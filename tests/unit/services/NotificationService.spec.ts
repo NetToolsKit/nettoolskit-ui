@@ -4,7 +4,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// Mock notification types
 type NotificationType = 'success' | 'error' | 'warning' | 'info'
 
 interface NotificationOptions {
@@ -15,7 +14,6 @@ interface NotificationOptions {
   actions?: Array<{ label: string; handler: () => void }>
 }
 
-// Simple mock implementation for testing
 class MockNotificationService {
   private notifications: NotificationOptions[] = []
   private adapter: any = null
@@ -189,7 +187,6 @@ describe('NotificationService', () => {
       expect(notifications[0].actions).toHaveLength(1)
       expect(notifications[0].actions![0].label).toBe('Undo')
 
-      // Simulate action click
       notifications[0].actions![0].handler()
       expect(undoHandler).toHaveBeenCalled()
     })

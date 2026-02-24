@@ -9,44 +9,33 @@ describe('useFormRules', () => {
   it('should return all validation methods', () => {
     const rules = useFormRules()
 
-    // Basic validations
     expect(rules.required).toBeDefined()
     expect(rules.email).toBeDefined()
 
-    // Length validations
     expect(rules.minLength).toBeDefined()
     expect(rules.maxLength).toBeDefined()
     expect(rules.lengthBetween).toBeDefined()
 
-    // Numeric validations
     expect(rules.numeric).toBeDefined()
     expect(rules.between).toBeDefined()
     expect(rules.min).toBeDefined()
     expect(rules.max).toBeDefined()
 
-    // Brazilian documents
     expect(rules.cpf).toBeDefined()
     expect(rules.cnpj).toBeDefined()
 
-    // Contact info
     expect(rules.phone).toBeDefined()
 
-    // Internet
     expect(rules.url).toBeDefined()
 
-    // Date
     expect(rules.dateFormat).toBeDefined()
 
-    // Match
     expect(rules.match).toBeDefined()
 
-    // Custom pattern
     expect(rules.pattern).toBeDefined()
 
-    // Password
     expect(rules.strongPassword).toBeDefined()
 
-    // Rule combination
     expect(rules.combine).toBeDefined()
   })
 
@@ -75,7 +64,7 @@ describe('useFormRules', () => {
 
       expect(rule('test@example.com')).toBe(true)
       expect(rule('invalid')).toBe('E-mail inválido')
-      expect(rule('')).toBe(true) // Optional by default
+      expect(rule('')).toBe(true)
     })
   })
 

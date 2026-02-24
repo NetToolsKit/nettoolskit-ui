@@ -1,14 +1,42 @@
 {
   "name": "@nettoolskit/ui-vue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shared Vue 3 + Quasar component library with theme system, composables, and design tokens",
-  "main": "index.ts",
-  "types": "index.ts",
+  "main": "./.build/dist/index.cjs",
+  "module": "./.build/dist/index.mjs",
+  "types": "./.build/dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./.build/dist/index.d.ts",
+      "import": "./.build/dist/index.mjs",
+      "require": "./.build/dist/index.cjs"
+    },
+    "./styles": "./src/styles/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    ".build/dist",
+    "src/styles",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "*.css",
+    "*.scss",
+    "src/styles/**"
+  ],
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui",
+    "build": "npm run build:js && npm run build:dts",
+    "build:js": "tsup",
+    "build:dts": "vue-tsc --declaration --emitDeclarationOnly --outDir .build/dist",
+    "build:landing": "vite build",
+    "dev": "vite",
+    "dev:lib": "tsup --watch",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run --config tests/vitest.config.ts",
+    "test:watch": "vitest --config tests/vitest.config.ts",
+    "test:coverage": "vitest run --coverage --config tests/vitest.config.ts",
+    "test:ui": "vitest --ui --config tests/vitest.config.ts",
     "lint": "eslint src --ext .ts,.vue",
     "type-check": "vue-tsc --noEmit"
   },
@@ -28,18 +56,35 @@
     "url": "https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git"
   },
   "peerDependencies": {
-    "vue": "^3.0.0",
-    "quasar": "^2.0.0"
+    "quasar": "^2.0.0",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@quasar/vite-plugin": "^1.8.1",
+    "@types/node": "^25.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vitest/coverage-v8": "^2.0.0",
     "@vitest/ui": "^2.0.0",
     "@vue/test-utils": "^2.4.0",
+    "esbuild-plugin-vue3": "^0.5.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-vue": "^9.33.0",
     "jsdom": "^24.0.0",
+    "quasar": "^2.17.4",
+    "sass": "^1.97.1",
+    "tsup": "^8.5.1",
     "typescript": "^5.0.0",
+    "vite": "^6.0.5",
     "vitest": "^2.0.0",
     "vue": "^3.4.0",
+    "vue-eslint-parser": "^9.4.3",
+    "vue-router": "^4.6.4",
     "vue-tsc": "^2.0.0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.17.0"
   }
 }

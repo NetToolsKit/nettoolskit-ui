@@ -14,8 +14,6 @@ import {
 
 describe('validators', () => {
   // ============================================================================
-  // validateEmail()
-  // ============================================================================
   describe('validateEmail()', () => {
     it('should return false for empty string', () => {
       expect(validateEmail('')).toBe(false)
@@ -55,8 +53,6 @@ describe('validators', () => {
     })
   })
 
-  // ============================================================================
-  // validateURL()
   // ============================================================================
   describe('validateURL()', () => {
     it('should return false for empty string', () => {
@@ -102,8 +98,6 @@ describe('validators', () => {
   })
 
   // ============================================================================
-  // validatePhone()
-  // ============================================================================
   describe('validatePhone()', () => {
     it('should return false for empty string', () => {
       expect(validatePhone('')).toBe(false)
@@ -140,8 +134,6 @@ describe('validators', () => {
   })
 
   // ============================================================================
-  // validateCPF()
-  // ============================================================================
   describe('validateCPF()', () => {
     it('should return false for empty string', () => {
       expect(validateCPF('')).toBe(false)
@@ -152,10 +144,6 @@ describe('validators', () => {
       expect(validateCPF(undefined as any)).toBe(false)
     })
 
-    // Note: These tests may fail if the validateCPF function has a bug
-    // The function in validators.ts has a reference to 'digits' which is undefined
-    // These tests document the expected behavior
-
     it('should return false for CPF with wrong length', () => {
       expect(validateCPF('1234567890')).toBe(false)
     })
@@ -165,8 +153,6 @@ describe('validators', () => {
     })
   })
 
-  // ============================================================================
-  // validateCNPJ()
   // ============================================================================
   describe('validateCNPJ()', () => {
     it('should return false for empty string', () => {
@@ -199,8 +185,6 @@ describe('validators', () => {
     })
   })
 
-  // ============================================================================
-  // validatePassword()
   // ============================================================================
   describe('validatePassword()', () => {
     it('should return invalid for empty password', () => {

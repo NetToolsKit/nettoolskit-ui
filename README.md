@@ -12,13 +12,16 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 ## Features
 
 - ✅ 22 reusable Vue 3 components (form, layout, UI)
-- ✅ 11 composables for reactive logic and state management
-- ✅ Multi-theme support (Sentinela blue, PlaTEA teal, Dark mode)
-- ✅ SCSS design system with CSS variables and utility classes
+- ✅ 12 composables for reactive logic and state management
+- ✅ **Centralized branding system** with `useBranding()` composable
+- ✅ Multi-theme support with CSS variables and design tokens
+- ✅ SCSS design system with comprehensive utility classes
 - ✅ TypeScript-first with full type definitions
 - ✅ Quasar Framework integration
 - ✅ Clean Architecture patterns
 - ✅ Accessibility-focused (WCAG AA compliant)
+- ✅ **Complete customization guides** and project templates
+- ✅ NPM package ready (CJS + ESM + CSS)
 
 ---
 
@@ -30,11 +33,12 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 - [Usage Examples](#usage-examples)
   - [Components](#components)
   - [Composables](#composables)
-  - [Theme System](#theme-system)
+  - [Branding System](#branding-system)
 - [API Reference](#api-reference)
   - [Components](#components-api)
   - [Composables](#composables-api)
   - [Theme Configuration](#theme-configuration)
+- [Documentation](#documentation)
 - [Design System](#design-system)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -45,6 +49,14 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 ---
 
 ## Installation
+
+### NPM Package (Recommended)
+
+```bash
+npm install @nettoolskit/ui-vue
+```
+
+### From Source
 
 Clone the repository and copy the `nettoolskit-ui-vue` folder to your project's `shared` directory:
 
@@ -81,29 +93,67 @@ Ensure your project has the following dependencies:
 
 ## Quick Start
 
-```ts
-// main.ts or boot file
-import { initTheme } from '@/shared/nettoolskit-ui-vue';
+### 1. Setup (main.ts)
 
-// Initialize theme on app startup
-initTheme('sentinela'); // or 'platea', 'dark'
+```ts
+import { createApp } from 'vue'
+import { Quasar } from 'quasar'
+import { NtkThemePlugin, nettoolskitTheme } from '@nettoolskit/ui-vue'
+
+// Import styles
+import '@quasar/extras/material-icons/material-icons.css'
+import 'quasar/dist/quasar.css'
+import '@nettoolskit/ui-vue/dist/index.css'
+
+const app = createApp(App)
+app.use(Quasar)
+app.use(themePlugin, themeConfig)
+app.mount('#app')
 ```
+
+### 2. Configure Theme (theme.config.ts)
+
+```ts
+import { ThemeConfig } from '@nettoolskit/ui-vue'
+
+export const themeConfig: ThemeConfig = {
+  logo: { letter: 'M', text: 'MyApp' },
+  appName: 'My Application',
+  tagline: 'Build amazing things',
+  colors: { primary: '#1976d2', secondary: '#424242' }
+}
+```
+
+### 3. Use Components
 
 ```vue
 <template>
-  <BaseInput v-model="email" label="Email" type="email" :rules="emailRules" />
+  <BaseInput v-model="email" label="Email" type="email" :rules="[required]" />
   <BaseButton label="Submit" color="primary" @click="handleSubmit" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { BaseInput, BaseButton, useFormRules } from '@/shared/nettoolskit-ui-vue';
+import { ref } from 'vue'
+import { BaseInput, BaseButton, useFormRules } from '@nettoolskit/ui-vue'
 
-const email = ref('');
-const { emailRules } = useFormRules();
-const handleSubmit = () => console.log('Submitted:', email.value);
+const email = ref('')
+const { required } = useFormRules()
+const handleSubmit = () => console.log('Submitted:', email.value)
 </script>
 ```
+
+### 4. Access Branding
+
+```vue
+<script setup lang="ts">
+import { useBranding } from '@nettoolskit/ui-vue'
+
+const { logo, appName, primaryColor, contact, social } = useBranding()
+</script>
+```
+
+> 📚 **Detailed Setup**: [templates/new-project-setup.md](./templates/new-project-setup.md)
+> 🎨 **Customization Guide**: [docs/CUSTOMIZATION.md](./docs/CUSTOMIZATION.md)
 
 ---
 
@@ -284,15 +334,34 @@ const onSubmit = () => console.log('Form:', form);
 
 ### Composables
 
+#### useBranding - Centralized Branding Access
+
+```ts
+import { useBranding } from '@nettoolskit/ui-vue'
+
+const {
+  logo,           // { letter, text, url } - Logo configuration
+  appName,        // Application name
+  tagline,        // Application tagline/subtitle
+  appUrl,         // Application URL
+  primaryColor,   // Primary brand color
+  secondaryColor, // Secondary brand color
+  contact,        // { email, phone, address, whatsapp }
+  social          // { github, linkedin, twitter, instagram, facebook }
+} = useBranding()
+
+// Use in templates
+<template>
+  <div :style="{ color: primaryColor }">{{ appName }}</div>
+  <a :href="social.github">GitHub</a>
+</template>
+```
+
 #### useTheme - Dynamic Theme Management
 
 ```ts
-import { useTheme, initTheme } from '@/shared/nettoolskit-ui-vue';
+import { useTheme } from '@nettoolskit/ui-vue'
 
-// Initialize on app startup (main.ts)
-initTheme('sentinela');
-
-// Use in components
 const {
   theme,           // Current theme config (readonly)
   themeName,       // Current theme name (readonly)
@@ -303,29 +372,22 @@ const {
   setTheme,        // Change theme by name
   setCustomTheme,  // Apply custom theme config
   loadSavedTheme,  // Load from localStorage
-} = useTheme();
+} = useTheme()
 
-// Switch themes
-setTheme('platea');  // Teal theme
-setTheme('dark');    // Dark mode
+// Switch themes programmatically
+setTheme('dark')  // Dark mode
 ```
 
 #### useFormRules - Form Validation
 
 ```ts
-import { useFormRules } from '@/shared/nettoolskit-ui-vue';
+import { useFormRules } from '@nettoolskit/ui-vue'
 
-const { rules, emailRules, cpfRules, cnpjRules, phoneRules } = useFormRules();
+const { required, email, minLength, maxLength, numeric, cpf, cnpj, phone } = useFormRules()
 
-// Available rules
-rules.required        // Field is required
-rules.email           // Valid email format
-rules.minLength(n)    // Minimum n characters
-rules.maxLength(n)    // Maximum n characters
-rules.numeric         // Numbers only
-rules.cpf             // Valid Brazilian CPF
-rules.cnpj            // Valid Brazilian CNPJ
-rules.phone           // Valid phone number
+// Use in components
+<BaseInput :rules="[required, email]" />
+<BaseInput :rules="[required, minLength(8)]" />
 ```
 
 #### useNotification - Toast Notifications
@@ -625,6 +687,27 @@ interface ThemeGradients {
   loading: string;
 }
 ```
+
+---
+
+## Documentation
+
+### Guides
+
+- 📘 **[New Project Setup](./templates/new-project-setup.md)** - Complete setup guide for new projects
+- 🎨 **[Customization Guide](./docs/CUSTOMIZATION.md)** - Theme and branding customization
+- 📝 **[Visual Identity Manual](./docs/nettoolskit-visual-identity-manual.md)** - Brand guidelines
+
+### Templates
+
+- **[custom-theme-template.ts](./templates/custom-theme-template.ts)** - TypeScript theme configuration template
+- **[custom-branding.scss](./templates/custom-branding.scss)** - SCSS design tokens template
+
+### API References
+
+- Components API (see sections above)
+- Composables API (see sections above)
+- Theme Configuration (see CUSTOMIZATION.md)
 
 ---
 

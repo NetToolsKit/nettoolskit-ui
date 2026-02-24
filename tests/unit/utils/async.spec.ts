@@ -15,8 +15,6 @@ describe('async utilities', () => {
   })
 
   // ============================================================================
-  // retry()
-  // ============================================================================
   describe('retry()', () => {
     it('should return result on first success', async () => {
       const fn = vi.fn().mockResolvedValue('success')
@@ -44,72 +42,80 @@ describe('async utilities', () => {
     })
 
     it('should throw after max retries', async () => {
+      // Arrange
       const fn = vi.fn().mockRejectedValue(new Error('always fails'))
 
+      // Act
       const resultPromise = retry(fn, 2, 100)
+      resultPromise.catch(() => {})
       await vi.runAllTimersAsync()
 
+      // Assert
       await expect(resultPromise).rejects.toThrow('always fails')
-      expect(fn).toHaveBeenCalledTimes(3) // initial + 2 retries
+      expect(fn).toHaveBeenCalledTimes(3)
     })
 
     it('should use exponential backoff', async () => {
+      // Arrange
       const fn = vi.fn()
         .mockRejectedValueOnce(new Error('fail'))
         .mockRejectedValueOnce(new Error('fail'))
         .mockResolvedValue('success')
 
+      // Act
       const resultPromise = retry(fn, 3, 100)
-
-      // First call immediate
       expect(fn).toHaveBeenCalledTimes(1)
 
-      // After 100ms (delay * 2^0)
       await vi.advanceTimersByTimeAsync(100)
       expect(fn).toHaveBeenCalledTimes(2)
 
-      // After 200ms more (delay * 2^1)
       await vi.advanceTimersByTimeAsync(200)
       expect(fn).toHaveBeenCalledTimes(3)
 
+      // Assert
       const result = await resultPromise
       expect(result).toBe('success')
     })
   })
 
   // ============================================================================
-  // timeout()
-  // ============================================================================
   describe('timeout()', () => {
     it('should return result if promise resolves before timeout', async () => {
+      // Arrange
       const promise = Promise.resolve('success')
 
+      // Act
       const result = await timeout(promise, 1000)
 
+      // Assert
       expect(result).toBe('success')
     })
 
     it('should throw if promise takes longer than timeout', async () => {
+      // Arrange
       const slowPromise = new Promise(resolve => {
         setTimeout(() => resolve('slow'), 2000)
       })
 
+      // Act
       const resultPromise = timeout(slowPromise, 1000)
-
+      resultPromise.catch(() => {})
       await vi.advanceTimersByTimeAsync(1000)
 
+      // Assert
       await expect(resultPromise).rejects.toThrow('Operation timed out after 1000ms')
+      await vi.advanceTimersByTimeAsync(1000)
     })
 
     it('should propagate errors from the promise', async () => {
+      // Arrange
       const failingPromise = Promise.reject(new Error('promise error'))
 
+      // Act & Assert
       await expect(timeout(failingPromise, 1000)).rejects.toThrow('promise error')
     })
   })
 
-  // ============================================================================
-  // parallel()
   // ============================================================================
   describe('parallel()', () => {
     it('should execute all tasks in parallel', async () => {
@@ -140,8 +146,6 @@ describe('async utilities', () => {
     })
   })
 
-  // ============================================================================
-  // sequential()
   // ============================================================================
   describe('sequential()', () => {
     it('should execute tasks in order', async () => {
@@ -182,11 +186,9 @@ describe('async utilities', () => {
   })
 
   // ============================================================================
-  // race()
-  // ============================================================================
   describe('race()', () => {
     it('should return first resolved promise', async () => {
-      vi.useRealTimers() // Need real timers for this test
+      vi.useRealTimers()
 
       const slow = new Promise(resolve => setTimeout(() => resolve('slow'), 100))
       const fast = new Promise(resolve => setTimeout(() => resolve('fast'), 10))

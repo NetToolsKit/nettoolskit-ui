@@ -169,9 +169,9 @@
  * Base Typography
  * ============================================ */
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-normal);
+  font-family: var(--ntk-font-body);
+  font-size: var(--ntk-text-base);
+  font-weight: var(--ntk-font-normal);
   line-height: var(--line-height-normal);
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -185,7 +185,7 @@ button,
 input,
 textarea,
 select {
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--ntk-font-normal);
 }
 
 /* ============================================
@@ -362,13 +362,13 @@ img[srcset] {
 }
 
 .empty-state-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ntk-text-lg);
+  font-weight: var(--ntk-font-medium);
   margin-bottom: var(--space-sm);
 }
 
 .empty-state-message {
-  font-size: var(--font-size-sm);
+  font-size: var(--ntk-text-sm);
   margin-bottom: var(--space-md);
 }
 
@@ -382,7 +382,7 @@ img[srcset] {
 
 .field-error {
   color: #f44336;
-  font-size: var(--font-size-xs);
+  font-size: var(--ntk-text-xs);
   margin-top: var(--space-xs);
   display: flex;
   align-items: center;
@@ -408,7 +408,7 @@ img[srcset] {
  * ============================================ */
 @media (max-width: 599px) {
   body {
-    font-size: var(--font-size-sm);
+    font-size: var(--ntk-text-sm);
   }
 
   .q-btn + .q-btn,
@@ -419,13 +419,13 @@ img[srcset] {
 
 @media (min-width: 600px) and (max-width: 1023px) {
   body {
-    font-size: var(--font-size-base);
+    font-size: var(--ntk-text-base);
   }
 }
 
 @media (min-width: 1024px) {
   body {
-    font-size: var(--font-size-base);
+    font-size: var(--ntk-text-base);
   }
 }
 
@@ -601,26 +601,26 @@ $breakpoint-xl: 1920px;
 .grid-auto-fit {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-md);
+  gap: var(--ntk-spacing-md);
 }
 
 .grid-auto-fill {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--spacing-md);
+  gap: var(--ntk-spacing-md);
 }
 
 /* Spacing Utilities (complement Quasar q-pa-*, q-ma-*) */
 .space-y-sm > * + * {
-  margin-top: var(--spacing-sm);
+  margin-top: var(--ntk-spacing-sm);
 }
 
 .space-y-md > * + * {
-  margin-top: var(--spacing-md);
+  margin-top: var(--ntk-spacing-md);
 }
 
 .space-y-lg > * + * {
-  margin-top: var(--spacing-lg);
+  margin-top: var(--ntk-spacing-lg);
 }
 
 /* ============================================

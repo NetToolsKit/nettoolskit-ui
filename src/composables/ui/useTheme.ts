@@ -5,8 +5,8 @@
  */
 
 import { ref, computed, readonly } from 'vue';
-import type { ThemeConfig, ThemeName } from '../../config/theme.config';
-import { themes, defaultTheme } from '../../config/theme.config';
+import type { ThemeConfig, ThemeName } from '../../config/theme/theme.config';
+import { themes, defaultTheme } from '../../config/theme/theme.config';
 
 // Estado global do tema
 const currentTheme = ref<ThemeConfig>(defaultTheme);
@@ -73,7 +73,7 @@ export function useTheme() {
       // Salvar preferência no localStorage
       try {
         localStorage.setItem('app-theme', name);
-      } catch (e) {
+      } catch (_e) {
         console.warn('Não foi possível salvar preferência de tema');
       }
     }
@@ -98,7 +98,7 @@ export function useTheme() {
       } else {
         applyThemeToCSS(currentTheme.value);
       }
-    } catch (e) {
+    } catch (_e) {
       applyThemeToCSS(currentTheme.value);
     }
   };
@@ -111,7 +111,7 @@ export function useTheme() {
   /**
    * Retorna as configurações do logo
    */
-  const logo = computed(() => currentTheme.value.logo);
+  const logo = computed(() => currentTheme.value.identity.logo);
 
   /**
    * Retorna o nome do tema atual
@@ -161,7 +161,7 @@ export function useTheme() {
  * Chamar no main.ts ou App.vue
  */
 export function initTheme(defaultThemeName: ThemeName = 'sentinela'): void {
-  const { setTheme, loadSavedTheme } = useTheme();
+  const { setTheme } = useTheme();
   
   // Tenta carregar tema salvo, senão usa o padrão
   try {
@@ -171,7 +171,7 @@ export function initTheme(defaultThemeName: ThemeName = 'sentinela'): void {
     } else {
       setTheme(defaultThemeName);
     }
-  } catch (e) {
+  } catch (_e) {
     setTheme(defaultThemeName);
   }
 }
