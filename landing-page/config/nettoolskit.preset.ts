@@ -27,23 +27,23 @@
  */
 
 // Colors
-import { nettoolskitPalette, type ColorScale } from '../colors/palette.config'
-import { semanticColors, type SemanticColors } from '../colors/semantic.config'
-import { lightThemeColors, darkThemeColors, applyThemeColors, type ThemeColorPalette } from '../colors/theme-mode.config'
+import { nettoolskitPalette, type BrandPalette } from '../../src/config/colors/palette.config'
+import { semanticColors, type SemanticColors } from '../../src/config/colors/semantic.config'
+import { lightThemeColors, darkThemeColors, type ThemeColorPalette } from '../../src/config/colors/theme-mode.config'
 
 // Visual
-import { nettoolskitTypography, applyTypography, type TypographyConfig } from '../visual/typography.config'
-import { nettoolskitEffects, applyEffects, type EffectsConfig } from '../visual/effects.config'
-import { defaultSpacing, applySpacing, type SpacingConfig } from '../visual/spacing.config'
+import { nettoolskitTypography, applyTypography, type TypographyConfig } from '../../src/config/visual/typography.config'
+import { nettoolskitEffects, applyEffects, type EffectsConfig } from '../../src/config/visual/effects.config'
+import { defaultSpacing, applySpacing, type SpacingConfig } from '../../src/config/visual/spacing.config'
 
 // Layout
-import { dashboardLayout, type LayoutConfig } from '../layout/structure.config'
-import { defaultResponsive, type ResponsiveConfig } from '../layout/responsive.config'
+import { dashboardLayout, type LayoutConfig } from '../../src/config/layout/structure.config'
+import { defaultResponsive, type ResponsiveConfig } from '../../src/config/layout/responsive.config'
 
 // Brand
-import { nettoolskitIdentity, type BrandIdentity } from '../brand/identity.config'
-import { nettoolskitNavigation, type BrandNavigation } from '../brand/navigation.config'
-import { nettoolskitContent, type BrandContent } from '../brand/content.config'
+import { nettoolskitIdentity, type BrandIdentity } from '../../src/config/brand/identity.config'
+import { nettoolskitNavigation, type BrandNavigation } from '../../src/config/brand/navigation.config'
+import { nettoolskitContent, type BrandContent } from '../../src/config/brand/content.config'
 
 // ============================
 // NetToolsKit Preset
@@ -55,7 +55,7 @@ import { nettoolskitContent, type BrandContent } from '../brand/content.config'
  */
 export interface BrandPreset {
   colors: {
-    palette: ColorScale
+    palette: BrandPalette
     semantic: SemanticColors
     themes: {
       light: ThemeColorPalette
@@ -122,14 +122,13 @@ export interface BrandPreset {
  * ```
  */
 export const nettoolskitPreset: BrandPreset = {
-  name: 'nettoolskit',
-  displayName: 'NetToolsKit',
-  
   colors: {
     palette: nettoolskitPalette,
     semantic: semanticColors,
-    lightTheme: lightThemeColors,
-    darkTheme: darkThemeColors,
+    themes: {
+      light: lightThemeColors,
+      dark: darkThemeColors,
+    },
   },
   
   visual: {
@@ -196,8 +195,8 @@ export function applyNettoolskitPreset(
   
   // Apply theme colors
   const themeColors = mode === 'light' 
-    ? nettoolskitPreset.colors.lightTheme 
-    : nettoolskitPreset.colors.darkTheme
+    ? nettoolskitPreset.colors.themes.light 
+    : nettoolskitPreset.colors.themes.dark
   
   // Apply theme colors as CSS variables
   const root = document.documentElement
@@ -207,7 +206,7 @@ export function applyNettoolskitPreset(
   
   // Apply semantic colors
   Object.entries(nettoolskitPreset.colors.semantic).forEach(([key, value]) => {
-    root.style.setProperty(`--semantic-${key}`, value)
+    root.style.setProperty(`--semantic-${key}`, String(value))
   })
   
   // Set document title
@@ -304,9 +303,9 @@ export function getNettoolskitConfig(
     case 'semantic':
       return nettoolskitPreset.colors.semantic
     case 'lightTheme':
-      return nettoolskitPreset.colors.lightTheme
+      return nettoolskitPreset.colors.themes.light
     case 'darkTheme':
-      return nettoolskitPreset.colors.darkTheme
+      return nettoolskitPreset.colors.themes.dark
     
     // Visual
     case 'typography':
@@ -397,7 +396,9 @@ export function enableDeveloperFeatures(features: {
  * ```
  */
 export function getComponentDocUrl(componentName: string): string {
-  const baseUrl = nettoolskitPreset.brand.content.social.find(s => s.platform === 'GitHub')?.url || ''
+  const baseUrl = nettoolskitPreset.brand.content.social.find(
+    (s: { platform?: string; url?: string }) => s.platform === 'GitHub'
+  )?.url || ''
   return `${baseUrl}/tree/main/src/components/${componentName}.vue`
 }
 

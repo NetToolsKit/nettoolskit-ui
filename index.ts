@@ -38,6 +38,12 @@ export { default as NtkMultiSelect } from './src/components/form/NtkMultiSelect.
 export { default as NtkTextarea } from './src/components/form/NtkTextarea.vue'
 export { default as NtkDatePicker } from './src/components/form/NtkDatePicker.vue'
 export { default as NtkTimePicker } from './src/components/form/NtkTimePicker.vue'
+export { default as BaseInput } from './src/components/form/BaseInput.vue'
+export { default as BaseSelect } from './src/components/form/BaseSelect.vue'
+export { default as BaseMultiSelect } from './src/components/form/BaseMultiSelect.vue'
+export { default as BaseTextarea } from './src/components/form/BaseTextarea.vue'
+export { default as BaseDatePicker } from './src/components/form/BaseDatePicker.vue'
+export { default as BaseTimePicker } from './src/components/form/BaseTimePicker.vue'
 
 // ============================================================================
 // COMPONENTS - Layout
@@ -50,6 +56,11 @@ export { default as NtkHero } from './src/components/layout/NtkHero.vue'
 export { default as NtkLandingHeader } from './src/components/layout/NtkLandingHeader.vue'
 export { default as NtkMobileDrawer } from './src/components/layout/NtkMobileDrawer.vue'
 export { default as NtkCTASection } from './src/components/layout/NtkCTASection.vue'
+export { default as BaseHeader } from './src/components/layout/BaseHeader.vue'
+export { default as BaseSidebar } from './src/components/layout/BaseSidebar.vue'
+export { default as BaseFooter } from './src/components/layout/BaseFooter.vue'
+export { default as BaseSection } from './src/components/layout/BaseSection.vue'
+export { default as BaseHero } from './src/components/layout/BaseHero.vue'
 
 // ============================================================================
 // COMPONENTS - UI
@@ -67,12 +78,22 @@ export { default as NtkSteps } from './src/components/ui/NtkSteps.vue'
 export { default as NtkCreditCard } from './src/components/ui/NtkCreditCard.vue'
 export { default as NtkStatCard } from './src/components/ui/NtkStatCard.vue'
 export { default as NtkTestimonialCard } from './src/components/ui/NtkTestimonialCard.vue'
+export { default as BaseButton } from './src/components/ui/BaseButton.vue'
+export { default as BaseCard } from './src/components/ui/BaseCard.vue'
+export { default as BaseChip } from './src/components/ui/BaseChip.vue'
+export { default as BaseLogo } from './src/components/ui/BaseLogo.vue'
+export { default as BaseFeatureCard } from './src/components/ui/BaseFeatureCard.vue'
+export { default as BasePricingCard } from './src/components/ui/BasePricingCard.vue'
+export { default as BaseCreditCard } from './src/components/ui/BaseCreditCard.vue'
+export { default as BaseSteps } from './src/components/ui/BaseSteps.vue'
+export { default as MetricCard } from './src/components/ui/MetricCard.vue'
 
 // ============================================================================
 // COMPOSABLES - Forms
 // ============================================================================
 export * from './src/composables/forms/useFormRules'
 export * from './src/composables/forms/useNtkField'
+export * from './src/composables/forms/useBaseField'
 
 // ============================================================================
 // COMPOSABLES - UI
@@ -136,3 +157,8 @@ export * from './src/config/brand/content.config'
 export * from './src/config/colors/palette.config'
 export * from './src/config/colors/semantic.config'
 export * from './src/config/colors/theme-mode.config'
+
+// ============================================================================
+// MODULES - CMS
+// ============================================================================
+export * from './src/modules/cms'

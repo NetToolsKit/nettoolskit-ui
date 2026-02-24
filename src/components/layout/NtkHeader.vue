@@ -1,8 +1,7 @@
 <template>
-  <!-- Landing Page Style Header (variant="landing") -->
   <header
     v-if="variant === 'landing'"
-    class="ntk-header ntk-header--landing"
+    class="ntk-header ntk-header--landing base-header base-header--landing"
   >
     <div class="ntk-header__container">
       <!-- Logo -->
@@ -162,7 +161,6 @@
     </div>
   </header>
 
-  <!-- App Style Header (variant="app" - default) -->
   <q-header
     v-else
     :elevated="elevated"
@@ -172,7 +170,7 @@
       <!-- Left Section: Hamburger Menu -->
       <div
         v-if="showMenuButton"
-        class="ntk-header__menu-container"
+        class="ntk-header__menu-container base-header__menu-container"
       >
         <q-btn
           flat
@@ -189,8 +187,8 @@
 
       <!-- Left Section: Title/Breadcrumb -->
       <q-toolbar-title
-        v-if="title || $slots.title"
-        class="ntk-header__title"
+        v-if="title || breadcrumbs.length > 0 || $slots.title"
+        class="ntk-header__title base-header__title"
       >
         <slot name="title">
           <div
@@ -207,7 +205,7 @@
                 v-if="index < breadcrumbs.length - 1"
                 name="chevron_right"
                 size="20px"
-                class="ntk-header__breadcrumb-separator"
+                class="ntk-header__breadcrumb-separator base-header__breadcrumb-separator"
               />
             </span>
           </div>
@@ -222,8 +220,8 @@
 
       <!-- Center Section: Search (optional) -->
       <div
-        v-if="showSearch && !isMobile"
-        class="ntk-header__search"
+        v-if="showSearch && !isMobileView"
+        class="ntk-header__search base-header__search"
       >
         <q-input
           dense
@@ -399,6 +397,10 @@ const props = defineProps({
     type: String,
     default: 'Search'
   },
+  isMobile: {
+    type: Boolean,
+    default: undefined
+  },
   showNotifications: {
     type: Boolean,
     default: true
@@ -410,6 +412,22 @@ const props = defineProps({
   showUserAvatar: {
     type: Boolean,
     default: true
+  },
+  compact: {
+    type: Boolean,
+    default: false
+  },
+  dark: {
+    type: Boolean,
+    default: false
+  },
+  transparent: {
+    type: Boolean,
+    default: false
+  },
+  customClass: {
+    type: String,
+    default: ''
   },
   userAvatar: {
     type: String,
@@ -432,12 +450,22 @@ defineEmits([
 ])
 
 const $q = useQuasar()
-const isMobile = computed(() => !$q.screen.gt.xs)
+const isMobileView = computed(() => props.isMobile ?? !$q.screen.gt.xs)
 
 const headerClass = computed(() => [
   'ntk-header',
+  'base-header',
   `bg-${props.bgColor}`,
-  `text-${props.textColor}`
+  `text-${props.textColor}`,
+  {
+    'ntk-header--compact': props.compact,
+    'base-header--compact': props.compact,
+    'ntk-header--dark': props.dark,
+    'base-header--dark': props.dark,
+    'ntk-header--transparent': props.transparent,
+    'base-header--transparent': props.transparent
+  },
+  props.customClass
 ])
 </script>
 

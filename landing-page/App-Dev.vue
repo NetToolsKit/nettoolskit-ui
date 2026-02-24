@@ -1,7 +1,7 @@
 <template>
   <div id="app-dev">
     <!-- Área de desenvolvimento de componentes -->
-    <BaseHeader
+    <NtkHeader
       variant="landing"
       logo="./assets/nuget-icon.png"
       logo-text="NetToolsKit UI"
@@ -40,7 +40,7 @@
           GitHub
         </a>
       </template>
-    </BaseHeader>
+    </NtkHeader>
 
     <!-- Conteúdo de teste -->
     <main style="padding-top: 80px; min-height: 100vh;">
@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watchEffect } from 'vue';
-import BaseHeader from '../src/components/layout/BaseHeader.vue';
+import NtkHeader from '../src/components/layout/NtkHeader.vue';
 import { lightThemeColors, darkThemeColors, applyThemeColors } from '../src/config/colors/theme-mode.config';
 
 const isDark = ref(false);

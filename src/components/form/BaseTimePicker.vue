@@ -1,0 +1,147 @@
+<template>
+  <q-input
+    v-bind="$attrs"
+    :model-value="internalValue"
+    :label="label"
+    :placeholder="placeholder"
+    :outlined="outlined"
+    :filled="filled"
+    :dense="dense"
+    :readonly="readonly"
+    :disable="disable"
+    :rules="rules"
+    :lazy-rules="lazyRules"
+    :mask="mask"
+    :error="error"
+    :error-message="errorMessage"
+    :loading="loading"
+    :clearable="clearable"
+    :stack-label="stackLabel"
+    class="base-time-picker"
+    :class="customClass"
+    @update:model-value="emitModelValue"
+    @update:modelValue="emitModelValue"
+    @blur="$emit('blur', $event)"
+    @focus="$emit('focus', $event)"
+  >
+    <template #append>
+      <q-icon
+        name="access_time"
+        class="cursor-pointer"
+      >
+        <q-popup-proxy
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+        >
+          <q-time
+            v-model="internalValue"
+            :format24h="format24h"
+            :with-seconds="withSeconds"
+            color="primary"
+            @update:model-value="emitModelValue"
+            @update:modelValue="emitModelValue"
+          >
+            <div class="row items-center justify-between q-px-sm q-gutter-sm">
+              <q-btn
+                label="Agora"
+                color="primary"
+                flat
+                @click="setNowTime"
+              />
+              <q-btn
+                v-bind="{ 'v-close-popup': true }"
+                label="Fechar"
+                color="primary"
+                flat
+              />
+            </div>
+          </q-time>
+        </q-popup-proxy>
+      </q-icon>
+    </template>
+  </q-input>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import type { ValidationRule } from 'quasar'
+
+interface Props {
+  modelValue?: string
+  label?: string
+  placeholder?: string
+  outlined?: boolean
+  filled?: boolean
+  dense?: boolean
+  readonly?: boolean
+  disable?: boolean
+  rules?: ValidationRule[]
+  lazyRules?: boolean
+  format24h?: boolean
+  withSeconds?: boolean
+  mask?: string
+  error?: boolean
+  errorMessage?: string
+  loading?: boolean
+  clearable?: boolean
+  stackLabel?: boolean
+  customClass?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  label: '',
+  placeholder: 'HH:mm',
+  outlined: true,
+  filled: false,
+  dense: false,
+  readonly: false,
+  disable: false,
+  rules: () => [],
+  lazyRules: true,
+  format24h: true,
+  withSeconds: false,
+  mask: '',
+  error: false,
+  errorMessage: '',
+  loading: false,
+  clearable: false,
+  stackLabel: true,
+  customClass: '',
+})
+
+const emit = defineEmits([
+  'update:modelValue',
+  'blur',
+  'focus',
+])
+
+const internalValue = ref(props.modelValue)
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    internalValue.value = newValue
+  }
+)
+
+const emitModelValue = (value: unknown) => {
+  internalValue.value = String(value ?? '')
+  emit('update:modelValue', internalValue.value)
+}
+
+const setNowTime = () => {
+  const now = new Date()
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+
+  if (props.withSeconds) {
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+    emitModelValue(`${hours}:${minutes}:${seconds}`)
+    return
+  }
+
+  emitModelValue(`${hours}:${minutes}`)
+}
+</script>

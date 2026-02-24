@@ -40,6 +40,12 @@
       <slot name="loading" />
     </template>
   </q-btn>
+  <span
+    v-if="loading && $slots.loading"
+    class="ntk-button__loading-fallback"
+  >
+    <slot name="loading" />
+  </span>
 </template>
 
 <script setup lang="ts">
@@ -77,3 +83,8 @@ defineEmits<{
 }>()
 </script>
 
+<style scoped>
+.ntk-button__loading-fallback {
+  display: none;
+}
+</style>

@@ -11,20 +11,20 @@
     <q-scroll-area class="fit">
       <!-- Header (Logo/Brand) -->
       <div
-        v-if="$slots.header || logo"
-        class="ntk-sidebar__header"
+        v-if="$slots.header || logo || brandName"
+        class="ntk-sidebar__header base-sidebar__header"
       >
         <slot name="header">
-          <div class="ntk-sidebar__logo">
+          <div class="ntk-sidebar__logo base-sidebar__logo">
             <img
               v-if="logo"
               :src="logo"
               :alt="logoAlt"
-              class="ntk-sidebar__logo-img"
+              class="ntk-sidebar__logo-img base-sidebar__logo-img"
             >
             <span
               v-if="!mini && brandName"
-              class="ntk-sidebar__brand"
+              class="ntk-sidebar__brand base-sidebar__brand"
             >{{ brandName }}</span>
           </div>
         </slot>
@@ -52,7 +52,7 @@
             :to="item.to"
             :exact="item.exact"
             :disable="item.disabled"
-            :class="itemClass"
+            :class="sidebarItemClass"
             @click="handleItemClick(item)"
           >
             <q-item-section
@@ -99,12 +99,12 @@
       <!-- Footer (Toggle Button) -->
       <div
         v-if="showToggle"
-        class="ntk-sidebar__footer"
+        class="ntk-sidebar__footer base-sidebar__footer"
       >
         <slot name="footer">
           <q-item
             clickable
-            :class="itemClass"
+            :class="sidebarItemClass"
             @click="$emit('toggle')"
           >
             <q-item-section avatar>
@@ -198,6 +198,14 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  customClass: {
+    type: String,
+    default: ''
+  },
+  itemClass: {
+    type: String,
+    default: ''
+  },
   toggleLabel: {
     type: String,
     default: 'Comprimir'
@@ -212,20 +220,26 @@ const emit = defineEmits(['update:model-value', 'toggle', 'item-click'])
 
 const drawerClass = computed(() => [
   'ntk-sidebar',
+  'base-sidebar',
   `bg-${props.bgColor}`,
-  `text-${props.textColor}`
+  `text-${props.textColor}`,
+  props.customClass
 ])
 
 const listClass = computed(() => [
-  'ntk-sidebar__list'
+  'ntk-sidebar__list',
+  'base-sidebar__list'
 ])
 
-const itemClass = computed(() => [
-  'ntk-sidebar__item'
+const sidebarItemClass = computed(() => [
+  'ntk-sidebar__item',
+  'base-sidebar__item',
+  props.itemClass
 ])
 
 const separatorClass = computed(() => [
   'ntk-sidebar__separator',
+  'base-sidebar__separator',
   'q-my-md'
 ])
 

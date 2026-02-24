@@ -667,22 +667,20 @@
           <div class="footer-links-grid">
             <div class="footer-column">
               <h4>Resources</h4>
-              <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/README.md">Documentation</a>
-              <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/samples/DemoPage.vue">Demo Page</a>
-              <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/components">Components</a>
-              <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/composables">Composables</a>
+              <ul class="footer-links-list">
+                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/README.md">Documentation</a></li>
+                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/samples/DemoPage.vue">Demo Page</a></li>
+                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/components">Components</a></li>
+                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/composables">Composables</a></li>
+              </ul>
             </div>
-            
-            <div class="footer-column">
-              <h4>Projects Using NTK</h4>
-              <a href="https://github.com/ThiagoGuislotti/sentinela">Sentinela</a>
-              <a href="https://github.com/ThiagoGuislotti/PlaTEA">PlaTEA</a>
-            </div>
-            
+
             <div class="footer-column">
               <h4>Related</h4>
-              <a href="https://github.com/ThiagoGuislotti/copilot-instructions">Copilot Instructions</a>
-              <a href="https://github.com/ThiagoGuislotti/nettoolskit-cli">NTK CLI (Rust)</a>
+              <ul class="footer-links-list">
+                <li><a href="https://github.com/ThiagoGuislotti/copilot-instructions">Copilot Instructions</a></li>
+                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-cli">NTK CLI (Rust)</a></li>
+              </ul>
             </div>
           </div>
         </div>
@@ -1985,27 +1983,50 @@ body.dark-mode .composable-item p {
 
 .footer-links-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: var(--spacing-xl);
 }
 
 .footer-column {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  justify-content: flex-start !important;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  min-height: auto !important;
 }
 
 .footer-column h4 {
   color: var(--white);
   font-weight: 600;
   font-size: 0.875rem;
-  margin-bottom: var(--spacing-sm);
+  margin: 0 0 var(--spacing-sm);
+  line-height: 1.2;
+}
+
+.footer-links-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.footer-links-list li {
+  margin: 0;
+  padding: 0;
 }
 
 .footer-column a {
+  display: inline-block;
   color: var(--gray-400);
   font-size: 0.875rem;
+  line-height: 1.35;
   transition: color var(--transition-fast);
+  margin: 0;
+  padding: 0;
 }
 
 .footer-column a:hover {

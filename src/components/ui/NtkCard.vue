@@ -1,23 +1,23 @@
 <template>
   <q-card
-    class="ntk-card"
+    class="ntk-card base-card"
     :class="cardClasses"
     :flat="variant === 'outlined'"
   >
     <q-card-section
       v-if="$slots.header"
-      class="ntk-card__header"
+      class="ntk-card__header base-card__header"
     >
       <slot name="header" />
     </q-card-section>
 
-    <q-card-section class="ntk-card__body">
+    <q-card-section class="ntk-card__body base-card__body">
       <slot />
     </q-card-section>
 
     <q-card-section
       v-if="$slots.footer"
-      class="ntk-card__footer"
+      class="ntk-card__footer base-card__footer"
     >
       <slot name="footer" />
     </q-card-section>
@@ -43,9 +43,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const cardClasses = computed(() => ({
   [`ntk-card--${props.variant}`]: true,
+  [`base-card--${props.variant}`]: true,
   [`ntk-card--padding-${props.padding}`]: true,
+  [`base-card--padding-${props.padding}`]: true,
   [`ntk-card--accent-${props.accentColor}`]: props.variant === 'accent-left' || props.variant === 'accent-top',
-  'ntk-card--clickable': props.clickable
+  [`base-card--accent-${props.accentColor}`]: props.variant === 'accent-left' || props.variant === 'accent-top',
+  'ntk-card--clickable': props.clickable,
+  'base-card--clickable': props.clickable
 }))
 </script>
 

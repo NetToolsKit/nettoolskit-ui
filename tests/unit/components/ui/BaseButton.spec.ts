@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { QBtn } from 'quasar'
 import NtkButton from '@/components/ui/NtkButton.vue'
+const BaseButton = NtkButton
 
 describe('NtkButton', () => {
   describe('Component Structure', () => {

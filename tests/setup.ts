@@ -37,6 +37,8 @@ const $qMock = {
 }
 
 const QUASAR_PROP_NAMES = [
+  'class',
+  'style',
   'modelValue',
   'label',
   'placeholder',
@@ -75,32 +77,102 @@ const QUASAR_PROP_NAMES = [
   'transitionShow',
   'transitionHide',
   'multiple',
+  'useChips',
   'options',
+  'useInput',
+  'optionValue',
+  'optionLabel',
+  'hideSelected',
+  'behavior',
+  'filterFn',
+  'noOptionsText',
+  'maxValues',
   'emitValue',
   'mapOptions',
-  'clearable'
+  'clearable',
+  'maxlength',
+  'counter',
+  'mask',
+  'autofocus',
+  'hint',
+  'rows',
+  'autogrow',
+  'error',
+  'errorMessage',
+  'bottomSlots',
+  'stackLabel',
+  'withSeconds',
+  'format24h',
+  'width',
+  'mini',
+  'miniWidth',
+  'breakpoint',
+  'floating',
+  'textColor',
+  'exact',
+  'side',
+  'caption'
 ] as const
 
 const createQuasarProps = () =>
   Object.fromEntries(QUASAR_PROP_NAMES.map((propName) => [propName, { type: null as any, required: false }]))
 
-const createQuasarStub = (name: string) =>
+const createQuasarStub = (name: string, tag = 'div', fixedAttrs: Record<string, unknown> = {}) =>
   defineComponent({
     name,
     props: createQuasarProps(),
-    setup(_props, { slots, attrs }) {
-      return () => h('div', { 'data-stub': name, ...attrs }, slots.default?.())
+    setup(props, { slots, attrs }) {
+      return () => {
+        const renderedSlots = Object.values(slots).flatMap((slotFn) => {
+          if (!slotFn) return []
+          const content = slotFn({})
+          return Array.isArray(content) ? content : [content]
+        })
+
+        const domProps: Record<string, unknown> = { 'data-stub': name, ...fixedAttrs, ...attrs }
+        Object.entries(props).forEach(([key, value]) => {
+          if (value !== undefined) {
+            domProps[key] = value
+          }
+        })
+
+        const mergedClass = [fixedAttrs.class, attrs.class, props.class].filter(Boolean)
+        if (mergedClass.length > 0) {
+          domProps.class = mergedClass
+        }
+
+        const labelText = props.label !== undefined && props.label !== null ? [String(props.label)] : []
+        return h(tag, domProps, [...renderedSlots, ...labelText])
+      }
     }
   })
 
-const QBtn = createQuasarStub('QBtn')
+const QBtn = createQuasarStub('QBtn', 'button')
 const QCard = createQuasarStub('QCard')
 const QCardSection = createQuasarStub('QCardSection')
 const QIcon = defineComponent({
   name: 'QIcon',
   props: createQuasarProps(),
-  setup(_props, { slots, attrs }) {
-    return () => h('i', { class: 'q-icon', 'data-stub': 'QIcon', ...attrs }, slots.default?.())
+  setup(props, { slots, attrs }) {
+    return () => {
+      const renderedSlots = Object.values(slots).flatMap((slotFn) => {
+        if (!slotFn) return []
+        const content = slotFn({})
+        return Array.isArray(content) ? content : [content]
+      })
+
+      const iconAttrs: Record<string, unknown> = { ...attrs, 'data-stub': 'QIcon' }
+      Object.entries(props).forEach(([key, value]) => {
+        if (value !== undefined) {
+          iconAttrs[key] = value
+        }
+      })
+
+      const attrClass = iconAttrs.class
+      delete iconAttrs.class
+
+      return h('i', { ...iconAttrs, class: ['q-icon', attrClass] }, renderedSlots)
+    }
   }
 })
 const QInput = createQuasarStub('QInput')
@@ -110,16 +182,21 @@ const QDate = createQuasarStub('QDate')
 const QTime = createQuasarStub('QTime')
 const QPopupProxy = createQuasarStub('QPopupProxy')
 const QMenu = createQuasarStub('QMenu')
-const QHeader = createQuasarStub('QHeader')
-const QFooter = createQuasarStub('QFooter')
+const QHeader = createQuasarStub('QHeader', 'header')
+const QFooter = createQuasarStub('QFooter', 'footer')
 const QDrawer = createQuasarStub('QDrawer')
 const QList = createQuasarStub('QList')
-const QItem = createQuasarStub('QItem')
+const QItem = createQuasarStub('QItem', 'div', { class: 'q-item' })
 const QItemSection = createQuasarStub('QItemSection')
-const QToolbar = createQuasarStub('QToolbar')
+const QItemLabel = createQuasarStub('QItemLabel')
+const QToolbar = createQuasarStub('QToolbar', 'div', { role: 'toolbar' })
 const QToolbarTitle = createQuasarStub('QToolbarTitle')
 const QSeparator = createQuasarStub('QSeparator')
 const QSpace = createQuasarStub('QSpace')
+const QBadge = createQuasarStub('QBadge')
+const QAvatar = createQuasarStub('QAvatar', 'div', { class: 'q-avatar' })
+const QTooltip = createQuasarStub('QTooltip')
+const QScrollArea = createQuasarStub('QScrollArea')
 
 // Mock the `quasar` module to avoid installing the real plugin (which requires SSR/runtime globals)
 // and to keep component mounting stable.
@@ -152,10 +229,15 @@ vi.mock('quasar', () => {
     QList,
     QItem,
     QItemSection,
+    QItemLabel,
     QToolbar,
     QToolbarTitle,
     QSeparator,
-    QSpace
+    QSpace,
+    QBadge,
+    QAvatar,
+    QTooltip,
+    QScrollArea
   }
 })
 
@@ -183,10 +265,15 @@ config.global.components = {
   QList,
   QItem,
   QItemSection,
+  QItemLabel,
   QToolbar,
   QToolbarTitle,
   QSeparator,
-  QSpace
+  QSpace,
+  QBadge,
+  QAvatar,
+  QTooltip,
+  QScrollArea
 }
 
 // Mock useBranding composable

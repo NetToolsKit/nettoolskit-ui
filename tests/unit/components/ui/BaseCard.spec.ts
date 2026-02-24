@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NtkCard from '../../../../src/components/ui/NtkCard.vue'
+const BaseCard = NtkCard
 
 describe('NtkCard', () => {
   describe('Props - Variant', () => {

@@ -24,7 +24,7 @@
       </div>
       <q-icon
         :name="icon"
-        :size="$q.screen.xs ? 'var(--ntk-text-2xl)' : 'var(--ntk-text-3xl)'"
+        size="var(--ntk-text-3xl)"
         class="metric-card__icon"
       />
     </q-card-section>

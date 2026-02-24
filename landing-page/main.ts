@@ -8,9 +8,9 @@ import '../src/styles/tokens.scss'
 import '../src/styles/design-system.scss'
 import '../src/styles/global.scss'
 
-import AppDev from './App-Dev.vue'
+import App from './App.vue'
 
-const app = createApp(AppDev)
+const app = createApp(App)
 
 app.use(Quasar, {
   plugins: {}

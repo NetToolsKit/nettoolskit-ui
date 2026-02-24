@@ -1,8 +1,12 @@
 import { computed } from 'vue';
 import { useTheme } from './useTheme';
 import type { LogoConfig } from '../../config/brand/identity.config';
+import { getContent, type BrandContent, type ContactInfo, type FooterSection } from '../../config/brand/content.config';
+import { getNavigation, type BrandNavigation, type CTAButton, type NavLink } from '../../config/brand/navigation.config';
+import type { BrandName } from '../../config/brand/identity.config';
 
 type ThemeLogo = LogoConfig;
+const KNOWN_BRANDS: BrandName[] = ['sentinela', 'platea', 'nettoolskit'];
 
 /**
  * Composable centralizado para acessar informações de branding
@@ -24,6 +28,15 @@ type ThemeLogo = LogoConfig;
  */
 export function useBranding() {
   const { theme, logo: themeLogo } = useTheme();
+  const activeBrand = computed<BrandName>(() => {
+    const identityName = String(theme.value.identity?.name || '').toLowerCase();
+    if (KNOWN_BRANDS.includes(identityName as BrandName)) {
+      return identityName as BrandName;
+    }
+    return 'nettoolskit';
+  });
+  const content = computed<BrandContent>(() => getContent(activeBrand.value));
+  const navigation = computed<BrandNavigation>(() => getNavigation(activeBrand.value));
 
   /**
    * Logo configuration from active theme
@@ -61,14 +74,42 @@ export function useBranding() {
   const accentColor = computed<string>(() => theme.value.colors.accent);
 
   /**
-   * Contact information from theme (deprecated - use content.config)
+   * Contact information from brand content config
    */
-  const contact = computed(() => ({}));
+  const contact = computed<ContactInfo>(() => content.value.contact || {});
 
   /**
-   * Social media links from theme (deprecated - use content.config)
+   * Social media links as { [platform]: url } map
    */
-  const social = computed(() => ({}));
+  const social = computed<Record<string, string>>(() => {
+    const entries = content.value.social || [];
+    return entries.reduce<Record<string, string>>((acc, item) => {
+      if (item?.platform && item?.url) {
+        acc[item.platform.toLowerCase()] = item.url;
+      }
+      return acc;
+    }, {});
+  });
+
+  /**
+   * Header navigation links
+   */
+  const navLinks = computed<NavLink[]>(() => navigation.value.header || []);
+
+  /**
+   * Primary CTA button config
+   */
+  const primaryCTA = computed<CTAButton | undefined>(() => navigation.value.primaryCTA);
+
+  /**
+   * Secondary CTA button config
+   */
+  const secondaryCTA = computed<CTAButton | undefined>(() => navigation.value.secondaryCTA);
+
+  /**
+   * Footer link sections from content config
+   */
+  const footerSections = computed<FooterSection[]>(() => content.value.footerSections || []);
 
   return {
     // Logo
@@ -87,5 +128,9 @@ export function useBranding() {
     // Contact & Social
     contact,
     social,
+    navLinks,
+    primaryCTA,
+    secondaryCTA,
+    footerSections,
   };
 }

@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "name": "nettoolskit-ui-vue",
-  "buildCommand": "",
+  "buildCommand": "npm run build:landing",
   "outputDirectory": "docs",
   "framework": null,
-  "installCommand": ""
+  "installCommand": "npm ci"
 }

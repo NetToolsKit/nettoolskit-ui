@@ -1,20 +1,20 @@
 <template>
   <footer
-    class="ntk-footer"
+    class="ntk-footer base-footer"
     :class="footerClasses"
   >
-    <div class="ntk-footer__container">
+    <div class="ntk-footer__container base-footer__container">
       <!-- Main Content -->
-      <div class="ntk-footer__content">
+      <div class="ntk-footer__content base-footer__content">
         <!-- Brand Section -->
-        <div class="ntk-footer__brand">
+        <div class="ntk-footer__brand base-footer__brand">
           <slot name="brand">
-            <h3 class="ntk-footer__logo">
+            <h3 class="ntk-footer__logo base-footer__logo">
               {{ brandName }}
             </h3>
             <p
               v-if="brandDescription"
-              class="ntk-footer__description"
+              class="ntk-footer__description base-footer__description"
             >
               {{ brandDescription }}
             </p>
@@ -22,24 +22,24 @@
         </div>
 
         <!-- Links Sections -->
-        <div class="ntk-footer__links">
+        <div class="ntk-footer__links base-footer__links">
           <slot name="links">
             <div
               v-for="(section, index) in linkSections"
               :key="index"
-              class="ntk-footer__link-section"
+              class="ntk-footer__link-section base-footer__link-section"
             >
-              <h4 class="ntk-footer__link-title">
+              <h4 class="ntk-footer__link-title base-footer__link-title">
                 {{ section.title }}
               </h4>
-              <ul class="ntk-footer__link-list">
+              <ul class="ntk-footer__link-list base-footer__link-list">
                 <li
                   v-for="(link, linkIndex) in section.links"
                   :key="linkIndex"
                 >
                   <a
                     :href="link.href"
-                    class="ntk-footer__link"
+                    class="ntk-footer__link base-footer__link"
                     :target="link.external ? '_blank' : undefined"
                     :rel="link.external ? 'noopener noreferrer' : undefined"
                   >
@@ -54,18 +54,18 @@
         <!-- Social Section -->
         <div
           v-if="$slots.social || finalSocialLinks.length > 0"
-          class="ntk-footer__social"
+          class="ntk-footer__social base-footer__social"
         >
           <slot name="social">
-            <h4 class="ntk-footer__link-title">
+            <h4 class="ntk-footer__link-title base-footer__link-title">
               {{ socialTitle }}
             </h4>
-            <div class="ntk-footer__social-links">
+            <div class="ntk-footer__social-links base-footer__social-links">
               <a
                 v-for="(socialLink, index) in finalSocialLinks"
                 :key="index"
                 :href="socialLink.href"
-                class="ntk-footer__social-link"
+                class="ntk-footer__social-link base-footer__social-link"
                 target="_blank"
                 rel="noopener noreferrer"
                 :aria-label="socialLink.label"
@@ -81,10 +81,10 @@
       </div>
 
       <!-- Divider -->
-      <div class="ntk-footer__divider" />
+      <div class="ntk-footer__divider base-footer__divider" />
 
       <!-- Copyright -->
-      <div class="ntk-footer__copyright">
+      <div class="ntk-footer__copyright base-footer__copyright">
         <slot name="copyright">
           <p>{{ copyrightText }}</p>
         </slot>
@@ -126,6 +126,8 @@ interface Props {
   socialLinks?: SocialLink[]
   socialTitle?: string
   copyrightText?: string
+  minimal?: boolean
+  useBrandingData?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -133,20 +135,23 @@ const props = withDefaults(defineProps<Props>(), {
   linkSections: () => [],
   socialLinks: () => [],
   socialTitle: 'Redes Sociais',
+  minimal: false,
+  useBrandingData: false,
 })
 
-const { appName, tagline, social } = useBranding()
+const branding = useBranding()
 
 // Valores computados com fallback para props ou tema
-const brandName = computed(() => props.brandName || appName.value)
-const brandDescription = computed(() => props.brandDescription || tagline.value || '')
+const brandName = computed(() => props.brandName || branding.appName?.value || '')
+const brandDescription = computed(() => props.brandDescription || branding.tagline?.value || '')
 const copyrightText = computed(() =>
   props.copyrightText || `© ${new Date().getFullYear()} ${brandName.value}. Todos os direitos reservados.`
 )
 
 // Mapeia redes sociais do tema para o formato do componente
 const themeSocialLinks = computed<SocialLink[]>(() => {
-  if (!social.value) return []
+  const socialLinks = branding.social?.value
+  if (!socialLinks) return []
 
   const iconMap: Record<string, string> = {
     facebook: 'fab fa-facebook',
@@ -157,7 +162,7 @@ const themeSocialLinks = computed<SocialLink[]>(() => {
     youtube: 'fab fa-youtube',
   }
 
-  return Object.entries(social.value)
+  return Object.entries(socialLinks)
     .filter(([_, url]) => url)
     .map(([platform, url]) => ({
       icon: iconMap[platform] || 'link',
@@ -172,7 +177,10 @@ const finalSocialLinks = computed(() =>
 )
 
 const footerClasses = computed(() => ({
-  [`ntk-footer--${props.variant}`]: true
+  [`ntk-footer--${props.variant}`]: true,
+  [`base-footer--${props.variant}`]: true,
+  'ntk-footer--minimal': props.minimal,
+  'base-footer--minimal': props.minimal,
 }))
 </script>
 
