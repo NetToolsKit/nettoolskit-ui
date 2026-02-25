@@ -59,7 +59,7 @@
               </q-item-section>
 
               <q-item-section v-if="!isMiniMode && item.badge" side>
-                <q-badge :color="item.badgeColor || 'primary'" :label="item.badge" />
+                <q-badge :style="getItemBadgeStyle(item)" :label="item.badge" />
               </q-item-section>
 
               <q-tooltip v-else-if="isMiniMode" anchor="center right" self="center left" :offset="[10, 0]">
@@ -90,7 +90,7 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-header elevated class="ntk-app-shell__header bg-white text-grey-8" :height-hint="headerHeight">
+    <q-header elevated class="ntk-app-shell__header" :height-hint="headerHeight">
       <q-toolbar class="ntk-app-shell__toolbar" :style="{ height: `${headerHeight}px` }">
         <div class="ntk-app-shell__menu-slot">
           <q-btn
@@ -98,7 +98,6 @@
             dense
             round
             :icon="menuIcon"
-            color="grey-8"
             :aria-label="menuAriaLabel"
             @click="toggleMenuMode"
           >
@@ -126,7 +125,7 @@
             @update:model-value="updateSearch"
           >
             <template #prepend>
-              <q-icon name="search" color="grey-7" />
+              <q-icon name="search" />
             </template>
           </q-input>
         </div>
@@ -145,7 +144,7 @@
                 :no-caps="action.noCaps ?? false"
                 :icon="action.icon"
                 :label="action.showLabel ? action.label : undefined"
-                :color="action.color ?? 'grey-8'"
+                :color="action.color"
                 :text-color="action.textColor"
                 :href="action.href"
                 :target="action.external ? '_blank' : undefined"
@@ -155,8 +154,7 @@
               >
                 <q-badge
                   v-if="action.badge !== undefined"
-                  :color="action.badgeColor ?? 'red'"
-                  :text-color="action.badgeTextColor ?? 'white'"
+                  :style="getActionBadgeStyle(action)"
                   floating
                 >
                   {{ action.badge }}
@@ -166,14 +164,14 @@
             </template>
 
             <template v-else>
-              <q-btn v-if="showNotifications" flat round dense icon="notifications" color="grey-8" @click="$emit('notifications-click')">
-                <q-badge v-if="notificationCount > 0" color="red" text-color="white" floating>
+              <q-btn v-if="showNotifications" flat round dense icon="notifications" @click="$emit('notifications-click')">
+                <q-badge v-if="notificationCount > 0" floating :style="notificationBadgeStyle">
                   {{ notificationCount }}
                 </q-badge>
                 <q-tooltip>{{ notificationsTooltip }}</q-tooltip>
               </q-btn>
 
-              <q-btn v-if="showUserAvatar" flat round dense color="grey-8" @click="$emit('user-click')">
+              <q-btn v-if="showUserAvatar" flat round dense @click="$emit('user-click')">
                 <q-avatar size="26px">
                   <img v-if="userAvatar" :src="userAvatar" alt="User avatar" />
                   <q-icon v-else name="account_circle" size="26px" />
@@ -198,6 +196,7 @@
 import { computed, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import type { AppShellAction, AppShellGroup, AppShellItem, AppShellTheme } from './app-shell.types'
+import { APP_SHELL_DEFAULTS, APP_SHELL_DEFAULT_THEME } from './app-shell.config'
 
 const props = withDefaults(
   defineProps<{
@@ -233,36 +232,36 @@ const props = withDefaults(
     defaultMini?: boolean
   }>(),
   {
-    appName: 'NetToolsKit',
-    appSubtitle: 'NTK CMS',
-    brandLogo: '/favicon.png',
-    brandLogoAlt: 'NTK',
-    menuIcon: 'menu',
-    menuAriaLabel: 'Alternar menu',
-    navGroups: () => [],
-    items: () => [],
-    activeItem: '',
-    searchValue: '',
-    searchPlaceholder: 'Buscar',
-    showSearch: true,
-    showGroupCaptions: true,
-    toolbarActions: () => [],
-    theme: () => ({}),
-    showNotifications: true,
-    notificationsTooltip: 'Notificacoes',
-    notificationCount: 0,
-    showUserAvatar: true,
-    userAvatar: '',
-    userTooltip: 'Conta',
-    collapsible: true,
-    collapseLabel: 'Comprimir menu',
-    expandLabel: 'Expandir menu',
-    drawerWidth: 200,
-    miniWidth: 64,
-    breakpoint: 1024,
-    headerHeight: 64,
-    defaultDrawerOpen: true,
-    defaultMini: false,
+    appName: APP_SHELL_DEFAULTS.appName,
+    appSubtitle: APP_SHELL_DEFAULTS.appSubtitle,
+    brandLogo: APP_SHELL_DEFAULTS.brandLogo,
+    brandLogoAlt: APP_SHELL_DEFAULTS.brandLogoAlt,
+    menuIcon: APP_SHELL_DEFAULTS.menuIcon,
+    menuAriaLabel: APP_SHELL_DEFAULTS.menuAriaLabel,
+    navGroups: () => [...APP_SHELL_DEFAULTS.navGroups],
+    items: () => [...APP_SHELL_DEFAULTS.items],
+    activeItem: APP_SHELL_DEFAULTS.activeItem,
+    searchValue: APP_SHELL_DEFAULTS.searchValue,
+    searchPlaceholder: APP_SHELL_DEFAULTS.searchPlaceholder,
+    showSearch: APP_SHELL_DEFAULTS.showSearch,
+    showGroupCaptions: APP_SHELL_DEFAULTS.showGroupCaptions,
+    toolbarActions: () => [...APP_SHELL_DEFAULTS.toolbarActions],
+    theme: () => ({ ...(APP_SHELL_DEFAULTS.theme ?? {}) }),
+    showNotifications: APP_SHELL_DEFAULTS.showNotifications,
+    notificationsTooltip: APP_SHELL_DEFAULTS.notificationsTooltip,
+    notificationCount: APP_SHELL_DEFAULTS.notificationCount,
+    showUserAvatar: APP_SHELL_DEFAULTS.showUserAvatar,
+    userAvatar: APP_SHELL_DEFAULTS.userAvatar,
+    userTooltip: APP_SHELL_DEFAULTS.userTooltip,
+    collapsible: APP_SHELL_DEFAULTS.collapsible,
+    collapseLabel: APP_SHELL_DEFAULTS.collapseLabel,
+    expandLabel: APP_SHELL_DEFAULTS.expandLabel,
+    drawerWidth: APP_SHELL_DEFAULTS.drawerWidth,
+    miniWidth: APP_SHELL_DEFAULTS.miniWidth,
+    breakpoint: APP_SHELL_DEFAULTS.breakpoint,
+    headerHeight: APP_SHELL_DEFAULTS.headerHeight,
+    defaultDrawerOpen: APP_SHELL_DEFAULTS.defaultDrawerOpen,
+    defaultMini: APP_SHELL_DEFAULTS.defaultMini,
   }
 )
 
@@ -341,54 +340,132 @@ const activeItem = computed<AppShellItem>(() => {
   return props.items.find(item => item.id === activeItemId.value) ?? {
     id: '',
     group: '',
-    label: 'Sem modulo',
+    label: 'No module selected',
     icon: 'dashboard',
     caption: '',
     description: '',
   }
 })
 
+const resolvedTheme = computed<AppShellTheme>(() => ({
+  ...APP_SHELL_DEFAULT_THEME,
+  ...(props.theme ?? {}),
+}))
+
 const isMiniMode = computed(() => miniState.value && $q.screen.gt.sm)
 const searchModel = computed(() => localSearchValue.value)
-const shellStyle = computed<Record<string, string>>(() => {
-  const variables: Record<string, string> = {}
-
-  if (props.theme.shellBackground) {
-    variables['--ntk-shell-bg'] = props.theme.shellBackground
-  }
-  if (props.theme.headerShadow) {
-    variables['--ntk-shell-header-shadow'] = props.theme.headerShadow
-  }
-  if (props.theme.drawerShadow) {
-    variables['--ntk-shell-drawer-shadow'] = props.theme.drawerShadow
-  }
-  if (props.theme.dividerColor) {
-    variables['--ntk-shell-divider'] = props.theme.dividerColor
-  }
-  if (props.theme.searchBorder) {
-    variables['--ntk-shell-search-border'] = props.theme.searchBorder
-  }
-  if (props.theme.searchBorderHover) {
-    variables['--ntk-shell-search-border-hover'] = props.theme.searchBorderHover
-  }
-  if (props.theme.actionHoverBackground) {
-    variables['--ntk-shell-action-hover'] = props.theme.actionHoverBackground
-  }
-  if (props.theme.itemTextColor) {
-    variables['--ntk-shell-item-text'] = props.theme.itemTextColor
-  }
-  if (props.theme.itemHoverBackground) {
-    variables['--ntk-shell-item-hover'] = props.theme.itemHoverBackground
-  }
-  if (props.theme.itemActiveBackground) {
-    variables['--ntk-shell-item-active-bg'] = props.theme.itemActiveBackground
-  }
-  if (props.theme.itemActiveColor) {
-    variables['--ntk-shell-item-active-color'] = props.theme.itemActiveColor
-  }
-
-  return variables
+const notificationDefaultColor = computed(() => {
+  return resolvedTheme.value.notificationErrorColor || ''
 })
+const notificationDefaultTextColor = computed(() => {
+  return (
+    resolvedTheme.value.notificationErrorTextColor ||
+    resolvedTheme.value.notificationBadgeTextColor ||
+    ''
+  )
+})
+
+const notificationBadgeStyle = computed(() => ({
+  backgroundColor: notificationDefaultColor.value,
+  color: notificationDefaultTextColor.value,
+}))
+
+const shellStyle = computed<Record<string, string>>(() => {
+  const theme = resolvedTheme.value
+
+  return {
+    '--ntk-shell-bg': theme.shellBackground ?? '',
+    '--ntk-shell-header-bg': theme.headerBackground ?? '',
+    '--ntk-shell-header-text': theme.headerTextColor ?? '',
+    '--ntk-shell-header-shadow': theme.headerShadow ?? '',
+    '--ntk-shell-toolbar-btn-color': theme.toolbarButtonColor ?? '',
+    '--ntk-shell-title-app': theme.titleAppColor ?? '',
+    '--ntk-shell-title-text': theme.titleTextColor ?? '',
+    '--ntk-shell-title-separator': theme.titleSeparatorColor ?? '',
+    '--ntk-shell-drawer-bg': theme.drawerBackground ?? '',
+    '--ntk-shell-drawer-text': theme.drawerTextColor ?? '',
+    '--ntk-shell-drawer-shadow': theme.drawerShadow ?? '',
+    '--ntk-shell-drawer-footer-bg': theme.drawerFooterBackground ?? '',
+    '--ntk-shell-divider': theme.dividerColor ?? '',
+    '--ntk-shell-search-bg': theme.searchBackground ?? '',
+    '--ntk-shell-search-text': theme.searchTextColor ?? '',
+    '--ntk-shell-search-icon': theme.searchIconColor ?? '',
+    '--ntk-shell-search-border': theme.searchBorder ?? '',
+    '--ntk-shell-search-border-hover': theme.searchBorderHover ?? '',
+    '--ntk-shell-focus-color': theme.focusColor ?? theme.itemActiveColor ?? '',
+    '--ntk-shell-action-hover': theme.actionHoverBackground ?? '',
+    '--ntk-shell-notification-badge-bg': notificationDefaultColor.value,
+    '--ntk-shell-notification-badge-text': notificationDefaultTextColor.value,
+    '--ntk-shell-brand-title': theme.brandTitleColor ?? '',
+    '--ntk-shell-brand-subtitle': theme.brandSubtitleColor ?? '',
+    '--ntk-shell-group-caption': theme.groupCaptionColor ?? '',
+    '--ntk-shell-group-caption-mini-bg': theme.groupCaptionMiniBackground ?? '',
+    '--ntk-shell-item-text': theme.itemTextColor ?? '',
+    '--ntk-shell-item-hover': theme.itemHoverBackground ?? '',
+    '--ntk-shell-item-hover-color': theme.itemHoverColor ?? '',
+    '--ntk-shell-item-icon': theme.itemIconColor ?? '',
+    '--ntk-shell-item-icon-hover': theme.itemIconHoverColor ?? '',
+    '--ntk-shell-item-active-bg': theme.itemActiveBackground ?? '',
+    '--ntk-shell-item-active-color': theme.itemActiveColor ?? '',
+    '--ntk-shell-footer-shadow': theme.drawerFooterShadow ?? '',
+    '--ntk-shell-page-bg': theme.pageBackground ?? '',
+    '--ntk-shell-page-text': theme.pageTextColor ?? '',
+    '--ntk-shell-font-family': theme.fontFamily ?? '',
+    '--ntk-shell-transition-fast': theme.transitionFast ?? '',
+  }
+})
+
+function resolveNotificationTypeColor(color?: string): string {
+  const value = (color ?? '').trim().toLowerCase()
+  if (value === 'success') {
+    return resolvedTheme.value.notificationSuccessColor ?? ''
+  }
+  if (value === 'warning') {
+    return resolvedTheme.value.notificationWarningColor ?? ''
+  }
+  if (value === 'error') {
+    return resolvedTheme.value.notificationErrorColor ?? ''
+  }
+  if (value === 'info') {
+    return resolvedTheme.value.notificationInfoColor ?? ''
+  }
+  return color ?? ''
+}
+
+function resolveNotificationTypeTextColor(color?: string): string {
+  const value = (color ?? '').trim().toLowerCase()
+  if (value === 'success') {
+    return resolvedTheme.value.notificationSuccessTextColor ?? resolvedTheme.value.notificationBadgeTextColor ?? ''
+  }
+  if (value === 'warning') {
+    return resolvedTheme.value.notificationWarningTextColor ?? resolvedTheme.value.notificationBadgeTextColor ?? ''
+  }
+  if (value === 'error') {
+    return resolvedTheme.value.notificationErrorTextColor ?? resolvedTheme.value.notificationBadgeTextColor ?? ''
+  }
+  if (value === 'info') {
+    return resolvedTheme.value.notificationInfoTextColor ?? resolvedTheme.value.notificationBadgeTextColor ?? ''
+  }
+  return ''
+}
+
+function getItemBadgeStyle(item: AppShellItem): Record<string, string> {
+  const semanticColor = resolveNotificationTypeColor(item.badgeColor)
+  const semanticTextColor = resolveNotificationTypeTextColor(item.badgeColor)
+  return {
+    backgroundColor: semanticColor || item.badgeColor || resolvedTheme.value.itemActiveColor || '',
+    color: item.badgeTextColor || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
+  }
+}
+
+function getActionBadgeStyle(action: AppShellAction): Record<string, string> {
+  const semanticColor = resolveNotificationTypeColor(action.badgeColor)
+  const semanticTextColor = resolveNotificationTypeTextColor(action.badgeColor)
+  return {
+    backgroundColor: semanticColor || action.badgeColor || notificationDefaultColor.value,
+    color: action.badgeTextColor || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
+  }
+}
 
 function hasVisibleItemsAfter(groupId: string): boolean {
   const groups = resolvedGroups.value
@@ -454,12 +531,14 @@ function toggleMenuMode(): void {
 
 <style scoped lang="scss">
 .ntk-app-shell {
-  background: var(--ntk-shell-bg, linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%));
-  font-family: var(--ntk-font-family, 'Inter', sans-serif);
+  background: var(--ntk-shell-bg);
+  font-family: var(--ntk-shell-font-family);
 }
 
 .ntk-app-shell__header {
-  box-shadow: var(--ntk-shell-header-shadow, 0 2px 8px rgba(0, 0, 0, 0.08)) !important;
+  background: var(--ntk-shell-header-bg);
+  color: var(--ntk-shell-header-text);
+  box-shadow: var(--ntk-shell-header-shadow) !important;
   z-index: 3000 !important;
   backdrop-filter: blur(10px);
 }
@@ -476,42 +555,46 @@ function toggleMenuMode(): void {
   width: 30px;
 }
 
+.ntk-app-shell__menu-slot :deep(.q-btn) {
+  color: var(--ntk-shell-toolbar-btn-color);
+}
+
 .ntk-app-shell__title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
   font-size: 0.925rem;
-  color: var(--ntk-text-secondary, #757575);
+  color: var(--ntk-shell-title-text);
 }
 
 .ntk-app-shell__title-app {
   font-weight: 700;
   font-size: 1.05rem;
-  color: var(--ntk-text-primary, #424242);
+  color: var(--ntk-shell-title-app);
 }
 
 .ntk-app-shell__title-separator {
-  color: var(--ntk-text-muted, #bdbdbd);
+  color: var(--ntk-shell-title-separator);
 }
 
 .ntk-app-shell__search-wrapper {
   width: 320px;
   max-width: 320px;
   margin-right: 16px;
-  border: 1px solid var(--ntk-shell-search-border, rgba(0, 0, 0, 0.24));
+  border: 1px solid var(--ntk-shell-search-border);
   border-radius: 8px;
-  background: var(--ntk-bg-primary, #ffffff);
-  transition: border-color var(--transition-fast, 0.2s ease);
+  background: var(--ntk-shell-search-bg);
+  transition: border-color var(--ntk-shell-transition-fast);
   padding: 0 12px;
 }
 
 .ntk-app-shell__search-wrapper:hover {
-  border-color: var(--ntk-shell-search-border-hover, rgba(0, 0, 0, 0.87));
+  border-color: var(--ntk-shell-search-border-hover);
 }
 
 .ntk-app-shell__search-wrapper:focus-within {
-  border-color: var(--ntk-primary, #1976d2);
+  border-color: var(--ntk-shell-focus-color);
 }
 
 .ntk-app-shell__search :deep(.q-field__control) {
@@ -530,7 +613,11 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__search :deep(input) {
-  color: var(--ntk-text-dark, #424242);
+  color: var(--ntk-shell-search-text);
+}
+
+.ntk-app-shell__search :deep(.q-icon) {
+  color: var(--ntk-shell-search-icon);
 }
 
 .ntk-app-shell__actions {
@@ -541,12 +628,13 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__actions :deep(.q-btn) {
-  transition: all var(--transition-fast, 0.3s ease);
+  color: var(--ntk-shell-toolbar-btn-color);
+  transition: all var(--ntk-shell-transition-fast);
 }
 
 .ntk-app-shell__actions :deep(.q-btn:hover) {
   transform: translateY(-2px);
-  background-color: var(--ntk-shell-action-hover, rgba(25, 118, 210, 0.08));
+  background-color: var(--ntk-shell-action-hover);
 }
 
 .ntk-app-shell__actions :deep(.q-badge) {
@@ -554,10 +642,10 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__drawer {
-  background-color: var(--ntk-sidebar-bg, #ffffff);
-  color: var(--ntk-text-secondary, #5f6368);
+  background-color: var(--ntk-shell-drawer-bg);
+  color: var(--ntk-shell-drawer-text);
   z-index: 2000;
-  box-shadow: var(--ntk-shell-drawer-shadow, 2px 0 8px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--ntk-shell-drawer-shadow);
 }
 
 .ntk-app-shell__drawer-header {
@@ -565,7 +653,7 @@ function toggleMenuMode(): void {
   padding: 16px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--ntk-shell-divider, #f0f0f0);
+  border-bottom: 1px solid var(--ntk-shell-divider);
 }
 
 .ntk-app-shell__brand {
@@ -582,12 +670,12 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__brand-text strong {
   font-size: 0.9rem;
-  color: var(--ntk-text-primary, #424242);
+  color: var(--ntk-shell-brand-title);
 }
 
 .ntk-app-shell__brand-text small {
   font-size: 0.72rem;
-  color: var(--ntk-text-muted, #757575);
+  color: var(--ntk-shell-brand-subtitle);
 }
 
 .ntk-app-shell__drawer-list {
@@ -601,7 +689,7 @@ function toggleMenuMode(): void {
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ntk-text-muted, #9fb2c8);
+  color: var(--ntk-shell-group-caption);
   display: flex;
   align-items: center;
 }
@@ -622,7 +710,7 @@ function toggleMenuMode(): void {
   height: 18px;
   padding: 0 0.35rem;
   border-radius: 999px;
-  background: rgba(159, 178, 200, 0.14);
+  background: var(--ntk-shell-group-caption-mini-bg);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -633,26 +721,26 @@ function toggleMenuMode(): void {
   margin-right: 12px;
   margin-bottom: 4px;
   min-height: 52px;
-  color: var(--ntk-shell-item-text, #5f6368);
-  transition: all var(--transition-fast, 0.3s ease);
+  color: var(--ntk-shell-item-text);
+  transition: all var(--ntk-shell-transition-fast);
   text-decoration: none;
 }
 
 .ntk-app-shell__item:hover {
-  background-color: var(--ntk-shell-item-hover, rgba(25, 118, 210, 0.08));
-  color: var(--ntk-primary, #1976d2);
+  background-color: var(--ntk-shell-item-hover);
+  color: var(--ntk-shell-item-hover-color);
   transform: translateX(4px);
   text-decoration: none;
 }
 
 .ntk-app-shell__item :deep(.q-icon) {
-  color: var(--ntk-shell-item-text, #5f6368);
+  color: var(--ntk-shell-item-icon);
   font-size: 22px;
-  transition: all var(--transition-fast, 0.3s ease);
+  transition: all var(--ntk-shell-transition-fast);
 }
 
 .ntk-app-shell__item:hover :deep(.q-icon) {
-  color: var(--ntk-primary, #1976d2);
+  color: var(--ntk-shell-item-icon-hover);
 }
 
 .ntk-app-shell__item :deep(.q-item__label) {
@@ -668,14 +756,14 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__item--active {
-  background: var(--ntk-shell-item-active-bg, linear-gradient(90deg, rgba(25, 118, 210, 0.15) 0%, rgba(25, 118, 210, 0.05) 100%));
-  color: var(--ntk-shell-item-active-color, var(--ntk-primary, #1976d2));
-  border-left: 4px solid var(--ntk-shell-item-active-color, var(--ntk-primary, #1976d2));
+  background: var(--ntk-shell-item-active-bg);
+  color: var(--ntk-shell-item-active-color);
+  border-left: 4px solid var(--ntk-shell-item-active-color);
 }
 
 .ntk-app-shell__item--active :deep(.q-icon),
 .ntk-app-shell__item--active :deep(.q-item__label) {
-  color: var(--ntk-shell-item-active-color, var(--ntk-primary, #1976d2));
+  color: var(--ntk-shell-item-active-color);
 }
 
 .ntk-app-shell__group-separator {
@@ -688,9 +776,9 @@ function toggleMenuMode(): void {
   bottom: 0;
   left: 0;
   right: 0;
-  border-top: 1px solid var(--ntk-shell-divider, #f0f0f0);
-  background-color: var(--ntk-sidebar-bg, #ffffff);
-  box-shadow: var(--ntk-shell-footer-shadow, 0 -2px 8px rgba(0, 0, 0, 0.05));
+  border-top: 1px solid var(--ntk-shell-divider);
+  background-color: var(--ntk-shell-drawer-footer-bg);
+  box-shadow: var(--ntk-shell-footer-shadow);
 }
 
 .ntk-app-shell__item--toggle {
@@ -703,11 +791,12 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__page-container {
-  background: transparent;
+  background: var(--ntk-shell-page-bg);
   min-height: 100vh;
 }
 
 .ntk-app-shell__page {
+  color: var(--ntk-shell-page-text);
   padding: 1rem;
 }
 

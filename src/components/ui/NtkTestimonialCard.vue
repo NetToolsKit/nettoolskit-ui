@@ -129,25 +129,25 @@ const cardClasses = computed(() => [
 
 // Variantes
 .variant-default {
-  background: var(--ntk-bg-card, #ffffff);
-  border: 1px solid var(--ntk-border-color, #e0e0e0);
+  background: var(--ntk-bg-card);
+  border: 1px solid var(--ntk-border-color);
   
   &:hover {
-    box-shadow: var(--ntk-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+    box-shadow: var(--ntk-shadow-md);
   }
 }
 
 .variant-featured {
   background: linear-gradient(
     135deg,
-    var(--ntk-bg-secondary, #f8f9fa) 0%,
-    var(--ntk-bg-card, #ffffff) 100%
+    var(--ntk-bg-secondary) 0%,
+    var(--ntk-bg-card) 100%
   );
-  border: 2px solid var(--ntk-border-color, #e0e0e0);
-  box-shadow: var(--ntk-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+  border: 2px solid var(--ntk-border-color);
+  box-shadow: var(--ntk-shadow-md);
   
   &:hover {
-    box-shadow: var(--ntk-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.12));
+    box-shadow: var(--ntk-shadow-lg);
     transform: translateY(-4px);
   }
 }
@@ -159,19 +159,19 @@ const cardClasses = computed(() => [
 }
 
 .variant-bordered {
-  background: var(--ntk-bg-card, #ffffff);
-  border-left: 4px solid var(--ntk-primary, #6366f1);
+  background: var(--ntk-bg-card);
+  border-left: 4px solid var(--ntk-primary);
   border-radius: 0 12px 12px 0;
-  box-shadow: var(--ntk-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.06));
+  box-shadow: var(--ntk-shadow-sm);
 }
 
 // Quote Icon
 .testimonial-quote-icon {
-  color: var(--ntk-border-color, #e0e0e0);
+  color: var(--ntk-border-color);
   margin-bottom: 0.75rem;
   
   .variant-featured & {
-    color: var(--ntk-primary, #6366f1);
+    color: var(--ntk-primary);
     opacity: 0.3;
   }
 }
@@ -180,7 +180,7 @@ const cardClasses = computed(() => [
 .testimonial-quote {
   font-size: 1rem;
   line-height: 1.7;
-  color: var(--ntk-text-secondary, #424242);
+  color: var(--ntk-text-secondary);
   margin: 0 0 1rem 0;
   font-style: italic;
   flex: 1;
@@ -195,10 +195,10 @@ const cardClasses = computed(() => [
 
 .rating-star {
   font-size: 1rem;
-  color: var(--ntk-border-color, #e0e0e0);
+  color: var(--ntk-border-color);
   
   &.filled {
-    color: var(--ntk-warning, #ffc107);
+    color: var(--ntk-warning);
   }
 }
 
@@ -232,12 +232,12 @@ const cardClasses = computed(() => [
 .author-name {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--ntk-text-primary, #212121);
+  color: var(--ntk-text-primary);
 }
 
 .author-role {
   font-size: 0.8125rem;
-  color: var(--ntk-text-muted, #757575);
+  color: var(--ntk-text-muted);
 }
 
 // Tamanhos

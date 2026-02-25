@@ -25,7 +25,14 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   const b = hasHexBackground ? parseInt(normalizedBackground.slice(4, 6), 16) : 255;
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
   const isDarkTheme = brightness < 128;
-  const textInverse = isDarkTheme ? '#0f172a' : '#ffffff';
+  const textInverse = isDarkTheme ? theme.colors.text : theme.colors.background;
+  const overlayBackground = `color-mix(in srgb, ${theme.colors.text} 50%, transparent)`;
+  const footerBackground = isDarkTheme ? theme.colors.background : theme.colors.primaryDark;
+  const footerText = isDarkTheme ? theme.colors.text : theme.colors.background;
+  const footerTextMuted = isDarkTheme ? theme.colors.textLight : theme.colors.backgroundLight;
+  const footerBorder = isDarkTheme
+    ? theme.colors.border
+    : `color-mix(in srgb, ${theme.colors.background} 16%, transparent)`;
   
   // Cores principais
   root.style.setProperty('--theme-primary', theme.colors.primary);
@@ -71,14 +78,14 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--ntk-bg-tertiary', theme.colors.backgroundLight);
   root.style.setProperty('--ntk-bg-card', theme.colors.background);
   root.style.setProperty('--ntk-bg-hover', theme.colors.backgroundLight);
-  root.style.setProperty('--ntk-bg-overlay', 'rgba(0, 0, 0, 0.5)');
+  root.style.setProperty('--ntk-bg-overlay', overlayBackground);
   root.style.setProperty('--ntk-text-primary', theme.colors.text);
   root.style.setProperty('--ntk-text-secondary', theme.colors.textLight);
   root.style.setProperty('--ntk-text-muted', theme.colors.textMuted);
   root.style.setProperty('--ntk-text-dark', theme.colors.text);
   root.style.setProperty('--ntk-text-light', theme.colors.textLight);
   root.style.setProperty('--ntk-text-inverse', textInverse);
-  root.style.setProperty('--ntk-text-on-primary', '#ffffff');
+  root.style.setProperty('--ntk-text-on-primary', textInverse);
   root.style.setProperty('--ntk-border-color', theme.colors.border);
   root.style.setProperty('--ntk-border-light', theme.colors.border);
   root.style.setProperty('--ntk-border-dark', theme.colors.border);
@@ -99,23 +106,27 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--color-action-primary-hover', theme.colors.primaryDark);
   root.style.setProperty('--color-bg-light', theme.colors.backgroundLight);
   root.style.setProperty('--color-surface-primary', theme.colors.background);
+  root.style.setProperty('--color-surface-secondary', theme.colors.backgroundLight);
   root.style.setProperty('--color-text-primary', theme.colors.text);
   root.style.setProperty('--color-text-secondary', theme.colors.textLight);
   root.style.setProperty('--color-text-muted', theme.colors.textMuted);
   root.style.setProperty('--color-text-dark', theme.colors.text);
   root.style.setProperty('--color-text-inverse', textInverse);
   root.style.setProperty('--color-border', theme.colors.border);
-  root.style.setProperty('--color-footer-bg', isDarkTheme ? theme.colors.background : '#1a1a2e');
-  root.style.setProperty('--color-footer-text', isDarkTheme ? theme.colors.text : '#e0e0e0');
-  root.style.setProperty('--color-footer-text-muted', isDarkTheme ? theme.colors.textLight : '#9e9e9e');
+  root.style.setProperty('--color-footer-bg', footerBackground);
+  root.style.setProperty('--color-footer-text', footerText);
+  root.style.setProperty('--color-footer-text-muted', footerTextMuted);
   root.style.setProperty('--color-footer-link', theme.colors.primaryLight);
   root.style.setProperty('--color-footer-link-hover', theme.colors.primary);
-  root.style.setProperty('--color-footer-border', isDarkTheme ? theme.colors.border : 'rgba(255, 255, 255, 0.1)');
+  root.style.setProperty('--color-footer-border', footerBorder);
+  root.style.setProperty('--ntk-surface-soft', theme.colors.backgroundLight);
+  root.style.setProperty('--ntk-border-subtle', theme.colors.border);
   
   // Data attribute para CSS selectors
   root.setAttribute('data-theme', theme.name.toLowerCase());
 
-  // Ensure semantic tokens are always available for components
+  // Semantic tokens are owned by semantic.config defaults and explicit white-label overrides.
+  // Theme switching must not mutate semantic defaults implicitly.
   applySemanticColors();
 }
 

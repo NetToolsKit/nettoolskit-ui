@@ -51,6 +51,8 @@ export {
   type SemanticColors,
   semanticColors,
   applySemanticColors,
+  setSemanticColors,
+  resetSemanticColors,
 } from './colors/semantic.config'
 
 /**

@@ -122,13 +122,13 @@ const containerStyle = computed(() => ({
 const primaryBtnStyle = computed(() => {
   if (props.variant === 'gradient' || props.variant === 'dark') {
     return {
-      background: 'white',
+      background: 'var(--ntk-bg-primary)',
       color: theme.value.colors.primary,
     };
   }
   return {
     background: theme.value.gradients.primary,
-    color: 'white',
+    color: 'var(--ntk-text-inverse)',
   };
 });
 </script>
@@ -301,7 +301,7 @@ const primaryBtnStyle = computed(() => {
 
 // Conteúdo
 .cta-title {
-  font-family: 'Poppins', 'Inter', sans-serif;
+  font-family: var(--ntk-font-family-display);
   font-weight: 700;
   margin: 0 0 0.5rem 0;
   line-height: 1.2;

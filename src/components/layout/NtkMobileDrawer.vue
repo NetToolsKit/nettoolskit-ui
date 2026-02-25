@@ -146,7 +146,7 @@ function handleCtaClick() {
 <style scoped lang="scss">
 .ntk-mobile-drawer {
   :deep(.q-drawer__content) {
-    background: var(--ntk-bg-card, #ffffff) !important;
+    background: var(--ntk-bg-card) !important;
   }
 }
 
@@ -159,7 +159,7 @@ function handleCtaClick() {
 
 .drawer-header {
   padding: 16px 20px;
-  border-bottom: 1px solid var(--ntk-border-color, #e0e0e0);
+  border-bottom: 1px solid var(--ntk-border-color);
 }
 
 .drawer-compress-btn {
@@ -170,7 +170,7 @@ function handleCtaClick() {
   border: none;
   padding: 8px 12px;
   cursor: pointer;
-  color: var(--ntk-text-muted, #757575);
+  color: var(--ntk-text-muted);
   font-size: 14px;
   font-weight: 500;
   border-radius: 6px;
@@ -178,8 +178,8 @@ function handleCtaClick() {
   text-decoration: none;
   
   &:hover {
-    background: var(--ntk-bg-secondary, #f5f5f5);
-    color: var(--ntk-text-secondary, #424242);
+    background: var(--ntk-bg-secondary);
+    color: var(--ntk-text-secondary);
     text-decoration: none;
   }
   
@@ -198,26 +198,26 @@ function handleCtaClick() {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  color: var(--ntk-text-secondary, #424242);
+  color: var(--ntk-text-secondary);
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
   transition: all 0.2s ease;
   
   &:hover {
-    background: var(--ntk-bg-secondary, #f5f5f5);
-    color: var(--ntk-text-primary, #212121);
+    background: var(--ntk-bg-secondary);
+    color: var(--ntk-text-primary);
     text-decoration: none;
   }
   
   :deep(.q-icon) {
-    color: var(--ntk-text-muted, #757575);
+    color: var(--ntk-text-muted);
   }
 }
 
 .drawer-cta-container {
   padding: 16px 20px;
-  border-top: 1px solid var(--ntk-border-color, #e0e0e0);
+  border-top: 1px solid var(--ntk-border-color);
 }
 
 .drawer-cta-btn {
@@ -225,7 +225,7 @@ function handleCtaClick() {
   width: 100%;
   padding: 12px 20px;
   text-align: center;
-  color: white;
+  color: var(--ntk-text-inverse);
   text-decoration: none;
   font-size: 15px;
   font-weight: 600;
@@ -241,6 +241,6 @@ function handleCtaClick() {
 
 .drawer-extra {
   padding: 16px 20px;
-  border-top: 1px solid var(--ntk-border-color, #e0e0e0);
+  border-top: 1px solid var(--ntk-border-color);
 }
 </style>

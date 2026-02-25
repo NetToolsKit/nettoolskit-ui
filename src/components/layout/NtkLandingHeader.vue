@@ -191,7 +191,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: 64,
   sticky: false,
   shadow: 'sm',
-  background: 'var(--ntk-bg-card, #ffffff)',
+  background: 'var(--ntk-bg-card)',
   maxWidth: 1200,
   paddingX: '20px',
   mobileBreakpoint: 768,
@@ -218,9 +218,9 @@ const logoLink = computed(() => props.logoLink || appUrl.value || '/');
 // Computed styles
 const shadowMap = {
   none: 'none',
-  sm: 'var(--ntk-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06))',
-  md: 'var(--ntk-shadow-md, 0 2px 8px rgba(0, 0, 0, 0.08))',
-  lg: 'var(--ntk-shadow-lg, 0 4px 12px rgba(0, 0, 0, 0.12))',
+  sm: 'var(--ntk-shadow-sm)',
+  md: 'var(--ntk-shadow-md)',
+  lg: 'var(--ntk-shadow-lg)',
 };
 
 const headerClasses = computed(() => ({
@@ -265,7 +265,7 @@ function handleCtaClick() {
   height: var(--header-height);
   background: var(--header-bg);
   box-shadow: var(--header-shadow);
-  border-bottom: 1px solid var(--ntk-border-subtle, rgba(0, 0, 0, 0.06));
+  border-bottom: 1px solid var(--ntk-border-color);
   z-index: 100;
 
   &.header-sticky {
@@ -299,14 +299,14 @@ function handleCtaClick() {
 }
 
 .header-nav-item {
-  color: var(--ntk-text-secondary, #424242);
+  color: var(--ntk-text-secondary);
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
   transition: color 0.2s ease;
 
   &:hover {
-    color: var(--ntk-text-primary, #212121);
+    color: var(--ntk-text-primary);
     text-decoration: none;
   }
 }
@@ -333,7 +333,7 @@ function handleCtaClick() {
   transition: all 0.2s ease;
 
   &.cta-primary {
-    color: white;
+    color: var(--ntk-text-inverse);
 
     &:hover {
       opacity: 0.9;
@@ -343,23 +343,23 @@ function handleCtaClick() {
   }
 
   &.cta-secondary {
-    background: var(--ntk-bg-secondary, #f5f5f5);
-    color: var(--ntk-text-secondary, #424242);
+    background: var(--ntk-bg-secondary);
+    color: var(--ntk-text-secondary);
 
     &:hover {
-      background: var(--ntk-border-color, #e0e0e0);
+      background: var(--ntk-border-color);
       text-decoration: none;
     }
   }
 
   &.cta-outline {
     background: transparent;
-    color: var(--ntk-text-secondary, #424242);
-    border: 1px solid var(--ntk-border-color, #e0e0e0);
+    color: var(--ntk-text-secondary);
+    border: 1px solid var(--ntk-border-color);
 
     &:hover {
-      background: var(--ntk-bg-secondary, #f5f5f5);
-      border-color: var(--ntk-border-dark, #bdbdbd);
+      background: var(--ntk-bg-secondary);
+      border-color: var(--ntk-border-dark);
       text-decoration: none;
     }
   }
@@ -374,13 +374,13 @@ function handleCtaClick() {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--ntk-text-secondary, #424242);
+  color: var(--ntk-text-secondary);
   border-radius: 8px;
   transition: all 0.2s ease;
   text-decoration: none;
 
   &:hover {
-    background: var(--ntk-bg-secondary, #f5f5f5);
+    background: var(--ntk-bg-secondary);
     text-decoration: none;
   }
 

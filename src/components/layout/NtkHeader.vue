@@ -479,7 +479,7 @@ const headerClass = computed(() => [
   left: 0;
   right: 0;
   background: var(--ntk-bg-primary);
-  box-shadow: var(--ntk-header-shadow, 0 2px 8px rgba(0, 0, 0, 0.3));
+  box-shadow: var(--ntk-header-shadow);
   padding: 0.6rem 0;
   font-family: var(--ntk-font-body);
   z-index: 1000;
@@ -599,7 +599,7 @@ const headerClass = computed(() => [
  * App Variant Styles (Quasar-based)
  * ============================================ */
 .ntk-header {
-  font-family: var(--ntk-font-body, 'Inter', sans-serif);
+  font-family: var(--ntk-font-body);
 
   :deep(.q-toolbar) {
     padding: 0 16px;
@@ -615,7 +615,7 @@ const headerClass = computed(() => [
 }
 
 .ntk-header__title {
-  font-family: var(--ntk-font-body, 'Inter', sans-serif);
+  font-family: var(--ntk-font-body);
   font-weight: 600;
   font-size: 1.125rem;
   flex-shrink: 0;
@@ -642,7 +642,7 @@ const headerClass = computed(() => [
 }
 
 .ntk-header__breadcrumb-separator {
-  color: var(--ntk-text-muted, rgba(0, 0, 0, 0.38));
+  color: var(--ntk-text-muted);
 }
 
 .ntk-header__search {
@@ -651,7 +651,7 @@ const headerClass = computed(() => [
 }
 
 .ntk-header__search-input {
-  background: var(--ntk-surface-soft, rgba(0, 0, 0, 0.05));
+  background: var(--ntk-bg-secondary);
   border-radius: 8px;
   padding: 4px 12px;
 
@@ -660,7 +660,7 @@ const headerClass = computed(() => [
   }
 
   :deep(.q-field__native) {
-    font-family: var(--ntk-font-body, 'Inter', sans-serif);
+    font-family: var(--ntk-font-body);
   }
 }
 </style>

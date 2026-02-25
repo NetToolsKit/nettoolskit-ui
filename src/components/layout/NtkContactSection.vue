@@ -183,10 +183,10 @@ function submitForm(): void {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: var(--space-md);
-  border: 1px solid var(--ntk-border-color, #e2e8f0);
+  border: 1px solid var(--ntk-border-color);
   border-radius: var(--ntk-radius-lg, 12px);
   padding: var(--space-md);
-  background: var(--ntk-bg-card, #ffffff);
+  background: var(--ntk-bg-card);
 }
 
 .ntk-contact__channel-icon {
@@ -196,8 +196,8 @@ function submitForm(): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ntk-bg-secondary, #eef2f7);
-  color: var(--ntk-primary, #2563eb);
+  background: var(--ntk-bg-secondary);
+  color: var(--ntk-primary);
 }
 
 .ntk-contact__channel-content {
@@ -207,17 +207,17 @@ function submitForm(): void {
 }
 
 .ntk-contact__channel-content strong {
-  color: var(--ntk-text-dark, #1f2937);
+  color: var(--ntk-text-dark);
 }
 
 .ntk-contact__channel-content a,
 .ntk-contact__channel-content span {
-  color: var(--ntk-text-light, #64748b);
+  color: var(--ntk-text-light);
   text-decoration: none;
 }
 
 .ntk-contact__channel-content a:hover {
-  color: var(--ntk-primary, #2563eb);
+  color: var(--ntk-primary);
   text-decoration: underline;
 }
 
@@ -226,10 +226,10 @@ function submitForm(): void {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  border: 1px solid var(--ntk-border-color, #e2e8f0);
+  border: 1px solid var(--ntk-border-color);
   border-radius: var(--ntk-radius-lg, 12px);
   padding: var(--space-md);
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  background: var(--ntk-gradient-subtle);
 }
 
 .ntk-contact__portal-content {
@@ -239,12 +239,12 @@ function submitForm(): void {
 }
 
 .ntk-contact__portal-content strong {
-  color: var(--ntk-text-dark, #1f2937);
+  color: var(--ntk-text-dark);
 }
 
 .ntk-contact__portal-content p {
   margin: 0;
-  color: var(--ntk-text-light, #64748b);
+  color: var(--ntk-text-light);
   font-size: 0.875rem;
 }
 

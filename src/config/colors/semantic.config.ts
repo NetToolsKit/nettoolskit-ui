@@ -284,7 +284,7 @@ export interface SemanticColors {
  * 
  * @see {@link SemanticColors} Interface documentation for each property
  */
-export const semanticColors: SemanticColors = {
+const defaultSemanticColors: SemanticColors = {
   // Success (Green) - Positive actions, confirmations
   successPrimary: '#22c55e',
   successLight: '#dcfce7',
@@ -323,6 +323,41 @@ export const semanticColors: SemanticColors = {
   neutral: '#64748b',     // Neutral gray
   disabled: '#e2e8f0',    // Disabled background
   disabledText: '#94a3b8', // Disabled text
+}
+
+export const semanticColors: SemanticColors = { ...defaultSemanticColors }
+
+function resolveSemanticColors(overrides: Partial<SemanticColors> = {}): SemanticColors {
+  const merged: SemanticColors = {
+    ...semanticColors,
+    ...overrides,
+  }
+
+  const successPrimary = overrides.successPrimary ?? merged.successPrimary
+  const warningPrimary = overrides.warningPrimary ?? merged.warningPrimary
+  const errorPrimary = overrides.errorPrimary ?? merged.errorPrimary
+  const infoPrimary = overrides.infoPrimary ?? merged.infoPrimary
+
+  return {
+    ...merged,
+    successBorder: overrides.successBorder ?? merged.successBorder ?? successPrimary,
+    warningBorder: overrides.warningBorder ?? merged.warningBorder ?? warningPrimary,
+    errorBorder: overrides.errorBorder ?? merged.errorBorder ?? errorPrimary,
+    infoBorder: overrides.infoBorder ?? merged.infoBorder ?? infoPrimary,
+    positive: overrides.positive ?? merged.positive ?? successPrimary,
+    negative: overrides.negative ?? merged.negative ?? errorPrimary,
+  }
+}
+
+export function setSemanticColors(overrides: Partial<SemanticColors>): SemanticColors {
+  const resolved = resolveSemanticColors(overrides)
+  Object.assign(semanticColors, resolved)
+  return semanticColors
+}
+
+export function resetSemanticColors(): SemanticColors {
+  Object.assign(semanticColors, defaultSemanticColors)
+  return semanticColors
 }
 
 /**
@@ -376,51 +411,55 @@ export const semanticColors: SemanticColors = {
  * 
  * @see {@link semanticColors} The source object for semantic colors
  */
-export function applySemanticColors(): void {
+export function applySemanticColors(overrides: Partial<SemanticColors> = {}): void {
+  const next = Object.keys(overrides).length > 0
+    ? setSemanticColors(overrides)
+    : semanticColors
+
   const root = document.documentElement
   
   // Success colors
-  root.style.setProperty('--semantic-success', semanticColors.successPrimary)
-  root.style.setProperty('--semantic-success-primary', semanticColors.successPrimary)
-  root.style.setProperty('--semantic-success-light', semanticColors.successLight)
-  root.style.setProperty('--semantic-success-dark', semanticColors.successDark)
-  root.style.setProperty('--semantic-success-border', semanticColors.successBorder)
-  root.style.setProperty('--semantic-success-bg', semanticColors.successBackground)
-  root.style.setProperty('--semantic-success-text', semanticColors.successText)
+  root.style.setProperty('--semantic-success', next.successPrimary)
+  root.style.setProperty('--semantic-success-primary', next.successPrimary)
+  root.style.setProperty('--semantic-success-light', next.successLight)
+  root.style.setProperty('--semantic-success-dark', next.successDark)
+  root.style.setProperty('--semantic-success-border', next.successBorder)
+  root.style.setProperty('--semantic-success-bg', next.successBackground)
+  root.style.setProperty('--semantic-success-text', next.successText)
   
   // Warning colors
-  root.style.setProperty('--semantic-warning', semanticColors.warningPrimary)
-  root.style.setProperty('--semantic-warning-primary', semanticColors.warningPrimary)
-  root.style.setProperty('--semantic-warning-light', semanticColors.warningLight)
-  root.style.setProperty('--semantic-warning-dark', semanticColors.warningDark)
-  root.style.setProperty('--semantic-warning-border', semanticColors.warningBorder)
-  root.style.setProperty('--semantic-warning-bg', semanticColors.warningBackground)
-  root.style.setProperty('--semantic-warning-text', semanticColors.warningText)
+  root.style.setProperty('--semantic-warning', next.warningPrimary)
+  root.style.setProperty('--semantic-warning-primary', next.warningPrimary)
+  root.style.setProperty('--semantic-warning-light', next.warningLight)
+  root.style.setProperty('--semantic-warning-dark', next.warningDark)
+  root.style.setProperty('--semantic-warning-border', next.warningBorder)
+  root.style.setProperty('--semantic-warning-bg', next.warningBackground)
+  root.style.setProperty('--semantic-warning-text', next.warningText)
   
   // Error colors
-  root.style.setProperty('--semantic-error', semanticColors.errorPrimary)
-  root.style.setProperty('--semantic-error-primary', semanticColors.errorPrimary)
-  root.style.setProperty('--semantic-error-light', semanticColors.errorLight)
-  root.style.setProperty('--semantic-error-dark', semanticColors.errorDark)
-  root.style.setProperty('--semantic-error-border', semanticColors.errorBorder)
-  root.style.setProperty('--semantic-error-bg', semanticColors.errorBackground)
-  root.style.setProperty('--semantic-error-text', semanticColors.errorText)
+  root.style.setProperty('--semantic-error', next.errorPrimary)
+  root.style.setProperty('--semantic-error-primary', next.errorPrimary)
+  root.style.setProperty('--semantic-error-light', next.errorLight)
+  root.style.setProperty('--semantic-error-dark', next.errorDark)
+  root.style.setProperty('--semantic-error-border', next.errorBorder)
+  root.style.setProperty('--semantic-error-bg', next.errorBackground)
+  root.style.setProperty('--semantic-error-text', next.errorText)
   
   // Info colors
-  root.style.setProperty('--semantic-info', semanticColors.infoPrimary)
-  root.style.setProperty('--semantic-info-primary', semanticColors.infoPrimary)
-  root.style.setProperty('--semantic-info-light', semanticColors.infoLight)
-  root.style.setProperty('--semantic-info-dark', semanticColors.infoDark)
-  root.style.setProperty('--semantic-info-border', semanticColors.infoBorder)
-  root.style.setProperty('--semantic-info-bg', semanticColors.infoBackground)
-  root.style.setProperty('--semantic-info-text', semanticColors.infoText)
+  root.style.setProperty('--semantic-info', next.infoPrimary)
+  root.style.setProperty('--semantic-info-primary', next.infoPrimary)
+  root.style.setProperty('--semantic-info-light', next.infoLight)
+  root.style.setProperty('--semantic-info-dark', next.infoDark)
+  root.style.setProperty('--semantic-info-border', next.infoBorder)
+  root.style.setProperty('--semantic-info-bg', next.infoBackground)
+  root.style.setProperty('--semantic-info-text', next.infoText)
   
   // Additional colors
-  root.style.setProperty('--semantic-positive', semanticColors.positive)
-  root.style.setProperty('--semantic-negative', semanticColors.negative)
-  root.style.setProperty('--semantic-neutral', semanticColors.neutral)
-  root.style.setProperty('--semantic-disabled', semanticColors.disabled)
-  root.style.setProperty('--semantic-disabled-text', semanticColors.disabledText)
+  root.style.setProperty('--semantic-positive', next.positive)
+  root.style.setProperty('--semantic-negative', next.negative)
+  root.style.setProperty('--semantic-neutral', next.neutral)
+  root.style.setProperty('--semantic-disabled', next.disabled)
+  root.style.setProperty('--semantic-disabled-text', next.disabledText)
 }
 
 /**

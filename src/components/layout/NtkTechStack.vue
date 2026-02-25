@@ -77,9 +77,9 @@ withDefaults(defineProps<Props>(), {
 }
 
 .ntk-tech-stack__card {
-  border: 1px solid var(--ntk-border-color, #e2e8f0);
+  border: 1px solid var(--ntk-border-color);
   border-radius: var(--ntk-radius-lg, 12px);
-  background: var(--ntk-bg-card, #ffffff);
+  background: var(--ntk-bg-card);
   padding: var(--space-lg);
 }
 
@@ -94,11 +94,11 @@ withDefaults(defineProps<Props>(), {
 .ntk-tech-stack__card-header h3 {
   margin: 0;
   font-size: var(--ntk-font-size-lg);
-  color: var(--ntk-text-dark, #1f2937);
+  color: var(--ntk-text-dark);
 }
 
 .ntk-tech-stack__card-header small {
-  color: var(--ntk-text-light, #64748b);
+  color: var(--ntk-text-light);
 }
 
 .ntk-tech-stack__chips {

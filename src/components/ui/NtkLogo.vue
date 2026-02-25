@@ -132,11 +132,11 @@ const textStyle = computed(() => ({
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--ntk-text-inverse);
   font-weight: 700;
   border-radius: 8px;
   transition: transform 0.2s ease;
-  box-shadow: var(--ntk-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--ntk-shadow-sm);
 }
 
 .logo-content {
@@ -146,12 +146,12 @@ const textStyle = computed(() => ({
 
 .logo-text {
   line-height: 1.2;
-  font-family: 'Poppins', 'Inter', sans-serif;
+  font-family: var(--ntk-font-family-display);
 }
 
 .logo-tagline {
   font-size: 0.65em;
-  color: var(--ntk-text-muted, #9e9e9e);
+  color: var(--ntk-text-muted);
   font-weight: 400;
 }
 

@@ -1,67 +1,119 @@
 import type { AppShellConfig, AppShellTheme } from './app-shell.types'
+import { semanticColors } from '../../config/colors/semantic.config'
 
-const APP_SHELL_DEFAULTS: AppShellConfig = {
+const APP_SHELL_COLOR_TOKENS = {
+  white: 'var(--ntk-bg-card)',
+  textInverse: 'var(--ntk-text-inverse)',
+  neutral500: 'var(--ntk-text-secondary)',
+  neutral600: 'var(--ntk-text-muted)',
+  neutral700: 'var(--ntk-text-primary)',
+  neutral300: 'var(--ntk-border-dark)',
+  neutral200: 'var(--ntk-text-muted)',
+  neutral100: 'var(--ntk-border-light)',
+  accent: 'var(--ntk-primary)',
+  danger: `var(--semantic-error, ${semanticColors.errorPrimary})`,
+  success: `var(--semantic-success, ${semanticColors.successPrimary})`,
+  warning: `var(--semantic-warning, ${semanticColors.warningPrimary})`,
+  info: `var(--semantic-info, ${semanticColors.infoPrimary})`,
+  pageText: 'var(--ntk-text-primary)',
+} as const
+
+const APP_SHELL_EFFECT_TOKENS = {
+  shellBackground: 'var(--ntk-gradient-subtle, var(--ntk-gradient-hero))',
+  headerShadow: 'var(--ntk-shadow-sm)',
+  drawerShadow: 'var(--ntk-shadow-sm)',
+  searchBorder: 'var(--ntk-border-input)',
+  searchBorderHover: 'var(--ntk-border-input-hover)',
+  actionHoverBackground: 'var(--ntk-bg-hover)',
+  groupCaptionMiniBackground: 'var(--ntk-bg-hover)',
+  itemHoverBackground: 'var(--ntk-bg-hover)',
+  itemActiveBackground: 'var(--ntk-bg-active)',
+  drawerFooterShadow: 'var(--ntk-shadow-sm)',
+} as const
+
+export const APP_SHELL_DEFAULT_THEME: AppShellTheme = {
+  fontFamily: 'var(--ntk-font-family)',
+  transitionFast: 'var(--ntk-transition-base)',
+  shellBackground: APP_SHELL_EFFECT_TOKENS.shellBackground,
+  headerBackground: APP_SHELL_COLOR_TOKENS.white,
+  headerTextColor: APP_SHELL_COLOR_TOKENS.neutral500,
+  headerShadow: APP_SHELL_EFFECT_TOKENS.headerShadow,
+  toolbarButtonColor: APP_SHELL_COLOR_TOKENS.neutral500,
+  titleAppColor: APP_SHELL_COLOR_TOKENS.neutral700,
+  titleTextColor: APP_SHELL_COLOR_TOKENS.neutral600,
+  titleSeparatorColor: APP_SHELL_COLOR_TOKENS.neutral300,
+  drawerBackground: APP_SHELL_COLOR_TOKENS.white,
+  drawerTextColor: APP_SHELL_COLOR_TOKENS.neutral500,
+  drawerShadow: APP_SHELL_EFFECT_TOKENS.drawerShadow,
+  drawerFooterBackground: APP_SHELL_COLOR_TOKENS.white,
+  dividerColor: APP_SHELL_COLOR_TOKENS.neutral100,
+  searchBackground: APP_SHELL_COLOR_TOKENS.white,
+  searchTextColor: APP_SHELL_COLOR_TOKENS.neutral700,
+  searchIconColor: APP_SHELL_COLOR_TOKENS.neutral600,
+  searchBorder: APP_SHELL_EFFECT_TOKENS.searchBorder,
+  searchBorderHover: APP_SHELL_EFFECT_TOKENS.searchBorderHover,
+  focusColor: APP_SHELL_COLOR_TOKENS.accent,
+  actionHoverBackground: APP_SHELL_EFFECT_TOKENS.actionHoverBackground,
+  notificationBadgeTextColor: APP_SHELL_COLOR_TOKENS.textInverse,
+  notificationSuccessColor: APP_SHELL_COLOR_TOKENS.success,
+  notificationWarningColor: APP_SHELL_COLOR_TOKENS.warning,
+  notificationErrorColor: APP_SHELL_COLOR_TOKENS.danger,
+  notificationInfoColor: APP_SHELL_COLOR_TOKENS.info,
+  notificationSuccessTextColor: APP_SHELL_COLOR_TOKENS.textInverse,
+  notificationWarningTextColor: APP_SHELL_COLOR_TOKENS.neutral700,
+  notificationErrorTextColor: APP_SHELL_COLOR_TOKENS.textInverse,
+  notificationInfoTextColor: APP_SHELL_COLOR_TOKENS.textInverse,
+  brandTitleColor: APP_SHELL_COLOR_TOKENS.neutral700,
+  brandSubtitleColor: APP_SHELL_COLOR_TOKENS.neutral600,
+  groupCaptionColor: APP_SHELL_COLOR_TOKENS.neutral200,
+  groupCaptionMiniBackground: APP_SHELL_EFFECT_TOKENS.groupCaptionMiniBackground,
+  itemTextColor: APP_SHELL_COLOR_TOKENS.neutral500,
+  itemHoverBackground: APP_SHELL_EFFECT_TOKENS.itemHoverBackground,
+  itemHoverColor: APP_SHELL_COLOR_TOKENS.accent,
+  itemIconColor: APP_SHELL_COLOR_TOKENS.neutral500,
+  itemIconHoverColor: APP_SHELL_COLOR_TOKENS.accent,
+  itemActiveBackground: APP_SHELL_EFFECT_TOKENS.itemActiveBackground,
+  itemActiveColor: APP_SHELL_COLOR_TOKENS.accent,
+  drawerFooterShadow: APP_SHELL_EFFECT_TOKENS.drawerFooterShadow,
+  pageBackground: 'var(--ntk-bg-primary)',
+  pageTextColor: APP_SHELL_COLOR_TOKENS.pageText,
+}
+
+export const SENTINELA_LIKE_THEME: AppShellTheme = {
+  ...APP_SHELL_DEFAULT_THEME,
+}
+
+export const APP_SHELL_DEFAULTS: AppShellConfig = {
   appName: 'NetToolsKit',
   appSubtitle: 'NTK CMS',
   brandLogo: '/favicon.png',
   brandLogoAlt: 'NTK',
   menuIcon: 'menu',
-  menuAriaLabel: 'Alternar menu',
+  menuAriaLabel: 'Toggle menu',
   navGroups: [],
   items: [],
   activeItem: '',
   searchValue: '',
-  searchPlaceholder: 'Buscar',
+  searchPlaceholder: 'Search module',
   showSearch: true,
   showGroupCaptions: true,
   toolbarActions: [],
-  theme: {},
+  theme: APP_SHELL_DEFAULT_THEME,
   showNotifications: true,
-  notificationsTooltip: 'Notificacoes',
+  notificationsTooltip: 'Notifications',
   notificationCount: 0,
   showUserAvatar: true,
   userAvatar: '',
-  userTooltip: 'Conta',
+  userTooltip: 'Account',
   collapsible: true,
-  collapseLabel: 'Comprimir menu',
-  expandLabel: 'Expandir menu',
+  collapseLabel: 'Collapse menu',
+  expandLabel: 'Expand menu',
   drawerWidth: 200,
   miniWidth: 64,
   breakpoint: 1024,
   headerHeight: 64,
   defaultDrawerOpen: true,
   defaultMini: false,
-}
-
-export const SENTINELA_LIKE_THEME: AppShellTheme = {
-  shellBackground: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-  headerShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-  drawerShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
-  dividerColor: '#f0f0f0',
-  searchBorder: 'rgba(0, 0, 0, 0.24)',
-  searchBorderHover: 'rgba(0, 0, 0, 0.87)',
-  actionHoverBackground: 'rgba(25, 118, 210, 0.08)',
-  itemTextColor: '#5f6368',
-  itemHoverBackground: 'rgba(25, 118, 210, 0.08)',
-  itemActiveBackground: 'linear-gradient(90deg, rgba(25, 118, 210, 0.15) 0%, rgba(25, 118, 210, 0.05) 100%)',
-  itemActiveColor: '#1976d2',
-}
-
-const SENTINELA_LIKE_DEFAULTS: Partial<AppShellConfig> = {
-  menuIcon: 'menu',
-  menuAriaLabel: 'Alternar menu',
-  showSearch: true,
-  showGroupCaptions: true,
-  collapsible: true,
-  collapseLabel: 'Comprimir menu',
-  expandLabel: 'Expandir menu',
-  drawerWidth: 200,
-  miniWidth: 64,
-  breakpoint: 1024,
-  headerHeight: 64,
-  defaultDrawerOpen: true,
-  defaultMini: false,
-  theme: SENTINELA_LIKE_THEME,
 }
 
 function mergeShellConfig(base: AppShellConfig, partial: Partial<AppShellConfig>): AppShellConfig {
@@ -72,17 +124,16 @@ function mergeShellConfig(base: AppShellConfig, partial: Partial<AppShellConfig>
     items: partial.items ?? base.items,
     toolbarActions: partial.toolbarActions ?? base.toolbarActions,
     theme: {
-      ...(base.theme ?? {}),
+      ...(base.theme ?? APP_SHELL_DEFAULT_THEME),
       ...(partial.theme ?? {}),
     },
   }
 }
 
-export function createAppShellConfig(partial: Partial<AppShellConfig>): AppShellConfig {
+export function createAppShellConfig(partial: Partial<AppShellConfig> = {}): AppShellConfig {
   return mergeShellConfig(APP_SHELL_DEFAULTS, partial)
 }
 
-export function sentinelaLikePreset(partial: Partial<AppShellConfig>): AppShellConfig {
-  const basePreset = mergeShellConfig(APP_SHELL_DEFAULTS, SENTINELA_LIKE_DEFAULTS)
-  return mergeShellConfig(basePreset, partial)
+export function sentinelaLikePreset(partial: Partial<AppShellConfig> = {}): AppShellConfig {
+  return createAppShellConfig(partial)
 }

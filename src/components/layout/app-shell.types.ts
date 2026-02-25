@@ -12,6 +12,7 @@ export interface AppShellItem {
   description?: string
   badge?: string | number
   badgeColor?: string
+  badgeTextColor?: string
 }
 
 export interface AppShellAction {
@@ -37,17 +38,51 @@ export interface AppShellAction {
 }
 
 export interface AppShellTheme {
+  fontFamily?: string
+  transitionFast?: string
   shellBackground?: string
+  headerBackground?: string
+  headerTextColor?: string
   headerShadow?: string
+  toolbarButtonColor?: string
+  titleAppColor?: string
+  titleTextColor?: string
+  titleSeparatorColor?: string
   drawerShadow?: string
+  drawerBackground?: string
+  drawerTextColor?: string
+  drawerFooterBackground?: string
   dividerColor?: string
+  searchBackground?: string
+  searchTextColor?: string
+  searchIconColor?: string
   searchBorder?: string
   searchBorderHover?: string
+  focusColor?: string
   actionHoverBackground?: string
+  notificationBadgeTextColor?: string
+  notificationSuccessColor?: string
+  notificationWarningColor?: string
+  notificationErrorColor?: string
+  notificationInfoColor?: string
+  notificationSuccessTextColor?: string
+  notificationWarningTextColor?: string
+  notificationErrorTextColor?: string
+  notificationInfoTextColor?: string
+  brandTitleColor?: string
+  brandSubtitleColor?: string
+  groupCaptionColor?: string
+  groupCaptionMiniBackground?: string
   itemTextColor?: string
   itemHoverBackground?: string
+  itemHoverColor?: string
+  itemIconColor?: string
+  itemIconHoverColor?: string
   itemActiveBackground?: string
   itemActiveColor?: string
+  drawerFooterShadow?: string
+  pageBackground?: string
+  pageTextColor?: string
 }
 
 export interface AppShellConfig {
