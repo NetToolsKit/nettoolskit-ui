@@ -30,48 +30,161 @@
 
           <q-tab-panels v-model="activeSettingsTab" animated class="cms-settings__panels">
             <q-tab-panel name="branding">
-              <div class="cms-form-grid">
-                <q-input v-model="settings.branding.appName" outlined dense label="Product name" />
-                <q-input v-model="settings.branding.appSubtitle" outlined dense label="Product subtitle" />
-                <q-input v-model="settings.branding.brandLogo" outlined dense label="Logo URL" />
-                <q-input v-model="settings.branding.brandLogoAlt" outlined dense label="Logo alt text" />
-                <q-input v-model="settings.branding.faviconUrl" outlined dense label="Favicon URL" />
-                <q-input v-model="settings.branding.userAvatar" outlined dense label="User avatar URL" />
-                <q-input v-model="settings.branding.userTooltip" outlined dense label="User tooltip" />
-                <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" label="Notification count" />
-              </div>
+              <div class="cms-config-section">
+                <div class="cms-config-section__form">
+                  <div class="cms-form-grid">
+                    <q-input v-model="settings.branding.appName" outlined dense label="Product name" />
+                    <q-input v-model="settings.branding.appSubtitle" outlined dense label="Product subtitle" />
+                    <q-input v-model="settings.branding.brandLogo" outlined dense label="Logo URL" />
+                    <q-input v-model="settings.branding.brandLogoAlt" outlined dense label="Logo alt text" />
+                    <q-input v-model="settings.branding.faviconUrl" outlined dense label="Favicon URL" />
+                    <q-input v-model="settings.branding.userAvatar" outlined dense label="User avatar URL" />
+                    <q-input v-model="settings.branding.userTooltip" outlined dense label="User tooltip" />
+                    <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" label="Notification count" />
+                  </div>
 
-              <q-banner rounded class="cms-banner" :style="bannerStyle">
-                {{ settings.content.brandingBannerText }}
-              </q-banner>
+                  <q-banner rounded class="cms-banner" :style="bannerStyle">
+                    {{ settings.content.brandingBannerText }}
+                  </q-banner>
+                </div>
+
+                <div class="cms-config-section__example">
+                  <div class="cms-example-section cms-example-section--inline">
+                    <div class="cms-example-section__header">
+                      <strong>Branding example</strong>
+                      <small>Live preview of logo, product identity and account information.</small>
+                    </div>
+                    <div class="cms-preview-card cms-preview-card--branding">
+                      <div class="cms-preview-brand">
+                        <img :src="settings.branding.brandLogo" :alt="settings.branding.brandLogoAlt" class="cms-preview-brand__logo">
+                        <div class="cms-preview-brand__copy">
+                          <strong>{{ settings.branding.appName }}</strong>
+                          <small>{{ settings.branding.appSubtitle }}</small>
+                        </div>
+                      </div>
+                      <div class="cms-preview-brand__meta">
+                        <div class="cms-preview-brand__meta-row">
+                          <span>Favicon</span>
+                          <code>{{ settings.branding.faviconUrl || settings.branding.brandLogo }}</code>
+                        </div>
+                        <div class="cms-preview-brand__meta-row">
+                          <span>User</span>
+                          <div class="cms-preview-user">
+                            <img v-if="settings.branding.userAvatar" :src="settings.branding.userAvatar" alt="User avatar">
+                            <q-icon v-else name="account_circle" size="22px" />
+                            <small>{{ settings.branding.userTooltip }}</small>
+                          </div>
+                        </div>
+                        <q-chip dense square icon="notifications" :style="statusChipStyle">
+                          {{ settings.branding.notificationCount }}
+                        </q-chip>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </q-tab-panel>
 
             <q-tab-panel name="colors">
               <div class="cms-color-groups">
-                <div v-for="group in colorFieldGroups" :key="group.id" class="cms-color-group">
-                  <div class="cms-section-header cms-section-header--stacked">
-                    <strong>{{ group.label }}</strong>
-                    <small>{{ group.description }}</small>
-                  </div>
-                  <div class="cms-color-grid">
-                    <div v-for="field in group.fields" :key="field.key" class="cms-color-field">
-                      <label>{{ field.label }}</label>
-                      <div class="cms-color-field__controls">
-                        <input
-                          v-if="field.isColor"
-                          :value="getThemeFieldPickerValue(field)"
-                          type="color"
-                          class="cms-color-field__picker"
-                          @input="onThemeColorInput(field, $event)"
-                        >
-                        <q-input
-                          :model-value="getThemeFieldValue(field)"
-                          outlined
-                          dense
-                          :placeholder="field.placeholder"
-                          @update:model-value="onThemeFieldInput(field, $event)"
-                        />
+                <div v-for="group in colorFieldGroups" :key="group.id" class="cms-color-group cms-config-section">
+                  <div class="cms-config-section__form">
+                    <div class="cms-section-header cms-section-header--stacked">
+                      <strong>{{ group.label }}</strong>
+                      <small>{{ group.description }}</small>
+                    </div>
+                    <div class="cms-color-grid">
+                      <div v-for="field in group.fields" :key="field.key" class="cms-color-field">
+                        <label>{{ field.label }}</label>
+                        <div class="cms-color-field__controls">
+                          <input
+                            v-if="field.isColor"
+                            :value="getThemeFieldPickerValue(field)"
+                            type="color"
+                            class="cms-color-field__picker"
+                            @input="onThemeColorInput(field, $event)"
+                          >
+                          <q-input
+                            :model-value="getThemeFieldValue(field)"
+                            outlined
+                            dense
+                            :placeholder="field.placeholder"
+                            @update:model-value="onThemeFieldInput(field, $event)"
+                          />
+                        </div>
                       </div>
+                    </div>
+                  </div>
+
+                  <div class="cms-config-section__example">
+                    <div class="cms-example-section cms-example-section--inline">
+                      <template v-if="group.id === 'foundation'">
+                        <div class="cms-example-section__header">
+                          <strong>Foundation example</strong>
+                          <small>Surface, text and border tokens applied together.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--foundation">
+                          <strong>Editable shell foundation</strong>
+                          <p>This card uses the same base tokens as the shell page and CMS cards.</p>
+                          <q-chip dense square class="cms-preview-chip">{{ settings.content.statusChipLabel }}</q-chip>
+                        </div>
+                      </template>
+
+                      <template v-else-if="group.id === 'navigation'">
+                        <div class="cms-example-section__header">
+                          <strong>Navigation example</strong>
+                          <small>Sidebar states: default, hover and active item.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--navigation">
+                          <div class="cms-preview-nav-item">Overview</div>
+                          <div class="cms-preview-nav-item cms-preview-nav-item--hover">Analytics</div>
+                          <div class="cms-preview-nav-item cms-preview-nav-item--active">Settings</div>
+                        </div>
+                      </template>
+
+                      <template v-else-if="group.id === 'header'">
+                        <div class="cms-example-section__header">
+                          <strong>Header and search example</strong>
+                          <small>Topbar colors, search background and border fields.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--header">
+                          <div class="cms-preview-header">
+                            <div class="cms-preview-header__left">
+                              <q-icon :name="settings.layout.menuIcon" size="18px" />
+                              <strong>{{ settings.branding.appName }}</strong>
+                            </div>
+                            <div class="cms-preview-header__search">
+                              <q-icon name="search" size="16px" />
+                              <span>{{ settings.layout.searchPlaceholder }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <template v-else-if="group.id === 'notifications'">
+                        <div class="cms-example-section__header">
+                          <strong>Notifications example</strong>
+                          <small>Success, warning, error and info chips in real time.</small>
+                        </div>
+                        <div class="cms-notification-preview">
+                          <q-chip dense square :style="notificationChipStyles.success">{{ settings.content.previewSuccessLabel }}</q-chip>
+                          <q-chip dense square :style="notificationChipStyles.warning">{{ settings.content.previewWarningLabel }}</q-chip>
+                          <q-chip dense square :style="notificationChipStyles.error">{{ settings.content.previewErrorLabel }}</q-chip>
+                          <q-chip dense square :style="notificationChipStyles.info">{{ settings.content.previewInfoLabel }}</q-chip>
+                        </div>
+                      </template>
+
+                      <template v-else>
+                        <div class="cms-example-section__header">
+                          <strong>Advanced tokens example</strong>
+                          <small>Typography and transition values from advanced fields.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--advanced">
+                          <strong>Theme internals preview</strong>
+                          <p>Font family and transition are reflected immediately in this block.</p>
+                          <code>transition: {{ settings.theme.transitionFast }}</code>
+                        </div>
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -80,118 +193,210 @@
               <q-banner rounded class="cms-banner" :style="bannerStyle">
                 {{ settings.content.colorsBannerText }}
               </q-banner>
-              <div class="cms-notification-preview">
-                <q-chip dense square :style="notificationChipStyles.success">{{ settings.content.previewSuccessLabel }}</q-chip>
-                <q-chip dense square :style="notificationChipStyles.warning">{{ settings.content.previewWarningLabel }}</q-chip>
-                <q-chip dense square :style="notificationChipStyles.error">{{ settings.content.previewErrorLabel }}</q-chip>
-                <q-chip dense square :style="notificationChipStyles.info">{{ settings.content.previewInfoLabel }}</q-chip>
-              </div>
             </q-tab-panel>
 
             <q-tab-panel name="menu">
-              <div class="cms-section-header">
-                <strong>Groups</strong>
-                <q-btn flat dense no-caps icon="add" label="Add group" @click="addGroup" />
-              </div>
-              <div class="cms-list">
-                <div v-for="(group, index) in settings.navGroups" :key="group.id" class="cms-list-item">
-                  <q-input v-model="group.id" outlined dense label="Group ID" @blur="normalizeGroupId(index)" />
-                  <q-input v-model="group.label" outlined dense label="Group label" />
-                  <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeGroup(index)" />
+              <div class="cms-config-section">
+                <div class="cms-config-section__form">
+                  <div class="cms-section-header">
+                    <strong>Groups</strong>
+                    <q-btn flat dense no-caps icon="add" label="Add group" @click="addGroup" />
+                  </div>
+                  <div class="cms-list">
+                    <div v-for="(group, index) in settings.navGroups" :key="group.id" class="cms-list-item">
+                      <q-input v-model="group.id" outlined dense label="Group ID" @blur="normalizeGroupId(index)" />
+                      <q-input v-model="group.label" outlined dense label="Group label" />
+                      <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeGroup(index)" />
+                    </div>
+                  </div>
+
+                  <q-separator class="q-my-md" />
+
+                  <div class="cms-section-header">
+                    <strong>Menu items</strong>
+                    <q-btn flat dense no-caps icon="add" label="Add item" @click="addMenuItem" />
+                  </div>
+                  <div class="cms-list">
+                    <div v-for="(item, index) in settings.items" :key="item.id" class="cms-list-item cms-list-item--menu">
+                      <q-input v-model="item.id" outlined dense label="Item ID" />
+                      <q-input v-model="item.label" outlined dense label="Label" />
+                      <q-input v-model="item.icon" outlined dense label="Icon" />
+                      <q-select
+                        v-model="item.group"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="groupOptions"
+                        label="Group"
+                      />
+                      <q-input v-model="item.caption" outlined dense label="Caption" />
+                      <q-input v-model="item.description" outlined dense label="Description" />
+                      <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeMenuItem(index)" />
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <q-separator class="q-my-md" />
-
-              <div class="cms-section-header">
-                <strong>Menu items</strong>
-                <q-btn flat dense no-caps icon="add" label="Add item" @click="addMenuItem" />
-              </div>
-              <div class="cms-list">
-                <div v-for="(item, index) in settings.items" :key="item.id" class="cms-list-item cms-list-item--menu">
-                  <q-input v-model="item.id" outlined dense label="Item ID" />
-                  <q-input v-model="item.label" outlined dense label="Label" />
-                  <q-input v-model="item.icon" outlined dense label="Icon" />
-                  <q-select
-                    v-model="item.group"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    :options="groupOptions"
-                    label="Group"
-                  />
-                  <q-input v-model="item.caption" outlined dense label="Caption" />
-                  <q-input v-model="item.description" outlined dense label="Description" />
-                  <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeMenuItem(index)" />
+                <div class="cms-config-section__example">
+                  <div class="cms-example-section cms-example-section--inline">
+                    <div class="cms-example-section__header">
+                      <strong>Sidebar menu example</strong>
+                      <small>Groups and items structure preview with active state.</small>
+                    </div>
+                    <div class="cms-preview-card cms-preview-card--menu">
+                      <div v-for="group in menuPreviewGroups" :key="group.id" class="cms-preview-menu-group">
+                        <small>{{ group.label }}</small>
+                        <div class="cms-preview-menu-items">
+                          <button
+                            v-for="item in group.items"
+                            :key="item.id"
+                            type="button"
+                            class="cms-preview-menu-item"
+                            :class="{ 'cms-preview-menu-item--active': item.id === previewActiveItemId }"
+                          >
+                            <q-icon :name="item.icon || 'radio_button_unchecked'" size="16px" />
+                            <span>{{ item.label }}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </q-tab-panel>
 
             <q-tab-panel name="topbar">
-              <div class="cms-form-grid">
-                <q-input v-model="settings.layout.menuIcon" outlined dense label="Menu icon" />
-                <q-input v-model="settings.layout.menuAriaLabel" outlined dense label="Menu aria-label" />
-                <q-input v-model="settings.layout.searchPlaceholder" outlined dense label="Search placeholder" />
-                <q-input v-model="settings.layout.collapseLabel" outlined dense label="Collapse label" />
-                <q-input v-model="settings.layout.expandLabel" outlined dense label="Expand label" />
-                <q-input v-model.number="settings.layout.headerHeight" outlined dense type="number" min="48" label="Header height" />
-                <q-input v-model.number="settings.layout.drawerWidth" outlined dense type="number" min="180" label="Drawer width" />
-                <q-input v-model.number="settings.layout.miniWidth" outlined dense type="number" min="56" label="Mini width" />
-              </div>
+              <div class="cms-config-section">
+                <div class="cms-config-section__form">
+                  <div class="cms-form-grid">
+                    <q-input v-model="settings.layout.menuIcon" outlined dense label="Menu icon" />
+                    <q-input v-model="settings.layout.menuAriaLabel" outlined dense label="Menu aria-label" />
+                    <q-input v-model="settings.layout.searchPlaceholder" outlined dense label="Search placeholder" />
+                    <q-input v-model="settings.layout.collapseLabel" outlined dense label="Collapse label" />
+                    <q-input v-model="settings.layout.expandLabel" outlined dense label="Expand label" />
+                    <q-input v-model.number="settings.layout.headerHeight" outlined dense type="number" min="48" label="Header height" />
+                    <q-input v-model.number="settings.layout.drawerWidth" outlined dense type="number" min="180" label="Drawer width" />
+                    <q-input v-model.number="settings.layout.miniWidth" outlined dense type="number" min="56" label="Mini width" />
+                  </div>
 
-              <div class="cms-toggle-row">
-                <q-toggle v-model="settings.layout.showSearch" label="Show search" />
-                <q-toggle v-model="settings.layout.showGroupCaptions" label="Show group captions" />
-                <q-toggle v-model="settings.layout.defaultDrawerOpen" label="Drawer open by default" />
-                <q-toggle v-model="settings.layout.defaultMini" label="Mini mode by default" />
-              </div>
+                  <div class="cms-toggle-row">
+                    <q-toggle v-model="settings.layout.showSearch" label="Show search" />
+                    <q-toggle v-model="settings.layout.showGroupCaptions" label="Show group captions" />
+                    <q-toggle v-model="settings.layout.defaultDrawerOpen" label="Drawer open by default" />
+                    <q-toggle v-model="settings.layout.defaultMini" label="Mini mode by default" />
+                  </div>
 
-              <q-separator class="q-my-md" />
+                  <q-separator class="q-my-md" />
 
-              <div class="cms-section-header">
-                <strong>Topbar actions</strong>
-                <q-btn flat dense no-caps icon="add" label="Add action" @click="addToolbarAction" />
-              </div>
-              <div class="cms-list">
-                <div v-for="(action, index) in settings.toolbarActions" :key="action.id" class="cms-list-item cms-list-item--toolbar">
-                  <q-input v-model="action.id" outlined dense label="Action ID" />
-                  <q-input v-model="action.icon" outlined dense label="Icon" />
-                  <q-input v-model="action.label" outlined dense label="Label" />
-                  <q-input v-model="action.tooltip" outlined dense label="Tooltip" />
-                  <q-input v-model="action.href" outlined dense label="Href" />
-                  <q-input v-model="action.color" outlined dense label="Color" />
-                  <q-input v-model="action.badge" outlined dense label="Badge" />
-                  <q-toggle v-model="action.showLabel" label="Show label" />
-                  <q-toggle v-model="action.external" label="Open external" />
-                  <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeToolbarAction(index)" />
+                  <div class="cms-section-header">
+                    <strong>Topbar actions</strong>
+                    <q-btn flat dense no-caps icon="add" label="Add action" @click="addToolbarAction" />
+                  </div>
+                  <div class="cms-list">
+                    <div v-for="(action, index) in settings.toolbarActions" :key="action.id" class="cms-list-item cms-list-item--toolbar">
+                      <q-input v-model="action.id" outlined dense label="Action ID" />
+                      <q-input v-model="action.icon" outlined dense label="Icon" />
+                      <q-input v-model="action.label" outlined dense label="Label" />
+                      <q-input v-model="action.tooltip" outlined dense label="Tooltip" />
+                      <q-input v-model="action.href" outlined dense label="Href" />
+                      <q-input v-model="action.color" outlined dense label="Color" />
+                      <q-input v-model="action.badge" outlined dense label="Badge" />
+                      <q-toggle v-model="action.showLabel" label="Show label" />
+                      <q-toggle v-model="action.external" label="Open external" />
+                      <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeToolbarAction(index)" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="cms-config-section__example">
+                  <div class="cms-example-section cms-example-section--inline">
+                    <div class="cms-example-section__header">
+                      <strong>Topbar example</strong>
+                      <small>Header height, search visibility and actions rendered together.</small>
+                    </div>
+                    <div class="cms-preview-card cms-preview-card--topbar">
+                      <div class="cms-preview-topbar">
+                        <div class="cms-preview-topbar__left">
+                          <q-icon :name="settings.layout.menuIcon" size="18px" />
+                          <strong>{{ settings.branding.appName }}</strong>
+                        </div>
+                        <div v-if="settings.layout.showSearch" class="cms-preview-topbar__search">
+                          <q-icon name="search" size="16px" />
+                          <span>{{ settings.layout.searchPlaceholder }}</span>
+                        </div>
+                        <div class="cms-preview-topbar__actions">
+                          <button
+                            v-for="action in toolbarPreviewActions"
+                            :key="action.id"
+                            type="button"
+                            class="cms-preview-topbar__action"
+                          >
+                            <q-icon :name="action.icon || 'bolt'" size="16px" />
+                            <span v-if="action.showLabel">{{ action.label }}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </q-tab-panel>
 
             <q-tab-panel name="content">
-              <div class="cms-form-grid">
-                <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow label="Module fallback description" />
-                <q-input v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow label="Branding banner text" />
-                <q-input v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow label="Colors banner text" />
-                <q-input v-model="settings.content.statusTitle" outlined dense label="Status card title" />
-                <q-input v-model="settings.content.statusChipLabel" outlined dense label="Status chip label" />
-                <q-input v-model="settings.content.statusThemeText" outlined dense label="Status: theme line" />
-                <q-input v-model="settings.content.statusBrandingText" outlined dense label="Status: branding line" />
-                <q-input v-model="settings.content.statusMenuText" outlined dense label="Status: menu line" />
-                <q-input v-model="settings.content.statusTopbarText" outlined dense label="Status: topbar line" />
-                <q-input v-model="settings.content.howToTitle" outlined dense label="How-to title" />
-                <q-input v-model="settings.content.howToBody" outlined dense type="textarea" autogrow label="How-to body" />
-                <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow label="How-to next step" />
-                <q-input v-model="settings.content.previewSuccessLabel" outlined dense label="Preview success label" />
-                <q-input v-model="settings.content.previewWarningLabel" outlined dense label="Preview warning label" />
-                <q-input v-model="settings.content.previewErrorLabel" outlined dense label="Preview error label" />
-                <q-input v-model="settings.content.previewInfoLabel" outlined dense label="Preview info label" />
-                <q-input v-model="settings.content.tabBrandingLabel" outlined dense label="Tab: branding label" />
-                <q-input v-model="settings.content.tabColorsLabel" outlined dense label="Tab: colors label" />
-                <q-input v-model="settings.content.tabMenuLabel" outlined dense label="Tab: menu label" />
-                <q-input v-model="settings.content.tabTopbarLabel" outlined dense label="Tab: topbar label" />
-                <q-input v-model="settings.content.tabContentLabel" outlined dense label="Tab: content label" />
+              <div class="cms-config-section">
+                <div class="cms-config-section__form">
+                  <div class="cms-form-grid">
+                    <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow label="Module fallback description" />
+                    <q-input v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow label="Branding banner text" />
+                    <q-input v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow label="Colors banner text" />
+                    <q-input v-model="settings.content.statusTitle" outlined dense label="Status card title" />
+                    <q-input v-model="settings.content.statusChipLabel" outlined dense label="Status chip label" />
+                    <q-input v-model="settings.content.statusThemeText" outlined dense label="Status: theme line" />
+                    <q-input v-model="settings.content.statusBrandingText" outlined dense label="Status: branding line" />
+                    <q-input v-model="settings.content.statusMenuText" outlined dense label="Status: menu line" />
+                    <q-input v-model="settings.content.statusTopbarText" outlined dense label="Status: topbar line" />
+                    <q-input v-model="settings.content.howToTitle" outlined dense label="How-to title" />
+                    <q-input v-model="settings.content.howToBody" outlined dense type="textarea" autogrow label="How-to body" />
+                    <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow label="How-to next step" />
+                    <q-input v-model="settings.content.previewSuccessLabel" outlined dense label="Preview success label" />
+                    <q-input v-model="settings.content.previewWarningLabel" outlined dense label="Preview warning label" />
+                    <q-input v-model="settings.content.previewErrorLabel" outlined dense label="Preview error label" />
+                    <q-input v-model="settings.content.previewInfoLabel" outlined dense label="Preview info label" />
+                    <q-input v-model="settings.content.tabBrandingLabel" outlined dense label="Tab: branding label" />
+                    <q-input v-model="settings.content.tabColorsLabel" outlined dense label="Tab: colors label" />
+                    <q-input v-model="settings.content.tabMenuLabel" outlined dense label="Tab: menu label" />
+                    <q-input v-model="settings.content.tabTopbarLabel" outlined dense label="Tab: topbar label" />
+                    <q-input v-model="settings.content.tabContentLabel" outlined dense label="Tab: content label" />
+                  </div>
+                </div>
+
+                <div class="cms-config-section__example">
+                  <div class="cms-example-section cms-example-section--inline">
+                    <div class="cms-example-section__header">
+                      <strong>Content copy example</strong>
+                      <small>Preview of tab labels, banners and instructional text.</small>
+                    </div>
+                    <div class="cms-preview-card cms-preview-card--content">
+                      <div class="cms-preview-content-tabs">
+                        <q-chip dense square>{{ settings.content.tabBrandingLabel }}</q-chip>
+                        <q-chip dense square>{{ settings.content.tabColorsLabel }}</q-chip>
+                        <q-chip dense square>{{ settings.content.tabMenuLabel }}</q-chip>
+                        <q-chip dense square>{{ settings.content.tabTopbarLabel }}</q-chip>
+                        <q-chip dense square>{{ settings.content.tabContentLabel }}</q-chip>
+                      </div>
+                      <p class="cms-preview-content-text">{{ settings.content.moduleFallbackDescription }}</p>
+                      <q-banner rounded class="cms-banner" :style="bannerStyle">
+                        {{ settings.content.brandingBannerText }}
+                      </q-banner>
+                      <div class="cms-preview-content-status">
+                        <span>{{ settings.content.statusThemeText }}</span>
+                        <span>{{ settings.content.statusBrandingText }}</span>
+                        <span>{{ settings.content.statusMenuText }}</span>
+                        <span>{{ settings.content.statusTopbarText }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </q-tab-panel>
           </q-tab-panels>
@@ -722,6 +927,21 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-border-color': settings.value.theme.dividerColor || defaultTheme.dividerColor || '',
   '--ntk-cms-bg-card': settings.value.theme.drawerBackground || defaultTheme.drawerBackground || '',
   '--ntk-cms-tab-active': settings.value.theme.itemActiveColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-accent': settings.value.theme.itemActiveColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-accent-soft': settings.value.theme.itemHoverBackground || defaultTheme.itemHoverBackground || '',
+  '--ntk-cms-accent-text': settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-active-bg': settings.value.theme.itemActiveBackground || defaultTheme.itemActiveBackground || '',
+  '--ntk-cms-header-bg': settings.value.theme.headerBackground || defaultTheme.headerBackground || '',
+  '--ntk-cms-header-text': settings.value.theme.headerTextColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-header-shadow': settings.value.theme.headerShadow || defaultTheme.headerShadow || '',
+  '--ntk-cms-search-bg': settings.value.theme.searchBackground || defaultTheme.searchBackground || '',
+  '--ntk-cms-search-text': settings.value.theme.searchTextColor || defaultTheme.searchTextColor || '',
+  '--ntk-cms-search-border': settings.value.theme.searchBorder || defaultTheme.searchBorder || '',
+  '--ntk-cms-font-family': settings.value.theme.fontFamily || defaultTheme.fontFamily || '',
+  '--ntk-cms-transition': settings.value.theme.transitionFast || defaultTheme.transitionFast || '',
+  '--ntk-cms-shell-bg': settings.value.theme.shellBackground || defaultTheme.shellBackground || '',
+  '--ntk-cms-page-bg': settings.value.theme.pageBackground || defaultTheme.pageBackground || '',
+  '--ntk-cms-mini-group-bg': settings.value.theme.groupCaptionMiniBackground || defaultTheme.groupCaptionMiniBackground || '',
   '--ntk-cms-notification-success': notificationSuccessColor.value,
   '--ntk-cms-notification-warning': notificationWarningColor.value,
   '--ntk-cms-notification-error': notificationErrorColor.value,
@@ -790,6 +1010,38 @@ const groupOptions = computed(() => {
     label: group.label,
     value: group.id,
   }))
+})
+
+const previewActiveItemId = computed(() => {
+  return settings.value.items.find(item => item.id === activeMenuId.value)?.id
+    ?? settings.value.items[0]?.id
+    ?? ''
+})
+
+const menuPreviewGroups = computed(() => {
+  return settings.value.navGroups
+    .map(group => ({
+      ...group,
+      items: settings.value.items
+        .filter(item => item.group === group.id)
+        .slice(0, 4),
+    }))
+    .filter(group => group.items.length > 0)
+})
+
+const toolbarPreviewActions = computed(() => {
+  const actions = settings.value.toolbarActions.slice(0, 4)
+  if (actions.length > 0) {
+    return actions
+  }
+  return [
+    {
+      id: 'preview-action',
+      icon: 'bolt',
+      label: 'Action',
+      showLabel: true,
+    },
+  ]
 })
 
 const settingsModuleId = computed(() => {
@@ -1107,6 +1359,18 @@ function resetToDefaults(): void {
   border-radius: 10px;
 }
 
+.cms-config-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.95fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.cms-config-section__form,
+.cms-config-section__example {
+  min-width: 0;
+}
+
 .cms-settings__tabs :deep(.q-tab) {
   color: var(--ntk-cms-text-secondary);
 }
@@ -1230,6 +1494,323 @@ function resetToDefaults(): void {
   margin-top: 0.75rem;
 }
 
+.cms-example-section {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--ntk-cms-border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cms-example-section--inline {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.cms-example-section__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.cms-example-section__header strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-example-section__header small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: 0.76rem;
+}
+
+.cms-preview-card {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: var(--ntk-cms-bg-card);
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-preview-card p {
+  margin: 0.35rem 0;
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-preview-chip {
+  margin-top: 0.35rem;
+  background: var(--ntk-cms-accent-soft);
+  color: var(--ntk-cms-accent-text);
+  border: 1px solid var(--ntk-cms-accent);
+}
+
+.cms-preview-card--foundation {
+  border-color: var(--ntk-cms-border-color);
+  background: var(--ntk-cms-bg-card);
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-preview-card--navigation {
+  background: var(--ntk-cms-shell-bg);
+}
+
+.cms-preview-nav-item {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  color: var(--ntk-cms-text-secondary);
+  background: transparent;
+  transition: all var(--ntk-cms-transition);
+}
+
+.cms-preview-nav-item + .cms-preview-nav-item {
+  margin-top: 0.35rem;
+}
+
+.cms-preview-nav-item--hover {
+  background: var(--ntk-cms-accent-soft);
+  color: var(--ntk-cms-accent-text);
+}
+
+.cms-preview-nav-item--active {
+  background: var(--ntk-cms-active-bg);
+  color: var(--ntk-cms-accent);
+  border-color: var(--ntk-cms-accent-soft);
+  font-weight: 600;
+}
+
+.cms-preview-card--header {
+  background: var(--ntk-cms-header-bg);
+  color: var(--ntk-cms-header-text);
+  box-shadow: var(--ntk-cms-header-shadow);
+}
+
+.cms-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cms-preview-header__left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cms-preview-header__search {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 220px;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--ntk-cms-search-border);
+  background: var(--ntk-cms-search-bg);
+  color: var(--ntk-cms-search-text);
+  font-size: 0.78rem;
+}
+
+.cms-preview-card--advanced {
+  font-family: var(--ntk-cms-font-family);
+  transition: all var(--ntk-cms-transition);
+  background: var(--ntk-cms-page-bg);
+}
+
+.cms-preview-card--advanced code {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+}
+
+.cms-preview-card--branding {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cms-preview-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cms-preview-brand__logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--ntk-cms-border-color);
+}
+
+.cms-preview-brand__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.cms-preview-brand__copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-preview-brand__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cms-preview-brand__meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cms-preview-brand__meta-row span {
+  font-size: 0.72rem;
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-preview-brand__meta-row code {
+  font-size: 0.74rem;
+  word-break: break-all;
+}
+
+.cms-preview-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cms-preview-user img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.cms-preview-user small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-preview-card--menu {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.cms-preview-menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cms-preview-menu-group > small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cms-preview-menu-items {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.cms-preview-menu-item {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ntk-cms-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.82rem;
+  text-align: left;
+  transition: all var(--ntk-cms-transition);
+}
+
+.cms-preview-menu-item--active {
+  background: var(--ntk-cms-active-bg);
+  color: var(--ntk-cms-accent);
+  border-color: var(--ntk-cms-accent-soft);
+  font-weight: 600;
+}
+
+.cms-preview-card--topbar {
+  background: var(--ntk-cms-header-bg);
+  color: var(--ntk-cms-header-text);
+  box-shadow: var(--ntk-cms-header-shadow);
+}
+
+.cms-preview-topbar {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cms-preview-topbar__left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cms-preview-topbar__search {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--ntk-cms-search-border);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  background: var(--ntk-cms-search-bg);
+  color: var(--ntk-cms-search-text);
+  font-size: 0.78rem;
+}
+
+.cms-preview-topbar__actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cms-preview-topbar__action {
+  border: 1px solid var(--ntk-cms-search-border);
+  border-radius: 7px;
+  padding: 0.3rem 0.45rem;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.74rem;
+}
+
+.cms-preview-card--content {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.cms-preview-content-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.cms-preview-content-text {
+  margin: 0;
+}
+
+.cms-preview-content-status {
+  display: grid;
+  gap: 0.2rem;
+  color: var(--ntk-cms-text-secondary);
+  font-size: 0.8rem;
+}
+
 .cms-banner :deep(code) {
   font-family: var(--ntk-font-family-mono);
   font-size: 0.78rem;
@@ -1247,6 +1828,7 @@ function resetToDefaults(): void {
 
 @media (max-width: 1024px) {
   .cms-shell-page__grid,
+  .cms-config-section,
   .cms-form-grid,
   .cms-color-grid,
   .cms-toggle-row {
@@ -1260,6 +1842,35 @@ function resetToDefaults(): void {
   .cms-settings__saved-at {
     margin-left: 0;
     width: 100%;
+  }
+
+  .cms-preview-brand__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .cms-preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cms-preview-header__search {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .cms-preview-topbar {
+    flex-wrap: wrap;
+  }
+
+  .cms-preview-topbar__search {
+    order: 3;
+    width: 100%;
+  }
+
+  .cms-preview-topbar__actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .cms-list-item,

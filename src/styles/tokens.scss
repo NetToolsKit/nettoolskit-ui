@@ -82,21 +82,45 @@
    * Feedback Colors
    * Cores semânticas para estados
    * ============================================ */
-  --ntk-success: #22c55e;
-  --ntk-success-light: #dcfce7;
-  --ntk-success-dark: #16a34a;
+  --semantic-success: #22c55e;
+  --semantic-success-primary: var(--semantic-success);
+  --semantic-success-border: #22c55e;
+  --semantic-success-bg: #dcfce7;
+  --semantic-success-text: #16a34a;
+
+  --semantic-warning: #f59e0b;
+  --semantic-warning-primary: var(--semantic-warning);
+  --semantic-warning-border: #f59e0b;
+  --semantic-warning-bg: #fef3c7;
+  --semantic-warning-text: #d97706;
+
+  --semantic-error: #ef4444;
+  --semantic-error-primary: var(--semantic-error);
+  --semantic-error-border: #ef4444;
+  --semantic-error-bg: #fee2e2;
+  --semantic-error-text: #dc2626;
+
+  --semantic-info: #3b82f6;
+  --semantic-info-primary: var(--semantic-info);
+  --semantic-info-border: #3b82f6;
+  --semantic-info-bg: #dbeafe;
+  --semantic-info-text: #2563eb;
+
+  --ntk-success: var(--semantic-success);
+  --ntk-success-light: var(--semantic-success-bg);
+  --ntk-success-dark: var(--semantic-success-text);
   
-  --ntk-warning: #f59e0b;
-  --ntk-warning-light: #fef3c7;
-  --ntk-warning-dark: #d97706;
+  --ntk-warning: var(--semantic-warning);
+  --ntk-warning-light: var(--semantic-warning-bg);
+  --ntk-warning-dark: var(--semantic-warning-text);
   
-  --ntk-error: #ef4444;
-  --ntk-error-light: #fee2e2;
-  --ntk-error-dark: #dc2626;
+  --ntk-error: var(--semantic-error);
+  --ntk-error-light: var(--semantic-error-bg);
+  --ntk-error-dark: var(--semantic-error-text);
   
-  --ntk-info: #3b82f6;
-  --ntk-info-light: #dbeafe;
-  --ntk-info-dark: #2563eb;
+  --ntk-info: var(--semantic-info);
+  --ntk-info-light: var(--semantic-info-bg);
+  --ntk-info-dark: var(--semantic-info-text);
   
   /* Aliases para compatibilidade */
   --ntk-positive: var(--ntk-success);
@@ -274,10 +298,10 @@
   --ntk-gradient-loading: linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%);
   
   /* Feedback Colors - Dark (mais vibrantes) */
-  --ntk-success-light: rgba(34, 197, 94, 0.2);
-  --ntk-warning-light: rgba(245, 158, 11, 0.2);
-  --ntk-error-light: rgba(239, 68, 68, 0.2);
-  --ntk-info-light: rgba(59, 130, 246, 0.2);
+  --ntk-success-light: color-mix(in srgb, var(--semantic-success) 20%, transparent);
+  --ntk-warning-light: color-mix(in srgb, var(--semantic-warning) 20%, transparent);
+  --ntk-error-light: color-mix(in srgb, var(--semantic-error) 20%, transparent);
+  --ntk-info-light: color-mix(in srgb, var(--semantic-info) 20%, transparent);
   
   /* Form Colors - Dark */
   --ntk-input-bg: var(--ntk-bg-secondary);

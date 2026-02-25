@@ -62,9 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 import NtkHeader from '../src/components/layout/NtkHeader.vue';
-import { lightThemeColors, darkThemeColors, applyThemeColors } from '../src/config/colors/theme-mode.config';
+import { applyThemeColors } from '../src/config/colors/theme-mode.config';
 
 const isDark = ref(false);
 
@@ -84,39 +84,6 @@ const toggleTheme = () => {
 watchEffect(() => {
   applyThemeColors(isDark.value ? 'dark' : 'light');
 });
-
-// Get current theme colors from global config
-const currentColors = computed(() => isDark.value ? darkThemeColors : lightThemeColors);
-
-// Header color configuration using global theme colors
-const headerColors = computed(() => ({
-  light: {
-    logoText: lightThemeColors.textPrimary,
-    navLink: lightThemeColors.textSecondary,
-    navLinkHover: lightThemeColors.primary,
-    themeToggleBorder: lightThemeColors.borderLight,
-    themeToggleColor: lightThemeColors.textSecondary,
-    themeToggleHoverBg: lightThemeColors.backgroundTertiary,
-    themeToggleHoverColor: lightThemeColors.primary,
-    ctaBackground: lightThemeColors.primary,
-    ctaColor: lightThemeColors.textOnPrimary,
-    ctaHoverBackground: lightThemeColors.primaryDark,
-  },
-  dark: {
-    logoText: darkThemeColors.textPrimary,
-    navLink: darkThemeColors.textSecondary,
-    navLinkHover: darkThemeColors.primaryLight,
-    themeToggleBorder: 'rgba(255, 255, 255, 0.2)',
-    themeToggleColor: darkThemeColors.textSecondary,
-    themeToggleHoverBg: 'rgba(255, 255, 255, 0.1)',
-    themeToggleHoverColor: darkThemeColors.primaryLight,
-    ctaBackground: darkThemeColors.primary,
-    ctaColor: darkThemeColors.textOnPrimary,
-    ctaHoverBackground: darkThemeColors.primaryDark,
-    headerBackground: darkThemeColors.backgroundSecondary + 'F2', // 95% opacity
-    headerBorder: `1px solid ${darkThemeColors.border}`,
-  }
-}));
 </script>
 
 <style>
@@ -137,8 +104,8 @@ body {
 }
 
 body.dark-mode {
-  background: #111827;
-  color: #f3f4f6;
+  background: var(--theme-background);
+  color: var(--theme-text);
 }
 
 /* Custom header actions styles */
@@ -219,62 +186,62 @@ h2 {
  
 /* Light mode colors */
 .base-header__logo-text {
-  color: #111827;
+  color: var(--theme-text);
 }
 
 .base-header__nav-link {
-  color: #374151;
+  color: var(--theme-text-light);
 }
 
 .base-header__nav-link:hover {
-  color: #512BD4;
+  color: var(--theme-primary);
 }
 
 .base-header__theme-toggle {
-  border-color: #D1D5DB;
-  color: #374151;
+  border-color: var(--theme-border);
+  color: var(--theme-text-light);
 }
 
 .base-header__theme-toggle:hover {
-  background: #F3F4F6;
-  color: #512BD4;
+  background: var(--theme-background-light);
+  color: var(--theme-primary);
 }
 
 /* GitHub button in purple */
 .base-header__cta {
-  background: #512BD4 !important;
-  color: white !important;
+  background: var(--theme-primary) !important;
+  color: var(--theme-text-inverse, var(--ntk-text-on-primary)) !important;
 }
 
 .base-header__cta:hover {
-  background: #3B1FA2 !important;
+  background: var(--theme-primary-dark) !important;
 }
 
 /* Dark mode colors */
 body.dark-mode .base-header--landing {
-  background: rgba(17, 24, 39, 0.95) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--theme-background) 95%, transparent) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-text) 10%, transparent);
 }
 
 body.dark-mode .base-header__logo-text {
-  color: #F3F4F6 !important;
+  color: var(--theme-text) !important;
 }
 
 body.dark-mode .base-header__nav-link {
-  color: #D1D5DB !important;
+  color: var(--theme-text-light) !important;
 }
 
 body.dark-mode .base-header__nav-link:hover {
-  color: #A78BFA !important;
+  color: var(--theme-primary-light) !important;
 }
 
 body.dark-mode .base-header__theme-toggle {
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  color: #D1D5DB !important;
+  border-color: color-mix(in srgb, var(--theme-text) 20%, transparent) !important;
+  color: var(--theme-text-light) !important;
 }
 
 body.dark-mode .base-header__theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #A78BFA !important;
+  background: color-mix(in srgb, var(--theme-text) 10%, transparent) !important;
+  color: var(--theme-primary-light) !important;
 }
 </style>

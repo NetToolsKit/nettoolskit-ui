@@ -585,7 +585,7 @@ export const notificationConfig: NotificationConfig = {
   
   // Appearance
   borderRadius: '8px',
-  shadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
+  shadow: 'var(--ntk-shadow-card-hover)',
   backdropBlur: '0px',
   minWidth: '320px',
   maxWidth: '480px',
@@ -598,7 +598,7 @@ export const notificationConfig: NotificationConfig = {
 export const popupConfig: PopupConfig = {
   // Overlay
   overlayOpacity: 0.5,
-  overlayColor: '#000000',
+  overlayColor: 'var(--ntk-text-primary)',
   overlayBlur: '4px',
   
   // Behavior
@@ -616,7 +616,7 @@ export const popupConfig: PopupConfig = {
   
   // Appearance
   borderRadius: '12px',
-  shadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+  shadow: 'var(--ntk-shadow-popup)',
   minWidth: '320px',
   maxWidth: '640px',
   maxHeight: '90vh',
@@ -672,7 +672,7 @@ export const toastConfig: ToastConfig = {
   minWidth: '300px',
   maxWidth: '420px',
   borderRadius: '8px',
-  shadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+  shadow: 'var(--ntk-shadow-popup)',
   padding: '12px 16px',
   
   // Behavior
@@ -705,7 +705,7 @@ export const snackbarConfig: SnackbarConfig = {
   minWidth: '320px',
   maxWidth: '640px',
   borderRadius: '4px',
-  shadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+  shadow: 'var(--ntk-shadow-card)',
   padding: '14px 16px',
   textAlign: 'left',
   
@@ -731,7 +731,7 @@ export const bannerConfig: BannerConfig = {
   
   // Appearance
   padding: '12px 16px',
-  shadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  shadow: 'var(--ntk-shadow-md)',
   borderWidth: '0 0 1px 0',
   
   // Behavior
@@ -769,12 +769,12 @@ export const alertConfig: AlertConfig = {
 export const loadingConfig: LoadingConfig = {
   // Overlay
   overlayOpacity: 0.6,
-  overlayColor: '#000000',
+  overlayColor: 'var(--ntk-text-primary)',
   overlayBlur: '4px',
   
   // Spinner
   spinnerSize: '48px',
-  spinnerColor: '#3b82f6',
+  spinnerColor: 'var(--semantic-info)',
   spinnerThickness: '4px',
   
   // Message
@@ -814,78 +814,78 @@ export interface NotificationStyles {
 
 export const lightNotificationStyles: NotificationStyles = {
   success: {
-    background: '#dcfce7',
-    color: '#16a34a',
-    borderColor: '#22c55e',
+    background: 'var(--semantic-success-bg)',
+    color: 'var(--semantic-success-text)',
+    borderColor: 'var(--semantic-success-border)',
     icon: 'check_circle',
   },
   warning: {
-    background: '#fef3c7',
-    color: '#d97706',
-    borderColor: '#f59e0b',
+    background: 'var(--semantic-warning-bg)',
+    color: 'var(--semantic-warning-text)',
+    borderColor: 'var(--semantic-warning-border)',
     icon: 'warning',
   },
   error: {
-    background: '#fee2e2',
-    color: '#dc2626',
-    borderColor: '#ef4444',
+    background: 'var(--semantic-error-bg)',
+    color: 'var(--semantic-error-text)',
+    borderColor: 'var(--semantic-error-border)',
     icon: 'error',
   },
   info: {
-    background: '#dbeafe',
-    color: '#2563eb',
-    borderColor: '#3b82f6',
+    background: 'var(--semantic-info-bg)',
+    color: 'var(--semantic-info-text)',
+    borderColor: 'var(--semantic-info-border)',
     icon: 'info',
   },
   loading: {
-    background: '#f1f5f9',
-    color: '#475569',
-    borderColor: '#cbd5e1',
+    background: 'var(--ntk-bg-secondary)',
+    color: 'var(--ntk-text-secondary)',
+    borderColor: 'var(--ntk-border-dark)',
     icon: 'hourglass_empty',
   },
   neutral: {
-    background: '#f8fafc',
-    color: '#64748b',
-    borderColor: '#e2e8f0',
+    background: 'var(--ntk-bg-tertiary)',
+    color: 'var(--ntk-text-secondary)',
+    borderColor: 'var(--ntk-border-color)',
     icon: 'notifications',
   },
 }
 
 export const darkNotificationStyles: NotificationStyles = {
   success: {
-    background: 'rgba(34, 197, 94, 0.2)',
-    color: '#22c55e',
-    borderColor: '#22c55e',
+    background: 'color-mix(in srgb, var(--semantic-success) 20%, transparent)',
+    color: 'var(--semantic-success)',
+    borderColor: 'var(--semantic-success-border)',
     icon: 'check_circle',
   },
   warning: {
-    background: 'rgba(245, 158, 11, 0.2)',
-    color: '#f59e0b',
-    borderColor: '#f59e0b',
+    background: 'color-mix(in srgb, var(--semantic-warning) 20%, transparent)',
+    color: 'var(--semantic-warning)',
+    borderColor: 'var(--semantic-warning-border)',
     icon: 'warning',
   },
   error: {
-    background: 'rgba(239, 68, 68, 0.2)',
-    color: '#ef4444',
-    borderColor: '#ef4444',
+    background: 'color-mix(in srgb, var(--semantic-error) 20%, transparent)',
+    color: 'var(--semantic-error)',
+    borderColor: 'var(--semantic-error-border)',
     icon: 'error',
   },
   info: {
-    background: 'rgba(59, 130, 246, 0.2)',
-    color: '#3b82f6',
-    borderColor: '#3b82f6',
+    background: 'color-mix(in srgb, var(--semantic-info) 20%, transparent)',
+    color: 'var(--semantic-info)',
+    borderColor: 'var(--semantic-info-border)',
     icon: 'info',
   },
   loading: {
-    background: 'rgba(100, 116, 139, 0.2)',
-    color: '#94a3b8',
-    borderColor: '#64748b',
+    background: 'color-mix(in srgb, var(--ntk-text-secondary) 20%, transparent)',
+    color: 'var(--ntk-text-muted)',
+    borderColor: 'var(--ntk-text-secondary)',
     icon: 'hourglass_empty',
   },
   neutral: {
-    background: 'rgba(148, 163, 184, 0.2)',
-    color: '#cbd5e1',
-    borderColor: '#64748b',
+    background: 'color-mix(in srgb, var(--ntk-text-muted) 20%, transparent)',
+    color: 'var(--ntk-border-dark)',
+    borderColor: 'var(--ntk-text-secondary)',
     icon: 'notifications',
   },
 }
