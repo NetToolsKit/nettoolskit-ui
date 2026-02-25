@@ -136,7 +136,7 @@ const textStyle = computed(() => ({
   font-weight: 700;
   border-radius: 8px;
   transition: transform 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--ntk-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .logo-content {
@@ -151,7 +151,7 @@ const textStyle = computed(() => ({
 
 .logo-tagline {
   font-size: 0.65em;
-  color: #9e9e9e;
+  color: var(--ntk-text-muted, #9e9e9e);
   font-weight: 400;
 }
 

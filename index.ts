@@ -56,11 +56,19 @@ export { default as NtkHero } from './src/components/layout/NtkHero.vue'
 export { default as NtkLandingHeader } from './src/components/layout/NtkLandingHeader.vue'
 export { default as NtkMobileDrawer } from './src/components/layout/NtkMobileDrawer.vue'
 export { default as NtkCTASection } from './src/components/layout/NtkCTASection.vue'
+export { default as NtkStatsSection } from './src/components/layout/NtkStatsSection.vue'
+export { default as NtkServiceGrid } from './src/components/layout/NtkServiceGrid.vue'
+export { default as NtkTechStack } from './src/components/layout/NtkTechStack.vue'
+export { default as NtkContactSection } from './src/components/layout/NtkContactSection.vue'
+export { default as NtkLandingComposer } from './src/components/layout/NtkLandingComposer.vue'
+export { default as NtkAppShell } from './src/components/layout/NtkAppShell.vue'
 export { default as BaseHeader } from './src/components/layout/BaseHeader.vue'
 export { default as BaseSidebar } from './src/components/layout/BaseSidebar.vue'
 export { default as BaseFooter } from './src/components/layout/BaseFooter.vue'
 export { default as BaseSection } from './src/components/layout/BaseSection.vue'
 export { default as BaseHero } from './src/components/layout/BaseHero.vue'
+export * from './src/components/layout/app-shell.types'
+export * from './src/components/layout/app-shell.config'
 
 // ============================================================================
 // COMPONENTS - UI
@@ -150,6 +158,7 @@ export * from './src/config/theme/theme.plugin'
 export * from './src/config/brand/identity.config'
 export * from './src/config/brand/navigation.config'
 export * from './src/config/brand/content.config'
+export * from './src/config/landing/landing-page.config'
 
 // ============================================================================
 // CONFIG - Colors

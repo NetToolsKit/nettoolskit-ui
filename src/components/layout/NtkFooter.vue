@@ -324,7 +324,7 @@ const footerClasses = computed(() => ({
     transition: all var(--transition-fast);
 
     .ntk-footer--dark & {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: var(--color-footer-border, rgba(255, 255, 255, 0.1));
       color: var(--color-footer-text);
 
       &:hover {

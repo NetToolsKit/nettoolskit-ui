@@ -1,701 +1,43 @@
 <template>
   <div id="app">
-    <!-- Header -->
-    <header class="header">
-      <div class="container">
-        <div class="logo">
-          <img src="./assets/nuget-icon.png" alt="NTK">
-          <span class="logo-text">NetToolsKit UI</span>
-        </div>
-        <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn" @click="openDrawer" aria-label="Open menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <nav class="nav">
-          <a href="#features">Features</a>
-          <a href="#components">Components</a>
-          <a href="#themes">Themes</a>
-          <a href="#installation">Installation</a>
-          <button @click="toggleTheme" class="theme-toggle" title="Toggle dark mode">
-            <svg v-show="!isDark" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/>
-              <line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/>
-              <line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <svg v-show="isDark" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-          </button>
-          <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue" class="btn btn-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            GitHub
-          </a>
-        </nav>
-      </div>
-    </header>
+    <LandingHeaderSection
+      :is-dark="isDark"
+      :drawer-open="drawerOpen"
+      @toggle-theme="toggleTheme"
+      @open-drawer="openDrawer"
+      @close-drawer="closeDrawer"
+    />
 
-    <!-- Mobile Drawer -->
-    <div class="mobile-drawer" :class="{ open: drawerOpen }">
-      <div class="drawer-header">
-        <button class="drawer-close-btn" @click="closeDrawer">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="13 17 18 12 13 7"/>
-            <polyline points="6 17 11 12 6 7"/>
-          </svg>
-          <span>Comprimir</span>
-        </button>
-      </div>
-      <nav class="drawer-nav">
-        <a href="#features" class="drawer-link" @click="closeDrawer">Features</a>
-        <a href="#components" class="drawer-link" @click="closeDrawer">Components</a>
-        <a href="#themes" class="drawer-link" @click="closeDrawer">Themes</a>
-        <a href="#installation" class="drawer-link" @click="closeDrawer">Installation</a>
-        <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue" class="btn btn-primary drawer-cta">GitHub</a>
-      </nav>
-    </div>
-    <div class="drawer-overlay" :class="{ open: drawerOpen }" @click="closeDrawer"></div>
+    <LandingHeroSection />
+    <LandingFeaturesSection />
+    <LandingShowcaseSection :tabs="tabs" :active-tab="activeTab" @update:active-tab="activeTab = $event" />
+    <LandingDeveloperSection />
+    <LandingDashboardSection />
+    <LandingThemesSection />
+    <LandingInstallationSection />
+    <LandingFooterSection />
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <span class="hero-badge">Vue 3 + Quasar</span>
-          <h1>Build Consistent UIs with <span>NetToolsKit</span></h1>
-          <p>A comprehensive component library with theme system, composables, and design tokens for building enterprise Vue applications.</p>
-          <div class="hero-actions">
-            <a href="#installation" class="btn btn-primary">Get Started</a>
-            <a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue" class="btn btn-secondary">View on GitHub</a>
-          </div>
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-value">22+</div>
-              <div class="stat-label">Components</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">11</div>
-              <div class="stat-label">Composables</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">3</div>
-              <div class="stat-label">Themes</div>
-            </div>
-          </div>
-        </div>
-        <div class="hero-visual">
-          <img src="./assets/hero-visual.png" alt="Vue Component Library - Floating UI Cards">
-        </div>
-      </div>
-    </section>
-
-    <!-- Features -->
-    <section class="features" id="features">
-      <div class="container">
-        <div class="section-header">
-          <h2>Why NetToolsKit UI?</h2>
-          <p>Built for developers who need consistent, accessible, and themeable components.</p>
-        </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
-            </div>
-            <h3>Theme System</h3>
-            <p>Runtime theme switching with CSS variables. Includes Dark, Purple, and Monochrome themes out of the box.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M3 9h18M9 21V9"/>
-              </svg>
-            </div>
-            <h3>Form Components</h3>
-            <p>Complete form toolkit with BaseInput, BaseSelect, BaseMultiSelect, BaseTextarea, and date/time pickers.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-              </svg>
-            </div>
-            <h3>Layout Components</h3>
-            <p>Flexible layouts with BaseHeader, BaseSidebar, BaseHero, BaseSection, and BaseFooter components.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
-            <h3>Composables</h3>
-            <p>Reusable logic with useTheme, useNotification, useDialog, useFormRules, useDebounce, and more.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
-            <h3>Accessibility</h3>
-            <p>WCAG compliant components with keyboard navigation, ARIA labels, and focus management.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
-            </div>
-            <h3>Design Tokens</h3>
-            <p>Consistent spacing, shadows, and transitions defined as CSS variables and SCSS mixins.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Components Showcase -->
-    <section class="showcase" id="components">
-      <div class="container">
-        <div class="section-header">
-          <h2>Component Library</h2>
-          <p>22+ production-ready components organized by category.</p>
-        </div>
-        <div class="component-tabs">
-          <button 
-            v-for="tab in tabs" 
-            :key="tab.id"
-            class="tab-btn" 
-            :class="{ active: activeTab === tab.id }"
-            @click="activeTab = tab.id"
-          >
-            {{ tab.label }}
-          </button>
-        </div>
-        
-        <!-- Form Components -->
-        <div v-show="activeTab === 'form'" class="component-grid">
-          <div class="component-item">
-            <code>BaseInput</code>
-            <p>Text input with validation</p>
-          </div>
-          <div class="component-item">
-            <code>BaseSelect</code>
-            <p>Single select dropdown</p>
-          </div>
-          <div class="component-item">
-            <code>BaseMultiSelect</code>
-            <p>Multi-select with chips</p>
-          </div>
-          <div class="component-item">
-            <code>BaseTextarea</code>
-            <p>Multiline text input</p>
-          </div>
-          <div class="component-item">
-            <code>BaseDatePicker</code>
-            <p>Date selection</p>
-          </div>
-          <div class="component-item">
-            <code>BaseTimePicker</code>
-            <p>Time selection</p>
-          </div>
-        </div>
-        
-        <!-- Layout Components -->
-        <div v-show="activeTab === 'layout'" class="component-grid">
-          <div class="component-item">
-            <code>BaseHeader</code>
-            <p>Application header</p>
-          </div>
-          <div class="component-item">
-            <code>BaseSidebar</code>
-            <p>Navigation sidebar</p>
-          </div>
-          <div class="component-item">
-            <code>BaseFooter</code>
-            <p>Application footer</p>
-          </div>
-          <div class="component-item">
-            <code>BaseHero</code>
-            <p>Landing page hero section</p>
-          </div>
-          <div class="component-item">
-            <code>BaseSection</code>
-            <p>Content section wrapper</p>
-          </div>
-        </div>
-        
-        <!-- UI Components -->
-        <div v-show="activeTab === 'ui'" class="component-grid">
-          <div class="component-item">
-            <code>BaseCard</code>
-            <p>Content container</p>
-          </div>
-          <div class="component-item">
-            <code>BaseButton</code>
-            <p>Action button</p>
-          </div>
-          <div class="component-item">
-            <code>BaseChip</code>
-            <p>Tag/label chip</p>
-          </div>
-          <div class="component-item">
-            <code>BaseLogo</code>
-            <p>Brand logo display</p>
-          </div>
-          <div class="component-item">
-            <code>MetricCard</code>
-            <p>Dashboard metrics</p>
-          </div>
-          <div class="component-item">
-            <code>InfoCard</code>
-            <p>Information display</p>
-          </div>
-          <div class="component-item">
-            <code>BaseFeatureCard</code>
-            <p>Feature showcase</p>
-          </div>
-          <div class="component-item">
-            <code>BasePricingCard</code>
-            <p>Pricing plans</p>
-          </div>
-          <div class="component-item">
-            <code>BaseCreditCard</code>
-            <p>Payment card display</p>
-          </div>
-          <div class="component-item">
-            <code>BaseSteps</code>
-            <p>Step indicator</p>
-          </div>
-          <div class="component-item">
-            <code>SectionHeader</code>
-            <p>Section title</p>
-          </div>
-        </div>
-        
-        <!-- Composables -->
-        <div v-show="activeTab === 'composables'" class="component-grid">
-          <div class="component-item">
-            <code>useTheme</code>
-            <p>Theme management</p>
-          </div>
-          <div class="component-item">
-            <code>useNotification</code>
-            <p>Toast notifications</p>
-          </div>
-          <div class="component-item">
-            <code>useDialog</code>
-            <p>Modal state management</p>
-          </div>
-          <div class="component-item">
-            <code>useFormRules</code>
-            <p>Form validation rules</p>
-          </div>
-          <div class="component-item">
-            <code>useResponsive</code>
-            <p>Breakpoint detection</p>
-          </div>
-          <div class="component-item">
-            <code>useDebounce</code>
-            <p>Debounced values</p>
-          </div>
-          <div class="component-item">
-            <code>useAsync</code>
-            <p>Async operation handling</p>
-          </div>
-          <div class="component-item">
-            <code>useFilters</code>
-            <p>Data filtering</p>
-          </div>
-          <div class="component-item">
-            <code>useTableColumns</code>
-            <p>Table column config</p>
-          </div>
-          <div class="component-item">
-            <code>useBaseField</code>
-            <p>Form field base</p>
-          </div>
-          <div class="component-item">
-            <code>useDialogActions</code>
-            <p>Dialog action handlers</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Code Example -->
-    <section class="code-section">
-      <div class="container">
-        <div class="code-container">
-          <div>
-            <div class="section-header" style="text-align: left; margin-bottom: var(--spacing-xl);">
-              <h2>Simple to Use</h2>
-              <p>Import components and composables with a single entry point. Full TypeScript support included.</p>
-            </div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--spacing-md);">
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
-                <span>Single entry point export for all components</span>
-              </li>
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
-                <span>Full TypeScript definitions included</span>
-              </li>
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
-                <span>Quasar-first CSS with design tokens</span>
-              </li>
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
-                <span>Runtime theme switching</span>
-              </li>
-            </ul>
-          </div>
-          <div class="code-block">
-            <div class="code-header">
-              <span class="code-dot red"></span>
-              <span class="code-dot yellow"></span>
-              <span class="code-dot green"></span>
-            </div>
-            <div class="code-content">
-<pre><span class="comment">// Import components</span>
-<span class="keyword">import</span> { 
-  <span class="component">BaseInput</span>,
-  <span class="component">BaseSelect</span>,
-  <span class="component">MetricCard</span>
-} <span class="keyword">from</span> <span class="string">'@nettoolskit/ui-vue'</span>
-
-<span class="comment">// Import composables</span>
-<span class="keyword">import</span> { 
-  <span class="component">useTheme</span>,
-  <span class="component">useNotification</span>
-} <span class="keyword">from</span> <span class="string">'@nettoolskit/ui-vue'</span>
-
-<span class="comment">// Use in your component</span>
-<span class="keyword">const</span> { currentTheme, setTheme } = <span class="component">useTheme</span>()
-<span class="keyword">const</span> { notify } = <span class="component">useNotification</span>()
-
-<span class="component">setTheme</span>(<span class="string">'dark'</span>)
-<span class="component">notify</span>(<span class="string">'Theme changed!'</span>, <span class="string">'success'</span>)</pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Form Components Visual -->
-    <section class="form-visual-section">
-      <div class="container">
-        <div class="form-visual-container">
-          <div class="form-visual-image">
-            <img src="./assets/form-components.png" alt="Form Components">
-          </div>
-          <div class="form-visual-content">
-            <h2>Complete Form Toolkit</h2>
-            <p>Everything you need to build complex forms with validation, accessibility, and consistent styling.</p>
-            <div class="form-features">
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </div>
-                <span>Built-in validation with useFormRules</span>
-              </div>
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </div>
-                <span>Date and time pickers with localization</span>
-              </div>
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </div>
-                <span>Multi-select with chip display</span>
-              </div>
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </div>
-                <span>Consistent error states and messages</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Composables Visual -->
-    <section class="composables-visual-section">
-      <div class="container">
-        <div class="composables-visual-container">
-          <div class="composables-visual-content">
-            <h2>Powerful Composables</h2>
-            <p>Reusable Vue 3 composition functions that encapsulate common logic and state management.</p>
-            <div class="composables-list">
-              <div class="composable-item">
-                <div class="composable-header">
-                  <span class="composable-icon">🎨</span>
-                  <code>useTheme</code>
-                </div>
-                <p>Runtime theme switching</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header">
-                  <span class="composable-icon">🔔</span>
-                  <code>useNotification</code>
-                </div>
-                <p>Toast notifications</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header">
-                  <span class="composable-icon">💬</span>
-                  <code>useDialog</code>
-                </div>
-                <p>Confirmation dialogs</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header">
-                  <span class="composable-icon">✅</span>
-                  <code>useFormRules</code>
-                </div>
-                <p>Validation rules</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header">
-                  <span class="composable-icon">⏱️</span>
-                  <code>useDebounce</code>
-                </div>
-                <p>Debounced values</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header">
-                  <span class="composable-icon">⚡</span>
-                  <code>useAsync</code>
-                </div>
-                <p>Async state handling</p>
-              </div>
-            </div>
-          </div>
-          <div class="composables-visual-image">
-            <img src="./assets/composables-visual.png" alt="Composables Architecture">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Dashboard Preview -->
-    <section class="dashboard-preview">
-      <div class="container">
-        <div class="section-header">
-          <h2>Dashboard Preview</h2>
-          <p>See how NetToolsKit components look in a real dashboard application.</p>
-        </div>
-        <div class="dashboard-simple">
-          <div class="metrics-grid-simple">
-            <div class="metric-card-simple">
-              <div class="metric-icon">👥</div>
-              <div class="metric-info">
-                <div class="metric-label">Total Users</div>
-                <div class="metric-value">12,847</div>
-              </div>
-              <div class="metric-trend positive">↑ 12.5%</div>
-            </div>
-            <div class="metric-card-simple">
-              <div class="metric-icon">💰</div>
-              <div class="metric-info">
-                <div class="metric-label">Revenue</div>
-                <div class="metric-value">$48,290</div>
-              </div>
-              <div class="metric-trend positive">↑ 8.2%</div>
-            </div>
-            <div class="metric-card-simple">
-              <div class="metric-icon">📦</div>
-              <div class="metric-info">
-                <div class="metric-label">Orders</div>
-                <div class="metric-value">1,429</div>
-              </div>
-              <div class="metric-trend negative">↓ 3.1%</div>
-            </div>
-            <div class="metric-card-simple">
-              <div class="metric-icon">📈</div>
-              <div class="metric-info">
-                <div class="metric-label">Conversion</div>
-                <div class="metric-value">3.24%</div>
-              </div>
-              <div class="metric-trend positive">↑ 1.8%</div>
-            </div>
-          </div>
-          <div class="chart-simple">
-            <div class="chart-header">
-              <span class="chart-title">Monthly Revenue</span>
-              <span class="chart-period">Last 12 months</span>
-            </div>
-            <div class="chart-bars-simple">
-              <div class="chart-bar-simple" style="height: 60%"><span>Jan</span></div>
-              <div class="chart-bar-simple" style="height: 80%"><span>Feb</span></div>
-              <div class="chart-bar-simple" style="height: 45%"><span>Mar</span></div>
-              <div class="chart-bar-simple" style="height: 90%"><span>Apr</span></div>
-              <div class="chart-bar-simple" style="height: 70%"><span>May</span></div>
-              <div class="chart-bar-simple" style="height: 85%"><span>Jun</span></div>
-              <div class="chart-bar-simple" style="height: 55%"><span>Jul</span></div>
-              <div class="chart-bar-simple" style="height: 75%"><span>Aug</span></div>
-              <div class="chart-bar-simple" style="height: 65%"><span>Sep</span></div>
-              <div class="chart-bar-simple" style="height: 95%"><span>Oct</span></div>
-              <div class="chart-bar-simple" style="height: 50%"><span>Nov</span></div>
-              <div class="chart-bar-simple" style="height: 88%"><span>Dec</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Themes -->
-    <section class="themes" id="themes">
-      <div class="container">
-        <div class="section-header">
-          <h2>Built-in Themes</h2>
-          <p>Three production-ready themes with runtime switching support.</p>
-        </div>
-        <div class="theme-preview-image">
-          <img src="./assets/theme-preview.png" alt="Theme Preview - Dark, Purple, Monochrome">
-        </div>
-        <div class="theme-grid">
-          <div class="theme-card">
-            <div class="theme-preview dark-theme">
-              <img src="./assets/nuget-icon.png" alt="Dark Theme" style="width: 64px; height: 64px;">
-            </div>
-            <div class="theme-info">
-              <h3>Dark</h3>
-              <p>Modern dark theme with deep backgrounds and vibrant accents</p>
-            </div>
-          </div>
-          <div class="theme-card">
-            <div class="theme-preview purple-theme">
-              <img src="./assets/positive-icon.png" alt="Purple Theme" style="width: 64px; height: 64px;">
-            </div>
-            <div class="theme-info">
-              <h3>Purple</h3>
-              <p>Vibrant purple theme with accessible contrast ratios</p>
-            </div>
-          </div>
-          <div class="theme-card">
-            <div class="theme-preview monochrome-theme">
-              <img src="./assets/monochrome-icon.png" alt="Monochrome Theme" style="width: 64px; height: 64px;">
-            </div>
-            <div class="theme-info">
-              <h3>Monochrome</h3>
-              <p>Clean grayscale theme for minimal interfaces</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Installation -->
-    <section class="installation" id="installation">
-      <div class="container">
-        <div class="section-header">
-          <h2>Get Started</h2>
-          <p>Add NetToolsKit UI to your project in minutes.</p>
-        </div>
-        <div class="install-steps">
-          <div class="install-step">
-            <div class="step-number">1</div>
-            <h3>Add as Submodule</h3>
-            <code>git submodule add https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git src/shared/ui</code>
-          </div>
-          <div class="install-step">
-            <div class="step-number">2</div>
-            <h3>Import Styles</h3>
-            <code>@import '@/shared/ui/styles/design-system.scss';</code>
-          </div>
-          <div class="install-step">
-            <div class="step-number">3</div>
-            <h3>Use Components</h3>
-            <code>import { BaseInput } from '@/shared/ui';</code>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <div class="footer-logo">
-              <img src="./assets/nuget-icon.png" alt="NTK">
-              <span>NetToolsKit UI Vue</span>
-            </div>
-            <p class="footer-description">A comprehensive Vue 3 + Quasar component library with theme system, composables, and design tokens for building consistent enterprise applications.</p>
-            <div class="footer-social">
-              <a href="https://github.com/ThiagoGuislotti" target="_blank" title="GitHub">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                </svg>
-              </a>
-              <a href="https://linkedin.com/in/thiagoguislotti" target="_blank" title="LinkedIn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-          
-          <div class="footer-links-grid">
-            <div class="footer-column">
-              <h4>Resources</h4>
-              <ul class="footer-links-list">
-                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/README.md">Documentation</a></li>
-                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/samples/DemoPage.vue">Demo Page</a></li>
-                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/components">Components</a></li>
-                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/composables">Composables</a></li>
-              </ul>
-            </div>
-
-            <div class="footer-column">
-              <h4>Related</h4>
-              <ul class="footer-links-list">
-                <li><a href="https://github.com/ThiagoGuislotti/copilot-instructions">Copilot Instructions</a></li>
-                <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-cli">NTK CLI (Rust)</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div class="footer-bottom">
-          <p>&copy; 2024 NetToolsKit. Built with Vue 3 + Quasar.</p>
-          <p>Created by <a href="https://github.com/ThiagoGuislotti">Thiago Guislotti</a></p>
-        </div>
-      </div>
-    </footer>
+    <a
+      href="/?cms=1"
+      class="cms-mode-btn"
+      aria-label="Open CMS mode"
+    >
+      Test CMS
+    </a>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import LandingDashboardSection from './components/LandingDashboardSection.vue'
+import LandingDeveloperSection from './components/LandingDeveloperSection.vue'
+import LandingFeaturesSection from './components/LandingFeaturesSection.vue'
+import LandingFooterSection from './components/LandingFooterSection.vue'
+import LandingHeaderSection from './components/LandingHeaderSection.vue'
+import LandingHeroSection from './components/LandingHeroSection.vue'
+import LandingInstallationSection from './components/LandingInstallationSection.vue'
+import LandingShowcaseSection from './components/LandingShowcaseSection.vue'
+import LandingThemesSection from './components/LandingThemesSection.vue'
 
 const isDark = ref(false)
 const drawerOpen = ref(false)
@@ -705,7 +47,7 @@ const tabs = [
   { id: 'form', label: 'Form' },
   { id: 'layout', label: 'Layout' },
   { id: 'ui', label: 'UI' },
-  { id: 'composables', label: 'Composables' }
+  { id: 'composables', label: 'Composables' },
 ]
 
 const toggleTheme = () => {
@@ -730,7 +72,7 @@ onMounted(() => {
   }
 })
 
-watch(isDark, (newValue) => {
+watch(isDark, newValue => {
   if (newValue) {
     document.body.classList.add('dark-mode')
   } else {
@@ -2407,4 +1749,32 @@ body.dark-mode .drawer-link:hover {
   opacity: 1;
   visibility: visible;
 }
+
+.cms-mode-btn {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 0.875rem;
+  border-radius: 999px;
+  background: var(--ntk-purple);
+  color: var(--white) !important;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: var(--shadow-medium);
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.cms-mode-btn:hover {
+  background: var(--ntk-purple-dark);
+  color: var(--white) !important;
+  transform: translateY(-1px);
+}
+
 </style>
+

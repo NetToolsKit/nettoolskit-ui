@@ -191,7 +191,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: 64,
   sticky: false,
   shadow: 'sm',
-  background: '#ffffff',
+  background: 'var(--ntk-bg-card, #ffffff)',
   maxWidth: 1200,
   paddingX: '20px',
   mobileBreakpoint: 768,
@@ -218,9 +218,9 @@ const logoLink = computed(() => props.logoLink || appUrl.value || '/');
 // Computed styles
 const shadowMap = {
   none: 'none',
-  sm: '0 1px 3px rgba(0, 0, 0, 0.06)',
-  md: '0 2px 8px rgba(0, 0, 0, 0.08)',
-  lg: '0 4px 12px rgba(0, 0, 0, 0.12)',
+  sm: 'var(--ntk-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06))',
+  md: 'var(--ntk-shadow-md, 0 2px 8px rgba(0, 0, 0, 0.08))',
+  lg: 'var(--ntk-shadow-lg, 0 4px 12px rgba(0, 0, 0, 0.12))',
 };
 
 const headerClasses = computed(() => ({
@@ -265,7 +265,7 @@ function handleCtaClick() {
   height: var(--header-height);
   background: var(--header-bg);
   box-shadow: var(--header-shadow);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--ntk-border-subtle, rgba(0, 0, 0, 0.06));
   z-index: 100;
 
   &.header-sticky {
@@ -299,14 +299,14 @@ function handleCtaClick() {
 }
 
 .header-nav-item {
-  color: #424242;
+  color: var(--ntk-text-secondary, #424242);
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #212121;
+    color: var(--ntk-text-primary, #212121);
     text-decoration: none;
   }
 }
@@ -343,23 +343,23 @@ function handleCtaClick() {
   }
 
   &.cta-secondary {
-    background: #f5f5f5;
-    color: #424242;
+    background: var(--ntk-bg-secondary, #f5f5f5);
+    color: var(--ntk-text-secondary, #424242);
 
     &:hover {
-      background: #e0e0e0;
+      background: var(--ntk-border-color, #e0e0e0);
       text-decoration: none;
     }
   }
 
   &.cta-outline {
     background: transparent;
-    color: #424242;
-    border: 1px solid #e0e0e0;
+    color: var(--ntk-text-secondary, #424242);
+    border: 1px solid var(--ntk-border-color, #e0e0e0);
 
     &:hover {
-      background: #f5f5f5;
-      border-color: #bdbdbd;
+      background: var(--ntk-bg-secondary, #f5f5f5);
+      border-color: var(--ntk-border-dark, #bdbdbd);
       text-decoration: none;
     }
   }
@@ -374,13 +374,13 @@ function handleCtaClick() {
   background: none;
   border: none;
   cursor: pointer;
-  color: #424242;
+  color: var(--ntk-text-secondary, #424242);
   border-radius: 8px;
   transition: all 0.2s ease;
   text-decoration: none;
 
   &:hover {
-    background: #f5f5f5;
+    background: var(--ntk-bg-secondary, #f5f5f5);
     text-decoration: none;
   }
 
