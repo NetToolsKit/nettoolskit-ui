@@ -1,7 +1,7 @@
 import { CMS_WHITE_LABEL_STORAGE_KEY, createDefaultWhiteLabelSettings } from './white-label.config'
 import type { CmsPageSettings, CmsWhiteLabelSettings } from './white-label.types'
 import { semanticColors } from '../../src/config/colors/semantic.config'
-import type { AppShellTheme } from '../../src/components/layout/app-shell.types'
+import type { AppShellGroup, AppShellItem, AppShellTheme } from '../../src/components/layout/app-shell.types'
 import { APP_SHELL_DEFAULT_THEME } from '../../src/components/layout/app-shell.config'
 import { resolveAppShellTheme } from '../../src/components/layout/app-shell.theme'
 import {
@@ -10,6 +10,8 @@ import {
   isCmsThemeBasePresetId,
   isCmsThemePresetId,
 } from './theme-presets'
+
+const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'pages', 'blocks', 'media', 'users'])
 
 /**
  * Provides persistence and normalization helpers for the CMS white-label settings payload.
@@ -93,6 +95,118 @@ function buildThemePresetsWithOverrides(
   }))
 }
 
+function toTitleCaseFromId(value: string): string {
+  const normalized = value
+    .trim()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (!normalized) {
+    return 'Group'
+  }
+
+  return normalized
+    .split(' ')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellItem[] {
+  const source = Array.isArray(items) ? items : defaults
+  const itemMap = new Map<string, AppShellItem>()
+
+  for (const rawItem of source) {
+    if (!rawItem || typeof rawItem !== 'object') {
+      continue
+    }
+
+    const item = rawItem as Partial<AppShellItem>
+    const id = String(item.id ?? '').trim()
+    if (!id || LEGACY_CMS_ITEM_IDS.has(id)) {
+      continue
+    }
+
+    const fallback = defaults.find(defaultItem => defaultItem.id === id)
+    const group = String(item.group ?? fallback?.group ?? '').trim()
+    const label = String(item.label ?? fallback?.label ?? '').trim()
+    const icon = String(item.icon ?? fallback?.icon ?? '').trim()
+    if (!group || !label || !icon) {
+      continue
+    }
+
+    itemMap.set(id, {
+      id,
+      group,
+      label,
+      icon,
+      caption: typeof item.caption === 'string' ? item.caption : fallback?.caption,
+      description: typeof item.description === 'string' ? item.description : fallback?.description,
+      badge: item.badge ?? fallback?.badge,
+      badgeColor: typeof item.badgeColor === 'string' ? item.badgeColor : fallback?.badgeColor,
+      badgeTextColor: typeof item.badgeTextColor === 'string' ? item.badgeTextColor : fallback?.badgeTextColor,
+    })
+  }
+
+  const settingsDefaultItem = defaults.find(item => item.id === 'settings')
+  if (settingsDefaultItem && !itemMap.has(settingsDefaultItem.id)) {
+    itemMap.set(settingsDefaultItem.id, cloneValue(settingsDefaultItem))
+  }
+
+  const normalizedItems = Array.from(itemMap.values())
+  return normalizedItems.length > 0 ? normalizedItems : cloneValue(defaults)
+}
+
+function normalizeNavGroups(
+  groups: unknown,
+  defaults: AppShellGroup[],
+  items: AppShellItem[]
+): AppShellGroup[] {
+  const source = Array.isArray(groups) ? groups : defaults
+  const usedGroupIds = new Set(
+    items
+      .map(item => String(item.group ?? '').trim())
+      .filter(groupId => groupId.length > 0)
+  )
+
+  const normalizedGroups: AppShellGroup[] = []
+  const seenGroupIds = new Set<string>()
+
+  for (const rawGroup of source) {
+    if (!rawGroup || typeof rawGroup !== 'object') {
+      continue
+    }
+
+    const group = rawGroup as Partial<AppShellGroup>
+    const id = String(group.id ?? '').trim()
+    if (!id || !usedGroupIds.has(id) || seenGroupIds.has(id)) {
+      continue
+    }
+
+    normalizedGroups.push({
+      id,
+      label: String(group.label ?? '').trim() || toTitleCaseFromId(id),
+    })
+    seenGroupIds.add(id)
+  }
+
+  for (const groupId of usedGroupIds) {
+    if (seenGroupIds.has(groupId)) {
+      continue
+    }
+
+    normalizedGroups.push({
+      id: groupId,
+      label: defaults.find(group => group.id === groupId)?.label ?? toTitleCaseFromId(groupId),
+    })
+    seenGroupIds.add(groupId)
+  }
+
+  return normalizedGroups.length > 0
+    ? normalizedGroups
+    : cloneValue(defaults).filter(group => usedGroupIds.has(group.id))
+}
+
 function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): CmsPageSettings[] {
   if (!Array.isArray(pages)) {
     return cloneValue(defaults)
@@ -149,6 +263,8 @@ export function normalizeCmsWhiteLabelSettings(
     ...defaults.theme,
     ...(parsed.theme ?? {}),
   })
+  const normalizedItems = normalizeMenuItems(parsed.items, defaults.items)
+  const normalizedNavGroups = normalizeNavGroups(parsed.navGroups, defaults.navGroups, normalizedItems)
 
   const merged: CmsWhiteLabelSettings = {
     branding: {
@@ -167,8 +283,8 @@ export function normalizeCmsWhiteLabelSettings(
     themePresetId: defaults.themePresetId,
     themePresetOverrides,
     theme: mergedTheme,
-    navGroups: parsed.navGroups ?? cloneValue(defaults.navGroups),
-    items: parsed.items ?? cloneValue(defaults.items),
+    navGroups: normalizedNavGroups,
+    items: normalizedItems,
     toolbarActions: parsed.toolbarActions ?? cloneValue(defaults.toolbarActions),
   }
 

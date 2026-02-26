@@ -54,6 +54,32 @@ describe('white-label.storage', () => {
     expect(normalized.theme.notificationBadgeColor).toBe('#123456')
   })
 
+  it('removes legacy CMS sidebar modules while keeping settings and custom modules', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      navGroups: [
+        { id: 'core', label: 'Core' },
+        { id: 'content', label: 'Content' },
+        { id: 'configuration', label: 'Configuration' },
+        { id: 'custom', label: 'Custom' },
+      ],
+      items: [
+        { id: 'dashboard', group: 'core', label: 'Dashboard', icon: 'space_dashboard' },
+        { id: 'pages', group: 'content', label: 'Pages', icon: 'description' },
+        { id: 'settings', group: 'configuration', label: 'Settings', icon: 'settings' },
+        { id: 'tenant-report', group: 'custom', label: 'Tenant report', icon: 'analytics' },
+      ],
+    })
+
+    expect(normalized.items.some(item => item.id === 'dashboard')).toBe(false)
+    expect(normalized.items.some(item => item.id === 'pages')).toBe(false)
+    expect(normalized.items.some(item => item.id === 'settings')).toBe(true)
+    expect(normalized.items.some(item => item.id === 'tenant-report')).toBe(true)
+    expect(normalized.navGroups.some(group => group.id === 'core')).toBe(false)
+    expect(normalized.navGroups.some(group => group.id === 'content')).toBe(false)
+    expect(normalized.navGroups.some(group => group.id === 'configuration')).toBe(true)
+    expect(normalized.navGroups.some(group => group.id === 'custom')).toBe(true)
+  })
+
   it('normalizes malformed pages payload into safe defaults', () => {
     const malformedPayload = {
       pages: [

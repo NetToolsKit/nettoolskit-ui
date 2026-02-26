@@ -7,55 +7,13 @@ import type {
 } from '../../src/components/layout/app-shell.types'
 
 const groups: AppShellGroup[] = [
-  { id: 'core', label: 'Core' },
-  { id: 'content', label: 'Content' },
-  { id: 'system', label: 'System' },
+  { id: 'configuration', label: 'Configuration' },
 ]
 
 const items: AppShellItem[] = [
   {
-    id: 'dashboard',
-    group: 'core',
-    label: 'Dashboard',
-    icon: 'space_dashboard',
-    caption: 'Overview',
-    description: 'Operational summary for the admin area.',
-  },
-  {
-    id: 'pages',
-    group: 'content',
-    label: 'Pages',
-    icon: 'description',
-    caption: 'Landing pages',
-    description: 'Landing pages catalog and publication status.',
-  },
-  {
-    id: 'blocks',
-    group: 'content',
-    label: 'Blocks',
-    icon: 'widgets',
-    caption: 'Components',
-    description: 'Reusable block library for page composition.',
-  },
-  {
-    id: 'media',
-    group: 'content',
-    label: 'Media',
-    icon: 'perm_media',
-    caption: 'Assets',
-    description: 'Image and support file library.',
-  },
-  {
-    id: 'users',
-    group: 'system',
-    label: 'Users',
-    icon: 'group',
-    caption: 'Access',
-    description: 'Profile, roles and permissions management.',
-  },
-  {
     id: 'settings',
-    group: 'system',
+    group: 'configuration',
     label: 'Settings',
     icon: 'settings',
     caption: 'White-label',
@@ -99,7 +57,7 @@ export function createCmsShellConfig(): AppShellConfig {
     navGroups: groups,
     items,
     toolbarActions,
-    activeItem: 'dashboard',
+    activeItem: 'settings',
     searchPlaceholder: 'Search module',
   })
 }
