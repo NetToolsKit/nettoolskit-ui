@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import LandingDashboardSection from './components/LandingDashboardSection.vue'
 import LandingDeveloperSection from './components/LandingDeveloperSection.vue'
 import LandingFeaturesSection from './components/LandingFeaturesSection.vue'
@@ -42,6 +42,40 @@ import LandingThemesSection from './components/LandingThemesSection.vue'
 const isDark = ref(false)
 const drawerOpen = ref(false)
 const activeTab = ref('form')
+const isScrolled = ref(false)
+
+interface LandingAnimationBlueprint {
+  selector: string
+  type: 'fade-up' | 'fade-right' | 'fade-left' | 'zoom-in'
+  delay?: number
+  stagger?: number
+  once?: boolean
+}
+
+const landingAnimationBlueprints: LandingAnimationBlueprint[] = [
+  { selector: '.hero-content', type: 'fade-right' },
+  { selector: '.hero-visual', type: 'fade-left', delay: 120 },
+  { selector: '.stats .stat', type: 'fade-up', delay: 150, stagger: 90 },
+  { selector: '.section-header', type: 'fade-up', delay: 40 },
+  { selector: '.feature-card', type: 'fade-up', delay: 80, stagger: 70 },
+  { selector: '.component-tabs', type: 'fade-up', delay: 80 },
+  { selector: '.component-grid .component-item', type: 'zoom-in', delay: 100, stagger: 35 },
+  { selector: '.code-container > div:first-child', type: 'fade-right' },
+  { selector: '.code-block', type: 'fade-left', delay: 120 },
+  { selector: '.form-visual-image', type: 'fade-right' },
+  { selector: '.form-visual-content', type: 'fade-left', delay: 120 },
+  { selector: '.composables-visual-content', type: 'fade-right' },
+  { selector: '.composables-visual-image', type: 'fade-left', delay: 120 },
+  { selector: '.composable-item', type: 'zoom-in', delay: 80, stagger: 45 },
+  { selector: '.metrics-grid-simple .metric-card-simple', type: 'fade-up', delay: 60, stagger: 60 },
+  { selector: '.chart-simple', type: 'fade-up', delay: 140 },
+  { selector: '.theme-preview-image', type: 'fade-up', delay: 60 },
+  { selector: '.theme-card', type: 'zoom-in', delay: 80, stagger: 80 },
+  { selector: '.install-step', type: 'fade-up', delay: 60, stagger: 90 },
+  { selector: '.footer-content > *', type: 'fade-up', delay: 60, stagger: 120 },
+]
+
+let revealObserver: IntersectionObserver | null = null
 
 const tabs = [
   { id: 'form', label: 'Form' },
@@ -65,11 +99,93 @@ const closeDrawer = () => {
   document.body.style.overflow = ''
 }
 
+const updateScrollState = () => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  isScrolled.value = window.scrollY > 18
+  document.body.classList.toggle('landing-scrolled', isScrolled.value)
+}
+
+function prepareLandingAnimations(): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  for (const blueprint of landingAnimationBlueprints) {
+    const elements = document.querySelectorAll<HTMLElement>(blueprint.selector)
+    elements.forEach((element, index) => {
+      element.dataset.animate = blueprint.type
+      element.dataset.animateOnce = blueprint.once === false ? 'false' : 'true'
+
+      const baseDelay = blueprint.delay ?? 0
+      const stagger = blueprint.stagger ?? 0
+      const resolvedDelay = baseDelay + (index * stagger)
+      element.style.setProperty('--animate-delay', `${resolvedDelay}ms`)
+    })
+  }
+}
+
+function observeLandingAnimations(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  const animatedElements = document.querySelectorAll<HTMLElement>('[data-animate]')
+  if (animatedElements.length === 0) {
+    return
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    animatedElements.forEach(element => element.classList.add('in-view'))
+    return
+  }
+
+  revealObserver?.disconnect()
+
+  revealObserver = new IntersectionObserver(
+    entries => {
+      for (const entry of entries) {
+        const target = entry.target as HTMLElement
+        const animateOnce = target.dataset.animateOnce !== 'false'
+
+        if (entry.isIntersecting) {
+          target.classList.add('in-view')
+          if (animateOnce) {
+            revealObserver?.unobserve(target)
+          }
+        } else if (!animateOnce) {
+          target.classList.remove('in-view')
+        }
+      }
+    },
+    {
+      threshold: 0.18,
+      rootMargin: '0px 0px -10% 0px',
+    }
+  )
+
+  animatedElements.forEach(element => revealObserver?.observe(element))
+}
+
+function refreshLandingAnimations(): void {
+  prepareLandingAnimations()
+  observeLandingAnimations()
+}
+
 onMounted(() => {
   const savedTheme = localStorage.getItem('ntk-theme')
   if (savedTheme === 'dark') {
     isDark.value = true
   }
+
+  updateScrollState()
+  window.addEventListener('scroll', updateScrollState, { passive: true })
+
+  nextTick(() => {
+    refreshLandingAnimations()
+  })
 })
 
 watch(isDark, newValue => {
@@ -78,6 +194,23 @@ watch(isDark, newValue => {
   } else {
     document.body.classList.remove('dark-mode')
   }
+})
+
+watch(activeTab, () => {
+  nextTick(() => {
+    refreshLandingAnimations()
+  })
+})
+
+onBeforeUnmount(() => {
+  revealObserver?.disconnect()
+  revealObserver = null
+
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', updateScrollState)
+  }
+
+  document.body.classList.remove('landing-scrolled')
 })
 </script>
 
@@ -147,10 +280,16 @@ watch(isDark, newValue => {
   --code-prop: color-mix(in srgb, var(--warning) 85%, var(--white));
   --code-comment: color-mix(in srgb, var(--gray-500) 85%, var(--gray-800));
   
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow: 350ms ease;
+  /* Motion */
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 220ms var(--easing-standard);
+  --transition-normal: 350ms var(--easing-standard);
+  --transition-slow: 500ms var(--easing-standard);
+  --reveal-distance: 40px;
+  --reveal-duration: 700ms;
+  --topbar-enter-duration: 520ms;
+  --topbar-enter-offset: 18px;
+  --topbar-shadow-scrolled: 0 10px 24px color-mix(in srgb, var(--gray-900) 22%, transparent);
 }
 
 * {
@@ -165,10 +304,40 @@ body {
   line-height: 1.6;
   background: var(--white);
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code, pre {
   font-family: var(--ntk-font-family-mono);
+}
+
+[data-animate] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-distance), 0);
+  transition:
+    opacity var(--reveal-duration) var(--easing-standard),
+    transform var(--reveal-duration) var(--easing-standard);
+  transition-delay: var(--animate-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-animate="fade-right"] {
+  transform: translate3d(calc(var(--reveal-distance) * -1), 0, 0);
+}
+
+[data-animate="fade-left"] {
+  transform: translate3d(var(--reveal-distance), 0, 0);
+}
+
+[data-animate="zoom-in"] {
+  transform: translate3d(0, calc(var(--reveal-distance) * 0.65), 0) scale(0.965);
+}
+
+[data-animate].in-view {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 a {
@@ -197,6 +366,35 @@ a:hover {
   box-shadow: var(--shadow-header);
   z-index: 100;
   padding: var(--spacing-md) 0;
+  transition:
+    background var(--transition-normal),
+    box-shadow var(--transition-normal),
+    padding var(--transition-normal);
+  backdrop-filter: blur(0);
+  animation: ntk-header-enter var(--topbar-enter-duration) var(--easing-standard);
+  animation-fill-mode: both;
+}
+
+body.landing-scrolled .header {
+  padding: calc(var(--spacing-md) * 0.82) 0;
+  background: color-mix(in srgb, var(--white) 90%, transparent);
+  box-shadow: var(--topbar-shadow-scrolled);
+  backdrop-filter: blur(8px);
+}
+
+body.dark-mode.landing-scrolled .header {
+  background: color-mix(in srgb, var(--gray-900) 90%, transparent);
+}
+
+@keyframes ntk-header-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--topbar-enter-offset) * -1), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .header .container {
@@ -238,8 +436,35 @@ a:hover {
   align-items: center;
 }
 
+.nav > a:not(.btn) {
+  position: relative;
+  transition: color var(--transition-fast), transform var(--transition-normal);
+}
+
+.nav > a:not(.btn)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.35rem;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-normal);
+}
+
 .nav a:hover {
   color: var(--ntk-purple);
+}
+
+.nav > a:not(.btn):hover {
+  transform: translateY(-1px);
+}
+
+.nav > a:not(.btn):hover::after {
+  transform: scaleX(1);
 }
 
 .btn {
@@ -322,6 +547,17 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: var(--spacing-lg);
+  position: relative;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 35%, transparent);
+  animation: ntk-pulse-dot 2s ease-in-out infinite;
 }
 
 .hero h1 {
@@ -361,16 +597,31 @@ a:hover {
   max-width: 700px;
   border-radius: 16px;
   box-shadow: var(--shadow-strong);
-  animation: ntk-float 3s ease-in-out infinite;
+  animation: ntk-float 4s ease-in-out infinite;
 }
 
 /* Float Animation */
 @keyframes ntk-float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translateY(-15px);
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes ntk-pulse-dot {
+  0% {
+    opacity: 0.75;
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 35%, transparent);
+  }
+  70% {
+    opacity: 1;
+    box-shadow: 0 0 0 8px color-mix(in srgb, currentColor 0%, transparent);
+  }
+  100% {
+    opacity: 0.75;
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 0%, transparent);
   }
 }
 
@@ -571,7 +822,7 @@ a:hover {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-strong);
-  animation: ntk-float 3s ease-in-out infinite;
+  animation: ntk-float 4s ease-in-out infinite;
   animation-delay: 0.2s;
 }
 
@@ -628,7 +879,7 @@ a:hover {
   width: 100%;
   border-radius: 16px;
   box-shadow: var(--shadow-strong);
-  animation: ntk-float 3s ease-in-out infinite;
+  animation: ntk-float 4s ease-in-out infinite;
   animation-delay: 0.3s;
 }
 
@@ -693,7 +944,7 @@ a:hover {
   max-width: 500px;
   border-radius: 16px;
   box-shadow: var(--shadow-strong);
-  animation: ntk-float 3s ease-in-out infinite;
+  animation: ntk-float 4s ease-in-out infinite;
   animation-delay: 0.6s;
 }
 
@@ -761,7 +1012,7 @@ a:hover {
   width: 100%;
   border-radius: 16px;
   box-shadow: var(--shadow-strong);
-  animation: ntk-float 3s ease-in-out infinite;
+  animation: ntk-float 4s ease-in-out infinite;
   animation-delay: 0.9s;
 }
 
@@ -1419,6 +1670,25 @@ body.dark-mode .composable-item p {
 
 .footer-bottom a:hover {
   color: var(--white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* Responsive */

@@ -19,7 +19,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: [resolve(__dirname, './setup.ts')],
-    include: ['**/*.spec.ts'],
+    include: ['tests/unit/**/*.spec.ts'],
     coverage: {
       provider: 'v8',
       reportsDirectory: '../.build/coverage',
