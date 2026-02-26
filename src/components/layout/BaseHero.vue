@@ -3,4 +3,3 @@ import NtkHero from './NtkHero.vue'
 
 export default NtkHero
 </script>
-

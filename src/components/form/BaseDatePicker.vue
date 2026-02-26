@@ -15,7 +15,6 @@
     class="base-date-picker"
     :class="customClass"
     @update:model-value="emitModelValue"
-    @update:modelValue="emitModelValue"
   >
     <template #append>
       <q-icon
@@ -34,7 +33,6 @@
             color="primary"
             :locale="dateLocale"
             @update:model-value="emitModelValue"
-            @update:modelValue="emitModelValue"
           >
             <div class="row items-center justify-end q-gutter-xs">
               <q-btn

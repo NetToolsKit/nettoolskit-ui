@@ -184,6 +184,9 @@ const QPopupProxy = createQuasarStub('QPopupProxy')
 const QMenu = createQuasarStub('QMenu')
 const QHeader = createQuasarStub('QHeader', 'header')
 const QFooter = createQuasarStub('QFooter', 'footer')
+const QLayout = createQuasarStub('QLayout')
+const QPageContainer = createQuasarStub('QPageContainer')
+const QPage = createQuasarStub('QPage')
 const QDrawer = createQuasarStub('QDrawer')
 const QList = createQuasarStub('QList')
 const QItem = createQuasarStub('QItem', 'div', { class: 'q-item' })
@@ -197,6 +200,11 @@ const QBadge = createQuasarStub('QBadge')
 const QAvatar = createQuasarStub('QAvatar', 'div', { class: 'q-avatar' })
 const QTooltip = createQuasarStub('QTooltip')
 const QScrollArea = createQuasarStub('QScrollArea')
+const QChip = createQuasarStub('QChip')
+const QExpansionItem = createQuasarStub('QExpansionItem')
+const QForm = createQuasarStub('QForm', 'form')
+const QCardActions = createQuasarStub('QCardActions')
+const QCheckbox = createQuasarStub('QCheckbox')
 
 // Mock the `quasar` module to avoid installing the real plugin (which requires SSR/runtime globals)
 // and to keep component mounting stable.
@@ -225,6 +233,9 @@ vi.mock('quasar', () => {
     QMenu,
     QHeader,
     QFooter,
+    QLayout,
+    QPageContainer,
+    QPage,
     QDrawer,
     QList,
     QItem,
@@ -237,7 +248,12 @@ vi.mock('quasar', () => {
     QBadge,
     QAvatar,
     QTooltip,
-    QScrollArea
+    QScrollArea,
+    QChip,
+    QExpansionItem,
+    QForm,
+    QCardActions,
+    QCheckbox
   }
 })
 
@@ -261,6 +277,9 @@ config.global.components = {
   QMenu,
   QHeader,
   QFooter,
+  QLayout,
+  QPageContainer,
+  QPage,
   QDrawer,
   QList,
   QItem,
@@ -273,8 +292,22 @@ config.global.components = {
   QBadge,
   QAvatar,
   QTooltip,
-  QScrollArea
+  QScrollArea,
+  QChip,
+  QExpansionItem,
+  QForm,
+  QCardActions,
+  QCheckbox
 }
+
+config.global.directives = {
+  ripple: {},
+  'close-popup': {}
+}
+
+vi.mock('vue-router', () => ({
+  useRoute: () => ({ path: '/' })
+}))
 
 // Mock useBranding composable
 vi.mock('@/composables/ui/useBranding', () => ({

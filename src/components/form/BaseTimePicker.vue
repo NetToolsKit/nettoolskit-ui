@@ -20,7 +20,6 @@
     class="base-time-picker"
     :class="customClass"
     @update:model-value="emitModelValue"
-    @update:modelValue="emitModelValue"
     @blur="$emit('blur', $event)"
     @focus="$emit('focus', $event)"
   >
@@ -40,7 +39,6 @@
             :with-seconds="withSeconds"
             color="primary"
             @update:model-value="emitModelValue"
-            @update:modelValue="emitModelValue"
           >
             <div class="row items-center justify-between q-px-sm q-gutter-sm">
               <q-btn

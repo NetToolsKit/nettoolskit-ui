@@ -69,6 +69,7 @@ export { default as BaseSection } from './src/components/layout/BaseSection.vue'
 export { default as BaseHero } from './src/components/layout/BaseHero.vue'
 export * from './src/components/layout/app-shell.types'
 export * from './src/components/layout/app-shell.config'
+export * from './src/components/layout/app-shell.theme'
 
 // ============================================================================
 // COMPONENTS - UI

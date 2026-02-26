@@ -1,8 +1,9 @@
-import { createAppShellConfig } from '../../src/components/layout/app-shell.config'
+import { APP_SHELL_DEFAULT_THEME, createAppShellConfig } from '../../src/components/layout/app-shell.config'
 import type { AppShellConfig, AppShellItem, AppShellTheme } from '../../src/components/layout/app-shell.types'
 import { semanticColors } from '../../src/config/colors/semantic.config'
+import { resolveAppShellTheme } from '../../src/components/layout/app-shell.theme'
 import { createCmsShellConfig } from './shell.config'
-import type { CmsContentSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './white-label.types'
+import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './white-label.types'
 
 export const CMS_WHITE_LABEL_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
 
@@ -14,19 +15,27 @@ function cloneValue<T>(value: T): T {
 }
 
 function createDefaultWhiteLabelTheme(theme: AppShellTheme): AppShellTheme {
+  const notificationErrorColor = theme.notificationErrorColor ?? semanticColors.errorPrimary
+  const notificationBadgeColor = theme.notificationBadgeColor ?? semanticColors.errorPrimary
   const notificationBadgeTextColor = theme.notificationBadgeTextColor ?? 'var(--ntk-text-inverse)'
-  return {
-    ...theme,
-    notificationSuccessColor: semanticColors.successPrimary,
-    notificationWarningColor: semanticColors.warningPrimary,
-    notificationErrorColor: semanticColors.errorPrimary,
-    notificationInfoColor: semanticColors.infoPrimary,
-    notificationBadgeTextColor,
-    notificationSuccessTextColor: theme.notificationSuccessTextColor ?? notificationBadgeTextColor,
-    notificationWarningTextColor: theme.notificationWarningTextColor ?? 'var(--ntk-text-primary)',
-    notificationErrorTextColor: theme.notificationErrorTextColor ?? notificationBadgeTextColor,
-    notificationInfoTextColor: theme.notificationInfoTextColor ?? notificationBadgeTextColor,
-  }
+  const notificationIconColor = theme.notificationIconColor ?? theme.toolbarButtonColor ?? 'var(--ntk-text-secondary)'
+  return resolveAppShellTheme(
+    {
+      ...theme,
+      notificationSuccessColor: semanticColors.successPrimary,
+      notificationWarningColor: semanticColors.warningPrimary,
+      notificationErrorColor,
+      notificationInfoColor: semanticColors.infoPrimary,
+      notificationBadgeColor,
+      notificationBadgeTextColor,
+      notificationIconColor,
+      notificationSuccessTextColor: theme.notificationSuccessTextColor ?? notificationBadgeTextColor,
+      notificationWarningTextColor: theme.notificationWarningTextColor ?? 'var(--ntk-text-primary)',
+      notificationErrorTextColor: theme.notificationErrorTextColor ?? notificationBadgeTextColor,
+      notificationInfoTextColor: theme.notificationInfoTextColor ?? notificationBadgeTextColor,
+    },
+    APP_SHELL_DEFAULT_THEME
+  )
 }
 
 function createDefaultContentSettings(): CmsContentSettings {
@@ -55,6 +64,25 @@ function createDefaultContentSettings(): CmsContentSettings {
   }
 }
 
+function createDefaultPagesSettings(): CmsPageSettings[] {
+  return [
+    {
+      id: 'landing-main',
+      title: 'Main Landing',
+      path: '/',
+      status: 'published',
+      description: 'Primary public landing page.',
+      sections: [
+        { id: 'header', label: 'Header', enabled: true },
+        { id: 'hero', label: 'Hero', enabled: true },
+        { id: 'features', label: 'Features', enabled: true },
+        { id: 'installation', label: 'Installation', enabled: true },
+        { id: 'footer', label: 'Footer', enabled: true },
+      ],
+    },
+  ]
+}
+
 export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
   const shell = createCmsShellConfig()
 
@@ -74,8 +102,11 @@ export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
       menuIcon: shell.menuIcon,
       menuAriaLabel: shell.menuAriaLabel,
       showSearch: shell.showSearch,
+      showNotifications: shell.showNotifications,
+      showUserAvatar: shell.showUserAvatar,
       searchPlaceholder: shell.searchPlaceholder,
       showGroupCaptions: shell.showGroupCaptions,
+      collapsible: shell.collapsible,
       collapseLabel: shell.collapseLabel,
       expandLabel: shell.expandLabel,
       drawerWidth: shell.drawerWidth,
@@ -86,6 +117,9 @@ export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
       defaultMini: shell.defaultMini,
     },
     content: createDefaultContentSettings(),
+    pages: createDefaultPagesSettings(),
+    themePresetId: 'default',
+    themePresetOverrides: {},
     theme: createDefaultWhiteLabelTheme(cloneValue(shell.theme)),
     navGroups: cloneValue(shell.navGroups),
     items: cloneValue(shell.items),
@@ -118,7 +152,23 @@ export function mapWhiteLabelToShellSnapshot(
     ? state.activeItem
     : fallbackActiveItem
 
-  const resolvedTheme = resolveWhiteLabelTheme(settings.theme)
+  const resolvedTheme = resolveAppShellTheme(settings.theme, APP_SHELL_DEFAULT_THEME)
+  const toolbarActions = settings.toolbarActions.filter(action => {
+    const normalizedId = String(action.id ?? '').trim().toLowerCase()
+    const normalizedIcon = String(action.icon ?? '').trim().toLowerCase()
+    const isNotificationAction = normalizedId === 'notifications' || normalizedIcon === 'notifications'
+    const isAccountAction = normalizedId === 'account' || normalizedIcon === 'account_circle'
+
+    if (!settings.layout.showNotifications && isNotificationAction) {
+      return false
+    }
+
+    if (!settings.layout.showUserAvatar && isAccountAction) {
+      return false
+    }
+
+    return true
+  })
 
   const shellConfig: AppShellConfig = createAppShellConfig({
     appName: settings.branding.appName,
@@ -133,8 +183,11 @@ export function mapWhiteLabelToShellSnapshot(
     searchValue: state.searchValue,
     searchPlaceholder: settings.layout.searchPlaceholder,
     showSearch: settings.layout.showSearch,
+    showNotifications: settings.layout.showNotifications,
+    showUserAvatar: settings.layout.showUserAvatar,
     showGroupCaptions: settings.layout.showGroupCaptions,
-    toolbarActions: settings.toolbarActions,
+    collapsible: settings.layout.collapsible,
+    toolbarActions,
     theme: resolvedTheme,
     notificationCount: settings.branding.notificationCount,
     notificationsTooltip: settings.branding.notificationsTooltip,
@@ -153,56 +206,6 @@ export function mapWhiteLabelToShellSnapshot(
   return {
     shellConfig,
     filteredItems,
-  }
-}
-
-function resolveWhiteLabelTheme(theme: AppShellTheme): AppShellTheme {
-  const accentColor = theme.itemActiveColor
-  const drawerTextColor = theme.drawerTextColor
-  const drawerBackground = theme.drawerBackground
-  const headerTextColor = theme.headerTextColor
-  const headerBackground = theme.headerBackground
-  const pageTextColor = theme.pageTextColor
-  const itemHoverBackground = theme.itemHoverBackground
-  const dividerColor = theme.dividerColor
-  const notificationSuccessColor = theme.notificationSuccessColor ?? semanticColors.successPrimary
-  const notificationWarningColor = theme.notificationWarningColor ?? semanticColors.warningPrimary
-  const notificationErrorColor = theme.notificationErrorColor ?? semanticColors.errorPrimary
-  const notificationInfoColor = theme.notificationInfoColor ?? semanticColors.infoPrimary
-  const notificationBadgeTextColor = theme.notificationBadgeTextColor ?? 'var(--ntk-text-inverse)'
-  const notificationSuccessTextColor = theme.notificationSuccessTextColor ?? notificationBadgeTextColor
-  const notificationWarningTextColor = theme.notificationWarningTextColor ?? 'var(--ntk-text-primary)'
-  const notificationErrorTextColor = theme.notificationErrorTextColor ?? notificationBadgeTextColor
-  const notificationInfoTextColor = theme.notificationInfoTextColor ?? notificationBadgeTextColor
-
-  return {
-    ...theme,
-    toolbarButtonColor: theme.toolbarButtonColor ?? headerTextColor,
-    titleTextColor: theme.titleTextColor ?? headerTextColor,
-    searchIconColor: theme.searchIconColor ?? headerTextColor,
-    titleAppColor: theme.titleAppColor ?? accentColor ?? headerTextColor,
-    brandTitleColor: theme.brandTitleColor ?? accentColor ?? headerTextColor,
-    brandSubtitleColor: theme.brandSubtitleColor ?? drawerTextColor ?? headerTextColor,
-    itemTextColor: theme.itemTextColor ?? drawerTextColor,
-    itemIconColor: theme.itemIconColor ?? drawerTextColor,
-    itemHoverColor: theme.itemHoverColor ?? accentColor,
-    itemIconHoverColor: theme.itemIconHoverColor ?? accentColor,
-    groupCaptionColor: theme.groupCaptionColor ?? drawerTextColor,
-    titleSeparatorColor: theme.titleSeparatorColor ?? dividerColor,
-    focusColor: theme.focusColor ?? accentColor,
-    actionHoverBackground: theme.actionHoverBackground ?? itemHoverBackground,
-    notificationErrorColor,
-    notificationSuccessColor,
-    notificationWarningColor,
-    notificationInfoColor,
-    notificationBadgeTextColor,
-    notificationSuccessTextColor,
-    notificationWarningTextColor,
-    notificationErrorTextColor,
-    notificationInfoTextColor,
-    drawerFooterBackground: theme.drawerFooterBackground ?? drawerBackground,
-    searchBackground: theme.searchBackground ?? headerBackground ?? drawerBackground,
-    searchTextColor: theme.searchTextColor ?? pageTextColor ?? drawerTextColor,
   }
 }
 

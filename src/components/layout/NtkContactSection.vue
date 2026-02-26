@@ -65,7 +65,10 @@
           </div>
         </article>
 
-        <article v-if="portalAction" class="ntk-contact__portal">
+        <article
+          v-if="portalAction"
+          class="ntk-contact__portal"
+        >
           <div class="ntk-contact__portal-content">
             <strong>Ja e cliente?</strong>
             <p>{{ portalAction.description || 'Acesse a area do cliente para acompanhar seus projetos.' }}</p>

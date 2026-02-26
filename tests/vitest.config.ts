@@ -4,6 +4,17 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Tests should use the same Sass API as production builds.
+        api: 'modern-compiler',
+      },
+      sass: {
+        api: 'modern-compiler',
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

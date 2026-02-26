@@ -254,4 +254,3 @@ const cardClasses = computed(() => ({
   }
 }
 </style>
-

@@ -1,5 +1,8 @@
 <template>
-  <div id="top" class="ntk-landing-composer">
+  <div
+    id="top"
+    class="ntk-landing-composer"
+  >
     <NtkLandingHeader
       v-if="config.sections.header"
       :logo-text="config.header.logoText"
@@ -48,7 +51,10 @@
             v-if="config.hero.codeTitle || config.hero.codeSnippet"
             class="ntk-landing-composer__code"
           >
-            <p v-if="config.hero.codeTitle" class="ntk-landing-composer__code-title">
+            <p
+              v-if="config.hero.codeTitle"
+              class="ntk-landing-composer__code-title"
+            >
               {{ config.hero.codeTitle }}
             </p>
             <pre

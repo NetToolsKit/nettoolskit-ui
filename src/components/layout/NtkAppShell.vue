@@ -1,5 +1,9 @@
 <template>
-  <q-layout view="hHh Lpr fFf" class="ntk-app-shell" :style="shellStyle">
+  <q-layout
+    view="hHh Lpr fFf"
+    class="ntk-app-shell"
+    :style="shellStyle"
+  >
     <q-drawer
       v-model="drawerOpen"
       show-if-above
@@ -8,16 +12,27 @@
       :mini="isMiniMode"
       :breakpoint="breakpoint"
       bordered
+      role="navigation"
+      :aria-label="navigationAriaLabel"
       class="ntk-app-shell__drawer"
     >
       <q-scroll-area class="fit">
         <div class="ntk-app-shell__drawer-header">
           <slot name="drawer-header">
             <div class="ntk-app-shell__brand">
-              <q-avatar square size="34px">
-                <img :src="brandLogo" :alt="brandLogoAlt" />
+              <q-avatar
+                square
+                size="34px"
+              >
+                <img
+                  :src="brandLogo"
+                  :alt="brandLogoAlt"
+                >
               </q-avatar>
-              <div v-if="!isMiniMode" class="ntk-app-shell__brand-text">
+              <div
+                v-if="!isMiniMode"
+                class="ntk-app-shell__brand-text"
+              >
                 <strong>{{ appName }}</strong>
                 <small>{{ appSubtitle }}</small>
               </div>
@@ -25,17 +40,30 @@
           </slot>
         </div>
 
-        <q-list padding class="ntk-app-shell__drawer-list">
-          <template v-for="group in resolvedGroups" :key="group.id">
+        <q-list
+          padding
+          class="ntk-app-shell__drawer-list"
+          :aria-label="navigationItemsAriaLabel"
+        >
+          <template
+            v-for="group in resolvedGroups"
+            :key="group.id"
+          >
             <div
               v-if="showGroupCaptions"
+              :id="groupLabelId(group.id)"
               class="ntk-app-shell__group-caption"
               :class="{ 'ntk-app-shell__group-caption--mini': isMiniMode }"
             >
               <span class="ntk-app-shell__group-caption-text">
                 {{ isMiniMode ? getCompactGroupLabel(group.label) : group.label }}
               </span>
-              <q-tooltip v-if="isMiniMode" anchor="center right" self="center left" :offset="[10, 0]">
+              <q-tooltip
+                v-if="isMiniMode"
+                anchor="center right"
+                self="center left"
+                :offset="[10, 0]"
+              >
                 {{ group.label }}
               </q-tooltip>
             </div>
@@ -47,7 +75,13 @@
               :active="activeItemId === item.id"
               active-class="ntk-app-shell__item--active"
               class="ntk-app-shell__item"
+              :aria-label="resolveItemAriaLabel(item)"
+              :aria-current="activeItemId === item.id ? 'page' : undefined"
+              :aria-describedby="showGroupCaptions ? groupLabelId(group.id) : undefined"
+              tabindex="0"
               @click="selectItem(item)"
+              @keyup.enter.prevent="selectItem(item)"
+              @keyup.space.prevent="selectItem(item)"
             >
               <q-item-section avatar>
                 <q-icon :name="item.icon" />
@@ -55,14 +89,30 @@
 
               <q-item-section v-if="!isMiniMode">
                 <q-item-label>{{ item.label }}</q-item-label>
-                <q-item-label v-if="item.caption" caption>{{ item.caption }}</q-item-label>
+                <q-item-label
+                  v-if="item.caption"
+                  caption
+                >
+                  {{ item.caption }}
+                </q-item-label>
               </q-item-section>
 
-              <q-item-section v-if="!isMiniMode && item.badge" side>
-                <q-badge :style="getItemBadgeStyle(item)" :label="item.badge" />
+              <q-item-section
+                v-if="!isMiniMode && item.badge"
+                side
+              >
+                <q-badge
+                  :style="getItemBadgeStyle(item)"
+                  :label="item.badge"
+                />
               </q-item-section>
 
-              <q-tooltip v-else-if="isMiniMode" anchor="center right" self="center left" :offset="[10, 0]">
+              <q-tooltip
+                v-else-if="isMiniMode"
+                anchor="center right"
+                self="center left"
+                :offset="[10, 0]"
+              >
                 {{ item.label }}
               </q-tooltip>
             </q-item>
@@ -74,15 +124,33 @@
           </template>
         </q-list>
 
-        <div v-if="collapsible" class="ntk-app-shell__drawer-footer">
-          <q-item clickable class="ntk-app-shell__item ntk-app-shell__item--toggle" @click="toggleMenuMode">
+        <div
+          v-if="collapsible"
+          class="ntk-app-shell__drawer-footer"
+        >
+          <q-item
+            clickable
+            role="button"
+            class="ntk-app-shell__item ntk-app-shell__item--toggle"
+            :aria-label="isMiniMode ? expandLabel : collapseLabel"
+            :aria-expanded="String(!isMiniMode)"
+            tabindex="0"
+            @click="toggleMenuMode"
+            @keyup.enter.prevent="toggleMenuMode"
+            @keyup.space.prevent="toggleMenuMode"
+          >
             <q-item-section avatar>
               <q-icon :name="isMiniMode ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left'" />
             </q-item-section>
             <q-item-section v-if="!isMiniMode">
               <q-item-label>{{ isMiniMode ? expandLabel : collapseLabel }}</q-item-label>
             </q-item-section>
-            <q-tooltip v-else anchor="center right" self="center left" :offset="[10, 0]">
+            <q-tooltip
+              v-else
+              anchor="center right"
+              self="center left"
+              :offset="[10, 0]"
+            >
               {{ expandLabel }}
             </q-tooltip>
           </q-item>
@@ -90,8 +158,15 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-header elevated class="ntk-app-shell__header" :height-hint="headerHeight">
-      <q-toolbar class="ntk-app-shell__toolbar" :style="{ height: `${headerHeight}px` }">
+    <q-header
+      elevated
+      class="ntk-app-shell__header"
+      :height-hint="headerHeight"
+    >
+      <q-toolbar
+        class="ntk-app-shell__toolbar"
+        :style="{ height: `${headerHeight}px` }"
+      >
         <div class="ntk-app-shell__menu-slot">
           <q-btn
             flat
@@ -99,6 +174,7 @@
             round
             :icon="menuIcon"
             :aria-label="menuAriaLabel"
+            :aria-expanded="String(drawerOpen)"
             @click="toggleMenuMode"
           >
             <q-tooltip>{{ isMiniMode ? expandLabel : collapseLabel }}</q-tooltip>
@@ -106,21 +182,32 @@
         </div>
 
         <q-toolbar-title class="ntk-app-shell__title">
-          <slot name="title" :active-item="activeItem">
+          <slot
+            name="title"
+            :active-item="activeItem"
+          >
             <span class="ntk-app-shell__title-app">{{ appName }}</span>
-            <q-icon name="chevron_right" size="20px" class="ntk-app-shell__title-separator" />
+            <q-icon
+              name="chevron_right"
+              size="20px"
+              class="ntk-app-shell__title-separator"
+            />
             <span>{{ activeItem.label }}</span>
           </slot>
         </q-toolbar-title>
 
         <q-space />
 
-        <div v-if="showSearch && $q.screen.gt.xs" class="ntk-app-shell__search-wrapper">
+        <div
+          v-if="showSearch && $q.screen.gt.xs"
+          class="ntk-app-shell__search-wrapper"
+        >
           <q-input
             :model-value="searchModel"
             dense
             borderless
             :placeholder="searchPlaceholder"
+            :aria-label="searchAriaLabel"
             class="ntk-app-shell__search"
             @update:model-value="updateSearch"
           >
@@ -130,7 +217,11 @@
           </q-input>
         </div>
 
-        <div class="ntk-app-shell__actions">
+        <div
+          class="ntk-app-shell__actions"
+          role="toolbar"
+          :aria-label="toolbarAriaLabel"
+        >
           <slot name="actions">
             <template v-if="toolbarActions.length > 0">
               <q-btn
@@ -144,11 +235,13 @@
                 :no-caps="action.noCaps ?? false"
                 :icon="action.icon"
                 :label="action.showLabel ? action.label : undefined"
-                :color="action.color"
-                :text-color="action.textColor"
-                :href="action.href"
-                :target="action.external ? '_blank' : undefined"
-                :rel="action.external ? 'noopener noreferrer' : undefined"
+                :color="resolveToolbarActionColor(action)"
+                :text-color="resolveToolbarActionTextColor(action)"
+                :aria-label="resolveToolbarActionAriaLabel(action)"
+                :href="resolveToolbarActionHref(action)"
+                :target="resolveToolbarActionTarget(action)"
+                :rel="resolveToolbarActionRel(action)"
+                :style="getToolbarActionStyle(action)"
                 :class="action.className"
                 @click="handleToolbarAction(action)"
               >
@@ -159,22 +252,52 @@
                 >
                   {{ action.badge }}
                 </q-badge>
-                <q-tooltip v-if="action.tooltip">{{ action.tooltip }}</q-tooltip>
+                <q-tooltip v-if="action.tooltip">
+                  {{ action.tooltip }}
+                </q-tooltip>
               </q-btn>
             </template>
 
             <template v-else>
-              <q-btn v-if="showNotifications" flat round dense icon="notifications" @click="$emit('notifications-click')">
-                <q-badge v-if="notificationCount > 0" floating :style="notificationBadgeStyle">
+              <q-btn
+                v-if="showNotifications"
+                flat
+                round
+                dense
+                icon="notifications"
+                :aria-label="notificationsAriaLabel"
+                :style="notificationActionStyle"
+                @click="$emit('notifications-click')"
+              >
+                <q-badge
+                  v-if="notificationCount > 0"
+                  floating
+                  :style="notificationBadgeStyle"
+                >
                   {{ notificationCount }}
                 </q-badge>
                 <q-tooltip>{{ notificationsTooltip }}</q-tooltip>
               </q-btn>
 
-              <q-btn v-if="showUserAvatar" flat round dense @click="$emit('user-click')">
+              <q-btn
+                v-if="showUserAvatar"
+                flat
+                round
+                dense
+                :aria-label="userAriaLabel"
+                @click="$emit('user-click')"
+              >
                 <q-avatar size="26px">
-                  <img v-if="userAvatar" :src="userAvatar" alt="User avatar" />
-                  <q-icon v-else name="account_circle" size="26px" />
+                  <img
+                    v-if="userAvatar"
+                    :src="userAvatar"
+                    alt="User avatar"
+                  >
+                  <q-icon
+                    v-else
+                    name="account_circle"
+                    size="26px"
+                  />
                 </q-avatar>
                 <q-tooltip>{{ userTooltip }}</q-tooltip>
               </q-btn>
@@ -186,94 +309,194 @@
 
     <q-page-container class="ntk-app-shell__page-container">
       <q-page class="ntk-app-shell__page">
-        <slot :active-item="activeItem" :active-item-id="activeItemId" :is-mini-mode="isMiniMode" />
+        <slot
+          :active-item="activeItem"
+          :active-item-id="activeItemId"
+          :is-mini-mode="isMiniMode"
+        />
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type PropType } from 'vue'
 import { useQuasar } from 'quasar'
-import type { AppShellAction, AppShellGroup, AppShellItem, AppShellTheme } from './app-shell.types'
+import type {
+  AppShellAction,
+  AppShellGroup,
+  AppShellItem,
+  AppShellTheme,
+  AppShellTelemetryEvent,
+} from './app-shell.types'
 import { APP_SHELL_DEFAULTS, APP_SHELL_DEFAULT_THEME } from './app-shell.config'
+import { resolveAppShellTheme, sanitizeShellLink } from './app-shell.theme'
 
-const props = withDefaults(
-  defineProps<{
-    appName?: string
-    appSubtitle?: string
-    brandLogo?: string
-    brandLogoAlt?: string
-    menuIcon?: string
-    menuAriaLabel?: string
-    navGroups?: AppShellGroup[]
-    items?: AppShellItem[]
-    activeItem?: string
-    searchValue?: string
-    searchPlaceholder?: string
-    showSearch?: boolean
-    showGroupCaptions?: boolean
-    toolbarActions?: AppShellAction[]
-    theme?: AppShellTheme
-    showNotifications?: boolean
-    notificationsTooltip?: string
-    notificationCount?: number
-    showUserAvatar?: boolean
-    userAvatar?: string
-    userTooltip?: string
-    collapsible?: boolean
-    collapseLabel?: string
-    expandLabel?: string
-    drawerWidth?: number
-    miniWidth?: number
-    breakpoint?: number
-    headerHeight?: number
-    defaultDrawerOpen?: boolean
-    defaultMini?: boolean
-  }>(),
-  {
-    appName: APP_SHELL_DEFAULTS.appName,
-    appSubtitle: APP_SHELL_DEFAULTS.appSubtitle,
-    brandLogo: APP_SHELL_DEFAULTS.brandLogo,
-    brandLogoAlt: APP_SHELL_DEFAULTS.brandLogoAlt,
-    menuIcon: APP_SHELL_DEFAULTS.menuIcon,
-    menuAriaLabel: APP_SHELL_DEFAULTS.menuAriaLabel,
-    navGroups: () => [...APP_SHELL_DEFAULTS.navGroups],
-    items: () => [...APP_SHELL_DEFAULTS.items],
-    activeItem: APP_SHELL_DEFAULTS.activeItem,
-    searchValue: APP_SHELL_DEFAULTS.searchValue,
-    searchPlaceholder: APP_SHELL_DEFAULTS.searchPlaceholder,
-    showSearch: APP_SHELL_DEFAULTS.showSearch,
-    showGroupCaptions: APP_SHELL_DEFAULTS.showGroupCaptions,
-    toolbarActions: () => [...APP_SHELL_DEFAULTS.toolbarActions],
-    theme: () => ({ ...(APP_SHELL_DEFAULTS.theme ?? {}) }),
-    showNotifications: APP_SHELL_DEFAULTS.showNotifications,
-    notificationsTooltip: APP_SHELL_DEFAULTS.notificationsTooltip,
-    notificationCount: APP_SHELL_DEFAULTS.notificationCount,
-    showUserAvatar: APP_SHELL_DEFAULTS.showUserAvatar,
-    userAvatar: APP_SHELL_DEFAULTS.userAvatar,
-    userTooltip: APP_SHELL_DEFAULTS.userTooltip,
-    collapsible: APP_SHELL_DEFAULTS.collapsible,
-    collapseLabel: APP_SHELL_DEFAULTS.collapseLabel,
-    expandLabel: APP_SHELL_DEFAULTS.expandLabel,
-    drawerWidth: APP_SHELL_DEFAULTS.drawerWidth,
-    miniWidth: APP_SHELL_DEFAULTS.miniWidth,
-    breakpoint: APP_SHELL_DEFAULTS.breakpoint,
-    headerHeight: APP_SHELL_DEFAULTS.headerHeight,
-    defaultDrawerOpen: APP_SHELL_DEFAULTS.defaultDrawerOpen,
-    defaultMini: APP_SHELL_DEFAULTS.defaultMini,
-  }
-)
+const props = defineProps({
+  appName: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.appName,
+  },
+  appSubtitle: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.appSubtitle,
+  },
+  brandLogo: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.brandLogo,
+  },
+  brandLogoAlt: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.brandLogoAlt,
+  },
+  menuIcon: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.menuIcon,
+  },
+  menuAriaLabel: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.menuAriaLabel,
+  },
+  navGroups: {
+    type: Array as PropType<AppShellGroup[]>,
+    default: () => [...APP_SHELL_DEFAULTS.navGroups],
+  },
+  items: {
+    type: Array as PropType<AppShellItem[]>,
+    default: () => [...APP_SHELL_DEFAULTS.items],
+  },
+  activeItem: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.activeItem,
+  },
+  searchValue: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.searchValue,
+  },
+  searchPlaceholder: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.searchPlaceholder,
+  },
+  showSearch: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.showSearch,
+  },
+  showGroupCaptions: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.showGroupCaptions,
+  },
+  toolbarActions: {
+    type: Array as PropType<AppShellAction[]>,
+    default: () => [...APP_SHELL_DEFAULTS.toolbarActions],
+  },
+  theme: {
+    type: Object as PropType<AppShellTheme>,
+    default: () => ({ ...(APP_SHELL_DEFAULTS.theme ?? {}) }),
+  },
+  showNotifications: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.showNotifications,
+  },
+  notificationsTooltip: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.notificationsTooltip,
+  },
+  notificationCount: {
+    type: Number,
+    default: APP_SHELL_DEFAULTS.notificationCount,
+  },
+  showUserAvatar: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.showUserAvatar,
+  },
+  userAvatar: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.userAvatar,
+  },
+  userTooltip: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.userTooltip,
+  },
+  collapsible: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.collapsible,
+  },
+  collapseLabel: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.collapseLabel,
+  },
+  expandLabel: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.expandLabel,
+  },
+  drawerWidth: {
+    type: Number,
+    default: APP_SHELL_DEFAULTS.drawerWidth,
+  },
+  miniWidth: {
+    type: Number,
+    default: APP_SHELL_DEFAULTS.miniWidth,
+  },
+  breakpoint: {
+    type: Number,
+    default: APP_SHELL_DEFAULTS.breakpoint,
+  },
+  headerHeight: {
+    type: Number,
+    default: APP_SHELL_DEFAULTS.headerHeight,
+  },
+  defaultDrawerOpen: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.defaultDrawerOpen,
+  },
+  defaultMini: {
+    type: Boolean,
+    default: APP_SHELL_DEFAULTS.defaultMini,
+  },
+  searchAriaLabel: {
+    type: String,
+    default: 'Search modules',
+  },
+  navigationAriaLabel: {
+    type: String,
+    default: 'Primary navigation',
+  },
+  navigationItemsAriaLabel: {
+    type: String,
+    default: 'Module list',
+  },
+  toolbarAriaLabel: {
+    type: String,
+    default: 'Header actions',
+  },
+  notificationsAriaLabel: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.notificationsTooltip,
+  },
+  userAriaLabel: {
+    type: String,
+    default: APP_SHELL_DEFAULTS.userTooltip,
+  },
+  itemAriaLabelPrefix: {
+    type: String,
+    default: 'Open module',
+  },
+  actionAriaLabelPrefix: {
+    type: String,
+    default: 'Action',
+  },
+})
 
-const emit = defineEmits<{
-  (e: 'update:active-item', value: string): void
-  (e: 'update:search-value', value: string): void
-  (e: 'item-click', value: AppShellItem): void
-  (e: 'notifications-click'): void
-  (e: 'user-click'): void
-  (e: 'toolbar-action', value: AppShellAction): void
-  (e: 'toggle-menu', value: { mini: boolean; open: boolean }): void
-}>()
+const emit = defineEmits({
+  'update:active-item': (_value: string) => true,
+  'update:search-value': (_value: string) => true,
+  'item-click': (_value: AppShellItem) => true,
+  'notifications-click': () => true,
+  'user-click': () => true,
+  'toolbar-action': (_value: AppShellAction) => true,
+  'toggle-menu': (_value: { mini: boolean; open: boolean }) => true,
+  'telemetry': (_value: AppShellTelemetryEvent) => true,
+})
 
 const $q = useQuasar()
 
@@ -347,27 +570,45 @@ const activeItem = computed<AppShellItem>(() => {
   }
 })
 
-const resolvedTheme = computed<AppShellTheme>(() => ({
-  ...APP_SHELL_DEFAULT_THEME,
-  ...(props.theme ?? {}),
-}))
+const resolvedTheme = computed<AppShellTheme>(() => resolveAppShellTheme(props.theme ?? {}, APP_SHELL_DEFAULT_THEME))
 
 const isMiniMode = computed(() => miniState.value && $q.screen.gt.sm)
 const searchModel = computed(() => localSearchValue.value)
 const notificationDefaultColor = computed(() => {
-  return resolvedTheme.value.notificationErrorColor || ''
+  return resolvedTheme.value.notificationBadgeColor || resolvedTheme.value.notificationErrorColor || ''
 })
 const notificationDefaultTextColor = computed(() => {
+  const explicitBadgeText = typeof props.theme?.notificationBadgeTextColor === 'string'
+    && props.theme.notificationBadgeTextColor.trim().length > 0
+
+  if (explicitBadgeText) {
+    return resolvedTheme.value.notificationBadgeTextColor || ''
+  }
+
   return (
     resolvedTheme.value.notificationErrorTextColor ||
     resolvedTheme.value.notificationBadgeTextColor ||
     ''
   )
 })
+const notificationFallbackTextColor = computed(() => {
+  return (
+    resolvedTheme.value.notificationErrorTextColor ||
+    resolvedTheme.value.notificationBadgeTextColor ||
+    ''
+  )
+})
+const notificationIconColor = computed(() => {
+  return resolvedTheme.value.notificationIconColor || resolvedTheme.value.toolbarButtonColor || ''
+})
 
 const notificationBadgeStyle = computed(() => ({
   backgroundColor: notificationDefaultColor.value,
   color: notificationDefaultTextColor.value,
+}))
+
+const notificationActionStyle = computed<Record<string, string>>(() => ({
+  color: notificationIconColor.value,
 }))
 
 const shellStyle = computed<Record<string, string>>(() => {
@@ -411,6 +652,27 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-page-bg': theme.pageBackground ?? '',
     '--ntk-shell-page-text': theme.pageTextColor ?? '',
     '--ntk-shell-font-family': theme.fontFamily ?? '',
+    '--ntk-shell-font-display': theme.fontFamilyDisplay ?? '',
+    '--ntk-shell-font-style-base': theme.fontStyleBase ?? '',
+    '--ntk-shell-font-weight-regular': theme.fontWeightRegular ?? '',
+    '--ntk-shell-font-weight-medium': theme.fontWeightMedium ?? '',
+    '--ntk-shell-font-weight-semibold': theme.fontWeightSemibold ?? '',
+    '--ntk-shell-font-weight-bold': theme.fontWeightBold ?? '',
+    '--ntk-shell-font-size-base': theme.fontSizeBase ?? '',
+    '--ntk-shell-font-size-title': theme.fontSizeTitle ?? '',
+    '--ntk-shell-font-size-title-app': theme.fontSizeTitleApp ?? '',
+    '--ntk-shell-font-size-brand-title': theme.fontSizeBrandTitle ?? '',
+    '--ntk-shell-font-size-brand-subtitle': theme.fontSizeBrandSubtitle ?? '',
+    '--ntk-shell-font-size-item-label': theme.fontSizeItemLabel ?? '',
+    '--ntk-shell-font-size-item-caption': theme.fontSizeItemCaption ?? '',
+    '--ntk-shell-radius-sm': theme.radiusSm ?? '',
+    '--ntk-shell-radius-md': theme.radiusMd ?? '',
+    '--ntk-shell-radius-lg': theme.radiusLg ?? '',
+    '--ntk-shell-radius-item': theme.radiusItem ?? '',
+    '--ntk-shell-space-xs': theme.spacingXs ?? '',
+    '--ntk-shell-space-sm': theme.spacingSm ?? '',
+    '--ntk-shell-space-md': theme.spacingMd ?? '',
+    '--ntk-shell-space-lg': theme.spacingLg ?? '',
     '--ntk-shell-transition-fast': theme.transitionFast ?? '',
   }
 })
@@ -449,21 +711,107 @@ function resolveNotificationTypeTextColor(color?: string): string {
   return ''
 }
 
+function normalizeOptionalToken(value?: string): string | undefined {
+  const normalized = String(value ?? '').trim()
+  return normalized.length > 0 ? normalized : undefined
+}
+
+function isCssColorExpression(value: string): boolean {
+  return /^(#|var\(|rgb\(|rgba\(|hsl\(|hsla\(|oklch\(|oklab\(|color\(|color-mix\()/i.test(value)
+}
+
+function isSystemToolbarAction(action: AppShellAction): boolean {
+  const actionId = String(action.id ?? '').trim().toLowerCase()
+  return actionId === 'notifications' || actionId === 'account' || actionId === 'go-landing'
+}
+
+function resolveToolbarActionColor(action: AppShellAction): string | undefined {
+  const color = normalizeOptionalToken(action.color)
+  if (!color || isCssColorExpression(color)) {
+    return undefined
+  }
+  if (isSystemToolbarAction(action)) {
+    return undefined
+  }
+  return color
+}
+
+function resolveToolbarActionTextColor(action: AppShellAction): string | undefined {
+  const textColor = normalizeOptionalToken(action.textColor)
+  if (!textColor || isCssColorExpression(textColor)) {
+    return undefined
+  }
+  if (isSystemToolbarAction(action)) {
+    return undefined
+  }
+  return textColor
+}
+
+function resolveToolbarActionStyleColor(action: AppShellAction): string | undefined {
+  const textColor = normalizeOptionalToken(action.textColor)
+  if (textColor && isCssColorExpression(textColor)) {
+    return textColor
+  }
+
+  const color = normalizeOptionalToken(action.color)
+  if (color && isCssColorExpression(color)) {
+    return color
+  }
+
+  return undefined
+}
+
+// Detects whether an action should follow the notification semantic styling.
+function isNotificationToolbarAction(action: AppShellAction): boolean {
+  const actionId = String(action.id ?? '').trim().toLowerCase()
+  const actionIcon = String(action.icon ?? '').trim().toLowerCase()
+  return actionId === 'notifications' || actionIcon === 'notifications'
+}
+
+// Applies notification icon color to bell actions while preserving explicit action color overrides.
+function getToolbarActionStyle(action: AppShellAction): Record<string, string> {
+  const explicitStyleColor = resolveToolbarActionStyleColor(action)
+  if (explicitStyleColor) {
+    return {
+      color: explicitStyleColor,
+    }
+  }
+
+  if (resolveToolbarActionColor(action) || resolveToolbarActionTextColor(action)) {
+    return {}
+  }
+
+  if (isNotificationToolbarAction(action)) {
+    return {
+      color: notificationIconColor.value,
+    }
+  }
+
+  return {}
+}
+
 function getItemBadgeStyle(item: AppShellItem): Record<string, string> {
-  const semanticColor = resolveNotificationTypeColor(item.badgeColor)
-  const semanticTextColor = resolveNotificationTypeTextColor(item.badgeColor)
+  const explicitBadgeColor = normalizeOptionalToken(item.badgeColor)
+  const explicitBadgeTextColor = normalizeOptionalToken(item.badgeTextColor)
+  const semanticColor = resolveNotificationTypeColor(explicitBadgeColor)
+  const semanticTextColor = resolveNotificationTypeTextColor(explicitBadgeColor)
   return {
-    backgroundColor: semanticColor || item.badgeColor || resolvedTheme.value.itemActiveColor || '',
-    color: item.badgeTextColor || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
+    backgroundColor: semanticColor || explicitBadgeColor || resolvedTheme.value.itemActiveColor || '',
+    color: explicitBadgeTextColor || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
   }
 }
 
 function getActionBadgeStyle(action: AppShellAction): Record<string, string> {
-  const semanticColor = resolveNotificationTypeColor(action.badgeColor)
-  const semanticTextColor = resolveNotificationTypeTextColor(action.badgeColor)
+  const explicitBadgeColor = normalizeOptionalToken(action.badgeColor)
+  const explicitBadgeTextColor = normalizeOptionalToken(action.badgeTextColor)
+  const semanticColor = resolveNotificationTypeColor(explicitBadgeColor)
+  const semanticTextColor = resolveNotificationTypeTextColor(explicitBadgeColor)
+  const fallbackTextColor = semanticTextColor
+    || (isNotificationToolbarAction(action) ? notificationDefaultTextColor.value : notificationFallbackTextColor.value)
+
   return {
-    backgroundColor: semanticColor || action.badgeColor || notificationDefaultColor.value,
-    color: action.badgeTextColor || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
+    backgroundColor: semanticColor || explicitBadgeColor || notificationDefaultColor.value,
+    color: explicitBadgeTextColor || fallbackTextColor || '',
   }
 }
 
@@ -495,10 +843,68 @@ function getCompactGroupLabel(label: string): string {
   return `${words[0][0] ?? ''}${words[1][0] ?? ''}`.toUpperCase()
 }
 
+function emitTelemetry(type: AppShellTelemetryEvent['type'], payload: Record<string, unknown>): void {
+  emit('telemetry', {
+    type,
+    component: 'NtkAppShell',
+    payload,
+    timestamp: new Date().toISOString(),
+  })
+}
+
+function normalizeIdSegment(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-_]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function groupLabelId(groupId: string): string {
+  const normalized = normalizeIdSegment(groupId)
+  return `ntk-shell-group-${normalized || 'default'}`
+}
+
+function resolveItemAriaLabel(item: AppShellItem): string {
+  const prefix = props.itemAriaLabelPrefix?.trim()
+  if (!prefix) {
+    return item.label
+  }
+  return `${prefix}: ${item.label}`
+}
+
+function resolveToolbarActionAriaLabel(action: AppShellAction): string {
+  const explicit = action.tooltip?.trim() || action.label?.trim()
+  if (explicit) {
+    return explicit
+  }
+
+  const prefix = props.actionAriaLabelPrefix?.trim() || 'Action'
+  return `${prefix}: ${action.id}`
+}
+
+function resolveToolbarActionHref(action: AppShellAction): string | undefined {
+  return sanitizeShellLink(action.href)
+}
+
+function resolveToolbarActionTarget(action: AppShellAction): string | undefined {
+  return action.external && resolveToolbarActionHref(action) ? '_blank' : undefined
+}
+
+function resolveToolbarActionRel(action: AppShellAction): string | undefined {
+  return action.external && resolveToolbarActionHref(action) ? 'noopener noreferrer' : undefined
+}
+
 function selectItem(item: AppShellItem): void {
   localActiveItem.value = item.id
   emit('update:active-item', item.id)
   emit('item-click', item)
+  emitTelemetry('navigation-select', {
+    itemId: item.id,
+    itemLabel: item.label,
+    groupId: item.group,
+  })
 
   if (!$q.screen.gt.sm) {
     drawerOpen.value = false
@@ -509,10 +915,16 @@ function updateSearch(value: string | number | null): void {
   const normalized = String(value ?? '')
   localSearchValue.value = normalized
   emit('update:search-value', normalized)
+  emitTelemetry('search-update', { value: normalized })
 }
 
 function handleToolbarAction(action: AppShellAction): void {
   emit('toolbar-action', action)
+  emitTelemetry('toolbar-action', {
+    actionId: action.id,
+    hasHref: Boolean(resolveToolbarActionHref(action)),
+    external: Boolean(action.external),
+  })
 }
 
 function toggleMenuMode(): void {
@@ -526,6 +938,10 @@ function toggleMenuMode(): void {
     mini: miniState.value,
     open: drawerOpen.value,
   })
+  emitTelemetry('menu-toggle', {
+    mini: miniState.value,
+    open: drawerOpen.value,
+  })
 }
 </script>
 
@@ -533,6 +949,7 @@ function toggleMenuMode(): void {
 .ntk-app-shell {
   background: var(--ntk-shell-bg);
   font-family: var(--ntk-shell-font-family);
+  font-style: var(--ntk-shell-font-style-base);
 }
 
 .ntk-app-shell__header {
@@ -544,8 +961,8 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__toolbar {
-  padding: 0 8px 0 16px;
-  gap: 0.5rem;
+  padding: 0 var(--ntk-shell-space-sm) 0 var(--ntk-shell-space-lg);
+  gap: var(--ntk-shell-space-sm);
 }
 
 .ntk-app-shell__menu-slot {
@@ -562,15 +979,16 @@ function toggleMenuMode(): void {
 .ntk-app-shell__title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  font-size: 0.925rem;
+  gap: var(--ntk-shell-space-sm);
+  font-weight: var(--ntk-shell-font-weight-medium);
+  font-size: var(--ntk-shell-font-size-title);
   color: var(--ntk-shell-title-text);
 }
 
 .ntk-app-shell__title-app {
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-family: var(--ntk-shell-font-display);
+  font-weight: var(--ntk-shell-font-weight-bold);
+  font-size: var(--ntk-shell-font-size-title-app);
   color: var(--ntk-shell-title-app);
 }
 
@@ -581,12 +999,12 @@ function toggleMenuMode(): void {
 .ntk-app-shell__search-wrapper {
   width: 320px;
   max-width: 320px;
-  margin-right: 16px;
+  margin-right: var(--ntk-shell-space-lg);
   border: 1px solid var(--ntk-shell-search-border);
-  border-radius: 8px;
+  border-radius: var(--ntk-shell-radius-md);
   background: var(--ntk-shell-search-bg);
   transition: border-color var(--ntk-shell-transition-fast);
-  padding: 0 12px;
+  padding: 0 var(--ntk-shell-space-md);
 }
 
 .ntk-app-shell__search-wrapper:hover {
@@ -614,6 +1032,8 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__search :deep(input) {
   color: var(--ntk-shell-search-text);
+  font-size: var(--ntk-shell-font-size-base);
+  font-weight: var(--ntk-shell-font-weight-regular);
 }
 
 .ntk-app-shell__search :deep(.q-icon) {
@@ -623,8 +1043,8 @@ function toggleMenuMode(): void {
 .ntk-app-shell__actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  margin-right: 0.25rem;
+  gap: var(--ntk-shell-space-xs);
+  margin-right: var(--ntk-shell-space-xs);
 }
 
 .ntk-app-shell__actions :deep(.q-btn) {
@@ -650,7 +1070,7 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__drawer-header {
   min-height: 64px;
-  padding: 16px;
+  padding: var(--ntk-shell-space-lg);
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--ntk-shell-divider);
@@ -659,7 +1079,7 @@ function toggleMenuMode(): void {
 .ntk-app-shell__brand {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: var(--ntk-shell-space-md);
 }
 
 .ntk-app-shell__brand-text {
@@ -669,17 +1089,20 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__brand-text strong {
-  font-size: 0.9rem;
+  font-family: var(--ntk-shell-font-display);
+  font-size: var(--ntk-shell-font-size-brand-title);
+  font-weight: var(--ntk-shell-font-weight-semibold);
   color: var(--ntk-shell-brand-title);
 }
 
 .ntk-app-shell__brand-text small {
-  font-size: 0.72rem;
+  font-size: var(--ntk-shell-font-size-brand-subtitle);
+  font-weight: var(--ntk-shell-font-weight-regular);
   color: var(--ntk-shell-brand-subtitle);
 }
 
 .ntk-app-shell__drawer-list {
-  padding: 16px 0;
+  padding: var(--ntk-shell-space-lg) 0;
   flex: 1;
 }
 
@@ -717,9 +1140,9 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__item {
-  border-radius: 0 28px 28px 0;
-  margin-right: 12px;
-  margin-bottom: 4px;
+  border-radius: var(--ntk-shell-radius-item);
+  margin-right: var(--ntk-shell-space-lg);
+  margin-bottom: var(--ntk-shell-space-xs);
   min-height: 52px;
   color: var(--ntk-shell-item-text);
   transition: all var(--ntk-shell-transition-fast);
@@ -744,13 +1167,14 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__item :deep(.q-item__label) {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--ntk-shell-font-size-item-label);
+  font-weight: var(--ntk-shell-font-weight-semibold);
   line-height: 1.25;
 }
 
 .ntk-app-shell__item :deep(.q-item__label--caption) {
-  font-size: 11px;
+  font-size: var(--ntk-shell-font-size-item-caption);
+  font-weight: var(--ntk-shell-font-weight-regular);
   line-height: 1.2;
   margin-top: 0.15rem;
 }
@@ -768,7 +1192,7 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__group-separator {
   opacity: 0.12;
-  margin: 0.8rem 0.9rem;
+  margin: var(--ntk-shell-space-lg) var(--ntk-shell-space-lg);
 }
 
 .ntk-app-shell__drawer-footer {
@@ -797,7 +1221,9 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__page {
   color: var(--ntk-shell-page-text);
-  padding: 1rem;
+  font-size: var(--ntk-shell-font-size-base);
+  font-weight: var(--ntk-shell-font-weight-regular);
+  padding: var(--ntk-shell-space-lg);
 }
 
 :deep(.q-drawer--mini) .ntk-app-shell__item {

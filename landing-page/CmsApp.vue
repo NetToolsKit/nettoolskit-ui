@@ -8,6 +8,7 @@
   >
     <template #default="{ activeItem }">
       <div class="cms-shell-page" :style="cmsStyleVars">
+        <div class="cms-shell-page__workspace">
         <div class="cms-shell-page__hero">
           <h1>{{ activeItem.label }}</h1>
           <p>{{ activeItem.description || settings.content.moduleFallbackDescription }}</p>
@@ -15,10 +16,46 @@
 
         <div v-if="isSettingsModule" class="cms-settings">
           <div class="cms-settings__toolbar">
-            <q-btn no-caps unelevated icon="save" label="Save settings" :style="primaryActionStyle" @click="saveNow" />
-            <q-btn flat no-caps icon="restart_alt" label="Reset defaults" :style="dangerActionStyle" @click="resetToDefaults" />
+            <div class="cms-settings__tenant-controls">
+              <q-select
+                :model-value="activeTenantProfileId"
+                outlined
+                dense
+                emit-value
+                map-options
+                :options="tenantProfileOptions"
+                label="Tenant profile"
+                class="cms-settings__tenant-select"
+                @update:model-value="onTenantProfileChange"
+              />
+              <q-btn flat dense no-caps icon="add" label="New tenant" @click="createTenantProfileFromPrompt" />
+              <q-btn
+                flat
+                dense
+                no-caps
+                icon="delete"
+                label="Delete tenant"
+                :disable="tenantProfilesState.profiles.length <= 1"
+                :style="dangerActionStyle"
+                @click="removeActiveTenantProfile"
+              />
+              <q-btn flat dense no-caps icon="download" label="Export JSON" @click="exportActiveTenantProfile" />
+              <q-btn flat dense no-caps icon="upload_file" label="Import JSON" @click="openTenantImportDialog" />
+            </div>
+
+            <div class="cms-settings__actions">
+              <q-btn no-caps unelevated icon="save" label="Save settings" :style="primaryActionStyle" @click="saveNow" />
+              <q-btn flat no-caps icon="restart_alt" label="Reset defaults" :style="dangerActionStyle" @click="resetToDefaults" />
+            </div>
             <span class="cms-settings__saved-at">{{ savedAtLabel }}</span>
           </div>
+          <input
+            ref="tenantImportInputRef"
+            type="file"
+            accept="application/json,.json"
+            class="cms-file-input"
+            @change="onTenantImportFileChange"
+          >
 
           <q-tabs v-model="activeSettingsTab" dense inline-label class="cms-settings__tabs">
             <q-tab name="branding" icon="branding_watermark" :label="settings.content.tabBrandingLabel" />
@@ -86,6 +123,57 @@
             </q-tab-panel>
 
             <q-tab-panel name="colors">
+              <div class="cms-theme-presets cms-config-section">
+                <div class="cms-config-section__form">
+                  <div class="cms-section-header cms-section-header--stacked">
+                    <strong>Theme values preset</strong>
+                    <small>Apply a complete set of theme values before fine tuning token fields.</small>
+                  </div>
+
+                  <div class="cms-theme-presets__controls">
+                    <q-select
+                      :model-value="selectedThemePreset"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      :options="themePresetOptions"
+                      label="Theme preset"
+                      @update:model-value="onThemePresetChange"
+                    />
+                    <q-btn flat dense no-caps icon="sync" label="Detect from current values" @click="detectThemePresetFromCurrent" />
+                  </div>
+                </div>
+
+                <div class="cms-config-section__example">
+                  <div class="cms-example-section cms-example-section--inline">
+                    <div class="cms-example-section__header">
+                      <strong>{{ activeThemePresetLabel }}</strong>
+                      <small>{{ activeThemePresetDescription }}</small>
+                    </div>
+
+                    <div class="cms-preview-card cms-preview-card--theme-preset">
+                      <div class="cms-theme-token">
+                        <span class="cms-theme-token__dot" :style="{ background: accentColor }" />
+                        <span>Accent: <code>{{ settings.theme.itemActiveColor || defaultTheme.itemActiveColor }}</code></span>
+                      </div>
+                      <div class="cms-theme-token">
+                        <span class="cms-theme-token__dot" :style="{ background: settings.theme.headerBackground || defaultTheme.headerBackground }" />
+                        <span>Header: <code>{{ settings.theme.headerBackground || defaultTheme.headerBackground }}</code></span>
+                      </div>
+                      <div class="cms-theme-token">
+                        <span class="cms-theme-token__dot" :style="{ background: settings.theme.drawerBackground || defaultTheme.drawerBackground }" />
+                        <span>Surface: <code>{{ settings.theme.drawerBackground || defaultTheme.drawerBackground }}</code></span>
+                      </div>
+                      <div class="cms-theme-token">
+                        <span class="cms-theme-token__dot" :style="{ background: settings.theme.pageBackground || defaultTheme.pageBackground }" />
+                        <span>Page: <code>{{ settings.theme.pageBackground || defaultTheme.pageBackground }}</code></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="cms-color-groups">
                 <div v-for="group in colorFieldGroups" :key="group.id" class="cms-color-group cms-config-section">
                   <div class="cms-config-section__form">
@@ -130,32 +218,103 @@
                         </div>
                       </template>
 
+                      <template v-else-if="group.id === 'typography'">
+                        <div class="cms-example-section__header">
+                          <strong>Typography example</strong>
+                          <small>Families, weights, styles and shell text scales.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--typography">
+                          <div class="cms-preview-typography__headline">{{ settings.branding.appName }}</div>
+                          <div class="cms-preview-typography__title">Shell heading and context text</div>
+                          <p class="cms-preview-typography__body">
+                            This paragraph uses base family/style. Adjust fonts and sizes to match each tenant brand.
+                          </p>
+                          <div class="cms-preview-typography__menu">
+                            <div class="cms-preview-typography__menu-label">Menu label</div>
+                            <div class="cms-preview-typography__menu-caption">Caption for module context</div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <template v-else-if="group.id === 'layout'">
+                        <div class="cms-example-section__header">
+                          <strong>Layout and motion example</strong>
+                          <small>Spacing, radius and transition tokens on shell widgets.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--layout">
+                          <div class="cms-preview-layout__row">
+                            <div class="cms-preview-layout__panel">Panel A</div>
+                            <div class="cms-preview-layout__panel cms-preview-layout__panel--accent">Panel B</div>
+                          </div>
+                          <div class="cms-preview-layout__nav-item">
+                            <q-icon name="tune" size="16px" />
+                            <span>Hover-ready item spacing</span>
+                          </div>
+                          <small class="cms-preview-layout__hint">Move mouse over cards/items to validate transition token.</small>
+                        </div>
+                      </template>
+
                       <template v-else-if="group.id === 'navigation'">
                         <div class="cms-example-section__header">
                           <strong>Navigation example</strong>
-                          <small>Sidebar states: default, hover and active item.</small>
+                          <small>Sidebar text, icon, caption and active states.</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--navigation">
-                          <div class="cms-preview-nav-item">Overview</div>
-                          <div class="cms-preview-nav-item cms-preview-nav-item--hover">Analytics</div>
-                          <div class="cms-preview-nav-item cms-preview-nav-item--active">Settings</div>
+                          <div class="cms-preview-nav-caption">Core</div>
+                          <div class="cms-preview-nav-item">
+                            <q-icon name="dashboard" size="16px" class="cms-preview-nav-item__icon" />
+                            <span>Overview</span>
+                          </div>
+                          <div class="cms-preview-nav-item cms-preview-nav-item--hover">
+                            <q-icon name="query_stats" size="16px" class="cms-preview-nav-item__icon" />
+                            <span>Analytics</span>
+                          </div>
+                          <div class="cms-preview-nav-item cms-preview-nav-item--active">
+                            <q-icon name="settings" size="16px" class="cms-preview-nav-item__icon" />
+                            <span>Settings</span>
+                          </div>
+                          <div class="cms-preview-nav-mini-caption">CO</div>
                         </div>
                       </template>
 
                       <template v-else-if="group.id === 'header'">
                         <div class="cms-example-section__header">
                           <strong>Header and search example</strong>
-                          <small>Topbar colors, search background and border fields.</small>
+                          <small>Topbar title, search, icon colors and notification badge.</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--header">
                           <div class="cms-preview-header">
                             <div class="cms-preview-header__left">
-                              <q-icon :name="settings.layout.menuIcon" size="18px" />
-                              <strong>{{ settings.branding.appName }}</strong>
+                              <q-icon :name="settings.layout.menuIcon" size="18px" class="cms-preview-header__menu-icon" />
+                              <strong class="cms-preview-header__title-app">{{ settings.branding.appName }}</strong>
+                              <q-icon name="chevron_right" size="16px" class="cms-preview-header__separator" />
+                              <span class="cms-preview-header__title-text">Settings</span>
                             </div>
                             <div class="cms-preview-header__search">
-                              <q-icon name="search" size="16px" />
+                              <q-icon name="search" size="16px" class="cms-preview-header__search-icon" />
                               <span>{{ settings.layout.searchPlaceholder }}</span>
+                            </div>
+                            <div class="cms-preview-header__actions">
+                              <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action">
+                                <q-icon name="notifications" size="16px" />
+                                <span class="cms-preview-header__badge">{{ settings.branding.notificationCount || 2 }}</span>
+                              </button>
+                              <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action">
+                                <q-icon name="account_circle" size="16px" />
+                              </button>
+                              <button type="button" class="cms-preview-header__action">
+                                <q-icon name="home" size="16px" />
+                              </button>
+                            </div>
+                          </div>
+                          <div class="cms-preview-drawer">
+                            <div class="cms-preview-drawer__item">
+                              <q-icon name="dashboard" size="16px" />
+                              <span>Drawer item</span>
+                            </div>
+                            <div class="cms-preview-drawer__footer">
+                              <q-icon name="keyboard_double_arrow_left" size="15px" />
+                              <span>{{ settings.layout.collapseLabel }}</span>
                             </div>
                           </div>
                         </div>
@@ -172,19 +331,22 @@
                           <q-chip dense square :style="notificationChipStyles.error">{{ settings.content.previewErrorLabel }}</q-chip>
                           <q-chip dense square :style="notificationChipStyles.info">{{ settings.content.previewInfoLabel }}</q-chip>
                         </div>
+                        <div class="cms-notification-bell-preview">
+                          <q-icon name="notifications" size="18px" :style="notificationBellPreviewStyle" />
+                          <q-chip dense square :style="notificationCounterPreviewStyle">2</q-chip>
+                        </div>
+                        <div class="cms-notification-actions-preview">
+                          <button type="button" class="cms-notification-actions-preview__action">
+                            <q-icon name="account_circle" size="16px" />
+                            <span>Account</span>
+                          </button>
+                          <button type="button" class="cms-notification-actions-preview__action">
+                            <q-icon name="home" size="16px" />
+                            <span>Landing</span>
+                          </button>
+                        </div>
                       </template>
 
-                      <template v-else>
-                        <div class="cms-example-section__header">
-                          <strong>Advanced tokens example</strong>
-                          <small>Typography and transition values from advanced fields.</small>
-                        </div>
-                        <div class="cms-preview-card cms-preview-card--advanced">
-                          <strong>Theme internals preview</strong>
-                          <p>Font family and transition are reflected immediately in this block.</p>
-                          <code>transition: {{ settings.theme.transitionFast }}</code>
-                        </div>
-                      </template>
                     </div>
                   </div>
                 </div>
@@ -232,6 +394,9 @@
                       />
                       <q-input v-model="item.caption" outlined dense label="Caption" />
                       <q-input v-model="item.description" outlined dense label="Description" />
+                      <q-input v-model="item.badge" outlined dense label="Badge" />
+                      <q-input v-model="item.badgeColor" outlined dense label="Badge color" />
+                      <q-input v-model="item.badgeTextColor" outlined dense label="Badge text color" />
                       <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeMenuItem(index)" />
                     </div>
                   </div>
@@ -256,6 +421,15 @@
                           >
                             <q-icon :name="item.icon || 'radio_button_unchecked'" size="16px" />
                             <span>{{ item.label }}</span>
+                            <q-badge
+                              v-if="item.badge !== undefined && item.badge !== ''"
+                              :style="{
+                                background: String(item.badgeColor || notificationBadgeColor),
+                                color: String(item.badgeTextColor || notificationBadgeTextColor),
+                              }"
+                            >
+                              {{ item.badge }}
+                            </q-badge>
                           </button>
                         </div>
                       </div>
@@ -277,11 +451,15 @@
                     <q-input v-model.number="settings.layout.headerHeight" outlined dense type="number" min="48" label="Header height" />
                     <q-input v-model.number="settings.layout.drawerWidth" outlined dense type="number" min="180" label="Drawer width" />
                     <q-input v-model.number="settings.layout.miniWidth" outlined dense type="number" min="56" label="Mini width" />
+                    <q-input v-model.number="settings.layout.breakpoint" outlined dense type="number" min="480" label="Breakpoint" />
                   </div>
 
                   <div class="cms-toggle-row">
                     <q-toggle v-model="settings.layout.showSearch" label="Show search" />
+                    <q-toggle v-model="settings.layout.showNotifications" label="Show notifications" />
+                    <q-toggle v-model="settings.layout.showUserAvatar" label="Show account action" />
                     <q-toggle v-model="settings.layout.showGroupCaptions" label="Show group captions" />
+                    <q-toggle v-model="settings.layout.collapsible" label="Allow sidebar collapse" />
                     <q-toggle v-model="settings.layout.defaultDrawerOpen" label="Drawer open by default" />
                     <q-toggle v-model="settings.layout.defaultMini" label="Mini mode by default" />
                   </div>
@@ -300,9 +478,19 @@
                       <q-input v-model="action.tooltip" outlined dense label="Tooltip" />
                       <q-input v-model="action.href" outlined dense label="Href" />
                       <q-input v-model="action.color" outlined dense label="Color" />
+                      <q-input v-model="action.textColor" outlined dense label="Text color" />
                       <q-input v-model="action.badge" outlined dense label="Badge" />
+                      <q-input v-model="action.badgeColor" outlined dense label="Badge color (or semantic)" />
+                      <q-input v-model="action.badgeTextColor" outlined dense label="Badge text color" />
+                      <q-input v-model="action.className" outlined dense label="Class name" />
                       <q-toggle v-model="action.showLabel" label="Show label" />
                       <q-toggle v-model="action.external" label="Open external" />
+                      <q-toggle v-model="action.flat" label="Flat" />
+                      <q-toggle v-model="action.dense" label="Dense" />
+                      <q-toggle v-model="action.round" label="Round" />
+                      <q-toggle v-model="action.unelevated" label="Unelevated" />
+                      <q-toggle v-model="action.outline" label="Outline" />
+                      <q-toggle v-model="action.noCaps" label="No caps" />
                       <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeToolbarAction(index)" />
                     </div>
                   </div>
@@ -333,6 +521,15 @@
                           >
                             <q-icon :name="action.icon || 'bolt'" size="16px" />
                             <span v-if="action.showLabel">{{ action.label }}</span>
+                            <q-badge
+                              v-if="action.badge !== undefined && action.badge !== ''"
+                              :style="{
+                                background: String(action.badgeColor || notificationBadgeColor),
+                                color: String(action.badgeTextColor || notificationBadgeTextColor),
+                              }"
+                            >
+                              {{ action.badge }}
+                            </q-badge>
                           </button>
                         </div>
                       </div>
@@ -402,6 +599,118 @@
           </q-tab-panels>
         </div>
 
+        <div v-else-if="isPagesModule" class="cms-pages">
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>Pages builder</strong>
+              <q-btn flat dense no-caps icon="add" label="Add page" @click="addCmsPage" />
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-pages__editor">
+              <div
+                v-for="(page, pageIndex) in settings.pages"
+                :key="page.id"
+                class="cms-page-item"
+              >
+                <div class="cms-page-item__grid">
+                  <q-input v-model="page.id" outlined dense label="Page ID" @blur="normalizeCmsPageId(pageIndex)" />
+                  <q-input v-model="page.title" outlined dense label="Title" />
+                  <q-input v-model="page.path" outlined dense label="Path" @blur="normalizeCmsPagePath(pageIndex)" />
+                  <q-select
+                    v-model="page.status"
+                    outlined
+                    dense
+                    emit-value
+                    map-options
+                    :options="pageStatusOptions"
+                    label="Status"
+                  />
+                  <q-input
+                    v-model="page.description"
+                    outlined
+                    dense
+                    type="textarea"
+                    autogrow
+                    label="Description"
+                    class="cms-page-item__description"
+                  />
+                </div>
+
+                <div class="cms-page-item__sections">
+                  <div class="cms-page-item__sections-header">
+                    <strong>Sections</strong>
+                    <q-btn flat dense no-caps icon="add" label="Add section" @click="addCmsPageSection(pageIndex)" />
+                  </div>
+                  <div
+                    v-for="(section, sectionIndex) in page.sections"
+                    :key="`${page.id}-${section.id}-${sectionIndex}`"
+                    class="cms-page-section-row"
+                  >
+                    <q-input v-model="section.id" outlined dense label="Section ID" />
+                    <q-input v-model="section.label" outlined dense label="Section label" />
+                    <q-toggle v-model="section.enabled" label="Enabled" />
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      icon="delete"
+                      :style="dangerActionStyle"
+                      @click="removeCmsPageSection(pageIndex, sectionIndex)"
+                    />
+                  </div>
+                </div>
+
+                <div class="cms-page-item__actions">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="delete"
+                    label="Delete page"
+                    :style="dangerActionStyle"
+                    :disable="settings.pages.length <= 1"
+                    @click="removeCmsPage(pageIndex)"
+                  />
+                </div>
+              </div>
+            </div>
+          </q-card>
+
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>Pages preview</strong>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-pages__preview">
+              <article
+                v-for="page in settings.pages"
+                :key="`preview-${page.id}`"
+                class="cms-page-preview"
+              >
+                <div class="cms-page-preview__header">
+                  <strong>{{ page.title }}</strong>
+                  <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
+                    {{ page.status }}
+                  </q-chip>
+                </div>
+                <small class="cms-page-preview__path">{{ page.path }}</small>
+                <p>{{ page.description || 'No description provided.' }}</p>
+                <div class="cms-page-preview__sections">
+                  <q-chip
+                    v-for="section in page.sections"
+                    :key="`${page.id}-${section.id}`"
+                    dense
+                    square
+                    :style="getCmsPageSectionStyle(section.enabled)"
+                  >
+                    {{ section.label }}
+                  </q-chip>
+                </div>
+              </article>
+            </div>
+          </q-card>
+        </div>
+
         <div v-else class="cms-shell-page__grid">
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
@@ -446,13 +755,14 @@
             </div>
           </q-card>
         </div>
+        </div>
       </div>
     </template>
   </NtkAppShell>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, toRaw, watch } from 'vue'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
 import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
 import {
@@ -463,13 +773,31 @@ import {
 import {
   applyCmsFavicon,
   loadCmsWhiteLabelSettings,
+  normalizeCmsWhiteLabelSettings,
   resetCmsWhiteLabelSettings,
   saveCmsWhiteLabelSettings,
 } from './cms/white-label.storage'
+import {
+  createTenantProfileId,
+  loadCmsTenantProfilesState,
+  removeCmsTenantProfile,
+  saveCmsTenantProfilesState,
+  upsertCmsTenantProfile,
+} from './cms/tenant-profiles.storage'
 import { applySemanticColors, semanticColors } from '../src/config/colors/semantic.config'
+import {
+  buildCmsThemePresets,
+  detectCmsThemePresetId,
+  isCmsThemeBasePresetId,
+  isCmsThemePresetId,
+  type CmsThemeBasePresetId,
+  type CmsThemePreset,
+  type CmsThemePresetId,
+} from './cms/theme-presets'
+import type { CmsPageSettings, CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } from './cms/white-label.types'
 
 type ThemeFieldKey = keyof ReturnType<typeof createDefaultWhiteLabelSettings>['theme']
-type ThemeFieldGroup = 'foundation' | 'navigation' | 'header' | 'notifications' | 'advanced'
+type ThemeFieldGroup = 'foundation' | 'typography' | 'layout' | 'navigation' | 'header' | 'notifications'
 
 interface ThemeField {
   key: ThemeFieldKey
@@ -490,24 +818,112 @@ const defaultSettings = createDefaultWhiteLabelSettings()
 const defaultTheme = defaultSettings.theme
 const defaultMenuId = defaultSettings.items[0]?.id ?? ''
 const defaultSettingsModuleId = defaultSettings.items.find(item => item.icon === 'settings')?.id ?? ''
+const baseThemePresets: CmsThemePreset[] = buildCmsThemePresets(defaultTheme)
 
 function themePlaceholder(key: ThemeFieldKey): string {
   const value = defaultTheme[key]
   return value ? String(value) : ''
 }
 
-const settings = ref(loadCmsWhiteLabelSettings())
+function cloneWhiteLabelSettings(value: CmsWhiteLabelSettings): CmsWhiteLabelSettings {
+  const rawValue = toRaw(value) as CmsWhiteLabelSettings
+  if (typeof structuredClone === 'function') {
+    try {
+      return structuredClone(rawValue)
+    } catch {
+      return JSON.parse(JSON.stringify(rawValue)) as CmsWhiteLabelSettings
+    }
+  }
+  return JSON.parse(JSON.stringify(rawValue)) as CmsWhiteLabelSettings
+}
+
+const tenantProfilesState = ref<CmsTenantProfilesState>(loadCmsTenantProfilesState())
+const activeTenantProfileId = ref(tenantProfilesState.value.activeProfileId)
+const tenantImportInputRef = ref<HTMLInputElement | null>(null)
+
+function getActiveTenantProfileSnapshot(): CmsTenantProfile {
+  const activeProfile = tenantProfilesState.value.profiles.find(profile => profile.id === activeTenantProfileId.value)
+  if (activeProfile) {
+    return activeProfile
+  }
+
+  const firstProfile = tenantProfilesState.value.profiles[0]
+  if (firstProfile) {
+    activeTenantProfileId.value = firstProfile.id
+    return firstProfile
+  }
+
+  const fallbackSettings = normalizeCmsWhiteLabelSettings(loadCmsWhiteLabelSettings())
+  const fallbackProfile: CmsTenantProfile = {
+    id: 'default',
+    name: 'Default Tenant',
+    settings: fallbackSettings,
+    updatedAt: new Date().toISOString(),
+  }
+  tenantProfilesState.value = {
+    activeProfileId: fallbackProfile.id,
+    profiles: [fallbackProfile],
+  }
+  activeTenantProfileId.value = fallbackProfile.id
+  return fallbackProfile
+}
+
+const settings = ref<CmsWhiteLabelSettings>(
+  cloneWhiteLabelSettings(getActiveTenantProfileSnapshot().settings)
+)
+
+function resolveThemePresetsWithOverrides(currentSettings: typeof settings.value): CmsThemePreset[] {
+  return baseThemePresets.map(preset => ({
+    ...preset,
+    theme: {
+      ...preset.theme,
+      ...(currentSettings.themePresetOverrides[preset.id] ?? {}),
+    },
+  }))
+}
+
+function getCurrentThemePresets(): CmsThemePreset[] {
+  return resolveThemePresetsWithOverrides(settings.value)
+}
 
 const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
 const activeSettingsTab = ref<'branding' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
 const savedAtLabel = ref('Auto-save enabled')
+const pageStatusOptions = [
+  { label: 'Draft', value: 'draft' },
+  { label: 'Published', value: 'published' },
+] as const
+const initialThemePresets = getCurrentThemePresets()
+const selectedThemePreset = ref<CmsThemePresetId>(
+  isCmsThemePresetId(settings.value.themePresetId)
+    ? settings.value.themePresetId
+    : detectCmsThemePresetId(settings.value.theme, initialThemePresets, defaultTheme)
+)
+settings.value.themePresetId = selectedThemePreset.value
+
+const tenantProfileOptions = computed(() => {
+  return tenantProfilesState.value.profiles.map(profile => ({
+    label: profile.name,
+    value: profile.id,
+  }))
+})
 
 const colorFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
   {
     id: 'foundation',
     label: 'Foundation',
     description: 'Base colors reused by page, cards and default text.',
+  },
+  {
+    id: 'typography',
+    label: 'Typography',
+    description: 'Font family, weights, sizes and base style.',
+  },
+  {
+    id: 'layout',
+    label: 'Layout and Motion',
+    description: 'Radii, spacing and motion tokens for shell structure.',
   },
   {
     id: 'navigation',
@@ -524,23 +940,144 @@ const colorFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
     label: 'Notifications and Actions',
     description: 'Badges and action highlights.',
   },
-  {
-    id: 'advanced',
-    label: 'Advanced Theme Tokens',
-    description: 'Fine-grained overrides for shell internals and typography.',
-  },
 ]
 
 const colorFields: ThemeField[] = [
   {
     key: 'fontFamily',
-    group: 'foundation',
+    group: 'typography',
     label: 'Font family',
     placeholder: themePlaceholder('fontFamily'),
   },
   {
+    key: 'fontFamilyDisplay',
+    group: 'typography',
+    label: 'Display font family',
+    placeholder: themePlaceholder('fontFamilyDisplay'),
+  },
+  {
+    key: 'fontStyleBase',
+    group: 'typography',
+    label: 'Base font style',
+    placeholder: themePlaceholder('fontStyleBase'),
+  },
+  {
+    key: 'fontWeightRegular',
+    group: 'typography',
+    label: 'Weight regular',
+    placeholder: themePlaceholder('fontWeightRegular'),
+  },
+  {
+    key: 'fontWeightMedium',
+    group: 'typography',
+    label: 'Weight medium',
+    placeholder: themePlaceholder('fontWeightMedium'),
+  },
+  {
+    key: 'fontWeightSemibold',
+    group: 'typography',
+    label: 'Weight semibold',
+    placeholder: themePlaceholder('fontWeightSemibold'),
+  },
+  {
+    key: 'fontWeightBold',
+    group: 'typography',
+    label: 'Weight bold',
+    placeholder: themePlaceholder('fontWeightBold'),
+  },
+  {
+    key: 'fontSizeBase',
+    group: 'typography',
+    label: 'Base font size',
+    placeholder: themePlaceholder('fontSizeBase'),
+  },
+  {
+    key: 'fontSizeTitle',
+    group: 'typography',
+    label: 'Title font size',
+    placeholder: themePlaceholder('fontSizeTitle'),
+  },
+  {
+    key: 'fontSizeTitleApp',
+    group: 'typography',
+    label: 'App title size',
+    placeholder: themePlaceholder('fontSizeTitleApp'),
+  },
+  {
+    key: 'fontSizeBrandTitle',
+    group: 'typography',
+    label: 'Brand title size',
+    placeholder: themePlaceholder('fontSizeBrandTitle'),
+  },
+  {
+    key: 'fontSizeBrandSubtitle',
+    group: 'typography',
+    label: 'Brand subtitle size',
+    placeholder: themePlaceholder('fontSizeBrandSubtitle'),
+  },
+  {
+    key: 'fontSizeItemLabel',
+    group: 'typography',
+    label: 'Menu label size',
+    placeholder: themePlaceholder('fontSizeItemLabel'),
+  },
+  {
+    key: 'fontSizeItemCaption',
+    group: 'typography',
+    label: 'Menu caption size',
+    placeholder: themePlaceholder('fontSizeItemCaption'),
+  },
+  {
+    key: 'radiusSm',
+    group: 'layout',
+    label: 'Radius small',
+    placeholder: themePlaceholder('radiusSm'),
+  },
+  {
+    key: 'radiusMd',
+    group: 'layout',
+    label: 'Radius medium',
+    placeholder: themePlaceholder('radiusMd'),
+  },
+  {
+    key: 'radiusLg',
+    group: 'layout',
+    label: 'Radius large',
+    placeholder: themePlaceholder('radiusLg'),
+  },
+  {
+    key: 'radiusItem',
+    group: 'layout',
+    label: 'Menu item radius',
+    placeholder: themePlaceholder('radiusItem'),
+  },
+  {
+    key: 'spacingXs',
+    group: 'layout',
+    label: 'Spacing XS',
+    placeholder: themePlaceholder('spacingXs'),
+  },
+  {
+    key: 'spacingSm',
+    group: 'layout',
+    label: 'Spacing SM',
+    placeholder: themePlaceholder('spacingSm'),
+  },
+  {
+    key: 'spacingMd',
+    group: 'layout',
+    label: 'Spacing MD',
+    placeholder: themePlaceholder('spacingMd'),
+  },
+  {
+    key: 'spacingLg',
+    group: 'layout',
+    label: 'Spacing LG',
+    placeholder: themePlaceholder('spacingLg'),
+  },
+  {
     key: 'transitionFast',
-    group: 'foundation',
+    group: 'layout',
     label: 'Transition',
     placeholder: themePlaceholder('transitionFast'),
   },
@@ -573,6 +1110,13 @@ const colorFields: ThemeField[] = [
     aliases: ['drawerFooterBackground', 'searchBackground'],
   },
   {
+    key: 'drawerFooterBackground',
+    group: 'foundation',
+    label: 'Surface footer background (override)',
+    isColor: true,
+    placeholder: themePlaceholder('drawerFooterBackground'),
+  },
+  {
     key: 'drawerTextColor',
     group: 'foundation',
     label: 'Surface text color',
@@ -597,6 +1141,20 @@ const colorFields: ThemeField[] = [
     aliases: ['itemHoverColor', 'itemIconHoverColor', 'focusColor', 'titleAppColor', 'brandTitleColor'],
   },
   {
+    key: 'itemTextColor',
+    group: 'navigation',
+    label: 'Item text color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('itemTextColor'),
+  },
+  {
+    key: 'itemIconColor',
+    group: 'navigation',
+    label: 'Item icon color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('itemIconColor'),
+  },
+  {
     key: 'itemHoverBackground',
     group: 'navigation',
     label: 'Hover background',
@@ -604,10 +1162,52 @@ const colorFields: ThemeField[] = [
     aliases: ['actionHoverBackground'],
   },
   {
+    key: 'itemHoverColor',
+    group: 'navigation',
+    label: 'Item hover text color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('itemHoverColor'),
+  },
+  {
+    key: 'itemIconHoverColor',
+    group: 'navigation',
+    label: 'Item hover icon color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('itemIconHoverColor'),
+  },
+  {
     key: 'itemActiveBackground',
     group: 'navigation',
     label: 'Active background',
     placeholder: themePlaceholder('itemActiveBackground'),
+  },
+  {
+    key: 'focusColor',
+    group: 'navigation',
+    label: 'Focus ring color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('focusColor'),
+  },
+  {
+    key: 'brandTitleColor',
+    group: 'navigation',
+    label: 'Brand title color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('brandTitleColor'),
+  },
+  {
+    key: 'brandSubtitleColor',
+    group: 'navigation',
+    label: 'Brand subtitle color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('brandSubtitleColor'),
+  },
+  {
+    key: 'groupCaptionColor',
+    group: 'navigation',
+    label: 'Group caption color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('groupCaptionColor'),
   },
   {
     key: 'groupCaptionMiniBackground',
@@ -629,6 +1229,55 @@ const colorFields: ThemeField[] = [
     isColor: true,
     placeholder: themePlaceholder('headerTextColor'),
     aliases: ['toolbarButtonColor', 'titleTextColor', 'searchIconColor'],
+  },
+  {
+    key: 'toolbarButtonColor',
+    group: 'header',
+    label: 'Toolbar icon color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('toolbarButtonColor'),
+  },
+  {
+    key: 'titleAppColor',
+    group: 'header',
+    label: 'App title color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('titleAppColor'),
+  },
+  {
+    key: 'titleTextColor',
+    group: 'header',
+    label: 'Module title color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('titleTextColor'),
+  },
+  {
+    key: 'titleSeparatorColor',
+    group: 'header',
+    label: 'Title separator color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('titleSeparatorColor'),
+  },
+  {
+    key: 'searchBackground',
+    group: 'header',
+    label: 'Search background (override)',
+    isColor: true,
+    placeholder: themePlaceholder('searchBackground'),
+  },
+  {
+    key: 'searchTextColor',
+    group: 'header',
+    label: 'Search text color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('searchTextColor'),
+  },
+  {
+    key: 'searchIconColor',
+    group: 'header',
+    label: 'Search icon color (override)',
+    isColor: true,
+    placeholder: themePlaceholder('searchIconColor'),
   },
   {
     key: 'searchBorder',
@@ -661,122 +1310,11 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('drawerFooterShadow'),
   },
   {
-    key: 'toolbarButtonColor',
-    group: 'advanced',
-    label: 'Toolbar button color',
-    isColor: true,
-    placeholder: themePlaceholder('toolbarButtonColor'),
-  },
-  {
-    key: 'titleAppColor',
-    group: 'advanced',
-    label: 'Title app color',
-    isColor: true,
-    placeholder: themePlaceholder('titleAppColor'),
-  },
-  {
-    key: 'titleTextColor',
-    group: 'advanced',
-    label: 'Title text color',
-    isColor: true,
-    placeholder: themePlaceholder('titleTextColor'),
-  },
-  {
-    key: 'titleSeparatorColor',
-    group: 'advanced',
-    label: 'Title separator color',
-    isColor: true,
-    placeholder: themePlaceholder('titleSeparatorColor'),
-  },
-  {
-    key: 'drawerFooterBackground',
-    group: 'advanced',
-    label: 'Drawer footer background',
-    isColor: true,
-    placeholder: themePlaceholder('drawerFooterBackground'),
-  },
-  {
-    key: 'searchBackground',
-    group: 'advanced',
-    label: 'Search background',
-    isColor: true,
-    placeholder: themePlaceholder('searchBackground'),
-  },
-  {
-    key: 'searchTextColor',
-    group: 'advanced',
-    label: 'Search text color',
-    isColor: true,
-    placeholder: themePlaceholder('searchTextColor'),
-  },
-  {
-    key: 'searchIconColor',
-    group: 'advanced',
-    label: 'Search icon color',
-    isColor: true,
-    placeholder: themePlaceholder('searchIconColor'),
-  },
-  {
-    key: 'focusColor',
-    group: 'advanced',
-    label: 'Focus color',
-    isColor: true,
-    placeholder: themePlaceholder('focusColor'),
-  },
-  {
     key: 'actionHoverBackground',
-    group: 'advanced',
-    label: 'Action hover background',
+    group: 'header',
+    label: 'Action hover background (override)',
+    isColor: true,
     placeholder: themePlaceholder('actionHoverBackground'),
-  },
-  {
-    key: 'brandTitleColor',
-    group: 'advanced',
-    label: 'Brand title color',
-    isColor: true,
-    placeholder: themePlaceholder('brandTitleColor'),
-  },
-  {
-    key: 'brandSubtitleColor',
-    group: 'advanced',
-    label: 'Brand subtitle color',
-    isColor: true,
-    placeholder: themePlaceholder('brandSubtitleColor'),
-  },
-  {
-    key: 'groupCaptionColor',
-    group: 'advanced',
-    label: 'Group caption color',
-    isColor: true,
-    placeholder: themePlaceholder('groupCaptionColor'),
-  },
-  {
-    key: 'itemTextColor',
-    group: 'advanced',
-    label: 'Item text color',
-    isColor: true,
-    placeholder: themePlaceholder('itemTextColor'),
-  },
-  {
-    key: 'itemHoverColor',
-    group: 'advanced',
-    label: 'Item hover color',
-    isColor: true,
-    placeholder: themePlaceholder('itemHoverColor'),
-  },
-  {
-    key: 'itemIconColor',
-    group: 'advanced',
-    label: 'Item icon color',
-    isColor: true,
-    placeholder: themePlaceholder('itemIconColor'),
-  },
-  {
-    key: 'itemIconHoverColor',
-    group: 'advanced',
-    label: 'Item icon hover color',
-    isColor: true,
-    placeholder: themePlaceholder('itemIconHoverColor'),
   },
   {
     key: 'notificationSuccessColor',
@@ -835,11 +1373,25 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('notificationInfoTextColor'),
   },
   {
+    key: 'notificationBadgeColor',
+    group: 'notifications',
+    label: 'Notification badge color',
+    isColor: true,
+    placeholder: themePlaceholder('notificationBadgeColor'),
+  },
+  {
     key: 'notificationBadgeTextColor',
     group: 'notifications',
-    label: 'Default badge text color',
+    label: 'Notification badge text color',
     isColor: true,
     placeholder: themePlaceholder('notificationBadgeTextColor'),
+  },
+  {
+    key: 'notificationIconColor',
+    group: 'notifications',
+    label: 'Notification bell icon color',
+    isColor: true,
+    placeholder: themePlaceholder('notificationIconColor'),
   },
 ]
 
@@ -848,6 +1400,25 @@ const colorFieldGroups = computed(() => {
     ...group,
     fields: colorFields.filter(field => field.group === group.id),
   }))
+})
+
+const themePresets = computed(() => getCurrentThemePresets())
+
+const themePresetOptions = computed(() => [
+  ...themePresets.value.map(preset => ({ label: preset.label, value: preset.id })),
+  { label: 'Custom', value: 'custom' as CmsThemePresetId },
+])
+
+const activeThemePreset = computed(() => {
+  return themePresets.value.find(preset => preset.id === selectedThemePreset.value)
+})
+
+const activeThemePresetLabel = computed(() => {
+  return activeThemePreset.value?.label ?? 'Custom theme'
+})
+
+const activeThemePresetDescription = computed(() => {
+  return activeThemePreset.value?.description ?? 'Custom values from manual token editing.'
 })
 
 const shellSnapshot = computed(() => {
@@ -881,12 +1452,34 @@ const notificationInfoColor = computed(() => {
   return settings.value.theme.notificationInfoColor || defaultTheme.notificationInfoColor || semanticColors.infoPrimary
 })
 
+const notificationBadgeColor = computed(() => {
+  return (
+    settings.value.theme.notificationBadgeColor ||
+    defaultTheme.notificationBadgeColor ||
+    notificationErrorColor.value
+  )
+})
+
+const notificationBadgeTextColor = computed(() => {
+  return settings.value.theme.notificationBadgeTextColor || defaultTheme.notificationBadgeTextColor || 'var(--ntk-text-inverse)'
+})
+
+const notificationIconColor = computed(() => {
+  return (
+    settings.value.theme.notificationIconColor ||
+    defaultTheme.notificationIconColor ||
+    settings.value.theme.toolbarButtonColor ||
+    defaultTheme.toolbarButtonColor ||
+    'var(--ntk-text-secondary)'
+  )
+})
+
 const notificationSuccessTextColor = computed(() => {
   return (
     settings.value.theme.notificationSuccessTextColor ||
-    settings.value.theme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     defaultTheme.notificationSuccessTextColor ||
-    defaultTheme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     'var(--ntk-text-inverse)'
   )
 })
@@ -894,9 +1487,9 @@ const notificationSuccessTextColor = computed(() => {
 const notificationWarningTextColor = computed(() => {
   return (
     settings.value.theme.notificationWarningTextColor ||
-    settings.value.theme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     defaultTheme.notificationWarningTextColor ||
-    defaultTheme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     'var(--ntk-text-primary)'
   )
 })
@@ -904,9 +1497,9 @@ const notificationWarningTextColor = computed(() => {
 const notificationErrorTextColor = computed(() => {
   return (
     settings.value.theme.notificationErrorTextColor ||
-    settings.value.theme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     defaultTheme.notificationErrorTextColor ||
-    defaultTheme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     'var(--ntk-text-inverse)'
   )
 })
@@ -914,14 +1507,36 @@ const notificationErrorTextColor = computed(() => {
 const notificationInfoTextColor = computed(() => {
   return (
     settings.value.theme.notificationInfoTextColor ||
-    settings.value.theme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     defaultTheme.notificationInfoTextColor ||
-    defaultTheme.notificationBadgeTextColor ||
+    notificationBadgeTextColor.value ||
     'var(--ntk-text-inverse)'
   )
 })
 
 const cmsStyleVars = computed<Record<string, string>>(() => ({
+  '--ntk-cms-font-family': settings.value.theme.fontFamily || defaultTheme.fontFamily || '',
+  '--ntk-cms-font-display': settings.value.theme.fontFamilyDisplay || settings.value.theme.fontFamily || defaultTheme.fontFamilyDisplay || defaultTheme.fontFamily || '',
+  '--ntk-cms-font-style-base': settings.value.theme.fontStyleBase || defaultTheme.fontStyleBase || 'normal',
+  '--ntk-cms-font-weight-regular': settings.value.theme.fontWeightRegular || defaultTheme.fontWeightRegular || '400',
+  '--ntk-cms-font-weight-medium': settings.value.theme.fontWeightMedium || defaultTheme.fontWeightMedium || settings.value.theme.fontWeightRegular || defaultTheme.fontWeightRegular || '500',
+  '--ntk-cms-font-weight-semibold': settings.value.theme.fontWeightSemibold || defaultTheme.fontWeightSemibold || settings.value.theme.fontWeightMedium || defaultTheme.fontWeightMedium || '600',
+  '--ntk-cms-font-weight-bold': settings.value.theme.fontWeightBold || defaultTheme.fontWeightBold || settings.value.theme.fontWeightSemibold || defaultTheme.fontWeightSemibold || '700',
+  '--ntk-cms-font-size-base': settings.value.theme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
+  '--ntk-cms-font-size-title': settings.value.theme.fontSizeTitle || defaultTheme.fontSizeTitle || settings.value.theme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
+  '--ntk-cms-font-size-title-app': settings.value.theme.fontSizeTitleApp || defaultTheme.fontSizeTitleApp || settings.value.theme.fontSizeTitle || defaultTheme.fontSizeTitle || '1.05rem',
+  '--ntk-cms-font-size-brand-title': settings.value.theme.fontSizeBrandTitle || defaultTheme.fontSizeBrandTitle || settings.value.theme.fontSizeBase || defaultTheme.fontSizeBase || '0.9rem',
+  '--ntk-cms-font-size-brand-subtitle': settings.value.theme.fontSizeBrandSubtitle || defaultTheme.fontSizeBrandSubtitle || '0.72rem',
+  '--ntk-cms-font-size-item-label': settings.value.theme.fontSizeItemLabel || defaultTheme.fontSizeItemLabel || '13px',
+  '--ntk-cms-font-size-item-caption': settings.value.theme.fontSizeItemCaption || defaultTheme.fontSizeItemCaption || '11px',
+  '--ntk-cms-radius-sm': settings.value.theme.radiusSm || defaultTheme.radiusSm || '6px',
+  '--ntk-cms-radius-md': settings.value.theme.radiusMd || defaultTheme.radiusMd || '8px',
+  '--ntk-cms-radius-lg': settings.value.theme.radiusLg || defaultTheme.radiusLg || '10px',
+  '--ntk-cms-radius-item': settings.value.theme.radiusItem || defaultTheme.radiusItem || '0 28px 28px 0',
+  '--ntk-cms-space-xs': settings.value.theme.spacingXs || defaultTheme.spacingXs || '0.25rem',
+  '--ntk-cms-space-sm': settings.value.theme.spacingSm || defaultTheme.spacingSm || '0.5rem',
+  '--ntk-cms-space-md': settings.value.theme.spacingMd || defaultTheme.spacingMd || '0.75rem',
+  '--ntk-cms-space-lg': settings.value.theme.spacingLg || defaultTheme.spacingLg || '1rem',
   '--ntk-cms-text-primary': settings.value.theme.pageTextColor || defaultTheme.pageTextColor || '',
   '--ntk-cms-text-secondary': settings.value.theme.drawerTextColor || defaultTheme.drawerTextColor || '',
   '--ntk-cms-border-color': settings.value.theme.dividerColor || defaultTheme.dividerColor || '',
@@ -934,18 +1549,37 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-header-bg': settings.value.theme.headerBackground || defaultTheme.headerBackground || '',
   '--ntk-cms-header-text': settings.value.theme.headerTextColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-header-shadow': settings.value.theme.headerShadow || defaultTheme.headerShadow || '',
+  '--ntk-cms-drawer-shadow': settings.value.theme.drawerShadow || defaultTheme.drawerShadow || '',
+  '--ntk-cms-drawer-footer-bg': settings.value.theme.drawerFooterBackground || settings.value.theme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
+  '--ntk-cms-drawer-footer-shadow': settings.value.theme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
   '--ntk-cms-search-bg': settings.value.theme.searchBackground || defaultTheme.searchBackground || '',
   '--ntk-cms-search-text': settings.value.theme.searchTextColor || defaultTheme.searchTextColor || '',
+  '--ntk-cms-search-icon': settings.value.theme.searchIconColor || settings.value.theme.headerTextColor || defaultTheme.searchIconColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-search-border': settings.value.theme.searchBorder || defaultTheme.searchBorder || '',
-  '--ntk-cms-font-family': settings.value.theme.fontFamily || defaultTheme.fontFamily || '',
+  '--ntk-cms-search-border-hover': settings.value.theme.searchBorderHover || defaultTheme.searchBorderHover || '',
   '--ntk-cms-transition': settings.value.theme.transitionFast || defaultTheme.transitionFast || '',
+  '--ntk-cms-focus-color': settings.value.theme.focusColor || settings.value.theme.itemActiveColor || defaultTheme.focusColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-action-hover': settings.value.theme.actionHoverBackground || settings.value.theme.itemHoverBackground || defaultTheme.actionHoverBackground || defaultTheme.itemHoverBackground || '',
   '--ntk-cms-shell-bg': settings.value.theme.shellBackground || defaultTheme.shellBackground || '',
-  '--ntk-cms-page-bg': settings.value.theme.pageBackground || defaultTheme.pageBackground || '',
-  '--ntk-cms-mini-group-bg': settings.value.theme.groupCaptionMiniBackground || defaultTheme.groupCaptionMiniBackground || '',
+  '--ntk-cms-title-app': settings.value.theme.titleAppColor || settings.value.theme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-title-text': settings.value.theme.titleTextColor || settings.value.theme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-title-separator': settings.value.theme.titleSeparatorColor || settings.value.theme.dividerColor || defaultTheme.titleSeparatorColor || defaultTheme.dividerColor || '',
+  '--ntk-cms-toolbar-icon': settings.value.theme.toolbarButtonColor || settings.value.theme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-brand-title': settings.value.theme.brandTitleColor || settings.value.theme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-brand-subtitle': settings.value.theme.brandSubtitleColor || settings.value.theme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-group-caption': settings.value.theme.groupCaptionColor || settings.value.theme.drawerTextColor || defaultTheme.groupCaptionColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-group-caption-mini-bg': settings.value.theme.groupCaptionMiniBackground || settings.value.theme.itemHoverBackground || defaultTheme.groupCaptionMiniBackground || defaultTheme.itemHoverBackground || '',
+  '--ntk-cms-item-text': settings.value.theme.itemTextColor || settings.value.theme.drawerTextColor || defaultTheme.itemTextColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-item-icon': settings.value.theme.itemIconColor || settings.value.theme.drawerTextColor || defaultTheme.itemIconColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-item-hover-color': settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-item-icon-hover': settings.value.theme.itemIconHoverColor || settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemIconHoverColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-notification-success': notificationSuccessColor.value,
   '--ntk-cms-notification-warning': notificationWarningColor.value,
   '--ntk-cms-notification-error': notificationErrorColor.value,
   '--ntk-cms-notification-info': notificationInfoColor.value,
+  '--ntk-cms-notification-badge-bg': notificationBadgeColor.value,
+  '--ntk-cms-notification-badge-text': notificationBadgeTextColor.value,
+  '--ntk-cms-notification-icon': notificationIconColor.value,
 }))
 
 const bannerStyle = computed(() => ({
@@ -962,7 +1596,7 @@ const statusChipStyle = computed(() => ({
 
 const primaryActionStyle = computed(() => ({
   background: accentColor.value,
-  color: settings.value.theme.notificationBadgeTextColor || defaultTheme.notificationBadgeTextColor || '',
+  color: notificationBadgeTextColor.value,
 }))
 
 const dangerActionStyle = computed(() => ({
@@ -986,6 +1620,15 @@ const notificationChipStyles = computed(() => ({
     background: notificationInfoColor.value,
     color: notificationInfoTextColor.value,
   },
+}))
+
+const notificationBellPreviewStyle = computed(() => ({
+  color: notificationIconColor.value,
+}))
+
+const notificationCounterPreviewStyle = computed(() => ({
+  background: notificationBadgeColor.value,
+  color: notificationBadgeTextColor.value,
 }))
 
 const semanticNotificationOverrides = computed(() => ({
@@ -1030,7 +1673,24 @@ const menuPreviewGroups = computed(() => {
 })
 
 const toolbarPreviewActions = computed(() => {
-  const actions = settings.value.toolbarActions.slice(0, 4)
+  const actions = settings.value.toolbarActions
+    .filter(action => {
+      const normalizedId = String(action.id ?? '').trim().toLowerCase()
+      const normalizedIcon = String(action.icon ?? '').trim().toLowerCase()
+      const isNotificationAction = normalizedId === 'notifications' || normalizedIcon === 'notifications'
+      const isAccountAction = normalizedId === 'account' || normalizedIcon === 'account_circle'
+
+      if (!settings.value.layout.showNotifications && isNotificationAction) {
+        return false
+      }
+
+      if (!settings.value.layout.showUserAvatar && isAccountAction) {
+        return false
+      }
+
+      return true
+    })
+    .slice(0, 4)
   if (actions.length > 0) {
     return actions
   }
@@ -1051,6 +1711,25 @@ const settingsModuleId = computed(() => {
 })
 
 const isSettingsModule = computed(() => activeMenuId.value === settingsModuleId.value)
+const pagesModuleId = computed(() => {
+  return settings.value.items.find(item => item.id === 'pages')?.id
+    ?? settings.value.items.find(item => item.icon === 'description')?.id
+    ?? 'pages'
+})
+const isPagesModule = computed(() => activeMenuId.value === pagesModuleId.value)
+
+function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): void {
+  const activeProfile = getActiveTenantProfileSnapshot()
+  tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
+    id: activeProfile.id,
+    name: activeProfile.name,
+    settings: cloneWhiteLabelSettings(nextSettings),
+    updatedAt: new Date().toISOString(),
+  })
+  tenantProfilesState.value.activeProfileId = activeProfile.id
+  activeTenantProfileId.value = activeProfile.id
+  saveCmsTenantProfilesState(tenantProfilesState.value)
+}
 
 watch(
   () => shellSnapshot.value.shellConfig.activeItem,
@@ -1065,6 +1744,7 @@ watch(
 watch(
   settings,
   value => {
+    syncActiveTenantProfileSettings(value)
     saveCmsWhiteLabelSettings(value)
     savedAtLabel.value = `Saved at ${new Date().toLocaleTimeString()}`
   },
@@ -1088,7 +1768,31 @@ watch(
 )
 
 function getThemeFieldValue(field: ThemeField): string {
-  return String(settings.value.theme[field.key] ?? '')
+  const directValue = String(settings.value.theme[field.key] ?? '')
+
+  if (!field.aliases || field.aliases.length === 0) {
+    return directValue
+  }
+
+  const directTrimmed = directValue.trim()
+  const defaultDirectTrimmed = String(defaultTheme[field.key] ?? '').trim()
+  const directIsDefault = directTrimmed.length === 0 || directTrimmed === defaultDirectTrimmed
+
+  if (!directIsDefault) {
+    return directValue
+  }
+
+  for (const alias of field.aliases) {
+    const aliasValue = String(settings.value.theme[alias] ?? '')
+    const aliasTrimmed = aliasValue.trim()
+    const defaultAliasTrimmed = String(defaultTheme[alias] ?? '').trim()
+
+    if (aliasTrimmed.length > 0 && aliasTrimmed !== defaultAliasTrimmed) {
+      return aliasValue
+    }
+  }
+
+  return directValue
 }
 
 function normalizeHexColor(value: string): string | null {
@@ -1173,11 +1877,376 @@ function onThemeFieldInput(field: ThemeField, value: string | number | null): vo
   for (const alias of field.aliases ?? []) {
     settings.value.theme[alias] = normalized
   }
+
+  settings.value.themePresetId = selectedThemePreset.value
+  if (!isCmsThemeBasePresetId(selectedThemePreset.value)) {
+    return
+  }
+
+  const presetId: CmsThemeBasePresetId = selectedThemePreset.value
+  const presetOverrides: Partial<Record<ThemeFieldKey, string>> = {
+    ...(settings.value.themePresetOverrides[presetId] as Partial<Record<ThemeFieldKey, string>> | undefined),
+  }
+
+  presetOverrides[field.key] = normalized
+  for (const alias of field.aliases ?? []) {
+    presetOverrides[alias] = normalized
+  }
+
+  settings.value.themePresetOverrides = {
+    ...settings.value.themePresetOverrides,
+    [presetId]: presetOverrides,
+  }
 }
 
 function onThemeColorInput(field: ThemeField, event: Event): void {
   const target = event.target as HTMLInputElement | null
   onThemeFieldInput(field, target?.value ?? '')
+}
+
+function applyThemePresetById(presetId: Exclude<CmsThemePresetId, 'custom'>): void {
+  const preset = themePresets.value.find(item => item.id === presetId)
+  if (!preset) {
+    return
+  }
+
+  settings.value.theme = {
+    ...settings.value.theme,
+    ...preset.theme,
+  }
+}
+
+function onThemePresetChange(value: CmsThemePresetId | null): void {
+  const presetId = (value ?? 'custom') as CmsThemePresetId
+  selectedThemePreset.value = presetId
+  settings.value.themePresetId = presetId
+
+  if (presetId === 'custom') {
+    return
+  }
+
+  applyThemePresetById(presetId)
+  savedAtLabel.value = `${activeThemePresetLabel.value} preset applied`
+}
+
+function detectThemePresetFromCurrent(): void {
+  const detectedPreset = detectCmsThemePresetId(settings.value.theme, themePresets.value, defaultTheme)
+  selectedThemePreset.value = detectedPreset
+  settings.value.themePresetId = detectedPreset
+}
+
+function applySelectedThemePresetFromSettings(): void {
+  selectedThemePreset.value = isCmsThemePresetId(settings.value.themePresetId)
+    ? settings.value.themePresetId
+    : detectCmsThemePresetId(settings.value.theme, themePresets.value, defaultTheme)
+  settings.value.themePresetId = selectedThemePreset.value
+}
+
+function onTenantProfileChange(value: string | null): void {
+  const profileId = String(value ?? '').trim()
+  const profile = tenantProfilesState.value.profiles.find(item => item.id === profileId)
+  if (!profile) {
+    return
+  }
+
+  activeTenantProfileId.value = profile.id
+  tenantProfilesState.value.activeProfileId = profile.id
+  saveCmsTenantProfilesState(tenantProfilesState.value)
+
+  settings.value = cloneWhiteLabelSettings(normalizeCmsWhiteLabelSettings(profile.settings))
+  applySelectedThemePresetFromSettings()
+  activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
+  searchQuery.value = ''
+  savedAtLabel.value = `${profile.name} loaded`
+}
+
+function createTenantProfileFromPrompt(): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const suggestedName = `Tenant ${tenantProfilesState.value.profiles.length + 1}`
+  const inputName = window.prompt('Tenant profile name', suggestedName)
+  if (!inputName) {
+    return
+  }
+
+  const profileName = inputName.trim()
+  if (!profileName) {
+    return
+  }
+
+  const profileId = createTenantProfileId(profileName, tenantProfilesState.value.profiles.map(profile => profile.id))
+  tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
+    id: profileId,
+    name: profileName,
+    settings: cloneWhiteLabelSettings(settings.value),
+  })
+  tenantProfilesState.value.activeProfileId = profileId
+  saveCmsTenantProfilesState(tenantProfilesState.value)
+  onTenantProfileChange(profileId)
+  savedAtLabel.value = `${profileName} created`
+}
+
+function removeActiveTenantProfile(): void {
+  if (tenantProfilesState.value.profiles.length <= 1 || typeof window === 'undefined') {
+    return
+  }
+
+  const activeProfile = getActiveTenantProfileSnapshot()
+  const confirmed = window.confirm(`Delete tenant profile "${activeProfile.name}"?`)
+  if (!confirmed) {
+    return
+  }
+
+  tenantProfilesState.value = removeCmsTenantProfile(tenantProfilesState.value, activeProfile.id)
+  activeTenantProfileId.value = tenantProfilesState.value.activeProfileId
+  saveCmsTenantProfilesState(tenantProfilesState.value)
+  onTenantProfileChange(activeTenantProfileId.value)
+  savedAtLabel.value = `${activeProfile.name} removed`
+}
+
+function toJsonFileName(value: string): string {
+  const normalized = value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-_]/g, '')
+  return normalized || 'tenant-profile'
+}
+
+function normalizeIdSegment(value: string): string {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function exportActiveTenantProfile(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  const profile = getActiveTenantProfileSnapshot()
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    profile: {
+      id: profile.id,
+      name: profile.name,
+      settings: profile.settings,
+    },
+  }
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+  const fileName = `ntk-cms-tenant-${toJsonFileName(profile.id)}.json`
+  const url = window.URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = fileName
+  anchor.click()
+  window.URL.revokeObjectURL(url)
+  savedAtLabel.value = `${profile.name} exported`
+}
+
+function openTenantImportDialog(): void {
+  if (!tenantImportInputRef.value) {
+    nextTick(() => tenantImportInputRef.value?.click())
+    return
+  }
+
+  tenantImportInputRef.value.value = ''
+  tenantImportInputRef.value.click()
+}
+
+function parseImportedTenantPayload(raw: unknown, fileName: string): {
+  id: string
+  name: string
+  settings: Partial<CmsWhiteLabelSettings>
+} | null {
+  const fallbackName = fileName.replace(/\.json$/i, '').trim() || 'Imported Tenant'
+  if (!raw || typeof raw !== 'object') {
+    return null
+  }
+
+  const root = raw as Record<string, unknown>
+  if (root.profile && typeof root.profile === 'object') {
+    const profile = root.profile as Record<string, unknown>
+    const settings = profile.settings
+    if (!settings || typeof settings !== 'object') {
+      return null
+    }
+
+    return {
+      id: String(profile.id ?? fallbackName),
+      name: String(profile.name ?? fallbackName),
+      settings: settings as Partial<CmsWhiteLabelSettings>,
+    }
+  }
+
+  if (root.settings && typeof root.settings === 'object') {
+    return {
+      id: String(root.id ?? fallbackName),
+      name: String(root.name ?? fallbackName),
+      settings: root.settings as Partial<CmsWhiteLabelSettings>,
+    }
+  }
+
+  if ('branding' in root || 'layout' in root || 'theme' in root) {
+    return {
+      id: fallbackName,
+      name: fallbackName,
+      settings: root as Partial<CmsWhiteLabelSettings>,
+    }
+  }
+
+  return null
+}
+
+async function onTenantImportFileChange(event: Event): Promise<void> {
+  const target = event.target as HTMLInputElement | null
+  const file = target?.files?.[0]
+  if (!file) {
+    return
+  }
+
+  try {
+    const fileContent = await file.text()
+    const parsed = JSON.parse(fileContent) as unknown
+    const imported = parseImportedTenantPayload(parsed, file.name)
+    if (!imported) {
+      savedAtLabel.value = 'Import failed: invalid JSON payload'
+      return
+    }
+
+    const normalizedSettings = normalizeCmsWhiteLabelSettings(imported.settings)
+    const existingIds = tenantProfilesState.value.profiles.map(profile => profile.id)
+    const requestedId = toJsonFileName(imported.id || imported.name)
+    const hasRequestedId = existingIds.includes(requestedId)
+    const shouldReplace = hasRequestedId
+      && typeof window !== 'undefined'
+      && window.confirm(`Replace existing tenant "${requestedId}"?`)
+    const profileId = shouldReplace
+      ? requestedId
+      : createTenantProfileId(requestedId, existingIds)
+
+    tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
+      id: profileId,
+      name: imported.name.trim() || profileId,
+      settings: normalizedSettings,
+    })
+    tenantProfilesState.value.activeProfileId = profileId
+    saveCmsTenantProfilesState(tenantProfilesState.value)
+    onTenantProfileChange(profileId)
+    savedAtLabel.value = `${imported.name.trim() || profileId} imported`
+  } catch {
+    savedAtLabel.value = 'Import failed: invalid JSON payload'
+  }
+}
+
+function normalizeCmsPageId(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const normalizedId = normalizeIdSegment(page.id)
+  page.id = normalizedId || `page-${pageIndex + 1}`
+}
+
+function normalizeCmsPagePath(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const normalizedPath = `/${String(page.path ?? '')
+    .trim()
+    .replace(/^\/+/, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9/_-]/g, '')
+    .toLowerCase()}`
+
+  page.path = normalizedPath === '/' ? `/${page.id}` : normalizedPath
+}
+
+function addCmsPage(): void {
+  const index = settings.value.pages.length + 1
+  const pageId = `page-${index}`
+  settings.value.pages.push({
+    id: pageId,
+    title: `Page ${index}`,
+    path: `/${pageId}`,
+    status: 'draft',
+    description: 'Describe purpose and expected audience.',
+    sections: [
+      { id: 'header', label: 'Header', enabled: true },
+      { id: 'hero', label: 'Hero', enabled: true },
+      { id: 'footer', label: 'Footer', enabled: true },
+    ],
+  })
+}
+
+function removeCmsPage(pageIndex: number): void {
+  if (settings.value.pages.length <= 1) {
+    return
+  }
+  settings.value.pages.splice(pageIndex, 1)
+}
+
+function addCmsPageSection(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const sectionIndex = page.sections.length + 1
+  const sectionId = `section-${sectionIndex}`
+  page.sections.push({
+    id: sectionId,
+    label: `Section ${sectionIndex}`,
+    enabled: true,
+  })
+}
+
+function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+  page.sections.splice(sectionIndex, 1)
+}
+
+function getCmsPageStatusStyle(status: CmsPageSettings['status']): Record<string, string> {
+  if (status === 'published') {
+    return {
+      background: notificationSuccessColor.value,
+      color: notificationSuccessTextColor.value,
+    }
+  }
+
+  return {
+    background: notificationWarningColor.value,
+    color: notificationWarningTextColor.value,
+  }
+}
+
+function getCmsPageSectionStyle(enabled: boolean): Record<string, string> {
+  if (enabled) {
+    return {
+      background: accentSoftBackground.value,
+      color: accentTextColor.value,
+      border: `1px solid ${accentColor.value}`,
+    }
+  }
+
+  return {
+    background: settings.value.theme.drawerBackground || defaultTheme.drawerBackground || '',
+    color: settings.value.theme.drawerTextColor || defaultTheme.drawerTextColor || '',
+    border: `1px solid ${settings.value.theme.dividerColor || defaultTheme.dividerColor || ''}`,
+  }
 }
 
 function addGroup(): void {
@@ -1194,11 +2263,7 @@ function normalizeGroupId(index: number): void {
     return
   }
 
-  const nextId = current.id
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-_]/g, '')
+  const nextId = normalizeIdSegment(current.id)
 
   if (!nextId) {
     current.id = `group-${index + 1}`
@@ -1276,6 +2341,11 @@ function saveNow(): void {
 
 function resetToDefaults(): void {
   settings.value = resetCmsWhiteLabelSettings()
+  const resolvedThemePresets = getCurrentThemePresets()
+  selectedThemePreset.value = isCmsThemePresetId(settings.value.themePresetId)
+    ? settings.value.themePresetId
+    : detectCmsThemePresetId(settings.value.theme, resolvedThemePresets, defaultTheme)
+  settings.value.themePresetId = selectedThemePreset.value
   activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
   searchQuery.value = ''
   activeSettingsTab.value = 'branding'
@@ -1286,6 +2356,19 @@ function resetToDefaults(): void {
 
 <style scoped>
 .cms-shell-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: var(--ntk-cms-font-family);
+  font-style: var(--ntk-cms-font-style-base);
+}
+
+.cms-shell-page__workspace {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: 16px;
+  background: var(--ntk-cms-bg-card);
+  box-shadow: var(--ntk-cms-header-shadow);
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -1306,6 +2389,110 @@ function resetToDefaults(): void {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+
+.cms-pages {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.cms-pages__editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: calc(100vh - 280px);
+  overflow: auto;
+  padding-right: 0.2rem;
+}
+
+.cms-pages__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cms-page-item {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  padding: var(--ntk-cms-space-md);
+  background: var(--ntk-cms-bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cms-page-item__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.cms-page-item__description {
+  grid-column: 1 / -1;
+}
+
+.cms-page-item__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.cms-page-item__sections-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cms-page-section-row {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cms-page-item__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cms-page-preview {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  padding: var(--ntk-cms-space-md);
+  background: var(--ntk-cms-bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.cms-page-preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cms-page-preview__path {
+  color: var(--ntk-cms-text-secondary);
+  word-break: break-word;
+}
+
+.cms-page-preview > p {
+  margin: 0;
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-page-preview__sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 .cms-shell-card {
@@ -1338,14 +2525,42 @@ function resetToDefaults(): void {
 
 .cms-settings__toolbar {
   display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.cms-settings__tenant-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+}
+
+.cms-settings__tenant-select {
+  min-width: 220px;
+}
+
+.cms-settings__actions {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .cms-settings__saved-at {
-  margin-left: auto;
+  margin-left: 0;
+  flex-basis: 100%;
   font-size: 0.8rem;
   color: var(--ntk-cms-text-secondary);
+}
+
+.cms-file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .cms-settings__tabs {
@@ -1401,6 +2616,20 @@ function resetToDefaults(): void {
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 0.9rem;
+}
+
+.cms-theme-presets {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.cms-theme-presets__controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
 }
 
 .cms-color-group {
@@ -1470,11 +2699,11 @@ function resetToDefaults(): void {
 }
 
 .cms-list-item--menu {
-  grid-template-columns: repeat(6, minmax(0, 1fr)) auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .cms-list-item--toolbar {
-  grid-template-columns: repeat(7, minmax(0, 1fr)) auto auto auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .cms-toggle-row {
@@ -1492,6 +2721,39 @@ function resetToDefaults(): void {
   flex-wrap: wrap;
   gap: 0.45rem;
   margin-top: 0.75rem;
+}
+
+.cms-notification-bell-preview {
+  margin-top: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cms-notification-actions-preview {
+  margin-top: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cms-notification-actions-preview__action {
+  border: 1px solid var(--ntk-cms-search-border);
+  border-radius: var(--ntk-cms-radius-sm);
+  background: transparent;
+  color: var(--ntk-cms-toolbar-icon);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
+  font-size: 0.74rem;
+  transition: all var(--ntk-cms-transition);
+}
+
+.cms-notification-actions-preview__action:hover {
+  background: var(--ntk-cms-action-hover);
+  color: var(--ntk-cms-item-hover-color);
 }
 
 .cms-example-section {
@@ -1526,10 +2788,12 @@ function resetToDefaults(): void {
 
 .cms-preview-card {
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 10px;
-  padding: 0.75rem;
+  border-radius: var(--ntk-cms-radius-lg);
+  padding: var(--ntk-cms-space-md);
   background: var(--ntk-cms-bg-card);
   color: var(--ntk-cms-text-primary);
+  font-family: var(--ntk-cms-font-family);
+  font-style: var(--ntk-cms-font-style-base);
 }
 
 .cms-preview-card p {
@@ -1550,27 +2814,174 @@ function resetToDefaults(): void {
   color: var(--ntk-cms-text-primary);
 }
 
+.cms-preview-card--typography {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-preview-typography__headline {
+  font-family: var(--ntk-cms-font-display);
+  font-size: var(--ntk-cms-font-size-title-app);
+  font-weight: var(--ntk-cms-font-weight-bold);
+  color: var(--ntk-cms-title-app);
+}
+
+.cms-preview-typography__title {
+  font-size: var(--ntk-cms-font-size-title);
+  font-weight: var(--ntk-cms-font-weight-medium);
+  color: var(--ntk-cms-title-text);
+}
+
+.cms-preview-typography__body {
+  margin: 0;
+  font-size: var(--ntk-cms-font-size-base);
+  font-weight: var(--ntk-cms-font-weight-regular);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-preview-typography__menu {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  background: var(--ntk-cms-shell-bg);
+}
+
+.cms-preview-typography__menu-label {
+  font-size: var(--ntk-cms-font-size-item-label);
+  font-weight: var(--ntk-cms-font-weight-semibold);
+  color: var(--ntk-cms-item-text);
+}
+
+.cms-preview-typography__menu-caption {
+  margin-top: 0.15rem;
+  font-size: var(--ntk-cms-font-size-item-caption);
+  font-weight: var(--ntk-cms-font-weight-regular);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-preview-card--layout {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-preview-layout__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-preview-layout__panel {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  padding: var(--ntk-cms-space-md);
+  background: var(--ntk-cms-bg-card);
+  transition: all var(--ntk-cms-transition);
+}
+
+.cms-preview-layout__panel:hover {
+  transform: translateY(calc(var(--ntk-cms-space-xs) * -1));
+}
+
+.cms-preview-layout__panel--accent {
+  background: var(--ntk-cms-accent-soft);
+  color: var(--ntk-cms-accent-text);
+}
+
+.cms-preview-layout__nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  width: 100%;
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-item);
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  transition: all var(--ntk-cms-transition);
+}
+
+.cms-preview-layout__nav-item:hover {
+  background: var(--ntk-cms-accent-soft);
+  color: var(--ntk-cms-item-hover-color);
+  transform: translateX(var(--ntk-cms-space-xs));
+}
+
+.cms-preview-layout__hint {
+  color: var(--ntk-cms-text-secondary);
+  font-size: 0.72rem;
+}
+
 .cms-preview-card--navigation {
   background: var(--ntk-cms-shell-bg);
+}
+
+.cms-preview-card--theme-preset {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.cms-theme-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.cms-theme-token span {
+  min-width: 0;
+  font-size: 0.78rem;
+}
+
+.cms-theme-token code {
+  font-size: 0.72rem;
+  word-break: break-all;
+}
+
+.cms-theme-token__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--ntk-cms-border-color);
+  flex-shrink: 0;
+}
+
+.cms-preview-nav-caption {
+  margin-bottom: 0.25rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ntk-cms-group-caption);
 }
 
 .cms-preview-nav-item {
   width: 100%;
   border: 1px solid transparent;
-  border-radius: 8px;
-  padding: 0.5rem 0.6rem;
-  color: var(--ntk-cms-text-secondary);
+  border-radius: var(--ntk-cms-radius-md);
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  color: var(--ntk-cms-item-text);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  font-size: var(--ntk-cms-font-size-item-label);
+  font-weight: var(--ntk-cms-font-weight-semibold);
   background: transparent;
   transition: all var(--ntk-cms-transition);
 }
 
+.cms-preview-nav-item__icon {
+  color: var(--ntk-cms-item-icon);
+  transition: color var(--ntk-cms-transition);
+}
+
 .cms-preview-nav-item + .cms-preview-nav-item {
-  margin-top: 0.35rem;
+  margin-top: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-nav-item--hover {
   background: var(--ntk-cms-accent-soft);
-  color: var(--ntk-cms-accent-text);
+  color: var(--ntk-cms-item-hover-color);
+}
+
+.cms-preview-nav-item--hover .cms-preview-nav-item__icon {
+  color: var(--ntk-cms-item-icon-hover);
 }
 
 .cms-preview-nav-item--active {
@@ -1578,6 +2989,26 @@ function resetToDefaults(): void {
   color: var(--ntk-cms-accent);
   border-color: var(--ntk-cms-accent-soft);
   font-weight: 600;
+}
+
+.cms-preview-nav-item--active .cms-preview-nav-item__icon {
+  color: var(--ntk-cms-accent);
+}
+
+.cms-preview-nav-mini-caption {
+  margin-top: var(--ntk-cms-space-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 18px;
+  padding: 0 var(--ntk-cms-space-xs);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: var(--ntk-cms-group-caption-mini-bg);
+  color: var(--ntk-cms-group-caption);
 }
 
 .cms-preview-card--header {
@@ -1590,38 +3021,139 @@ function resetToDefaults(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-preview-header__left {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
+  color: var(--ntk-cms-title-text);
+}
+
+.cms-preview-header__menu-icon {
+  color: var(--ntk-cms-toolbar-icon);
+}
+
+.cms-preview-header__title-app {
+  font-family: var(--ntk-cms-font-display);
+  font-size: var(--ntk-cms-font-size-title-app);
+  font-weight: var(--ntk-cms-font-weight-bold);
+  color: var(--ntk-cms-title-app);
+}
+
+.cms-preview-header__separator {
+  color: var(--ntk-cms-title-separator);
+}
+
+.cms-preview-header__title-text {
+  color: var(--ntk-cms-title-text);
+  font-size: var(--ntk-cms-font-size-title);
+  font-weight: var(--ntk-cms-font-weight-medium);
 }
 
 .cms-preview-header__search {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--ntk-cms-space-sm);
   min-width: 220px;
-  padding: 0.35rem 0.55rem;
-  border-radius: 8px;
+  padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-md);
+  border-radius: var(--ntk-cms-radius-md);
   border: 1px solid var(--ntk-cms-search-border);
   background: var(--ntk-cms-search-bg);
   color: var(--ntk-cms-search-text);
   font-size: 0.78rem;
+  transition: border-color var(--ntk-cms-transition);
 }
 
-.cms-preview-card--advanced {
-  font-family: var(--ntk-cms-font-family);
+.cms-preview-header__search-icon {
+  color: var(--ntk-cms-search-icon);
+}
+
+.cms-preview-header__search:hover {
+  border-color: var(--ntk-cms-search-border-hover);
+}
+
+.cms-preview-header__actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-preview-header__action {
+  position: relative;
+  border: 1px solid var(--ntk-cms-search-border);
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
+  min-width: 30px;
+  min-height: 28px;
+  background: transparent;
+  color: var(--ntk-cms-toolbar-icon);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all var(--ntk-cms-transition);
-  background: var(--ntk-cms-page-bg);
 }
 
-.cms-preview-card--advanced code {
-  display: inline-block;
-  margin-top: 0.35rem;
-  font-size: 0.78rem;
+.cms-preview-header__action:hover {
+  background: var(--ntk-cms-action-hover);
+  color: var(--ntk-cms-item-hover-color);
+}
+
+.cms-preview-header__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: var(--ntk-cms-notification-badge-bg);
+  color: var(--ntk-cms-notification-badge-text);
+}
+
+.cms-preview-drawer {
+  margin-top: var(--ntk-cms-space-sm);
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  box-shadow: var(--ntk-cms-drawer-shadow);
+  overflow: hidden;
+}
+
+.cms-preview-drawer__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  width: 100%;
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  color: var(--ntk-cms-item-text);
+}
+
+.cms-preview-drawer__item :deep(.q-icon) {
+  color: var(--ntk-cms-item-icon);
+}
+
+.cms-preview-drawer__footer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  width: 100%;
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  border-top: 1px solid var(--ntk-cms-border-color);
+  background: var(--ntk-cms-drawer-footer-bg);
+  color: var(--ntk-cms-item-text);
+  box-shadow: var(--ntk-cms-drawer-footer-shadow);
+}
+
+.cms-preview-drawer__footer :deep(.q-icon) {
+  color: var(--ntk-cms-item-icon);
 }
 
 .cms-preview-card--branding {
@@ -1650,8 +3182,17 @@ function resetToDefaults(): void {
   gap: 0.1rem;
 }
 
+.cms-preview-brand__copy strong {
+  font-family: var(--ntk-cms-font-display);
+  font-size: var(--ntk-cms-font-size-brand-title);
+  font-weight: var(--ntk-cms-font-weight-semibold);
+  color: var(--ntk-cms-brand-title);
+}
+
 .cms-preview-brand__copy small {
-  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-brand-subtitle);
+  font-weight: var(--ntk-cms-font-weight-regular);
+  color: var(--ntk-cms-brand-subtitle);
 }
 
 .cms-preview-brand__meta {
@@ -1706,7 +3247,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-menu-group > small {
-  color: var(--ntk-cms-text-secondary);
+  color: var(--ntk-cms-group-caption);
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1719,16 +3260,21 @@ function resetToDefaults(): void {
 
 .cms-preview-menu-item {
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--ntk-cms-radius-md);
   background: transparent;
-  color: var(--ntk-cms-text-secondary);
+  color: var(--ntk-cms-item-text);
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.55rem;
-  font-size: 0.82rem;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  font-size: var(--ntk-cms-font-size-item-label);
+  font-weight: var(--ntk-cms-font-weight-semibold);
   text-align: left;
   transition: all var(--ntk-cms-transition);
+}
+
+.cms-preview-menu-item :deep(.q-icon) {
+  color: var(--ntk-cms-item-icon);
 }
 
 .cms-preview-menu-item--active {
@@ -1736,6 +3282,10 @@ function resetToDefaults(): void {
   color: var(--ntk-cms-accent);
   border-color: var(--ntk-cms-accent-soft);
   font-weight: 600;
+}
+
+.cms-preview-menu-item--active :deep(.q-icon) {
+  color: var(--ntk-cms-accent);
 }
 
 .cms-preview-card--topbar {
@@ -1748,45 +3298,66 @@ function resetToDefaults(): void {
   min-height: 44px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-preview-topbar__left {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--ntk-cms-space-sm);
+  color: var(--ntk-cms-title-text);
+  font-size: var(--ntk-cms-font-size-title);
+  font-weight: var(--ntk-cms-font-weight-medium);
+}
+
+.cms-preview-topbar__left :deep(.q-icon) {
+  color: var(--ntk-cms-toolbar-icon);
 }
 
 .cms-preview-topbar__search {
   flex: 1;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--ntk-cms-space-xs);
   border: 1px solid var(--ntk-cms-search-border);
-  border-radius: 8px;
-  padding: 0.35rem 0.5rem;
+  border-radius: var(--ntk-cms-radius-md);
+  padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   background: var(--ntk-cms-search-bg);
   color: var(--ntk-cms-search-text);
   font-size: 0.78rem;
+  transition: border-color var(--ntk-cms-transition);
+}
+
+.cms-preview-topbar__search :deep(.q-icon) {
+  color: var(--ntk-cms-search-icon);
+}
+
+.cms-preview-topbar__search:hover {
+  border-color: var(--ntk-cms-search-border-hover);
 }
 
 .cms-preview-topbar__actions {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-topbar__action {
   border: 1px solid var(--ntk-cms-search-border);
-  border-radius: 7px;
-  padding: 0.3rem 0.45rem;
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   background: transparent;
-  color: inherit;
+  color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.74rem;
+}
+
+.cms-preview-topbar__action:hover {
+  background: var(--ntk-cms-action-hover);
+  color: var(--ntk-cms-item-hover-color);
 }
 
 .cms-preview-card--content {
@@ -1817,12 +3388,21 @@ function resetToDefaults(): void {
 }
 
 @media (max-width: 1280px) {
+  .cms-pages,
+  .cms-page-item__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cms-page-section-row {
+    grid-template-columns: 1fr;
+  }
+
   .cms-list-item--menu {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .cms-list-item--toolbar {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) auto auto auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1831,8 +3411,13 @@ function resetToDefaults(): void {
   .cms-config-section,
   .cms-form-grid,
   .cms-color-grid,
-  .cms-toggle-row {
+  .cms-toggle-row,
+  .cms-theme-presets__controls {
     grid-template-columns: 1fr;
+  }
+
+  .cms-shell-page__workspace {
+    padding: 0.75rem;
   }
 
   .cms-settings__toolbar {
@@ -1856,6 +3441,12 @@ function resetToDefaults(): void {
   .cms-preview-header__search {
     min-width: 0;
     width: 100%;
+  }
+
+  .cms-preview-header__actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .cms-preview-topbar {

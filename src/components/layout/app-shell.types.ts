@@ -39,6 +39,27 @@ export interface AppShellAction {
 
 export interface AppShellTheme {
   fontFamily?: string
+  fontFamilyDisplay?: string
+  fontStyleBase?: string
+  fontWeightRegular?: string
+  fontWeightMedium?: string
+  fontWeightSemibold?: string
+  fontWeightBold?: string
+  fontSizeBase?: string
+  fontSizeTitle?: string
+  fontSizeTitleApp?: string
+  fontSizeBrandTitle?: string
+  fontSizeBrandSubtitle?: string
+  fontSizeItemLabel?: string
+  fontSizeItemCaption?: string
+  radiusSm?: string
+  radiusMd?: string
+  radiusLg?: string
+  radiusItem?: string
+  spacingXs?: string
+  spacingSm?: string
+  spacingMd?: string
+  spacingLg?: string
   transitionFast?: string
   shellBackground?: string
   headerBackground?: string
@@ -60,7 +81,9 @@ export interface AppShellTheme {
   searchBorderHover?: string
   focusColor?: string
   actionHoverBackground?: string
+  notificationBadgeColor?: string
   notificationBadgeTextColor?: string
+  notificationIconColor?: string
   notificationSuccessColor?: string
   notificationWarningColor?: string
   notificationErrorColor?: string
@@ -116,4 +139,63 @@ export interface AppShellConfig {
   headerHeight: number
   defaultDrawerOpen: boolean
   defaultMini: boolean
+}
+
+export interface AppShellTelemetryEvent {
+  type: 'navigation-select' | 'search-update' | 'toolbar-action' | 'menu-toggle'
+  component: 'NtkAppShell'
+  payload: Record<string, unknown>
+  timestamp: string
+}
+
+export interface NtkAppShellProps {
+  appName?: string
+  appSubtitle?: string
+  brandLogo?: string
+  brandLogoAlt?: string
+  menuIcon?: string
+  menuAriaLabel?: string
+  navGroups?: AppShellGroup[]
+  items?: AppShellItem[]
+  activeItem?: string
+  searchValue?: string
+  searchPlaceholder?: string
+  showSearch?: boolean
+  showGroupCaptions?: boolean
+  toolbarActions?: AppShellAction[]
+  theme?: AppShellTheme
+  showNotifications?: boolean
+  notificationsTooltip?: string
+  notificationCount?: number
+  showUserAvatar?: boolean
+  userAvatar?: string
+  userTooltip?: string
+  collapsible?: boolean
+  collapseLabel?: string
+  expandLabel?: string
+  drawerWidth?: number
+  miniWidth?: number
+  breakpoint?: number
+  headerHeight?: number
+  defaultDrawerOpen?: boolean
+  defaultMini?: boolean
+  searchAriaLabel?: string
+  navigationAriaLabel?: string
+  navigationItemsAriaLabel?: string
+  toolbarAriaLabel?: string
+  notificationsAriaLabel?: string
+  userAriaLabel?: string
+  itemAriaLabelPrefix?: string
+  actionAriaLabelPrefix?: string
+}
+
+export interface NtkAppShellEmits {
+  (e: 'update:active-item', value: string): void
+  (e: 'update:search-value', value: string): void
+  (e: 'item-click', value: AppShellItem): void
+  (e: 'notifications-click'): void
+  (e: 'user-click'): void
+  (e: 'toolbar-action', value: AppShellAction): void
+  (e: 'toggle-menu', value: { mini: boolean; open: boolean }): void
+  (e: 'telemetry', value: AppShellTelemetryEvent): void
 }

@@ -13,7 +13,10 @@
       />
     </template>
 
-    <div class="ntk-stats-section__grid" :style="gridStyle">
+    <div
+      class="ntk-stats-section__grid"
+      :style="gridStyle"
+    >
       <NtkStatCard
         v-for="item in items"
         :key="item.id"

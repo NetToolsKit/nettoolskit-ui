@@ -165,6 +165,7 @@
     v-else
     :elevated="elevated"
     :class="headerClass"
+    :style="headerTokenStyle"
   >
     <q-toolbar :style="{ height: `${height}px` }">
       <!-- Left Section: Hamburger Menu -->
@@ -178,7 +179,7 @@
           round
           :icon="menuIcon"
           :aria-label="menuAriaLabel"
-          color="grey-8"
+          class="ntk-header__action-btn"
           @click="$emit('toggle-menu')"
         >
           <q-tooltip>{{ menuTooltip }}</q-tooltip>
@@ -234,7 +235,7 @@
           <template #prepend>
             <q-icon
               name="search"
-              color="grey-7"
+              class="ntk-header__search-icon"
             />
           </template>
         </q-input>
@@ -250,24 +251,25 @@
             dense
             flat
             icon="notifications"
-            color="grey-8"
+            class="ntk-header__action-btn"
+            :aria-label="notificationsAriaLabel"
             @click="$emit('notifications-click')"
           >
             <q-badge
               v-if="notificationCount > 0"
+              class="ntk-header__notification-badge"
               :label="notificationCount"
-              color="red"
-              text-color="white"
               floating
             />
-            <q-tooltip>Notificações</q-tooltip>
+            <q-tooltip>{{ notificationsTooltip }}</q-tooltip>
           </q-btn>
 
           <q-btn
             v-if="showUserAvatar"
             round
             flat
-            color="grey-8"
+            class="ntk-header__action-btn"
+            :aria-label="userAriaLabel"
             @click="$emit('user-click')"
           >
             <q-avatar size="26px">
@@ -363,11 +365,11 @@ const props = defineProps({
   },
   bgColor: {
     type: String,
-    default: 'white'
+    default: ''
   },
   textColor: {
     type: String,
-    default: 'grey-8'
+    default: ''
   },
   showMenuButton: {
     type: Boolean,
@@ -409,6 +411,14 @@ const props = defineProps({
     type: Number,
     default: 0
   },
+  notificationsTooltip: {
+    type: String,
+    default: 'Notifications'
+  },
+  notificationsAriaLabel: {
+    type: String,
+    default: 'Open notifications'
+  },
   showUserAvatar: {
     type: Boolean,
     default: true
@@ -435,7 +445,27 @@ const props = defineProps({
   },
   userTooltip: {
     type: String,
-    default: 'Conta'
+    default: 'Account'
+  },
+  userAriaLabel: {
+    type: String,
+    default: 'Open account menu'
+  },
+  actionColor: {
+    type: String,
+    default: 'var(--ntk-text-secondary)'
+  },
+  searchIconColor: {
+    type: String,
+    default: 'var(--ntk-text-muted)'
+  },
+  notificationBadgeColor: {
+    type: String,
+    default: 'var(--semantic-error, var(--ntk-danger))'
+  },
+  notificationBadgeTextColor: {
+    type: String,
+    default: 'var(--ntk-text-inverse)'
   }
 })
 
@@ -452,21 +482,37 @@ defineEmits([
 const $q = useQuasar()
 const isMobileView = computed(() => props.isMobile ?? !$q.screen.gt.xs)
 
-const headerClass = computed(() => [
-  'ntk-header',
-  'base-header',
-  `bg-${props.bgColor}`,
-  `text-${props.textColor}`,
-  {
-    'ntk-header--compact': props.compact,
-    'base-header--compact': props.compact,
-    'ntk-header--dark': props.dark,
-    'base-header--dark': props.dark,
-    'ntk-header--transparent': props.transparent,
-    'base-header--transparent': props.transparent
-  },
-  props.customClass
-])
+const headerClass = computed(() => {
+  const classes: Array<string | Record<string, boolean>> = [
+    'ntk-header',
+    'base-header',
+    {
+      'ntk-header--compact': props.compact,
+      'base-header--compact': props.compact,
+      'ntk-header--dark': props.dark,
+      'base-header--dark': props.dark,
+      'ntk-header--transparent': props.transparent,
+      'base-header--transparent': props.transparent
+    },
+    props.customClass
+  ]
+
+  if (props.bgColor.trim().length > 0) {
+    classes.push(`bg-${props.bgColor}`)
+  }
+  if (props.textColor.trim().length > 0) {
+    classes.push(`text-${props.textColor}`)
+  }
+
+  return classes
+})
+
+const headerTokenStyle = computed<Record<string, string>>(() => ({
+  '--ntk-header-action-color': props.actionColor,
+  '--ntk-header-search-icon-color': props.searchIconColor,
+  '--ntk-header-notification-badge-bg': props.notificationBadgeColor,
+  '--ntk-header-notification-badge-text': props.notificationBadgeTextColor
+}))
 </script>
 
 <style scoped lang="scss">
@@ -539,6 +585,10 @@ const headerClass = computed(() => [
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.ntk-header__action-btn {
+  color: var(--ntk-header-action-color);
 }
 
 .ntk-header__theme-toggle {
@@ -662,5 +712,14 @@ const headerClass = computed(() => [
   :deep(.q-field__native) {
     font-family: var(--ntk-font-body);
   }
+}
+
+.ntk-header__search-icon {
+  color: var(--ntk-header-search-icon-color);
+}
+
+.ntk-header__notification-badge {
+  background: var(--ntk-header-notification-badge-bg);
+  color: var(--ntk-header-notification-badge-text);
 }
 </style>

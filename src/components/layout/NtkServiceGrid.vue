@@ -13,7 +13,10 @@
       />
     </template>
 
-    <div class="ntk-service-grid__list" :style="gridStyle">
+    <div
+      class="ntk-service-grid__list"
+      :style="gridStyle"
+    >
       <NtkFeatureCard
         v-for="(service, index) in services"
         :key="service.id"

@@ -22,7 +22,6 @@
     class="base-input"
     :class="customClass"
     @update:model-value="emitModelValue"
-    @update:modelValue="emitModelValue"
     @blur="$emit('blur', $event)"
     @focus="$emit('focus', $event)"
   >

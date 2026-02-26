@@ -1,5 +1,6 @@
 import type { AppShellConfig, AppShellTheme } from './app-shell.types'
 import { semanticColors } from '../../config/colors/semantic.config'
+import { resolveAppShellTheme } from './app-shell.theme'
 
 const APP_SHELL_COLOR_TOKENS = {
   white: 'var(--ntk-bg-card)',
@@ -31,8 +32,29 @@ const APP_SHELL_EFFECT_TOKENS = {
   drawerFooterShadow: 'var(--ntk-shadow-sm)',
 } as const
 
-export const APP_SHELL_DEFAULT_THEME: AppShellTheme = {
+const APP_SHELL_BASE_THEME: AppShellTheme = {
   fontFamily: 'var(--ntk-font-family)',
+  fontFamilyDisplay: 'var(--ntk-font-family-display)',
+  fontStyleBase: 'normal',
+  fontWeightRegular: 'var(--ntk-font-weight-normal)',
+  fontWeightMedium: 'var(--ntk-font-weight-medium)',
+  fontWeightSemibold: 'var(--ntk-font-weight-semibold)',
+  fontWeightBold: 'var(--ntk-font-weight-bold)',
+  fontSizeBase: '0.925rem',
+  fontSizeTitle: '0.925rem',
+  fontSizeTitleApp: '1.05rem',
+  fontSizeBrandTitle: '0.9rem',
+  fontSizeBrandSubtitle: '0.72rem',
+  fontSizeItemLabel: '13px',
+  fontSizeItemCaption: '11px',
+  radiusSm: '6px',
+  radiusMd: '8px',
+  radiusLg: '10px',
+  radiusItem: '0 28px 28px 0',
+  spacingXs: '0.25rem',
+  spacingSm: '0.5rem',
+  spacingMd: '0.75rem',
+  spacingLg: '1rem',
   transitionFast: 'var(--ntk-transition-base)',
   shellBackground: APP_SHELL_EFFECT_TOKENS.shellBackground,
   headerBackground: APP_SHELL_COLOR_TOKENS.white,
@@ -54,7 +76,10 @@ export const APP_SHELL_DEFAULT_THEME: AppShellTheme = {
   searchBorderHover: APP_SHELL_EFFECT_TOKENS.searchBorderHover,
   focusColor: APP_SHELL_COLOR_TOKENS.accent,
   actionHoverBackground: APP_SHELL_EFFECT_TOKENS.actionHoverBackground,
+  // Keep the default equal to error, but as a concrete color to avoid implicit coupling.
+  notificationBadgeColor: semanticColors.errorPrimary,
   notificationBadgeTextColor: APP_SHELL_COLOR_TOKENS.textInverse,
+  notificationIconColor: APP_SHELL_COLOR_TOKENS.neutral500,
   notificationSuccessColor: APP_SHELL_COLOR_TOKENS.success,
   notificationWarningColor: APP_SHELL_COLOR_TOKENS.warning,
   notificationErrorColor: APP_SHELL_COLOR_TOKENS.danger,
@@ -78,6 +103,8 @@ export const APP_SHELL_DEFAULT_THEME: AppShellTheme = {
   pageBackground: 'var(--ntk-bg-primary)',
   pageTextColor: APP_SHELL_COLOR_TOKENS.pageText,
 }
+
+export const APP_SHELL_DEFAULT_THEME: AppShellTheme = resolveAppShellTheme(APP_SHELL_BASE_THEME)
 
 export const SENTINELA_LIKE_THEME: AppShellTheme = {
   ...APP_SHELL_DEFAULT_THEME,

@@ -1,6 +1,11 @@
-import { defineConfig } from 'tsup';
-import vue from 'esbuild-plugin-vue3';
+import { defineConfig } from 'tsup'
+import vue from 'esbuild-plugin-vue3'
 
+/**
+ * Library bundle configuration.
+ * The output stays framework-agnostic (no "use client" banner) to prevent
+ * declaration build warnings and keep the package usable across runtimes.
+ */
 export default defineConfig({
   entry: ['index.ts'],
   format: ['cjs', 'esm'],
@@ -12,9 +17,4 @@ export default defineConfig({
   treeshake: true,
   external: ['vue', 'quasar', 'vue-router'],
   esbuildPlugins: [vue()],
-  esbuildOptions(options) {
-    options.banner = {
-      js: '"use client"',
-    };
-  },
-});
+})

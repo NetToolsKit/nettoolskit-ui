@@ -5,6 +5,7 @@ import type {
   AppShellItem,
   AppShellTheme,
 } from '../../src/components/layout/app-shell.types'
+import type { CmsThemeBasePresetId, CmsThemePresetId } from './theme-presets'
 
 export interface CmsBrandingSettings {
   appName: string
@@ -22,8 +23,11 @@ export interface CmsLayoutSettings {
   menuIcon: string
   menuAriaLabel: string
   showSearch: boolean
+  showNotifications: boolean
+  showUserAvatar: boolean
   searchPlaceholder: string
   showGroupCaptions: boolean
+  collapsible: boolean
   collapseLabel: string
   expandLabel: string
   drawerWidth: number
@@ -58,10 +62,28 @@ export interface CmsContentSettings {
   howToNextStep: string
 }
 
+export interface CmsPageSectionSettings {
+  id: string
+  label: string
+  enabled: boolean
+}
+
+export interface CmsPageSettings {
+  id: string
+  title: string
+  path: string
+  status: 'draft' | 'published'
+  description: string
+  sections: CmsPageSectionSettings[]
+}
+
 export interface CmsWhiteLabelSettings {
   branding: CmsBrandingSettings
   layout: CmsLayoutSettings
   content: CmsContentSettings
+  pages: CmsPageSettings[]
+  themePresetId: CmsThemePresetId
+  themePresetOverrides: Partial<Record<CmsThemeBasePresetId, Partial<AppShellTheme>>>
   theme: AppShellTheme
   navGroups: AppShellGroup[]
   items: AppShellItem[]
@@ -77,4 +99,16 @@ export interface CmsWhiteLabelState {
 export interface CmsShellSnapshot {
   shellConfig: AppShellConfig
   filteredItems: AppShellItem[]
+}
+
+export interface CmsTenantProfile {
+  id: string
+  name: string
+  settings: CmsWhiteLabelSettings
+  updatedAt: string
+}
+
+export interface CmsTenantProfilesState {
+  activeProfileId: string
+  profiles: CmsTenantProfile[]
 }
