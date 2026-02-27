@@ -33,10 +33,6 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
   const drawerTextColor = pickThemeValue(sourceTheme.drawerTextColor, baseTheme.drawerTextColor)
   const drawerBackground = pickThemeValue(sourceTheme.drawerBackground, baseTheme.drawerBackground)
   const headerTextColor = pickThemeValue(sourceTheme.headerTextColor, baseTheme.headerTextColor)
-  const headerBackground = pickThemeValue(sourceTheme.headerBackground, baseTheme.headerBackground)
-  const pageBackground = pickThemeValue(sourceTheme.pageBackground, baseTheme.pageBackground)
-  const pageTextColor = pickThemeValue(sourceTheme.pageTextColor, baseTheme.pageTextColor)
-  const itemHoverBackground = pickThemeValue(sourceTheme.itemHoverBackground, baseTheme.itemHoverBackground)
   const dividerColor = pickThemeValue(sourceTheme.dividerColor, baseTheme.dividerColor)
 
   const notificationSuccessColor = pickThemeValue(sourceTheme.notificationSuccessColor, semanticColors.successPrimary)
@@ -62,6 +58,33 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
     fontSizeBrandSubtitle: pickThemeValue(sourceTheme.fontSizeBrandSubtitle, '0.72rem'),
     fontSizeItemLabel: pickThemeValue(sourceTheme.fontSizeItemLabel, '13px'),
     fontSizeItemCaption: pickThemeValue(sourceTheme.fontSizeItemCaption, '11px'),
+    fontSizeGroupCaption: pickThemeValue(sourceTheme.fontSizeGroupCaption, '0.68rem'),
+    fontSizeGroupCaptionMini: pickThemeValue(sourceTheme.fontSizeGroupCaptionMini, '0.62rem'),
+    letterSpacingGroupCaption: pickThemeValue(sourceTheme.letterSpacingGroupCaption, '0.08em'),
+    letterSpacingGroupCaptionMini: pickThemeValue(sourceTheme.letterSpacingGroupCaptionMini, '0.06em'),
+    lineHeightBrandText: pickThemeValue(sourceTheme.lineHeightBrandText, '1.1'),
+    lineHeightItemLabel: pickThemeValue(sourceTheme.lineHeightItemLabel, '1.25'),
+    lineHeightItemCaption: pickThemeValue(sourceTheme.lineHeightItemCaption, '1.2'),
+    menuSlotWidth: pickThemeValue(sourceTheme.menuSlotWidth, '30px'),
+    searchWidth: pickThemeValue(sourceTheme.searchWidth, '320px'),
+    searchControlHeight: pickThemeValue(sourceTheme.searchControlHeight, '36px'),
+    searchPrependPaddingRight: pickThemeValue(sourceTheme.searchPrependPaddingRight, '12px'),
+    drawerHeaderMinHeight: pickThemeValue(sourceTheme.drawerHeaderMinHeight, '64px'),
+    brandLogoSize: pickThemeValue(sourceTheme.brandLogoSize, '34px'),
+    groupCaptionMinHeight: pickThemeValue(sourceTheme.groupCaptionMinHeight, '24px'),
+    groupCaptionPadding: pickThemeValue(sourceTheme.groupCaptionPadding, '0.45rem 1rem 0.25rem'),
+    groupCaptionMiniPadding: pickThemeValue(sourceTheme.groupCaptionMiniPadding, '0.45rem 0'),
+    groupCaptionMiniMinWidth: pickThemeValue(sourceTheme.groupCaptionMiniMinWidth, '34px'),
+    groupCaptionMiniHeight: pickThemeValue(sourceTheme.groupCaptionMiniHeight, '18px'),
+    groupCaptionMiniHorizontalPadding: pickThemeValue(sourceTheme.groupCaptionMiniHorizontalPadding, '0.35rem'),
+    itemMinHeight: pickThemeValue(sourceTheme.itemMinHeight, '52px'),
+    itemIconSize: pickThemeValue(sourceTheme.itemIconSize, '22px'),
+    itemHoverTranslateX: pickThemeValue(sourceTheme.itemHoverTranslateX, '4px'),
+    itemActiveBorderWidth: pickThemeValue(sourceTheme.itemActiveBorderWidth, '4px'),
+    drawerScrollPaddingBottom: pickThemeValue(sourceTheme.drawerScrollPaddingBottom, '80px'),
+    workspaceMaxWidth: pickThemeValue(sourceTheme.workspaceMaxWidth, '1280px'),
+    miniItemMarginRight: pickThemeValue(sourceTheme.miniItemMarginRight, '12px'),
+    miniItemAvatarMinWidth: pickThemeValue(sourceTheme.miniItemAvatarMinWidth, '28px'),
     radiusSm: pickThemeValue(sourceTheme.radiusSm, '6px'),
     radiusMd: pickThemeValue(sourceTheme.radiusMd, '8px'),
     radiusLg: pickThemeValue(sourceTheme.radiusLg, '10px'),
@@ -83,7 +106,7 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
     groupCaptionColor: pickThemeValue(sourceTheme.groupCaptionColor, drawerTextColor),
     titleSeparatorColor: pickThemeValue(sourceTheme.titleSeparatorColor, dividerColor),
     focusColor: pickThemeValue(sourceTheme.focusColor, accentColor),
-    actionHoverBackground: pickThemeValue(sourceTheme.actionHoverBackground, itemHoverBackground),
+    actionHoverBackground: pickThemeValue(sourceTheme.actionHoverBackground, baseTheme.actionHoverBackground, 'var(--ntk-bg-hover)'),
     notificationBadgeColor,
     notificationSuccessColor,
     notificationWarningColor,
@@ -96,8 +119,8 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
     notificationErrorTextColor: pickThemeValue(sourceTheme.notificationErrorTextColor, notificationBadgeTextColor),
     notificationInfoTextColor: pickThemeValue(sourceTheme.notificationInfoTextColor, notificationBadgeTextColor),
     drawerFooterBackground: pickThemeValue(sourceTheme.drawerFooterBackground, drawerBackground),
-    searchBackground: pickThemeValue(sourceTheme.searchBackground, pageBackground, headerBackground, drawerBackground),
-    searchTextColor: pickThemeValue(sourceTheme.searchTextColor, pageTextColor, drawerTextColor),
+    searchBackground: pickThemeValue(sourceTheme.searchBackground, baseTheme.searchBackground, 'var(--ntk-bg-hover)'),
+    searchTextColor: pickThemeValue(sourceTheme.searchTextColor, baseTheme.searchTextColor, drawerTextColor),
   }
 }
 

@@ -160,4 +160,36 @@ describe('NtkAppShell', () => {
     expect(style).toContain('--ntk-shell-action-hover')
     expect(style).toContain('#9f1414')
   })
+
+  it('injects typography and dimension override tokens into shell style variables', () => {
+    const wrapper = mount(NtkAppShell, {
+      props: {
+        navGroups,
+        items,
+        theme: {
+          fontSizeGroupCaption: '0.74rem',
+          searchWidth: '360px',
+          searchControlHeight: '40px',
+          brandLogoSize: '38px',
+          itemIconSize: '24px',
+          workspaceMaxWidth: '1400px',
+        },
+      },
+    })
+
+    const layout = wrapper.find('[data-stub="QLayout"]')
+    const style = layout.attributes('style')
+    expect(style).toContain('--ntk-shell-font-size-group-caption')
+    expect(style).toContain('0.74rem')
+    expect(style).toContain('--ntk-shell-search-width')
+    expect(style).toContain('360px')
+    expect(style).toContain('--ntk-shell-search-control-height')
+    expect(style).toContain('40px')
+    expect(style).toContain('--ntk-shell-brand-logo-size')
+    expect(style).toContain('38px')
+    expect(style).toContain('--ntk-shell-item-icon-size')
+    expect(style).toContain('24px')
+    expect(style).toContain('--ntk-shell-workspace-max-width')
+    expect(style).toContain('1400px')
+  })
 })

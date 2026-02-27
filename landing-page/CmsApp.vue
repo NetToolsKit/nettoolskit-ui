@@ -108,7 +108,7 @@
                           <span>User</span>
                           <div class="cms-preview-user">
                             <img v-if="settings.branding.userAvatar" :src="settings.branding.userAvatar" alt="User avatar">
-                            <q-icon v-else name="account_circle" size="22px" />
+                            <q-icon v-else name="account_circle" class="cms-icon cms-icon--avatar" />
                             <small>{{ settings.branding.userTooltip }}</small>
                           </div>
                         </div>
@@ -247,7 +247,7 @@
                             <div class="cms-preview-layout__panel cms-preview-layout__panel--accent">Panel B</div>
                           </div>
                           <div class="cms-preview-layout__nav-item">
-                            <q-icon name="tune" size="16px" />
+                            <q-icon name="tune" class="cms-icon cms-icon--sm" />
                             <span>Hover-ready item spacing</span>
                           </div>
                           <small class="cms-preview-layout__hint">Move mouse over cards/items to validate transition token.</small>
@@ -262,15 +262,15 @@
                         <div class="cms-preview-card cms-preview-card--navigation">
                           <div class="cms-preview-nav-caption">Core</div>
                           <div class="cms-preview-nav-item">
-                            <q-icon name="dashboard" size="16px" class="cms-preview-nav-item__icon" />
+                            <q-icon name="dashboard" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
                             <span>Overview</span>
                           </div>
                           <div class="cms-preview-nav-item cms-preview-nav-item--hover">
-                            <q-icon name="query_stats" size="16px" class="cms-preview-nav-item__icon" />
+                            <q-icon name="query_stats" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
                             <span>Analytics</span>
                           </div>
                           <div class="cms-preview-nav-item cms-preview-nav-item--active">
-                            <q-icon name="settings" size="16px" class="cms-preview-nav-item__icon" />
+                            <q-icon name="settings" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
                             <span>Settings</span>
                           </div>
                           <div class="cms-preview-nav-mini-caption">CO</div>
@@ -285,35 +285,35 @@
                         <div class="cms-preview-card cms-preview-card--header">
                           <div class="cms-preview-header">
                             <div class="cms-preview-header__left">
-                              <q-icon :name="settings.layout.menuIcon" size="18px" class="cms-preview-header__menu-icon" />
+                              <q-icon :name="settings.layout.menuIcon" class="cms-icon cms-icon--md cms-preview-header__menu-icon" />
                               <strong class="cms-preview-header__title-app">{{ settings.branding.appName }}</strong>
-                              <q-icon name="chevron_right" size="16px" class="cms-preview-header__separator" />
+                              <q-icon name="chevron_right" class="cms-icon cms-icon--sm cms-preview-header__separator" />
                               <span class="cms-preview-header__title-text">Settings</span>
                             </div>
                             <div class="cms-preview-header__search">
-                              <q-icon name="search" size="16px" class="cms-preview-header__search-icon" />
+                              <q-icon name="search" class="cms-icon cms-icon--sm cms-preview-header__search-icon" />
                               <span>{{ settings.layout.searchPlaceholder }}</span>
                             </div>
                             <div class="cms-preview-header__actions">
                               <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action">
-                                <q-icon name="notifications" size="16px" />
+                                <q-icon name="notifications" class="cms-icon cms-icon--sm" />
                                 <span class="cms-preview-header__badge">{{ settings.branding.notificationCount || 2 }}</span>
                               </button>
                               <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action">
-                                <q-icon name="account_circle" size="16px" />
+                                <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
                               </button>
                               <button type="button" class="cms-preview-header__action">
-                                <q-icon name="home" size="16px" />
+                                <q-icon name="home" class="cms-icon cms-icon--sm" />
                               </button>
                             </div>
                           </div>
                           <div class="cms-preview-drawer">
                             <div class="cms-preview-drawer__item">
-                              <q-icon name="dashboard" size="16px" />
+                              <q-icon name="dashboard" class="cms-icon cms-icon--sm" />
                               <span>Drawer item</span>
                             </div>
                             <div class="cms-preview-drawer__footer">
-                              <q-icon name="keyboard_double_arrow_left" size="15px" />
+                              <q-icon name="keyboard_double_arrow_left" class="cms-icon cms-icon--xs" />
                               <span>{{ settings.layout.collapseLabel }}</span>
                             </div>
                           </div>
@@ -332,20 +332,20 @@
                           <q-chip dense square :style="notificationChipStyles.info">{{ settings.content.previewInfoLabel }}</q-chip>
                         </div>
                         <div class="cms-notification-bell-preview">
-                          <q-icon name="notifications" size="18px" :style="notificationBellPreviewStyle" />
+                          <q-icon name="notifications" class="cms-icon cms-icon--md" :style="notificationBellPreviewStyle" />
                           <q-chip dense square :style="notificationCounterPreviewStyle">2</q-chip>
                         </div>
                         <div class="cms-notification-actions-preview">
                           <button type="button" class="cms-notification-actions-preview__action">
-                            <q-icon name="account_circle" size="16px" />
+                            <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
                             <span>Account</span>
                           </button>
                           <button type="button" class="cms-notification-actions-preview__action">
-                            <q-icon name="home" size="16px" />
+                            <q-icon name="home" class="cms-icon cms-icon--sm" />
                             <span>Landing</span>
                           </button>
                           <button type="button" class="cms-notification-actions-preview__action cms-notification-actions-preview__action--forced-hover">
-                            <q-icon name="visibility" size="16px" />
+                            <q-icon name="visibility" class="cms-icon cms-icon--sm" />
                             <span>Hover sample</span>
                           </button>
                         </div>
@@ -423,7 +423,7 @@
                             class="cms-preview-menu-item"
                             :class="{ 'cms-preview-menu-item--active': item.id === previewActiveItemId }"
                           >
-                            <q-icon :name="item.icon || 'radio_button_unchecked'" size="16px" />
+                            <q-icon :name="item.icon || 'radio_button_unchecked'" class="cms-icon cms-icon--sm" />
                             <span>{{ item.label }}</span>
                             <q-badge
                               v-if="item.badge !== undefined && item.badge !== ''"
@@ -509,11 +509,11 @@
                     <div class="cms-preview-card cms-preview-card--topbar">
                       <div class="cms-preview-topbar">
                         <div class="cms-preview-topbar__left">
-                          <q-icon :name="settings.layout.menuIcon" size="18px" />
+                          <q-icon :name="settings.layout.menuIcon" class="cms-icon cms-icon--md" />
                           <strong>{{ settings.branding.appName }}</strong>
                         </div>
                         <div v-if="settings.layout.showSearch" class="cms-preview-topbar__search">
-                          <q-icon name="search" size="16px" />
+                          <q-icon name="search" class="cms-icon cms-icon--sm" />
                           <span>{{ settings.layout.searchPlaceholder }}</span>
                         </div>
                         <div class="cms-preview-topbar__actions">
@@ -523,7 +523,7 @@
                             type="button"
                             class="cms-preview-topbar__action"
                           >
-                            <q-icon :name="action.icon || 'bolt'" size="16px" />
+                            <q-icon :name="action.icon || 'bolt'" class="cms-icon cms-icon--sm" />
                             <span v-if="action.showLabel">{{ action.label }}</span>
                             <q-badge
                               v-if="action.badge !== undefined && action.badge !== ''"
@@ -1061,6 +1061,48 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('fontSizeItemCaption'),
   },
   {
+    key: 'fontSizeGroupCaption',
+    group: 'typography',
+    label: 'Group caption size',
+    placeholder: themePlaceholder('fontSizeGroupCaption'),
+  },
+  {
+    key: 'fontSizeGroupCaptionMini',
+    group: 'typography',
+    label: 'Group mini caption size',
+    placeholder: themePlaceholder('fontSizeGroupCaptionMini'),
+  },
+  {
+    key: 'letterSpacingGroupCaption',
+    group: 'typography',
+    label: 'Group caption letter spacing',
+    placeholder: themePlaceholder('letterSpacingGroupCaption'),
+  },
+  {
+    key: 'letterSpacingGroupCaptionMini',
+    group: 'typography',
+    label: 'Group mini letter spacing',
+    placeholder: themePlaceholder('letterSpacingGroupCaptionMini'),
+  },
+  {
+    key: 'lineHeightBrandText',
+    group: 'typography',
+    label: 'Brand block line height',
+    placeholder: themePlaceholder('lineHeightBrandText'),
+  },
+  {
+    key: 'lineHeightItemLabel',
+    group: 'typography',
+    label: 'Item label line height',
+    placeholder: themePlaceholder('lineHeightItemLabel'),
+  },
+  {
+    key: 'lineHeightItemCaption',
+    group: 'typography',
+    label: 'Item caption line height',
+    placeholder: themePlaceholder('lineHeightItemCaption'),
+  },
+  {
     key: 'radiusSm',
     group: 'layout',
     label: 'Radius small',
@@ -1115,6 +1157,126 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('transitionFast'),
   },
   {
+    key: 'menuSlotWidth',
+    group: 'layout',
+    label: 'Menu slot width',
+    placeholder: themePlaceholder('menuSlotWidth'),
+  },
+  {
+    key: 'searchWidth',
+    group: 'layout',
+    label: 'Search width',
+    placeholder: themePlaceholder('searchWidth'),
+  },
+  {
+    key: 'searchControlHeight',
+    group: 'layout',
+    label: 'Search control height',
+    placeholder: themePlaceholder('searchControlHeight'),
+  },
+  {
+    key: 'searchPrependPaddingRight',
+    group: 'layout',
+    label: 'Search icon right padding',
+    placeholder: themePlaceholder('searchPrependPaddingRight'),
+  },
+  {
+    key: 'drawerHeaderMinHeight',
+    group: 'layout',
+    label: 'Drawer header min height',
+    placeholder: themePlaceholder('drawerHeaderMinHeight'),
+  },
+  {
+    key: 'brandLogoSize',
+    group: 'layout',
+    label: 'Brand logo size',
+    placeholder: themePlaceholder('brandLogoSize'),
+  },
+  {
+    key: 'groupCaptionMinHeight',
+    group: 'layout',
+    label: 'Group caption min height',
+    placeholder: themePlaceholder('groupCaptionMinHeight'),
+  },
+  {
+    key: 'groupCaptionPadding',
+    group: 'layout',
+    label: 'Group caption padding',
+    placeholder: themePlaceholder('groupCaptionPadding'),
+  },
+  {
+    key: 'groupCaptionMiniPadding',
+    group: 'layout',
+    label: 'Group mini padding',
+    placeholder: themePlaceholder('groupCaptionMiniPadding'),
+  },
+  {
+    key: 'groupCaptionMiniMinWidth',
+    group: 'layout',
+    label: 'Group mini min width',
+    placeholder: themePlaceholder('groupCaptionMiniMinWidth'),
+  },
+  {
+    key: 'groupCaptionMiniHeight',
+    group: 'layout',
+    label: 'Group mini height',
+    placeholder: themePlaceholder('groupCaptionMiniHeight'),
+  },
+  {
+    key: 'groupCaptionMiniHorizontalPadding',
+    group: 'layout',
+    label: 'Group mini horizontal padding',
+    placeholder: themePlaceholder('groupCaptionMiniHorizontalPadding'),
+  },
+  {
+    key: 'itemMinHeight',
+    group: 'layout',
+    label: 'Item min height',
+    placeholder: themePlaceholder('itemMinHeight'),
+  },
+  {
+    key: 'itemIconSize',
+    group: 'layout',
+    label: 'Item icon size',
+    placeholder: themePlaceholder('itemIconSize'),
+  },
+  {
+    key: 'itemHoverTranslateX',
+    group: 'layout',
+    label: 'Item hover translate X',
+    placeholder: themePlaceholder('itemHoverTranslateX'),
+  },
+  {
+    key: 'itemActiveBorderWidth',
+    group: 'layout',
+    label: 'Item active border width',
+    placeholder: themePlaceholder('itemActiveBorderWidth'),
+  },
+  {
+    key: 'drawerScrollPaddingBottom',
+    group: 'layout',
+    label: 'Drawer scroll padding bottom',
+    placeholder: themePlaceholder('drawerScrollPaddingBottom'),
+  },
+  {
+    key: 'workspaceMaxWidth',
+    group: 'layout',
+    label: 'Workspace max width',
+    placeholder: themePlaceholder('workspaceMaxWidth'),
+  },
+  {
+    key: 'miniItemMarginRight',
+    group: 'layout',
+    label: 'Mini item margin right',
+    placeholder: themePlaceholder('miniItemMarginRight'),
+  },
+  {
+    key: 'miniItemAvatarMinWidth',
+    group: 'layout',
+    label: 'Mini item avatar min width',
+    placeholder: themePlaceholder('miniItemAvatarMinWidth'),
+  },
+  {
     key: 'shellBackground',
     group: 'foundation',
     label: 'Shell background',
@@ -1140,7 +1302,7 @@ const colorFields: ThemeField[] = [
     label: 'Surface background (card)',
     isColor: true,
     placeholder: themePlaceholder('drawerBackground'),
-    aliases: ['drawerFooterBackground', 'searchBackground'],
+    aliases: ['drawerFooterBackground'],
   },
   {
     key: 'drawerFooterBackground',
@@ -1344,10 +1506,9 @@ const colorFields: ThemeField[] = [
   {
     key: 'actionHoverBackground',
     group: 'header',
-    label: 'Neutral background (page/actions)',
+    label: 'Header actions hover background (hover only)',
     isColor: true,
     placeholder: themePlaceholder('actionHoverBackground'),
-    aliases: ['pageBackground'],
   },
   {
     key: 'notificationSuccessColor',
@@ -1562,6 +1723,12 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-font-size-brand-subtitle': settings.value.theme.fontSizeBrandSubtitle || defaultTheme.fontSizeBrandSubtitle || '0.72rem',
   '--ntk-cms-font-size-item-label': settings.value.theme.fontSizeItemLabel || defaultTheme.fontSizeItemLabel || '13px',
   '--ntk-cms-font-size-item-caption': settings.value.theme.fontSizeItemCaption || defaultTheme.fontSizeItemCaption || '11px',
+  '--ntk-cms-font-size-group-caption': settings.value.theme.fontSizeGroupCaption || defaultTheme.fontSizeGroupCaption || '0.68rem',
+  '--ntk-cms-font-size-group-caption-mini': settings.value.theme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
+  '--ntk-cms-letter-spacing-group-caption': settings.value.theme.letterSpacingGroupCaption || defaultTheme.letterSpacingGroupCaption || '0.08em',
+  '--ntk-cms-letter-spacing-group-caption-mini': settings.value.theme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
+  '--ntk-cms-line-height-item-label': settings.value.theme.lineHeightItemLabel || defaultTheme.lineHeightItemLabel || '1.25',
+  '--ntk-cms-line-height-item-caption': settings.value.theme.lineHeightItemCaption || defaultTheme.lineHeightItemCaption || '1.2',
   '--ntk-cms-radius-sm': settings.value.theme.radiusSm || defaultTheme.radiusSm || '6px',
   '--ntk-cms-radius-md': settings.value.theme.radiusMd || defaultTheme.radiusMd || '8px',
   '--ntk-cms-radius-lg': settings.value.theme.radiusLg || defaultTheme.radiusLg || '10px',
@@ -1592,7 +1759,7 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-search-border-hover': settings.value.theme.searchBorderHover || defaultTheme.searchBorderHover || '',
   '--ntk-cms-transition': settings.value.theme.transitionFast || defaultTheme.transitionFast || '',
   '--ntk-cms-focus-color': settings.value.theme.focusColor || settings.value.theme.itemActiveColor || defaultTheme.focusColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-action-hover': settings.value.theme.actionHoverBackground || settings.value.theme.itemHoverBackground || defaultTheme.actionHoverBackground || defaultTheme.itemHoverBackground || '',
+  '--ntk-cms-action-hover': settings.value.theme.actionHoverBackground || defaultTheme.actionHoverBackground || '',
   '--ntk-cms-shell-bg': settings.value.theme.shellBackground || defaultTheme.shellBackground || '',
   '--ntk-cms-title-app': settings.value.theme.titleAppColor || settings.value.theme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-title-text': settings.value.theme.titleTextColor || settings.value.theme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '',
@@ -1606,6 +1773,24 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-item-icon': settings.value.theme.itemIconColor || settings.value.theme.drawerTextColor || defaultTheme.itemIconColor || defaultTheme.drawerTextColor || '',
   '--ntk-cms-item-hover-color': settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-item-icon-hover': settings.value.theme.itemIconHoverColor || settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemIconHoverColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-preview-search-width': settings.value.theme.searchWidth || defaultTheme.searchWidth || '220px',
+  '--ntk-cms-preview-search-height': settings.value.theme.searchControlHeight || defaultTheme.searchControlHeight || '36px',
+  '--ntk-cms-preview-action-min-width': settings.value.theme.menuSlotWidth || defaultTheme.menuSlotWidth || '30px',
+  '--ntk-cms-preview-action-min-height': settings.value.theme.searchControlHeight || defaultTheme.searchControlHeight || '28px',
+  '--ntk-cms-preview-brand-logo-size': settings.value.theme.brandLogoSize || defaultTheme.brandLogoSize || '40px',
+  '--ntk-cms-layout-side-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 5))',
+  '--ntk-cms-layout-config-example-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 3.5))',
+  '--ntk-cms-editor-max-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 13)))',
+  '--ntk-cms-preview-icon-size-lg': settings.value.theme.itemIconSize || defaultTheme.itemIconSize || '22px',
+  '--ntk-cms-preview-icon-size-md': 'calc(var(--ntk-cms-preview-icon-size-lg) - var(--ntk-cms-space-xs))',
+  '--ntk-cms-preview-icon-size-sm': 'calc(var(--ntk-cms-preview-icon-size-md) - var(--ntk-cms-space-xs))',
+  '--ntk-cms-preview-icon-size-xs': 'calc(var(--ntk-cms-preview-icon-size-sm) - (var(--ntk-cms-space-xs) / 2))',
+  '--ntk-cms-preview-avatar-icon-size': 'var(--ntk-cms-preview-action-min-height)',
+  '--ntk-cms-preview-mini-caption-min-width': settings.value.theme.groupCaptionMiniMinWidth || defaultTheme.groupCaptionMiniMinWidth || '34px',
+  '--ntk-cms-preview-mini-caption-height': settings.value.theme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '18px',
+  '--ntk-cms-preview-badge-min-size': settings.value.theme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '16px',
+  '--ntk-cms-preview-badge-font-size': settings.value.theme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
+  '--ntk-cms-preview-badge-letter-spacing': settings.value.theme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
   '--ntk-cms-notification-success': notificationSuccessColor.value,
   '--ntk-cms-notification-warning': notificationWarningColor.value,
   '--ntk-cms-notification-error': notificationErrorColor.value,
@@ -1894,7 +2079,7 @@ function normalizeHexColor(value: string): string | null {
 function rgbStringToHex(value: string): string | null {
   const match = value
     .trim()
-    .match(/^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:[\s,\/]+[\d.]+)?\s*\)$/i)
+    .match(/^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:[\s,/]+[\d.]+)?\s*\)$/i)
 
   if (!match) {
     return null
@@ -2541,7 +2726,7 @@ function resetToDefaults(): void {
 .cms-shell-page {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--ntk-cms-space-lg);
   font-family: var(--ntk-cms-font-family);
   font-style: var(--ntk-cms-font-style-base);
   min-width: 0;
@@ -2550,47 +2735,71 @@ function resetToDefaults(): void {
 .cms-shell-page__workspace {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--ntk-cms-space-lg);
   min-width: 0;
+}
+
+.cms-icon {
+  line-height: 1;
+}
+
+.cms-icon--lg {
+  font-size: var(--ntk-cms-preview-icon-size-lg);
+}
+
+.cms-icon--md {
+  font-size: var(--ntk-cms-preview-icon-size-md);
+}
+
+.cms-icon--sm {
+  font-size: var(--ntk-cms-preview-icon-size-sm);
+}
+
+.cms-icon--xs {
+  font-size: var(--ntk-cms-preview-icon-size-xs);
+}
+
+.cms-icon--avatar {
+  font-size: var(--ntk-cms-preview-avatar-icon-size);
 }
 
 .cms-shell-page__hero h1 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: calc(var(--ntk-cms-font-size-title-app) + var(--ntk-cms-space-xs));
   color: var(--ntk-cms-text-primary);
 }
 
 .cms-shell-page__hero p {
-  margin: 0.35rem 0 0;
+  margin: var(--ntk-cms-space-xs) 0 0;
   color: var(--ntk-cms-text-secondary);
 }
 
 .cms-shell-page__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: var(--ntk-cms-space-lg);
 }
 
 .cms-pages {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(var(--ntk-cms-layout-side-min-width), 1fr);
+  gap: var(--ntk-cms-space-lg);
   align-items: start;
 }
 
 .cms-pages__editor {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  max-height: calc(100vh - 280px);
+  gap: var(--ntk-cms-space-md);
+  max-height: var(--ntk-cms-editor-max-height);
   overflow: auto;
-  padding-right: 0.2rem;
+  padding-right: calc(var(--ntk-cms-space-xs) / 2);
 }
 
 .cms-pages__preview {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-page-item {
@@ -2600,13 +2809,13 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-bg-card);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-page-item__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-page-item__description {
@@ -2616,24 +2825,24 @@ function resetToDefaults(): void {
 .cms-page-item__sections {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-page-item__sections-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-page-section-row {
   border: 1px solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
-  padding: 0.5rem;
+  padding: var(--ntk-cms-space-sm);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
   align-items: center;
 }
 
@@ -2649,14 +2858,14 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-bg-card);
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-page-preview__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-page-preview__path {
@@ -2672,11 +2881,11 @@ function resetToDefaults(): void {
 .cms-page-preview__sections {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-shell-card {
-  border-radius: 14px;
+  border-radius: var(--ntk-cms-radius-lg);
   border-color: var(--ntk-cms-border-color);
   background: var(--ntk-cms-bg-card);
 }
@@ -2685,53 +2894,53 @@ function resetToDefaults(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.9rem 1rem;
+  gap: var(--ntk-cms-space-md);
+  padding: var(--ntk-cms-space-lg);
 }
 
 .cms-shell-card__body {
-  padding: 0.9rem 1rem 1rem;
+  padding: var(--ntk-cms-space-lg);
 }
 
 .cms-settings {
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 14px;
+  border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
-  padding: 1rem;
+  padding: var(--ntk-cms-space-lg);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-settings__toolbar {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
+  gap: var(--ntk-cms-space-md);
   flex-wrap: wrap;
 }
 
 .cms-settings__tenant-controls {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--ntk-cms-space-sm);
   flex-wrap: wrap;
   flex: 1 1 auto;
 }
 
 .cms-settings__tenant-select {
-  min-width: 220px;
+  min-width: var(--ntk-cms-preview-search-width);
 }
 
 .cms-settings__actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-settings__saved-at {
   margin-left: 0;
   flex-basis: 100%;
-  font-size: 0.8rem;
+  font-size: var(--ntk-cms-font-size-item-label);
   color: var(--ntk-cms-text-secondary);
 }
 
@@ -2745,19 +2954,19 @@ function resetToDefaults(): void {
 
 .cms-settings__tabs {
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 10px;
-  padding: 0 0.3rem;
+  border-radius: var(--ntk-cms-radius-lg);
+  padding: 0 calc(var(--ntk-cms-space-xs) + (var(--ntk-cms-space-xs) / 4));
 }
 
 .cms-settings__panels {
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 10px;
+  border-radius: var(--ntk-cms-radius-lg);
 }
 
 .cms-config-section {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.95fr);
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.45fr) minmax(var(--ntk-cms-layout-config-example-min-width), 0.95fr);
+  gap: var(--ntk-cms-space-lg);
   align-items: start;
 }
 
@@ -2781,101 +2990,101 @@ function resetToDefaults(): void {
 .cms-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 0.9rem;
+  gap: var(--ntk-cms-space-md);
+  margin-bottom: var(--ntk-cms-space-lg);
 }
 
 .cms-color-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-color-groups {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 0.9rem;
+  gap: var(--ntk-cms-space-lg);
+  margin-bottom: var(--ntk-cms-space-lg);
 }
 
 .cms-theme-presets {
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 10px;
-  padding: 0.75rem;
-  margin-bottom: 0.9rem;
+  border-radius: var(--ntk-cms-radius-lg);
+  padding: var(--ntk-cms-space-md);
+  margin-bottom: var(--ntk-cms-space-lg);
 }
 
 .cms-theme-presets__controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
   align-items: end;
 }
 
 .cms-color-group {
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 10px;
-  padding: 0.75rem;
+  border-radius: var(--ntk-cms-radius-lg);
+  padding: var(--ntk-cms-space-md);
 }
 
 .cms-color-field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-color-field label {
-  font-size: 0.8rem;
+  font-size: var(--ntk-cms-font-size-item-label);
   color: var(--ntk-cms-text-secondary);
 }
 
 .cms-color-field__controls {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-color-field__picker {
-  width: 44px;
-  height: 36px;
+  width: calc(var(--ntk-cms-preview-icon-size-lg) * 2);
+  height: var(--ntk-cms-preview-search-height);
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 8px;
+  border-radius: var(--ntk-cms-radius-md);
   background: transparent;
-  padding: 2px;
+  padding: calc(var(--ntk-cms-space-xs) / 2);
 }
 
 .cms-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--ntk-cms-space-sm);
 }
 
 .cms-section-header--stacked {
   align-items: flex-start;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: calc(var(--ntk-cms-space-xs) * 0.6);
 }
 
 .cms-section-header--stacked small {
   color: var(--ntk-cms-text-secondary);
-  font-size: 0.76rem;
+  font-size: var(--ntk-cms-font-size-item-caption);
 }
 
 .cms-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-list-item {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
   align-items: center;
-  padding: 0.5rem;
+  padding: var(--ntk-cms-space-sm);
   border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 10px;
+  border-radius: var(--ntk-cms-radius-lg);
 }
 
 .cms-list-item--menu {
@@ -2889,32 +3098,32 @@ function resetToDefaults(): void {
 .cms-toggle-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.35rem 1rem;
+  gap: var(--ntk-cms-space-xs) var(--ntk-cms-space-lg);
 }
 
 .cms-banner {
-  border-radius: 10px;
+  border-radius: var(--ntk-cms-radius-lg);
 }
 
 .cms-notification-preview {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.75rem;
+  gap: var(--ntk-cms-space-sm);
+  margin-top: var(--ntk-cms-space-md);
 }
 
 .cms-notification-bell-preview {
-  margin-top: 0.65rem;
+  margin-top: var(--ntk-cms-space-md);
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-notification-actions-preview {
-  margin-top: 0.65rem;
+  margin-top: var(--ntk-cms-space-md);
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
   flex-wrap: wrap;
 }
 
@@ -2925,9 +3134,10 @@ function resetToDefaults(): void {
   color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--ntk-cms-space-xs);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
-  font-size: 0.74rem;
+  font-size: var(--ntk-cms-font-size-item-caption);
+  line-height: var(--ntk-cms-line-height-item-caption);
   transition: all var(--ntk-cms-transition);
 }
 
@@ -2942,12 +3152,12 @@ function resetToDefaults(): void {
 }
 
 .cms-example-section {
-  margin-top: 0.9rem;
-  padding-top: 0.9rem;
+  margin-top: var(--ntk-cms-space-lg);
+  padding-top: var(--ntk-cms-space-lg);
   border-top: 1px dashed var(--ntk-cms-border-color);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-example-section--inline {
@@ -2959,7 +3169,7 @@ function resetToDefaults(): void {
 .cms-example-section__header {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: calc(var(--ntk-cms-space-xs) * 0.4);
 }
 
 .cms-example-section__header strong {
@@ -2968,7 +3178,7 @@ function resetToDefaults(): void {
 
 .cms-example-section__header small {
   color: var(--ntk-cms-text-secondary);
-  font-size: 0.76rem;
+  font-size: var(--ntk-cms-font-size-item-caption);
 }
 
 .cms-preview-card {
@@ -2982,12 +3192,12 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-card p {
-  margin: 0.35rem 0;
+  margin: var(--ntk-cms-space-xs) 0;
   color: var(--ntk-cms-text-secondary);
 }
 
 .cms-preview-chip {
-  margin-top: 0.35rem;
+  margin-top: var(--ntk-cms-space-xs);
   background: var(--ntk-cms-accent-soft);
   color: var(--ntk-cms-accent-text);
   border: 1px solid var(--ntk-cms-accent);
@@ -3038,7 +3248,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-typography__menu-caption {
-  margin-top: 0.15rem;
+  margin-top: calc(var(--ntk-cms-space-xs) * 0.6);
   font-size: var(--ntk-cms-font-size-item-caption);
   font-weight: var(--ntk-cms-font-weight-regular);
   color: var(--ntk-cms-text-secondary);
@@ -3091,7 +3301,7 @@ function resetToDefaults(): void {
 
 .cms-preview-layout__hint {
   color: var(--ntk-cms-text-secondary);
-  font-size: 0.72rem;
+  font-size: var(--ntk-cms-font-size-brand-subtitle);
 }
 
 .cms-preview-card--navigation {
@@ -3100,39 +3310,40 @@ function resetToDefaults(): void {
 
 .cms-preview-card--theme-preset {
   display: grid;
-  gap: 0.4rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-theme-token {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--ntk-cms-space-xs);
   min-width: 0;
 }
 
 .cms-theme-token span {
   min-width: 0;
-  font-size: 0.78rem;
+  font-size: var(--ntk-cms-font-size-item-label);
+  line-height: var(--ntk-cms-line-height-item-label);
 }
 
 .cms-theme-token code {
-  font-size: 0.72rem;
+  font-size: var(--ntk-cms-font-size-brand-subtitle);
   word-break: break-all;
 }
 
 .cms-theme-token__dot {
-  width: 12px;
-  height: 12px;
+  width: var(--ntk-cms-space-md);
+  height: var(--ntk-cms-space-md);
   border-radius: 50%;
   border: 1px solid var(--ntk-cms-border-color);
   flex-shrink: 0;
 }
 
 .cms-preview-nav-caption {
-  margin-bottom: 0.25rem;
-  font-size: 0.7rem;
+  margin-bottom: var(--ntk-cms-space-xs);
+  font-size: var(--ntk-cms-font-size-group-caption);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ntk-cms-letter-spacing-group-caption);
   color: var(--ntk-cms-group-caption);
 }
 
@@ -3147,6 +3358,7 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
   font-size: var(--ntk-cms-font-size-item-label);
   font-weight: var(--ntk-cms-font-weight-semibold);
+  line-height: var(--ntk-cms-line-height-item-label);
   background: transparent;
   transition: all var(--ntk-cms-transition);
 }
@@ -3185,13 +3397,13 @@ function resetToDefaults(): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
-  height: 18px;
+  min-width: var(--ntk-cms-preview-mini-caption-min-width);
+  height: var(--ntk-cms-preview-mini-caption-height);
   padding: 0 var(--ntk-cms-space-xs);
   border-radius: 999px;
-  font-size: 0.62rem;
+  font-size: var(--ntk-cms-font-size-group-caption-mini);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ntk-cms-letter-spacing-group-caption-mini);
   background: var(--ntk-cms-group-caption-mini-bg);
   color: var(--ntk-cms-group-caption);
 }
@@ -3241,13 +3453,15 @@ function resetToDefaults(): void {
   display: inline-flex;
   align-items: center;
   gap: var(--ntk-cms-space-sm);
-  min-width: 220px;
+  min-width: var(--ntk-cms-preview-search-width);
+  min-height: var(--ntk-cms-preview-search-height);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-md);
   border-radius: var(--ntk-cms-radius-md);
   border: 1px solid var(--ntk-cms-search-border);
   background: var(--ntk-cms-search-bg);
   color: var(--ntk-cms-search-text);
-  font-size: 0.78rem;
+  font-size: var(--ntk-cms-font-size-item-label);
+  line-height: var(--ntk-cms-line-height-item-label);
   transition: border-color var(--ntk-cms-transition);
 }
 
@@ -3271,8 +3485,8 @@ function resetToDefaults(): void {
   border: 1px solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-sm);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
-  min-width: 30px;
-  min-height: 28px;
+  min-width: var(--ntk-cms-preview-action-min-width);
+  min-height: var(--ntk-cms-preview-action-min-height);
   background: transparent;
   color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
@@ -3288,17 +3502,18 @@ function resetToDefaults(): void {
 
 .cms-preview-header__badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 16px;
-  height: 16px;
+  top: calc(var(--ntk-cms-space-xs) * -1);
+  right: calc(var(--ntk-cms-space-xs) * -1);
+  min-width: var(--ntk-cms-preview-badge-min-size);
+  height: var(--ntk-cms-preview-badge-min-size);
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
-  font-size: 0.62rem;
+  padding: 0 var(--ntk-cms-space-xs);
+  font-size: var(--ntk-cms-preview-badge-font-size);
   font-weight: 700;
+  letter-spacing: var(--ntk-cms-preview-badge-letter-spacing);
   background: var(--ntk-cms-notification-badge-bg);
   color: var(--ntk-cms-notification-badge-text);
 }
@@ -3344,19 +3559,19 @@ function resetToDefaults(): void {
 .cms-preview-card--branding {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--ntk-cms-space-md);
 }
 
 .cms-preview-brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-preview-brand__logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: var(--ntk-cms-preview-brand-logo-size);
+  height: var(--ntk-cms-preview-brand-logo-size);
+  border-radius: var(--ntk-cms-radius-lg);
   object-fit: cover;
   border: 1px solid var(--ntk-cms-border-color);
 }
@@ -3364,7 +3579,7 @@ function resetToDefaults(): void {
 .cms-preview-brand__copy {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
 }
 
 .cms-preview-brand__copy strong {
@@ -3383,35 +3598,35 @@ function resetToDefaults(): void {
 .cms-preview-brand__meta {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
-  gap: 0.5rem;
+  gap: var(--ntk-cms-space-sm);
   align-items: center;
 }
 
 .cms-preview-brand__meta-row {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-brand__meta-row span {
-  font-size: 0.72rem;
+  font-size: var(--ntk-cms-font-size-brand-subtitle);
   color: var(--ntk-cms-text-secondary);
 }
 
 .cms-preview-brand__meta-row code {
-  font-size: 0.74rem;
+  font-size: var(--ntk-cms-font-size-item-caption);
   word-break: break-all;
 }
 
 .cms-preview-user {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-user img {
-  width: 22px;
-  height: 22px;
+  width: var(--ntk-cms-preview-action-min-height);
+  height: var(--ntk-cms-preview-action-min-height);
   border-radius: 50%;
   object-fit: cover;
 }
@@ -3422,25 +3637,25 @@ function resetToDefaults(): void {
 
 .cms-preview-card--menu {
   display: grid;
-  gap: 0.6rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-preview-menu-group {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-menu-group > small {
   color: var(--ntk-cms-group-caption);
-  font-size: 0.72rem;
+  font-size: var(--ntk-cms-font-size-group-caption);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--ntk-cms-letter-spacing-group-caption);
 }
 
 .cms-preview-menu-items {
   display: grid;
-  gap: 0.25rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-menu-item {
@@ -3454,6 +3669,7 @@ function resetToDefaults(): void {
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
   font-size: var(--ntk-cms-font-size-item-label);
   font-weight: var(--ntk-cms-font-weight-semibold);
+  line-height: var(--ntk-cms-line-height-item-label);
   text-align: left;
   transition: all var(--ntk-cms-transition);
 }
@@ -3480,7 +3696,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-topbar {
-  min-height: 44px;
+  min-height: var(--ntk-cms-preview-search-height);
   display: flex;
   align-items: center;
   gap: var(--ntk-cms-space-md);
@@ -3509,7 +3725,8 @@ function resetToDefaults(): void {
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   background: var(--ntk-cms-search-bg);
   color: var(--ntk-cms-search-text);
-  font-size: 0.78rem;
+  font-size: var(--ntk-cms-font-size-item-label);
+  line-height: var(--ntk-cms-line-height-item-label);
   transition: border-color var(--ntk-cms-transition);
 }
 
@@ -3532,12 +3749,15 @@ function resetToDefaults(): void {
   border: 1px solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-sm);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
+  min-width: var(--ntk-cms-preview-action-min-width);
+  min-height: var(--ntk-cms-preview-action-min-height);
   background: transparent;
   color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.74rem;
+  gap: var(--ntk-cms-space-xs);
+  font-size: var(--ntk-cms-font-size-item-caption);
+  line-height: var(--ntk-cms-line-height-item-caption);
 }
 
 .cms-preview-topbar__action:hover {
@@ -3547,13 +3767,13 @@ function resetToDefaults(): void {
 
 .cms-preview-card--content {
   display: grid;
-  gap: 0.6rem;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-preview-content-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-preview-content-text {
@@ -3562,14 +3782,14 @@ function resetToDefaults(): void {
 
 .cms-preview-content-status {
   display: grid;
-  gap: 0.2rem;
+  gap: var(--ntk-cms-space-xs);
   color: var(--ntk-cms-text-secondary);
-  font-size: 0.8rem;
+  font-size: var(--ntk-cms-font-size-base);
 }
 
 .cms-banner :deep(code) {
   font-family: var(--ntk-font-family-mono);
-  font-size: 0.78rem;
+  font-size: var(--ntk-cms-font-size-item-label);
 }
 
 @media (max-width: 1280px) {
@@ -3602,7 +3822,7 @@ function resetToDefaults(): void {
   }
 
   .cms-shell-page__workspace {
-    padding: 0.75rem;
+    padding: var(--ntk-cms-space-md);
   }
 
   .cms-settings__toolbar {

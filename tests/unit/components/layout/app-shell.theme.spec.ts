@@ -14,6 +14,11 @@ describe('app-shell.theme typography resolution', () => {
     expect(resolvedTheme.fontFamilyDisplay).toBe(APP_SHELL_DEFAULT_THEME.fontFamilyDisplay)
     expect(resolvedTheme.fontSizeTitleApp).toBe(APP_SHELL_DEFAULT_THEME.fontSizeTitleApp)
     expect(resolvedTheme.fontWeightBold).toBe(APP_SHELL_DEFAULT_THEME.fontWeightBold)
+    expect(resolvedTheme.fontSizeGroupCaption).toBe(APP_SHELL_DEFAULT_THEME.fontSizeGroupCaption)
+    expect(resolvedTheme.menuSlotWidth).toBe(APP_SHELL_DEFAULT_THEME.menuSlotWidth)
+    expect(resolvedTheme.searchControlHeight).toBe(APP_SHELL_DEFAULT_THEME.searchControlHeight)
+    expect(resolvedTheme.brandLogoSize).toBe(APP_SHELL_DEFAULT_THEME.brandLogoSize)
+    expect(resolvedTheme.itemIconSize).toBe(APP_SHELL_DEFAULT_THEME.itemIconSize)
     expect(resolvedTheme.radiusMd).toBe(APP_SHELL_DEFAULT_THEME.radiusMd)
     expect(resolvedTheme.spacingMd).toBe(APP_SHELL_DEFAULT_THEME.spacingMd)
   })
@@ -26,6 +31,11 @@ describe('app-shell.theme typography resolution', () => {
         fontSizeTitle: '1rem',
         fontSizeTitleApp: '1.3rem',
         fontWeightBold: '800',
+        fontSizeGroupCaption: '0.75rem',
+        menuSlotWidth: '34px',
+        searchControlHeight: '40px',
+        brandLogoSize: '38px',
+        itemIconSize: '24px',
         radiusMd: '12px',
         spacingMd: '1.2rem',
       },
@@ -37,11 +47,16 @@ describe('app-shell.theme typography resolution', () => {
     expect(resolvedTheme.fontSizeTitle).toBe('1rem')
     expect(resolvedTheme.fontSizeTitleApp).toBe('1.3rem')
     expect(resolvedTheme.fontWeightBold).toBe('800')
+    expect(resolvedTheme.fontSizeGroupCaption).toBe('0.75rem')
+    expect(resolvedTheme.menuSlotWidth).toBe('34px')
+    expect(resolvedTheme.searchControlHeight).toBe('40px')
+    expect(resolvedTheme.brandLogoSize).toBe('38px')
+    expect(resolvedTheme.itemIconSize).toBe('24px')
     expect(resolvedTheme.radiusMd).toBe('12px')
     expect(resolvedTheme.spacingMd).toBe('1.2rem')
   })
 
-  it('uses page background as search background fallback', () => {
+  it('keeps search background independent from page background fallback', () => {
     const resolvedTheme = resolveAppShellTheme(
       {
         pageBackground: '#f4f1ec',
@@ -50,10 +65,10 @@ describe('app-shell.theme typography resolution', () => {
       APP_SHELL_DEFAULT_THEME
     )
 
-    expect(resolvedTheme.searchBackground).toBe('#f4f1ec')
+    expect(resolvedTheme.searchBackground).toBe(APP_SHELL_DEFAULT_THEME.searchBackground)
   })
 
-  it('keeps header action hover independent from sidebar item hover', () => {
+  it('keeps header action hover independent from sidebar item hover fallback', () => {
     const resolvedTheme = resolveAppShellTheme(
       {
         itemHoverBackground: '#223344',
@@ -64,5 +79,17 @@ describe('app-shell.theme typography resolution', () => {
 
     expect(resolvedTheme.itemHoverBackground).toBe('#223344')
     expect(resolvedTheme.actionHoverBackground).toBe('#991111')
+  })
+
+  it('uses default header action hover token when override is missing', () => {
+    const resolvedTheme = resolveAppShellTheme(
+      {
+        itemHoverBackground: '#223344',
+        actionHoverBackground: '',
+      },
+      APP_SHELL_DEFAULT_THEME
+    )
+
+    expect(resolvedTheme.actionHoverBackground).toBe(APP_SHELL_DEFAULT_THEME.actionHoverBackground)
   })
 })

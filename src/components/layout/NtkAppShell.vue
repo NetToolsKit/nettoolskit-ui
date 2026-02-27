@@ -22,7 +22,7 @@
             <div class="ntk-app-shell__brand">
               <q-avatar
                 square
-                size="34px"
+                class="ntk-app-shell__brand-logo"
               >
                 <img
                   :src="brandLogo"
@@ -189,7 +189,6 @@
             <span class="ntk-app-shell__title-app">{{ appName }}</span>
             <q-icon
               name="chevron_right"
-              size="20px"
               class="ntk-app-shell__title-separator"
             />
             <span>{{ activeItem.label }}</span>
@@ -287,7 +286,7 @@
                 :aria-label="userAriaLabel"
                 @click="$emit('user-click')"
               >
-                <q-avatar size="26px">
+                <q-avatar class="ntk-app-shell__user-avatar">
                   <img
                     v-if="userAvatar"
                     :src="userAvatar"
@@ -296,7 +295,7 @@
                   <q-icon
                     v-else
                     name="account_circle"
-                    size="26px"
+                    class="ntk-app-shell__user-avatar-icon"
                   />
                 </q-avatar>
                 <q-tooltip>{{ userTooltip }}</q-tooltip>
@@ -673,6 +672,33 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-font-size-brand-subtitle': theme.fontSizeBrandSubtitle ?? '',
     '--ntk-shell-font-size-item-label': theme.fontSizeItemLabel ?? '',
     '--ntk-shell-font-size-item-caption': theme.fontSizeItemCaption ?? '',
+    '--ntk-shell-font-size-group-caption': theme.fontSizeGroupCaption ?? '',
+    '--ntk-shell-font-size-group-caption-mini': theme.fontSizeGroupCaptionMini ?? '',
+    '--ntk-shell-letter-spacing-group-caption': theme.letterSpacingGroupCaption ?? '',
+    '--ntk-shell-letter-spacing-group-caption-mini': theme.letterSpacingGroupCaptionMini ?? '',
+    '--ntk-shell-line-height-brand-text': theme.lineHeightBrandText ?? '',
+    '--ntk-shell-line-height-item-label': theme.lineHeightItemLabel ?? '',
+    '--ntk-shell-line-height-item-caption': theme.lineHeightItemCaption ?? '',
+    '--ntk-shell-menu-slot-width': theme.menuSlotWidth ?? '',
+    '--ntk-shell-search-width': theme.searchWidth ?? '',
+    '--ntk-shell-search-control-height': theme.searchControlHeight ?? '',
+    '--ntk-shell-search-prepend-padding-right': theme.searchPrependPaddingRight ?? '',
+    '--ntk-shell-drawer-header-min-height': theme.drawerHeaderMinHeight ?? '',
+    '--ntk-shell-brand-logo-size': theme.brandLogoSize ?? '',
+    '--ntk-shell-group-caption-min-height': theme.groupCaptionMinHeight ?? '',
+    '--ntk-shell-group-caption-padding': theme.groupCaptionPadding ?? '',
+    '--ntk-shell-group-caption-mini-padding': theme.groupCaptionMiniPadding ?? '',
+    '--ntk-shell-group-caption-mini-min-width': theme.groupCaptionMiniMinWidth ?? '',
+    '--ntk-shell-group-caption-mini-height': theme.groupCaptionMiniHeight ?? '',
+    '--ntk-shell-group-caption-mini-horizontal-padding': theme.groupCaptionMiniHorizontalPadding ?? '',
+    '--ntk-shell-item-min-height': theme.itemMinHeight ?? '',
+    '--ntk-shell-item-icon-size': theme.itemIconSize ?? '',
+    '--ntk-shell-item-hover-translate-x': theme.itemHoverTranslateX ?? '',
+    '--ntk-shell-item-active-border-width': theme.itemActiveBorderWidth ?? '',
+    '--ntk-shell-drawer-scroll-padding-bottom': theme.drawerScrollPaddingBottom ?? '',
+    '--ntk-shell-workspace-max-width': theme.workspaceMaxWidth ?? '',
+    '--ntk-shell-mini-item-margin-right': theme.miniItemMarginRight ?? '',
+    '--ntk-shell-mini-item-avatar-min-width': theme.miniItemAvatarMinWidth ?? '',
     '--ntk-shell-radius-sm': theme.radiusSm ?? '',
     '--ntk-shell-radius-md': theme.radiusMd ?? '',
     '--ntk-shell-radius-lg': theme.radiusLg ?? '',
@@ -682,6 +708,11 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-space-md': theme.spacingMd ?? '',
     '--ntk-shell-space-lg': theme.spacingLg ?? '',
     '--ntk-shell-transition-fast': theme.transitionFast ?? '',
+    '--ntk-shell-title-separator-size': 'calc(var(--ntk-shell-font-size-title-app) + var(--ntk-shell-space-xs))',
+    '--ntk-shell-user-avatar-size': 'calc(var(--ntk-shell-search-control-height) - (var(--ntk-shell-space-xs) * 2))',
+    '--ntk-shell-header-blur': 'blur(calc(var(--ntk-shell-space-sm) * 2))',
+    '--ntk-shell-action-hover-translate-y': 'calc(var(--ntk-shell-space-xs) * -0.5)',
+    '--ntk-shell-item-caption-offset': 'calc(var(--ntk-shell-space-xs) * 0.6)',
     '--ntk-shell-header-height': `${props.headerHeight}px`,
   }
 })
@@ -1044,7 +1075,7 @@ function toggleMenuMode(): void {
   color: var(--ntk-shell-header-text);
   box-shadow: var(--ntk-shell-header-shadow) !important;
   z-index: 3000 !important;
-  backdrop-filter: blur(10px);
+  backdrop-filter: var(--ntk-shell-header-blur);
 }
 
 .ntk-app-shell__toolbar {
@@ -1056,7 +1087,7 @@ function toggleMenuMode(): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
+  width: var(--ntk-shell-menu-slot-width);
 }
 
 .ntk-app-shell__menu-slot :deep(.q-btn) {
@@ -1097,11 +1128,21 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__title-separator {
   color: var(--ntk-shell-title-separator);
+  font-size: var(--ntk-shell-title-separator-size);
+}
+
+.ntk-app-shell__user-avatar {
+  width: var(--ntk-shell-user-avatar-size);
+  height: var(--ntk-shell-user-avatar-size);
+}
+
+.ntk-app-shell__user-avatar-icon {
+  font-size: var(--ntk-shell-user-avatar-size);
 }
 
 .ntk-app-shell__search-wrapper {
-  width: 320px;
-  max-width: 320px;
+  width: var(--ntk-shell-search-width);
+  max-width: var(--ntk-shell-search-width);
   margin-right: var(--ntk-shell-space-lg);
   border: 1px solid var(--ntk-shell-search-border);
   border-radius: var(--ntk-shell-radius-md);
@@ -1119,18 +1160,18 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__search :deep(.q-field__control) {
-  height: 36px;
-  min-height: 36px;
+  height: var(--ntk-shell-search-control-height);
+  min-height: var(--ntk-shell-search-control-height);
   padding: 0;
   background: transparent;
 }
 
 .ntk-app-shell__search :deep(.q-field__marginal) {
-  height: 36px;
+  height: var(--ntk-shell-search-control-height);
 }
 
 .ntk-app-shell__search :deep(.q-field__prepend) {
-  padding-right: 12px;
+  padding-right: var(--ntk-shell-search-prepend-padding-right);
 }
 
 .ntk-app-shell__search :deep(input) {
@@ -1160,7 +1201,7 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__actions :deep(.q-btn:hover) {
-  transform: translateY(-2px);
+  transform: translateY(var(--ntk-shell-action-hover-translate-y));
   background-color: var(--ntk-shell-action-hover) !important;
   color: var(--ntk-shell-item-hover-color) !important;
 }
@@ -1187,7 +1228,7 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__drawer-header {
-  min-height: 64px;
+  min-height: var(--ntk-shell-drawer-header-min-height);
   padding: var(--ntk-shell-space-lg);
   display: flex;
   align-items: center;
@@ -1200,10 +1241,15 @@ function toggleMenuMode(): void {
   gap: var(--ntk-shell-space-md);
 }
 
+.ntk-app-shell__brand-logo {
+  width: var(--ntk-shell-brand-logo-size);
+  height: var(--ntk-shell-brand-logo-size);
+}
+
 .ntk-app-shell__brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  line-height: var(--ntk-shell-line-height-brand-text);
 }
 
 .ntk-app-shell__brand-text strong {
@@ -1225,10 +1271,10 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__group-caption {
-  min-height: 24px;
-  padding: 0.45rem 1rem 0.25rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  min-height: var(--ntk-shell-group-caption-min-height);
+  padding: var(--ntk-shell-group-caption-padding);
+  font-size: var(--ntk-shell-font-size-group-caption);
+  letter-spacing: var(--ntk-shell-letter-spacing-group-caption);
   text-transform: uppercase;
   color: var(--ntk-shell-group-caption);
   display: flex;
@@ -1243,25 +1289,25 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__group-caption--mini {
   justify-content: center;
-  padding: 0.45rem 0;
+  padding: var(--ntk-shell-group-caption-mini-padding);
 }
 
 .ntk-app-shell__group-caption--mini .ntk-app-shell__group-caption-text {
-  min-width: 34px;
-  height: 18px;
-  padding: 0 0.35rem;
+  min-width: var(--ntk-shell-group-caption-mini-min-width);
+  height: var(--ntk-shell-group-caption-mini-height);
+  padding: 0 var(--ntk-shell-group-caption-mini-horizontal-padding);
   border-radius: 999px;
   background: var(--ntk-shell-group-caption-mini-bg);
-  font-size: 0.62rem;
+  font-size: var(--ntk-shell-font-size-group-caption-mini);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ntk-shell-letter-spacing-group-caption-mini);
 }
 
 .ntk-app-shell__item {
   border-radius: var(--ntk-shell-radius-item);
   margin-right: var(--ntk-shell-space-lg);
   margin-bottom: var(--ntk-shell-space-xs);
-  min-height: 52px;
+  min-height: var(--ntk-shell-item-min-height);
   color: var(--ntk-shell-item-text);
   transition: all var(--ntk-shell-transition-fast);
   text-decoration: none;
@@ -1270,7 +1316,7 @@ function toggleMenuMode(): void {
 .ntk-app-shell__item:hover {
   background-color: var(--ntk-shell-item-hover);
   color: var(--ntk-shell-item-hover-color);
-  transform: translateX(4px);
+  transform: translateX(var(--ntk-shell-item-hover-translate-x));
   text-decoration: none;
 }
 
@@ -1286,7 +1332,7 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__item :deep(.q-icon) {
   color: var(--ntk-shell-item-icon);
-  font-size: 22px;
+  font-size: var(--ntk-shell-item-icon-size);
   transition: all var(--ntk-shell-transition-fast);
 }
 
@@ -1297,20 +1343,20 @@ function toggleMenuMode(): void {
 .ntk-app-shell__item :deep(.q-item__label) {
   font-size: var(--ntk-shell-font-size-item-label);
   font-weight: var(--ntk-shell-font-weight-semibold);
-  line-height: 1.25;
+  line-height: var(--ntk-shell-line-height-item-label);
 }
 
 .ntk-app-shell__item :deep(.q-item__label--caption) {
   font-size: var(--ntk-shell-font-size-item-caption);
   font-weight: var(--ntk-shell-font-weight-regular);
-  line-height: 1.2;
-  margin-top: 0.15rem;
+  line-height: var(--ntk-shell-line-height-item-caption);
+  margin-top: var(--ntk-shell-item-caption-offset);
 }
 
 .ntk-app-shell__item--active {
   background: var(--ntk-shell-item-active-bg);
   color: var(--ntk-shell-item-active-color);
-  border-left: 4px solid var(--ntk-shell-item-active-color);
+  border-left: var(--ntk-shell-item-active-border-width) solid var(--ntk-shell-item-active-color);
 }
 
 .ntk-app-shell__item--active :deep(.q-focus-helper) {
@@ -1344,7 +1390,7 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__drawer :deep(.q-scrollarea__content) {
   min-height: 100%;
-  padding-bottom: 80px;
+  padding-bottom: var(--ntk-shell-drawer-scroll-padding-bottom);
 }
 
 .ntk-app-shell__page-container {
@@ -1366,7 +1412,7 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__workspace {
   width: 100%;
-  max-width: 1280px;
+  max-width: var(--ntk-shell-workspace-max-width);
   margin: 0 auto;
 }
 
@@ -1381,13 +1427,13 @@ function toggleMenuMode(): void {
 
 :deep(.q-drawer--mini) .ntk-app-shell__item {
   justify-content: center;
-  margin-right: 12px;
-  border-radius: 0 28px 28px 0;
-  min-height: 52px;
+  margin-right: var(--ntk-shell-mini-item-margin-right);
+  border-radius: var(--ntk-shell-radius-item);
+  min-height: var(--ntk-shell-item-min-height);
 }
 
 :deep(.q-drawer--mini) .ntk-app-shell__item :deep(.q-item__section--avatar) {
-  min-width: 28px;
+  min-width: var(--ntk-shell-mini-item-avatar-min-width);
   padding-right: 0;
 }
 

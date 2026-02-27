@@ -84,6 +84,20 @@ describe('white-label.storage', () => {
     expect(normalized.theme.searchBackground).toBe('var(--ntk-bg-hover)')
   })
 
+  it('keeps action hover and search backgrounds independent when both are explicitly set', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      theme: {
+        pageBackground: '#f4f1ec',
+        searchBackground: '#ffffff',
+        actionHoverBackground: '#1f2937',
+      },
+    })
+
+    expect(normalized.theme.pageBackground).toBe('#f4f1ec')
+    expect(normalized.theme.searchBackground).toBe('#ffffff')
+    expect(normalized.theme.actionHoverBackground).toBe('#1f2937')
+  })
+
   it('removes legacy CMS sidebar modules while keeping settings and custom modules', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       navGroups: [

@@ -7,7 +7,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
 const DEFAULT_TENANT_NAME = 'Default Tenant'
 const BLUE_TENANT_NAME = 'Blue Tenant'
-const HEADER_ACTIONS_HOVER_LABEL = 'Neutral background (page/actions)'
+const HEADER_ACTIONS_HOVER_LABEL = 'Header actions hover background (hover only)'
 const SEARCH_BACKGROUND_LABEL = 'Search background'
 
 interface NotificationPalette {

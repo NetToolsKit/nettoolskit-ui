@@ -97,4 +97,24 @@ describe('white-label.config', () => {
     expect(snapshot.shellConfig.theme.pageBackground).toBe('var(--ntk-bg-hover)')
     expect(snapshot.shellConfig.theme.searchBackground).toBe('var(--ntk-bg-hover)')
   })
+
+  it('propagates typography and layout token overrides to shell snapshot theme', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    settings.theme.fontSizeGroupCaption = '0.74rem'
+    settings.theme.searchControlHeight = '40px'
+    settings.theme.workspaceMaxWidth = '1440px'
+    settings.theme.searchBackground = '#f5f7fb'
+    settings.theme.actionHoverBackground = '#1f2937'
+
+    const snapshot = mapWhiteLabelToShellSnapshot(settings, {
+      activeItem: settings.items[0]?.id ?? '',
+      searchValue: '',
+    })
+
+    expect(snapshot.shellConfig.theme.fontSizeGroupCaption).toBe('0.74rem')
+    expect(snapshot.shellConfig.theme.searchControlHeight).toBe('40px')
+    expect(snapshot.shellConfig.theme.workspaceMaxWidth).toBe('1440px')
+    expect(snapshot.shellConfig.theme.searchBackground).toBe('#f5f7fb')
+    expect(snapshot.shellConfig.theme.actionHoverBackground).toBe('#1f2937')
+  })
 })

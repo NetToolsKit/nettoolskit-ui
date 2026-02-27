@@ -56,6 +56,33 @@ export interface AppShellTheme {
   fontSizeBrandSubtitle?: string
   fontSizeItemLabel?: string
   fontSizeItemCaption?: string
+  fontSizeGroupCaption?: string
+  fontSizeGroupCaptionMini?: string
+  letterSpacingGroupCaption?: string
+  letterSpacingGroupCaptionMini?: string
+  lineHeightBrandText?: string
+  lineHeightItemLabel?: string
+  lineHeightItemCaption?: string
+  menuSlotWidth?: string
+  searchWidth?: string
+  searchControlHeight?: string
+  searchPrependPaddingRight?: string
+  drawerHeaderMinHeight?: string
+  brandLogoSize?: string
+  groupCaptionMinHeight?: string
+  groupCaptionPadding?: string
+  groupCaptionMiniPadding?: string
+  groupCaptionMiniMinWidth?: string
+  groupCaptionMiniHeight?: string
+  groupCaptionMiniHorizontalPadding?: string
+  itemMinHeight?: string
+  itemIconSize?: string
+  itemHoverTranslateX?: string
+  itemActiveBorderWidth?: string
+  drawerScrollPaddingBottom?: string
+  workspaceMaxWidth?: string
+  miniItemMarginRight?: string
+  miniItemAvatarMinWidth?: string
   radiusSm?: string
   radiusMd?: string
   radiusLg?: string
