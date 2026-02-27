@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/modules/cms/Landing Schema Integration spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import { validateCmsPageSchema } from '../../../../src/modules/cms'
 import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'

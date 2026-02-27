@@ -1,8 +1,15 @@
+/**
+ * Src/modules/cms/renderer/Cms Renderer module.
+ */
+
 import { defineComponent, h } from 'vue'
 import type { Component, PropType, VNode } from 'vue'
 import type { CmsBlockRegistry, CmsPageSchema, CmsSectionNode } from '../core'
 import { CmsRendererNode } from './CmsRendererNode'
 
+/**
+ * Builds section class.
+ */
 function buildSectionClass(section: CmsSectionNode): string[] {
   const classes = ['cms-section']
   if (section.layout) {

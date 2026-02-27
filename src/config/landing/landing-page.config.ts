@@ -1,3 +1,7 @@
+/**
+ * Src/config/landing/landing page config module.
+ */
+
 export interface LandingNavLink {
   label: string
   href: string
@@ -338,6 +342,9 @@ export const MGA_LABS_LANDING_PRESET: LandingPageConfig = {
   },
 }
 
+/**
+ * Handles merge landing config.
+ */
 function mergeLandingConfig(base: LandingPageConfig, partial: LandingPageConfigOverrides): LandingPageConfig {
   return {
     ...base,
@@ -395,6 +402,9 @@ function mergeLandingConfig(base: LandingPageConfig, partial: LandingPageConfigO
   }
 }
 
+/**
+ * Creates landing page config.
+ */
 export function createLandingPageConfig(partial: LandingPageConfigOverrides = {}): LandingPageConfig {
   return mergeLandingConfig(MGA_LABS_LANDING_PRESET, partial)
 }

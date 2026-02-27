@@ -131,6 +131,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/builders/Ntk Notification Center module.
+ */
+
 import { ref, computed } from 'vue'
 
 export interface Notification {

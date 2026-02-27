@@ -1,3 +1,7 @@
+/**
+ * CMS white-label persistence and migration helpers.
+ * This module loads/saves tenant settings and normalizes legacy payloads.
+ */
 import { CMS_WHITE_LABEL_STORAGE_KEY, createDefaultWhiteLabelSettings } from './white-label.config'
 import type { CmsPageSettings, CmsWhiteLabelSettings } from './white-label.types'
 import { semanticColors } from '../../src/config/colors/semantic.config'
@@ -16,10 +20,8 @@ const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 
 /**
- * Provides persistence and normalization helpers for the CMS white-label settings payload.
- * All loaded values are merged with defaults so legacy/partial snapshots remain usable.
+ * Creates a deep clone for plain objects used in settings payloads.
  */
-
 function cloneValue<T>(value: T): T {
   if (typeof structuredClone === 'function') {
     return structuredClone(value)
@@ -27,10 +29,16 @@ function cloneValue<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
+/**
+ * Checks if current runtime supports browser storage APIs.
+ */
 function isBrowserRuntime(): boolean {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 }
 
+/**
+ * Normalizes notification semantic colors and decouples legacy badge expressions.
+ */
 function normalizeNotificationColors(theme: AppShellTheme): AppShellTheme {
   const nextTheme: AppShellTheme = { ...theme }
   const notificationKeys: Array<keyof AppShellTheme> = [
@@ -67,6 +75,9 @@ function normalizeNotificationColors(theme: AppShellTheme): AppShellTheme {
   return resolveAppShellTheme(nextTheme, APP_SHELL_DEFAULT_THEME)
 }
 
+/**
+ * Migrates legacy flat page/surface/search backgrounds to modern contrasting defaults.
+ */
 function normalizeLegacySurfaceContrast(theme: AppShellTheme): AppShellTheme {
   const normalizedPageBackground = String(theme.pageBackground ?? '').trim().toLowerCase()
   const normalizedSearchBackground = String(theme.searchBackground ?? '').trim().toLowerCase()
@@ -89,6 +100,9 @@ function normalizeLegacySurfaceContrast(theme: AppShellTheme): AppShellTheme {
   }
 }
 
+/**
+ * Keeps only valid theme preset overrides known by the base preset catalog.
+ */
 function normalizeThemePresetOverrides(overrides: unknown): CmsWhiteLabelSettings['themePresetOverrides'] {
   const normalized: CmsWhiteLabelSettings['themePresetOverrides'] = {}
   if (!overrides || typeof overrides !== 'object') {
@@ -106,6 +120,9 @@ function normalizeThemePresetOverrides(overrides: unknown): CmsWhiteLabelSetting
   return normalized
 }
 
+/**
+ * Builds theme presets while applying persisted override patches.
+ */
 function buildThemePresetsWithOverrides(
   defaultTheme: AppShellTheme,
   overrides: CmsWhiteLabelSettings['themePresetOverrides']
@@ -119,6 +136,9 @@ function buildThemePresetsWithOverrides(
   }))
 }
 
+/**
+ * Converts a group id into a readable fallback label.
+ */
 function toTitleCaseFromId(value: string): string {
   const normalized = value
     .trim()
@@ -136,6 +156,9 @@ function toTitleCaseFromId(value: string): string {
     .join(' ')
 }
 
+/**
+ * Normalizes menu items by removing invalid/legacy entries and restoring required defaults.
+ */
 function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellItem[] {
   const source = Array.isArray(items) ? items : defaults
   const itemMap = new Map<string, AppShellItem>()
@@ -181,6 +204,9 @@ function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellI
   return normalizedItems.length > 0 ? normalizedItems : cloneValue(defaults)
 }
 
+/**
+ * Ensures navigation groups match the current menu items and contain unique ids.
+ */
 function normalizeNavGroups(
   groups: unknown,
   defaults: AppShellGroup[],
@@ -231,6 +257,9 @@ function normalizeNavGroups(
     : cloneValue(defaults).filter(group => usedGroupIds.has(group.id))
 }
 
+/**
+ * Normalizes page builder settings and section collections for CMS pages.
+ */
 function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): CmsPageSettings[] {
   if (!Array.isArray(pages)) {
     return cloneValue(defaults)
@@ -274,6 +303,9 @@ function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): Cm
   return normalized.length > 0 ? normalized : cloneValue(defaults)
 }
 
+/**
+ * Merges partial/legacy settings with defaults and returns a stable CMS white-label payload.
+ */
 export function normalizeCmsWhiteLabelSettings(
   parsed: Partial<CmsWhiteLabelSettings> | null | undefined
 ): CmsWhiteLabelSettings {

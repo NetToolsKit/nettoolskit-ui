@@ -327,6 +327,9 @@ const defaultSemanticColors: SemanticColors = {
 
 export const semanticColors: SemanticColors = { ...defaultSemanticColors }
 
+/**
+ * Resolves semantic colors.
+ */
 function resolveSemanticColors(overrides: Partial<SemanticColors> = {}): SemanticColors {
   const merged: SemanticColors = {
     ...semanticColors,
@@ -349,12 +352,18 @@ function resolveSemanticColors(overrides: Partial<SemanticColors> = {}): Semanti
   }
 }
 
+/**
+ * Handles set semantic colors.
+ */
 export function setSemanticColors(overrides: Partial<SemanticColors>): SemanticColors {
   const resolved = resolveSemanticColors(overrides)
   Object.assign(semanticColors, resolved)
   return semanticColors
 }
 
+/**
+ * Resets semantic colors.
+ */
 export function resetSemanticColors(): SemanticColors {
   Object.assign(semanticColors, defaultSemanticColors)
   return semanticColors

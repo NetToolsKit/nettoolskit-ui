@@ -98,6 +98,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Info Card module.
+ */
+
 interface Props {
   title: string
   subtitle?: string

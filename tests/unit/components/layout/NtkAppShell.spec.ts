@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/layout/Ntk App Shell spec module.
+ */
+
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NtkAppShell from '../../../../src/components/layout/NtkAppShell.vue'

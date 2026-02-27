@@ -1,15 +1,27 @@
+/**
+ * Tenant profile persistence helpers for CMS white-label configuration.
+ * Stores multiple tenant snapshots and keeps an active profile reference.
+ */
 import { createDefaultWhiteLabelSettings } from './white-label.config'
 import { loadCmsWhiteLabelSettings, normalizeCmsWhiteLabelSettings } from './white-label.storage'
 import type { CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } from './white-label.types'
 
 /**
- * Tenant profile storage for CMS white-label settings.
- * Keeps multiple tenant snapshots and an active profile pointer.
+ * Storage key that persists all tenant profiles for CMS white-label settings.
  */
 export const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
+/**
+ * Reserved identifier for the fallback tenant profile.
+ */
 export const CMS_DEFAULT_TENANT_PROFILE_ID = 'default'
+/**
+ * Default display name for the fallback tenant profile.
+ */
 export const CMS_DEFAULT_TENANT_PROFILE_NAME = 'Default Tenant'
 
+/**
+ * Creates a deep clone for profile payloads.
+ */
 function cloneValue<T>(value: T): T {
   if (typeof structuredClone === 'function') {
     return structuredClone(value)
@@ -17,15 +29,24 @@ function cloneValue<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
+/**
+ * Checks if browser storage APIs are available in current runtime.
+ */
 function isBrowserRuntime(): boolean {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 }
 
+/**
+ * Normalizes tenant display names and enforces max length.
+ */
 function normalizeTenantProfileName(value: unknown): string {
   const name = String(value ?? '').trim().slice(0, 64)
   return name || CMS_DEFAULT_TENANT_PROFILE_NAME
 }
 
+/**
+ * Converts arbitrary names into safe tenant profile ids.
+ */
 function slugifyTenantProfileId(value: string): string {
   const slug = value
     .trim()
@@ -38,6 +59,9 @@ function slugifyTenantProfileId(value: string): string {
   return slug || 'tenant'
 }
 
+/**
+ * Ensures profile id uniqueness by appending numeric suffixes when needed.
+ */
 function ensureUniqueTenantProfileId(candidate: string, existingIds: Set<string>): string {
   if (!existingIds.has(candidate)) {
     return candidate
@@ -52,6 +76,9 @@ function ensureUniqueTenantProfileId(candidate: string, existingIds: Set<string>
   return nextId
 }
 
+/**
+ * Creates a normalized tenant profile object.
+ */
 function createTenantProfile(settings: CmsWhiteLabelSettings, id: string, name: string): CmsTenantProfile {
   return {
     id,
@@ -61,6 +88,9 @@ function createTenantProfile(settings: CmsWhiteLabelSettings, id: string, name: 
   }
 }
 
+/**
+ * Builds the default tenant profiles state with a single fallback profile.
+ */
 function createDefaultTenantProfilesState(initialSettings?: CmsWhiteLabelSettings): CmsTenantProfilesState {
   const baseSettings = initialSettings ? cloneValue(initialSettings) : createDefaultWhiteLabelSettings()
   return {
@@ -75,6 +105,9 @@ function createDefaultTenantProfilesState(initialSettings?: CmsWhiteLabelSetting
   }
 }
 
+/**
+ * Parses and normalizes a raw persisted tenant profiles state payload.
+ */
 function normalizeParsedTenantProfilesState(parsed: unknown): CmsTenantProfilesState | null {
   if (!parsed || typeof parsed !== 'object') {
     return null
@@ -133,6 +166,9 @@ function normalizeParsedTenantProfilesState(parsed: unknown): CmsTenantProfilesS
   }
 }
 
+/**
+ * Creates a unique tenant profile id from a display name and existing ids.
+ */
 export function createTenantProfileId(name: string, existingIds: Iterable<string>): string {
   const usedIds = new Set(existingIds)
   const seed = slugifyTenantProfileId(name)

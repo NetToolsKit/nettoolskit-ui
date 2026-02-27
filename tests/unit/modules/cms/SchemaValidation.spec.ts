@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/modules/cms/Schema Validation spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import {
   CMS_SCHEMA_VERSION,

@@ -56,6 +56,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Steps module.
+ */
+
 import { computed } from 'vue';
 import { useTheme } from '../../composables/ui/useTheme';
 

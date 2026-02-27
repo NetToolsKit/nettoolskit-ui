@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/modules/cms/Block Registry spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import { CmsBlockRegistry } from '../../../../src/modules/cms/core/registry'
 import type { CmsBlockDefinition } from '../../../../src/modules/cms/core/block'

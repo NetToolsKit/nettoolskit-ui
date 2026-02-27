@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/ui/Base Button spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { QBtn } from 'quasar'

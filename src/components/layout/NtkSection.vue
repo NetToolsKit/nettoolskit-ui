@@ -50,6 +50,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Section module.
+ */
+
 import { computed } from 'vue'
 
 // ✅ NUNCA usar default export (frontend.instructions.md)

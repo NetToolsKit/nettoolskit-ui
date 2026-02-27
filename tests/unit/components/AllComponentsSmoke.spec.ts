@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/All Components Smoke spec module.
+ */
+
 import { describe, expect, it } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 import { createLandingPageConfig } from '../../../src/config/landing/landing-page.config'

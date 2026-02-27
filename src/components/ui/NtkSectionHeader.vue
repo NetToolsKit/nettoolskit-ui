@@ -16,6 +16,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Section Header module.
+ */
+
 import { computed } from 'vue'
 
 interface Props {

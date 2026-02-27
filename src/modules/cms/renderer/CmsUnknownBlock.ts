@@ -1,3 +1,7 @@
+/**
+ * Src/modules/cms/renderer/Cms Unknown Block module.
+ */
+
 import { defineComponent, h } from 'vue'
 import type { PropType } from 'vue'
 import type { CmsBlockNode } from '../core'

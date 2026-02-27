@@ -87,6 +87,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Contact Section module.
+ */
+
 import { reactive } from 'vue'
 import NtkSection from './NtkSection.vue'
 import NtkSectionHeader from '../ui/NtkSectionHeader.vue'
@@ -150,10 +154,16 @@ for (const field of props.fields) {
   formState[field.id] = ''
 }
 
+/**
+ * Handles required rule.
+ */
 function requiredRule(value: string): true | string {
   return Boolean(value && value.trim()) || 'Campo obrigatorio'
 }
 
+/**
+ * Handles submit form.
+ */
 function submitForm(): void {
   emit('submit', { ...formState })
 }

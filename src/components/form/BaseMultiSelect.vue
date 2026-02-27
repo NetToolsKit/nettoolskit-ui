@@ -82,6 +82,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Base Multi Select module.
+ */
+
 import type { ValidationRule } from 'quasar'
 
 type SelectOption = string | number | Record<string, unknown>

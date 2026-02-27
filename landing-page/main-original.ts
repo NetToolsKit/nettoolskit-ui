@@ -1,3 +1,7 @@
+/**
+ * Landing page/main original module.
+ */
+
 import { createApp } from 'vue'
 import { Quasar, Dark } from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'

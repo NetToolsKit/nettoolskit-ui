@@ -1,3 +1,7 @@
+/**
+ * Src/components/layout/app shell types module.
+ */
+
 export interface AppShellGroup {
   id: string
   label: string

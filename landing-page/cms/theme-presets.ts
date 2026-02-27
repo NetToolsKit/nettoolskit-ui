@@ -1,9 +1,15 @@
+/**
+ * Theme preset catalog and detection helpers used by CMS white-label settings.
+ */
 import type { AppShellTheme } from '../../src/components/layout/app-shell.types'
 import type { ThemeColorPalette } from '../../src/config/colors/theme-mode.config'
 import { themeColors } from '../../src/config/colors/theme-mode.config'
 import type { ThemeConfig } from '../../src/config/theme/theme.config'
 import { themes } from '../../src/config/theme/theme.config'
 
+/**
+ * Complete list of preset ids accepted by CMS theme selectors.
+ */
 export const CMS_THEME_PRESET_IDS = [
   'default',
   'light',
@@ -14,6 +20,9 @@ export const CMS_THEME_PRESET_IDS = [
   'custom',
 ] as const
 
+/**
+ * Preset ids backed by predefined palettes/themes (excluding custom).
+ */
 export const CMS_THEME_BASE_PRESET_IDS = [
   'default',
   'light',
@@ -26,14 +35,23 @@ export const CMS_THEME_BASE_PRESET_IDS = [
 export type CmsThemePresetId = (typeof CMS_THEME_PRESET_IDS)[number]
 export type CmsThemeBasePresetId = (typeof CMS_THEME_BASE_PRESET_IDS)[number]
 
+/**
+ * Type guard for all supported preset ids.
+ */
 export function isCmsThemePresetId(value: unknown): value is CmsThemePresetId {
   return typeof value === 'string' && (CMS_THEME_PRESET_IDS as readonly string[]).includes(value)
 }
 
+/**
+ * Type guard for base preset ids that can receive persisted overrides.
+ */
 export function isCmsThemeBasePresetId(value: unknown): value is CmsThemeBasePresetId {
   return typeof value === 'string' && (CMS_THEME_BASE_PRESET_IDS as readonly string[]).includes(value)
 }
 
+/**
+ * Serializable descriptor of a CMS theme preset entry.
+ */
 export interface CmsThemePreset {
   id: Exclude<CmsThemePresetId, 'custom'>
   label: string
@@ -41,6 +59,9 @@ export interface CmsThemePreset {
   theme: Partial<AppShellTheme>
 }
 
+/**
+ * Converts an hex color into rgba preserving original value on invalid input.
+ */
 function hexToRgba(value: string, alpha: number): string {
   const normalized = value.trim().replace('#', '')
   if (!/^[0-9a-f]{6}$/i.test(normalized)) {
@@ -53,6 +74,9 @@ function hexToRgba(value: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
+/**
+ * Builds an app-shell partial theme from a mode color palette.
+ */
 function createThemeFromMode(palette: ThemeColorPalette): Partial<AppShellTheme> {
   const accent = palette.primary
   const accentSoft = hexToRgba(accent, 0.12)
@@ -89,6 +113,9 @@ function createThemeFromMode(palette: ThemeColorPalette): Partial<AppShellTheme>
   }
 }
 
+/**
+ * Builds an app-shell partial theme from a branded theme configuration.
+ */
 function createThemeFromBrand(config: ThemeConfig): Partial<AppShellTheme> {
   const accent = config.colors.primary
   const accentSoft = hexToRgba(accent, 0.12)
@@ -126,10 +153,16 @@ function createThemeFromBrand(config: ThemeConfig): Partial<AppShellTheme> {
   }
 }
 
+/**
+ * Normalizes token values for case/whitespace-insensitive comparisons.
+ */
 function normalizeThemeValue(value: string | undefined): string {
   return String(value ?? '').trim().toLowerCase()
 }
 
+/**
+ * Checks whether current theme matches a preset considering default fallbacks.
+ */
 function themeMatchesPreset(
   currentTheme: AppShellTheme,
   presetTheme: Partial<AppShellTheme>,
@@ -142,6 +175,9 @@ function themeMatchesPreset(
   return keys.every(key => normalizeThemeValue(currentResolved[key]) === normalizeThemeValue(presetResolved[key]))
 }
 
+/**
+ * Builds the full list of selectable CMS theme presets.
+ */
 export function buildCmsThemePresets(defaultTheme: AppShellTheme): CmsThemePreset[] {
   return [
     {
@@ -183,6 +219,9 @@ export function buildCmsThemePresets(defaultTheme: AppShellTheme): CmsThemePrese
   ]
 }
 
+/**
+ * Detects which preset id best matches the current theme payload.
+ */
 export function detectCmsThemePresetId(
   currentTheme: AppShellTheme,
   presets: CmsThemePreset[],

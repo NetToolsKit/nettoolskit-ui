@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/ui/Base Card spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NtkCard from '../../../../src/components/ui/NtkCard.vue'

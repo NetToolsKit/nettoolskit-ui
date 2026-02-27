@@ -293,6 +293,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Header module.
+ */
+
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
 

@@ -1,12 +1,22 @@
+/**
+ * Tests/unit/modules/cms/Cms Config Coverage spec module.
+ */
+
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
+/**
+ * Handles read repo file.
+ */
 function readRepoFile(relativePath: string): string {
   const absolutePath = fileURLToPath(new URL(relativePath, import.meta.url))
   return readFileSync(absolutePath, 'utf8')
 }
 
+/**
+ * Handles extract interface keys.
+ */
 function extractInterfaceKeys(source: string, interfaceName: string): string[] {
   const pattern = new RegExp(`export interface ${interfaceName}\\s*\\{([\\s\\S]*?)\\n\\}`, 'm')
   const match = source.match(pattern)
@@ -17,6 +27,9 @@ function extractInterfaceKeys(source: string, interfaceName: string): string[] {
   return [...match[1].matchAll(/\n\s*([a-zA-Z0-9_]+)\??:/g)].map(item => item[1])
 }
 
+/**
+ * Handles extract unique matches.
+ */
 function extractUniqueMatches(source: string, pattern: RegExp): string[] {
   return [...new Set([...source.matchAll(pattern)].map(match => match[1]))]
 }

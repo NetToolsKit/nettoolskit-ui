@@ -324,6 +324,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk App Shell module.
+ */
+
 import { computed, ref, watch, type PropType } from 'vue'
 import { useQuasar } from 'quasar'
 import type {
@@ -682,6 +686,9 @@ const shellStyle = computed<Record<string, string>>(() => {
   }
 })
 
+/**
+ * Resolves notification type color.
+ */
 function resolveNotificationTypeColor(color?: string): string {
   const value = (color ?? '').trim().toLowerCase()
   if (value === 'success') {
@@ -699,6 +706,9 @@ function resolveNotificationTypeColor(color?: string): string {
   return color ?? ''
 }
 
+/**
+ * Resolves notification type text color.
+ */
 function resolveNotificationTypeTextColor(color?: string): string {
   const value = (color ?? '').trim().toLowerCase()
   if (value === 'success') {
@@ -716,20 +726,32 @@ function resolveNotificationTypeTextColor(color?: string): string {
   return ''
 }
 
+/**
+ * Normalizes optional token.
+ */
 function normalizeOptionalToken(value?: string): string | undefined {
   const normalized = String(value ?? '').trim()
   return normalized.length > 0 ? normalized : undefined
 }
 
+/**
+ * Checks whether is css color expression.
+ */
 function isCssColorExpression(value: string): boolean {
   return /^(#|var\(|rgb\(|rgba\(|hsl\(|hsla\(|oklch\(|oklab\(|color\(|color-mix\()/i.test(value)
 }
 
+/**
+ * Checks whether is system toolbar action.
+ */
 function isSystemToolbarAction(action: AppShellAction): boolean {
   const actionId = String(action.id ?? '').trim().toLowerCase()
   return actionId === 'notifications' || actionId === 'account' || actionId === 'go-landing'
 }
 
+/**
+ * Resolves toolbar action color.
+ */
 function resolveToolbarActionColor(action: AppShellAction): string | undefined {
   const color = normalizeOptionalToken(action.color)
   if (!color || isCssColorExpression(color)) {
@@ -741,6 +763,9 @@ function resolveToolbarActionColor(action: AppShellAction): string | undefined {
   return color
 }
 
+/**
+ * Resolves toolbar action text color.
+ */
 function resolveToolbarActionTextColor(action: AppShellAction): string | undefined {
   const textColor = normalizeOptionalToken(action.textColor)
   if (!textColor || isCssColorExpression(textColor)) {
@@ -752,6 +777,9 @@ function resolveToolbarActionTextColor(action: AppShellAction): string | undefin
   return textColor
 }
 
+/**
+ * Resolves toolbar action style color.
+ */
 function resolveToolbarActionStyleColor(action: AppShellAction): string | undefined {
   const textColor = normalizeOptionalToken(action.textColor)
   if (textColor && isCssColorExpression(textColor)) {
@@ -767,6 +795,9 @@ function resolveToolbarActionStyleColor(action: AppShellAction): string | undefi
 }
 
 // Detects whether an action should follow the notification semantic styling.
+/**
+ * Checks whether is notification toolbar action.
+ */
 function isNotificationToolbarAction(action: AppShellAction): boolean {
   const actionId = String(action.id ?? '').trim().toLowerCase()
   const actionIcon = String(action.icon ?? '').trim().toLowerCase()
@@ -774,6 +805,9 @@ function isNotificationToolbarAction(action: AppShellAction): boolean {
 }
 
 // Applies notification icon color to bell actions while preserving explicit action color overrides.
+/**
+ * Handles get toolbar action style.
+ */
 function getToolbarActionStyle(action: AppShellAction): Record<string, string> {
   const explicitStyleColor = resolveToolbarActionStyleColor(action)
   if (explicitStyleColor) {
@@ -795,6 +829,9 @@ function getToolbarActionStyle(action: AppShellAction): Record<string, string> {
   return {}
 }
 
+/**
+ * Handles get item badge style.
+ */
 function getItemBadgeStyle(item: AppShellItem): Record<string, string> {
   const explicitBadgeColor = normalizeOptionalToken(item.badgeColor)
   const explicitBadgeTextColor = normalizeOptionalToken(item.badgeTextColor)
@@ -806,6 +843,9 @@ function getItemBadgeStyle(item: AppShellItem): Record<string, string> {
   }
 }
 
+/**
+ * Handles get action badge style.
+ */
 function getActionBadgeStyle(action: AppShellAction): Record<string, string> {
   const explicitBadgeColor = normalizeOptionalToken(action.badgeColor)
   const explicitBadgeTextColor = normalizeOptionalToken(action.badgeTextColor)
@@ -820,6 +860,9 @@ function getActionBadgeStyle(action: AppShellAction): Record<string, string> {
   }
 }
 
+/**
+ * Checks whether has visible items after.
+ */
 function hasVisibleItemsAfter(groupId: string): boolean {
   const groups = resolvedGroups.value
   const currentIndex = groups.findIndex(group => group.id === groupId)
@@ -837,6 +880,9 @@ function hasVisibleItemsAfter(groupId: string): boolean {
   return false
 }
 
+/**
+ * Handles get compact group label.
+ */
 function getCompactGroupLabel(label: string): string {
   const words = label.trim().split(/\s+/).filter(Boolean)
   if (words.length === 0) {
@@ -848,6 +894,9 @@ function getCompactGroupLabel(label: string): string {
   return `${words[0][0] ?? ''}${words[1][0] ?? ''}`.toUpperCase()
 }
 
+/**
+ * Handles emit telemetry.
+ */
 function emitTelemetry(type: AppShellTelemetryEvent['type'], payload: Record<string, unknown>): void {
   emit('telemetry', {
     type,
@@ -857,6 +906,9 @@ function emitTelemetry(type: AppShellTelemetryEvent['type'], payload: Record<str
   })
 }
 
+/**
+ * Normalizes id segment.
+ */
 function normalizeIdSegment(value: string): string {
   return value
     .trim()
@@ -866,11 +918,17 @@ function normalizeIdSegment(value: string): string {
     .replace(/^-|-$/g, '')
 }
 
+/**
+ * Handles group label id.
+ */
 function groupLabelId(groupId: string): string {
   const normalized = normalizeIdSegment(groupId)
   return `ntk-shell-group-${normalized || 'default'}`
 }
 
+/**
+ * Resolves item aria label.
+ */
 function resolveItemAriaLabel(item: AppShellItem): string {
   const prefix = props.itemAriaLabelPrefix?.trim()
   if (!prefix) {
@@ -879,6 +937,9 @@ function resolveItemAriaLabel(item: AppShellItem): string {
   return `${prefix}: ${item.label}`
 }
 
+/**
+ * Resolves toolbar action aria label.
+ */
 function resolveToolbarActionAriaLabel(action: AppShellAction): string {
   const explicit = action.tooltip?.trim() || action.label?.trim()
   if (explicit) {
@@ -889,18 +950,30 @@ function resolveToolbarActionAriaLabel(action: AppShellAction): string {
   return `${prefix}: ${action.id}`
 }
 
+/**
+ * Resolves toolbar action href.
+ */
 function resolveToolbarActionHref(action: AppShellAction): string | undefined {
   return sanitizeShellLink(action.href)
 }
 
+/**
+ * Resolves toolbar action target.
+ */
 function resolveToolbarActionTarget(action: AppShellAction): string | undefined {
   return action.external && resolveToolbarActionHref(action) ? '_blank' : undefined
 }
 
+/**
+ * Resolves toolbar action rel.
+ */
 function resolveToolbarActionRel(action: AppShellAction): string | undefined {
   return action.external && resolveToolbarActionHref(action) ? 'noopener noreferrer' : undefined
 }
 
+/**
+ * Handles select item.
+ */
 function selectItem(item: AppShellItem): void {
   localActiveItem.value = item.id
   emit('update:active-item', item.id)
@@ -916,6 +989,9 @@ function selectItem(item: AppShellItem): void {
   }
 }
 
+/**
+ * Handles update search.
+ */
 function updateSearch(value: string | number | null): void {
   const normalized = String(value ?? '')
   localSearchValue.value = normalized
@@ -923,6 +999,9 @@ function updateSearch(value: string | number | null): void {
   emitTelemetry('search-update', { value: normalized })
 }
 
+/**
+ * Handles handle toolbar action.
+ */
 function handleToolbarAction(action: AppShellAction): void {
   emit('toolbar-action', action)
   emitTelemetry('toolbar-action', {
@@ -932,6 +1011,9 @@ function handleToolbarAction(action: AppShellAction): void {
   })
 }
 
+/**
+ * Handles toggle menu mode.
+ */
 function toggleMenuMode(): void {
   if ($q.screen.gt.sm) {
     miniState.value = !miniState.value

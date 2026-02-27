@@ -1,3 +1,7 @@
+/**
+ * Src/modules/cms/renderer/Cms Renderer Node module.
+ */
+
 import { defineComponent, h, toRaw } from 'vue'
 import type { Component, PropType, VNode } from 'vue'
 import type { CmsBlockNode } from '../core'

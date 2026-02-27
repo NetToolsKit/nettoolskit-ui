@@ -12,6 +12,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/modules/cms/blocks/landing/Cms Landing Cta Block module.
+ */
+
 import NtkCTASection from '../../../../components/layout/NtkCTASection.vue'
 
 interface CTAButton {

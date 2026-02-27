@@ -62,6 +62,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Base Time Picker module.
+ */
+
 import { ref, watch } from 'vue'
 import type { ValidationRule } from 'quasar'
 

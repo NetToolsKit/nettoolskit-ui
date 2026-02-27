@@ -129,6 +129,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Sidebar module.
+ */
+
 import { computed } from 'vue'
 
 export interface SidebarItem {

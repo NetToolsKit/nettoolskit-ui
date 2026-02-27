@@ -43,6 +43,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Tech Stack module.
+ */
+
 import NtkSection from './NtkSection.vue'
 import NtkSectionHeader from '../ui/NtkSectionHeader.vue'
 

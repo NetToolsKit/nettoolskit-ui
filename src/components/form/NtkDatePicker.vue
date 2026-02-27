@@ -54,6 +54,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Ntk Date Picker module.
+ */
+
 import { ntkFieldPropsDefaults, useNtkField } from '../../composables/forms/useNtkField'
 
 const props = defineProps({

@@ -1,3 +1,7 @@
+/**
+ * Src/composables/ui/use Dialog Actions module.
+ */
+
 import { useQuasar } from 'quasar'
 import { useNotification } from '../services/useNotification'
 

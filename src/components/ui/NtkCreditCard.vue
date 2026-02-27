@@ -38,6 +38,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Credit Card module.
+ */
+
 import { computed } from 'vue';
 import { useTheme } from '../../composables/ui/useTheme';
 

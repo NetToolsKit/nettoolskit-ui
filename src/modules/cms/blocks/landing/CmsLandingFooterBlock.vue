@@ -11,6 +11,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/modules/cms/blocks/landing/Cms Landing Footer Block module.
+ */
+
 import NtkFooter from '../../../../components/layout/NtkFooter.vue'
 
 interface LinkItem {

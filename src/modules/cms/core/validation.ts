@@ -1,3 +1,7 @@
+/**
+ * Src/modules/cms/core/validation module.
+ */
+
 import { CMS_SCHEMA_VERSION, type CmsPageSchema } from './types'
 import type { CmsBlockRegistry } from './registry'
 
@@ -18,14 +22,23 @@ export interface CmsSchemaValidationOptions {
 
 const VALID_STATUS = new Set(['draft', 'published', 'archived'])
 
+/**
+ * Checks whether is object.
+ */
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+/**
+ * Checks whether is non empty string.
+ */
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0
 }
 
+/**
+ * Handles push issue.
+ */
 function pushIssue(
   issues: CmsSchemaValidationIssue[],
   path: string,
@@ -34,6 +47,9 @@ function pushIssue(
   issues.push({ path, message })
 }
 
+/**
+ * Handles validate block node.
+ */
 function validateBlockNode(
   value: unknown,
   path: string,
@@ -71,6 +87,9 @@ function validateBlockNode(
   }
 }
 
+/**
+ * Handles validate section node.
+ */
 function validateSectionNode(
   value: unknown,
   path: string,
@@ -96,6 +115,9 @@ function validateSectionNode(
   })
 }
 
+/**
+ * Handles validate cms page schema.
+ */
 export function validateCmsPageSchema(
   value: unknown,
   options: CmsSchemaValidationOptions = {}
@@ -146,6 +168,9 @@ export function validateCmsPageSchema(
   }
 }
 
+/**
+ * Checks whether is cms page schema.
+ */
 export function isCmsPageSchema(
   value: unknown,
   options: CmsSchemaValidationOptions = {}

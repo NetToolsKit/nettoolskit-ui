@@ -1,9 +1,16 @@
+/**
+ * Src/components/layout/app shell theme module.
+ */
+
 import { semanticColors } from '../../config/colors/semantic.config'
 import type { AppShellTheme } from './app-shell.types'
 
 const DEFAULT_NOTIFICATION_TEXT = 'var(--ntk-text-inverse)'
 const DEFAULT_WARNING_TEXT = 'var(--ntk-text-primary)'
 
+/**
+ * Handles pick theme value.
+ */
 function pickThemeValue(...values: Array<string | undefined>): string | undefined {
   for (const value of values) {
     if (typeof value === 'string' && value.trim().length > 0) {
@@ -13,6 +20,9 @@ function pickThemeValue(...values: Array<string | undefined>): string | undefine
   return undefined
 }
 
+/**
+ * Resolves app shell theme.
+ */
 export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppShellTheme = {}): AppShellTheme {
   const sourceTheme: AppShellTheme = {
     ...baseTheme,
@@ -91,6 +101,9 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
   }
 }
 
+/**
+ * Handles sanitize shell link.
+ */
 export function sanitizeShellLink(href?: string): string | undefined {
   const normalized = (href ?? '').trim()
   if (!normalized) {

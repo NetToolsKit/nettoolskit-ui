@@ -77,6 +77,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Mobile Drawer module.
+ */
+
 import { computed } from 'vue';
 import { QDrawer, QIcon } from 'quasar';
 import { useTheme } from '../../composables/ui/useTheme';
@@ -125,10 +129,16 @@ const ctaStyle = computed(() => ({
   background: theme.value.gradients.primary,
 }));
 
+/**
+ * Handles close.
+ */
 function close() {
   isOpen.value = false;
 }
 
+/**
+ * Handles handle nav click.
+ */
 function handleNavClick(item: NavLink) {
   emit('nav-click', item);
   // Fecha o drawer após clicar em um link interno
@@ -137,6 +147,9 @@ function handleNavClick(item: NavLink) {
   }
 }
 
+/**
+ * Handles handle cta click.
+ */
 function handleCtaClick() {
   emit('cta-click');
   close();

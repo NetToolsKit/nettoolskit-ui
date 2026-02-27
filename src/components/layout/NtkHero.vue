@@ -66,6 +66,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Hero module.
+ */
+
 import { computed } from 'vue'
 import { useBranding } from '../../composables/ui/useBranding'
 

@@ -1,3 +1,7 @@
+/**
+ * Src/components/layout/app shell config module.
+ */
+
 import type { AppShellConfig, AppShellTheme } from './app-shell.types'
 import { semanticColors } from '../../config/colors/semantic.config'
 import { resolveAppShellTheme } from './app-shell.theme'
@@ -144,6 +148,9 @@ export const APP_SHELL_DEFAULTS: AppShellConfig = {
   defaultMini: false,
 }
 
+/**
+ * Handles merge shell config.
+ */
 function mergeShellConfig(base: AppShellConfig, partial: Partial<AppShellConfig>): AppShellConfig {
   return {
     ...base,
@@ -158,10 +165,16 @@ function mergeShellConfig(base: AppShellConfig, partial: Partial<AppShellConfig>
   }
 }
 
+/**
+ * Creates app shell config.
+ */
 export function createAppShellConfig(partial: Partial<AppShellConfig> = {}): AppShellConfig {
   return mergeShellConfig(APP_SHELL_DEFAULTS, partial)
 }
 
+/**
+ * Handles sentinela like preset.
+ */
 export function sentinelaLikePreset(partial: Partial<AppShellConfig> = {}): AppShellConfig {
   return createAppShellConfig(partial)
 }

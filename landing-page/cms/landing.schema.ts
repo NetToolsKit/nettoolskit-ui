@@ -1,5 +1,11 @@
+/**
+ * Default landing-page schema consumed by the CMS page renderer.
+ */
 import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../../src/modules/cms'
 
+/**
+ * Canonical landing-page schema with sections, block props and metadata.
+ */
 export const landingPageSchema: CmsPageSchema = {
   version: CMS_SCHEMA_VERSION,
   id: 'landing-nettoolskit-cms',

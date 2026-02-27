@@ -1,3 +1,7 @@
+/**
+ * Src/modules/cms/core/block module.
+ */
+
 import type { Component } from 'vue'
 import type { CmsBlockNode, CmsRecord } from './types'
 

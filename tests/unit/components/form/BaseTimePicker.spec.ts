@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/form/Base Time Picker spec module.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import BaseTimePicker from '@/components/form/BaseTimePicker.vue'

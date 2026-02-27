@@ -92,6 +92,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Landing page/components/Landing Header Section module.
+ */
+
 defineProps<{
   isDark: boolean
   drawerOpen: boolean

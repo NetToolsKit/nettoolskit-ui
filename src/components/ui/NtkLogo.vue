@@ -28,6 +28,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Logo module.
+ */
+
 import { computed } from 'vue';
 import { useBranding } from '../../composables/ui/useBranding';
 

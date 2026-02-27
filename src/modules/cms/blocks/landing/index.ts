@@ -1,3 +1,7 @@
+/**
+ * Src/modules/cms/blocks/landing/index module.
+ */
+
 export { default as CmsLandingHeaderBlock } from './CmsLandingHeaderBlock.vue'
 export { default as CmsLandingHeroBlock } from './CmsLandingHeroBlock.vue'
 export { default as CmsLandingStatsBlock } from './CmsLandingStatsBlock.vue'

@@ -1,3 +1,6 @@
+/**
+ * CMS app-shell defaults used by the white-label settings workspace.
+ */
 import { sentinelaLikePreset } from '../../src/components/layout/app-shell.config'
 import type {
   AppShellAction,
@@ -50,6 +53,9 @@ const toolbarActions: AppShellAction[] = [
   },
 ]
 
+/**
+ * Creates the baseline shell configuration used by CMS settings pages.
+ */
 export function createCmsShellConfig(): AppShellConfig {
   return sentinelaLikePreset({
     appName: 'NetToolsKit',

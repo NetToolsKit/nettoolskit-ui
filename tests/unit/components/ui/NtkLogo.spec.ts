@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/ui/Ntk Logo spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NtkLogo from '../../../../src/components/ui/NtkLogo.vue'

@@ -31,6 +31,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/modules/cms/blocks/landing/Cms Landing Hero Block module.
+ */
+
 import NtkHero from '../../../../components/layout/NtkHero.vue'
 import NtkButton from '../../../../components/ui/NtkButton.vue'
 

@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/layout/app shell theme spec module.
+ */
+
 import { describe, expect, it } from 'vitest'
 import { resolveAppShellTheme } from '@/components/layout/app-shell.theme'
 import { APP_SHELL_DEFAULT_THEME } from '@/components/layout/app-shell.config'

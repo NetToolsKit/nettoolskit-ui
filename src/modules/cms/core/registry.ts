@@ -1,6 +1,13 @@
+/**
+ * Src/modules/cms/core/registry module.
+ */
+
 import type { CmsBlockCategory, CmsBlockDefinition, CmsBlockFactoryInput } from './block'
 import type { CmsBlockNode, CmsRecord } from './types'
 
+/**
+ * Checks whether is non empty string.
+ */
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0
 }

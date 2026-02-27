@@ -54,6 +54,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Base Textarea module.
+ */
+
 import type { ValidationRule } from 'quasar'
 
 interface Props {

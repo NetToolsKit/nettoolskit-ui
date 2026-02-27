@@ -1,3 +1,7 @@
+/**
+ * Landing page/main module.
+ */
+
 import { createApp, defineAsyncComponent } from 'vue'
 import { Quasar } from 'quasar'
 import * as QuasarExports from 'quasar'

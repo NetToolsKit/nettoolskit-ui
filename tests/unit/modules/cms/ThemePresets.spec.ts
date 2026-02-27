@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/modules/cms/Theme Presets spec module.
+ */
+
 import { describe, expect, it } from 'vitest'
 import { APP_SHELL_DEFAULT_THEME } from '../../../../src/components/layout/app-shell.config'
 import {

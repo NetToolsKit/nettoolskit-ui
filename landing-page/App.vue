@@ -28,6 +28,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Landing page/App module.
+ */
+
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import LandingDashboardSection from './components/LandingDashboardSection.vue'
 import LandingDeveloperSection from './components/LandingDeveloperSection.vue'
@@ -108,6 +112,9 @@ const updateScrollState = () => {
   document.body.classList.toggle('landing-scrolled', isScrolled.value)
 }
 
+/**
+ * Handles prepare landing animations.
+ */
 function prepareLandingAnimations(): void {
   if (typeof document === 'undefined') {
     return
@@ -127,6 +134,9 @@ function prepareLandingAnimations(): void {
   }
 }
 
+/**
+ * Handles observe landing animations.
+ */
 function observeLandingAnimations(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return
@@ -169,6 +179,9 @@ function observeLandingAnimations(): void {
   animatedElements.forEach(element => revealObserver?.observe(element))
 }
 
+/**
+ * Handles refresh landing animations.
+ */
 function refreshLandingAnimations(): void {
   prepareLandingAnimations()
   observeLandingAnimations()

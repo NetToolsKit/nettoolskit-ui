@@ -31,6 +31,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Service Grid module.
+ */
+
 import { computed } from 'vue'
 import NtkSection from './NtkSection.vue'
 import NtkSectionHeader from '../ui/NtkSectionHeader.vue'
@@ -74,6 +78,9 @@ const gridStyle = computed(() => {
   }
 })
 
+/**
+ * Handles format order.
+ */
 function formatOrder(index: number): string {
   return `${index + 1}`.padStart(2, '0')
 }

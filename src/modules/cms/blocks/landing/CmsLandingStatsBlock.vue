@@ -28,6 +28,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/modules/cms/blocks/landing/Cms Landing Stats Block module.
+ */
+
 import NtkSection from '../../../../components/layout/NtkSection.vue'
 import NtkSectionHeader from '../../../../components/ui/NtkSectionHeader.vue'
 import NtkStatCard from '../../../../components/ui/NtkStatCard.vue'

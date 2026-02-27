@@ -1,3 +1,6 @@
+/**
+ * Landing-page block registry for CMS runtime rendering.
+ */
 import { markRaw } from 'vue'
 import { CmsBlockRegistry, type CmsBlockDefinition } from '../../src/modules/cms'
 import {
@@ -9,6 +12,9 @@ import {
   CmsLandingFooterBlock,
 } from '../../src/modules/cms/blocks'
 
+/**
+ * Declares all landing block definitions available in the CMS registry.
+ */
 function createLandingDefinitions(): CmsBlockDefinition[] {
   return [
     {
@@ -50,6 +56,9 @@ function createLandingDefinitions(): CmsBlockDefinition[] {
   ]
 }
 
+/**
+ * Creates a CMS block registry preloaded with landing-page block definitions.
+ */
 export function createLandingRegistry(): CmsBlockRegistry {
   return new CmsBlockRegistry(createLandingDefinitions())
 }

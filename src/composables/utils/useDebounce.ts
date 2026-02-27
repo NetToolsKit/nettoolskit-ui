@@ -1,3 +1,7 @@
+/**
+ * Src/composables/utils/use Debounce module.
+ */
+
 import { ref } from 'vue'
 
 /**

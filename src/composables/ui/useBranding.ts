@@ -1,3 +1,7 @@
+/**
+ * Src/composables/ui/use Branding module.
+ */
+
 import { computed } from 'vue';
 import { useTheme } from './useTheme';
 import type { LogoConfig } from '../../config/brand/identity.config';

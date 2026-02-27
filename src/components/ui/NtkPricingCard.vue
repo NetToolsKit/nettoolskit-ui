@@ -71,6 +71,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Pricing Card module.
+ */
+
 import { computed } from 'vue'
 import { QIcon } from 'quasar'
 import NtkButton from './NtkButton.vue'

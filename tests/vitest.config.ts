@@ -1,3 +1,7 @@
+/**
+ * Tests/vitest config module.
+ */
+
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'

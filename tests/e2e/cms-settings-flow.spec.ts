@@ -1,3 +1,7 @@
+/**
+ * Tests/e2e/cms settings flow spec module.
+ */
+
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
@@ -27,6 +31,9 @@ const blueTenantPalette: NotificationPalette = {
   actionHoverColor: '#1d4ed8',
 }
 
+/**
+ * Handles hex to rgb regex.
+ */
 function hexToRgbRegex(hexColor: string): RegExp {
   const normalized = hexColor.trim().replace('#', '')
   const value = normalized.length === 3
@@ -46,6 +53,9 @@ async function fillTextInput(input: Locator, value: string): Promise<void> {
   await input.press('Tab')
 }
 
+/**
+ * Handles cms input by label.
+ */
 function cmsInputByLabel(page: Page, label: string): Locator {
   return page
     .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
@@ -54,6 +64,9 @@ function cmsInputByLabel(page: Page, label: string): Locator {
     .first()
 }
 
+/**
+ * Handles color token input by label.
+ */
 function colorTokenInputByLabel(page: Page, label: string): Locator {
   return page
     .locator('.cms-color-field', { has: page.locator('label', { hasText: label }) })

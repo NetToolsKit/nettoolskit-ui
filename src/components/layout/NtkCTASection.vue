@@ -49,6 +49,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk CTASection module.
+ */
+
 import { computed } from 'vue';
 import { useTheme } from '../../composables/ui/useTheme';
 

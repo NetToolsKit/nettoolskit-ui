@@ -14,6 +14,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Chip module.
+ */
+
 import { computed } from 'vue'
 
 type ChipVariant = 'default' | 'primary' | 'secondary' | 'outlined'

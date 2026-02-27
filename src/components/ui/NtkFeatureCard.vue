@@ -41,6 +41,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Feature Card module.
+ */
+
 import { computed } from 'vue';
 import { useTheme } from '../../composables/ui/useTheme';
 

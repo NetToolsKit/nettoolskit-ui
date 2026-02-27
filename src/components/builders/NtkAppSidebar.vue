@@ -146,6 +146,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/builders/Ntk App Sidebar module.
+ */
+
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 

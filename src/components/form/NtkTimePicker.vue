@@ -62,6 +62,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Ntk Time Picker module.
+ */
+
 import { ref } from 'vue'
 import { ntkFieldPropsDefaults, useNtkField } from '../../composables/forms/useNtkField'
 

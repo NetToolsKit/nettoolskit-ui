@@ -62,6 +62,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Landing page/App Dev module.
+ */
+
 import { ref, watchEffect } from 'vue';
 import NtkHeader from '../src/components/layout/NtkHeader.vue';
 import { applyThemeColors } from '../src/config/colors/theme-mode.config';

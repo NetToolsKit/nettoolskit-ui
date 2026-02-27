@@ -1,3 +1,6 @@
+/**
+ * Shared type contracts for CMS white-label state, settings and shell snapshots.
+ */
 import type {
   AppShellAction,
   AppShellConfig,
@@ -7,6 +10,9 @@ import type {
 } from '../../src/components/layout/app-shell.types'
 import type { CmsThemeBasePresetId, CmsThemePresetId } from './theme-presets'
 
+/**
+ * Branding values editable in CMS white-label settings.
+ */
 export interface CmsBrandingSettings {
   appName: string
   appSubtitle: string
@@ -19,6 +25,9 @@ export interface CmsBrandingSettings {
   notificationCount: number
 }
 
+/**
+ * Layout and behavior flags for the CMS app shell.
+ */
 export interface CmsLayoutSettings {
   menuIcon: string
   menuAriaLabel: string
@@ -38,6 +47,9 @@ export interface CmsLayoutSettings {
   defaultMini: boolean
 }
 
+/**
+ * Text/copy values rendered by CMS settings screens and previews.
+ */
 export interface CmsContentSettings {
   tabBrandingLabel: string
   tabColorsLabel: string
@@ -62,12 +74,18 @@ export interface CmsContentSettings {
   howToNextStep: string
 }
 
+/**
+ * Section metadata for a CMS managed page.
+ */
 export interface CmsPageSectionSettings {
   id: string
   label: string
   enabled: boolean
 }
 
+/**
+ * Page definition editable in CMS page builder.
+ */
 export interface CmsPageSettings {
   id: string
   title: string
@@ -77,6 +95,9 @@ export interface CmsPageSettings {
   sections: CmsPageSectionSettings[]
 }
 
+/**
+ * Aggregate white-label settings persisted per tenant profile.
+ */
 export interface CmsWhiteLabelSettings {
   branding: CmsBrandingSettings
   layout: CmsLayoutSettings
@@ -90,17 +111,26 @@ export interface CmsWhiteLabelSettings {
   toolbarActions: AppShellAction[]
 }
 
+/**
+ * In-memory CMS white-label editing state.
+ */
 export interface CmsWhiteLabelState {
   activeItem: string
   searchValue: string
   settings: CmsWhiteLabelSettings
 }
 
+/**
+ * Render snapshot returned by config mapping helpers.
+ */
 export interface CmsShellSnapshot {
   shellConfig: AppShellConfig
   filteredItems: AppShellItem[]
 }
 
+/**
+ * Tenant profile wrapper containing settings and metadata.
+ */
 export interface CmsTenantProfile {
   id: string
   name: string
@@ -108,6 +138,9 @@ export interface CmsTenantProfile {
   updatedAt: string
 }
 
+/**
+ * Persisted collection of tenant profiles with active pointer.
+ */
 export interface CmsTenantProfilesState {
   activeProfileId: string
   profiles: CmsTenantProfile[]

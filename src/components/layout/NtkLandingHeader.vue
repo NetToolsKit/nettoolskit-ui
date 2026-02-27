@@ -108,6 +108,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Landing Header module.
+ */
+
 import { ref, computed } from 'vue';
 import NtkLogo from '../ui/NtkLogo.vue';
 import NtkMobileDrawer from './NtkMobileDrawer.vue';
@@ -245,15 +249,24 @@ const ctaPrimaryStyle = computed(() => ({
 }));
 
 // Methods
+/**
+ * Handles toggle mobile menu.
+ */
 function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value;
   emit('mobile-toggle', mobileMenuOpen.value);
 }
 
+/**
+ * Handles handle nav click.
+ */
 function handleNavClick(item: NavLink) {
   emit('nav-click', item);
 }
 
+/**
+ * Handles handle cta click.
+ */
 function handleCtaClick() {
   emit('cta-click');
 }

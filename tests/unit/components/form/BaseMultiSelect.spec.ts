@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/form/Base Multi Select spec module.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import BaseMultiSelect from '@/components/form/BaseMultiSelect.vue'

@@ -34,6 +34,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Landing page/components/Landing Showcase Section module.
+ */
+
 interface TabItem {
   id: string
   label: string

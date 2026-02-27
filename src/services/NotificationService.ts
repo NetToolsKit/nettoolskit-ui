@@ -180,6 +180,9 @@ export class NotificationService implements INotificationService {
  */
 let notificationServiceInstance: NotificationService | null = null
 
+/**
+ * Handles get notification service.
+ */
 export function getNotificationService(): NotificationService {
   if (!notificationServiceInstance) {
     notificationServiceInstance = new NotificationService()

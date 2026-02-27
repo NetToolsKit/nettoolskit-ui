@@ -77,6 +77,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Base Select module.
+ */
+
 import type { ValidationRule } from 'quasar'
 
 type SelectOption = string | number | Record<string, unknown>

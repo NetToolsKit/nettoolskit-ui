@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/modules/cms/Tenant Profiles Storage spec module.
+ */
+
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   CMS_DEFAULT_TENANT_PROFILE_ID,
@@ -10,6 +14,9 @@ import {
 } from '../../../../landing-page/cms/tenant-profiles.storage'
 import { createDefaultWhiteLabelSettings } from '../../../../landing-page/cms/white-label.config'
 
+/**
+ * Handles install memory local storage.
+ */
 function installMemoryLocalStorage(): void {
   const storage = new Map<string, string>()
   Object.defineProperty(window, 'localStorage', {

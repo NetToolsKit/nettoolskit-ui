@@ -51,6 +51,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Base Input module.
+ */
+
 import type { ValidationRule } from 'quasar'
 
 interface Props {

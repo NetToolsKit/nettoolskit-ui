@@ -33,6 +33,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Stats Section module.
+ */
+
 import { computed } from 'vue'
 import NtkSection from './NtkSection.vue'
 import NtkSectionHeader from '../ui/NtkSectionHeader.vue'

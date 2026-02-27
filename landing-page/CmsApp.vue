@@ -766,6 +766,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Landing page/Cms App module.
+ */
+
 import { computed, nextTick, ref, toRaw, watch } from 'vue'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
 import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
@@ -834,11 +838,17 @@ const defaultMenuId = defaultSettings.items[0]?.id ?? ''
 const defaultSettingsModuleId = defaultSettings.items.find(item => item.icon === 'settings')?.id ?? ''
 const baseThemePresets: CmsThemePreset[] = buildCmsThemePresets(defaultTheme)
 
+/**
+ * Handles theme placeholder.
+ */
 function themePlaceholder(key: ThemeFieldKey): string {
   const value = defaultTheme[key]
   return value ? String(value) : ''
 }
 
+/**
+ * Handles clone white label settings.
+ */
 function cloneWhiteLabelSettings(value: CmsWhiteLabelSettings): CmsWhiteLabelSettings {
   const rawValue = toRaw(value) as CmsWhiteLabelSettings
   if (typeof structuredClone === 'function') {
@@ -855,6 +865,9 @@ const tenantProfilesState = ref<CmsTenantProfilesState>(loadCmsTenantProfilesSta
 const activeTenantProfileId = ref(tenantProfilesState.value.activeProfileId)
 const tenantImportInputRef = ref<HTMLInputElement | null>(null)
 
+/**
+ * Handles get active tenant profile snapshot.
+ */
 function getActiveTenantProfileSnapshot(): CmsTenantProfile {
   const activeProfile = tenantProfilesState.value.profiles.find(profile => profile.id === activeTenantProfileId.value)
   if (activeProfile) {
@@ -886,6 +899,9 @@ const settings = ref<CmsWhiteLabelSettings>(
   cloneWhiteLabelSettings(getActiveTenantProfileSnapshot().settings)
 )
 
+/**
+ * Resolves theme presets with overrides.
+ */
 function resolveThemePresetsWithOverrides(currentSettings: typeof settings.value): CmsThemePreset[] {
   return baseThemePresets.map(preset => ({
     ...preset,
@@ -896,6 +912,9 @@ function resolveThemePresetsWithOverrides(currentSettings: typeof settings.value
   }))
 }
 
+/**
+ * Handles get current theme presets.
+ */
 function getCurrentThemePresets(): CmsThemePreset[] {
   return resolveThemePresetsWithOverrides(settings.value)
 }
@@ -1672,6 +1691,9 @@ const quasarBrandOverrides = computed<QuasarBrandOverrides>(() => ({
   info: notificationInfoColor.value,
 }))
 
+/**
+ * Applies quasar brand overrides.
+ */
 function applyQuasarBrandOverrides(brand: QuasarBrandOverrides): void {
   if (typeof document === 'undefined') {
     return
@@ -1757,6 +1779,9 @@ const pagesModuleId = computed(() => {
 })
 const isPagesModule = computed(() => activeMenuId.value === pagesModuleId.value)
 
+/**
+ * Handles sync active tenant profile settings.
+ */
 function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): void {
   const activeProfile = getActiveTenantProfileSnapshot()
   tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
@@ -1814,6 +1839,9 @@ watch(
   { immediate: true, deep: true }
 )
 
+/**
+ * Handles get theme field value.
+ */
 function getThemeFieldValue(field: ThemeField): string {
   const directValue = String(settings.value.theme[field.key] ?? '')
 
@@ -1842,6 +1870,9 @@ function getThemeFieldValue(field: ThemeField): string {
   return directValue
 }
 
+/**
+ * Normalizes hex color.
+ */
 function normalizeHexColor(value: string): string | null {
   const normalized = value.trim().toLowerCase()
   const shortHex = normalized.match(/^#([0-9a-f]{3})$/i)
@@ -1857,6 +1888,9 @@ function normalizeHexColor(value: string): string | null {
   return null
 }
 
+/**
+ * Handles rgb string to hex.
+ */
 function rgbStringToHex(value: string): string | null {
   const match = value
     .trim()
@@ -1871,6 +1905,9 @@ function rgbStringToHex(value: string): string | null {
   return `#${channels.map(channel => channel.toString(16).padStart(2, '0')).join('')}`
 }
 
+/**
+ * Resolves color value to hex.
+ */
 function resolveColorValueToHex(value: string): string | null {
   const directHex = normalizeHexColor(value)
   if (directHex) {
@@ -1902,6 +1939,9 @@ function resolveColorValueToHex(value: string): string | null {
   return rgbStringToHex(computedColor) ?? normalizeHexColor(computedColor)
 }
 
+/**
+ * Handles get theme field picker value.
+ */
 function getThemeFieldPickerValue(field: ThemeField): string {
   const explicitValue = getThemeFieldValue(field)
   const explicitColor = resolveColorValueToHex(explicitValue)
@@ -1917,6 +1957,9 @@ function getThemeFieldPickerValue(field: ThemeField): string {
   return resolveColorValueToHex(semanticColors.infoPrimary) ?? semanticColors.infoPrimary
 }
 
+/**
+ * Handles on theme field input.
+ */
 function onThemeFieldInput(field: ThemeField, value: string | number | null): void {
   const normalized = String(value ?? '')
   settings.value.theme[field.key] = normalized
@@ -1946,11 +1989,17 @@ function onThemeFieldInput(field: ThemeField, value: string | number | null): vo
   }
 }
 
+/**
+ * Handles on theme color input.
+ */
 function onThemeColorInput(field: ThemeField, event: Event): void {
   const target = event.target as HTMLInputElement | null
   onThemeFieldInput(field, target?.value ?? '')
 }
 
+/**
+ * Applies theme preset by id.
+ */
 function applyThemePresetById(presetId: Exclude<CmsThemePresetId, 'custom'>): void {
   const preset = themePresets.value.find(item => item.id === presetId)
   if (!preset) {
@@ -1963,6 +2012,9 @@ function applyThemePresetById(presetId: Exclude<CmsThemePresetId, 'custom'>): vo
   }
 }
 
+/**
+ * Handles on theme preset change.
+ */
 function onThemePresetChange(value: CmsThemePresetId | null): void {
   const presetId = (value ?? 'custom') as CmsThemePresetId
   selectedThemePreset.value = presetId
@@ -1976,12 +2028,18 @@ function onThemePresetChange(value: CmsThemePresetId | null): void {
   savedAtLabel.value = `${activeThemePresetLabel.value} preset applied`
 }
 
+/**
+ * Detects theme preset from current.
+ */
 function detectThemePresetFromCurrent(): void {
   const detectedPreset = detectCmsThemePresetId(settings.value.theme, themePresets.value, defaultTheme)
   selectedThemePreset.value = detectedPreset
   settings.value.themePresetId = detectedPreset
 }
 
+/**
+ * Applies selected theme preset from settings.
+ */
 function applySelectedThemePresetFromSettings(): void {
   selectedThemePreset.value = isCmsThemePresetId(settings.value.themePresetId)
     ? settings.value.themePresetId
@@ -1989,6 +2047,9 @@ function applySelectedThemePresetFromSettings(): void {
   settings.value.themePresetId = selectedThemePreset.value
 }
 
+/**
+ * Handles on tenant profile change.
+ */
 function onTenantProfileChange(value: string | null): void {
   const profileId = String(value ?? '').trim()
   const profile = tenantProfilesState.value.profiles.find(item => item.id === profileId)
@@ -2007,6 +2068,9 @@ function onTenantProfileChange(value: string | null): void {
   savedAtLabel.value = `${profile.name} loaded`
 }
 
+/**
+ * Creates tenant profile from prompt.
+ */
 function createTenantProfileFromPrompt(): void {
   if (typeof window === 'undefined') {
     return
@@ -2035,6 +2099,9 @@ function createTenantProfileFromPrompt(): void {
   savedAtLabel.value = `${profileName} created`
 }
 
+/**
+ * Handles remove active tenant profile.
+ */
 function removeActiveTenantProfile(): void {
   if (tenantProfilesState.value.profiles.length <= 1 || typeof window === 'undefined') {
     return
@@ -2053,6 +2120,9 @@ function removeActiveTenantProfile(): void {
   savedAtLabel.value = `${activeProfile.name} removed`
 }
 
+/**
+ * Handles to json file name.
+ */
 function toJsonFileName(value: string): string {
   const normalized = value
     .trim()
@@ -2062,6 +2132,9 @@ function toJsonFileName(value: string): string {
   return normalized || 'tenant-profile'
 }
 
+/**
+ * Normalizes id segment.
+ */
 function normalizeIdSegment(value: string): string {
   return String(value ?? '')
     .trim()
@@ -2071,6 +2144,9 @@ function normalizeIdSegment(value: string): string {
     .replace(/^-|-$/g, '')
 }
 
+/**
+ * Handles export active tenant profile.
+ */
 function exportActiveTenantProfile(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return
@@ -2098,6 +2174,9 @@ function exportActiveTenantProfile(): void {
   savedAtLabel.value = `${profile.name} exported`
 }
 
+/**
+ * Handles open tenant import dialog.
+ */
 function openTenantImportDialog(): void {
   if (!tenantImportInputRef.value) {
     nextTick(() => tenantImportInputRef.value?.click())
@@ -2108,6 +2187,9 @@ function openTenantImportDialog(): void {
   tenantImportInputRef.value.click()
 }
 
+/**
+ * Handles parse imported tenant payload.
+ */
 function parseImportedTenantPayload(raw: unknown, fileName: string): {
   id: string
   name: string
@@ -2193,6 +2275,9 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
   }
 }
 
+/**
+ * Normalizes cms page id.
+ */
 function normalizeCmsPageId(pageIndex: number): void {
   const page = settings.value.pages[pageIndex]
   if (!page) {
@@ -2203,6 +2288,9 @@ function normalizeCmsPageId(pageIndex: number): void {
   page.id = normalizedId || `page-${pageIndex + 1}`
 }
 
+/**
+ * Normalizes cms page path.
+ */
 function normalizeCmsPagePath(pageIndex: number): void {
   const page = settings.value.pages[pageIndex]
   if (!page) {
@@ -2219,6 +2307,9 @@ function normalizeCmsPagePath(pageIndex: number): void {
   page.path = normalizedPath === '/' ? `/${page.id}` : normalizedPath
 }
 
+/**
+ * Handles add cms page.
+ */
 function addCmsPage(): void {
   const index = settings.value.pages.length + 1
   const pageId = `page-${index}`
@@ -2236,6 +2327,9 @@ function addCmsPage(): void {
   })
 }
 
+/**
+ * Handles remove cms page.
+ */
 function removeCmsPage(pageIndex: number): void {
   if (settings.value.pages.length <= 1) {
     return
@@ -2243,6 +2337,9 @@ function removeCmsPage(pageIndex: number): void {
   settings.value.pages.splice(pageIndex, 1)
 }
 
+/**
+ * Handles add cms page section.
+ */
 function addCmsPageSection(pageIndex: number): void {
   const page = settings.value.pages[pageIndex]
   if (!page) {
@@ -2258,6 +2355,9 @@ function addCmsPageSection(pageIndex: number): void {
   })
 }
 
+/**
+ * Handles remove cms page section.
+ */
 function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
   const page = settings.value.pages[pageIndex]
   if (!page) {
@@ -2266,6 +2366,9 @@ function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
   page.sections.splice(sectionIndex, 1)
 }
 
+/**
+ * Handles get cms page status style.
+ */
 function getCmsPageStatusStyle(status: CmsPageSettings['status']): Record<string, string> {
   if (status === 'published') {
     return {
@@ -2280,6 +2383,9 @@ function getCmsPageStatusStyle(status: CmsPageSettings['status']): Record<string
   }
 }
 
+/**
+ * Handles get cms page section style.
+ */
 function getCmsPageSectionStyle(enabled: boolean): Record<string, string> {
   if (enabled) {
     return {
@@ -2296,6 +2402,9 @@ function getCmsPageSectionStyle(enabled: boolean): Record<string, string> {
   }
 }
 
+/**
+ * Handles add group.
+ */
 function addGroup(): void {
   const id = `group-${Math.random().toString(36).slice(2, 7)}`
   settings.value.navGroups.push({
@@ -2304,6 +2413,9 @@ function addGroup(): void {
   })
 }
 
+/**
+ * Normalizes group id.
+ */
 function normalizeGroupId(index: number): void {
   const current = settings.value.navGroups[index]
   if (!current) {
@@ -2320,6 +2432,9 @@ function normalizeGroupId(index: number): void {
   current.id = nextId
 }
 
+/**
+ * Handles remove group.
+ */
 function removeGroup(index: number): void {
   if (settings.value.navGroups.length <= 1) {
     return
@@ -2342,11 +2457,17 @@ function removeGroup(index: number): void {
   }
 }
 
+/**
+ * Handles add menu item.
+ */
 function addMenuItem(): void {
   const groupId = settings.value.navGroups[0]?.id ?? 'core'
   settings.value.items.push(createNewMenuItem(groupId))
 }
 
+/**
+ * Handles remove menu item.
+ */
 function removeMenuItem(index: number): void {
   if (settings.value.items.length <= 1) {
     return
@@ -2354,6 +2475,9 @@ function removeMenuItem(index: number): void {
   settings.value.items.splice(index, 1)
 }
 
+/**
+ * Handles add toolbar action.
+ */
 function addToolbarAction(): void {
   settings.value.toolbarActions.push({
     id: `action-${Math.random().toString(36).slice(2, 7)}`,
@@ -2367,10 +2491,16 @@ function addToolbarAction(): void {
   })
 }
 
+/**
+ * Handles remove toolbar action.
+ */
 function removeToolbarAction(index: number): void {
   settings.value.toolbarActions.splice(index, 1)
 }
 
+/**
+ * Handles on toolbar action.
+ */
 function onToolbarAction(action: AppShellAction): void {
   if (!action.id) {
     return
@@ -2381,11 +2511,17 @@ function onToolbarAction(action: AppShellAction): void {
   }
 }
 
+/**
+ * Saves now.
+ */
 function saveNow(): void {
   saveCmsWhiteLabelSettings(settings.value)
   savedAtLabel.value = `Saved at ${new Date().toLocaleTimeString()}`
 }
 
+/**
+ * Resets to defaults.
+ */
 function resetToDefaults(): void {
   settings.value = resetCmsWhiteLabelSettings()
   const resolvedThemePresets = getCurrentThemePresets()

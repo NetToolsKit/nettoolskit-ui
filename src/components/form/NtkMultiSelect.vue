@@ -36,6 +36,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Ntk Multi Select module.
+ */
+
 import { ntkFieldPropsDefaults, useNtkField } from '../../composables/forms/useNtkField'
 import ntkSelect from './NtkSelect.vue'
 

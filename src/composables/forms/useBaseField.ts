@@ -1,3 +1,7 @@
+/**
+ * Src/composables/forms/use Base Field module.
+ */
+
 import { useNtkField, ntkFieldPropsDefaults, type NtkFieldProps, type NtkFieldPropsExtracted } from './useNtkField'
 
 export type BaseFieldProps = NtkFieldProps

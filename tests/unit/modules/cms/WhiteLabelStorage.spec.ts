@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/modules/cms/White Label Storage spec module.
+ */
+
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   loadCmsWhiteLabelSettings,

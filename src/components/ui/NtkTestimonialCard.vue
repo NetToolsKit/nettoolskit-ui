@@ -69,6 +69,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Testimonial Card module.
+ */
+
 import { computed } from 'vue';
 
 /**

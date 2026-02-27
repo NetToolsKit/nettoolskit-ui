@@ -94,6 +94,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Footer module.
+ */
+
 import { computed } from 'vue'
 import { QIcon } from 'quasar'
 import { useBranding } from '../../composables/ui/useBranding'

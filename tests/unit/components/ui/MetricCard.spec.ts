@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/ui/Metric Card spec module.
+ */
+
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NtkMetricCard from '../../../../src/components/ui/NtkMetricCard.vue'

@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/layout/Ntk Header spec module.
+ */
+
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NtkHeader from '../../../../src/components/layout/NtkHeader.vue'

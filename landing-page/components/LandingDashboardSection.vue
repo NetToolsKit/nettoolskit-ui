@@ -33,6 +33,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Landing page/components/Landing Dashboard Section module.
+ */
+
 const metrics = [
   { icon: '👥', label: 'Total Users', value: '12,847', trend: '↑ 12.5%', trendDirection: 'positive' },
   { icon: '💰', label: 'Revenue', value: '$48,290', trend: '↑ 8.2%', trendDirection: 'positive' },

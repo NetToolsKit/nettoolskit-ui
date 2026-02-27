@@ -49,6 +49,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Button module.
+ */
+
 interface Props {
   label?: string
   color?: string

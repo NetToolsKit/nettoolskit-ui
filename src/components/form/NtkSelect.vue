@@ -100,6 +100,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/form/Ntk Select module.
+ */
+
 import { ntkFieldPropsDefaults, useNtkField } from '../../composables/forms/useNtkField'
 
 const props = defineProps({

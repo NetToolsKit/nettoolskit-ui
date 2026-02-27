@@ -1,3 +1,7 @@
+/**
+ * CMS white-label configuration builders.
+ * This module defines default settings and maps them into the app shell snapshot.
+ */
 import { APP_SHELL_DEFAULT_THEME, createAppShellConfig } from '../../src/components/layout/app-shell.config'
 import type { AppShellConfig, AppShellItem, AppShellTheme } from '../../src/components/layout/app-shell.types'
 import { semanticColors } from '../../src/config/colors/semantic.config'
@@ -5,10 +9,16 @@ import { resolveAppShellTheme } from '../../src/components/layout/app-shell.them
 import { createCmsShellConfig } from './shell.config'
 import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './white-label.types'
 
+/**
+ * Storage key for the current tenant white-label settings payload.
+ */
 export const CMS_WHITE_LABEL_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
 const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 
+/**
+ * Creates a deep clone for plain objects used in default settings.
+ */
 function cloneValue<T>(value: T): T {
   if (typeof structuredClone === 'function') {
     return structuredClone(value)
@@ -16,6 +26,9 @@ function cloneValue<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
+/**
+ * Builds the default theme while enforcing explicit notification semantic values.
+ */
 function createDefaultWhiteLabelTheme(theme: AppShellTheme): AppShellTheme {
   const notificationErrorColor = theme.notificationErrorColor ?? semanticColors.errorPrimary
   const notificationBadgeColor = theme.notificationBadgeColor ?? semanticColors.errorPrimary
@@ -40,6 +53,9 @@ function createDefaultWhiteLabelTheme(theme: AppShellTheme): AppShellTheme {
   )
 }
 
+/**
+ * Migrates legacy flat page/surface/search backgrounds to modern contrasting defaults.
+ */
 function normalizeLegacyShellSurfaceContrast(theme: AppShellTheme): AppShellTheme {
   const pageBackground = String(theme.pageBackground ?? '').trim().toLowerCase()
   const drawerBackground = String(theme.drawerBackground ?? '').trim().toLowerCase()
@@ -60,6 +76,9 @@ function normalizeLegacyShellSurfaceContrast(theme: AppShellTheme): AppShellThem
   }
 }
 
+/**
+ * Provides default copy used by CMS settings UI sections and previews.
+ */
 function createDefaultContentSettings(): CmsContentSettings {
   return {
     tabBrandingLabel: 'Branding',
@@ -86,6 +105,9 @@ function createDefaultContentSettings(): CmsContentSettings {
   }
 }
 
+/**
+ * Provides default CMS pages metadata for landing-page orchestration.
+ */
 function createDefaultPagesSettings(): CmsPageSettings[] {
   return [
     {
@@ -105,6 +127,9 @@ function createDefaultPagesSettings(): CmsPageSettings[] {
   ]
 }
 
+/**
+ * Builds the complete default white-label settings object used by CMS.
+ */
 export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
   const shell = createCmsShellConfig()
 
@@ -149,6 +174,9 @@ export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
   }
 }
 
+/**
+ * Resolves current white-label settings into an AppShell snapshot for runtime rendering.
+ */
 export function mapWhiteLabelToShellSnapshot(
   settings: CmsWhiteLabelSettings,
   state: {
@@ -233,6 +261,9 @@ export function mapWhiteLabelToShellSnapshot(
   }
 }
 
+/**
+ * Creates a new menu item scaffold bound to a specific navigation group.
+ */
 export function createNewMenuItem(groupId: string): AppShellItem {
   const id = `item-${Math.random().toString(36).slice(2, 8)}`
   return {

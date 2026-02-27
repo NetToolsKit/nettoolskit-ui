@@ -11,6 +11,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/modules/cms/blocks/landing/Cms Landing Header Block module.
+ */
+
 import NtkLandingHeader from '../../../../components/layout/NtkLandingHeader.vue'
 import type { NavLink } from '../../../../config/brand/navigation.config'
 

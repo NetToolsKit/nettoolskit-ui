@@ -1,3 +1,7 @@
+/**
+ * Tests/unit/components/form/Base Textarea spec module.
+ */
+
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import BaseTextarea from '@/components/form/BaseTextarea.vue'

@@ -32,6 +32,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Metric Card module.
+ */
+
 import { computed } from 'vue'
 
 interface Props {

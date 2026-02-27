@@ -127,6 +127,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/layout/Ntk Landing Composer module.
+ */
+
 import { computed } from 'vue'
 import type { LandingPageConfig } from '../../config/landing/landing-page.config'
 import NtkButton from '../ui/NtkButton.vue'
