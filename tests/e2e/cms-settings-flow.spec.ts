@@ -75,6 +75,15 @@ function colorTokenInputByLabel(page: Page, label: string): Locator {
     .first()
 }
 
+/**
+ * Handles settings toolbar action button by visible label.
+ */
+function settingsActionButton(page: Page, label: string): Locator {
+  return page
+    .locator('.cms-settings__actions .q-btn', { hasText: label })
+    .first()
+}
+
 async function openSettingsModule(page: Page): Promise<void> {
   const settingsItem = page
     .locator('.ntk-app-shell__drawer .ntk-app-shell__item', {
@@ -129,9 +138,14 @@ async function assertHeaderNotificationPalette(page: Page, palette: Notification
 async function assertActionHoverPalette(page: Page, palette: NotificationPalette): Promise<void> {
   const expectedBackground = hexToRgbRegex(palette.actionHoverColor)
 
-  const headerNotificationAction = page.getByRole('button', { name: /notifications/i }).first()
-  await headerNotificationAction.hover()
-  await expect(headerNotificationAction).toHaveCSS('background-color', expectedBackground)
+  const headerActions = page.locator('.ntk-app-shell__header .ntk-app-shell__actions .q-btn')
+  const headerActionCount = await headerActions.count()
+  expect(headerActionCount).toBeGreaterThan(0)
+  for (let index = 0; index < headerActionCount; index += 1) {
+    const action = headerActions.nth(index)
+    await action.hover()
+    await expect(action).toHaveCSS('background-color', expectedBackground)
+  }
 
   const headerPreviewAction = page.locator('.cms-preview-header__action').first()
   await headerPreviewAction.hover()
@@ -153,25 +167,47 @@ async function expectTenantSnapshots(page: Page, snapshotId: string): Promise<vo
 }
 
 test.describe('CMS settings white-label flow', () => {
+  test('exposes accessible controls for settings toolbar and tabs', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+
+    await expect(page.locator('.cms-settings__saved-at[role="status"][aria-live="polite"]')).toBeVisible()
+    await expect(page.locator('[aria-label="Tenant profile selector"]')).toBeVisible()
+    await expect(page.locator('[aria-label="Create tenant profile"]')).toBeVisible()
+    await expect(page.locator('[aria-label="Export active tenant as JSON"]')).toBeVisible()
+    await expect(page.locator('[aria-label="Import tenant settings from JSON"]')).toBeVisible()
+    await expect(page.locator('.cms-settings__tabs[aria-label="CMS settings sections"]')).toBeVisible()
+    await expect(page.locator('input[aria-label="Import tenant JSON file"]')).toBeAttached()
+
+    const saveButton = settingsActionButton(page, 'Save settings')
+    const resetButton = settingsActionButton(page, 'Reset defaults')
+    await saveButton.focus()
+    await page.keyboard.press('Tab')
+    await expect(resetButton).toBeFocused()
+
+    await openSettingsTab(page, /colors/i)
+    await expect(page.locator('input[type="color"][aria-label$="picker"]').first()).toBeVisible()
+  })
+
   test('edits, saves, reloads and preserves notification tokens by tenant', async ({ page }) => {
     await page.goto('/?cms=1')
     await openSettingsModule(page)
 
     await openSettingsTab(page, /branding/i)
     await fillTextInput(cmsInputByLabel(page, 'Product name'), 'Default Tenant CMS')
-    await page.getByRole('button', { name: /^Save settings$/i }).click()
+    await settingsActionButton(page, 'Save settings').click()
     await expect(page.locator('.cms-settings__saved-at')).toContainText('Saved at')
 
     await openSettingsTab(page, /colors/i)
     await configureNotificationPalette(page, defaultTenantPalette)
     await expect(colorTokenInputByLabel(page, SEARCH_BACKGROUND_LABEL)).not.toHaveValue(defaultTenantPalette.actionHoverColor)
-    await page.getByRole('button', { name: /^Save settings$/i }).click()
+    await settingsActionButton(page, 'Save settings').click()
     await assertHeaderNotificationPalette(page, defaultTenantPalette)
     await assertActionHoverPalette(page, defaultTenantPalette)
     await expectTenantSnapshots(page, 'default-tenant')
 
     page.once('dialog', dialog => dialog.accept(BLUE_TENANT_NAME))
-    await page.getByRole('button', { name: /^New tenant$/i }).click()
+    await page.locator('[aria-label="Create tenant profile"]').first().click()
     await openSettingsModule(page)
 
     await openSettingsTab(page, /branding/i)
@@ -179,7 +215,7 @@ test.describe('CMS settings white-label flow', () => {
     await openSettingsTab(page, /colors/i)
     await configureNotificationPalette(page, blueTenantPalette)
     await expect(colorTokenInputByLabel(page, SEARCH_BACKGROUND_LABEL)).not.toHaveValue(blueTenantPalette.actionHoverColor)
-    await page.getByRole('button', { name: /^Save settings$/i }).click()
+    await settingsActionButton(page, 'Save settings').click()
     await assertHeaderNotificationPalette(page, blueTenantPalette)
     await assertActionHoverPalette(page, blueTenantPalette)
     await expectTenantSnapshots(page, 'blue-tenant')
@@ -217,7 +253,10 @@ test.describe('CMS settings white-label flow', () => {
       return JSON.parse(raw) as {
         profiles: Array<{
           name: string
-          settings: { theme: { notificationBadgeColor: string; actionHoverBackground: string } }
+          settings: {
+            theme: { notificationBadgeColor: string; actionHoverBackground: string }
+            governance: { workflow: { status: string; version: number } }
+          }
         }>
       }
     }, CMS_TENANT_PROFILES_STORAGE_KEY)
@@ -231,10 +270,17 @@ test.describe('CMS settings white-label flow', () => {
     const actionHoverByTenant = Object.fromEntries(
       persistedState?.profiles.map(profile => [profile.name, profile.settings.theme.actionHoverBackground]) ?? []
     ) as Record<string, string>
+    const governanceByTenant = Object.fromEntries(
+      persistedState?.profiles.map(profile => [profile.name, profile.settings.governance.workflow]) ?? []
+    ) as Record<string, { status: string; version: number }>
 
     expect(paletteByTenant[DEFAULT_TENANT_NAME]).toBe(defaultTenantPalette.badgeColor)
     expect(paletteByTenant[BLUE_TENANT_NAME]).toBe(blueTenantPalette.badgeColor)
     expect(actionHoverByTenant[DEFAULT_TENANT_NAME]).toBe(defaultTenantPalette.actionHoverColor)
     expect(actionHoverByTenant[BLUE_TENANT_NAME]).toBe(blueTenantPalette.actionHoverColor)
+    expect(governanceByTenant[DEFAULT_TENANT_NAME]?.version).toBeGreaterThanOrEqual(2)
+    expect(governanceByTenant[BLUE_TENANT_NAME]?.version).toBeGreaterThanOrEqual(2)
+    expect(governanceByTenant[DEFAULT_TENANT_NAME]?.status).toBe('draft')
+    expect(governanceByTenant[BLUE_TENANT_NAME]?.status).toBe('draft')
   })
 })

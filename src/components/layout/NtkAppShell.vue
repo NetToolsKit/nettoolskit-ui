@@ -240,8 +240,12 @@
                 :href="resolveToolbarActionHref(action)"
                 :target="resolveToolbarActionTarget(action)"
                 :rel="resolveToolbarActionRel(action)"
-                :style="getToolbarActionStyle(action)"
-                :class="action.className"
+                :style="getToolbarActionInteractiveStyle(action)"
+                :class="['ntk-app-shell__toolbar-action-btn', action.className]"
+                @mouseenter="setToolbarActionHover(`action:${action.id}`, true)"
+                @mouseleave="setToolbarActionHover(`action:${action.id}`, false)"
+                @focus="setToolbarActionHover(`action:${action.id}`, true)"
+                @blur="setToolbarActionHover(`action:${action.id}`, false)"
                 @click="handleToolbarAction(action)"
               >
                 <q-badge
@@ -265,7 +269,12 @@
                 dense
                 icon="notifications"
                 :aria-label="notificationsAriaLabel"
-                :style="notificationActionStyle"
+                :style="getDefaultHeaderActionStyle('default-notifications', notificationActionStyle)"
+                class="ntk-app-shell__toolbar-action-btn"
+                @mouseenter="setToolbarActionHover('default-notifications', true)"
+                @mouseleave="setToolbarActionHover('default-notifications', false)"
+                @focus="setToolbarActionHover('default-notifications', true)"
+                @blur="setToolbarActionHover('default-notifications', false)"
                 @click="$emit('notifications-click')"
               >
                 <q-badge
@@ -284,6 +293,12 @@
                 round
                 dense
                 :aria-label="userAriaLabel"
+                :style="getDefaultHeaderActionStyle('default-account')"
+                class="ntk-app-shell__toolbar-action-btn"
+                @mouseenter="setToolbarActionHover('default-account', true)"
+                @mouseleave="setToolbarActionHover('default-account', false)"
+                @focus="setToolbarActionHover('default-account', true)"
+                @blur="setToolbarActionHover('default-account', false)"
                 @click="$emit('user-click')"
               >
                 <q-avatar class="ntk-app-shell__user-avatar">
@@ -618,6 +633,8 @@ const notificationActionStyle = computed<Record<string, string>>(() => ({
   color: notificationIconColor.value,
 }))
 
+const hoveredToolbarActionKey = ref<string | null>(null)
+
 const shellStyle = computed<Record<string, string>>(() => {
   const theme = resolvedTheme.value
 
@@ -641,6 +658,7 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-search-border': theme.searchBorder ?? '',
     '--ntk-shell-search-border-hover': theme.searchBorderHover ?? '',
     '--ntk-shell-focus-color': theme.focusColor ?? theme.itemActiveColor ?? '',
+    '--ntk-shell-action-bg': theme.actionBackground ?? '',
     '--ntk-shell-action-hover': theme.actionHoverBackground ?? '',
     '--ntk-shell-notification-badge-bg': notificationDefaultColor.value,
     '--ntk-shell-notification-badge-text': notificationDefaultTextColor.value,
@@ -858,6 +876,54 @@ function getToolbarActionStyle(action: AppShellAction): Record<string, string> {
   }
 
   return {}
+}
+
+/**
+ * Handles set toolbar action hover.
+ */
+function setToolbarActionHover(actionKey: string, active: boolean): void {
+  if (active) {
+    hoveredToolbarActionKey.value = actionKey
+    return
+  }
+
+  if (hoveredToolbarActionKey.value === actionKey) {
+    hoveredToolbarActionKey.value = null
+  }
+}
+
+/**
+ * Handles merge toolbar action interactive style.
+ *
+ * Hover/focus/active visual feedback is handled entirely by CSS pseudo-class
+ * rules (.ntk-app-shell__toolbar-action-btn:hover, :focus-visible, :active)
+ * using the --ntk-shell-action-hover CSS custom property.
+ * No inline style overrides are applied — they previously shadowed the CSS
+ * and prevented the CMS actionHoverBackground token from reflecting visually.
+ */
+function mergeToolbarActionInteractiveStyle(
+  _actionKey: string,
+  baseStyle: Record<string, string> = {}
+): Record<string, string> {
+  return baseStyle
+}
+
+/**
+ * Handles get toolbar action interactive style.
+ */
+function getToolbarActionInteractiveStyle(action: AppShellAction): Record<string, string> {
+  const baseStyle = getToolbarActionStyle(action)
+  return mergeToolbarActionInteractiveStyle(`action:${action.id}`, baseStyle)
+}
+
+/**
+ * Handles get default header action style.
+ */
+function getDefaultHeaderActionStyle(
+  actionKey: string,
+  baseStyle: Record<string, string> = {}
+): Record<string, string> {
+  return mergeToolbarActionInteractiveStyle(actionKey, baseStyle)
 }
 
 /**
@@ -1192,27 +1258,47 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__actions :deep(.q-btn) {
+  background: var(--ntk-shell-action-bg) !important;
   color: var(--ntk-shell-toolbar-btn-color);
-  transition: all var(--ntk-shell-transition-fast);
+  transition:
+    transform var(--ntk-shell-transition-fast),
+    color var(--ntk-shell-transition-fast),
+    background-color var(--ntk-shell-transition-fast);
 }
 
 .ntk-app-shell__actions :deep(.q-btn:not(.q-btn--round)) {
   border-radius: var(--ntk-shell-radius-sm);
 }
 
-.ntk-app-shell__actions :deep(.q-btn:hover) {
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn > .q-focus-helper) {
+  opacity: 0 !important;
+  background: transparent !important;
+  transition:
+    opacity var(--ntk-shell-transition-fast),
+    background var(--ntk-shell-transition-fast);
+}
+
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:hover),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:focus-visible),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:active) {
   transform: translateY(var(--ntk-shell-action-hover-translate-y));
   background-color: var(--ntk-shell-action-hover) !important;
   color: var(--ntk-shell-item-hover-color) !important;
 }
 
-.ntk-app-shell__actions :deep(.q-btn:hover > .q-focus-helper) {
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:hover > .q-focus-helper),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:focus-visible > .q-focus-helper),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:active > .q-focus-helper) {
   background: var(--ntk-shell-action-hover) !important;
   opacity: 1 !important;
 }
 
-.ntk-app-shell__actions :deep(.q-btn:hover > .q-focus-helper:before),
-.ntk-app-shell__actions :deep(.q-btn:hover > .q-focus-helper:after) {
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:hover > .q-focus-helper:before),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:hover > .q-focus-helper:after),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:focus-visible > .q-focus-helper:before),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:focus-visible > .q-focus-helper:after),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:active > .q-focus-helper:before),
+.ntk-app-shell__actions :deep(.ntk-app-shell__toolbar-action-btn:active > .q-focus-helper:after) {
   opacity: 0 !important;
 }
 

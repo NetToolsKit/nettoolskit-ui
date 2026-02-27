@@ -117,4 +117,13 @@ describe('white-label.config', () => {
     expect(snapshot.shellConfig.theme.searchBackground).toBe('#f5f7fb')
     expect(snapshot.shellConfig.theme.actionHoverBackground).toBe('#1f2937')
   })
+
+  it('creates default governance values in white-label settings', () => {
+    const settings = createDefaultWhiteLabelSettings()
+
+    expect(settings.governance.workflow.status).toBe('draft')
+    expect(settings.governance.workflow.version).toBe(1)
+    expect(settings.governance.workflow.publishedVersion).toBeNull()
+    expect(settings.governance.revisions.length).toBeGreaterThanOrEqual(1)
+  })
 })

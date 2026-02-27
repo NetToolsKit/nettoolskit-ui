@@ -14,10 +14,12 @@ import {
   isCmsThemeBasePresetId,
   isCmsThemePresetId,
 } from './theme-presets'
+import { normalizeWhiteLabelGovernance } from './white-label.workflow'
 
 const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'pages', 'blocks', 'media', 'users'])
 const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
+const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 2
 
 /**
  * Creates a deep clone for plain objects used in settings payloads.
@@ -342,6 +344,7 @@ export function normalizeCmsWhiteLabelSettings(
     navGroups: normalizedNavGroups,
     items: normalizedItems,
     toolbarActions: parsed.toolbarActions ?? cloneValue(defaults.toolbarActions),
+    governance: normalizeWhiteLabelGovernance(parsed.governance),
   }
 
   const themePresets = buildThemePresetsWithOverrides(defaults.theme, themePresetOverrides)
@@ -386,7 +389,10 @@ export function saveCmsWhiteLabelSettings(settings: CmsWhiteLabelSettings): void
     return
   }
 
-  const serialized = JSON.stringify(settings)
+  const serialized = JSON.stringify({
+    version: CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION,
+    settings: normalizeCmsWhiteLabelSettings(settings),
+  })
   window.localStorage.setItem(CMS_WHITE_LABEL_STORAGE_KEY, serialized)
 }
 
@@ -406,8 +412,26 @@ export function loadCmsWhiteLabelSettings(): CmsWhiteLabelSettings {
   }
 
   try {
-    const parsed = JSON.parse(rawValue) as Partial<CmsWhiteLabelSettings>
-    return normalizeCmsWhiteLabelSettings(parsed)
+    const parsed = JSON.parse(rawValue) as unknown
+    if (!parsed || typeof parsed !== 'object') {
+      return defaults
+    }
+
+    const root = parsed as Record<string, unknown>
+    if ('settings' in root) {
+      const version = Number.parseInt(String(root.version ?? ''), 10)
+      if (Number.isFinite(version) && version > CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION) {
+        return defaults
+      }
+
+      const wrappedSettings = root.settings
+      if (!wrappedSettings || typeof wrappedSettings !== 'object') {
+        return defaults
+      }
+      return normalizeCmsWhiteLabelSettings(wrappedSettings as Partial<CmsWhiteLabelSettings>)
+    }
+
+    return normalizeCmsWhiteLabelSettings(root as Partial<CmsWhiteLabelSettings>)
   } catch {
     return defaults
   }

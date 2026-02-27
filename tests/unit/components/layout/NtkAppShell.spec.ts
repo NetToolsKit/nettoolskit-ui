@@ -150,6 +150,7 @@ describe('NtkAppShell', () => {
         navGroups,
         items,
         theme: {
+          actionBackground: '#f3f4f6',
           actionHoverBackground: '#9f1414',
         },
       },
@@ -157,8 +158,59 @@ describe('NtkAppShell', () => {
 
     const layout = wrapper.find('[data-stub="QLayout"]')
     const style = layout.attributes('style')
+    expect(style).toContain('--ntk-shell-action-bg')
+    expect(style).toContain('#f3f4f6')
     expect(style).toContain('--ntk-shell-action-hover')
     expect(style).toContain('#9f1414')
+  })
+
+  it('applies dedicated hover class to every header action button', () => {
+    const wrapper = mount(NtkAppShell, {
+      props: {
+        navGroups,
+        items,
+        toolbarActions: [
+          { id: 'notifications', icon: 'notifications', badge: 2, flat: true, dense: true, round: true },
+          { id: 'account', icon: 'account_circle', flat: true, dense: true, round: true },
+          { id: 'go-landing', icon: 'home', label: 'Landing', flat: true, dense: true, showLabel: true },
+        ],
+        theme: {
+          actionHoverBackground: '#423434',
+        },
+      },
+    })
+
+    const actionButtons = wrapper.findAll('.ntk-app-shell__actions [data-stub="QBtn"]')
+    expect(actionButtons.length).toBe(3)
+    actionButtons.forEach(button => {
+      expect(button.classes()).toContain('ntk-app-shell__toolbar-action-btn')
+    })
+
+    const layout = wrapper.find('[data-stub="QLayout"]')
+    expect(layout.attributes('style')).toContain('#423434')
+  })
+
+  it('does not apply inline background on toolbar action buttons so CSS hover token takes precedence', () => {
+    const wrapper = mount(NtkAppShell, {
+      props: {
+        navGroups,
+        items,
+        toolbarActions: [
+          { id: 'notifications', icon: 'notifications', flat: true, dense: true, round: true },
+          { id: 'account', icon: 'account_circle', flat: true, dense: true, round: true },
+        ],
+        theme: {
+          actionHoverBackground: '#991111',
+        },
+      },
+    })
+
+    const actionButtons = wrapper.findAll('.ntk-app-shell__actions [data-stub="QBtn"]')
+    expect(actionButtons.length).toBe(2)
+    actionButtons.forEach(button => {
+      const style = button.attributes('style') ?? ''
+      expect(style).not.toContain('background')
+    })
   })
 
   it('injects typography and dimension override tokens into shell style variables', () => {

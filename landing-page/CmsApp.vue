@@ -25,44 +25,49 @@
                 map-options
                 :options="tenantProfileOptions"
                 label="Tenant profile"
+                aria-label="Tenant profile selector"
                 class="cms-settings__tenant-select"
                 @update:model-value="onTenantProfileChange"
               />
-              <q-btn flat dense no-caps icon="add" label="New tenant" @click="createTenantProfileFromPrompt" />
+              <q-btn flat dense no-caps icon="add" label="New tenant" aria-label="Create tenant profile" @click="createTenantProfileFromPrompt" />
               <q-btn
                 flat
                 dense
                 no-caps
                 icon="delete"
                 label="Delete tenant"
+                aria-label="Delete active tenant profile"
                 :disable="tenantProfilesState.profiles.length <= 1"
                 :style="dangerActionStyle"
                 @click="removeActiveTenantProfile"
               />
-              <q-btn flat dense no-caps icon="download" label="Export JSON" @click="exportActiveTenantProfile" />
-              <q-btn flat dense no-caps icon="upload_file" label="Import JSON" @click="openTenantImportDialog" />
+              <q-btn flat dense no-caps icon="download" label="Export JSON" aria-label="Export active tenant as JSON" @click="exportActiveTenantProfile" />
+              <q-btn flat dense no-caps icon="upload_file" label="Import JSON" aria-label="Import tenant settings from JSON" @click="openTenantImportDialog" />
             </div>
 
             <div class="cms-settings__actions">
-              <q-btn no-caps unelevated icon="save" label="Save settings" :style="primaryActionStyle" @click="saveNow" />
-              <q-btn flat no-caps icon="restart_alt" label="Reset defaults" :style="dangerActionStyle" @click="resetToDefaults" />
+              <q-btn no-caps unelevated icon="save" label="Save settings" aria-label="Save tenant settings" :style="primaryActionStyle" @click="saveNow" />
+              <q-btn flat no-caps icon="restart_alt" label="Reset defaults" aria-label="Reset tenant settings to defaults" :style="dangerActionStyle" @click="resetToDefaults" />
             </div>
-            <span class="cms-settings__saved-at">{{ savedAtLabel }}</span>
+            <span class="cms-settings__saved-at" role="status" aria-live="polite" aria-atomic="true">{{ savedAtLabel }}</span>
           </div>
           <input
             ref="tenantImportInputRef"
             type="file"
             accept="application/json,.json"
+            aria-label="Import tenant JSON file"
             class="cms-file-input"
             @change="onTenantImportFileChange"
           >
 
-          <q-tabs v-model="activeSettingsTab" dense inline-label class="cms-settings__tabs">
-            <q-tab name="branding" icon="branding_watermark" :label="settings.content.tabBrandingLabel" />
-            <q-tab name="colors" icon="palette" :label="settings.content.tabColorsLabel" />
-            <q-tab name="menu" icon="menu" :label="settings.content.tabMenuLabel" />
-            <q-tab name="topbar" icon="toolbar" :label="settings.content.tabTopbarLabel" />
-            <q-tab name="content" icon="edit_note" :label="settings.content.tabContentLabel" />
+          <q-tabs v-model="activeSettingsTab" dense inline-label class="cms-settings__tabs" aria-label="CMS settings sections">
+            <q-tab name="branding" icon="branding_watermark" :label="settings.content.tabBrandingLabel" :aria-label="settings.content.tabBrandingLabel" />
+            <q-tab name="typography" icon="text_fields" :label="settings.content.tabTypographyLabel" :aria-label="settings.content.tabTypographyLabel" />
+            <q-tab name="layout" icon="dashboard_customize" :label="settings.content.tabLayoutLabel" :aria-label="settings.content.tabLayoutLabel" />
+            <q-tab name="colors" icon="palette" :label="settings.content.tabColorsLabel" :aria-label="settings.content.tabColorsLabel" />
+            <q-tab name="menu" icon="menu" :label="settings.content.tabMenuLabel" :aria-label="settings.content.tabMenuLabel" />
+            <q-tab name="topbar" icon="web_asset" :label="settings.content.tabTopbarLabel" :aria-label="settings.content.tabTopbarLabel" />
+            <q-tab name="content" icon="edit_note" :label="settings.content.tabContentLabel" :aria-label="settings.content.tabContentLabel" />
           </q-tabs>
 
           <q-tab-panels v-model="activeSettingsTab" animated class="cms-settings__panels">
@@ -115,6 +120,116 @@
                         <q-chip dense square icon="notifications" :style="statusChipStyle">
                           {{ settings.branding.notificationCount }}
                         </q-chip>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="typography">
+              <div class="cms-color-groups">
+                <div v-for="group in typographyFieldGroups" :key="group.id" class="cms-color-group cms-config-section">
+                  <div class="cms-config-section__form">
+                    <div class="cms-section-header cms-section-header--stacked">
+                      <strong>{{ group.label }}</strong>
+                      <small>{{ group.description }}</small>
+                    </div>
+                    <div class="cms-color-grid">
+                      <div v-for="field in group.fields" :key="field.key" class="cms-color-field">
+                        <label>{{ field.label }}</label>
+                        <div class="cms-color-field__controls">
+                          <input
+                            v-if="field.isColor"
+                            :value="getThemeFieldPickerValue(field)"
+                            type="color"
+                            :aria-label="`${field.label} picker`"
+                            class="cms-color-field__picker"
+                            @input="onThemeColorInput(field, $event)"
+                          >
+                          <q-input
+                            :model-value="getThemeFieldValue(field)"
+                            outlined
+                            dense
+                            :placeholder="field.placeholder"
+                            @update:model-value="onThemeFieldInput(field, $event)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="cms-config-section__example">
+                    <div class="cms-example-section cms-example-section--inline">
+                      <div class="cms-example-section__header">
+                        <strong>Typography example</strong>
+                        <small>Families, weights, styles and shell text scales.</small>
+                      </div>
+                      <div class="cms-preview-card cms-preview-card--typography">
+                        <div class="cms-preview-typography__headline">{{ settings.branding.appName }}</div>
+                        <div class="cms-preview-typography__title">Shell heading and context text</div>
+                        <p class="cms-preview-typography__body">
+                          This paragraph uses base family/style. Adjust fonts and sizes to match each tenant brand.
+                        </p>
+                        <div class="cms-preview-typography__menu">
+                          <div class="cms-preview-typography__menu-label">Menu label</div>
+                          <div class="cms-preview-typography__menu-caption">Caption for module context</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="layout">
+              <div class="cms-color-groups">
+                <div v-for="group in layoutFieldGroups" :key="group.id" class="cms-color-group cms-config-section">
+                  <div class="cms-config-section__form">
+                    <div class="cms-section-header cms-section-header--stacked">
+                      <strong>{{ group.label }}</strong>
+                      <small>{{ group.description }}</small>
+                    </div>
+                    <div class="cms-color-grid">
+                      <div v-for="field in group.fields" :key="field.key" class="cms-color-field">
+                        <label>{{ field.label }}</label>
+                        <div class="cms-color-field__controls">
+                          <input
+                            v-if="field.isColor"
+                            :value="getThemeFieldPickerValue(field)"
+                            type="color"
+                            :aria-label="`${field.label} picker`"
+                            class="cms-color-field__picker"
+                            @input="onThemeColorInput(field, $event)"
+                          >
+                          <q-input
+                            :model-value="getThemeFieldValue(field)"
+                            outlined
+                            dense
+                            :placeholder="field.placeholder"
+                            @update:model-value="onThemeFieldInput(field, $event)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="cms-config-section__example">
+                    <div class="cms-example-section cms-example-section--inline">
+                      <div class="cms-example-section__header">
+                        <strong>Layout and motion example</strong>
+                        <small>Spacing, radius and transition tokens on shell widgets.</small>
+                      </div>
+                      <div class="cms-preview-card cms-preview-card--layout">
+                        <div class="cms-preview-layout__row">
+                          <div class="cms-preview-layout__panel">Panel A</div>
+                          <div class="cms-preview-layout__panel cms-preview-layout__panel--accent">Panel B</div>
+                        </div>
+                        <div class="cms-preview-layout__nav-item">
+                          <q-icon name="tune" class="cms-icon cms-icon--sm" />
+                          <span>Hover-ready item spacing</span>
+                        </div>
+                        <small class="cms-preview-layout__hint">Move mouse over cards/items to validate transition token.</small>
                       </div>
                     </div>
                   </div>
@@ -189,6 +304,7 @@
                             v-if="field.isColor"
                             :value="getThemeFieldPickerValue(field)"
                             type="color"
+                            :aria-label="`${field.label} picker`"
                             class="cms-color-field__picker"
                             @input="onThemeColorInput(field, $event)"
                           >
@@ -215,42 +331,6 @@
                           <strong>Editable shell foundation</strong>
                           <p>This card uses the same base tokens as the shell page and CMS cards.</p>
                           <q-chip dense square class="cms-preview-chip">{{ settings.content.statusChipLabel }}</q-chip>
-                        </div>
-                      </template>
-
-                      <template v-else-if="group.id === 'typography'">
-                        <div class="cms-example-section__header">
-                          <strong>Typography example</strong>
-                          <small>Families, weights, styles and shell text scales.</small>
-                        </div>
-                        <div class="cms-preview-card cms-preview-card--typography">
-                          <div class="cms-preview-typography__headline">{{ settings.branding.appName }}</div>
-                          <div class="cms-preview-typography__title">Shell heading and context text</div>
-                          <p class="cms-preview-typography__body">
-                            This paragraph uses base family/style. Adjust fonts and sizes to match each tenant brand.
-                          </p>
-                          <div class="cms-preview-typography__menu">
-                            <div class="cms-preview-typography__menu-label">Menu label</div>
-                            <div class="cms-preview-typography__menu-caption">Caption for module context</div>
-                          </div>
-                        </div>
-                      </template>
-
-                      <template v-else-if="group.id === 'layout'">
-                        <div class="cms-example-section__header">
-                          <strong>Layout and motion example</strong>
-                          <small>Spacing, radius and transition tokens on shell widgets.</small>
-                        </div>
-                        <div class="cms-preview-card cms-preview-card--layout">
-                          <div class="cms-preview-layout__row">
-                            <div class="cms-preview-layout__panel">Panel A</div>
-                            <div class="cms-preview-layout__panel cms-preview-layout__panel--accent">Panel B</div>
-                          </div>
-                          <div class="cms-preview-layout__nav-item">
-                            <q-icon name="tune" class="cms-icon cms-icon--sm" />
-                            <span>Hover-ready item spacing</span>
-                          </div>
-                          <small class="cms-preview-layout__hint">Move mouse over cards/items to validate transition token.</small>
                         </div>
                       </template>
 
@@ -295,14 +375,14 @@
                               <span>{{ settings.layout.searchPlaceholder }}</span>
                             </div>
                             <div class="cms-preview-header__actions">
-                              <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action">
+                              <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action" aria-label="Notifications action preview">
                                 <q-icon name="notifications" class="cms-icon cms-icon--sm" />
                                 <span class="cms-preview-header__badge">{{ settings.branding.notificationCount || 2 }}</span>
                               </button>
-                              <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action">
+                              <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action" aria-label="Account action preview">
                                 <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
                               </button>
-                              <button type="button" class="cms-preview-header__action">
+                              <button type="button" class="cms-preview-header__action" aria-label="Home action preview">
                                 <q-icon name="home" class="cms-icon cms-icon--sm" />
                               </button>
                             </div>
@@ -336,11 +416,11 @@
                           <q-chip dense square :style="notificationCounterPreviewStyle">2</q-chip>
                         </div>
                         <div class="cms-notification-actions-preview">
-                          <button type="button" class="cms-notification-actions-preview__action">
+                          <button type="button" class="cms-notification-actions-preview__action" aria-label="Account hover preview">
                             <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
                             <span>Account</span>
                           </button>
-                          <button type="button" class="cms-notification-actions-preview__action">
+                          <button type="button" class="cms-notification-actions-preview__action" aria-label="Landing hover preview">
                             <q-icon name="home" class="cms-icon cms-icon--sm" />
                             <span>Landing</span>
                           </button>
@@ -564,6 +644,8 @@
                     <q-input v-model="settings.content.previewErrorLabel" outlined dense label="Preview error label" />
                     <q-input v-model="settings.content.previewInfoLabel" outlined dense label="Preview info label" />
                     <q-input v-model="settings.content.tabBrandingLabel" outlined dense label="Tab: branding label" />
+                    <q-input v-model="settings.content.tabTypographyLabel" outlined dense label="Tab: typography label" />
+                    <q-input v-model="settings.content.tabLayoutLabel" outlined dense label="Tab: layout label" />
                     <q-input v-model="settings.content.tabColorsLabel" outlined dense label="Tab: colors label" />
                     <q-input v-model="settings.content.tabMenuLabel" outlined dense label="Tab: menu label" />
                     <q-input v-model="settings.content.tabTopbarLabel" outlined dense label="Tab: topbar label" />
@@ -580,6 +662,8 @@
                     <div class="cms-preview-card cms-preview-card--content">
                       <div class="cms-preview-content-tabs">
                         <q-chip dense square>{{ settings.content.tabBrandingLabel }}</q-chip>
+                        <q-chip dense square>{{ settings.content.tabTypographyLabel }}</q-chip>
+                        <q-chip dense square>{{ settings.content.tabLayoutLabel }}</q-chip>
                         <q-chip dense square>{{ settings.content.tabColorsLabel }}</q-chip>
                         <q-chip dense square>{{ settings.content.tabMenuLabel }}</q-chip>
                         <q-chip dense square>{{ settings.content.tabTopbarLabel }}</q-chip>
@@ -792,6 +876,14 @@ import {
   saveCmsTenantProfilesState,
   upsertCmsTenantProfile,
 } from './cms/tenant-profiles.storage'
+import {
+  createCmsTenantExportPayload,
+  parseCmsTenantImportPayload,
+} from './cms/tenant-payload'
+import {
+  applyWhiteLabelWorkflowAction,
+  canApplyWhiteLabelWorkflowAction,
+} from './cms/white-label.workflow'
 import { applySemanticColors, semanticColors } from '../src/config/colors/semantic.config'
 import {
   buildCmsThemePresets,
@@ -802,7 +894,14 @@ import {
   type CmsThemePreset,
   type CmsThemePresetId,
 } from './cms/theme-presets'
-import type { CmsPageSettings, CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } from './cms/white-label.types'
+import type {
+  CmsPageSettings,
+  CmsTenantProfile,
+  CmsTenantProfilesState,
+  CmsWhiteLabelActor,
+  CmsWhiteLabelWorkflowAction,
+  CmsWhiteLabelSettings,
+} from './cms/white-label.types'
 
 type ThemeFieldKey = keyof ReturnType<typeof createDefaultWhiteLabelSettings>['theme']
 type ThemeFieldGroup = 'foundation' | 'typography' | 'layout' | 'navigation' | 'header' | 'notifications'
@@ -942,21 +1041,27 @@ const tenantProfileOptions = computed(() => {
   }))
 })
 
-const colorFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
-  {
-    id: 'foundation',
-    label: 'Foundation',
-    description: 'Base colors reused by page, cards and default text.',
-  },
+const typographyFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
   {
     id: 'typography',
     label: 'Typography',
     description: 'Font family, weights, sizes and base style.',
   },
+]
+
+const layoutFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
   {
     id: 'layout',
     label: 'Layout and Motion',
     description: 'Radii, spacing and motion tokens for shell structure.',
+  },
+]
+
+const colorFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
+  {
+    id: 'foundation',
+    label: 'Foundation',
+    description: 'Base colors reused by page, cards and default text.',
   },
   {
     id: 'navigation',
@@ -1280,12 +1385,14 @@ const colorFields: ThemeField[] = [
     key: 'shellBackground',
     group: 'foundation',
     label: 'Shell background',
+    isColor: true,
     placeholder: themePlaceholder('shellBackground'),
   },
   {
     key: 'pageBackground',
     group: 'foundation',
     label: 'Page background (outside card)',
+    isColor: true,
     placeholder: themePlaceholder('pageBackground'),
   },
   {
@@ -1353,6 +1460,7 @@ const colorFields: ThemeField[] = [
     key: 'itemHoverBackground',
     group: 'navigation',
     label: 'Sidebar item hover background',
+    isColor: true,
     placeholder: themePlaceholder('itemHoverBackground'),
   },
   {
@@ -1373,6 +1481,7 @@ const colorFields: ThemeField[] = [
     key: 'itemActiveBackground',
     group: 'navigation',
     label: 'Active background',
+    isColor: true,
     placeholder: themePlaceholder('itemActiveBackground'),
   },
   {
@@ -1407,6 +1516,7 @@ const colorFields: ThemeField[] = [
     key: 'groupCaptionMiniBackground',
     group: 'navigation',
     label: 'Group mini background',
+    isColor: true,
     placeholder: themePlaceholder('groupCaptionMiniBackground'),
   },
   {
@@ -1477,12 +1587,14 @@ const colorFields: ThemeField[] = [
     key: 'searchBorder',
     group: 'header',
     label: 'Search border',
+    isColor: true,
     placeholder: themePlaceholder('searchBorder'),
   },
   {
     key: 'searchBorderHover',
     group: 'header',
     label: 'Search border hover',
+    isColor: true,
     placeholder: themePlaceholder('searchBorderHover'),
   },
   {
@@ -1502,6 +1614,13 @@ const colorFields: ThemeField[] = [
     group: 'header',
     label: 'Drawer footer shadow',
     placeholder: themePlaceholder('drawerFooterShadow'),
+  },
+  {
+    key: 'actionBackground',
+    group: 'header',
+    label: 'Header actions background',
+    isColor: true,
+    placeholder: themePlaceholder('actionBackground'),
   },
   {
     key: 'actionHoverBackground',
@@ -1588,6 +1707,20 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('notificationIconColor'),
   },
 ]
+
+const typographyFieldGroups = computed(() => {
+  return typographyFieldGroupsDefinition.map(group => ({
+    ...group,
+    fields: colorFields.filter(field => field.group === group.id),
+  }))
+})
+
+const layoutFieldGroups = computed(() => {
+  return layoutFieldGroupsDefinition.map(group => ({
+    ...group,
+    fields: colorFields.filter(field => field.group === group.id),
+  }))
+})
 
 const colorFieldGroups = computed(() => {
   return colorFieldGroupsDefinition.map(group => ({
@@ -1759,6 +1892,7 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-search-border-hover': settings.value.theme.searchBorderHover || defaultTheme.searchBorderHover || '',
   '--ntk-cms-transition': settings.value.theme.transitionFast || defaultTheme.transitionFast || '',
   '--ntk-cms-focus-color': settings.value.theme.focusColor || settings.value.theme.itemActiveColor || defaultTheme.focusColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-action-bg': settings.value.theme.actionBackground || defaultTheme.actionBackground || 'transparent',
   '--ntk-cms-action-hover': settings.value.theme.actionHoverBackground || defaultTheme.actionHoverBackground || '',
   '--ntk-cms-shell-bg': settings.value.theme.shellBackground || defaultTheme.shellBackground || '',
   '--ntk-cms-title-app': settings.value.theme.titleAppColor || settings.value.theme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
@@ -1963,6 +2097,33 @@ const pagesModuleId = computed(() => {
     ?? 'pages'
 })
 const isPagesModule = computed(() => activeMenuId.value === pagesModuleId.value)
+
+const governanceActor: CmsWhiteLabelActor = {
+  id: 'cms-admin',
+  role: 'admin',
+  name: 'CMS Admin',
+}
+
+/**
+ * Applies workflow governance transitions in a safe way without breaking editing flow.
+ */
+function applyGovernanceAction(
+  action: CmsWhiteLabelWorkflowAction,
+  options?: {
+    summary?: string
+    metadata?: Record<string, string>
+  }
+): void {
+  const currentGovernance = settings.value.governance
+  if (!canApplyWhiteLabelWorkflowAction(currentGovernance, action, governanceActor.role)) {
+    return
+  }
+
+  settings.value.governance = applyWhiteLabelWorkflowAction(currentGovernance, action, governanceActor, {
+    summary: options?.summary,
+    metadata: options?.metadata,
+  })
+}
 
 /**
  * Handles sync active tenant profile settings.
@@ -2338,15 +2499,7 @@ function exportActiveTenantProfile(): void {
   }
 
   const profile = getActiveTenantProfileSnapshot()
-  const payload = {
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    profile: {
-      id: profile.id,
-      name: profile.name,
-      settings: profile.settings,
-    },
-  }
+  const payload = createCmsTenantExportPayload(profile)
 
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const fileName = `ntk-cms-tenant-${toJsonFileName(profile.id)}.json`
@@ -2372,53 +2525,6 @@ function openTenantImportDialog(): void {
   tenantImportInputRef.value.click()
 }
 
-/**
- * Handles parse imported tenant payload.
- */
-function parseImportedTenantPayload(raw: unknown, fileName: string): {
-  id: string
-  name: string
-  settings: Partial<CmsWhiteLabelSettings>
-} | null {
-  const fallbackName = fileName.replace(/\.json$/i, '').trim() || 'Imported Tenant'
-  if (!raw || typeof raw !== 'object') {
-    return null
-  }
-
-  const root = raw as Record<string, unknown>
-  if (root.profile && typeof root.profile === 'object') {
-    const profile = root.profile as Record<string, unknown>
-    const settings = profile.settings
-    if (!settings || typeof settings !== 'object') {
-      return null
-    }
-
-    return {
-      id: String(profile.id ?? fallbackName),
-      name: String(profile.name ?? fallbackName),
-      settings: settings as Partial<CmsWhiteLabelSettings>,
-    }
-  }
-
-  if (root.settings && typeof root.settings === 'object') {
-    return {
-      id: String(root.id ?? fallbackName),
-      name: String(root.name ?? fallbackName),
-      settings: root.settings as Partial<CmsWhiteLabelSettings>,
-    }
-  }
-
-  if ('branding' in root || 'layout' in root || 'theme' in root) {
-    return {
-      id: fallbackName,
-      name: fallbackName,
-      settings: root as Partial<CmsWhiteLabelSettings>,
-    }
-  }
-
-  return null
-}
-
 async function onTenantImportFileChange(event: Event): Promise<void> {
   const target = event.target as HTMLInputElement | null
   const file = target?.files?.[0]
@@ -2429,7 +2535,7 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
   try {
     const fileContent = await file.text()
     const parsed = JSON.parse(fileContent) as unknown
-    const imported = parseImportedTenantPayload(parsed, file.name)
+    const imported = parseCmsTenantImportPayload(parsed, file.name)
     if (!imported) {
       savedAtLabel.value = 'Import failed: invalid JSON payload'
       return
@@ -2454,7 +2560,14 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
     tenantProfilesState.value.activeProfileId = profileId
     saveCmsTenantProfilesState(tenantProfilesState.value)
     onTenantProfileChange(profileId)
-    savedAtLabel.value = `${imported.name.trim() || profileId} imported`
+    applyGovernanceAction('import_settings', {
+      summary: `${imported.name.trim() || profileId} imported`,
+      metadata: {
+        sourceVersion: String(imported.sourceVersion),
+        profileId,
+      },
+    })
+    savedAtLabel.value = `${imported.name.trim() || profileId} imported (v${imported.sourceVersion})`
   } catch {
     savedAtLabel.value = 'Import failed: invalid JSON payload'
   }
@@ -2700,6 +2813,12 @@ function onToolbarAction(action: AppShellAction): void {
  * Saves now.
  */
 function saveNow(): void {
+  applyGovernanceAction('save_draft', {
+    summary: 'Settings saved manually',
+    metadata: {
+      source: 'toolbar',
+    },
+  })
   saveCmsWhiteLabelSettings(settings.value)
   savedAtLabel.value = `Saved at ${new Date().toLocaleTimeString()}`
 }
@@ -2708,7 +2827,18 @@ function saveNow(): void {
  * Resets to defaults.
  */
 function resetToDefaults(): void {
+  const previousGovernance = settings.value.governance
+  const nextGovernance = canApplyWhiteLabelWorkflowAction(previousGovernance, 'reset_defaults', governanceActor.role)
+    ? applyWhiteLabelWorkflowAction(previousGovernance, 'reset_defaults', governanceActor, {
+      summary: 'Defaults restored',
+      metadata: {
+        source: 'toolbar',
+      },
+    })
+    : previousGovernance
+
   settings.value = resetCmsWhiteLabelSettings()
+  settings.value.governance = nextGovernance
   const resolvedThemePresets = getCurrentThemePresets()
   selectedThemePreset.value = isCmsThemePresetId(settings.value.themePresetId)
     ? settings.value.themePresetId
@@ -3130,7 +3260,7 @@ function resetToDefaults(): void {
 .cms-notification-actions-preview__action {
   border: 1px solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-sm);
-  background: transparent;
+  background: var(--ntk-cms-action-bg);
   color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
   align-items: center;
@@ -3487,7 +3617,7 @@ function resetToDefaults(): void {
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   min-width: var(--ntk-cms-preview-action-min-width);
   min-height: var(--ntk-cms-preview-action-min-height);
-  background: transparent;
+  background: var(--ntk-cms-action-bg);
   color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
   align-items: center;
@@ -3751,7 +3881,7 @@ function resetToDefaults(): void {
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   min-width: var(--ntk-cms-preview-action-min-width);
   min-height: var(--ntk-cms-preview-action-min-height);
-  background: transparent;
+  background: var(--ntk-cms-action-bg);
   color: var(--ntk-cms-toolbar-icon);
   display: inline-flex;
   align-items: center;

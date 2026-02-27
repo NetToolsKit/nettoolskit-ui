@@ -106,6 +106,7 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
     groupCaptionColor: pickThemeValue(sourceTheme.groupCaptionColor, drawerTextColor),
     titleSeparatorColor: pickThemeValue(sourceTheme.titleSeparatorColor, dividerColor),
     focusColor: pickThemeValue(sourceTheme.focusColor, accentColor),
+    actionBackground: pickThemeValue(sourceTheme.actionBackground, baseTheme.actionBackground, 'transparent'),
     actionHoverBackground: pickThemeValue(sourceTheme.actionHoverBackground, baseTheme.actionHoverBackground, 'var(--ntk-bg-hover)'),
     notificationBadgeColor,
     notificationSuccessColor,

@@ -72,12 +72,14 @@ describe('app-shell.theme typography resolution', () => {
     const resolvedTheme = resolveAppShellTheme(
       {
         itemHoverBackground: '#223344',
+        actionBackground: '#111827',
         actionHoverBackground: '#991111',
       },
       APP_SHELL_DEFAULT_THEME
     )
 
     expect(resolvedTheme.itemHoverBackground).toBe('#223344')
+    expect(resolvedTheme.actionBackground).toBe('#111827')
     expect(resolvedTheme.actionHoverBackground).toBe('#991111')
   })
 
@@ -85,11 +87,27 @@ describe('app-shell.theme typography resolution', () => {
     const resolvedTheme = resolveAppShellTheme(
       {
         itemHoverBackground: '#223344',
+        actionBackground: '',
         actionHoverBackground: '',
       },
       APP_SHELL_DEFAULT_THEME
     )
 
+    expect(resolvedTheme.actionBackground).toBe(APP_SHELL_DEFAULT_THEME.actionBackground)
     expect(resolvedTheme.actionHoverBackground).toBe(APP_SHELL_DEFAULT_THEME.actionHoverBackground)
+  })
+
+  it('keeps actionHoverBackground independent from searchBackground fallback', () => {
+    const resolvedTheme = resolveAppShellTheme(
+      {
+        searchBackground: '#aabbcc',
+        actionHoverBackground: '',
+      },
+      APP_SHELL_DEFAULT_THEME
+    )
+
+    expect(resolvedTheme.searchBackground).toBe('#aabbcc')
+    expect(resolvedTheme.actionHoverBackground).toBe(APP_SHELL_DEFAULT_THEME.actionHoverBackground)
+    expect(resolvedTheme.actionHoverBackground).not.toBe('#aabbcc')
   })
 })

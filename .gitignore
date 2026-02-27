@@ -160,6 +160,8 @@ orleans.codegen.cs
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 TestResult.xml
+test-results/
+playwright-report/
 
 # MSTest
 *.VisualState.xml

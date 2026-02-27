@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import {
   CMS_DEFAULT_TENANT_PROFILE_ID,
   CMS_TENANT_PROFILES_STORAGE_KEY,
+  CMS_TENANT_PROFILES_SCHEMA_VERSION,
   createTenantProfileId,
   loadCmsTenantProfilesState,
   removeCmsTenantProfile,
@@ -13,6 +14,7 @@ import {
   upsertCmsTenantProfile,
 } from '../../../../landing-page/cms/tenant-profiles.storage'
 import { createDefaultWhiteLabelSettings } from '../../../../landing-page/cms/white-label.config'
+import { applyWhiteLabelWorkflowAction } from '../../../../landing-page/cms/white-label.workflow'
 
 /**
  * Handles install memory local storage.
@@ -99,5 +101,59 @@ describe('tenant-profiles.storage', () => {
     expect(new Set(profileIds).size).toBe(profileIds.length)
     expect(loaded.profiles.length).toBe(2)
     expect(loaded.profiles.some(profile => profile.id === loaded.activeProfileId)).toBe(true)
+  })
+
+  it('persists schema version and rejects unsupported future payload versions', () => {
+    const baseState = loadCmsTenantProfilesState()
+    saveCmsTenantProfilesState(baseState)
+
+    const persisted = JSON.parse(window.localStorage.getItem(CMS_TENANT_PROFILES_STORAGE_KEY) ?? '{}') as Record<string, unknown>
+    expect(persisted.version).toBe(CMS_TENANT_PROFILES_SCHEMA_VERSION)
+
+    window.localStorage.setItem(CMS_TENANT_PROFILES_STORAGE_KEY, JSON.stringify({
+      version: CMS_TENANT_PROFILES_SCHEMA_VERSION + 10,
+      activeProfileId: 'future',
+      profiles: [],
+    }))
+
+    const loaded = loadCmsTenantProfilesState()
+    expect(loaded.profiles.length).toBeGreaterThanOrEqual(1)
+    expect(loaded.profiles[0]?.id).toBe(CMS_DEFAULT_TENANT_PROFILE_ID)
+  })
+
+  it('keeps tenant settings isolated and preserves rollback history per profile', () => {
+    const baseState = loadCmsTenantProfilesState()
+    const tenantASettings = createDefaultWhiteLabelSettings()
+    const tenantBSettings = createDefaultWhiteLabelSettings()
+
+    tenantASettings.branding.appName = 'Tenant A'
+    tenantBSettings.branding.appName = 'Tenant B'
+    tenantASettings.governance = applyWhiteLabelWorkflowAction(tenantASettings.governance, 'save_draft', { id: 'editor-a', role: 'editor' })
+    tenantASettings.governance = applyWhiteLabelWorkflowAction(tenantASettings.governance, 'submit_review', { id: 'editor-a', role: 'editor' })
+    tenantASettings.governance = applyWhiteLabelWorkflowAction(tenantASettings.governance, 'approve', { id: 'reviewer-a', role: 'reviewer' })
+    tenantASettings.governance = applyWhiteLabelWorkflowAction(tenantASettings.governance, 'publish', { id: 'admin-a', role: 'admin' })
+    tenantASettings.governance = applyWhiteLabelWorkflowAction(tenantASettings.governance, 'rollback', { id: 'owner-a', role: 'owner' })
+
+    let state = upsertCmsTenantProfile(baseState, {
+      id: 'tenant-a',
+      name: 'Tenant A',
+      settings: tenantASettings,
+    })
+    state = upsertCmsTenantProfile(state, {
+      id: 'tenant-b',
+      name: 'Tenant B',
+      settings: tenantBSettings,
+    })
+    saveCmsTenantProfilesState(state)
+
+    const loaded = loadCmsTenantProfilesState()
+    const loadedTenantA = loaded.profiles.find(profile => profile.id === 'tenant-a')
+    const loadedTenantB = loaded.profiles.find(profile => profile.id === 'tenant-b')
+
+    expect(loadedTenantA?.settings.branding.appName).toBe('Tenant A')
+    expect(loadedTenantB?.settings.branding.appName).toBe('Tenant B')
+    expect(loadedTenantA?.settings.governance.workflow.status).toBe('draft')
+    expect(loadedTenantA?.settings.governance.workflow.version).toBeGreaterThan(loadedTenantB?.settings.governance.workflow.version ?? 0)
+    expect(loadedTenantB?.settings.governance.workflow.status).toBe('draft')
   })
 })

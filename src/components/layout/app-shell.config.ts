@@ -30,6 +30,7 @@ const APP_SHELL_EFFECT_TOKENS = {
   drawerShadow: 'var(--ntk-shadow-sm)',
   searchBorder: 'var(--ntk-border-input)',
   searchBorderHover: 'var(--ntk-border-input-hover)',
+  actionBackground: 'transparent',
   actionHoverBackground: 'var(--ntk-bg-hover)',
   groupCaptionMiniBackground: 'var(--ntk-bg-hover)',
   itemHoverBackground: 'var(--ntk-bg-hover)',
@@ -107,6 +108,7 @@ const APP_SHELL_BASE_THEME: AppShellTheme = {
   searchBorder: APP_SHELL_EFFECT_TOKENS.searchBorder,
   searchBorderHover: APP_SHELL_EFFECT_TOKENS.searchBorderHover,
   focusColor: APP_SHELL_COLOR_TOKENS.accent,
+  actionBackground: APP_SHELL_EFFECT_TOKENS.actionBackground,
   actionHoverBackground: APP_SHELL_EFFECT_TOKENS.actionHoverBackground,
   // Keep the default equal to error, but as a concrete color to avoid implicit coupling.
   notificationBadgeColor: semanticColors.errorPrimary,

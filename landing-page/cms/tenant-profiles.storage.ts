@@ -11,6 +11,10 @@ import type { CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } 
  */
 export const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
 /**
+ * Current persisted schema version for tenant profile collections.
+ */
+export const CMS_TENANT_PROFILES_SCHEMA_VERSION = 2
+/**
  * Reserved identifier for the fallback tenant profile.
  */
 export const CMS_DEFAULT_TENANT_PROFILE_ID = 'default'
@@ -18,6 +22,7 @@ export const CMS_DEFAULT_TENANT_PROFILE_ID = 'default'
  * Default display name for the fallback tenant profile.
  */
 export const CMS_DEFAULT_TENANT_PROFILE_NAME = 'Default Tenant'
+const CMS_MAX_TENANT_PROFILES = 50
 
 /**
  * Creates a deep clone for profile payloads.
@@ -118,13 +123,18 @@ function normalizeParsedTenantProfilesState(parsed: unknown): CmsTenantProfilesS
     profiles?: unknown
   }
 
+  const version = Number.parseInt(String((source as Record<string, unknown>).version ?? ''), 10)
+  if (Number.isFinite(version) && version > CMS_TENANT_PROFILES_SCHEMA_VERSION) {
+    return null
+  }
+
   if (!Array.isArray(source.profiles)) {
     return null
   }
 
   const usedIds = new Set<string>()
   const profiles: CmsTenantProfile[] = []
-  for (const entry of source.profiles) {
+  for (const entry of source.profiles.slice(0, CMS_MAX_TENANT_PROFILES)) {
     if (!entry || typeof entry !== 'object') {
       continue
     }
@@ -206,7 +216,10 @@ export function saveCmsTenantProfilesState(state: CmsTenantProfilesState): void 
   }
 
   const normalized = normalizeParsedTenantProfilesState(state) ?? createDefaultTenantProfilesState(loadCmsWhiteLabelSettings())
-  window.localStorage.setItem(CMS_TENANT_PROFILES_STORAGE_KEY, JSON.stringify(normalized))
+  window.localStorage.setItem(CMS_TENANT_PROFILES_STORAGE_KEY, JSON.stringify({
+    version: CMS_TENANT_PROFILES_SCHEMA_VERSION,
+    ...normalized,
+  }))
 }
 
 /**

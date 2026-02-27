@@ -44,6 +44,8 @@ describe('white-label.storage', () => {
     expect(normalized.layout.showUserAvatar).toBe(defaults.layout.showUserAvatar)
     expect(normalized.layout.collapsible).toBe(defaults.layout.collapsible)
     expect(normalized.layout.breakpoint).toBe(defaults.layout.breakpoint)
+    expect(normalized.governance.workflow.status).toBe(defaults.governance.workflow.status)
+    expect(normalized.governance.workflow.version).toBe(defaults.governance.workflow.version)
   })
 
   it('decouples legacy semantic badge expression from notification error token', () => {
@@ -167,5 +169,47 @@ describe('white-label.storage', () => {
     expect(loaded.layout.showNotifications).toBe(false)
     expect(loaded.layout.showUserAvatar).toBe(false)
     expect(loaded.layout.collapsible).toBe(false)
+  })
+
+  it('stores versioned payload and ignores unsupported future versions', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    saveCmsWhiteLabelSettings(settings)
+
+    const persisted = JSON.parse(window.localStorage.getItem(CMS_WHITE_LABEL_STORAGE_KEY) ?? '{}') as Record<string, unknown>
+    expect(persisted.version).toBe(2)
+    expect(persisted.settings && typeof persisted.settings === 'object').toBe(true)
+
+    window.localStorage.setItem(CMS_WHITE_LABEL_STORAGE_KEY, JSON.stringify({
+      version: 99,
+      settings,
+    }))
+
+    const loaded = loadCmsWhiteLabelSettings()
+    expect(loaded.branding.appName).toBe(createDefaultWhiteLabelSettings().branding.appName)
+    expect(loaded.governance.workflow.version).toBe(1)
+  })
+
+  it('normalizes malformed governance payload into safe values', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      governance: {
+        workflow: {
+          status: 'invalid-status',
+          version: -1,
+          publishedVersion: 999,
+          lastActionAt: '',
+          lastActionBy: '',
+          lastActionRole: 'invalid-role',
+        } as never,
+        revisions: [],
+        auditTrail: [],
+        maxAuditEntries: 0,
+      },
+    })
+
+    expect(normalized.governance.workflow.status).toBe('draft')
+    expect(normalized.governance.workflow.version).toBe(1)
+    expect(normalized.governance.workflow.publishedVersion).toBeNull()
+    expect(normalized.governance.revisions.length).toBeGreaterThanOrEqual(1)
+    expect(normalized.governance.maxAuditEntries).toBeGreaterThanOrEqual(20)
   })
 })

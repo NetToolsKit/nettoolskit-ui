@@ -8,6 +8,7 @@ import { semanticColors } from '../../src/config/colors/semantic.config'
 import { resolveAppShellTheme } from '../../src/components/layout/app-shell.theme'
 import { createCmsShellConfig } from './shell.config'
 import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './white-label.types'
+import { createDefaultWhiteLabelGovernance } from './white-label.workflow'
 
 /**
  * Storage key for the current tenant white-label settings payload.
@@ -82,6 +83,8 @@ function normalizeLegacyShellSurfaceContrast(theme: AppShellTheme): AppShellThem
 function createDefaultContentSettings(): CmsContentSettings {
   return {
     tabBrandingLabel: 'Branding',
+    tabTypographyLabel: 'Typography',
+    tabLayoutLabel: 'Layout',
     tabColorsLabel: 'Colors',
     tabMenuLabel: 'Sidebar Menu',
     tabTopbarLabel: 'Topbar',
@@ -171,6 +174,7 @@ export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
     navGroups: cloneValue(shell.navGroups),
     items: cloneValue(shell.items),
     toolbarActions: cloneValue(shell.toolbarActions),
+    governance: createDefaultWhiteLabelGovernance(),
   }
 }
 

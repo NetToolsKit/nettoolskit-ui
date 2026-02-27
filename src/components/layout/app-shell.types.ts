@@ -111,6 +111,7 @@ export interface AppShellTheme {
   searchBorder?: string
   searchBorderHover?: string
   focusColor?: string
+  actionBackground?: string
   actionHoverBackground?: string
   notificationBadgeColor?: string
   notificationBadgeTextColor?: string

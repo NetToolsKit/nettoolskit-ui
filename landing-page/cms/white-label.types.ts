@@ -52,6 +52,8 @@ export interface CmsLayoutSettings {
  */
 export interface CmsContentSettings {
   tabBrandingLabel: string
+  tabTypographyLabel: string
+  tabLayoutLabel: string
   tabColorsLabel: string
   tabMenuLabel: string
   tabTopbarLabel: string
@@ -96,6 +98,100 @@ export interface CmsPageSettings {
 }
 
 /**
+ * Supported actor roles for white-label governance workflow.
+ */
+export type CmsWhiteLabelActorRole =
+  | 'owner'
+  | 'admin'
+  | 'editor'
+  | 'reviewer'
+  | 'viewer'
+  | 'system'
+
+/**
+ * Allowed lifecycle statuses for white-label publication workflow.
+ */
+export type CmsWhiteLabelWorkflowStatus =
+  | 'draft'
+  | 'in_review'
+  | 'approved'
+  | 'published'
+
+/**
+ * Supported workflow actions for white-label governance transitions.
+ */
+export type CmsWhiteLabelWorkflowAction =
+  | 'save_draft'
+  | 'submit_review'
+  | 'approve'
+  | 'request_changes'
+  | 'publish'
+  | 'rollback'
+  | 'reset_defaults'
+  | 'import_settings'
+
+/**
+ * Actor metadata used in governance and audit operations.
+ */
+export interface CmsWhiteLabelActor {
+  id: string
+  role: CmsWhiteLabelActorRole
+  name?: string
+}
+
+/**
+ * Workflow runtime state persisted for white-label lifecycle control.
+ */
+export interface CmsWhiteLabelWorkflowState {
+  status: CmsWhiteLabelWorkflowStatus
+  version: number
+  publishedVersion: number | null
+  lastActionAt: string
+  lastActionBy: string
+  lastActionRole: CmsWhiteLabelActorRole
+}
+
+/**
+ * Lightweight revision metadata for version tracking per tenant.
+ */
+export interface CmsWhiteLabelRevision {
+  version: number
+  status: CmsWhiteLabelWorkflowStatus
+  action: CmsWhiteLabelWorkflowAction
+  at: string
+  by: string
+  byRole: CmsWhiteLabelActorRole
+  summary: string
+}
+
+/**
+ * Immutable audit row for governance events and compliance tracking.
+ */
+export interface CmsWhiteLabelAuditEntry {
+  id: string
+  action: CmsWhiteLabelWorkflowAction
+  actorId: string
+  actorRole: CmsWhiteLabelActorRole
+  at: string
+  fromStatus: CmsWhiteLabelWorkflowStatus
+  toStatus: CmsWhiteLabelWorkflowStatus
+  fromVersion: number
+  toVersion: number
+  summary: string
+  metadata?: Record<string, string>
+}
+
+/**
+ * Governance envelope that stores workflow, revisions and audit trail.
+ */
+export interface CmsWhiteLabelGovernance {
+  workflow: CmsWhiteLabelWorkflowState
+  revisions: CmsWhiteLabelRevision[]
+  auditTrail: CmsWhiteLabelAuditEntry[]
+  maxAuditEntries: number
+}
+
+/**
  * Aggregate white-label settings persisted per tenant profile.
  */
 export interface CmsWhiteLabelSettings {
@@ -109,6 +205,7 @@ export interface CmsWhiteLabelSettings {
   navGroups: AppShellGroup[]
   items: AppShellItem[]
   toolbarActions: AppShellAction[]
+  governance: CmsWhiteLabelGovernance
 }
 
 /**
