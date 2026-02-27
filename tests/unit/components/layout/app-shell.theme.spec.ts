@@ -36,4 +36,29 @@ describe('app-shell.theme typography resolution', () => {
     expect(resolvedTheme.radiusMd).toBe('12px')
     expect(resolvedTheme.spacingMd).toBe('1.2rem')
   })
+
+  it('uses page background as search background fallback', () => {
+    const resolvedTheme = resolveAppShellTheme(
+      {
+        pageBackground: '#f4f1ec',
+        searchBackground: '',
+      },
+      APP_SHELL_DEFAULT_THEME
+    )
+
+    expect(resolvedTheme.searchBackground).toBe('#f4f1ec')
+  })
+
+  it('keeps header action hover independent from sidebar item hover', () => {
+    const resolvedTheme = resolveAppShellTheme(
+      {
+        itemHoverBackground: '#223344',
+        actionHoverBackground: '#991111',
+      },
+      APP_SHELL_DEFAULT_THEME
+    )
+
+    expect(resolvedTheme.itemHoverBackground).toBe('#223344')
+    expect(resolvedTheme.actionHoverBackground).toBe('#991111')
+  })
 })

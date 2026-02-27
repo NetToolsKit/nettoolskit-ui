@@ -6,6 +6,8 @@ import { createCmsShellConfig } from './shell.config'
 import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './white-label.types'
 
 export const CMS_WHITE_LABEL_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
+const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
+const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 
 function cloneValue<T>(value: T): T {
   if (typeof structuredClone === 'function') {
@@ -36,6 +38,26 @@ function createDefaultWhiteLabelTheme(theme: AppShellTheme): AppShellTheme {
     },
     APP_SHELL_DEFAULT_THEME
   )
+}
+
+function normalizeLegacyShellSurfaceContrast(theme: AppShellTheme): AppShellTheme {
+  const pageBackground = String(theme.pageBackground ?? '').trim().toLowerCase()
+  const drawerBackground = String(theme.drawerBackground ?? '').trim().toLowerCase()
+  const searchBackground = String(theme.searchBackground ?? '').trim().toLowerCase()
+
+  const isLegacyPageToken = pageBackground === LEGACY_PAGE_BACKGROUND_TOKEN || pageBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
+  const isLegacyFlatSurface = isLegacyPageToken && pageBackground === drawerBackground
+  const isLegacySearchSurface = searchBackground.length === 0 || searchBackground === drawerBackground
+
+  if (!isLegacyFlatSurface || !isLegacySearchSurface) {
+    return theme
+  }
+
+  return {
+    ...theme,
+    pageBackground: APP_SHELL_DEFAULT_THEME.pageBackground,
+    searchBackground: APP_SHELL_DEFAULT_THEME.searchBackground,
+  }
 }
 
 function createDefaultContentSettings(): CmsContentSettings {
@@ -152,7 +174,9 @@ export function mapWhiteLabelToShellSnapshot(
     ? state.activeItem
     : fallbackActiveItem
 
-  const resolvedTheme = resolveAppShellTheme(settings.theme, APP_SHELL_DEFAULT_THEME)
+  const resolvedTheme = normalizeLegacyShellSurfaceContrast(
+    resolveAppShellTheme(settings.theme, APP_SHELL_DEFAULT_THEME)
+  )
   const toolbarActions = settings.toolbarActions.filter(action => {
     const normalizedId = String(action.id ?? '').trim().toLowerCase()
     const normalizedIcon = String(action.icon ?? '').trim().toLowerCase()

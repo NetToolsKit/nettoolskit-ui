@@ -54,6 +54,32 @@ describe('white-label.storage', () => {
     expect(normalized.theme.notificationBadgeColor).toBe('#123456')
   })
 
+  it('migrates legacy page/search backgrounds to secondary contrast tokens', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      theme: {
+        pageBackground: 'var(--ntk-bg-primary)',
+        drawerBackground: 'var(--ntk-bg-card)',
+        searchBackground: 'var(--ntk-bg-card)',
+      },
+    })
+
+    expect(normalized.theme.pageBackground).toBe('var(--ntk-bg-hover)')
+    expect(normalized.theme.searchBackground).toBe('var(--ntk-bg-hover)')
+  })
+
+  it('migrates legacy flat card/page token combination to secondary page background', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      theme: {
+        pageBackground: 'var(--ntk-bg-card)',
+        drawerBackground: 'var(--ntk-bg-card)',
+        searchBackground: 'var(--ntk-bg-card)',
+      },
+    })
+
+    expect(normalized.theme.pageBackground).toBe('var(--ntk-bg-hover)')
+    expect(normalized.theme.searchBackground).toBe('var(--ntk-bg-hover)')
+  })
+
   it('removes legacy CMS sidebar modules while keeping settings and custom modules', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       navGroups: [

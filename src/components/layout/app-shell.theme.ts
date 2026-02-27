@@ -24,6 +24,7 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
   const drawerBackground = pickThemeValue(sourceTheme.drawerBackground, baseTheme.drawerBackground)
   const headerTextColor = pickThemeValue(sourceTheme.headerTextColor, baseTheme.headerTextColor)
   const headerBackground = pickThemeValue(sourceTheme.headerBackground, baseTheme.headerBackground)
+  const pageBackground = pickThemeValue(sourceTheme.pageBackground, baseTheme.pageBackground)
   const pageTextColor = pickThemeValue(sourceTheme.pageTextColor, baseTheme.pageTextColor)
   const itemHoverBackground = pickThemeValue(sourceTheme.itemHoverBackground, baseTheme.itemHoverBackground)
   const dividerColor = pickThemeValue(sourceTheme.dividerColor, baseTheme.dividerColor)
@@ -85,7 +86,7 @@ export function resolveAppShellTheme(theme: AppShellTheme = {}, baseTheme: AppSh
     notificationErrorTextColor: pickThemeValue(sourceTheme.notificationErrorTextColor, notificationBadgeTextColor),
     notificationInfoTextColor: pickThemeValue(sourceTheme.notificationInfoTextColor, notificationBadgeTextColor),
     drawerFooterBackground: pickThemeValue(sourceTheme.drawerFooterBackground, drawerBackground),
-    searchBackground: pickThemeValue(sourceTheme.searchBackground, headerBackground, drawerBackground),
+    searchBackground: pickThemeValue(sourceTheme.searchBackground, pageBackground, headerBackground, drawerBackground),
     searchTextColor: pickThemeValue(sourceTheme.searchTextColor, pageTextColor, drawerTextColor),
   }
 }

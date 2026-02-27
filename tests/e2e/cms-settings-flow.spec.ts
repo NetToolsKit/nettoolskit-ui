@@ -3,23 +3,28 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
 const DEFAULT_TENANT_NAME = 'Default Tenant'
 const BLUE_TENANT_NAME = 'Blue Tenant'
+const HEADER_ACTIONS_HOVER_LABEL = 'Neutral background (page/actions)'
+const SEARCH_BACKGROUND_LABEL = 'Search background'
 
 interface NotificationPalette {
   badgeColor: string
   badgeTextColor: string
   bellIconColor: string
+  actionHoverColor: string
 }
 
 const defaultTenantPalette: NotificationPalette = {
   badgeColor: '#ef4444',
   badgeTextColor: '#ffffff',
   bellIconColor: '#64748b',
+  actionHoverColor: '#9f1414',
 }
 
 const blueTenantPalette: NotificationPalette = {
   badgeColor: '#2563eb',
   badgeTextColor: '#ffffff',
   bellIconColor: '#1d4ed8',
+  actionHoverColor: '#1d4ed8',
 }
 
 function hexToRgbRegex(hexColor: string): RegExp {
@@ -95,6 +100,7 @@ async function configureNotificationPalette(page: Page, palette: NotificationPal
   await fillTextInput(colorTokenInputByLabel(page, 'Notification badge color'), palette.badgeColor)
   await fillTextInput(colorTokenInputByLabel(page, 'Notification badge text color'), palette.badgeTextColor)
   await fillTextInput(colorTokenInputByLabel(page, 'Notification bell icon color'), palette.bellIconColor)
+  await fillTextInput(colorTokenInputByLabel(page, HEADER_ACTIONS_HOVER_LABEL), palette.actionHoverColor)
 }
 
 async function assertHeaderNotificationPalette(page: Page, palette: NotificationPalette): Promise<void> {
@@ -105,6 +111,22 @@ async function assertHeaderNotificationPalette(page: Page, palette: Notification
   await expect(notificationBadge).toHaveCSS('background-color', hexToRgbRegex(palette.badgeColor))
   await expect(notificationBadge).toHaveCSS('color', hexToRgbRegex(palette.badgeTextColor))
   await expect(notificationIcon).toHaveCSS('color', hexToRgbRegex(palette.bellIconColor))
+}
+
+async function assertActionHoverPalette(page: Page, palette: NotificationPalette): Promise<void> {
+  const expectedBackground = hexToRgbRegex(palette.actionHoverColor)
+
+  const headerNotificationAction = page.getByRole('button', { name: /notifications/i }).first()
+  await headerNotificationAction.hover()
+  await expect(headerNotificationAction).toHaveCSS('background-color', expectedBackground)
+
+  const headerPreviewAction = page.locator('.cms-preview-header__action').first()
+  await headerPreviewAction.hover()
+  await expect(headerPreviewAction).toHaveCSS('background-color', expectedBackground)
+
+  const notificationPreviewAction = page.locator('.cms-notification-actions-preview__action').first()
+  await notificationPreviewAction.hover()
+  await expect(notificationPreviewAction).toHaveCSS('background-color', expectedBackground)
 }
 
 async function expectTenantSnapshots(page: Page, snapshotId: string): Promise<void> {
@@ -129,8 +151,10 @@ test.describe('CMS settings white-label flow', () => {
 
     await openSettingsTab(page, /colors/i)
     await configureNotificationPalette(page, defaultTenantPalette)
+    await expect(colorTokenInputByLabel(page, SEARCH_BACKGROUND_LABEL)).not.toHaveValue(defaultTenantPalette.actionHoverColor)
     await page.getByRole('button', { name: /^Save settings$/i }).click()
     await assertHeaderNotificationPalette(page, defaultTenantPalette)
+    await assertActionHoverPalette(page, defaultTenantPalette)
     await expectTenantSnapshots(page, 'default-tenant')
 
     page.once('dialog', dialog => dialog.accept(BLUE_TENANT_NAME))
@@ -141,8 +165,10 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(cmsInputByLabel(page, 'Product name'), 'Blue Tenant CMS')
     await openSettingsTab(page, /colors/i)
     await configureNotificationPalette(page, blueTenantPalette)
+    await expect(colorTokenInputByLabel(page, SEARCH_BACKGROUND_LABEL)).not.toHaveValue(blueTenantPalette.actionHoverColor)
     await page.getByRole('button', { name: /^Save settings$/i }).click()
     await assertHeaderNotificationPalette(page, blueTenantPalette)
+    await assertActionHoverPalette(page, blueTenantPalette)
     await expectTenantSnapshots(page, 'blue-tenant')
 
     await selectTenantProfile(page, DEFAULT_TENANT_NAME)
@@ -151,7 +177,9 @@ test.describe('CMS settings white-label flow', () => {
     await expect(cmsInputByLabel(page, 'Product name')).toHaveValue('Default Tenant CMS')
     await openSettingsTab(page, /colors/i)
     await expect(colorTokenInputByLabel(page, 'Notification badge color')).toHaveValue(defaultTenantPalette.badgeColor)
+    await expect(colorTokenInputByLabel(page, HEADER_ACTIONS_HOVER_LABEL)).toHaveValue(defaultTenantPalette.actionHoverColor)
     await assertHeaderNotificationPalette(page, defaultTenantPalette)
+    await assertActionHoverPalette(page, defaultTenantPalette)
 
     await page.reload()
     await openSettingsModule(page)
@@ -164,7 +192,9 @@ test.describe('CMS settings white-label flow', () => {
     await expect(cmsInputByLabel(page, 'Product name')).toHaveValue('Blue Tenant CMS')
     await openSettingsTab(page, /colors/i)
     await expect(colorTokenInputByLabel(page, 'Notification badge color')).toHaveValue(blueTenantPalette.badgeColor)
+    await expect(colorTokenInputByLabel(page, HEADER_ACTIONS_HOVER_LABEL)).toHaveValue(blueTenantPalette.actionHoverColor)
     await assertHeaderNotificationPalette(page, blueTenantPalette)
+    await assertActionHoverPalette(page, blueTenantPalette)
 
     const persistedState = await page.evaluate((storageKey: string) => {
       const raw = window.localStorage.getItem(storageKey)
@@ -174,7 +204,7 @@ test.describe('CMS settings white-label flow', () => {
       return JSON.parse(raw) as {
         profiles: Array<{
           name: string
-          settings: { theme: { notificationBadgeColor: string } }
+          settings: { theme: { notificationBadgeColor: string; actionHoverBackground: string } }
         }>
       }
     }, CMS_TENANT_PROFILES_STORAGE_KEY)
@@ -185,8 +215,13 @@ test.describe('CMS settings white-label flow', () => {
     const paletteByTenant = Object.fromEntries(
       persistedState?.profiles.map(profile => [profile.name, profile.settings.theme.notificationBadgeColor]) ?? []
     ) as Record<string, string>
+    const actionHoverByTenant = Object.fromEntries(
+      persistedState?.profiles.map(profile => [profile.name, profile.settings.theme.actionHoverBackground]) ?? []
+    ) as Record<string, string>
 
     expect(paletteByTenant[DEFAULT_TENANT_NAME]).toBe(defaultTenantPalette.badgeColor)
     expect(paletteByTenant[BLUE_TENANT_NAME]).toBe(blueTenantPalette.badgeColor)
+    expect(actionHoverByTenant[DEFAULT_TENANT_NAME]).toBe(defaultTenantPalette.actionHoverColor)
+    expect(actionHoverByTenant[BLUE_TENANT_NAME]).toBe(blueTenantPalette.actionHoverColor)
   })
 })

@@ -78,4 +78,19 @@ describe('white-label.config', () => {
     ).toBe(true)
     expect(snapshot.shellConfig.activeItem).toBe(snapshot.filteredItems[0]?.id ?? '')
   })
+
+  it('normalizes legacy flat page/surface backgrounds in shell snapshot', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    settings.theme.pageBackground = 'var(--ntk-bg-card)'
+    settings.theme.drawerBackground = 'var(--ntk-bg-card)'
+    settings.theme.searchBackground = 'var(--ntk-bg-card)'
+
+    const snapshot = mapWhiteLabelToShellSnapshot(settings, {
+      activeItem: settings.items[0]?.id ?? '',
+      searchValue: '',
+    })
+
+    expect(snapshot.shellConfig.theme.pageBackground).toBe('var(--ntk-bg-hover)')
+    expect(snapshot.shellConfig.theme.searchBackground).toBe('var(--ntk-bg-hover)')
+  })
 })

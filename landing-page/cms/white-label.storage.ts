@@ -12,6 +12,8 @@ import {
 } from './theme-presets'
 
 const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'pages', 'blocks', 'media', 'users'])
+const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
+const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 
 /**
  * Provides persistence and normalization helpers for the CMS white-label settings payload.
@@ -63,6 +65,28 @@ function normalizeNotificationColors(theme: AppShellTheme): AppShellTheme {
   }
 
   return resolveAppShellTheme(nextTheme, APP_SHELL_DEFAULT_THEME)
+}
+
+function normalizeLegacySurfaceContrast(theme: AppShellTheme): AppShellTheme {
+  const normalizedPageBackground = String(theme.pageBackground ?? '').trim().toLowerCase()
+  const normalizedSearchBackground = String(theme.searchBackground ?? '').trim().toLowerCase()
+  const normalizedDrawerBackground = String(theme.drawerBackground ?? '').trim().toLowerCase()
+
+  const isLegacyPageBackground = normalizedPageBackground === LEGACY_PAGE_BACKGROUND_TOKEN
+    || normalizedPageBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
+  const isLegacySearchBackground = normalizedSearchBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
+    || normalizedSearchBackground.length === 0
+  const isLegacyDrawerBackground = normalizedDrawerBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
+
+  if (!isLegacyPageBackground || !isLegacySearchBackground || !isLegacyDrawerBackground) {
+    return theme
+  }
+
+  return {
+    ...theme,
+    pageBackground: APP_SHELL_DEFAULT_THEME.pageBackground,
+    searchBackground: APP_SHELL_DEFAULT_THEME.searchBackground,
+  }
 }
 
 function normalizeThemePresetOverrides(overrides: unknown): CmsWhiteLabelSettings['themePresetOverrides'] {
@@ -259,10 +283,10 @@ export function normalizeCmsWhiteLabelSettings(
   }
 
   const themePresetOverrides = normalizeThemePresetOverrides(parsed.themePresetOverrides)
-  const mergedTheme = normalizeNotificationColors({
+  const mergedTheme = normalizeLegacySurfaceContrast(normalizeNotificationColors({
     ...defaults.theme,
     ...(parsed.theme ?? {}),
-  })
+  }))
   const normalizedItems = normalizeMenuItems(parsed.items, defaults.items)
   const normalizedNavGroups = normalizeNavGroups(parsed.navGroups, defaults.navGroups, normalizedItems)
 

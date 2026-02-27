@@ -139,4 +139,21 @@ describe('NtkAppShell', () => {
     expect(badgeStyle).toMatch(/background-color:\s*(#ef4444|rgb\(\s*239,\s*68,\s*68\))/i)
     expect(badgeStyle).toMatch(/color:\s*(#111111|rgb\(\s*17,\s*17,\s*17\))/i)
   })
+
+  it('injects custom action hover token into shell style variables', () => {
+    const wrapper = mount(NtkAppShell, {
+      props: {
+        navGroups,
+        items,
+        theme: {
+          actionHoverBackground: '#9f1414',
+        },
+      },
+    })
+
+    const layout = wrapper.find('[data-stub="QLayout"]')
+    const style = layout.attributes('style')
+    expect(style).toContain('--ntk-shell-action-hover')
+    expect(style).toContain('#9f1414')
+  })
 })

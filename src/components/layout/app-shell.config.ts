@@ -4,6 +4,7 @@ import { resolveAppShellTheme } from './app-shell.theme'
 
 const APP_SHELL_COLOR_TOKENS = {
   white: 'var(--ntk-bg-card)',
+  secondarySurface: 'var(--ntk-bg-hover)',
   textInverse: 'var(--ntk-text-inverse)',
   neutral500: 'var(--ntk-text-secondary)',
   neutral600: 'var(--ntk-text-muted)',
@@ -69,7 +70,7 @@ const APP_SHELL_BASE_THEME: AppShellTheme = {
   drawerShadow: APP_SHELL_EFFECT_TOKENS.drawerShadow,
   drawerFooterBackground: APP_SHELL_COLOR_TOKENS.white,
   dividerColor: APP_SHELL_COLOR_TOKENS.neutral100,
-  searchBackground: APP_SHELL_COLOR_TOKENS.white,
+  searchBackground: APP_SHELL_COLOR_TOKENS.secondarySurface,
   searchTextColor: APP_SHELL_COLOR_TOKENS.neutral700,
   searchIconColor: APP_SHELL_COLOR_TOKENS.neutral600,
   searchBorder: APP_SHELL_EFFECT_TOKENS.searchBorder,
@@ -100,7 +101,7 @@ const APP_SHELL_BASE_THEME: AppShellTheme = {
   itemActiveBackground: APP_SHELL_EFFECT_TOKENS.itemActiveBackground,
   itemActiveColor: APP_SHELL_COLOR_TOKENS.accent,
   drawerFooterShadow: APP_SHELL_EFFECT_TOKENS.drawerFooterShadow,
-  pageBackground: 'var(--ntk-bg-primary)',
+  pageBackground: APP_SHELL_COLOR_TOKENS.secondarySurface,
   pageTextColor: APP_SHELL_COLOR_TOKENS.pageText,
 }
 

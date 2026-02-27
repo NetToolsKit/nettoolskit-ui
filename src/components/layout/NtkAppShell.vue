@@ -309,11 +309,15 @@
 
     <q-page-container class="ntk-app-shell__page-container">
       <q-page class="ntk-app-shell__page">
-        <slot
-          :active-item="activeItem"
-          :active-item-id="activeItemId"
-          :is-mini-mode="isMiniMode"
-        />
+        <div class="ntk-app-shell__workspace">
+          <div class="ntk-app-shell__workspace-card">
+            <slot
+              :active-item="activeItem"
+              :active-item-id="activeItemId"
+              :is-mini-mode="isMiniMode"
+            />
+          </div>
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -603,8 +607,8 @@ const notificationIconColor = computed(() => {
 })
 
 const notificationBadgeStyle = computed(() => ({
-  backgroundColor: notificationDefaultColor.value,
-  color: notificationDefaultTextColor.value,
+  backgroundColor: 'var(--ntk-shell-notification-badge-bg)',
+  color: 'var(--ntk-shell-notification-badge-text)',
 }))
 
 const notificationActionStyle = computed<Record<string, string>>(() => ({
@@ -674,6 +678,7 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-space-md': theme.spacingMd ?? '',
     '--ntk-shell-space-lg': theme.spacingLg ?? '',
     '--ntk-shell-transition-fast': theme.transitionFast ?? '',
+    '--ntk-shell-header-height': `${props.headerHeight}px`,
   }
 })
 
@@ -974,6 +979,22 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__menu-slot :deep(.q-btn) {
   color: var(--ntk-shell-toolbar-btn-color);
+  transition: all var(--ntk-shell-transition-fast);
+}
+
+.ntk-app-shell__menu-slot :deep(.q-btn:hover) {
+  background-color: var(--ntk-shell-action-hover) !important;
+  color: var(--ntk-shell-item-hover-color) !important;
+}
+
+.ntk-app-shell__menu-slot :deep(.q-btn:hover > .q-focus-helper) {
+  background: var(--ntk-shell-action-hover) !important;
+  opacity: 1 !important;
+}
+
+.ntk-app-shell__menu-slot :deep(.q-btn:hover > .q-focus-helper:before),
+.ntk-app-shell__menu-slot :deep(.q-btn:hover > .q-focus-helper:after) {
+  opacity: 0 !important;
 }
 
 .ntk-app-shell__title {
@@ -1052,9 +1073,24 @@ function toggleMenuMode(): void {
   transition: all var(--ntk-shell-transition-fast);
 }
 
+.ntk-app-shell__actions :deep(.q-btn:not(.q-btn--round)) {
+  border-radius: var(--ntk-shell-radius-sm);
+}
+
 .ntk-app-shell__actions :deep(.q-btn:hover) {
   transform: translateY(-2px);
-  background-color: var(--ntk-shell-action-hover);
+  background-color: var(--ntk-shell-action-hover) !important;
+  color: var(--ntk-shell-item-hover-color) !important;
+}
+
+.ntk-app-shell__actions :deep(.q-btn:hover > .q-focus-helper) {
+  background: var(--ntk-shell-action-hover) !important;
+  opacity: 1 !important;
+}
+
+.ntk-app-shell__actions :deep(.q-btn:hover > .q-focus-helper:before),
+.ntk-app-shell__actions :deep(.q-btn:hover > .q-focus-helper:after) {
+  opacity: 0 !important;
 }
 
 .ntk-app-shell__actions :deep(.q-badge) {
@@ -1156,6 +1192,16 @@ function toggleMenuMode(): void {
   text-decoration: none;
 }
 
+.ntk-app-shell__item:hover :deep(.q-focus-helper) {
+  background: var(--ntk-shell-item-hover) !important;
+  opacity: 0.9;
+}
+
+.ntk-app-shell__item:hover :deep(.q-focus-helper:before),
+.ntk-app-shell__item:hover :deep(.q-focus-helper:after) {
+  opacity: 0 !important;
+}
+
 .ntk-app-shell__item :deep(.q-icon) {
   color: var(--ntk-shell-item-icon);
   font-size: 22px;
@@ -1183,6 +1229,11 @@ function toggleMenuMode(): void {
   background: var(--ntk-shell-item-active-bg);
   color: var(--ntk-shell-item-active-color);
   border-left: 4px solid var(--ntk-shell-item-active-color);
+}
+
+.ntk-app-shell__item--active :deep(.q-focus-helper) {
+  background: var(--ntk-shell-item-active-bg) !important;
+  opacity: 0.95;
 }
 
 .ntk-app-shell__item--active :deep(.q-icon),
@@ -1217,6 +1268,10 @@ function toggleMenuMode(): void {
 .ntk-app-shell__page-container {
   background: var(--ntk-shell-page-bg);
   min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable both-edges;
 }
 
 .ntk-app-shell__page {
@@ -1224,6 +1279,22 @@ function toggleMenuMode(): void {
   font-size: var(--ntk-shell-font-size-base);
   font-weight: var(--ntk-shell-font-weight-regular);
   padding: var(--ntk-shell-space-lg);
+  min-height: calc(100vh - var(--ntk-shell-header-height));
+}
+
+.ntk-app-shell__workspace {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.ntk-app-shell__workspace-card {
+  border: 1px solid var(--ntk-shell-divider);
+  border-radius: var(--ntk-shell-radius-lg);
+  background: var(--ntk-shell-drawer-bg);
+  box-shadow: var(--ntk-shell-header-shadow);
+  padding: var(--ntk-shell-space-lg);
+  min-height: calc(100vh - var(--ntk-shell-header-height) - (var(--ntk-shell-space-lg) * 2));
 }
 
 :deep(.q-drawer--mini) .ntk-app-shell__item {
@@ -1251,6 +1322,15 @@ function toggleMenuMode(): void {
 @media (max-width: 500px) {
   .ntk-app-shell__search-wrapper {
     display: none;
+  }
+
+  .ntk-app-shell__page {
+    padding: var(--ntk-shell-space-md);
+  }
+
+  .ntk-app-shell__workspace-card {
+    padding: var(--ntk-shell-space-md);
+    min-height: calc(100vh - var(--ntk-shell-header-height) - (var(--ntk-shell-space-md) * 2));
   }
 }
 </style>

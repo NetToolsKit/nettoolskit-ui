@@ -344,6 +344,10 @@
                             <q-icon name="home" size="16px" />
                             <span>Landing</span>
                           </button>
+                          <button type="button" class="cms-notification-actions-preview__action cms-notification-actions-preview__action--forced-hover">
+                            <q-icon name="visibility" size="16px" />
+                            <span>Hover sample</span>
+                          </button>
                         </div>
                       </template>
 
@@ -814,6 +818,16 @@ interface ThemeFieldGroupDefinition {
   description: string
 }
 
+interface QuasarBrandOverrides {
+  primary: string
+  secondary: string
+  accent: string
+  positive: string
+  warning: string
+  negative: string
+  info: string
+}
+
 const defaultSettings = createDefaultWhiteLabelSettings()
 const defaultTheme = defaultSettings.theme
 const defaultMenuId = defaultSettings.items[0]?.id ?? ''
@@ -1090,7 +1104,7 @@ const colorFields: ThemeField[] = [
   {
     key: 'pageBackground',
     group: 'foundation',
-    label: 'Page background',
+    label: 'Page background (outside card)',
     placeholder: themePlaceholder('pageBackground'),
   },
   {
@@ -1104,7 +1118,7 @@ const colorFields: ThemeField[] = [
   {
     key: 'drawerBackground',
     group: 'foundation',
-    label: 'Surface background',
+    label: 'Surface background (card)',
     isColor: true,
     placeholder: themePlaceholder('drawerBackground'),
     aliases: ['drawerFooterBackground', 'searchBackground'],
@@ -1157,9 +1171,8 @@ const colorFields: ThemeField[] = [
   {
     key: 'itemHoverBackground',
     group: 'navigation',
-    label: 'Hover background',
+    label: 'Sidebar item hover background',
     placeholder: themePlaceholder('itemHoverBackground'),
-    aliases: ['actionHoverBackground'],
   },
   {
     key: 'itemHoverColor',
@@ -1261,7 +1274,7 @@ const colorFields: ThemeField[] = [
   {
     key: 'searchBackground',
     group: 'header',
-    label: 'Search background (override)',
+    label: 'Search background',
     isColor: true,
     placeholder: themePlaceholder('searchBackground'),
   },
@@ -1312,9 +1325,10 @@ const colorFields: ThemeField[] = [
   {
     key: 'actionHoverBackground',
     group: 'header',
-    label: 'Action hover background (override)',
+    label: 'Neutral background (page/actions)',
     isColor: true,
     placeholder: themePlaceholder('actionHoverBackground'),
+    aliases: ['pageBackground'],
   },
   {
     key: 'notificationSuccessColor',
@@ -1648,6 +1662,31 @@ const semanticNotificationOverrides = computed(() => ({
   negative: notificationErrorColor.value,
 }))
 
+const quasarBrandOverrides = computed<QuasarBrandOverrides>(() => ({
+  primary: accentColor.value || defaultTheme.itemActiveColor || 'var(--ntk-primary)',
+  secondary: accentTextColor.value || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || 'var(--ntk-secondary)',
+  accent: accentColor.value || defaultTheme.itemActiveColor || 'var(--ntk-primary)',
+  positive: notificationSuccessColor.value,
+  warning: notificationWarningColor.value,
+  negative: notificationErrorColor.value,
+  info: notificationInfoColor.value,
+}))
+
+function applyQuasarBrandOverrides(brand: QuasarBrandOverrides): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const root = document.documentElement
+  root.style.setProperty('--q-primary', brand.primary)
+  root.style.setProperty('--q-secondary', brand.secondary)
+  root.style.setProperty('--q-accent', brand.accent)
+  root.style.setProperty('--q-positive', brand.positive)
+  root.style.setProperty('--q-warning', brand.warning)
+  root.style.setProperty('--q-negative', brand.negative)
+  root.style.setProperty('--q-info', brand.info)
+}
+
 const groupOptions = computed(() => {
   return settings.value.navGroups.map(group => ({
     label: group.label,
@@ -1763,6 +1802,14 @@ watch(
   semanticNotificationOverrides,
   value => {
     applySemanticColors(value)
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  quasarBrandOverrides,
+  value => {
+    applyQuasarBrandOverrides(value)
   },
   { immediate: true, deep: true }
 )
@@ -2361,17 +2408,14 @@ function resetToDefaults(): void {
   gap: 1rem;
   font-family: var(--ntk-cms-font-family);
   font-style: var(--ntk-cms-font-style-base);
+  min-width: 0;
 }
 
 .cms-shell-page__workspace {
-  border: 1px solid var(--ntk-cms-border-color);
-  border-radius: 16px;
-  background: var(--ntk-cms-bg-card);
-  box-shadow: var(--ntk-cms-header-shadow);
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 0;
 }
 
 .cms-shell-page__hero h1 {
@@ -2752,6 +2796,11 @@ function resetToDefaults(): void {
 }
 
 .cms-notification-actions-preview__action:hover {
+  background: var(--ntk-cms-action-hover);
+  color: var(--ntk-cms-item-hover-color);
+}
+
+.cms-notification-actions-preview__action--forced-hover {
   background: var(--ntk-cms-action-hover);
   color: var(--ntk-cms-item-hover-color);
 }
