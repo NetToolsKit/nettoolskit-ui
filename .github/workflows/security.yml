@@ -1,4 +1,4 @@
-name: CI Tests
+name: Security Analysis
 
 env:
   SHARED_AUTOMATION_REPO: ThiagoGuislotti/copilot-instructions
@@ -10,19 +10,65 @@ on:
     branches:
       - main
       - master
-      - develop
-      - 'feature/**'
   pull_request:
     branches:
-      - '*'
+      - main
+      - master
+  schedule:
+    - cron: "30 6 * * 1"
+
+permissions:
+  contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: security-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  quality:
-    name: Lint + Type-check + Unit
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
+
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: always
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+
+  vulnerability-audit:
+    name: Vulnerability Audit (Security Gate)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -48,87 +94,22 @@ jobs:
           curl -fsSL "${base_url}/scripts/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1"
           curl -fsSL "${base_url}/scripts/security/Invoke-PreBuildSecurityGate.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-PreBuildSecurityGate.ps1"
 
-      - name: Security audit (vulnerability gate)
+      - name: Run security gate
         shell: pwsh
         run: |
           & "${env:SHARED_SCRIPTS_DIR}/security/Invoke-PreBuildSecurityGate.ps1" `
             -RepoRoot "${{ github.workspace }}" `
             -SkipDotnet `
             -SkipRust `
-            -WarningOnly `
             -FailOnSeverities Critical,High `
             -FrontendPackageManager npm `
             -DetailedLogs
-        continue-on-error: true
 
       - name: Upload vulnerability reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vulnerability-audit-ci
+          name: vulnerability-audit-security
           path: .temp/vulnerability-audit/
           if-no-files-found: ignore
-          retention-days: 14
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Type-check
-        run: npm run type-check
-
-      - name: Unit tests
-        run: npm test
-
-  build:
-    name: Build Verification
-    runs-on: ubuntu-latest
-    needs: quality
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build library (CJS + ESM + declarations)
-        run: npm run build
-
-      - name: Verify dist output exists
-        run: |
-          test -f .build/dist/index.cjs || (echo "Missing CJS output" && exit 1)
-          test -f .build/dist/index.mjs || (echo "Missing ESM output" && exit 1)
-          test -f .build/dist/index.d.ts || (echo "Missing type declarations" && exit 1)
-          echo "All expected outputs present"
-
-  e2e:
-    name: E2E (Playwright)
-    runs-on: ubuntu-latest
-    needs: quality
-    timeout-minutes: 15
-    env:
-      CI: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-
-      - name: E2E tests
-        run: npm run test:e2e -- --project=chromium
+          retention-days: 30
