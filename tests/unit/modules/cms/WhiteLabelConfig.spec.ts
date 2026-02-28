@@ -7,7 +7,7 @@ import { APP_SHELL_DEFAULT_THEME } from '../../../../src/components/layout/app-s
 import {
   createDefaultWhiteLabelSettings,
   mapWhiteLabelToShellSnapshot,
-} from '../../../../landing-page/cms/white-label.config'
+} from '../../../../src/modules/cms/white-label/config'
 
 describe('white-label.config', () => {
   it('keeps theme keys aligned with AppShell default theme', () => {

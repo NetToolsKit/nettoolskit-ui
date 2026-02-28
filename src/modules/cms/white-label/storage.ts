@@ -2,19 +2,19 @@
  * CMS white-label persistence and migration helpers.
  * This module loads/saves tenant settings and normalizes legacy payloads.
  */
-import { CMS_WHITE_LABEL_STORAGE_KEY, createDefaultWhiteLabelSettings } from './white-label.config'
-import type { CmsPageSettings, CmsWhiteLabelSettings } from './white-label.types'
-import { semanticColors } from '../../src/config/colors/semantic.config'
-import type { AppShellGroup, AppShellItem, AppShellTheme } from '../../src/components/layout/app-shell.types'
-import { APP_SHELL_DEFAULT_THEME } from '../../src/components/layout/app-shell.config'
-import { resolveAppShellTheme } from '../../src/components/layout/app-shell.theme'
+import { CMS_WHITE_LABEL_STORAGE_KEY, createDefaultWhiteLabelSettings } from './config'
+import type { CmsPageSettings, CmsWhiteLabelSettings } from './types'
+import { semanticColors } from '../../../config/colors/semantic.config'
+import type { AppShellGroup, AppShellItem, AppShellTheme } from '../../../components/layout/app-shell.types'
+import { APP_SHELL_DEFAULT_THEME } from '../../../components/layout/app-shell.config'
+import { resolveAppShellTheme } from '../../../components/layout/app-shell.theme'
 import {
   buildCmsThemePresets,
   detectCmsThemePresetId,
   isCmsThemeBasePresetId,
   isCmsThemePresetId,
 } from './theme-presets'
-import { normalizeWhiteLabelGovernance } from './white-label.workflow'
+import { normalizeWhiteLabelGovernance } from './workflow'
 
 const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'pages', 'blocks', 'media', 'users'])
 const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'

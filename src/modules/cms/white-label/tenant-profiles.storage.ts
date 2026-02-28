@@ -2,9 +2,9 @@
  * Tenant profile persistence helpers for CMS white-label configuration.
  * Stores multiple tenant snapshots and keeps an active profile reference.
  */
-import { createDefaultWhiteLabelSettings } from './white-label.config'
-import { loadCmsWhiteLabelSettings, normalizeCmsWhiteLabelSettings } from './white-label.storage'
-import type { CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } from './white-label.types'
+import { createDefaultWhiteLabelSettings } from './config'
+import { loadCmsWhiteLabelSettings, normalizeCmsWhiteLabelSettings } from './storage'
+import type { CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } from './types'
 
 /**
  * Storage key that persists all tenant profiles for CMS white-label settings.

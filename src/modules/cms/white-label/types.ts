@@ -7,7 +7,7 @@ import type {
   AppShellGroup,
   AppShellItem,
   AppShellTheme,
-} from '../../src/components/layout/app-shell.types'
+} from '../../../components/layout/app-shell.types'
 import type { CmsThemeBasePresetId, CmsThemePresetId } from './theme-presets'
 
 /**

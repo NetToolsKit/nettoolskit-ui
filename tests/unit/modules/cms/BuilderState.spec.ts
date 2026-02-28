@@ -12,7 +12,7 @@ import {
   moveCmsBuilderBlock,
   removeCmsBuilderBlock,
   selectCmsBuilderNode,
-} from '../../../../landing-page/cms/builder.state'
+} from '../../../../src/modules/cms/white-label/builder.state'
 
 describe('builder.state', () => {
   it('creates an editable state with first section/block selected', () => {

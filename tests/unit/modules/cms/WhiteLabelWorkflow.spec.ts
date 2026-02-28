@@ -9,7 +9,7 @@ import {
   createDefaultWhiteLabelGovernance,
   getAllowedWhiteLabelWorkflowActions,
   normalizeWhiteLabelGovernance,
-} from '../../../../landing-page/cms/white-label.workflow'
+} from '../../../../src/modules/cms/white-label/workflow'
 
 describe('white-label.workflow', () => {
   it('creates default governance envelope with draft status and seed revision', () => {

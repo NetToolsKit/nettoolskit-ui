@@ -1,7 +1,7 @@
 /**
  * Tenant profile import/export payload helpers used by CMS white-label settings.
  */
-import type { CmsWhiteLabelSettings } from './white-label.types'
+import type { CmsWhiteLabelSettings } from './types'
 
 /**
  * Known payload kind for tenant profile import/export files.

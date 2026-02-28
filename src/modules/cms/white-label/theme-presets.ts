@@ -1,11 +1,11 @@
 /**
  * Theme preset catalog and detection helpers used by CMS white-label settings.
  */
-import type { AppShellTheme } from '../../src/components/layout/app-shell.types'
-import type { ThemeColorPalette } from '../../src/config/colors/theme-mode.config'
-import { themeColors } from '../../src/config/colors/theme-mode.config'
-import type { ThemeConfig } from '../../src/config/theme/theme.config'
-import { themes } from '../../src/config/theme/theme.config'
+import type { AppShellTheme } from '../../../components/layout/app-shell.types'
+import type { ThemeColorPalette } from '../../../config/colors/theme-mode.config'
+import { themeColors } from '../../../config/colors/theme-mode.config'
+import type { ThemeConfig } from '../../../config/theme/theme.config'
+import { themes } from '../../../config/theme/theme.config'
 
 /**
  * Complete list of preset ids accepted by CMS theme selectors.

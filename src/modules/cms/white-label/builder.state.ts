@@ -3,8 +3,8 @@
  * Provides immutable operations over page schema, block palette and selection.
  */
 
-import type { CmsBlockNode, CmsPageSchema, CmsSectionNode } from '../../src/modules/cms'
-import type { CmsBlockRegistry } from '../../src/modules/cms'
+import type { CmsBlockNode, CmsPageSchema, CmsSectionNode } from '..'
+import type { CmsBlockRegistry } from '..'
 
 export type CmsBuilderMoveDirection = 'up' | 'down'
 

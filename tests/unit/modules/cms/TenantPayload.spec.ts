@@ -3,13 +3,13 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { createDefaultWhiteLabelSettings } from '../../../../landing-page/cms/white-label.config'
+import { createDefaultWhiteLabelSettings } from '../../../../src/modules/cms/white-label/config'
 import {
   CMS_TENANT_PROFILE_PAYLOAD_KIND,
   CMS_TENANT_PROFILE_PAYLOAD_VERSION,
   createCmsTenantExportPayload,
   parseCmsTenantImportPayload,
-} from '../../../../landing-page/cms/tenant-payload'
+} from '../../../../src/modules/cms/white-label/tenant-payload'
 
 describe('tenant-payload', () => {
   it('creates versioned export payload with kind and profile envelope', () => {

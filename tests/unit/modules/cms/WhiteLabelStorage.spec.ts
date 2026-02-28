@@ -7,11 +7,11 @@ import {
   loadCmsWhiteLabelSettings,
   normalizeCmsWhiteLabelSettings,
   saveCmsWhiteLabelSettings,
-} from '../../../../landing-page/cms/white-label.storage'
+} from '../../../../src/modules/cms/white-label/storage'
 import {
   CMS_WHITE_LABEL_STORAGE_KEY,
   createDefaultWhiteLabelSettings,
-} from '../../../../landing-page/cms/white-label.config'
+} from '../../../../src/modules/cms/white-label/config'
 
 describe('white-label.storage', () => {
   beforeEach(() => {

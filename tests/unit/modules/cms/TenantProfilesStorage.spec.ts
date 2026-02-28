@@ -12,9 +12,9 @@ import {
   removeCmsTenantProfile,
   saveCmsTenantProfilesState,
   upsertCmsTenantProfile,
-} from '../../../../landing-page/cms/tenant-profiles.storage'
-import { createDefaultWhiteLabelSettings } from '../../../../landing-page/cms/white-label.config'
-import { applyWhiteLabelWorkflowAction } from '../../../../landing-page/cms/white-label.workflow'
+} from '../../../../src/modules/cms/white-label/tenant-profiles.storage'
+import { createDefaultWhiteLabelSettings } from '../../../../src/modules/cms/white-label/config'
+import { applyWhiteLabelWorkflowAction } from '../../../../src/modules/cms/white-label/workflow'
 
 /**
  * Handles install memory local storage.

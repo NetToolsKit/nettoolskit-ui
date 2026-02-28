@@ -35,7 +35,7 @@ function extractUniqueMatches(source: string, pattern: RegExp): string[] {
 }
 
 const appShellTypesSource = readRepoFile('../../../../src/components/layout/app-shell.types.ts')
-const cmsTypesSource = readRepoFile('../../../../landing-page/cms/white-label.types.ts')
+const cmsTypesSource = readRepoFile('../../../../src/modules/cms/white-label/types.ts')
 const cmsAppSource = readRepoFile('../../../../landing-page/CmsApp.vue')
 
 describe('CMS white-label configuration coverage', () => {

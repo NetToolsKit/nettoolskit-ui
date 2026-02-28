@@ -11,7 +11,7 @@ import {
   detectCmsThemePresetId,
   isCmsThemeBasePresetId,
   isCmsThemePresetId,
-} from '../../../../landing-page/cms/theme-presets'
+} from '../../../../src/modules/cms/white-label/theme-presets'
 
 describe('theme-presets', () => {
   it('validates preset id helpers for known and unknown values', () => {

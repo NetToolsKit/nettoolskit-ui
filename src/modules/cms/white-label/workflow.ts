@@ -9,7 +9,7 @@ import type {
   CmsWhiteLabelRevision,
   CmsWhiteLabelWorkflowAction,
   CmsWhiteLabelWorkflowStatus,
-} from './white-label.types'
+} from './types'
 
 /**
  * Default max number of audit entries retained per tenant profile.

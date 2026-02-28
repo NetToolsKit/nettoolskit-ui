@@ -1,14 +1,17 @@
 /**
  * CMS white-label configuration builders.
  * This module defines default settings and maps them into the app shell snapshot.
+ *
+ * Consumers can inject a custom {@link AppShellConfig} seed via the optional
+ * parameter in {@link createDefaultWhiteLabelSettings} to provide branded
+ * defaults. When omitted, a minimal library-level default is used.
  */
-import { APP_SHELL_DEFAULT_THEME, createAppShellConfig } from '../../src/components/layout/app-shell.config'
-import type { AppShellConfig, AppShellItem, AppShellTheme } from '../../src/components/layout/app-shell.types'
-import { semanticColors } from '../../src/config/colors/semantic.config'
-import { resolveAppShellTheme } from '../../src/components/layout/app-shell.theme'
-import { createCmsShellConfig } from './shell.config'
-import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './white-label.types'
-import { createDefaultWhiteLabelGovernance } from './white-label.workflow'
+import { APP_SHELL_DEFAULT_THEME, createAppShellConfig } from '../../../components/layout/app-shell.config'
+import type { AppShellConfig, AppShellItem, AppShellTheme } from '../../../components/layout/app-shell.types'
+import { semanticColors } from '../../../config/colors/semantic.config'
+import { resolveAppShellTheme } from '../../../components/layout/app-shell.theme'
+import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './types'
+import { createDefaultWhiteLabelGovernance } from './workflow'
 
 /**
  * Storage key for the current tenant white-label settings payload.
@@ -25,6 +28,49 @@ function cloneValue<T>(value: T): T {
     return structuredClone(value)
   }
   return JSON.parse(JSON.stringify(value)) as T
+}
+
+/**
+ * Builds a minimal library-level shell configuration seed.
+ * This provides sensible structural defaults without imposing any specific branding.
+ */
+function createDefaultShellConfig(): AppShellConfig {
+  return createAppShellConfig({
+    appName: 'White-Label App',
+    appSubtitle: 'CMS Workspace',
+    navGroups: [{ id: 'configuration', label: 'Configuration' }],
+    items: [
+      {
+        id: 'settings',
+        group: 'configuration',
+        label: 'Settings',
+        icon: 'settings',
+        caption: 'White-label',
+        description: 'Theme tokens, branding and tenant configuration.',
+      },
+    ],
+    toolbarActions: [
+      {
+        id: 'notifications',
+        icon: 'notifications',
+        tooltip: 'Notifications',
+        flat: true,
+        dense: true,
+        round: true,
+        badge: 0,
+      },
+      {
+        id: 'account',
+        icon: 'account_circle',
+        tooltip: 'Account',
+        flat: true,
+        dense: true,
+        round: true,
+      },
+    ],
+    activeItem: 'settings',
+    searchPlaceholder: 'Search module',
+  })
 }
 
 /**
@@ -131,10 +177,14 @@ function createDefaultPagesSettings(): CmsPageSettings[] {
 }
 
 /**
- * Builds the complete default white-label settings object used by CMS.
+ * Builds the complete default white-label settings object.
+ *
+ * @param shellConfig - Optional branded shell seed. When omitted, a minimal
+ *   library-level default is used. Consumers (e.g. demo apps) can inject their
+ *   own branded shell config to customize the initial settings.
  */
-export function createDefaultWhiteLabelSettings(): CmsWhiteLabelSettings {
-  const shell = createCmsShellConfig()
+export function createDefaultWhiteLabelSettings(shellConfig?: AppShellConfig): CmsWhiteLabelSettings {
+  const shell = shellConfig ?? createDefaultShellConfig()
 
   return {
     branding: {

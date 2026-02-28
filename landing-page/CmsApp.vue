@@ -15,8 +15,15 @@
         </div>
 
         <div v-if="isSettingsModule" class="cms-settings">
-          <div class="cms-settings__toolbar">
-            <div class="cms-settings__tenant-controls">
+          <!-- ── Admin Card ───────────────────────────────────────── -->
+          <div class="cms-settings__admin">
+          <!-- ── Tenant Card ──────────────────────────────────────── -->
+          <div class="cms-toolbar-card">
+            <div class="cms-toolbar-card__header">
+              <q-icon name="business" size="18px" class="cms-toolbar-card__icon" />
+              <span class="cms-toolbar-card__title">Tenant Profile</span>
+            </div>
+            <div class="cms-toolbar-card__body">
               <q-select
                 :model-value="activeTenantProfileId"
                 outlined
@@ -26,30 +33,44 @@
                 :options="tenantProfileOptions"
                 label="Tenant profile"
                 aria-label="Tenant profile selector"
-                class="cms-settings__tenant-select"
+                class="cms-toolbar-card__select"
                 @update:model-value="onTenantProfileChange"
               />
-              <q-btn flat dense no-caps icon="add" label="New tenant" aria-label="Create tenant profile" @click="createTenantProfileFromPrompt" />
-              <q-btn
-                flat
-                dense
-                no-caps
-                icon="delete"
-                label="Delete tenant"
-                aria-label="Delete active tenant profile"
-                :disable="tenantProfilesState.profiles.length <= 1"
-                :style="dangerActionStyle"
-                @click="removeActiveTenantProfile"
-              />
-              <q-btn flat dense no-caps icon="download" label="Export JSON" aria-label="Export active tenant as JSON" @click="exportActiveTenantProfile" />
-              <q-btn flat dense no-caps icon="upload_file" label="Import JSON" aria-label="Import tenant settings from JSON" @click="openTenantImportDialog" />
+              <div class="cms-toolbar-card__actions">
+                <q-btn flat dense no-caps icon="add" label="New" aria-label="Create tenant profile" @click="createTenantProfileFromPrompt" />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="delete"
+                  label="Delete"
+                  aria-label="Delete active tenant profile"
+                  :disable="tenantProfilesState.profiles.length <= 1"
+                  :style="dangerActionStyle"
+                  @click="removeActiveTenantProfile"
+                />
+              </div>
             </div>
+          </div>
 
-            <div class="cms-settings__actions">
-              <q-btn no-caps unelevated icon="save" label="Save settings" aria-label="Save tenant settings" :style="primaryActionStyle" @click="saveNow" />
-              <q-btn flat no-caps icon="restart_alt" label="Reset defaults" aria-label="Reset tenant settings to defaults" :style="dangerActionStyle" @click="resetToDefaults" />
+          <!-- ── Actions Card ─────────────────────────────────────── -->
+          <div class="cms-toolbar-card">
+            <div class="cms-toolbar-card__header">
+              <q-icon name="tune" size="18px" class="cms-toolbar-card__icon" />
+              <span class="cms-toolbar-card__title">Actions</span>
+              <span class="cms-toolbar-card__saved-at" role="status" aria-live="polite" aria-atomic="true">{{ savedAtLabel }}</span>
             </div>
-            <span class="cms-settings__saved-at" role="status" aria-live="polite" aria-atomic="true">{{ savedAtLabel }}</span>
+            <div class="cms-toolbar-card__body">
+              <div class="cms-toolbar-card__actions">
+                <q-btn no-caps unelevated icon="save" label="Save" aria-label="Save tenant settings" :style="primaryActionStyle" @click="saveNow" />
+                <q-btn flat no-caps icon="restart_alt" label="Reset" aria-label="Reset tenant settings to defaults" :style="dangerActionStyle" @click="resetToDefaults" />
+              </div>
+              <q-separator vertical inset class="cms-toolbar-card__separator" />
+              <div class="cms-toolbar-card__actions">
+                <q-btn flat dense no-caps icon="download" label="Export" aria-label="Export active tenant as JSON" @click="exportActiveTenantProfile" />
+                <q-btn flat dense no-caps icon="upload_file" label="Import" aria-label="Import tenant settings from JSON" @click="openTenantImportDialog" />
+              </div>
+            </div>
           </div>
           <input
             ref="tenantImportInputRef"
@@ -59,7 +80,10 @@
             class="cms-file-input"
             @change="onTenantImportFileChange"
           >
+          </div>
 
+          <!-- ── Editor Card ──────────────────────────────────────── -->
+          <div class="cms-settings__editor">
           <q-tabs v-model="activeSettingsTab" dense inline-label class="cms-settings__tabs" aria-label="CMS settings sections">
             <q-tab name="branding" icon="branding_watermark" :label="settings.content.tabBrandingLabel" :aria-label="settings.content.tabBrandingLabel" />
             <q-tab name="typography" icon="text_fields" :label="settings.content.tabTypographyLabel" :aria-label="settings.content.tabTypographyLabel" />
@@ -82,6 +106,7 @@
                     <q-input v-model="settings.branding.faviconUrl" outlined dense label="Favicon URL" />
                     <q-input v-model="settings.branding.userAvatar" outlined dense label="User avatar URL" />
                     <q-input v-model="settings.branding.userTooltip" outlined dense label="User tooltip" />
+                    <q-input v-model="settings.branding.notificationsTooltip" outlined dense label="Notifications tooltip" />
                     <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" label="Notification count" />
                   </div>
 
@@ -117,7 +142,8 @@
                             <small>{{ settings.branding.userTooltip }}</small>
                           </div>
                         </div>
-                        <q-chip dense square icon="notifications" :style="statusChipStyle">
+                        <q-chip dense square icon="notifications" :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
+                          <q-tooltip v-if="settings.branding.notificationsTooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
                           {{ settings.branding.notificationCount }}
                         </q-chip>
                       </div>
@@ -685,6 +711,7 @@
               </div>
             </q-tab-panel>
           </q-tab-panels>
+          </div>
         </div>
 
         <div v-else-if="isPagesModule" class="cms-pages">
@@ -861,29 +888,29 @@ import {
   createDefaultWhiteLabelSettings,
   createNewMenuItem,
   mapWhiteLabelToShellSnapshot,
-} from './cms/white-label.config'
+} from '../src/modules/cms/white-label/config'
 import {
   applyCmsFavicon,
   loadCmsWhiteLabelSettings,
   normalizeCmsWhiteLabelSettings,
   resetCmsWhiteLabelSettings,
   saveCmsWhiteLabelSettings,
-} from './cms/white-label.storage'
+} from '../src/modules/cms/white-label/storage'
 import {
   createTenantProfileId,
   loadCmsTenantProfilesState,
   removeCmsTenantProfile,
   saveCmsTenantProfilesState,
   upsertCmsTenantProfile,
-} from './cms/tenant-profiles.storage'
+} from '../src/modules/cms/white-label/tenant-profiles.storage'
 import {
   createCmsTenantExportPayload,
   parseCmsTenantImportPayload,
-} from './cms/tenant-payload'
+} from '../src/modules/cms/white-label/tenant-payload'
 import {
   applyWhiteLabelWorkflowAction,
   canApplyWhiteLabelWorkflowAction,
-} from './cms/white-label.workflow'
+} from '../src/modules/cms/white-label/workflow'
 import { applySemanticColors, semanticColors } from '../src/config/colors/semantic.config'
 import {
   buildCmsThemePresets,
@@ -893,7 +920,7 @@ import {
   type CmsThemeBasePresetId,
   type CmsThemePreset,
   type CmsThemePresetId,
-} from './cms/theme-presets'
+} from '../src/modules/cms/white-label/theme-presets'
 import type {
   CmsPageSettings,
   CmsTenantProfile,
@@ -901,7 +928,7 @@ import type {
   CmsWhiteLabelActor,
   CmsWhiteLabelWorkflowAction,
   CmsWhiteLabelSettings,
-} from './cms/white-label.types'
+} from '../src/modules/cms/white-label/types'
 
 type ThemeFieldKey = keyof ReturnType<typeof createDefaultWhiteLabelSettings>['theme']
 type ThemeFieldGroup = 'foundation' | 'typography' | 'layout' | 'navigation' | 'header' | 'notifications'
@@ -3033,6 +3060,13 @@ function resetToDefaults(): void {
 }
 
 .cms-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-lg);
+}
+
+/* ── Admin Card (Tenant + Actions) ─────────────────── */
+.cms-settings__admin {
   border: 1px solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
@@ -3042,36 +3076,77 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
 }
 
-.cms-settings__toolbar {
+/* ── Editor Card (Tabs + Panels) ───────────────────── */
+.cms-settings__editor {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-lg);
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: var(--ntk-cms-space-md);
+}
+
+/* ── Toolbar Cards (Tenant + Actions) ───────────────── */
+.cms-toolbar-card {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  overflow: hidden;
+}
+
+.cms-toolbar-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  border-bottom: 1px solid var(--ntk-cms-border-color);
+  background: color-mix(in srgb, var(--ntk-cms-border-color) 15%, transparent);
+}
+
+.cms-toolbar-card__icon {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-toolbar-card__title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ntk-cms-text-secondary);
+  user-select: none;
+}
+
+.cms-toolbar-card__saved-at {
+  margin-left: auto;
+  font-size: var(--ntk-cms-font-size-item-label);
+  color: var(--ntk-cms-text-secondary);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.cms-toolbar-card__body {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-md);
+  padding: var(--ntk-cms-space-md);
   flex-wrap: wrap;
 }
 
-.cms-settings__tenant-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ntk-cms-space-sm);
-  flex-wrap: wrap;
+.cms-toolbar-card__select {
+  min-width: var(--ntk-cms-preview-search-width);
   flex: 1 1 auto;
 }
 
-.cms-settings__tenant-select {
-  min-width: var(--ntk-cms-preview-search-width);
-}
-
-.cms-settings__actions {
+.cms-toolbar-card__actions {
   display: inline-flex;
   align-items: center;
-  gap: var(--ntk-cms-space-sm);
+  gap: var(--ntk-cms-space-xs);
 }
 
-.cms-settings__saved-at {
-  margin-left: 0;
-  flex-basis: 100%;
-  font-size: var(--ntk-cms-font-size-item-label);
-  color: var(--ntk-cms-text-secondary);
+.cms-toolbar-card__separator {
+  align-self: stretch;
+  opacity: 0.35;
 }
 
 .cms-file-input {
@@ -3955,13 +4030,19 @@ function resetToDefaults(): void {
     padding: var(--ntk-cms-space-md);
   }
 
-  .cms-settings__toolbar {
-    flex-wrap: wrap;
+  .cms-toolbar-card__body {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .cms-settings__saved-at {
-    margin-left: 0;
+  .cms-toolbar-card__separator {
+    display: none;
+  }
+
+  .cms-toolbar-card__saved-at {
     width: 100%;
+    margin-left: 0;
+    text-align: center;
   }
 
   .cms-preview-brand__meta {

@@ -7,7 +7,7 @@ import { APP_SHELL_DEFAULT_THEME } from '../../../../src/components/layout/app-s
 import {
   createDefaultWhiteLabelSettings,
   mapWhiteLabelToShellSnapshot,
-} from '../../../../landing-page/cms/white-label.config'
+} from '../../../../src/modules/cms/white-label/config'
 
 const TYPOGRAPHY_LAYOUT_TOKEN_PATTERN = /^(font|lineHeight|letterSpacing|spacing|radius)|^(searchWidth|searchControlHeight|menuSlotWidth|brandLogoSize|itemIconSize|workspaceMaxWidth|itemMinHeight|itemHoverTranslateX|groupCaption|drawerHeader|drawerScroll|miniItem)/i
 
