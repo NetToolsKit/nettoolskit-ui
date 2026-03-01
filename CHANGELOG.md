@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-03-01
+
+### Added
+
+- **Structured block props editor in CMS Blocks module**
+  - Dynamic field catalog for landing blocks (`header`, `hero`, `stats`, `features`, `cta`, `footer`)
+  - Field-level editing for `text`, `textarea`, `number`, `toggle`, `select`, and `json`
+  - Bidirectional sync between structured fields and raw `Block props JSON`
+- **Regression tests for CMS Blocks flow**
+  - E2E coverage for `Pages -> Blocks` navigation and structured/JSON props synchronization
+  - Unit tests validating landing block field catalog (supported types, unknown types, unique paths)
+- **Renderer regression test for legacy props**
+  - Added coverage for rendering `landing.cta` when props are empty
+
+### Fixed
+
+- **Blank screen in Blocks module with legacy data**
+  - Added safe defaults in landing CMS blocks (`CTA`, `Hero`, `Stats`, `Features`) to prevent runtime errors when required props are missing
+  - Hardened `openPageInBlocksEditor` selection access with safer optional chaining for legacy section/block payloads
+
 ## [1.1.0] - 2025-12-25
 
 ### Added

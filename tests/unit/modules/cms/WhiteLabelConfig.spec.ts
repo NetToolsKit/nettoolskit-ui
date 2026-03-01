@@ -18,6 +18,28 @@ describe('white-label.config', () => {
     expect(settingsThemeKeys).toEqual(shellThemeKeys)
   })
 
+  it('includes required CMS modules in default sidebar config', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    const itemIds = settings.items.map(item => item.id)
+
+    expect(itemIds).toContain('settings')
+    expect(itemIds).toContain('pages')
+    expect(itemIds).toContain('blocks')
+    expect(itemIds).toContain('media')
+  })
+
+  it('creates default pages with section blocks for builder integration', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    const firstPage = settings.pages[0]
+    const firstSection = firstPage?.sections[0]
+    const firstBlock = firstSection?.blocks[0]
+
+    expect(firstPage).toBeDefined()
+    expect(firstSection).toBeDefined()
+    expect(firstBlock).toBeDefined()
+    expect(firstBlock?.type).toContain('landing.')
+  })
+
   it('maps layout and branding settings to shell snapshot', () => {
     const settings = createDefaultWhiteLabelSettings()
     settings.branding.appName = 'Tenant Alpha'

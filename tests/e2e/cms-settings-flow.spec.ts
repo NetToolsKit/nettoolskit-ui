@@ -80,18 +80,22 @@ function colorTokenInputByLabel(page: Page, label: string): Locator {
  */
 function settingsActionButton(page: Page, label: string): Locator {
   return page
-    .locator('.cms-settings__actions .q-btn', { hasText: label })
+    .locator('.cms-toolbar-card__actions .q-btn, .cms-settings__actions .q-btn', { hasText: label })
     .first()
 }
 
-async function openSettingsModule(page: Page): Promise<void> {
-  const settingsItem = page
+async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
+  const moduleItem = page
     .locator('.ntk-app-shell__drawer .ntk-app-shell__item', {
-      has: page.locator('.q-item__label', { hasText: /^Settings$/ }),
+      has: page.locator('.q-item__label', { hasText: moduleName }),
     })
     .first()
 
-  await settingsItem.click()
+  await moduleItem.click()
+}
+
+async function openSettingsModule(page: Page): Promise<void> {
+  await openDrawerModule(page, /^Settings$/)
   await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Settings')
 }
 
@@ -107,7 +111,9 @@ async function openSettingsTab(page: Page, tabName: RegExp): Promise<void> {
 }
 
 async function selectTenantProfile(page: Page, tenantName: string): Promise<void> {
-  const selector = page.locator('.cms-settings__tenant-select').first()
+  const selector = page
+    .locator('[aria-label="Tenant profile selector"], .cms-toolbar-card__select, .cms-settings__tenant-select')
+    .first()
   await selector.click()
 
   const optionByRole = page.getByRole('option', { name: tenantName, exact: true }).first()
@@ -171,7 +177,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.goto('/?cms=1')
     await openSettingsModule(page)
 
-    await expect(page.locator('.cms-settings__saved-at[role="status"][aria-live="polite"]')).toBeVisible()
+    await expect(page.locator('.cms-toolbar-card__saved-at[role="status"][aria-live="polite"], .cms-settings__saved-at[role="status"][aria-live="polite"]')).toBeVisible()
     await expect(page.locator('[aria-label="Tenant profile selector"]')).toBeVisible()
     await expect(page.locator('[aria-label="Create tenant profile"]')).toBeVisible()
     await expect(page.locator('[aria-label="Export active tenant as JSON"]')).toBeVisible()
@@ -179,8 +185,8 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-settings__tabs[aria-label="CMS settings sections"]')).toBeVisible()
     await expect(page.locator('input[aria-label="Import tenant JSON file"]')).toBeAttached()
 
-    const saveButton = settingsActionButton(page, 'Save settings')
-    const resetButton = settingsActionButton(page, 'Reset defaults')
+    const saveButton = settingsActionButton(page, 'Save')
+    const resetButton = settingsActionButton(page, 'Reset')
     await saveButton.focus()
     await page.keyboard.press('Tab')
     await expect(resetButton).toBeFocused()
@@ -195,13 +201,13 @@ test.describe('CMS settings white-label flow', () => {
 
     await openSettingsTab(page, /branding/i)
     await fillTextInput(cmsInputByLabel(page, 'Product name'), 'Default Tenant CMS')
-    await settingsActionButton(page, 'Save settings').click()
-    await expect(page.locator('.cms-settings__saved-at')).toContainText('Saved at')
+    await settingsActionButton(page, 'Save').click()
+    await expect(page.locator('.cms-toolbar-card__saved-at, .cms-settings__saved-at')).toContainText('Saved at')
 
     await openSettingsTab(page, /colors/i)
     await configureNotificationPalette(page, defaultTenantPalette)
     await expect(colorTokenInputByLabel(page, SEARCH_BACKGROUND_LABEL)).not.toHaveValue(defaultTenantPalette.actionHoverColor)
-    await settingsActionButton(page, 'Save settings').click()
+    await settingsActionButton(page, 'Save').click()
     await assertHeaderNotificationPalette(page, defaultTenantPalette)
     await assertActionHoverPalette(page, defaultTenantPalette)
     await expectTenantSnapshots(page, 'default-tenant')
@@ -215,7 +221,7 @@ test.describe('CMS settings white-label flow', () => {
     await openSettingsTab(page, /colors/i)
     await configureNotificationPalette(page, blueTenantPalette)
     await expect(colorTokenInputByLabel(page, SEARCH_BACKGROUND_LABEL)).not.toHaveValue(blueTenantPalette.actionHoverColor)
-    await settingsActionButton(page, 'Save settings').click()
+    await settingsActionButton(page, 'Save').click()
     await assertHeaderNotificationPalette(page, blueTenantPalette)
     await assertActionHoverPalette(page, blueTenantPalette)
     await expectTenantSnapshots(page, 'blue-tenant')
@@ -282,5 +288,63 @@ test.describe('CMS settings white-label flow', () => {
     expect(governanceByTenant[BLUE_TENANT_NAME]?.version).toBeGreaterThanOrEqual(2)
     expect(governanceByTenant[DEFAULT_TENANT_NAME]?.status).toBe('draft')
     expect(governanceByTenant[BLUE_TENANT_NAME]?.status).toBe('draft')
+  })
+
+  test('navigates from pages to blocks and keeps block props editors in sync', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    const sectionOpenBlocksButton = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="header"]') })
+      .first()
+      .locator('.q-btn', { hasText: 'Open blocks' })
+      .first()
+
+    if (await sectionOpenBlocksButton.count() > 0) {
+      await sectionOpenBlocksButton.click()
+    } else {
+      await page
+        .locator('.cms-page-item__actions .q-btn', { hasText: 'Open blocks' })
+        .first()
+        .click()
+    }
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
+    const blockSelectButton = page
+      .locator('.cms-block-row .q-btn', { hasText: 'Select' })
+      .first()
+    await expect(blockSelectButton).toBeVisible()
+    await blockSelectButton.click()
+    await expect(page.locator('.cms-block-row--active').first()).toBeVisible()
+
+    const structuredTextInput = page
+      .locator('.cms-blocks-fields .q-field', {
+        has: page.locator('input[type="text"]:not([readonly]), textarea'),
+      })
+      .first()
+      .locator('input[type="text"]:not([readonly]), textarea')
+      .first()
+    const blockPropsInput = cmsInputByLabel(page, 'Block props JSON')
+    await expect(structuredTextInput).toBeVisible()
+    await expect(blockPropsInput).toBeVisible()
+
+    const structuredMarker = 'Structured Sync Marker'
+    const jsonMarker = 'JSON Sync Marker'
+    await fillTextInput(structuredTextInput, structuredMarker)
+    await expect(blockPropsInput).toHaveValue(new RegExp(structuredMarker))
+
+    const currentProps = await blockPropsInput.inputValue()
+    const updatedProps = currentProps.replace(structuredMarker, jsonMarker)
+    expect(updatedProps).not.toBe(currentProps)
+
+    await fillTextInput(blockPropsInput, updatedProps)
+    await page
+      .locator('.cms-blocks-props__actions .q-btn', { hasText: 'Apply props' })
+      .first()
+      .click()
+
+    await expect(structuredTextInput).toHaveValue(jsonMarker)
+    await expect(blockPropsInput).toHaveValue(new RegExp(jsonMarker))
   })
 })

@@ -83,6 +83,17 @@ export interface CmsPageSectionSettings {
   id: string
   label: string
   enabled: boolean
+  blocks: CmsPageBlockSettings[]
+}
+
+/**
+ * Block definition editable in CMS blocks manager.
+ */
+export interface CmsPageBlockSettings {
+  id: string
+  type: string
+  enabled: boolean
+  props: Record<string, unknown>
 }
 
 /**

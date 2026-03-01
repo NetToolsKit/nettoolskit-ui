@@ -766,6 +766,14 @@
                     <q-toggle v-model="section.enabled" label="Enabled" />
                     <q-btn
                       flat
+                      dense
+                      no-caps
+                      icon="widgets"
+                      label="Open blocks"
+                      @click="openPageInBlocksEditor(page.id, section.id)"
+                    />
+                    <q-btn
+                      flat
                       round
                       dense
                       icon="delete"
@@ -776,6 +784,14 @@
                 </div>
 
                 <div class="cms-page-item__actions">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="widgets"
+                    label="Open blocks"
+                    @click="openPageInBlocksEditor(page.id)"
+                  />
                   <q-btn
                     flat
                     dense
@@ -821,6 +837,336 @@
                     {{ section.label }}
                   </q-chip>
                 </div>
+              </article>
+            </div>
+          </q-card>
+        </div>
+
+        <div v-else-if="isBlocksModule" class="cms-shell-page__grid">
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>Blocks manager</strong>
+              <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} blocks</q-chip>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-blocks__editor">
+              <div class="cms-form-grid cms-blocks-toolbar">
+                <q-select
+                  v-model="activeBlocksPageId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="blocksPageOptions"
+                  label="Target page"
+                />
+                <q-select
+                  v-model="activeBlocksSectionId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="blocksSectionOptions"
+                  label="Target section"
+                />
+                <q-select
+                  v-model="activeBlocksBlockId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="activeBlocksBlockOptions"
+                  label="Target block"
+                />
+                <q-select
+                  v-model="selectedPaletteBlockType"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsBlockPaletteOptions"
+                  label="Palette block"
+                />
+                <q-btn
+                  no-caps
+                  unelevated
+                  icon="add"
+                  label="Add block"
+                  :style="primaryActionStyle"
+                  :disable="!activeBlocksSectionId || !selectedPaletteBlockType"
+                  @click="addCmsBuilderBlockFromPalette"
+                />
+              </div>
+
+              <div class="cms-blocks-list">
+                <div
+                  v-for="section in activeBlocksSections"
+                  :key="section.id"
+                  class="cms-block-item"
+                >
+                  <div class="cms-block-item__meta">
+                    <strong>{{ section.label }}</strong>
+                    <small>{{ section.blocks.length }} blocks</small>
+                  </div>
+
+                  <div v-if="section.blocks.length === 0" class="cms-block-item__empty">
+                    No blocks in this section yet.
+                  </div>
+
+                  <div
+                    v-for="block in section.blocks"
+                    :key="`${section.id}-${block.id}`"
+                    class="cms-block-row"
+                    :class="{ 'cms-block-row--active': block.id === activeBlocksBlockId }"
+                  >
+                    <div class="cms-block-row__meta">
+                      <q-chip dense square :style="getCmsPageSectionStyle(block.enabled)">
+                        {{ resolveCmsBlockDisplayName(block.type) }}
+                      </q-chip>
+                      <small>{{ block.id }}</small>
+                      <small>{{ block.type }}</small>
+                    </div>
+                    <div class="cms-block-row__actions">
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="ads_click"
+                        label="Select"
+                        @click="setActiveBlocksSelection(block.sectionId, block.id)"
+                      />
+                      <q-toggle
+                        :model-value="block.enabled"
+                        label="Enabled"
+                        @update:model-value="updateCmsBuilderBlockEnabled(block, $event)"
+                      />
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="arrow_upward"
+                        :disable="block.blockIndex === 0"
+                        @click="moveCmsBuilderBlockByRecord(block, 'up')"
+                      />
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="arrow_downward"
+                        :disable="block.blockIndex >= section.blocks.length - 1"
+                        @click="moveCmsBuilderBlockByRecord(block, 'down')"
+                      />
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="delete"
+                        :style="dangerActionStyle"
+                        @click="removeCmsBuilderBlockByRecord(block)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </q-card>
+
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>Blocks preview</strong>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-blocks__preview">
+              <div class="cms-blocks-summary-grid">
+                <div class="cms-blocks-summary-card">
+                  <span>Total pages</span>
+                  <strong>{{ settings.pages.length }}</strong>
+                </div>
+                <div class="cms-blocks-summary-card">
+                  <span>Published pages</span>
+                  <strong>{{ cmsPublishedPagesCount }}</strong>
+                </div>
+                <div class="cms-blocks-summary-card">
+                  <span>Enabled blocks</span>
+                  <strong>{{ cmsEnabledSectionsCount }}</strong>
+                </div>
+              </div>
+
+              <div class="cms-blocks-props">
+                <div class="cms-blocks-props__header">
+                  <strong>Selected block props</strong>
+                  <small v-if="activeBlocksSelectedBlockRecord">
+                    {{ resolveCmsBlockDisplayName(activeBlocksSelectedBlockRecord.type) }} · {{ activeBlocksSelectedBlockRecord.id }}
+                  </small>
+                  <small v-else>No block selected</small>
+                </div>
+                <div
+                  v-if="activeBlocksSelectedBlock && activeBlocksFieldDefinitions.length > 0"
+                  class="cms-blocks-fields"
+                >
+                  <div
+                    v-for="field in activeBlocksFieldDefinitions"
+                    :key="field.path"
+                    class="cms-blocks-field"
+                  >
+                    <q-toggle
+                      v-if="field.type === 'toggle'"
+                      :model-value="Boolean(getActiveBlocksFieldModelValue(field))"
+                      :label="field.label"
+                      @update:model-value="updateActiveBlocksFieldValue(field, $event)"
+                    />
+                    <q-select
+                      v-else-if="field.type === 'select'"
+                      :model-value="String(getActiveBlocksFieldModelValue(field) ?? '')"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      :label="field.label"
+                      :options="field.options ?? []"
+                      @update:model-value="updateActiveBlocksFieldValue(field, $event)"
+                    />
+                    <q-input
+                      v-else-if="field.type === 'textarea'"
+                      :model-value="String(getActiveBlocksFieldModelValue(field) ?? '')"
+                      outlined
+                      dense
+                      type="textarea"
+                      autogrow
+                      :rows="field.rows ?? 3"
+                      :label="field.label"
+                      :placeholder="field.placeholder"
+                      @update:model-value="updateActiveBlocksFieldValue(field, $event)"
+                    />
+                    <q-input
+                      v-else-if="field.type === 'number'"
+                      :model-value="getActiveBlocksNumberFieldModelValue(field)"
+                      outlined
+                      dense
+                      type="number"
+                      :label="field.label"
+                      :placeholder="field.placeholder"
+                      @update:model-value="updateActiveBlocksFieldValue(field, $event)"
+                    />
+                    <div v-else-if="field.type === 'json'" class="cms-blocks-field__json">
+                      <q-input
+                        :model-value="String(getActiveBlocksFieldModelValue(field) ?? '')"
+                        outlined
+                        dense
+                        type="textarea"
+                        autogrow
+                        :rows="field.rows ?? 6"
+                        :label="field.label"
+                        :placeholder="field.placeholder"
+                        @update:model-value="updateActiveBlocksJsonFieldDraft(field, $event)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="save"
+                        label="Apply field JSON"
+                        @click="applyActiveBlocksJsonFieldValue(field)"
+                      />
+                    </div>
+                    <q-input
+                      v-else
+                      :model-value="String(getActiveBlocksFieldModelValue(field) ?? '')"
+                      outlined
+                      dense
+                      :label="field.label"
+                      :placeholder="field.placeholder"
+                      @update:model-value="updateActiveBlocksFieldValue(field, $event)"
+                    />
+                    <small v-if="field.help">{{ field.help }}</small>
+                  </div>
+                </div>
+                <q-input
+                  v-model="activeBlocksPropsDraft"
+                  outlined
+                  dense
+                  type="textarea"
+                  autogrow
+                  label="Block props JSON"
+                  :disable="!activeBlocksSelectedBlock"
+                />
+                <div class="cms-blocks-props__actions">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="format_align_left"
+                    label="Format JSON"
+                    :disable="!activeBlocksSelectedBlock"
+                    @click="formatSelectedBlockPropsDraft"
+                  />
+                  <q-btn
+                    no-caps
+                    unelevated
+                    icon="save"
+                    label="Apply props"
+                    :style="primaryActionStyle"
+                    :disable="!activeBlocksSelectedBlock"
+                    @click="applySelectedBlockPropsDraft"
+                  />
+                </div>
+              </div>
+
+              <div class="cms-preview-card cms-preview-card--content">
+                <CmsRenderer
+                  v-if="activeBlocksSchema"
+                  :page="activeBlocksSchema"
+                  :registry="landingRegistry"
+                />
+                <p v-else>No page selected for preview.</p>
+              </div>
+            </div>
+          </q-card>
+        </div>
+
+        <div v-else-if="isMediaModule" class="cms-shell-page__grid">
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>Media settings</strong>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-media__editor">
+              <div class="cms-form-grid">
+                <q-input v-model="settings.branding.brandLogo" outlined dense label="Brand logo URL" />
+                <q-input v-model="settings.branding.faviconUrl" outlined dense label="Favicon URL" />
+                <q-input v-model="settings.branding.userAvatar" outlined dense label="User avatar URL" />
+                <q-input v-model="settings.branding.brandLogoAlt" outlined dense label="Brand logo alt text" />
+              </div>
+              <q-banner rounded class="cms-banner" :style="bannerStyle">
+                Media values are tenant-scoped and update shell branding immediately.
+              </q-banner>
+            </div>
+          </q-card>
+
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>Media preview</strong>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-media__preview">
+              <article
+                v-for="asset in cmsMediaAssets"
+                :key="asset.id"
+                class="cms-media-preview-item"
+              >
+                <div class="cms-media-preview-item__meta">
+                  <strong>{{ asset.label }}</strong>
+                  <small>{{ asset.description }}</small>
+                </div>
+                <div class="cms-media-preview-item__visual">
+                  <img
+                    v-if="isPreviewImageAsset(asset.url)"
+                    :src="asset.url"
+                    :alt="asset.label"
+                  >
+                  <q-icon v-else name="image_not_supported" class="cms-icon cms-icon--lg" />
+                </div>
+                <code class="cms-media-preview-item__url">{{ asset.url || 'No URL configured' }}</code>
               </article>
             </div>
           </q-card>
@@ -884,6 +1230,7 @@
 import { computed, nextTick, ref, toRaw, watch } from 'vue'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
 import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
+import { CmsRenderer } from '../src/modules/cms/renderer'
 import {
   createDefaultWhiteLabelSettings,
   createNewMenuItem,
@@ -921,7 +1268,24 @@ import {
   type CmsThemePreset,
   type CmsThemePresetId,
 } from '../src/modules/cms/white-label/theme-presets'
+import {
+  createCmsBuilderState,
+  insertCmsBuilderBlock,
+  listCmsBuilderPalette,
+  moveCmsBuilderBlock,
+  removeCmsBuilderBlock,
+  selectCmsBuilderNode,
+  type CmsBuilderSelection,
+  type CmsBuilderState,
+} from '../src/modules/cms/white-label/builder.state'
+import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms'
+import { createLandingRegistry } from './cms/landing.registry'
+import {
+  getLandingBlockFieldDefinitions,
+  type CmsBlockFieldDefinition,
+} from './cms/landing.block-fields'
 import type {
+  CmsPageBlockSettings,
   CmsPageSettings,
   CmsTenantProfile,
   CmsTenantProfilesState,
@@ -958,10 +1322,43 @@ interface QuasarBrandOverrides {
   info: string
 }
 
+interface CmsSectionBlockRecord {
+  id: string
+  type: string
+  enabled: boolean
+  sectionId: string
+  sectionLabel: string
+  pageId: string
+  pageTitle: string
+  pagePath: string
+  pageStatus: CmsPageSettings['status']
+  pageIndex: number
+  sectionIndex: number
+  blockIndex: number
+}
+
+interface CmsMediaAssetPreview {
+  id: string
+  label: string
+  description: string
+  url: string
+}
+
+interface CmsBlocksSectionRow {
+  id: string
+  label: string
+  enabled: boolean
+  sectionIndex: number
+  blocks: CmsSectionBlockRecord[]
+}
+
 const defaultSettings = createDefaultWhiteLabelSettings()
 const defaultTheme = defaultSettings.theme
 const defaultMenuId = defaultSettings.items[0]?.id ?? ''
 const defaultSettingsModuleId = defaultSettings.items.find(item => item.icon === 'settings')?.id ?? ''
+const defaultPagesModuleId = defaultSettings.items.find(item => item.id === 'pages')?.id ?? 'pages'
+const defaultBlocksModuleId = defaultSettings.items.find(item => item.id === 'blocks')?.id ?? 'blocks'
+const defaultMediaModuleId = defaultSettings.items.find(item => item.id === 'media')?.id ?? 'media'
 const baseThemePresets: CmsThemePreset[] = buildCmsThemePresets(defaultTheme)
 
 /**
@@ -1047,7 +1444,7 @@ function getCurrentThemePresets(): CmsThemePreset[] {
 
 const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
-const activeSettingsTab = ref<'branding' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
+const activeSettingsTab = ref<'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
 const savedAtLabel = ref('Auto-save enabled')
 const pageStatusOptions = [
   { label: 'Draft', value: 'draft' },
@@ -2121,9 +2518,718 @@ const isSettingsModule = computed(() => activeMenuId.value === settingsModuleId.
 const pagesModuleId = computed(() => {
   return settings.value.items.find(item => item.id === 'pages')?.id
     ?? settings.value.items.find(item => item.icon === 'description')?.id
-    ?? 'pages'
+    ?? defaultPagesModuleId
 })
 const isPagesModule = computed(() => activeMenuId.value === pagesModuleId.value)
+const blocksModuleId = computed(() => {
+  return settings.value.items.find(item => item.id === 'blocks')?.id
+    ?? settings.value.items.find(item => item.icon === 'widgets')?.id
+    ?? defaultBlocksModuleId
+})
+const mediaModuleId = computed(() => {
+  return settings.value.items.find(item => item.id === 'media')?.id
+    ?? settings.value.items.find(item => item.icon === 'photo_library')?.id
+    ?? defaultMediaModuleId
+})
+const isBlocksModule = computed(() => activeMenuId.value === blocksModuleId.value)
+const isMediaModule = computed(() => activeMenuId.value === mediaModuleId.value)
+
+const landingRegistry = createLandingRegistry()
+const cmsBlockPalette = listCmsBuilderPalette(landingRegistry)
+const cmsBlockPaletteByType = new Map(cmsBlockPalette.map(item => [item.type, item]))
+const activeBlocksPageId = ref(settings.value.pages[0]?.id ?? '')
+const activeBlocksSectionId = ref('')
+const activeBlocksBlockId = ref('')
+const selectedPaletteBlockType = ref(cmsBlockPalette[0]?.type ?? '')
+const activeBlocksPropsDraft = ref('{}')
+const activeBlocksFieldJsonDrafts = ref<Record<string, string>>({})
+
+/**
+ * Resolves default landing block type from section identifiers.
+ */
+function resolveDefaultLandingBlockType(sectionId: string): string {
+  const normalized = sectionId.trim().toLowerCase()
+  switch (normalized) {
+    case 'header':
+      return 'landing.header'
+    case 'hero':
+      return 'landing.hero'
+    case 'stats':
+    case 'metrics':
+      return 'landing.stats'
+    case 'features':
+      return 'landing.features'
+    case 'installation':
+    case 'cta':
+      return 'landing.cta'
+    case 'footer':
+      return 'landing.footer'
+    default:
+      return 'landing.hero'
+  }
+}
+
+/**
+ * Creates a default block scaffold for a page section.
+ */
+function createDefaultSectionBlock(sectionId: string, index = 1, enabled = true): CmsPageBlockSettings {
+  return {
+    id: `${sectionId}-block-${index}`,
+    type: resolveDefaultLandingBlockType(sectionId),
+    enabled,
+    props: {},
+  }
+}
+
+/**
+ * Ensures page sections always contain at least one editable block.
+ */
+function ensurePageSectionBlocks(page: CmsPageSettings): CmsPageSettings {
+  return {
+    ...page,
+    sections: page.sections.map(section => {
+      const normalizedBlocks = Array.isArray(section.blocks) && section.blocks.length > 0
+        ? section.blocks.map((block, index) => ({
+          id: String(block.id ?? '').trim() || `${section.id}-block-${index + 1}`,
+          type: String(block.type ?? '').trim() || resolveDefaultLandingBlockType(section.id),
+          enabled: typeof block.enabled === 'boolean' ? block.enabled : section.enabled,
+          props: block.props && typeof block.props === 'object' ? { ...block.props } : {},
+        }))
+        : [createDefaultSectionBlock(section.id, 1, section.enabled)]
+
+      return {
+        ...section,
+        blocks: normalizedBlocks,
+      }
+    }),
+  }
+}
+
+/**
+ * Converts editable page settings into schema format consumed by CMS builder helpers.
+ */
+function toCmsPageSchema(page: CmsPageSettings): CmsPageSchema {
+  const normalizedPage = ensurePageSectionBlocks(page)
+  return {
+    version: CMS_SCHEMA_VERSION,
+    id: normalizedPage.id,
+    slug: normalizedPage.path,
+    title: normalizedPage.title,
+    status: normalizedPage.status,
+    sections: normalizedPage.sections.map(section => ({
+      id: section.id,
+      layout: 'single',
+      settings: {
+        label: section.label,
+        enabled: section.enabled,
+      },
+      blocks: section.blocks.map(block => ({
+        id: block.id,
+        type: block.type,
+        props: { ...block.props },
+      })),
+    })),
+  }
+}
+
+/**
+ * Converts builder schema output back to persisted white-label page settings.
+ */
+function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings): CmsPageSettings {
+  const previousSectionsById = new Map(originalPage.sections.map(section => [section.id, section]))
+
+  return {
+    ...originalPage,
+    id: String(schema.id ?? '').trim() || originalPage.id,
+    path: String(schema.slug ?? '').trim() || originalPage.path,
+    title: String(schema.title ?? '').trim() || originalPage.title,
+    status: schema.status === 'published' ? 'published' : 'draft',
+    sections: schema.sections.map((section, sectionIndex) => {
+      const previousSection = previousSectionsById.get(section.id)
+      const previousBlocksById = new Map((previousSection?.blocks ?? []).map(block => [block.id, block]))
+      const normalizedSectionId = String(section.id ?? '').trim() || `${originalPage.id}-section-${sectionIndex + 1}`
+      const settingsLabel = section.settings && typeof section.settings.label === 'string'
+        ? section.settings.label.trim()
+        : ''
+      const settingsEnabled = section.settings && typeof section.settings.enabled === 'boolean'
+        ? section.settings.enabled
+        : undefined
+
+      const normalizedBlocks = section.blocks.length > 0
+        ? section.blocks.map((block, blockIndex) => {
+          const previousBlock = previousBlocksById.get(block.id)
+          return {
+            id: String(block.id ?? '').trim() || `${normalizedSectionId}-block-${blockIndex + 1}`,
+            type: String(block.type ?? '').trim() || resolveDefaultLandingBlockType(normalizedSectionId),
+            enabled: previousBlock?.enabled ?? previousSection?.enabled ?? true,
+            props: block.props && typeof block.props === 'object'
+              ? { ...block.props }
+              : {},
+          }
+        })
+        : [createDefaultSectionBlock(normalizedSectionId, 1, previousSection?.enabled ?? true)]
+
+      return {
+        id: normalizedSectionId,
+        label: settingsLabel || previousSection?.label || `Section ${sectionIndex + 1}`,
+        enabled: typeof settingsEnabled === 'boolean'
+          ? settingsEnabled
+          : previousSection?.enabled ?? true,
+        blocks: normalizedBlocks,
+      }
+    }),
+  }
+}
+
+const blocksPageOptions = computed(() => {
+  return settings.value.pages.map(page => ({
+    label: `${page.title} (${page.path})`,
+    value: page.id,
+  }))
+})
+
+const activeBlocksPageIndex = computed(() => {
+  return settings.value.pages.findIndex(page => page.id === activeBlocksPageId.value)
+})
+
+const activeBlocksPage = computed(() => {
+  if (activeBlocksPageIndex.value < 0) {
+    return null
+  }
+  return ensurePageSectionBlocks(settings.value.pages[activeBlocksPageIndex.value] as CmsPageSettings)
+})
+
+const activeBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
+  const page = activeBlocksPage.value
+  if (!page) {
+    return []
+  }
+
+  return page.sections.map((section, sectionIndex) => ({
+    id: section.id,
+    label: section.label,
+    enabled: section.enabled,
+    sectionIndex,
+    blocks: section.blocks.map((block, blockIndex) => ({
+      id: block.id,
+      type: block.type,
+      enabled: block.enabled,
+      sectionId: section.id,
+      sectionLabel: section.label,
+      pageId: page.id,
+      pageTitle: page.title,
+      pagePath: page.path,
+      pageStatus: page.status,
+      pageIndex: activeBlocksPageIndex.value,
+      sectionIndex,
+      blockIndex,
+    })),
+  }))
+})
+
+const blocksSectionOptions = computed(() => {
+  return activeBlocksSections.value.map(section => ({
+    label: `${section.label} (${section.blocks.length})`,
+    value: section.id,
+  }))
+})
+
+const activeBlocksBlockOptions = computed(() => {
+  const section = activeBlocksSections.value.find(entry => entry.id === activeBlocksSectionId.value)
+  if (!section) {
+    return []
+  }
+
+  return section.blocks.map(block => ({
+    label: `${resolveCmsBlockDisplayName(block.type)} (${block.id})`,
+    value: block.id,
+  }))
+})
+
+const cmsBlockPaletteOptions = computed(() => {
+  return cmsBlockPalette.map(item => ({
+    label: `${item.displayName} (${item.category})`,
+    value: item.type,
+  }))
+})
+
+const activeBlocksSchema = computed<CmsPageSchema | null>(() => {
+  const page = activeBlocksPage.value
+  return page ? toCmsPageSchema(page) : null
+})
+
+const cmsSectionBlocks = computed<CmsSectionBlockRecord[]>(() => {
+  return settings.value.pages.flatMap((page, pageIndex) => {
+    const normalizedPage = ensurePageSectionBlocks(page)
+    return normalizedPage.sections.flatMap((section, sectionIndex) => {
+      return section.blocks.map((block, blockIndex) => ({
+        id: block.id,
+        type: block.type,
+        enabled: block.enabled,
+        sectionId: section.id,
+        sectionLabel: section.label,
+        pageId: normalizedPage.id,
+        pageTitle: normalizedPage.title,
+        pagePath: normalizedPage.path,
+        pageStatus: normalizedPage.status,
+        pageIndex,
+        sectionIndex,
+        blockIndex,
+      }))
+    })
+  })
+})
+
+const cmsPublishedPagesCount = computed(() => {
+  return settings.value.pages.filter(page => page.status === 'published').length
+})
+
+const cmsEnabledSectionsCount = computed(() => {
+  return cmsSectionBlocks.value.filter(section => section.enabled).length
+})
+
+const activeBlocksSelectedBlockRecord = computed(() => {
+  const section = activeBlocksSections.value.find(entry => entry.id === activeBlocksSectionId.value)
+  if (!section) {
+    return null
+  }
+  return section.blocks.find(block => block.id === activeBlocksBlockId.value) ?? null
+})
+
+const activeBlocksSelectedBlock = computed<CmsPageBlockSettings | null>(() => {
+  const block = activeBlocksSelectedBlockRecord.value
+  if (!block) {
+    return null
+  }
+
+  const page = settings.value.pages[block.pageIndex]
+  const section = page?.sections[block.sectionIndex]
+  return section?.blocks[block.blockIndex] ?? null
+})
+
+const activeBlocksFieldDefinitions = computed<CmsBlockFieldDefinition[]>(() => {
+  const blockType = activeBlocksSelectedBlockRecord.value?.type ?? ''
+  return getLandingBlockFieldDefinitions(blockType)
+})
+
+/**
+ * Checks whether a value is a plain object record.
+ */
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+/**
+ * Resolves a nested property value from a path expression.
+ */
+function getNestedPropByPath(source: Record<string, unknown>, path: string): unknown {
+  const segments = path.split('.').map(part => part.trim()).filter(Boolean)
+  let current: unknown = source
+  for (const segment of segments) {
+    if (!isObjectRecord(current)) {
+      return undefined
+    }
+    current = current[segment]
+  }
+  return current
+}
+
+/**
+ * Sets or clears a nested property value from a path expression.
+ */
+function setNestedPropByPath(source: Record<string, unknown>, path: string, value: unknown): void {
+  const segments = path.split('.').map(part => part.trim()).filter(Boolean)
+  if (segments.length === 0) {
+    return
+  }
+
+  let current: Record<string, unknown> = source
+  for (let index = 0; index < segments.length - 1; index += 1) {
+    const segment = segments[index]
+    if (!segment) {
+      continue
+    }
+    const currentValue = current[segment]
+    if (!isObjectRecord(currentValue)) {
+      current[segment] = {}
+    }
+    current = current[segment] as Record<string, unknown>
+  }
+
+  const leaf = segments[segments.length - 1]
+  if (!leaf) {
+    return
+  }
+
+  if (value === undefined) {
+    delete current[leaf]
+    return
+  }
+  current[leaf] = value
+}
+
+/**
+ * Synchronizes full block props JSON draft from selected block state.
+ */
+function syncSelectedBlockPropsDraft(): void {
+  activeBlocksPropsDraft.value = JSON.stringify(activeBlocksSelectedBlock.value?.props ?? {}, null, 2)
+}
+
+/**
+ * Synchronizes JSON field drafts for advanced field definitions.
+ */
+function syncSelectedBlockFieldJsonDrafts(): void {
+  const target = activeBlocksSelectedBlock.value
+  const nextDrafts: Record<string, string> = {}
+
+  for (const field of activeBlocksFieldDefinitions.value) {
+    if (field.type !== 'json') {
+      continue
+    }
+
+    const rawValue = target ? getNestedPropByPath(target.props, field.path) : undefined
+    if (rawValue === undefined) {
+      nextDrafts[field.path] = field.help?.toLowerCase().includes('array') ? '[]' : '{}'
+      continue
+    }
+
+    nextDrafts[field.path] = JSON.stringify(rawValue, null, 2)
+  }
+
+  activeBlocksFieldJsonDrafts.value = nextDrafts
+}
+
+/**
+ * Returns current model value for a dynamic block field.
+ */
+function getActiveBlocksFieldModelValue(field: CmsBlockFieldDefinition): string | number | boolean {
+  const target = activeBlocksSelectedBlock.value
+  const rawValue = target ? getNestedPropByPath(target.props, field.path) : undefined
+
+  if (field.type === 'toggle') {
+    return Boolean(rawValue)
+  }
+
+  if (field.type === 'number') {
+    if (typeof rawValue === 'number') {
+      return rawValue
+    }
+    if (typeof rawValue === 'string' && rawValue.trim().length > 0) {
+      const parsed = Number(rawValue)
+      return Number.isFinite(parsed) ? parsed : ''
+    }
+    return ''
+  }
+
+  if (field.type === 'json') {
+    return activeBlocksFieldJsonDrafts.value[field.path] ?? '{}'
+  }
+
+  return rawValue == null ? '' : String(rawValue)
+}
+
+/**
+ * Returns a safe model value for number inputs.
+ */
+function getActiveBlocksNumberFieldModelValue(field: CmsBlockFieldDefinition): string | number {
+  const value = getActiveBlocksFieldModelValue(field)
+  if (typeof value === 'number' || typeof value === 'string') {
+    return value
+  }
+  return ''
+}
+
+/**
+ * Updates selected block value for primitive/select/toggle fields.
+ */
+function updateActiveBlocksFieldValue(field: CmsBlockFieldDefinition, value: unknown): void {
+  const target = activeBlocksSelectedBlock.value
+  if (!target || field.type === 'json') {
+    return
+  }
+
+  if (field.type === 'toggle') {
+    setNestedPropByPath(target.props, field.path, Boolean(value))
+    syncSelectedBlockPropsDraft()
+    return
+  }
+
+  if (field.type === 'number') {
+    const raw = String(value ?? '').trim()
+    if (raw.length === 0) {
+      setNestedPropByPath(target.props, field.path, undefined)
+      syncSelectedBlockPropsDraft()
+      return
+    }
+    const parsed = Number(raw)
+    if (Number.isFinite(parsed)) {
+      setNestedPropByPath(target.props, field.path, parsed)
+      syncSelectedBlockPropsDraft()
+    }
+    return
+  }
+
+  const normalized = String(value ?? '')
+  setNestedPropByPath(target.props, field.path, normalized)
+  syncSelectedBlockPropsDraft()
+}
+
+/**
+ * Updates JSON field draft without applying immediately.
+ */
+function updateActiveBlocksJsonFieldDraft(field: CmsBlockFieldDefinition, value: unknown): void {
+  activeBlocksFieldJsonDrafts.value = {
+    ...activeBlocksFieldJsonDrafts.value,
+    [field.path]: String(value ?? ''),
+  }
+}
+
+/**
+ * Applies JSON field draft into selected block props.
+ */
+function applyActiveBlocksJsonFieldValue(field: CmsBlockFieldDefinition): void {
+  const target = activeBlocksSelectedBlock.value
+  if (!target || field.type !== 'json') {
+    return
+  }
+
+  const draft = String(activeBlocksFieldJsonDrafts.value[field.path] ?? '').trim()
+  if (!draft) {
+    setNestedPropByPath(target.props, field.path, undefined)
+    syncSelectedBlockPropsDraft()
+    return
+  }
+
+  try {
+    const parsed = JSON.parse(draft) as unknown
+    setNestedPropByPath(target.props, field.path, parsed)
+    syncSelectedBlockPropsDraft()
+    syncSelectedBlockFieldJsonDrafts()
+  } catch {
+    savedAtLabel.value = `Invalid JSON for field: ${field.label}`
+  }
+}
+
+const cmsMediaAssets = computed<CmsMediaAssetPreview[]>(() => {
+  return [
+    {
+      id: 'brand-logo',
+      label: 'Brand logo',
+      description: 'Top-left product identity used by shell and previews.',
+      url: settings.value.branding.brandLogo,
+    },
+    {
+      id: 'favicon',
+      label: 'Favicon',
+      description: 'Browser tab icon and bookmark image.',
+      url: settings.value.branding.faviconUrl || settings.value.branding.brandLogo,
+    },
+    {
+      id: 'user-avatar',
+      label: 'User avatar',
+      description: 'Topbar account icon/avatar source.',
+      url: settings.value.branding.userAvatar,
+    },
+  ]
+})
+
+/**
+ * Resolves display label from block palette metadata.
+ */
+function resolveCmsBlockDisplayName(type: string): string {
+  return cmsBlockPaletteByType.get(type)?.displayName ?? type
+}
+
+/**
+ * Creates a builder state from active page and current section/block selection.
+ */
+function buildActivePageBuilderState(): CmsBuilderState | null {
+  const page = activeBlocksPage.value
+  if (!page) {
+    return null
+  }
+
+  let state = createCmsBuilderState(toCmsPageSchema(page))
+  const desiredSelection: CmsBuilderSelection | null = activeBlocksSectionId.value
+    ? {
+      sectionId: activeBlocksSectionId.value,
+      blockId: activeBlocksBlockId.value || undefined,
+    }
+    : null
+
+  if (desiredSelection) {
+    try {
+      state = selectCmsBuilderNode(state, desiredSelection)
+    } catch {
+      // Ignore stale selection and keep builder fallback selection.
+    }
+  }
+
+  return state
+}
+
+/**
+ * Persists builder schema output back into active page settings.
+ */
+function applyBuilderStateToActivePage(state: CmsBuilderState): void {
+  const pageIndex = activeBlocksPageIndex.value
+  if (pageIndex < 0) {
+    return
+  }
+
+  const currentPage = settings.value.pages[pageIndex]
+  if (!currentPage) {
+    return
+  }
+
+  settings.value.pages[pageIndex] = fromCmsPageSchema(state.page, currentPage)
+  activeBlocksSectionId.value = state.selection?.sectionId ?? ''
+  activeBlocksBlockId.value = state.selection?.blockId ?? ''
+}
+
+/**
+ * Sets the active section/block selection for blocks manager controls.
+ */
+function setActiveBlocksSelection(sectionId: string, blockId = ''): void {
+  activeBlocksSectionId.value = sectionId
+  activeBlocksBlockId.value = blockId
+}
+
+/**
+ * Opens the blocks module focused on a specific page/section.
+ */
+function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
+  const page = settings.value.pages.find(entry => entry.id === pageId)
+  if (!page) {
+    return
+  }
+
+  const resolvedSection = sectionId
+    ? page.sections.find(entry => entry.id === sectionId)
+    : page.sections[0]
+  const resolvedBlockId = resolvedSection?.blocks?.[0]?.id ?? ''
+
+  activeBlocksPageId.value = page.id
+  setActiveBlocksSelection(resolvedSection?.id ?? '', resolvedBlockId)
+  activeMenuId.value = blocksModuleId.value
+}
+
+/**
+ * Adds a new block from selected palette type into the selected section.
+ */
+function addCmsBuilderBlockFromPalette(): void {
+  const state = buildActivePageBuilderState()
+  if (!state) {
+    return
+  }
+
+  const sectionId = activeBlocksSectionId.value || state.selection?.sectionId || state.page.sections[0]?.id
+  const type = selectedPaletteBlockType.value || cmsBlockPalette[0]?.type
+  if (!sectionId || !type) {
+    return
+  }
+
+  const nextState = insertCmsBuilderBlock(state, landingRegistry, {
+    sectionId,
+    type,
+  })
+  applyBuilderStateToActivePage(nextState)
+}
+
+/**
+ * Pretty-formats selected block props JSON editor value.
+ */
+function formatSelectedBlockPropsDraft(): void {
+  if (!activeBlocksSelectedBlock.value) {
+    return
+  }
+
+  try {
+    const parsed = JSON.parse(activeBlocksPropsDraft.value) as unknown
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      savedAtLabel.value = 'Block props must be a JSON object'
+      return
+    }
+    activeBlocksPropsDraft.value = JSON.stringify(parsed, null, 2)
+  } catch {
+    savedAtLabel.value = 'Invalid JSON for selected block props'
+  }
+}
+
+/**
+ * Applies JSON props draft to the currently selected block.
+ */
+function applySelectedBlockPropsDraft(): void {
+  const target = activeBlocksSelectedBlock.value
+  if (!target) {
+    return
+  }
+
+  try {
+    const parsed = JSON.parse(activeBlocksPropsDraft.value) as unknown
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      savedAtLabel.value = 'Block props must be a JSON object'
+      return
+    }
+
+    target.props = parsed as Record<string, unknown>
+    syncSelectedBlockPropsDraft()
+    syncSelectedBlockFieldJsonDrafts()
+    savedAtLabel.value = `Block props updated at ${new Date().toLocaleTimeString()}`
+  } catch {
+    savedAtLabel.value = 'Invalid JSON for selected block props'
+  }
+}
+
+/**
+ * Removes a block from the active page schema.
+ */
+function removeCmsBuilderBlockByRecord(block: CmsSectionBlockRecord): void {
+  const state = buildActivePageBuilderState()
+  if (!state) {
+    return
+  }
+
+  const nextState = removeCmsBuilderBlock(state, {
+    sectionId: block.sectionId,
+    blockId: block.id,
+  })
+  applyBuilderStateToActivePage(nextState)
+}
+
+/**
+ * Moves a block inside its section in active page schema.
+ */
+function moveCmsBuilderBlockByRecord(
+  block: CmsSectionBlockRecord,
+  direction: 'up' | 'down'
+): void {
+  const state = buildActivePageBuilderState()
+  if (!state) {
+    return
+  }
+
+  const nextState = moveCmsBuilderBlock(state, {
+    sectionId: block.sectionId,
+    blockId: block.id,
+    direction,
+  })
+  applyBuilderStateToActivePage(nextState)
+}
+
+/**
+ * Toggles block enabled flag in active page settings.
+ */
+function updateCmsBuilderBlockEnabled(block: CmsSectionBlockRecord, enabled: boolean): void {
+  const page = settings.value.pages[block.pageIndex]
+  const section = page?.sections[block.sectionIndex]
+  const target = section?.blocks[block.blockIndex]
+  if (!target) {
+    return
+  }
+  target.enabled = enabled
+  section.enabled = section.blocks.some(entry => entry.enabled)
+}
 
 const governanceActor: CmsWhiteLabelActor = {
   id: 'cms-admin',
@@ -2167,6 +3273,80 @@ function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): v
   activeTenantProfileId.value = activeProfile.id
   saveCmsTenantProfilesState(tenantProfilesState.value)
 }
+
+watch(
+  () => settings.value.pages.map(page => page.id),
+  pageIds => {
+    if (pageIds.length === 0) {
+      activeBlocksPageId.value = ''
+      return
+    }
+
+    if (!pageIds.includes(activeBlocksPageId.value)) {
+      activeBlocksPageId.value = pageIds[0] ?? ''
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  blocksSectionOptions,
+  options => {
+    if (options.length === 0) {
+      activeBlocksSectionId.value = ''
+      activeBlocksBlockId.value = ''
+      return
+    }
+
+    const hasSection = options.some(option => option.value === activeBlocksSectionId.value)
+    if (!hasSection) {
+      activeBlocksSectionId.value = String(options[0]?.value ?? '')
+      activeBlocksBlockId.value = ''
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  activeBlocksBlockOptions,
+  options => {
+    if (options.length === 0) {
+      activeBlocksBlockId.value = ''
+      return
+    }
+
+    const hasBlock = options.some(option => option.value === activeBlocksBlockId.value)
+    if (!hasBlock) {
+      activeBlocksBlockId.value = String(options[0]?.value ?? '')
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  cmsBlockPaletteOptions,
+  options => {
+    if (options.length === 0) {
+      selectedPaletteBlockType.value = ''
+      return
+    }
+
+    const hasType = options.some(option => option.value === selectedPaletteBlockType.value)
+    if (!hasType) {
+      selectedPaletteBlockType.value = String(options[0]?.value ?? '')
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => `${activeBlocksPageId.value}|${activeBlocksSectionId.value}|${activeBlocksBlockId.value}`,
+  () => {
+    syncSelectedBlockPropsDraft()
+    syncSelectedBlockFieldJsonDrafts()
+  },
+  { immediate: true }
+)
 
 watch(
   () => shellSnapshot.value.shellConfig.activeItem,
@@ -2645,9 +3825,24 @@ function addCmsPage(): void {
     status: 'draft',
     description: 'Describe purpose and expected audience.',
     sections: [
-      { id: 'header', label: 'Header', enabled: true },
-      { id: 'hero', label: 'Hero', enabled: true },
-      { id: 'footer', label: 'Footer', enabled: true },
+      {
+        id: 'header',
+        label: 'Header',
+        enabled: true,
+        blocks: [createDefaultSectionBlock('header', 1, true)],
+      },
+      {
+        id: 'hero',
+        label: 'Hero',
+        enabled: true,
+        blocks: [createDefaultSectionBlock('hero', 1, true)],
+      },
+      {
+        id: 'footer',
+        label: 'Footer',
+        enabled: true,
+        blocks: [createDefaultSectionBlock('footer', 1, true)],
+      },
     ],
   })
 }
@@ -2677,6 +3872,7 @@ function addCmsPageSection(pageIndex: number): void {
     id: sectionId,
     label: `Section ${sectionIndex}`,
     enabled: true,
+    blocks: [createDefaultSectionBlock(sectionId, 1, true)],
   })
 }
 
@@ -2689,6 +3885,20 @@ function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
     return
   }
   page.sections.splice(sectionIndex, 1)
+}
+
+/**
+ * Checks whether an URL should be rendered as image preview.
+ */
+function isPreviewImageAsset(url: string): boolean {
+  const value = String(url ?? '').trim().toLowerCase()
+  if (!value) {
+    return false
+  }
+  if (value.startsWith('data:image/')) {
+    return true
+  }
+  return /\.(png|jpe?g|gif|webp|svg|ico)(\?.*)?$/.test(value)
 }
 
 /**
@@ -2959,6 +4169,224 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
 }
 
+.cms-blocks__editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+  max-height: var(--ntk-cms-editor-max-height);
+  overflow: auto;
+  padding-right: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-blocks-toolbar {
+  align-items: end;
+}
+
+.cms-blocks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-block-item {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-block-item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-block-item__meta small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-block-item__empty {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-label);
+}
+
+.cms-block-row {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-block-row--active {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 35%, transparent);
+}
+
+.cms-block-row__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-block-row__meta small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-block-row__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
+.cms-blocks__summary {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-blocks__preview {
+  display: grid;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-blocks-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-blocks-summary-card {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-blocks-summary-card strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-blocks-props {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-blocks-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+}
+
+.cms-blocks-field {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+}
+
+.cms-blocks-field small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-blocks-field__json {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+}
+
+.cms-blocks-props__header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-blocks-props__header small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-blocks-props__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-media__editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-media__preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-media-preview-item {
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--ntk-cms-space-sm);
+  align-items: center;
+}
+
+.cms-media-preview-item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-media-preview-item__meta small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-media-preview-item__visual {
+  width: calc(var(--ntk-cms-space-lg) * 3.6);
+  height: calc(var(--ntk-cms-space-lg) * 3.6);
+  border: 1px solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cms-media-preview-item__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cms-media-preview-item__url {
+  grid-column: 1 / -1;
+  font-size: var(--ntk-cms-font-size-item-caption);
+  color: var(--ntk-cms-text-secondary);
+  word-break: break-all;
+}
+
 .cms-page-item {
   border: 1px solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
@@ -2998,7 +4426,7 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-sm);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto auto;
   gap: var(--ntk-cms-space-sm);
   align-items: center;
 }
@@ -3006,6 +4434,7 @@ function resetToDefaults(): void {
 .cms-page-item__actions {
   display: flex;
   justify-content: flex-end;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-page-preview {
@@ -3999,7 +5428,9 @@ function resetToDefaults(): void {
 
 @media (max-width: 1280px) {
   .cms-pages,
-  .cms-page-item__grid {
+  .cms-page-item__grid,
+  .cms-blocks-summary-grid,
+  .cms-blocks-fields {
     grid-template-columns: 1fr;
   }
 
@@ -4022,7 +5453,8 @@ function resetToDefaults(): void {
   .cms-form-grid,
   .cms-color-grid,
   .cms-toggle-row,
-  .cms-theme-presets__controls {
+  .cms-theme-presets__controls,
+  .cms-media-preview-item {
     grid-template-columns: 1fr;
   }
 

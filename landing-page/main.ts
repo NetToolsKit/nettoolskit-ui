@@ -3,8 +3,49 @@
  */
 
 import { createApp, defineAsyncComponent } from 'vue'
-import { Quasar } from 'quasar'
-import * as QuasarExports from 'quasar'
+import {
+  ClosePopup,
+  QAvatar,
+  QBadge,
+  QBanner,
+  QBtn,
+  QCard,
+  QCardActions,
+  QCardSection,
+  QCheckbox,
+  QChip,
+  QDate,
+  QDrawer,
+  QExpansionItem,
+  QForm,
+  QHeader,
+  QIcon,
+  QInput,
+  QItem,
+  QItemLabel,
+  QItemSection,
+  QLayout,
+  QList,
+  QMenu,
+  QPage,
+  QPageContainer,
+  QPopupProxy,
+  QScrollArea,
+  QSelect,
+  QSeparator,
+  QSpace,
+  QTab,
+  QTabPanel,
+  QTabPanels,
+  QTabs,
+  QTime,
+  QToggle,
+  QToolbar,
+  QToolbarTitle,
+  QTooltip,
+  Quasar,
+  Ripple,
+} from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
 
@@ -26,13 +67,52 @@ const RootComponent = isCmsMode
 
 const app = createApp(RootComponent)
 
-const quasarComponents = Object.fromEntries(
-  Object.entries(QuasarExports).filter(([name]) => name.startsWith('Q'))
-)
-
 app.use(Quasar, {
   plugins: {},
-  components: quasarComponents as never
+  components: {
+    QAvatar,
+    QBadge,
+    QBanner,
+    QBtn,
+    QCard,
+    QCardActions,
+    QCardSection,
+    QCheckbox,
+    QChip,
+    QDate,
+    QDrawer,
+    QExpansionItem,
+    QForm,
+    QHeader,
+    QIcon,
+    QInput,
+    QItem,
+    QItemLabel,
+    QItemSection,
+    QLayout,
+    QList,
+    QMenu,
+    QPage,
+    QPageContainer,
+    QPopupProxy,
+    QScrollArea,
+    QSelect,
+    QSeparator,
+    QSpace,
+    QTab,
+    QTabPanel,
+    QTabPanels,
+    QTabs,
+    QTime,
+    QToggle,
+    QToolbar,
+    QToolbarTitle,
+    QTooltip,
+  },
+  directives: {
+    Ripple,
+    ClosePopup,
+  },
 })
 
 app.mount('#app')

@@ -63,7 +63,16 @@
       <div class="container">
         <div class="form-visual-container">
           <div class="form-visual-image">
-            <img src="../assets/form-components.png" alt="Form Components">
+            <picture>
+              <source srcset="../assets/form-components.webp" type="image/webp">
+              <img
+                src="../assets/form-components.png"
+                alt="Form Components"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+              >
+            </picture>
           </div>
           <div class="form-visual-content">
             <h2>Complete Form Toolkit</h2>
@@ -141,7 +150,16 @@
             </div>
           </div>
           <div class="composables-visual-image">
-            <img src="../assets/composables-visual.png" alt="Composables Architecture">
+            <picture>
+              <source srcset="../assets/composables-visual.webp" type="image/webp">
+              <img
+                src="../assets/composables-visual.png"
+                alt="Composables Architecture"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+              >
+            </picture>
           </div>
         </div>
       </div>

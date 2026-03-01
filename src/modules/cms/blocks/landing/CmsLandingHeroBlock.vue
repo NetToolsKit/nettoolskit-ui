@@ -49,8 +49,8 @@ interface Props {
   layout?: 'centered' | 'split' | 'split-reverse'
   size?: 'sm' | 'md' | 'lg'
   badge?: string
-  title: string
-  subtitle: string
+  title?: string
+  subtitle?: string
   image?: string
   imageAlt?: string
   primaryAction?: HeroAction
@@ -62,6 +62,8 @@ withDefaults(defineProps<Props>(), {
   layout: 'split',
   size: 'lg',
   badge: '',
+  title: '',
+  subtitle: '',
   image: '',
   imageAlt: 'Hero image',
   primaryAction: undefined,

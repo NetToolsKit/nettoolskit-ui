@@ -3,7 +3,10 @@
     <header class="header">
       <div class="container">
         <div class="logo">
-          <img src="../assets/nuget-icon.png" alt="NTK">
+          <picture>
+            <source srcset="../assets/nuget-icon.webp" type="image/webp">
+            <img src="../assets/nuget-icon.png" alt="NTK" loading="eager" decoding="async" fetchpriority="high">
+          </picture>
           <span class="logo-text">NetToolsKit UI</span>
         </div>
 

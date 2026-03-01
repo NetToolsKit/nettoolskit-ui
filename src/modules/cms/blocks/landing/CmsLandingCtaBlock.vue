@@ -24,9 +24,9 @@ interface CTAButton {
 }
 
 interface Props {
-  title: string
+  title?: string
   subtitle?: string
-  primaryCTA: CTAButton
+  primaryCTA?: CTAButton
   secondaryCTA?: CTAButton
   variant?: 'default' | 'gradient' | 'dark' | 'light'
   size?: 'sm' | 'md' | 'lg'
@@ -35,7 +35,12 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+  title: '',
   subtitle: '',
+  primaryCTA: () => ({
+    text: 'Get started',
+    link: '#',
+  }),
   secondaryCTA: undefined,
   variant: 'gradient',
   size: 'md',

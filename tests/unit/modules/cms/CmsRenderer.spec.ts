@@ -7,6 +7,7 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import { CMS_SCHEMA_VERSION, CmsBlockRegistry } from '../../../../src/modules/cms'
 import { CmsRenderer } from '../../../../src/modules/cms/renderer'
+import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'
 
 describe('CmsRenderer', () => {
   const HeroBlock = defineComponent({
@@ -186,5 +187,37 @@ describe('CmsRenderer', () => {
 
     expect(wrapper.text()).toContain('Unknown block: content.missing')
     expect(wrapper.find('[data-cms-unknown-block-type="content.missing"]').exists()).toBe(true)
+  })
+
+  it('should render landing CTA block even when legacy props are empty', () => {
+    const page = {
+      version: CMS_SCHEMA_VERSION,
+      id: 'landing-legacy',
+      slug: '/legacy',
+      title: 'Legacy page',
+      status: 'draft' as const,
+      sections: [
+        {
+          id: 'cta',
+          blocks: [
+            {
+              id: 'cta-1',
+              type: 'landing.cta',
+              props: {},
+            },
+          ],
+        },
+      ],
+    }
+
+    const wrapper = mount(CmsRenderer, {
+      props: {
+        page,
+        registry: createLandingRegistry(),
+      },
+    })
+
+    expect(wrapper.find('[data-cms-page-id="landing-legacy"]').exists()).toBe(true)
+    expect(wrapper.text()).not.toContain('Unknown block')
   })
 })

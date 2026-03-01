@@ -16,7 +16,8 @@ import {
 } from './theme-presets'
 import { normalizeWhiteLabelGovernance } from './workflow'
 
-const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'pages', 'blocks', 'media', 'users'])
+const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'users'])
+const REQUIRED_CMS_ITEM_IDS = new Set(['settings', 'pages', 'blocks', 'media'])
 const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 2
@@ -26,7 +27,11 @@ const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 2
  */
 function cloneValue<T>(value: T): T {
   if (typeof structuredClone === 'function') {
-    return structuredClone(value)
+    try {
+      return structuredClone(value)
+    } catch {
+      // Fallback for reactive proxies or non-cloneable browser objects.
+    }
   }
   return JSON.parse(JSON.stringify(value)) as T
 }
@@ -159,6 +164,31 @@ function toTitleCaseFromId(value: string): string {
 }
 
 /**
+ * Resolves a default landing block type from canonical section identifiers.
+ */
+function resolveDefaultBlockTypeForSection(sectionId: string): string {
+  const normalized = sectionId.trim().toLowerCase()
+  switch (normalized) {
+    case 'header':
+      return 'landing.header'
+    case 'hero':
+      return 'landing.hero'
+    case 'stats':
+    case 'metrics':
+      return 'landing.stats'
+    case 'features':
+      return 'landing.features'
+    case 'installation':
+    case 'cta':
+      return 'landing.cta'
+    case 'footer':
+      return 'landing.footer'
+    default:
+      return 'landing.hero'
+  }
+}
+
+/**
  * Normalizes menu items by removing invalid/legacy entries and restoring required defaults.
  */
 function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellItem[] {
@@ -197,9 +227,11 @@ function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellI
     })
   }
 
-  const settingsDefaultItem = defaults.find(item => item.id === 'settings')
-  if (settingsDefaultItem && !itemMap.has(settingsDefaultItem.id)) {
-    itemMap.set(settingsDefaultItem.id, cloneValue(settingsDefaultItem))
+  for (const defaultItem of defaults) {
+    if (!REQUIRED_CMS_ITEM_IDS.has(defaultItem.id) || itemMap.has(defaultItem.id)) {
+      continue
+    }
+    itemMap.set(defaultItem.id, cloneValue(defaultItem))
   }
 
   const normalizedItems = Array.from(itemMap.values())
@@ -282,10 +314,42 @@ function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): Cm
               return null
             }
             const section = rawSection as Partial<CmsPageSettings['sections'][number]>
+            const resolvedSectionId = String(section.id ?? '').trim() || `${id}-section-${sectionIndex + 1}`
+            const defaultBlockType = resolveDefaultBlockTypeForSection(resolvedSectionId)
+            const blocks = Array.isArray(section.blocks)
+              ? section.blocks
+                .map((rawBlock, blockIndex) => {
+                  if (!rawBlock || typeof rawBlock !== 'object') {
+                    return null
+                  }
+                  const block = rawBlock as Partial<CmsPageSettings['sections'][number]['blocks'][number]>
+                  const blockType = String(block.type ?? '').trim() || defaultBlockType
+                  return {
+                    id: String(block.id ?? '').trim() || `${resolvedSectionId}-block-${blockIndex + 1}`,
+                    type: blockType,
+                    enabled: typeof block.enabled === 'boolean' ? block.enabled : Boolean(section.enabled),
+                    props: block.props && typeof block.props === 'object'
+                      ? cloneValue(block.props)
+                      : {},
+                  }
+                })
+                .filter((block): block is CmsPageSettings['sections'][number]['blocks'][number] => block !== null)
+              : []
+
+            const normalizedBlocks = blocks.length > 0
+              ? blocks
+              : [{
+                id: `${resolvedSectionId}-block-1`,
+                type: defaultBlockType,
+                enabled: Boolean(section.enabled),
+                props: {},
+              }]
+
             return {
-              id: String(section.id ?? '').trim() || `${id}-section-${sectionIndex + 1}`,
+              id: resolvedSectionId,
               label: String(section.label ?? '').trim() || `Section ${sectionIndex + 1}`,
               enabled: Boolean(section.enabled),
+              blocks: normalizedBlocks,
             }
           })
           .filter((section): section is CmsPageSettings['sections'][number] => section !== null)

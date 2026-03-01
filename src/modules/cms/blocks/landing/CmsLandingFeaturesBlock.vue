@@ -46,9 +46,9 @@ interface FeatureItem {
 }
 
 interface Props {
-  title: string
+  title?: string
   subtitle?: string
-  items: FeatureItem[]
+  items?: FeatureItem[]
   variant?: 'default' | 'light' | 'dark' | 'gradient'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   cardVariant?: 'default' | 'outlined' | 'elevated' | 'accent-left' | 'accent-top'
@@ -56,7 +56,9 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+  title: '',
   subtitle: '',
+  items: () => [],
   variant: 'default',
   size: 'lg',
   cardVariant: 'elevated',

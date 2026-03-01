@@ -47,16 +47,18 @@ interface StatsItem {
 }
 
 interface Props {
-  title: string
+  title?: string
   subtitle?: string
-  items: StatsItem[]
+  items?: StatsItem[]
   variant?: 'default' | 'light' | 'dark' | 'gradient'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   cardVariant?: 'default' | 'outlined' | 'gradient' | 'minimal'
 }
 
 withDefaults(defineProps<Props>(), {
+  title: '',
   subtitle: '',
+  items: () => [],
   variant: 'light',
   size: 'md',
   cardVariant: 'default',

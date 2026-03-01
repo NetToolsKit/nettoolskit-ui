@@ -10,12 +10,17 @@
 
     <LandingHeroSection />
     <LandingFeaturesSection />
-    <LandingShowcaseSection :tabs="tabs" :active-tab="activeTab" @update:active-tab="activeTab = $event" />
-    <LandingDeveloperSection />
-    <LandingDashboardSection />
-    <LandingThemesSection />
-    <LandingInstallationSection />
-    <LandingFooterSection />
+    <LandingShowcaseSection
+      class="ntk-deferred-section"
+      :tabs="tabs"
+      :active-tab="activeTab"
+      @update:active-tab="activeTab = $event"
+    />
+    <LandingDeveloperSection class="ntk-deferred-section" />
+    <LandingDashboardSection class="ntk-deferred-section" />
+    <LandingThemesSection class="ntk-deferred-section" />
+    <LandingInstallationSection class="ntk-deferred-section" />
+    <LandingFooterSection class="ntk-deferred-section" />
 
     <a
       href="/?cms=1"
@@ -357,6 +362,11 @@ a {
   color: var(--ntk-purple);
   text-decoration: none;
   transition: color var(--transition-fast);
+}
+
+.ntk-deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
 }
 
 a:hover {

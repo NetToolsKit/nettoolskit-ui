@@ -100,7 +100,7 @@ describe('white-label.storage', () => {
     expect(normalized.theme.actionHoverBackground).toBe('#1f2937')
   })
 
-  it('removes legacy CMS sidebar modules while keeping settings and custom modules', () => {
+  it('removes deprecated legacy modules and restores required CMS core items', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       navGroups: [
         { id: 'core', label: 'Core' },
@@ -110,18 +110,21 @@ describe('white-label.storage', () => {
       ],
       items: [
         { id: 'dashboard', group: 'core', label: 'Dashboard', icon: 'space_dashboard' },
-        { id: 'pages', group: 'content', label: 'Pages', icon: 'description' },
+        { id: 'users', group: 'core', label: 'Users', icon: 'group' },
         { id: 'settings', group: 'configuration', label: 'Settings', icon: 'settings' },
         { id: 'tenant-report', group: 'custom', label: 'Tenant report', icon: 'analytics' },
       ],
     })
 
     expect(normalized.items.some(item => item.id === 'dashboard')).toBe(false)
-    expect(normalized.items.some(item => item.id === 'pages')).toBe(false)
+    expect(normalized.items.some(item => item.id === 'users')).toBe(false)
     expect(normalized.items.some(item => item.id === 'settings')).toBe(true)
+    expect(normalized.items.some(item => item.id === 'pages')).toBe(true)
+    expect(normalized.items.some(item => item.id === 'blocks')).toBe(true)
+    expect(normalized.items.some(item => item.id === 'media')).toBe(true)
     expect(normalized.items.some(item => item.id === 'tenant-report')).toBe(true)
     expect(normalized.navGroups.some(group => group.id === 'core')).toBe(false)
-    expect(normalized.navGroups.some(group => group.id === 'content')).toBe(false)
+    expect(normalized.navGroups.some(group => group.id === 'content')).toBe(true)
     expect(normalized.navGroups.some(group => group.id === 'configuration')).toBe(true)
     expect(normalized.navGroups.some(group => group.id === 'custom')).toBe(true)
   })
@@ -153,6 +156,57 @@ describe('white-label.storage', () => {
     expect(normalized.pages[0]?.status).toBe('draft')
     expect(normalized.pages[0]?.sections[0]?.id).toBe('page-1-section-1')
     expect(normalized.pages[0]?.sections[0]?.label).toBe('Section 1')
+    expect(normalized.pages[0]?.sections[0]?.blocks.length).toBeGreaterThan(0)
+    expect(normalized.pages[0]?.sections[0]?.blocks[0]?.id).toBe('page-1-section-1-block-1')
+    expect(normalized.pages[0]?.sections[0]?.blocks[0]?.type).toBe('landing.hero')
+  })
+
+  it('normalizes section block props and keeps valid object payloads', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      pages: [
+        {
+          id: 'landing',
+          title: 'Landing',
+          path: '/',
+          status: 'draft',
+          description: '',
+          sections: [
+            {
+              id: 'hero',
+              label: 'Hero',
+              enabled: true,
+              blocks: [
+                {
+                  id: 'hero-main',
+                  type: 'landing.hero',
+                  enabled: true,
+                  props: {
+                    title: 'Tenant Hero',
+                    subtitle: 'Tenant subtitle',
+                  },
+                },
+                {
+                  id: '',
+                  type: '',
+                  enabled: false,
+                  props: 'invalid',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    } as unknown as Parameters<typeof normalizeCmsWhiteLabelSettings>[0])
+
+    expect(normalized.pages[0]?.sections[0]?.blocks[0]?.id).toBe('hero-main')
+    expect(normalized.pages[0]?.sections[0]?.blocks[0]?.type).toBe('landing.hero')
+    expect(normalized.pages[0]?.sections[0]?.blocks[0]?.props).toEqual({
+      title: 'Tenant Hero',
+      subtitle: 'Tenant subtitle',
+    })
+    expect(normalized.pages[0]?.sections[0]?.blocks[1]?.id).toBe('hero-block-2')
+    expect(normalized.pages[0]?.sections[0]?.blocks[1]?.type).toBe('landing.hero')
+    expect(normalized.pages[0]?.sections[0]?.blocks[1]?.props).toEqual({})
   })
 
   it('persists and loads white-label settings with layout toggles', () => {

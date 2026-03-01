@@ -28,7 +28,16 @@
         </div>
       </div>
       <div class="hero-visual">
-        <img src="../assets/hero-visual.png" alt="Vue Component Library - Floating UI Cards">
+        <picture>
+          <source srcset="../assets/hero-visual.webp" type="image/webp">
+          <img
+            src="../assets/hero-visual.png"
+            alt="Vue Component Library - Floating UI Cards"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          >
+        </picture>
       </div>
     </div>
   </section>

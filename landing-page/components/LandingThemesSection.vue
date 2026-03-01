@@ -7,13 +7,31 @@
       </div>
 
       <div class="theme-preview-image">
-        <img src="../assets/theme-preview.png" alt="Theme Preview - Dark, Purple, Monochrome">
+        <picture>
+          <source srcset="../assets/theme-preview.webp" type="image/webp">
+          <img
+            src="../assets/theme-preview.png"
+            alt="Theme Preview - Dark, Purple, Monochrome"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+          >
+        </picture>
       </div>
 
       <div class="theme-grid">
         <div class="theme-card">
           <div class="theme-preview dark-theme">
-            <img src="../assets/nuget-icon.png" alt="Dark Theme" style="width: 64px; height: 64px;">
+            <picture>
+              <source srcset="../assets/nuget-icon.webp" type="image/webp">
+              <img
+                src="../assets/nuget-icon.png"
+                alt="Dark Theme"
+                style="width: 64px; height: 64px;"
+                loading="lazy"
+                decoding="async"
+              >
+            </picture>
           </div>
           <div class="theme-info">
             <h3>Dark</h3>
@@ -22,7 +40,16 @@
         </div>
         <div class="theme-card">
           <div class="theme-preview purple-theme">
-            <img src="../assets/positive-icon.png" alt="Purple Theme" style="width: 64px; height: 64px;">
+            <picture>
+              <source srcset="../assets/positive-icon.webp" type="image/webp">
+              <img
+                src="../assets/positive-icon.png"
+                alt="Purple Theme"
+                style="width: 64px; height: 64px;"
+                loading="lazy"
+                decoding="async"
+              >
+            </picture>
           </div>
           <div class="theme-info">
             <h3>Purple</h3>
@@ -31,7 +58,16 @@
         </div>
         <div class="theme-card">
           <div class="theme-preview monochrome-theme">
-            <img src="../assets/monochrome-icon.png" alt="Monochrome Theme" style="width: 64px; height: 64px;">
+            <picture>
+              <source srcset="../assets/monochrome-icon.webp" type="image/webp">
+              <img
+                src="../assets/monochrome-icon.png"
+                alt="Monochrome Theme"
+                style="width: 64px; height: 64px;"
+                loading="lazy"
+                decoding="async"
+              >
+            </picture>
           </div>
           <div class="theme-info">
             <h3>Monochrome</h3>

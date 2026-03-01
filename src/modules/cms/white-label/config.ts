@@ -38,7 +38,10 @@ function createDefaultShellConfig(): AppShellConfig {
   return createAppShellConfig({
     appName: 'White-Label App',
     appSubtitle: 'CMS Workspace',
-    navGroups: [{ id: 'configuration', label: 'Configuration' }],
+    navGroups: [
+      { id: 'configuration', label: 'Configuration' },
+      { id: 'content', label: 'Content' },
+    ],
     items: [
       {
         id: 'settings',
@@ -47,6 +50,30 @@ function createDefaultShellConfig(): AppShellConfig {
         icon: 'settings',
         caption: 'White-label',
         description: 'Theme tokens, branding and tenant configuration.',
+      },
+      {
+        id: 'pages',
+        group: 'content',
+        label: 'Pages',
+        icon: 'description',
+        caption: 'Landing pages',
+        description: 'Manage page routes, status and section composition.',
+      },
+      {
+        id: 'blocks',
+        group: 'content',
+        label: 'Blocks',
+        icon: 'widgets',
+        caption: 'Reusable blocks',
+        description: 'Manage reusable CMS blocks for landing experiences.',
+      },
+      {
+        id: 'media',
+        group: 'content',
+        label: 'Media',
+        icon: 'photo_library',
+        caption: 'Assets',
+        description: 'Manage images and media references used by CMS pages.',
       },
     ],
     toolbarActions: [
@@ -155,9 +182,42 @@ function createDefaultContentSettings(): CmsContentSettings {
 }
 
 /**
+ * Resolves a landing block type from canonical section identifiers.
+ */
+function resolveDefaultBlockTypeForSection(sectionId: string): string {
+  const normalized = sectionId.trim().toLowerCase()
+  switch (normalized) {
+    case 'header':
+      return 'landing.header'
+    case 'hero':
+      return 'landing.hero'
+    case 'stats':
+    case 'metrics':
+      return 'landing.stats'
+    case 'features':
+      return 'landing.features'
+    case 'installation':
+    case 'cta':
+      return 'landing.cta'
+    case 'footer':
+      return 'landing.footer'
+    default:
+      return 'landing.hero'
+  }
+}
+
+/**
  * Provides default CMS pages metadata for landing-page orchestration.
  */
 function createDefaultPagesSettings(): CmsPageSettings[] {
+  const mainSections = [
+    { id: 'header', label: 'Header', enabled: true },
+    { id: 'hero', label: 'Hero', enabled: true },
+    { id: 'features', label: 'Features', enabled: true },
+    { id: 'installation', label: 'Installation', enabled: true },
+    { id: 'footer', label: 'Footer', enabled: true },
+  ]
+
   return [
     {
       id: 'landing-main',
@@ -165,13 +225,17 @@ function createDefaultPagesSettings(): CmsPageSettings[] {
       path: '/',
       status: 'published',
       description: 'Primary public landing page.',
-      sections: [
-        { id: 'header', label: 'Header', enabled: true },
-        { id: 'hero', label: 'Hero', enabled: true },
-        { id: 'features', label: 'Features', enabled: true },
-        { id: 'installation', label: 'Installation', enabled: true },
-        { id: 'footer', label: 'Footer', enabled: true },
-      ],
+      sections: mainSections.map(section => ({
+        ...section,
+        blocks: [
+          {
+            id: `${section.id}-block-1`,
+            type: resolveDefaultBlockTypeForSection(section.id),
+            enabled: section.enabled,
+            props: {},
+          },
+        ],
+      })),
     },
   ]
 }

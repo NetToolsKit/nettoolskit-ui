@@ -4,6 +4,9 @@ env:
   SHARED_AUTOMATION_REPO: ThiagoGuislotti/copilot-instructions
   SHARED_AUTOMATION_REF: 69db62f81259237a38bf8f394f574b0060d49752
   SHARED_SCRIPTS_DIR: .temp/shared-scripts
+  SHARED_CONSOLE_STYLE_SHA256: 97ce0e2a37fa15cc8c23d06b6afa5a7ba88f1fcaefaf50949e73869180a04e16
+  SHARED_FRONTEND_AUDIT_SHA256: 0e3f9b943bd09c63f304679525ab5429395fe88c4e1c7fdc80cf9cd7f5165af5
+  SHARED_PREBUILD_GATE_SHA256: a0ee604d753cd27a3192e466a1b75b33d1d4fb8a52c4b3d6c69e0d51b6c4c427
 
 on:
   push:
@@ -93,6 +96,9 @@ jobs:
           curl -fsSL "${base_url}/scripts/common/console-style.ps1" -o "${SHARED_SCRIPTS_DIR}/common/console-style.ps1"
           curl -fsSL "${base_url}/scripts/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1"
           curl -fsSL "${base_url}/scripts/security/Invoke-PreBuildSecurityGate.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-PreBuildSecurityGate.ps1"
+          echo "${SHARED_CONSOLE_STYLE_SHA256}  ${SHARED_SCRIPTS_DIR}/common/console-style.ps1" | sha256sum --check --
+          echo "${SHARED_FRONTEND_AUDIT_SHA256}  ${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" | sha256sum --check --
+          echo "${SHARED_PREBUILD_GATE_SHA256}  ${SHARED_SCRIPTS_DIR}/security/Invoke-PreBuildSecurityGate.ps1" | sha256sum --check --
 
       - name: Run security gate
         shell: pwsh
