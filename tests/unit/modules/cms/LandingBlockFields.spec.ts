@@ -26,6 +26,40 @@ describe('Landing block fields catalog', () => {
     expect(getLandingBlockFieldDefinitions('landing.unknown')).toEqual([])
   })
 
+  it('includes premium hero video field definitions', () => {
+    const heroFields = getLandingBlockFieldDefinitions('landing.hero')
+    const heroFieldPaths = heroFields.map(field => field.path)
+
+    expect(heroFieldPaths).toEqual(expect.arrayContaining([
+      'videoWebm',
+      'videoMp4',
+      'videoPoster',
+      'videoAutoplay',
+      'videoLoop',
+      'videoMuted',
+      'videoPlaysinline',
+      'videoControls',
+      'revealOnScroll',
+      'revealMask',
+      'revealOnce',
+      'parallaxEnabled',
+      'parallaxStrength',
+      'videoPreload',
+    ]))
+  })
+
+  it('includes cinematic feature card field definitions', () => {
+    const featureFields = getLandingBlockFieldDefinitions('landing.features')
+    const featureFieldPaths = featureFields.map(field => field.path)
+
+    expect(featureFieldPaths).toEqual(expect.arrayContaining([
+      'cinematicCardsEnabled',
+      'cinematicCardsTilt',
+      'cinematicCardsGlow',
+      'cinematicCardsPerspective',
+    ]))
+  })
+
   it('keeps field paths unique per block type', () => {
     for (const blockType of LANDING_BLOCK_TYPES) {
       const definitions = getLandingBlockFieldDefinitions(blockType)

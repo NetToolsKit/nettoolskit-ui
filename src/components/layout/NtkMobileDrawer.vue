@@ -184,10 +184,10 @@ function handleCtaClick() {
   padding: 8px 12px;
   cursor: pointer;
   color: var(--ntk-text-muted);
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-medium);
+  border-radius: var(--ntk-radius-sm);
+  transition: all var(--ntk-transition-fast);
   text-decoration: none;
   
   &:hover {
@@ -213,9 +213,9 @@ function handleCtaClick() {
   padding: 12px 20px;
   color: var(--ntk-text-secondary);
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-medium);
+  transition: all var(--ntk-transition-fast);
   
   &:hover {
     background: var(--ntk-bg-secondary);
@@ -240,10 +240,10 @@ function handleCtaClick() {
   text-align: center;
   color: var(--ntk-text-inverse);
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-semibold);
+  border-radius: var(--ntk-radius-md);
+  transition: all var(--ntk-transition-fast);
   
   &:hover {
     opacity: 0.9;

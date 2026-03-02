@@ -123,9 +123,9 @@ const cardClasses = computed(() => ({
   flex-direction: column;
   background: var(--ntk-bg-card);
   border: var(--border-width-md) solid var(--ntk-border-color);
-  border-radius: var(--border-radius-lg);
-  padding: var(--space-xl);
-  transition: all var(--transition-base);
+  border-radius: var(--ntk-radius-lg);
+  padding: var(--ntk-spacing-xl);
+  transition: all var(--ntk-transition-base);
   font-family: var(--ntk-font-body);
 
   &:hover {
@@ -150,8 +150,8 @@ const cardClasses = computed(() => ({
     transform: translateX(-50%);
     background: var(--ntk-primary);
     color: var(--ntk-text-inverse);
-    padding: var(--space-xs) var(--space-md);
-    border-radius: var(--border-radius-xl);
+    padding: var(--ntk-spacing-xs) var(--ntk-spacing-md);
+    border-radius: var(--ntk-radius-xl);
     font-size: var(--ntk-text-xs);
     font-weight: var(--ntk-font-semibold);
     text-transform: uppercase;
@@ -161,9 +161,9 @@ const cardClasses = computed(() => ({
 
   &__header {
     text-align: center;
-    padding-bottom: var(--space-lg);
+    padding-bottom: var(--ntk-spacing-lg);
     border-bottom: var(--border-width-sm) solid var(--ntk-border-light);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--ntk-spacing-lg);
   }
 
   &__title {
@@ -171,7 +171,7 @@ const cardClasses = computed(() => ({
     font-size: var(--ntk-text-xl);
     font-weight: var(--ntk-font-bold);
     color: var(--ntk-text-primary);
-    margin: 0 0 var(--space-md) 0;
+    margin: 0 0 var(--ntk-spacing-md) 0;
   }
 
   &__price {
@@ -179,7 +179,7 @@ const cardClasses = computed(() => ({
     align-items: baseline;
     justify-content: center;
     gap: var(--ntk-spacing-xxs);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--ntk-spacing-sm);
   }
 
   &__currency {
@@ -209,7 +209,7 @@ const cardClasses = computed(() => ({
 
   &__features {
     flex: 1;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--ntk-spacing-lg);
   }
 
   &__feature-list {
@@ -218,13 +218,13 @@ const cardClasses = computed(() => ({
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--ntk-spacing-sm);
   }
 
   &__feature {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--ntk-spacing-sm);
     font-size: var(--ntk-text-sm);
     color: var(--ntk-text-primary);
 

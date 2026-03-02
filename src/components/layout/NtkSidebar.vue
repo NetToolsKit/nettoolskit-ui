@@ -299,7 +299,7 @@ const handleItemClick = (item: SidebarItem) => {
 .ntk-sidebar__item {
   border-radius: var(--ntk-radius-md);
   margin: var(--ntk-spacing-xs) var(--ntk-spacing-sm);
-  transition: all var(--transition-fast);
+  transition: all var(--ntk-transition-fast);
   text-decoration: none;
 
   &:hover {

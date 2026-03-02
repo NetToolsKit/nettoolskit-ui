@@ -1,6 +1,6 @@
 /**
  * CMS white-label persistence and migration helpers.
- * This module loads/saves tenant settings and normalizes legacy payloads.
+ * This module loads/saves tenant settings and normalizes compatibility payloads.
  */
 import { CMS_WHITE_LABEL_STORAGE_KEY, createDefaultWhiteLabelSettings } from './config'
 import type { CmsPageSettings, CmsWhiteLabelSettings } from './types'
@@ -16,10 +16,10 @@ import {
 } from './theme-presets'
 import { normalizeWhiteLabelGovernance } from './workflow'
 
-const LEGACY_CMS_ITEM_IDS = new Set(['dashboard', 'users'])
+const REMOVED_CMS_ITEM_IDS = new Set(['dashboard', 'users'])
 const REQUIRED_CMS_ITEM_IDS = new Set(['settings', 'pages', 'blocks', 'media'])
-const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
-const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
+const COMPAT_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
+const COMPAT_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 2
 
 /**
@@ -44,7 +44,7 @@ function isBrowserRuntime(): boolean {
 }
 
 /**
- * Normalizes notification semantic colors and decouples legacy badge expressions.
+ * Normalizes notification semantic colors and decouples compatibility badge expressions.
  */
 function normalizeNotificationColors(theme: AppShellTheme): AppShellTheme {
   const nextTheme: AppShellTheme = { ...theme }
@@ -62,7 +62,7 @@ function normalizeNotificationColors(theme: AppShellTheme): AppShellTheme {
   const allColorsEqual = allColorsFilled && notificationValues.every(value => value === notificationValues[0])
   const allColorsMatchBadgeText = allColorsEqual && badgeTextColor.length > 0 && notificationValues[0] === badgeTextColor
 
-  // Legacy snapshots used a semantic CSS expression for badge color, coupling it to error token changes.
+  // Older snapshots used a semantic CSS expression for badge color, coupling it to error token changes.
   // Convert it to a concrete value so badge can be tuned independently from notification error color.
   if (
     badgeColor === 'var(--semantic-error)'
@@ -83,20 +83,20 @@ function normalizeNotificationColors(theme: AppShellTheme): AppShellTheme {
 }
 
 /**
- * Migrates legacy flat page/surface/search backgrounds to modern contrasting defaults.
+ * Migrates old flat page/surface/search backgrounds to modern contrasting defaults.
  */
-function normalizeLegacySurfaceContrast(theme: AppShellTheme): AppShellTheme {
+function normalizeSurfaceContrast(theme: AppShellTheme): AppShellTheme {
   const normalizedPageBackground = String(theme.pageBackground ?? '').trim().toLowerCase()
   const normalizedSearchBackground = String(theme.searchBackground ?? '').trim().toLowerCase()
   const normalizedDrawerBackground = String(theme.drawerBackground ?? '').trim().toLowerCase()
 
-  const isLegacyPageBackground = normalizedPageBackground === LEGACY_PAGE_BACKGROUND_TOKEN
-    || normalizedPageBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
-  const isLegacySearchBackground = normalizedSearchBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
+  const isCompatPageBackground = normalizedPageBackground === COMPAT_PAGE_BACKGROUND_TOKEN
+    || normalizedPageBackground === COMPAT_SURFACE_BACKGROUND_TOKEN
+  const isCompatSearchBackground = normalizedSearchBackground === COMPAT_SURFACE_BACKGROUND_TOKEN
     || normalizedSearchBackground.length === 0
-  const isLegacyDrawerBackground = normalizedDrawerBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
+  const isCompatDrawerBackground = normalizedDrawerBackground === COMPAT_SURFACE_BACKGROUND_TOKEN
 
-  if (!isLegacyPageBackground || !isLegacySearchBackground || !isLegacyDrawerBackground) {
+  if (!isCompatPageBackground || !isCompatSearchBackground || !isCompatDrawerBackground) {
     return theme
   }
 
@@ -189,7 +189,7 @@ function resolveDefaultBlockTypeForSection(sectionId: string): string {
 }
 
 /**
- * Normalizes menu items by removing invalid/legacy entries and restoring required defaults.
+ * Normalizes menu items by removing invalid/deprecated entries and restoring required defaults.
  */
 function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellItem[] {
   const source = Array.isArray(items) ? items : defaults
@@ -202,7 +202,7 @@ function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellI
 
     const item = rawItem as Partial<AppShellItem>
     const id = String(item.id ?? '').trim()
-    if (!id || LEGACY_CMS_ITEM_IDS.has(id)) {
+    if (!id || REMOVED_CMS_ITEM_IDS.has(id)) {
       continue
     }
 
@@ -370,7 +370,7 @@ function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): Cm
 }
 
 /**
- * Merges partial/legacy settings with defaults and returns a stable CMS white-label payload.
+ * Merges partial/compatibility settings with defaults and returns a stable CMS white-label payload.
  */
 export function normalizeCmsWhiteLabelSettings(
   parsed: Partial<CmsWhiteLabelSettings> | null | undefined
@@ -381,7 +381,7 @@ export function normalizeCmsWhiteLabelSettings(
   }
 
   const themePresetOverrides = normalizeThemePresetOverrides(parsed.themePresetOverrides)
-  const mergedTheme = normalizeLegacySurfaceContrast(normalizeNotificationColors({
+  const mergedTheme = normalizeSurfaceContrast(normalizeNotificationColors({
     ...defaults.theme,
     ...(parsed.theme ?? {}),
   }))

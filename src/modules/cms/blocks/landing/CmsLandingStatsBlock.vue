@@ -69,7 +69,7 @@ withDefaults(defineProps<Props>(), {
 .cms-stats-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: var(--space-lg);
+  gap: var(--ntk-spacing-lg);
 }
 
 @media (min-width: 768px) {

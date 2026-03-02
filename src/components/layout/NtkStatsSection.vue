@@ -90,7 +90,7 @@ const gridStyle = computed(() => {
 .ntk-stats-section__grid {
   display: grid;
   grid-template-columns: repeat(var(--ntk-stats-columns), minmax(0, 1fr));
-  gap: var(--space-lg);
+  gap: var(--ntk-spacing-lg);
 }
 
 @media (max-width: 1024px) {

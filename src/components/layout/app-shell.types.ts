@@ -63,6 +63,7 @@ export interface AppShellTheme {
   lineHeightBrandText?: string
   lineHeightItemLabel?: string
   lineHeightItemCaption?: string
+  borderWidth?: string
   menuSlotWidth?: string
   searchWidth?: string
   searchControlHeight?: string
@@ -75,12 +76,19 @@ export interface AppShellTheme {
   groupCaptionMiniMinWidth?: string
   groupCaptionMiniHeight?: string
   groupCaptionMiniHorizontalPadding?: string
+  groupCaptionMiniRadius?: string
   itemMinHeight?: string
   itemIconSize?: string
   itemHoverTranslateX?: string
   itemActiveBorderWidth?: string
   drawerScrollPaddingBottom?: string
   workspaceMaxWidth?: string
+  viewportHeight?: string
+  compactBreakpoint?: string
+  compactPagePadding?: string
+  compactWorkspaceCardPadding?: string
+  cmsLayoutBreakpointLg?: string
+  cmsLayoutBreakpointMd?: string
   miniItemMarginRight?: string
   miniItemAvatarMinWidth?: string
   radiusSm?: string
@@ -92,6 +100,15 @@ export interface AppShellTheme {
   spacingMd?: string
   spacingLg?: string
   transitionFast?: string
+  titleSeparatorSize?: string
+  userAvatarSize?: string
+  headerBlur?: string
+  actionHoverTranslateY?: string
+  itemCaptionOffset?: string
+  headerZIndex?: string
+  drawerZIndex?: string
+  groupSeparatorOpacity?: string
+  badgePulseScale?: string
   shellBackground?: string
   headerBackground?: string
   headerTextColor?: string

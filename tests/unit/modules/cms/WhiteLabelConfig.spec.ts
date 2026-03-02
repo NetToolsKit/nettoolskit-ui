@@ -105,7 +105,7 @@ describe('white-label.config', () => {
     expect(snapshot.shellConfig.activeItem).toBe(snapshot.filteredItems[0]?.id ?? '')
   })
 
-  it('normalizes legacy flat page/surface backgrounds in shell snapshot', () => {
+  it('normalizes old flat page/surface backgrounds in shell snapshot', () => {
     const settings = createDefaultWhiteLabelSettings()
     settings.theme.pageBackground = 'var(--ntk-bg-card)'
     settings.theme.drawerBackground = 'var(--ntk-bg-card)'

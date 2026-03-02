@@ -306,7 +306,7 @@ const primaryBtnStyle = computed(() => {
 // Conteúdo
 .cta-title {
   font-family: var(--ntk-font-family-display);
-  font-weight: 700;
+  font-weight: var(--ntk-font-weight-bold);
   margin: 0 0 0.5rem 0;
   line-height: 1.2;
 }
@@ -330,10 +330,10 @@ const primaryBtnStyle = computed(() => {
   justify-content: center;
   padding: var(--ntk-spacing-sm) var(--ntk-spacing-lg);
   font-size: var(--ntk-text-base);
-  font-weight: 600;
+  font-weight: var(--ntk-font-weight-semibold);
   text-decoration: none;
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast);
+  border-radius: var(--ntk-radius-md);
+  transition: all var(--ntk-transition-fast);
   
   &--primary {
     box-shadow: var(--ntk-shadow-medium);

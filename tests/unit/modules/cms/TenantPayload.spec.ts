@@ -26,7 +26,7 @@ describe('tenant-payload', () => {
     expect(payload.profile.name).toBe('Tenant Alpha')
   })
 
-  it('parses current payload schema and legacy settings envelope formats', () => {
+  it('parses current payload schema and compatibility settings envelope formats', () => {
     const settings = createDefaultWhiteLabelSettings()
     const currentPayload = {
       kind: CMS_TENANT_PROFILE_PAYLOAD_KIND,
@@ -45,16 +45,16 @@ describe('tenant-payload', () => {
     expect(currentResult?.name).toBe('Tenant Alpha')
     expect(currentResult?.sourceVersion).toBe(2)
 
-    const legacyResult = parseCmsTenantImportPayload({
-      id: 'legacy-id',
-      name: 'Legacy Tenant',
+    const compatibilityResult = parseCmsTenantImportPayload({
+      id: 'compat-id',
+      name: 'Compatibility Tenant',
       settings,
-    }, 'legacy.json')
+    }, 'compat.json')
 
-    expect(legacyResult).not.toBeNull()
-    expect(legacyResult?.id).toBe('legacy-id')
-    expect(legacyResult?.name).toBe('Legacy Tenant')
-    expect(legacyResult?.sourceVersion).toBe(1)
+    expect(compatibilityResult).not.toBeNull()
+    expect(compatibilityResult?.id).toBe('compat-id')
+    expect(compatibilityResult?.name).toBe('Compatibility Tenant')
+    expect(compatibilityResult?.sourceVersion).toBe(1)
   })
 
   it('rejects unsupported versions and invalid payload kinds', () => {

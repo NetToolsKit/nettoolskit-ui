@@ -186,7 +186,7 @@ export function createTenantProfileId(name: string, existingIds: Iterable<string
 }
 
 /**
- * Loads profile state from storage with legacy fallback from single-profile settings.
+ * Loads profile state from storage with compatibility fallback from single-profile settings.
  */
 export function loadCmsTenantProfilesState(): CmsTenantProfilesState {
   const fallback = createDefaultTenantProfilesState(loadCmsWhiteLabelSettings())

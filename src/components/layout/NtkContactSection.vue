@@ -173,13 +173,13 @@ function submitForm(): void {
 .ntk-contact__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-xl);
+  gap: var(--ntk-spacing-xl);
 }
 
 .ntk-contact__form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--ntk-spacing-md);
 }
 
 .ntk-contact__submit {
@@ -189,16 +189,16 @@ function submitForm(): void {
 .ntk-contact__channels {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--ntk-spacing-md);
 }
 
 .ntk-contact__channel {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: var(--space-md);
+  gap: var(--ntk-spacing-md);
   border: 1px solid var(--ntk-border-color);
   border-radius: var(--ntk-radius-lg, 12px);
-  padding: var(--space-md);
+  padding: var(--ntk-spacing-md);
   background: var(--ntk-bg-card);
 }
 
@@ -238,10 +238,10 @@ function submitForm(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
+  gap: var(--ntk-spacing-md);
   border: 1px solid var(--ntk-border-color);
   border-radius: var(--ntk-radius-lg, 12px);
-  padding: var(--space-md);
+  padding: var(--ntk-spacing-md);
   background: var(--ntk-gradient-subtle);
 }
 
@@ -258,7 +258,7 @@ function submitForm(): void {
 .ntk-contact__portal-content p {
   margin: 0;
   color: var(--ntk-text-light);
-  font-size: 0.875rem;
+  font-size: var(--ntk-font-size-sm);
 }
 
 @media (max-width: 900px) {

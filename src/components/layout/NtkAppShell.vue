@@ -1,7 +1,10 @@
 <template>
   <q-layout
     view="hHh Lpr fFf"
-    class="ntk-app-shell"
+    :class="[
+      'ntk-app-shell',
+      { 'ntk-app-shell--compact': isCompactViewport },
+    ]"
     :style="shellStyle"
   >
     <q-drawer
@@ -198,7 +201,7 @@
         <q-space />
 
         <div
-          v-if="showSearch && $q.screen.gt.xs"
+          v-if="showSearch && !isCompactViewport"
           class="ntk-app-shell__search-wrapper"
         >
           <q-input
@@ -594,6 +597,33 @@ const activeItem = computed<AppShellItem>(() => {
 
 const resolvedTheme = computed<AppShellTheme>(() => resolveAppShellTheme(props.theme ?? {}, APP_SHELL_DEFAULT_THEME))
 
+/**
+ * Parses breakpoint token values (e.g. "500" or "500px") into pixels.
+ */
+function parseBreakpointToken(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseFloat(String(value ?? '').replace(/[^0-9.]/g, ''))
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed
+  }
+  return fallback
+}
+
+/**
+ * Resolves viewport width with deterministic fallback for tests/SSR.
+ */
+function resolveViewportWidth(fallback: number): number {
+  if (typeof $q.screen.width === 'number' && Number.isFinite($q.screen.width)) {
+    return $q.screen.width
+  }
+  if (typeof window !== 'undefined' && typeof window.innerWidth === 'number' && Number.isFinite(window.innerWidth)) {
+    return window.innerWidth
+  }
+  return fallback
+}
+
+const compactBreakpointPx = computed(() => parseBreakpointToken(resolvedTheme.value.compactBreakpoint, 500))
+const viewportWidthPx = computed(() => resolveViewportWidth(1280))
+const isCompactViewport = computed(() => viewportWidthPx.value <= compactBreakpointPx.value)
 const isMiniMode = computed(() => miniState.value && $q.screen.gt.sm)
 const searchModel = computed(() => localSearchValue.value)
 const notificationDefaultColor = computed(() => {
@@ -697,6 +727,7 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-line-height-brand-text': theme.lineHeightBrandText ?? '',
     '--ntk-shell-line-height-item-label': theme.lineHeightItemLabel ?? '',
     '--ntk-shell-line-height-item-caption': theme.lineHeightItemCaption ?? '',
+    '--ntk-shell-border-width': theme.borderWidth ?? '',
     '--ntk-shell-menu-slot-width': theme.menuSlotWidth ?? '',
     '--ntk-shell-search-width': theme.searchWidth ?? '',
     '--ntk-shell-search-control-height': theme.searchControlHeight ?? '',
@@ -709,12 +740,19 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-group-caption-mini-min-width': theme.groupCaptionMiniMinWidth ?? '',
     '--ntk-shell-group-caption-mini-height': theme.groupCaptionMiniHeight ?? '',
     '--ntk-shell-group-caption-mini-horizontal-padding': theme.groupCaptionMiniHorizontalPadding ?? '',
+    '--ntk-shell-group-caption-mini-radius': theme.groupCaptionMiniRadius ?? '',
     '--ntk-shell-item-min-height': theme.itemMinHeight ?? '',
     '--ntk-shell-item-icon-size': theme.itemIconSize ?? '',
     '--ntk-shell-item-hover-translate-x': theme.itemHoverTranslateX ?? '',
     '--ntk-shell-item-active-border-width': theme.itemActiveBorderWidth ?? '',
     '--ntk-shell-drawer-scroll-padding-bottom': theme.drawerScrollPaddingBottom ?? '',
     '--ntk-shell-workspace-max-width': theme.workspaceMaxWidth ?? '',
+    '--ntk-shell-viewport-height': theme.viewportHeight ?? '',
+    '--ntk-shell-compact-breakpoint': `${compactBreakpointPx.value}px`,
+    '--ntk-shell-compact-page-padding': theme.compactPagePadding ?? '',
+    '--ntk-shell-compact-workspace-card-padding': theme.compactWorkspaceCardPadding ?? '',
+    '--ntk-shell-cms-layout-breakpoint-lg': theme.cmsLayoutBreakpointLg ?? '',
+    '--ntk-shell-cms-layout-breakpoint-md': theme.cmsLayoutBreakpointMd ?? '',
     '--ntk-shell-mini-item-margin-right': theme.miniItemMarginRight ?? '',
     '--ntk-shell-mini-item-avatar-min-width': theme.miniItemAvatarMinWidth ?? '',
     '--ntk-shell-radius-sm': theme.radiusSm ?? '',
@@ -726,11 +764,15 @@ const shellStyle = computed<Record<string, string>>(() => {
     '--ntk-shell-space-md': theme.spacingMd ?? '',
     '--ntk-shell-space-lg': theme.spacingLg ?? '',
     '--ntk-shell-transition-fast': theme.transitionFast ?? '',
-    '--ntk-shell-title-separator-size': 'calc(var(--ntk-shell-font-size-title-app) + var(--ntk-shell-space-xs))',
-    '--ntk-shell-user-avatar-size': 'calc(var(--ntk-shell-search-control-height) - (var(--ntk-shell-space-xs) * 2))',
-    '--ntk-shell-header-blur': 'blur(calc(var(--ntk-shell-space-sm) * 2))',
-    '--ntk-shell-action-hover-translate-y': 'calc(var(--ntk-shell-space-xs) * -0.5)',
-    '--ntk-shell-item-caption-offset': 'calc(var(--ntk-shell-space-xs) * 0.6)',
+    '--ntk-shell-title-separator-size': theme.titleSeparatorSize ?? '',
+    '--ntk-shell-user-avatar-size': theme.userAvatarSize ?? '',
+    '--ntk-shell-header-blur': theme.headerBlur ?? '',
+    '--ntk-shell-action-hover-translate-y': theme.actionHoverTranslateY ?? '',
+    '--ntk-shell-item-caption-offset': theme.itemCaptionOffset ?? '',
+    '--ntk-shell-header-z-index': theme.headerZIndex ?? '',
+    '--ntk-shell-drawer-z-index': theme.drawerZIndex ?? '',
+    '--ntk-shell-group-separator-opacity': theme.groupSeparatorOpacity ?? '',
+    '--ntk-shell-badge-pulse-scale': theme.badgePulseScale ?? '',
     '--ntk-shell-header-height': `${props.headerHeight}px`,
   }
 })
@@ -1140,7 +1182,7 @@ function toggleMenuMode(): void {
   background: var(--ntk-shell-header-bg);
   color: var(--ntk-shell-header-text);
   box-shadow: var(--ntk-shell-header-shadow) !important;
-  z-index: 3000 !important;
+  z-index: var(--ntk-shell-header-z-index) !important;
   backdrop-filter: var(--ntk-shell-header-blur);
 }
 
@@ -1210,7 +1252,7 @@ function toggleMenuMode(): void {
   width: var(--ntk-shell-search-width);
   max-width: var(--ntk-shell-search-width);
   margin-right: var(--ntk-shell-space-lg);
-  border: 1px solid var(--ntk-shell-search-border);
+  border: var(--ntk-shell-border-width) solid var(--ntk-shell-search-border);
   border-radius: var(--ntk-shell-radius-md);
   background: var(--ntk-shell-search-bg);
   transition: border-color var(--ntk-shell-transition-fast);
@@ -1242,8 +1284,8 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__search :deep(input) {
   color: var(--ntk-shell-search-text);
-  font-size: var(--ntk-shell-font-size-base);
-  font-weight: var(--ntk-shell-font-weight-regular);
+  font-size: var(--ntk-shell-font-size-title);
+  font-weight: var(--ntk-shell-font-weight-medium);
 }
 
 .ntk-app-shell__search :deep(.q-icon) {
@@ -1264,6 +1306,11 @@ function toggleMenuMode(): void {
     transform var(--ntk-shell-transition-fast),
     color var(--ntk-shell-transition-fast),
     background-color var(--ntk-shell-transition-fast);
+}
+
+.ntk-app-shell__actions :deep(.q-btn__content) {
+  font-size: var(--ntk-shell-font-size-title);
+  font-weight: var(--ntk-shell-font-weight-medium);
 }
 
 .ntk-app-shell__actions :deep(.q-btn:not(.q-btn--round)) {
@@ -1309,7 +1356,8 @@ function toggleMenuMode(): void {
 .ntk-app-shell__drawer {
   background-color: var(--ntk-shell-drawer-bg);
   color: var(--ntk-shell-drawer-text);
-  z-index: 2000;
+  border-right: var(--ntk-shell-border-width) solid var(--ntk-shell-divider);
+  z-index: var(--ntk-shell-drawer-z-index);
   box-shadow: var(--ntk-shell-drawer-shadow);
 }
 
@@ -1318,7 +1366,7 @@ function toggleMenuMode(): void {
   padding: var(--ntk-shell-space-lg);
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--ntk-shell-divider);
+  border-bottom: var(--ntk-shell-border-width) solid var(--ntk-shell-divider);
 }
 
 .ntk-app-shell__brand {
@@ -1382,10 +1430,10 @@ function toggleMenuMode(): void {
   min-width: var(--ntk-shell-group-caption-mini-min-width);
   height: var(--ntk-shell-group-caption-mini-height);
   padding: 0 var(--ntk-shell-group-caption-mini-horizontal-padding);
-  border-radius: 999px;
+  border-radius: var(--ntk-shell-group-caption-mini-radius);
   background: var(--ntk-shell-group-caption-mini-bg);
   font-size: var(--ntk-shell-font-size-group-caption-mini);
-  font-weight: 700;
+  font-weight: var(--ntk-shell-font-weight-bold);
   letter-spacing: var(--ntk-shell-letter-spacing-group-caption-mini);
 }
 
@@ -1456,7 +1504,7 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__group-separator {
-  opacity: 0.12;
+  opacity: var(--ntk-shell-group-separator-opacity);
   margin: var(--ntk-shell-space-lg) var(--ntk-shell-space-lg);
 }
 
@@ -1465,7 +1513,7 @@ function toggleMenuMode(): void {
   bottom: 0;
   left: 0;
   right: 0;
-  border-top: 1px solid var(--ntk-shell-divider);
+  border-top: var(--ntk-shell-border-width) solid var(--ntk-shell-divider);
   background-color: var(--ntk-shell-drawer-footer-bg);
   box-shadow: var(--ntk-shell-footer-shadow);
 }
@@ -1481,8 +1529,8 @@ function toggleMenuMode(): void {
 
 .ntk-app-shell__page-container {
   background: var(--ntk-shell-page-bg);
-  min-height: 100vh;
-  height: 100vh;
+  min-height: var(--ntk-shell-viewport-height);
+  height: var(--ntk-shell-viewport-height);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable both-edges;
@@ -1493,7 +1541,7 @@ function toggleMenuMode(): void {
   font-size: var(--ntk-shell-font-size-base);
   font-weight: var(--ntk-shell-font-weight-regular);
   padding: var(--ntk-shell-space-lg);
-  min-height: calc(100vh - var(--ntk-shell-header-height));
+  min-height: calc(var(--ntk-shell-viewport-height) - var(--ntk-shell-header-height));
 }
 
 .ntk-app-shell__workspace {
@@ -1503,12 +1551,12 @@ function toggleMenuMode(): void {
 }
 
 .ntk-app-shell__workspace-card {
-  border: 1px solid var(--ntk-shell-divider);
+  border: var(--ntk-shell-border-width) solid var(--ntk-shell-divider);
   border-radius: var(--ntk-shell-radius-lg);
   background: var(--ntk-shell-drawer-bg);
   box-shadow: var(--ntk-shell-header-shadow);
   padding: var(--ntk-shell-space-lg);
-  min-height: calc(100vh - var(--ntk-shell-header-height) - (var(--ntk-shell-space-lg) * 2));
+  min-height: calc(var(--ntk-shell-viewport-height) - var(--ntk-shell-header-height) - (var(--ntk-shell-space-lg) * 2));
 }
 
 :deep(.q-drawer--mini) .ntk-app-shell__item {
@@ -1529,22 +1577,16 @@ function toggleMenuMode(): void {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(var(--ntk-shell-badge-pulse-scale));
   }
 }
 
-@media (max-width: 500px) {
-  .ntk-app-shell__search-wrapper {
-    display: none;
-  }
+.ntk-app-shell--compact .ntk-app-shell__page {
+  padding: var(--ntk-shell-compact-page-padding);
+}
 
-  .ntk-app-shell__page {
-    padding: var(--ntk-shell-space-md);
-  }
-
-  .ntk-app-shell__workspace-card {
-    padding: var(--ntk-shell-space-md);
-    min-height: calc(100vh - var(--ntk-shell-header-height) - (var(--ntk-shell-space-md) * 2));
-  }
+.ntk-app-shell--compact .ntk-app-shell__workspace-card {
+  padding: var(--ntk-shell-compact-workspace-card-padding);
+  min-height: calc(var(--ntk-shell-viewport-height) - var(--ntk-shell-header-height) - (var(--ntk-shell-compact-workspace-card-padding) * 2));
 }
 </style>

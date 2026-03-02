@@ -189,12 +189,12 @@ describe('CmsRenderer', () => {
     expect(wrapper.find('[data-cms-unknown-block-type="content.missing"]').exists()).toBe(true)
   })
 
-  it('should render landing CTA block even when legacy props are empty', () => {
+  it('should render landing CTA block even when compatibility props are empty', () => {
     const page = {
       version: CMS_SCHEMA_VERSION,
-      id: 'landing-legacy',
-      slug: '/legacy',
-      title: 'Legacy page',
+      id: 'landing-compat',
+      slug: '/compat',
+      title: 'Compatibility page',
       status: 'draft' as const,
       sections: [
         {
@@ -217,7 +217,7 @@ describe('CmsRenderer', () => {
       },
     })
 
-    expect(wrapper.find('[data-cms-page-id="landing-legacy"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cms-page-id="landing-compat"]').exists()).toBe(true)
     expect(wrapper.text()).not.toContain('Unknown block')
   })
 })

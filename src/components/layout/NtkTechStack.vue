@@ -77,22 +77,22 @@ withDefaults(defineProps<Props>(), {
 .ntk-tech-stack__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-lg);
+  gap: var(--ntk-spacing-lg);
 }
 
 .ntk-tech-stack__card {
   border: 1px solid var(--ntk-border-color);
   border-radius: var(--ntk-radius-lg, 12px);
   background: var(--ntk-bg-card);
-  padding: var(--space-lg);
+  padding: var(--ntk-spacing-lg);
 }
 
 .ntk-tech-stack__card-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+  gap: var(--ntk-spacing-sm);
+  margin-bottom: var(--ntk-spacing-md);
 }
 
 .ntk-tech-stack__card-header h3 {
@@ -108,7 +108,7 @@ withDefaults(defineProps<Props>(), {
 .ntk-tech-stack__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
+  gap: var(--ntk-spacing-sm);
 }
 
 .ntk-tech-stack__chip {

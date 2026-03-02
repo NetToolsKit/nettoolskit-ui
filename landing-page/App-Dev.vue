@@ -91,9 +91,6 @@ watchEffect(() => {
 </script>
 
 <style>
-/* Importar design system */
-@import '../src/styles/design-system.scss';
-
 * {
   margin: 0;
   padding: 0;
@@ -123,7 +120,7 @@ body.dark-mode {
   align-items: center;
   justify-content: center;
   color: var(--theme-text-light);
-  transition: all var(--transition-fast);
+  transition: all var(--ntk-transition-fast);
 }
 
 .header-action__theme-toggle:hover {
@@ -142,9 +139,9 @@ body.dark-mode {
   gap: 0.5rem;
   padding: 0rem 1rem;
   border-radius: 6px;
-  font-size: 0.8125rem;
+  font-size: var(--ntk-font-size-sm);
   line-height: 1.2;
-  transition: all var(--transition-fast);
+  transition: all var(--ntk-transition-fast);
   cursor: pointer;
   border: none;
   background: var(--theme-primary);

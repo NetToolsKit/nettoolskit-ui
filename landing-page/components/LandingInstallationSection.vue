@@ -14,7 +14,7 @@
         <div class="install-step">
           <div class="step-number">2</div>
           <h3>Import Styles</h3>
-          <code>@import '@/shared/ui/styles/design-system.scss';</code>
+          <code>@import '@/shared/ui/styles/tokens.scss';</code>
         </div>
         <div class="install-step">
           <div class="step-number">3</div>

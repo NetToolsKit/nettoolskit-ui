@@ -17,8 +17,8 @@ import { createDefaultWhiteLabelGovernance } from './workflow'
  * Storage key for the current tenant white-label settings payload.
  */
 export const CMS_WHITE_LABEL_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
-const LEGACY_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
-const LEGACY_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
+const COMPAT_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
+const COMPAT_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 
 /**
  * Creates a deep clone for plain objects used in default settings.
@@ -128,18 +128,18 @@ function createDefaultWhiteLabelTheme(theme: AppShellTheme): AppShellTheme {
 }
 
 /**
- * Migrates legacy flat page/surface/search backgrounds to modern contrasting defaults.
+ * Migrates old flat page/surface/search backgrounds to modern contrasting defaults.
  */
-function normalizeLegacyShellSurfaceContrast(theme: AppShellTheme): AppShellTheme {
+function normalizeShellSurfaceContrast(theme: AppShellTheme): AppShellTheme {
   const pageBackground = String(theme.pageBackground ?? '').trim().toLowerCase()
   const drawerBackground = String(theme.drawerBackground ?? '').trim().toLowerCase()
   const searchBackground = String(theme.searchBackground ?? '').trim().toLowerCase()
 
-  const isLegacyPageToken = pageBackground === LEGACY_PAGE_BACKGROUND_TOKEN || pageBackground === LEGACY_SURFACE_BACKGROUND_TOKEN
-  const isLegacyFlatSurface = isLegacyPageToken && pageBackground === drawerBackground
-  const isLegacySearchSurface = searchBackground.length === 0 || searchBackground === drawerBackground
+  const isCompatPageToken = pageBackground === COMPAT_PAGE_BACKGROUND_TOKEN || pageBackground === COMPAT_SURFACE_BACKGROUND_TOKEN
+  const isCompatFlatSurface = isCompatPageToken && pageBackground === drawerBackground
+  const isCompatSearchSurface = searchBackground.length === 0 || searchBackground === drawerBackground
 
-  if (!isLegacyFlatSurface || !isLegacySearchSurface) {
+  if (!isCompatFlatSurface || !isCompatSearchSurface) {
     return theme
   }
 
@@ -320,7 +320,7 @@ export function mapWhiteLabelToShellSnapshot(
     ? state.activeItem
     : fallbackActiveItem
 
-  const resolvedTheme = normalizeLegacyShellSurfaceContrast(
+  const resolvedTheme = normalizeShellSurfaceContrast(
     resolveAppShellTheme(settings.theme, APP_SHELL_DEFAULT_THEME)
   )
   const toolbarActions = settings.toolbarActions.filter(action => {

@@ -134,7 +134,7 @@ export function createCmsTenantExportPayload(profile: {
 }
 
 /**
- * Parses and validates tenant import payloads from multiple legacy/current JSON formats.
+ * Parses and validates tenant import payloads from multiple compatible JSON formats.
  */
 export function parseCmsTenantImportPayload(raw: unknown, fileName: string): CmsTenantImportPayload | null {
   if (!raw || typeof raw !== 'object') {

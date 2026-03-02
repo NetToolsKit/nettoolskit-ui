@@ -7,9 +7,8 @@ import { Quasar, Dark } from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
 
-// NetToolsKit Design System
+// NetToolsKit style tokens
 import '../src/styles/tokens.scss'
-import '../src/styles/design-system.scss'
 import '../src/styles/global.scss'
 
 import App from './App.vue'

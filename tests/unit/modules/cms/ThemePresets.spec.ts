@@ -30,7 +30,8 @@ describe('theme-presets', () => {
     const presets = buildCmsThemePresets(APP_SHELL_DEFAULT_THEME)
     const detected = detectCmsThemePresetId(APP_SHELL_DEFAULT_THEME, presets, APP_SHELL_DEFAULT_THEME)
 
-    expect(presets.length).toBeGreaterThanOrEqual(6)
+    expect(presets).toHaveLength(3)
+    expect(presets.map(preset => preset.id)).toEqual(['default', 'dark', 'monochrome'])
     expect(detected).toBe('default')
   })
 

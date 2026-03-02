@@ -60,8 +60,8 @@ const cardClasses = computed(() => ({
 <style lang="scss" scoped>
 .ntk-card {
   background: var(--ntk-bg-card);
-  border-radius: var(--border-radius-lg);
-  transition: all var(--transition-base);
+  border-radius: var(--ntk-radius-lg);
+  transition: all var(--ntk-transition-base);
   font-family: var(--ntk-font-body);
 
   :deep(.q-card__section) {
@@ -86,14 +86,14 @@ const cardClasses = computed(() => ({
   &--accent-left {
     border: var(--border-width-md) solid transparent;
     border-left: var(--border-width-lg) solid;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--ntk-radius-md);
     box-shadow: var(--ntk-shadow-md);
   }
 
   &--accent-top {
     border: var(--border-width-md) solid transparent;
     border-top: var(--border-width-lg) solid;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--ntk-radius-md);
     box-shadow: var(--ntk-shadow-md);
   }
 
@@ -131,8 +131,8 @@ const cardClasses = computed(() => ({
   }
 
   .ntk-card__header {
-    padding: var(--space-lg);
-    padding-bottom: var(--space-md);
+    padding: var(--ntk-spacing-lg);
+    padding-bottom: var(--ntk-spacing-md);
     border-bottom: var(--border-width-sm) solid var(--ntk-border-light);
   }
 
@@ -145,20 +145,20 @@ const cardClasses = computed(() => ({
   }
 
   &--padding-sm .ntk-card__body {
-    padding: var(--space-md);
+    padding: var(--ntk-spacing-md);
   }
 
   &--padding-md .ntk-card__body {
-    padding: var(--space-lg);
+    padding: var(--ntk-spacing-lg);
   }
 
   &--padding-lg .ntk-card__body {
-    padding: var(--space-xl);
+    padding: var(--ntk-spacing-xl);
   }
 
   .ntk-card__footer {
-    padding: var(--space-lg);
-    padding-top: var(--space-md);
+    padding: var(--ntk-spacing-lg);
+    padding-top: var(--ntk-spacing-md);
     border-top: var(--border-width-sm) solid var(--ntk-border-light);
   }
 }

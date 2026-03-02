@@ -162,7 +162,7 @@ const heroImage = computed<string | undefined>(() => {
 <style scoped>
 .ntk-landing-composer {
   min-height: 100vh;
-  background: var(--color-surface-primary);
+  background: var(--ntk-bg-primary);
 }
 
 .ntk-landing-composer__main {
@@ -170,18 +170,18 @@ const heroImage = computed<string | undefined>(() => {
 }
 
 .ntk-landing-composer__code {
-  margin-top: var(--space-lg);
-  padding: var(--space-md);
-  border-radius: var(--border-radius-lg, 14px);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-secondary);
+  margin-top: var(--ntk-spacing-lg);
+  padding: var(--ntk-spacing-md);
+  border-radius: var(--ntk-radius-lg, 14px);
+  border: 1px solid var(--ntk-border-color);
+  background: var(--ntk-bg-secondary);
 }
 
 .ntk-landing-composer__code-title {
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 var(--ntk-spacing-xs);
   font-size: var(--ntk-text-sm, 0.875rem);
   font-weight: var(--ntk-font-semibold, 600);
-  color: var(--color-text-secondary);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-landing-composer__code-snippet {
@@ -189,7 +189,7 @@ const heroImage = computed<string | undefined>(() => {
   padding: 0;
   font-size: var(--ntk-text-sm, 0.875rem);
   line-height: 1.55;
-  color: var(--color-text-primary);
+  color: var(--ntk-text-primary);
   white-space: pre-wrap;
   word-break: break-word;
 }

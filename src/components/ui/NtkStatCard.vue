@@ -165,8 +165,8 @@ const trendClass = computed(() => ({
   align-items: center;
   text-align: center;
   padding: var(--ntk-spacing-lg);
-  border-radius: var(--border-radius-lg);
-  transition: all var(--transition-fast);
+  border-radius: var(--ntk-radius-lg);
+  transition: all var(--ntk-transition-fast);
   text-decoration: none;
 
   &:hover {
@@ -253,7 +253,7 @@ const trendClass = computed(() => ({
   font-size: var(--ntk-text-xs);
   font-weight: 600;
   padding: var(--ntk-spacing-xxs) var(--ntk-spacing-sm);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--ntk-radius-lg);
   
   &.trend-up {
     background: var(--semantic-success-light);

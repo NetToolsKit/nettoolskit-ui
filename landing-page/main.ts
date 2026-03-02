@@ -49,9 +49,8 @@ import {
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
 
-// NetToolsKit Design System
+// NetToolsKit style tokens
 import '../src/styles/tokens.scss'
-import '../src/styles/design-system.scss'
 import '../src/styles/global.scss'
 
 // Route-mode async loading keeps landing and CMS bundles split at runtime.

@@ -133,19 +133,19 @@ const heroStyle = computed(() => {
 
   // Variants
   &--default {
-    background-color: var(--color-surface-primary);
+    background-color: var(--ntk-bg-primary);
   }
 
   &--light {
-    background-color: var(--color-bg-light);
+    background-color: var(--ntk-bg-secondary);
   }
 
   &--dark {
-    background-color: var(--color-footer-bg);
-    color: var(--color-text-inverse);
+    background-color: var(--ntk-footer-bg);
+    color: var(--ntk-text-inverse);
 
     .ntk-hero__subtitle {
-      color: var(--color-footer-text-muted);
+      color: var(--ntk-footer-text-muted);
     }
   }
 
@@ -155,43 +155,43 @@ const heroStyle = computed(() => {
 
   // Sizes
   &--sm {
-    padding: var(--space-xl) 0;
+    padding: var(--ntk-spacing-xl) 0;
 
     @media (min-width: 1024px) {
-      padding: var(--space-2xl) 0;
+      padding: var(--ntk-spacing-2xl) 0;
     }
   }
 
   &--md {
-    padding: var(--space-2xl) 0;
+    padding: var(--ntk-spacing-2xl) 0;
 
     @media (min-width: 1024px) {
-      padding: var(--space-3xl) 0;
+      padding: var(--ntk-spacing-3xl) 0;
     }
   }
 
   &--lg {
-    padding: var(--space-3xl) 0;
+    padding: var(--ntk-spacing-3xl) 0;
     min-height: 80vh;
     display: flex;
     align-items: center;
 
     @media (min-width: 1024px) {
-      padding: calc(var(--space-3xl) * 1.5) 0;
+      padding: calc(var(--ntk-spacing-3xl) * 1.5) 0;
     }
   }
 
   &__container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--space-md);
+    padding: 0 var(--ntk-spacing-md);
 
     @media (min-width: 600px) {
-      padding: 0 var(--space-lg);
+      padding: 0 var(--ntk-spacing-lg);
     }
 
     @media (min-width: 1024px) {
-      padding: 0 var(--space-xl);
+      padding: 0 var(--ntk-spacing-xl);
     }
   }
 
@@ -213,7 +213,7 @@ const heroStyle = computed(() => {
     }
 
     .ntk-hero__media {
-      margin-top: var(--space-xl);
+      margin-top: var(--ntk-spacing-xl);
     }
   }
 
@@ -222,12 +222,12 @@ const heroStyle = computed(() => {
     .ntk-hero__container {
       display: grid;
       grid-template-columns: 1fr;
-      gap: var(--space-xl);
+      gap: var(--ntk-spacing-xl);
       align-items: center;
 
       @media (min-width: 1024px) {
         grid-template-columns: 1fr 1fr;
-        gap: var(--space-2xl);
+        gap: var(--ntk-spacing-2xl);
       }
     }
   }
@@ -237,12 +237,12 @@ const heroStyle = computed(() => {
     .ntk-hero__container {
       display: grid;
       grid-template-columns: 1fr;
-      gap: var(--space-xl);
+      gap: var(--ntk-spacing-xl);
       align-items: center;
 
       @media (min-width: 1024px) {
         grid-template-columns: 1fr 1fr;
-        gap: var(--space-2xl);
+        gap: var(--ntk-spacing-2xl);
       }
     }
 
@@ -256,27 +256,27 @@ const heroStyle = computed(() => {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--ntk-spacing-md);
   }
 
   &__badge {
     display: inline-block;
     width: fit-content;
-    padding: var(--space-xs) var(--space-md);
-    background-color: var(--color-action-primary);
-    color: var(--color-text-inverse);
+    padding: var(--ntk-spacing-xs) var(--ntk-spacing-md);
+    background-color: var(--ntk-primary);
+    color: var(--ntk-text-inverse);
     font-size: var(--ntk-text-xs);
     font-weight: var(--ntk-font-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-radius: var(--border-radius-xl);
+    border-radius: var(--ntk-radius-xl);
   }
 
   &__title {
     font-family: var(--ntk-font-display);
     font-size: var(--ntk-text-3xl);
     font-weight: var(--ntk-font-extrabold);
-    line-height: var(--line-height-tight);
+    line-height: var(--ntk-line-height-tight);
     margin: 0;
     color: inherit;
 
@@ -287,8 +287,8 @@ const heroStyle = computed(() => {
 
   &__subtitle {
     font-size: var(--ntk-text-lg);
-    color: var(--color-text-secondary);
-    line-height: var(--line-height-relaxed);
+    color: var(--ntk-text-secondary);
+    line-height: var(--ntk-line-height-relaxed);
     margin: 0;
     max-width: 600px;
 
@@ -300,12 +300,12 @@ const heroStyle = computed(() => {
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-md);
-    margin-top: var(--space-md);
+    gap: var(--ntk-spacing-md);
+    margin-top: var(--ntk-spacing-md);
   }
 
   &__extra {
-    margin-top: var(--space-lg);
+    margin-top: var(--ntk-spacing-lg);
   }
 
   &__media {
@@ -317,7 +317,7 @@ const heroStyle = computed(() => {
   &__image {
     max-width: 100%;
     height: auto;
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--ntk-radius-lg);
     box-shadow: var(--ntk-shadow-lg);
   }
 }

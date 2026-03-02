@@ -4,19 +4,14 @@
 import type { AppShellTheme } from '../../../components/layout/app-shell.types'
 import type { ThemeColorPalette } from '../../../config/colors/theme-mode.config'
 import { themeColors } from '../../../config/colors/theme-mode.config'
-import type { ThemeConfig } from '../../../config/theme/theme.config'
-import { themes } from '../../../config/theme/theme.config'
 
 /**
  * Complete list of preset ids accepted by CMS theme selectors.
  */
 export const CMS_THEME_PRESET_IDS = [
   'default',
-  'light',
   'dark',
-  'sentinela',
-  'platea',
-  'nettoolskit',
+  'monochrome',
   'custom',
 ] as const
 
@@ -25,11 +20,8 @@ export const CMS_THEME_PRESET_IDS = [
  */
 export const CMS_THEME_BASE_PRESET_IDS = [
   'default',
-  'light',
   'dark',
-  'sentinela',
-  'platea',
-  'nettoolskit',
+  'monochrome',
 ] as const
 
 export type CmsThemePresetId = (typeof CMS_THEME_PRESET_IDS)[number]
@@ -114,42 +106,44 @@ function createThemeFromMode(palette: ThemeColorPalette): Partial<AppShellTheme>
 }
 
 /**
- * Builds an app-shell partial theme from a branded theme configuration.
+ * Builds a monochrome app-shell partial theme.
  */
-function createThemeFromBrand(config: ThemeConfig): Partial<AppShellTheme> {
-  const accent = config.colors.primary
-  const accentSoft = hexToRgba(accent, 0.12)
-  const accentActive = hexToRgba(accent, 0.2)
+function createMonochromeTheme(): Partial<AppShellTheme> {
+  const accent = '#64748b'
+  const accentSoft = hexToRgba(accent, 0.14)
+  const accentActive = hexToRgba(accent, 0.22)
 
   return {
-    fontFamily: `${config.fonts.body}, sans-serif`,
-    shellBackground: config.gradients.hero,
-    headerBackground: config.colors.background,
-    headerTextColor: config.colors.textLight,
-    drawerBackground: config.colors.background,
-    drawerTextColor: config.colors.textLight,
-    dividerColor: config.colors.border,
-    searchBackground: config.colors.backgroundLight,
-    searchTextColor: config.colors.text,
-    searchBorder: config.colors.border,
-    searchBorderHover: accent,
-    pageBackground: config.colors.backgroundLight,
-    pageTextColor: config.colors.text,
+    shellBackground: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    headerBackground: '#f8fafc',
+    headerTextColor: '#475569',
+    drawerBackground: '#f8fafc',
+    drawerTextColor: '#64748b',
+    dividerColor: '#dbe3ee',
+    searchBackground: '#ffffff',
+    searchTextColor: '#1e293b',
+    searchBorder: '#cbd5e1',
+    searchBorderHover: '#94a3b8',
+    pageBackground: '#eef2f7',
+    pageTextColor: '#1e293b',
     itemActiveColor: accent,
+    itemHoverColor: '#334155',
+    itemIconColor: '#64748b',
+    itemIconHoverColor: '#334155',
     itemHoverBackground: accentSoft,
     itemActiveBackground: accentActive,
-    groupCaptionMiniBackground: config.colors.backgroundLight,
-    notificationSuccessColor: config.colors.success,
-    notificationWarningColor: config.colors.warning,
-    notificationErrorColor: config.colors.error,
-    notificationInfoColor: config.colors.info,
-    notificationBadgeColor: config.colors.error,
-    notificationBadgeTextColor: 'var(--ntk-text-inverse)',
-    notificationIconColor: config.colors.textLight,
-    notificationSuccessTextColor: 'var(--ntk-text-inverse)',
-    notificationWarningTextColor: config.colors.text,
-    notificationErrorTextColor: 'var(--ntk-text-inverse)',
-    notificationInfoTextColor: 'var(--ntk-text-inverse)',
+    groupCaptionMiniBackground: '#e2e8f0',
+    notificationSuccessColor: '#22c55e',
+    notificationWarningColor: '#f59e0b',
+    notificationErrorColor: '#ef4444',
+    notificationInfoColor: '#3b82f6',
+    notificationBadgeColor: '#ef4444',
+    notificationBadgeTextColor: '#ffffff',
+    notificationIconColor: '#64748b',
+    notificationSuccessTextColor: '#ffffff',
+    notificationWarningTextColor: '#111827',
+    notificationErrorTextColor: '#ffffff',
+    notificationInfoTextColor: '#ffffff',
   }
 }
 
@@ -182,39 +176,21 @@ export function buildCmsThemePresets(defaultTheme: AppShellTheme): CmsThemePrese
   return [
     {
       id: 'default',
-      label: 'Default shell',
-      description: 'Base values from AppShell default theme.',
+      label: 'Purple',
+      description: 'Light shell with purple accents.',
       theme: { ...defaultTheme },
     },
     {
-      id: 'light',
-      label: 'Light mode',
-      description: 'Preload light palette values into shell tokens.',
-      theme: createThemeFromMode(themeColors.light),
-    },
-    {
       id: 'dark',
-      label: 'Dark mode',
+      label: 'Dark',
       description: 'Preload dark palette values into shell tokens.',
       theme: createThemeFromMode(themeColors.dark),
     },
     {
-      id: 'sentinela',
-      label: 'Sentinela',
-      description: 'Blue enterprise visual identity.',
-      theme: createThemeFromBrand(themes.sentinela),
-    },
-    {
-      id: 'platea',
-      label: 'PlaTEA',
-      description: 'Warm accessibility-first visual identity.',
-      theme: createThemeFromBrand(themes.platea),
-    },
-    {
-      id: 'nettoolskit',
-      label: 'NetToolsKit',
-      description: 'Official product visual identity values.',
-      theme: createThemeFromBrand(themes.nettoolskit),
+      id: 'monochrome',
+      label: 'Monochrome',
+      description: 'Neutral grayscale palette for minimal interfaces.',
+      theme: createMonochromeTheme(),
     },
   ]
 }

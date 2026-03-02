@@ -205,7 +205,7 @@
               <q-icon
                 v-if="index < breadcrumbs.length - 1"
                 name="chevron_right"
-                size="20px"
+                size="var(--ntk-header-breadcrumb-icon-size, 20px)"
                 class="ntk-header__breadcrumb-separator base-header__breadcrumb-separator"
               />
             </span>
@@ -272,7 +272,7 @@
             :aria-label="userAriaLabel"
             @click="$emit('user-click')"
           >
-            <q-avatar size="26px">
+            <q-avatar size="var(--ntk-header-avatar-size, 26px)">
               <img
                 v-if="userAvatar"
                 :src="userAvatar"
@@ -281,7 +281,7 @@
               <q-icon
                 v-else
                 name="account_circle"
-                size="26px"
+                size="var(--ntk-header-avatar-size, 26px)"
               />
             </q-avatar>
             <q-tooltip>{{ userTooltip }}</q-tooltip>
@@ -552,14 +552,14 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
 }
 
 .ntk-header__logo-img {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
+  width: var(--ntk-header-logo-size, 38px);
+  height: var(--ntk-header-logo-size, 38px);
+  border-radius: var(--ntk-header-logo-radius, var(--ntk-radius-md));
 }
 
 .ntk-header__logo-text {
-  font-weight: 800;
-  font-size: 1.25rem;
+  font-weight: var(--ntk-font-weight-extrabold);
+  font-size: var(--ntk-font-size-xl);
   color: var(--ntk-text-primary);
 }
 
@@ -571,10 +571,10 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
 
 .ntk-header__nav-link {
   color: var(--ntk-text-secondary);
-  font-weight: 500;
-  font-size: 0.875rem;
+  font-weight: var(--ntk-font-weight-medium);
+  font-size: var(--ntk-font-size-sm);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color var(--ntk-transition-fast);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -598,14 +598,14 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
 .ntk-header__theme-toggle {
   background: transparent;
   border: 1px solid var(--ntk-border-color);
-  border-radius: 8px;
+  border-radius: var(--ntk-radius-md);
   padding: 0.375rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--ntk-text-secondary);
-  transition: all var(--transition-fast);
+  transition: all var(--ntk-transition-fast);
   text-decoration: none;
 }
 
@@ -616,8 +616,8 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
 }
 
 .ntk-header__icon {
-  width: 18px;
-  height: 18px;
+  width: var(--ntk-header-theme-icon-size, 18px);
+  height: var(--ntk-header-theme-icon-size, 18px);
 }
 
 
@@ -626,7 +626,7 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
   display: none;
   background: transparent;
   border: none;
-  padding: 8px;
+  padding: var(--ntk-spacing-sm);
   cursor: pointer;
   color: var(--ntk-text-secondary);
   text-decoration: none;
@@ -670,13 +670,13 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
 
 .ntk-header__title {
   font-family: var(--ntk-font-body);
-  font-weight: 600;
-  font-size: 1.125rem;
+  font-weight: var(--ntk-font-weight-semibold);
+  font-size: var(--ntk-font-size-lg);
   flex-shrink: 0;
 }
 
 .ntk-header__title-text {
-  font-weight: 600;
+  font-weight: var(--ntk-font-weight-semibold);
 }
 
 .ntk-header__breadcrumb {
@@ -692,7 +692,7 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
 }
 
 .ntk-header__breadcrumb-app {
-  font-weight: 600;
+  font-weight: var(--ntk-font-weight-semibold);
 }
 
 .ntk-header__breadcrumb-separator {

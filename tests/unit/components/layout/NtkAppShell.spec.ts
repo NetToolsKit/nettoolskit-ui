@@ -225,6 +225,15 @@ describe('NtkAppShell', () => {
           brandLogoSize: '38px',
           itemIconSize: '24px',
           workspaceMaxWidth: '1400px',
+          viewportHeight: '100dvh',
+          compactPagePadding: '14px',
+          compactWorkspaceCardPadding: '10px',
+          titleSeparatorSize: '1.35rem',
+          userAvatarSize: '30px',
+          headerBlur: 'blur(8px)',
+          actionHoverTranslateY: '-3px',
+          itemCaptionOffset: '5px',
+          groupCaptionMiniRadius: '18px',
         },
       },
     })
@@ -243,5 +252,71 @@ describe('NtkAppShell', () => {
     expect(style).toContain('24px')
     expect(style).toContain('--ntk-shell-workspace-max-width')
     expect(style).toContain('1400px')
+    expect(style).toContain('--ntk-shell-viewport-height')
+    expect(style).toContain('100dvh')
+    expect(style).toContain('--ntk-shell-compact-page-padding')
+    expect(style).toContain('14px')
+    expect(style).toContain('--ntk-shell-compact-workspace-card-padding')
+    expect(style).toContain('10px')
+    expect(style).toContain('--ntk-shell-title-separator-size')
+    expect(style).toContain('1.35rem')
+    expect(style).toContain('--ntk-shell-user-avatar-size')
+    expect(style).toContain('30px')
+    expect(style).toContain('--ntk-shell-header-blur')
+    expect(style).toContain('blur(8px)')
+    expect(style).toContain('--ntk-shell-action-hover-translate-y')
+    expect(style).toContain('-3px')
+    expect(style).toContain('--ntk-shell-item-caption-offset')
+    expect(style).toContain('5px')
+    expect(style).toContain('--ntk-shell-group-caption-mini-radius')
+    expect(style).toContain('18px')
+  })
+
+  it('applies editable font style and sidebar colors from theme tokens', () => {
+    const wrapper = mount(NtkAppShell, {
+      props: {
+        navGroups,
+        items,
+        theme: {
+          fontFamily: "'IBM Plex Sans', sans-serif",
+          fontStyleBase: 'italic',
+          drawerBackground: '#111827',
+          drawerTextColor: '#cbd5e1',
+          dividerColor: '#334155',
+        },
+      },
+    })
+
+    const layout = wrapper.find('[data-stub="QLayout"]')
+    const style = layout.attributes('style')
+    expect(style).toContain('--ntk-shell-font-family')
+    expect(style).toContain('IBM Plex Sans')
+    expect(style).toContain('--ntk-shell-font-style-base')
+    expect(style).toContain('italic')
+    expect(style).toContain('--ntk-shell-drawer-bg')
+    expect(style).toContain('#111827')
+    expect(style).toContain('--ntk-shell-drawer-text')
+    expect(style).toContain('#cbd5e1')
+    expect(style).toContain('--ntk-shell-divider')
+    expect(style).toContain('#334155')
+  })
+
+  it('uses compact breakpoint token to toggle compact shell behavior', () => {
+    const wrapper = mount(NtkAppShell, {
+      props: {
+        navGroups,
+        items,
+        showSearch: true,
+        theme: {
+          compactBreakpoint: '99999',
+        },
+      },
+    })
+
+    const layout = wrapper.find('[data-stub="QLayout"]')
+    const style = layout.attributes('style') ?? ''
+    expect(style).toContain('--ntk-shell-compact-breakpoint')
+    expect(style).toContain('99999px')
+    expect(wrapper.find('.ntk-app-shell__search-wrapper').exists()).toBe(false)
   })
 })

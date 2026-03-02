@@ -68,7 +68,7 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--theme-font-display', theme.fonts.display);
   root.style.setProperty('--theme-font-body', theme.fonts.body);
 
-  // Backward compatibility: legacy NTK tokens
+  // Apply NTK tokens consumed by component styles
   root.style.setProperty('--ntk-primary', theme.colors.primary);
   root.style.setProperty('--ntk-primary-dark', theme.colors.primaryDark);
   root.style.setProperty('--ntk-primary-light', theme.colors.primaryLight);
@@ -100,25 +100,12 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--ntk-gradient-subtle', `linear-gradient(135deg, ${theme.colors.background} 0%, ${theme.colors.backgroundLight} 100%)`);
   root.style.setProperty('--ntk-font-family', theme.fonts.body);
   root.style.setProperty('--ntk-font-family-display', theme.fonts.display);
-
-  // Compatibility aliases used by legacy design-system styles
-  root.style.setProperty('--color-action-primary', theme.colors.primary);
-  root.style.setProperty('--color-action-primary-hover', theme.colors.primaryDark);
-  root.style.setProperty('--color-bg-light', theme.colors.backgroundLight);
-  root.style.setProperty('--color-surface-primary', theme.colors.background);
-  root.style.setProperty('--color-surface-secondary', theme.colors.backgroundLight);
-  root.style.setProperty('--color-text-primary', theme.colors.text);
-  root.style.setProperty('--color-text-secondary', theme.colors.textLight);
-  root.style.setProperty('--color-text-muted', theme.colors.textMuted);
-  root.style.setProperty('--color-text-dark', theme.colors.text);
-  root.style.setProperty('--color-text-inverse', textInverse);
-  root.style.setProperty('--color-border', theme.colors.border);
-  root.style.setProperty('--color-footer-bg', footerBackground);
-  root.style.setProperty('--color-footer-text', footerText);
-  root.style.setProperty('--color-footer-text-muted', footerTextMuted);
-  root.style.setProperty('--color-footer-link', theme.colors.primaryLight);
-  root.style.setProperty('--color-footer-link-hover', theme.colors.primary);
-  root.style.setProperty('--color-footer-border', footerBorder);
+  root.style.setProperty('--ntk-footer-bg', footerBackground);
+  root.style.setProperty('--ntk-footer-text', footerText);
+  root.style.setProperty('--ntk-footer-text-muted', footerTextMuted);
+  root.style.setProperty('--ntk-footer-link', theme.colors.primaryLight);
+  root.style.setProperty('--ntk-footer-link-hover', theme.colors.primary);
+  root.style.setProperty('--ntk-footer-border', footerBorder);
   root.style.setProperty('--ntk-surface-soft', theme.colors.backgroundLight);
   root.style.setProperty('--ntk-border-subtle', theme.colors.border);
   

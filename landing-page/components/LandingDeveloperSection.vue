@@ -4,25 +4,25 @@
       <div class="container">
         <div class="code-container">
           <div>
-            <div class="section-header" style="text-align: left; margin-bottom: var(--spacing-xl);">
+            <div class="section-header landing-dev__section-header">
               <h2>Simple to Use</h2>
               <p>Import components and composables with a single entry point. Full TypeScript support included.</p>
             </div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--spacing-md);">
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
+            <ul class="landing-dev__list">
+              <li class="landing-dev__item">
+                <span class="landing-dev__check">✓</span>
                 <span>Single entry point export for all components</span>
               </li>
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
+              <li class="landing-dev__item">
+                <span class="landing-dev__check">✓</span>
                 <span>Full TypeScript definitions included</span>
               </li>
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
+              <li class="landing-dev__item">
+                <span class="landing-dev__check">✓</span>
                 <span>Quasar-first CSS with design tokens</span>
               </li>
-              <li style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                <span style="color: var(--ntk-purple); font-weight: 700;">✓</span>
+              <li class="landing-dev__item">
+                <span class="landing-dev__check">✓</span>
                 <span>Runtime theme switching</span>
               </li>
             </ul>
@@ -166,3 +166,28 @@
     </section>
   </div>
 </template>
+
+<style scoped>
+.landing-dev__section-header {
+  text-align: left;
+  margin-bottom: var(--spacing-xl);
+}
+
+.landing-dev__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.landing-dev__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.landing-dev__check {
+  color: var(--ntk-purple);
+  font-weight: var(--ntk-font-weight-bold);
+}
+</style>

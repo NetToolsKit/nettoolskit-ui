@@ -106,19 +106,19 @@ const sectionStyle = computed(() => {
 
   // Variants
   &--default {
-    background-color: var(--color-surface-primary);
+    background-color: var(--ntk-bg-primary);
   }
 
   &--light {
-    background-color: var(--color-bg-light);
+    background-color: var(--ntk-bg-light);
   }
 
   &--dark {
-    background-color: var(--color-footer-bg);
-    color: var(--color-text-inverse);
+    background-color: var(--ntk-footer-bg);
+    color: var(--ntk-text-inverse);
     
     .ntk-section__subtitle {
-      color: var(--color-footer-text-muted);
+      color: var(--ntk-footer-text-muted);
     }
   }
 
@@ -128,30 +128,30 @@ const sectionStyle = computed(() => {
 
   // Sizes
   &--sm {
-    padding: var(--space-lg) 0;
+    padding: var(--ntk-spacing-lg) 0;
   }
 
   &--md {
-    padding: var(--space-xl) 0;
+    padding: var(--ntk-spacing-xl) 0;
     
     @media (min-width: 1024px) {
-      padding: var(--space-2xl) 0;
+      padding: var(--ntk-spacing-2xl) 0;
     }
   }
 
   &--lg {
-    padding: var(--space-2xl) 0;
+    padding: var(--ntk-spacing-2xl) 0;
     
     @media (min-width: 1024px) {
-      padding: var(--space-3xl) 0;
+      padding: var(--ntk-spacing-3xl) 0;
     }
   }
 
   &--xl {
-    padding: var(--space-3xl) 0;
+    padding: var(--ntk-spacing-3xl) 0;
     
     @media (min-width: 1024px) {
-      padding: calc(var(--space-3xl) * 1.5) 0;
+      padding: calc(var(--ntk-spacing-3xl) * 1.5) 0;
     }
   }
 
@@ -165,14 +165,14 @@ const sectionStyle = computed(() => {
   &__container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--space-md);
+    padding: 0 var(--ntk-spacing-md);
     
     @media (min-width: 600px) {
-      padding: 0 var(--space-lg);
+      padding: 0 var(--ntk-spacing-lg);
     }
     
     @media (min-width: 1024px) {
-      padding: 0 var(--space-xl);
+      padding: 0 var(--ntk-spacing-xl);
     }
 
     &--full-width {
@@ -182,32 +182,32 @@ const sectionStyle = computed(() => {
   }
 
   &__header {
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--ntk-spacing-xl);
     
     @media (min-width: 1024px) {
-      margin-bottom: var(--space-2xl);
+      margin-bottom: var(--ntk-spacing-2xl);
     }
   }
 
   &__badge {
     display: inline-block;
-    padding: var(--space-xs) var(--space-md);
-    background-color: var(--color-action-primary);
-    color: var(--color-text-inverse);
+    padding: var(--ntk-spacing-xs) var(--ntk-spacing-md);
+    background-color: var(--ntk-primary);
+    color: var(--ntk-text-inverse);
     font-size: var(--ntk-text-xs);
     font-weight: var(--ntk-font-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-radius: var(--border-radius-xl);
-    margin-bottom: var(--space-md);
+    border-radius: var(--ntk-radius-xl);
+    margin-bottom: var(--ntk-spacing-md);
   }
 
   &__title {
     font-family: var(--ntk-font-display);
     font-size: var(--ntk-text-2xl);
     font-weight: var(--ntk-font-bold);
-    line-height: var(--line-height-tight);
-    margin: 0 0 var(--space-md) 0;
+    line-height: var(--ntk-line-height-tight);
+    margin: 0 0 var(--ntk-spacing-md) 0;
     color: inherit;
     
     @media (min-width: 1024px) {
@@ -217,10 +217,10 @@ const sectionStyle = computed(() => {
 
   &__subtitle {
     font-size: var(--ntk-text-lg);
-    color: var(--color-text-secondary);
+    color: var(--ntk-text-secondary);
     max-width: 700px;
     margin: 0 auto;
-    line-height: var(--line-height-relaxed);
+    line-height: var(--ntk-line-height-relaxed);
   }
 
   &__content {
@@ -228,10 +228,10 @@ const sectionStyle = computed(() => {
   }
 
   &__footer {
-    margin-top: var(--space-xl);
+    margin-top: var(--ntk-spacing-xl);
     
     @media (min-width: 1024px) {
-      margin-top: var(--space-2xl);
+      margin-top: var(--ntk-spacing-2xl);
     }
   }
 }

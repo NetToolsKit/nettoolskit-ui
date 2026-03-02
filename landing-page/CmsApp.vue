@@ -7,7 +7,7 @@
     @toolbar-action="onToolbarAction"
   >
     <template #default="{ activeItem }">
-      <div class="cms-shell-page" :style="cmsStyleVars">
+      <div class="cms-shell-page" :class="cmsViewportClasses" :style="cmsStyleVars">
         <div class="cms-shell-page__workspace">
         <div class="cms-shell-page__hero">
           <h1>{{ activeItem.label }}</h1>
@@ -93,6 +93,9 @@
             <q-tab name="topbar" icon="web_asset" :label="settings.content.tabTopbarLabel" :aria-label="settings.content.tabTopbarLabel" />
             <q-tab name="content" icon="edit_note" :label="settings.content.tabContentLabel" :aria-label="settings.content.tabContentLabel" />
           </q-tabs>
+          <div class="cms-settings__advanced-toggle">
+            <q-toggle v-model="showAdvancedThemeFields" dense label="Show advanced overrides" />
+          </div>
 
           <q-tab-panels v-model="activeSettingsTab" animated class="cms-settings__panels">
             <q-tab-panel name="branding">
@@ -1228,6 +1231,7 @@
  */
 
 import { computed, nextTick, ref, toRaw, watch } from 'vue'
+import { useQuasar } from 'quasar'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
 import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
 import { CmsRenderer } from '../src/modules/cms/renderer'
@@ -1304,6 +1308,7 @@ interface ThemeField {
   isColor?: boolean
   placeholder?: string
   aliases?: ThemeFieldKey[]
+  advanced?: boolean
 }
 
 interface ThemeFieldGroupDefinition {
@@ -1360,6 +1365,31 @@ const defaultPagesModuleId = defaultSettings.items.find(item => item.id === 'pag
 const defaultBlocksModuleId = defaultSettings.items.find(item => item.id === 'blocks')?.id ?? 'blocks'
 const defaultMediaModuleId = defaultSettings.items.find(item => item.id === 'media')?.id ?? 'media'
 const baseThemePresets: CmsThemePreset[] = buildCmsThemePresets(defaultTheme)
+const $q = useQuasar()
+
+/**
+ * Parses breakpoint values (e.g. "1024" or "1024px") into pixels.
+ */
+function parseBreakpointToken(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseFloat(String(value ?? '').replace(/[^0-9.]/g, ''))
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed
+  }
+  return fallback
+}
+
+/**
+ * Resolves viewport width with deterministic fallback for tests/SSR.
+ */
+function resolveViewportWidth(fallback: number): number {
+  if (typeof $q.screen.width === 'number' && Number.isFinite($q.screen.width)) {
+    return $q.screen.width
+  }
+  if (typeof window !== 'undefined' && typeof window.innerWidth === 'number' && Number.isFinite(window.innerWidth)) {
+    return window.innerWidth
+  }
+  return fallback
+}
 
 /**
  * Handles theme placeholder.
@@ -1445,6 +1475,7 @@ function getCurrentThemePresets(): CmsThemePreset[] {
 const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
 const activeSettingsTab = ref<'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
+const showAdvancedThemeFields = ref(false)
 const savedAtLabel = ref('Auto-save enabled')
 const pageStatusOptions = [
   { label: 'Draft', value: 'draft' },
@@ -1457,6 +1488,27 @@ const selectedThemePreset = ref<CmsThemePresetId>(
     : detectCmsThemePresetId(settings.value.theme, initialThemePresets, defaultTheme)
 )
 settings.value.themePresetId = selectedThemePreset.value
+
+const cmsLayoutBreakpointLgPx = computed(() => {
+  return parseBreakpointToken(
+    settings.value.theme.cmsLayoutBreakpointLg || defaultTheme.cmsLayoutBreakpointLg || '1280',
+    1280
+  )
+})
+
+const cmsLayoutBreakpointMdPx = computed(() => {
+  return parseBreakpointToken(
+    settings.value.theme.cmsLayoutBreakpointMd || defaultTheme.cmsLayoutBreakpointMd || '1024',
+    1024
+  )
+})
+
+const cmsViewportWidthPx = computed(() => resolveViewportWidth(cmsLayoutBreakpointLgPx.value + 1))
+
+const cmsViewportClasses = computed(() => ({
+  'cms-shell-page--lg-compact': cmsViewportWidthPx.value <= cmsLayoutBreakpointLgPx.value,
+  'cms-shell-page--md-compact': cmsViewportWidthPx.value <= cmsLayoutBreakpointMdPx.value,
+}))
 
 const tenantProfileOptions = computed(() => {
   return tenantProfilesState.value.profiles.map(profile => ({
@@ -1520,7 +1572,7 @@ const colorFields: ThemeField[] = [
   {
     key: 'fontStyleBase',
     group: 'typography',
-    label: 'Base font style',
+    label: 'Base font style (normal/italic)',
     placeholder: themePlaceholder('fontStyleBase'),
   },
   {
@@ -1632,6 +1684,12 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('lineHeightItemCaption'),
   },
   {
+    key: 'borderWidth',
+    group: 'layout',
+    label: 'Border width',
+    placeholder: themePlaceholder('borderWidth'),
+  },
+  {
     key: 'radiusSm',
     group: 'layout',
     label: 'Radius small',
@@ -1686,106 +1744,137 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('transitionFast'),
   },
   {
+    key: 'itemCaptionOffset',
+    group: 'layout',
+    label: 'Item caption offset',
+    placeholder: themePlaceholder('itemCaptionOffset'),
+    advanced: true,
+  },
+  {
     key: 'menuSlotWidth',
     group: 'layout',
     label: 'Menu slot width',
     placeholder: themePlaceholder('menuSlotWidth'),
+    advanced: true,
   },
   {
     key: 'searchWidth',
     group: 'layout',
     label: 'Search width',
     placeholder: themePlaceholder('searchWidth'),
+    advanced: true,
   },
   {
     key: 'searchControlHeight',
     group: 'layout',
     label: 'Search control height',
     placeholder: themePlaceholder('searchControlHeight'),
+    advanced: true,
   },
   {
     key: 'searchPrependPaddingRight',
     group: 'layout',
     label: 'Search icon right padding',
     placeholder: themePlaceholder('searchPrependPaddingRight'),
+    advanced: true,
   },
   {
     key: 'drawerHeaderMinHeight',
     group: 'layout',
     label: 'Drawer header min height',
     placeholder: themePlaceholder('drawerHeaderMinHeight'),
+    advanced: true,
   },
   {
     key: 'brandLogoSize',
     group: 'layout',
     label: 'Brand logo size',
     placeholder: themePlaceholder('brandLogoSize'),
+    advanced: true,
   },
   {
     key: 'groupCaptionMinHeight',
     group: 'layout',
     label: 'Group caption min height',
     placeholder: themePlaceholder('groupCaptionMinHeight'),
+    advanced: true,
   },
   {
     key: 'groupCaptionPadding',
     group: 'layout',
     label: 'Group caption padding',
     placeholder: themePlaceholder('groupCaptionPadding'),
+    advanced: true,
   },
   {
     key: 'groupCaptionMiniPadding',
     group: 'layout',
     label: 'Group mini padding',
     placeholder: themePlaceholder('groupCaptionMiniPadding'),
+    advanced: true,
   },
   {
     key: 'groupCaptionMiniMinWidth',
     group: 'layout',
     label: 'Group mini min width',
     placeholder: themePlaceholder('groupCaptionMiniMinWidth'),
+    advanced: true,
   },
   {
     key: 'groupCaptionMiniHeight',
     group: 'layout',
     label: 'Group mini height',
     placeholder: themePlaceholder('groupCaptionMiniHeight'),
+    advanced: true,
   },
   {
     key: 'groupCaptionMiniHorizontalPadding',
     group: 'layout',
     label: 'Group mini horizontal padding',
     placeholder: themePlaceholder('groupCaptionMiniHorizontalPadding'),
+    advanced: true,
+  },
+  {
+    key: 'groupCaptionMiniRadius',
+    group: 'layout',
+    label: 'Group mini radius',
+    placeholder: themePlaceholder('groupCaptionMiniRadius'),
+    advanced: true,
   },
   {
     key: 'itemMinHeight',
     group: 'layout',
     label: 'Item min height',
     placeholder: themePlaceholder('itemMinHeight'),
+    advanced: true,
   },
   {
     key: 'itemIconSize',
     group: 'layout',
     label: 'Item icon size',
     placeholder: themePlaceholder('itemIconSize'),
+    advanced: true,
   },
   {
     key: 'itemHoverTranslateX',
     group: 'layout',
     label: 'Item hover translate X',
     placeholder: themePlaceholder('itemHoverTranslateX'),
+    advanced: true,
   },
   {
     key: 'itemActiveBorderWidth',
     group: 'layout',
     label: 'Item active border width',
     placeholder: themePlaceholder('itemActiveBorderWidth'),
+    advanced: true,
   },
   {
     key: 'drawerScrollPaddingBottom',
     group: 'layout',
     label: 'Drawer scroll padding bottom',
     placeholder: themePlaceholder('drawerScrollPaddingBottom'),
+    advanced: true,
   },
   {
     key: 'workspaceMaxWidth',
@@ -1794,16 +1883,58 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('workspaceMaxWidth'),
   },
   {
+    key: 'viewportHeight',
+    group: 'layout',
+    label: 'Viewport height',
+    placeholder: themePlaceholder('viewportHeight'),
+  },
+  {
+    key: 'compactBreakpoint',
+    group: 'layout',
+    label: 'Compact breakpoint',
+    placeholder: themePlaceholder('compactBreakpoint'),
+  },
+  {
+    key: 'compactPagePadding',
+    group: 'layout',
+    label: 'Compact page padding',
+    placeholder: themePlaceholder('compactPagePadding'),
+    advanced: true,
+  },
+  {
+    key: 'compactWorkspaceCardPadding',
+    group: 'layout',
+    label: 'Compact workspace card padding',
+    placeholder: themePlaceholder('compactWorkspaceCardPadding'),
+    advanced: true,
+  },
+  {
+    key: 'cmsLayoutBreakpointLg',
+    group: 'layout',
+    label: 'CMS layout breakpoint LG',
+    placeholder: themePlaceholder('cmsLayoutBreakpointLg'),
+    advanced: true,
+  },
+  {
+    key: 'cmsLayoutBreakpointMd',
+    group: 'layout',
+    label: 'CMS layout breakpoint MD',
+    placeholder: themePlaceholder('cmsLayoutBreakpointMd'),
+    advanced: true,
+  },
+  {
     key: 'miniItemMarginRight',
     group: 'layout',
     label: 'Mini item margin right',
     placeholder: themePlaceholder('miniItemMarginRight'),
+    advanced: true,
   },
   {
     key: 'miniItemAvatarMinWidth',
     group: 'layout',
     label: 'Mini item avatar min width',
     placeholder: themePlaceholder('miniItemAvatarMinWidth'),
+    advanced: true,
   },
   {
     key: 'shellBackground',
@@ -1830,7 +1961,7 @@ const colorFields: ThemeField[] = [
   {
     key: 'drawerBackground',
     group: 'foundation',
-    label: 'Surface background (card)',
+    label: 'Sidebar background (and cards)',
     isColor: true,
     placeholder: themePlaceholder('drawerBackground'),
     aliases: ['drawerFooterBackground'],
@@ -1841,11 +1972,12 @@ const colorFields: ThemeField[] = [
     label: 'Surface footer background (override)',
     isColor: true,
     placeholder: themePlaceholder('drawerFooterBackground'),
+    advanced: true,
   },
   {
     key: 'drawerTextColor',
     group: 'foundation',
-    label: 'Surface text color',
+    label: 'Sidebar text color',
     isColor: true,
     placeholder: themePlaceholder('drawerTextColor'),
     aliases: ['itemTextColor', 'itemIconColor', 'brandSubtitleColor', 'groupCaptionColor'],
@@ -1872,6 +2004,7 @@ const colorFields: ThemeField[] = [
     label: 'Item text color (override)',
     isColor: true,
     placeholder: themePlaceholder('itemTextColor'),
+    advanced: true,
   },
   {
     key: 'itemIconColor',
@@ -1879,6 +2012,7 @@ const colorFields: ThemeField[] = [
     label: 'Item icon color (override)',
     isColor: true,
     placeholder: themePlaceholder('itemIconColor'),
+    advanced: true,
   },
   {
     key: 'itemHoverBackground',
@@ -1893,6 +2027,7 @@ const colorFields: ThemeField[] = [
     label: 'Item hover text color (override)',
     isColor: true,
     placeholder: themePlaceholder('itemHoverColor'),
+    advanced: true,
   },
   {
     key: 'itemIconHoverColor',
@@ -1900,6 +2035,7 @@ const colorFields: ThemeField[] = [
     label: 'Item hover icon color (override)',
     isColor: true,
     placeholder: themePlaceholder('itemIconHoverColor'),
+    advanced: true,
   },
   {
     key: 'itemActiveBackground',
@@ -1914,6 +2050,7 @@ const colorFields: ThemeField[] = [
     label: 'Focus ring color (override)',
     isColor: true,
     placeholder: themePlaceholder('focusColor'),
+    advanced: true,
   },
   {
     key: 'brandTitleColor',
@@ -1921,6 +2058,7 @@ const colorFields: ThemeField[] = [
     label: 'Brand title color (override)',
     isColor: true,
     placeholder: themePlaceholder('brandTitleColor'),
+    advanced: true,
   },
   {
     key: 'brandSubtitleColor',
@@ -1928,6 +2066,7 @@ const colorFields: ThemeField[] = [
     label: 'Brand subtitle color (override)',
     isColor: true,
     placeholder: themePlaceholder('brandSubtitleColor'),
+    advanced: true,
   },
   {
     key: 'groupCaptionColor',
@@ -1935,6 +2074,14 @@ const colorFields: ThemeField[] = [
     label: 'Group caption color (override)',
     isColor: true,
     placeholder: themePlaceholder('groupCaptionColor'),
+    advanced: true,
+  },
+  {
+    key: 'groupSeparatorOpacity',
+    group: 'navigation',
+    label: 'Group separator opacity',
+    placeholder: themePlaceholder('groupSeparatorOpacity'),
+    advanced: true,
   },
   {
     key: 'groupCaptionMiniBackground',
@@ -1964,6 +2111,7 @@ const colorFields: ThemeField[] = [
     label: 'Toolbar icon color (override)',
     isColor: true,
     placeholder: themePlaceholder('toolbarButtonColor'),
+    advanced: true,
   },
   {
     key: 'titleAppColor',
@@ -1971,6 +2119,7 @@ const colorFields: ThemeField[] = [
     label: 'App title color (override)',
     isColor: true,
     placeholder: themePlaceholder('titleAppColor'),
+    advanced: true,
   },
   {
     key: 'titleTextColor',
@@ -1978,6 +2127,7 @@ const colorFields: ThemeField[] = [
     label: 'Module title color (override)',
     isColor: true,
     placeholder: themePlaceholder('titleTextColor'),
+    advanced: true,
   },
   {
     key: 'titleSeparatorColor',
@@ -1985,6 +2135,13 @@ const colorFields: ThemeField[] = [
     label: 'Title separator color (override)',
     isColor: true,
     placeholder: themePlaceholder('titleSeparatorColor'),
+    advanced: true,
+  },
+  {
+    key: 'titleSeparatorSize',
+    group: 'header',
+    label: 'Title separator size',
+    placeholder: themePlaceholder('titleSeparatorSize'),
   },
   {
     key: 'searchBackground',
@@ -1999,6 +2156,7 @@ const colorFields: ThemeField[] = [
     label: 'Search text color (override)',
     isColor: true,
     placeholder: themePlaceholder('searchTextColor'),
+    advanced: true,
   },
   {
     key: 'searchIconColor',
@@ -2006,6 +2164,7 @@ const colorFields: ThemeField[] = [
     label: 'Search icon color (override)',
     isColor: true,
     placeholder: themePlaceholder('searchIconColor'),
+    advanced: true,
   },
   {
     key: 'searchBorder',
@@ -2028,10 +2187,30 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('headerShadow'),
   },
   {
+    key: 'headerZIndex',
+    group: 'header',
+    label: 'Header z-index',
+    placeholder: themePlaceholder('headerZIndex'),
+    advanced: true,
+  },
+  {
+    key: 'headerBlur',
+    group: 'header',
+    label: 'Header blur',
+    placeholder: themePlaceholder('headerBlur'),
+  },
+  {
     key: 'drawerShadow',
     group: 'header',
     label: 'Drawer shadow',
     placeholder: themePlaceholder('drawerShadow'),
+  },
+  {
+    key: 'drawerZIndex',
+    group: 'header',
+    label: 'Drawer z-index',
+    placeholder: themePlaceholder('drawerZIndex'),
+    advanced: true,
   },
   {
     key: 'drawerFooterShadow',
@@ -2052,6 +2231,18 @@ const colorFields: ThemeField[] = [
     label: 'Header actions hover background (hover only)',
     isColor: true,
     placeholder: themePlaceholder('actionHoverBackground'),
+  },
+  {
+    key: 'actionHoverTranslateY',
+    group: 'header',
+    label: 'Header actions hover translate Y',
+    placeholder: themePlaceholder('actionHoverTranslateY'),
+  },
+  {
+    key: 'userAvatarSize',
+    group: 'header',
+    label: 'User avatar size',
+    placeholder: themePlaceholder('userAvatarSize'),
   },
   {
     key: 'notificationSuccessColor',
@@ -2130,35 +2321,52 @@ const colorFields: ThemeField[] = [
     isColor: true,
     placeholder: themePlaceholder('notificationIconColor'),
   },
+  {
+    key: 'badgePulseScale',
+    group: 'notifications',
+    label: 'Badge pulse scale',
+    placeholder: themePlaceholder('badgePulseScale'),
+    advanced: true,
+  },
 ]
+
+/**
+ * Lists theme fields for one group, honoring advanced toggle state.
+ */
+function getGroupThemeFields(groupId: ThemeFieldGroup): ThemeField[] {
+  return colorFields.filter(field => field.group === groupId && (showAdvancedThemeFields.value || !field.advanced))
+}
 
 const typographyFieldGroups = computed(() => {
   return typographyFieldGroupsDefinition.map(group => ({
     ...group,
-    fields: colorFields.filter(field => field.group === group.id),
+    fields: getGroupThemeFields(group.id),
   }))
 })
 
 const layoutFieldGroups = computed(() => {
   return layoutFieldGroupsDefinition.map(group => ({
     ...group,
-    fields: colorFields.filter(field => field.group === group.id),
+    fields: getGroupThemeFields(group.id),
   }))
 })
 
 const colorFieldGroups = computed(() => {
   return colorFieldGroupsDefinition.map(group => ({
     ...group,
-    fields: colorFields.filter(field => field.group === group.id),
+    fields: getGroupThemeFields(group.id),
   }))
 })
 
 const themePresets = computed(() => getCurrentThemePresets())
 
-const themePresetOptions = computed(() => [
-  ...themePresets.value.map(preset => ({ label: preset.label, value: preset.id })),
-  { label: 'Custom', value: 'custom' as CmsThemePresetId },
-])
+const themePresetOptions = computed(() => {
+  const baseOptions = themePresets.value.map(preset => ({ label: preset.label, value: preset.id }))
+  if (selectedThemePreset.value === 'custom') {
+    return [...baseOptions, { label: 'Custom', value: 'custom' as CmsThemePresetId }]
+  }
+  return baseOptions
+})
 
 const activeThemePreset = computed(() => {
   return themePresets.value.find(preset => preset.id === selectedThemePreset.value)
@@ -2265,6 +2473,10 @@ const notificationInfoTextColor = computed(() => {
   )
 })
 
+const resolvedBorderWidth = computed(() => {
+  return settings.value.theme.borderWidth || defaultTheme.borderWidth || '1px'
+})
+
 const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-font-family': settings.value.theme.fontFamily || defaultTheme.fontFamily || '',
   '--ntk-cms-font-display': settings.value.theme.fontFamilyDisplay || settings.value.theme.fontFamily || defaultTheme.fontFamilyDisplay || defaultTheme.fontFamily || '',
@@ -2286,14 +2498,17 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-letter-spacing-group-caption-mini': settings.value.theme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
   '--ntk-cms-line-height-item-label': settings.value.theme.lineHeightItemLabel || defaultTheme.lineHeightItemLabel || '1.25',
   '--ntk-cms-line-height-item-caption': settings.value.theme.lineHeightItemCaption || defaultTheme.lineHeightItemCaption || '1.2',
+  '--ntk-cms-item-caption-offset': settings.value.theme.itemCaptionOffset || defaultTheme.itemCaptionOffset || 'calc(var(--ntk-cms-space-xs) * 0.6)',
   '--ntk-cms-radius-sm': settings.value.theme.radiusSm || defaultTheme.radiusSm || '6px',
   '--ntk-cms-radius-md': settings.value.theme.radiusMd || defaultTheme.radiusMd || '8px',
   '--ntk-cms-radius-lg': settings.value.theme.radiusLg || defaultTheme.radiusLg || '10px',
   '--ntk-cms-radius-item': settings.value.theme.radiusItem || defaultTheme.radiusItem || '0 28px 28px 0',
+  '--ntk-cms-group-caption-mini-radius': settings.value.theme.groupCaptionMiniRadius || defaultTheme.groupCaptionMiniRadius || '999px',
   '--ntk-cms-space-xs': settings.value.theme.spacingXs || defaultTheme.spacingXs || '0.25rem',
   '--ntk-cms-space-sm': settings.value.theme.spacingSm || defaultTheme.spacingSm || '0.5rem',
   '--ntk-cms-space-md': settings.value.theme.spacingMd || defaultTheme.spacingMd || '0.75rem',
   '--ntk-cms-space-lg': settings.value.theme.spacingLg || defaultTheme.spacingLg || '1rem',
+  '--ntk-cms-border-width': settings.value.theme.borderWidth || defaultTheme.borderWidth || '1px',
   '--ntk-cms-text-primary': settings.value.theme.pageTextColor || defaultTheme.pageTextColor || '',
   '--ntk-cms-text-secondary': settings.value.theme.drawerTextColor || defaultTheme.drawerTextColor || '',
   '--ntk-cms-border-color': settings.value.theme.dividerColor || defaultTheme.dividerColor || '',
@@ -2306,6 +2521,7 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-header-bg': settings.value.theme.headerBackground || defaultTheme.headerBackground || '',
   '--ntk-cms-header-text': settings.value.theme.headerTextColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-header-shadow': settings.value.theme.headerShadow || defaultTheme.headerShadow || '',
+  '--ntk-cms-header-blur': settings.value.theme.headerBlur || defaultTheme.headerBlur || 'blur(calc(var(--ntk-cms-space-sm) * 2))',
   '--ntk-cms-drawer-shadow': settings.value.theme.drawerShadow || defaultTheme.drawerShadow || '',
   '--ntk-cms-drawer-footer-bg': settings.value.theme.drawerFooterBackground || settings.value.theme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
   '--ntk-cms-drawer-footer-shadow': settings.value.theme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
@@ -2322,6 +2538,7 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-title-app': settings.value.theme.titleAppColor || settings.value.theme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-title-text': settings.value.theme.titleTextColor || settings.value.theme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-title-separator': settings.value.theme.titleSeparatorColor || settings.value.theme.dividerColor || defaultTheme.titleSeparatorColor || defaultTheme.dividerColor || '',
+  '--ntk-cms-title-separator-size': settings.value.theme.titleSeparatorSize || defaultTheme.titleSeparatorSize || 'calc(var(--ntk-cms-font-size-title-app) + var(--ntk-cms-space-xs))',
   '--ntk-cms-toolbar-icon': settings.value.theme.toolbarButtonColor || settings.value.theme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-brand-title': settings.value.theme.brandTitleColor || settings.value.theme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-brand-subtitle': settings.value.theme.brandSubtitleColor || settings.value.theme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
@@ -2333,9 +2550,13 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-item-icon-hover': settings.value.theme.itemIconHoverColor || settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemIconHoverColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-preview-search-width': settings.value.theme.searchWidth || defaultTheme.searchWidth || '220px',
   '--ntk-cms-preview-search-height': settings.value.theme.searchControlHeight || defaultTheme.searchControlHeight || '36px',
+  '--ntk-cms-preview-user-avatar-size': settings.value.theme.userAvatarSize || defaultTheme.userAvatarSize || 'calc(var(--ntk-cms-preview-search-height) - (var(--ntk-cms-space-xs) * 2))',
+  '--ntk-cms-preview-action-hover-translate-y': settings.value.theme.actionHoverTranslateY || defaultTheme.actionHoverTranslateY || 'calc(var(--ntk-cms-space-xs) * -0.5)',
   '--ntk-cms-preview-action-min-width': settings.value.theme.menuSlotWidth || defaultTheme.menuSlotWidth || '30px',
   '--ntk-cms-preview-action-min-height': settings.value.theme.searchControlHeight || defaultTheme.searchControlHeight || '28px',
   '--ntk-cms-preview-brand-logo-size': settings.value.theme.brandLogoSize || defaultTheme.brandLogoSize || '40px',
+  '--ntk-cms-layout-breakpoint-lg': `${cmsLayoutBreakpointLgPx.value}px`,
+  '--ntk-cms-layout-breakpoint-md': `${cmsLayoutBreakpointMdPx.value}px`,
   '--ntk-cms-layout-side-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 5))',
   '--ntk-cms-layout-config-example-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 3.5))',
   '--ntk-cms-editor-max-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 13)))',
@@ -2361,13 +2582,13 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
 const bannerStyle = computed(() => ({
   background: accentSoftBackground.value,
   color: accentTextColor.value,
-  border: `1px solid ${accentColor.value}`,
+  border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
 }))
 
 const statusChipStyle = computed(() => ({
   background: accentSoftBackground.value,
   color: accentTextColor.value,
-  border: `1px solid ${accentColor.value}`,
+  border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
 }))
 
 const primaryActionStyle = computed(() => ({
@@ -3926,14 +4147,14 @@ function getCmsPageSectionStyle(enabled: boolean): Record<string, string> {
     return {
       background: accentSoftBackground.value,
       color: accentTextColor.value,
-      border: `1px solid ${accentColor.value}`,
+      border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
     }
   }
 
   return {
     background: settings.value.theme.drawerBackground || defaultTheme.drawerBackground || '',
     color: settings.value.theme.drawerTextColor || defaultTheme.drawerTextColor || '',
-    border: `1px solid ${settings.value.theme.dividerColor || defaultTheme.dividerColor || ''}`,
+    border: `${resolvedBorderWidth.value} solid ${settings.value.theme.dividerColor || defaultTheme.dividerColor || ''}`,
   }
 }
 
@@ -4099,6 +4320,16 @@ function resetToDefaults(): void {
   min-width: 0;
 }
 
+.cms-shell-page :deep(.q-field__native),
+.cms-shell-page :deep(.q-field__input),
+.cms-shell-page :deep(.q-item__label),
+.cms-shell-page :deep(.q-tab__label),
+.cms-shell-page :deep(.q-btn__content),
+.cms-shell-page :deep(.q-chip) {
+  font-family: var(--ntk-cms-font-family);
+  font-style: var(--ntk-cms-font-style-base);
+}
+
 .cms-shell-page__workspace {
   display: flex;
   flex-direction: column;
@@ -4189,7 +4420,7 @@ function resetToDefaults(): void {
 }
 
 .cms-block-item {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-md);
@@ -4214,7 +4445,7 @@ function resetToDefaults(): void {
 }
 
 .cms-block-row {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-bg-card);
   padding: var(--ntk-cms-space-sm);
@@ -4266,7 +4497,7 @@ function resetToDefaults(): void {
 }
 
 .cms-blocks-summary-card {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
@@ -4282,7 +4513,7 @@ function resetToDefaults(): void {
 }
 
 .cms-blocks-props {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-md);
@@ -4342,7 +4573,7 @@ function resetToDefaults(): void {
 }
 
 .cms-media-preview-item {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-md);
@@ -4365,7 +4596,7 @@ function resetToDefaults(): void {
 .cms-media-preview-item__visual {
   width: calc(var(--ntk-cms-space-lg) * 3.6);
   height: calc(var(--ntk-cms-space-lg) * 3.6);
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-bg-card);
   display: inline-flex;
@@ -4388,7 +4619,7 @@ function resetToDefaults(): void {
 }
 
 .cms-page-item {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: var(--ntk-cms-space-md);
   background: var(--ntk-cms-bg-card);
@@ -4421,7 +4652,7 @@ function resetToDefaults(): void {
 }
 
 .cms-page-section-row {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-sm);
@@ -4438,7 +4669,7 @@ function resetToDefaults(): void {
 }
 
 .cms-page-preview {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: var(--ntk-cms-space-md);
   background: var(--ntk-cms-bg-card);
@@ -4496,7 +4727,7 @@ function resetToDefaults(): void {
 
 /* ── Admin Card (Tenant + Actions) ─────────────────── */
 .cms-settings__admin {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
   padding: var(--ntk-cms-space-lg);
@@ -4507,7 +4738,7 @@ function resetToDefaults(): void {
 
 /* ── Editor Card (Tabs + Panels) ───────────────────── */
 .cms-settings__editor {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
   padding: var(--ntk-cms-space-lg);
@@ -4518,7 +4749,7 @@ function resetToDefaults(): void {
 
 /* ── Toolbar Cards (Tenant + Actions) ───────────────── */
 .cms-toolbar-card {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-bg-card);
   overflow: hidden;
@@ -4529,7 +4760,7 @@ function resetToDefaults(): void {
   align-items: center;
   gap: var(--ntk-cms-space-sm);
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
-  border-bottom: 1px solid var(--ntk-cms-border-color);
+  border-bottom: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   background: color-mix(in srgb, var(--ntk-cms-border-color) 15%, transparent);
 }
 
@@ -4538,10 +4769,10 @@ function resetToDefaults(): void {
 }
 
 .cms-toolbar-card__title {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: var(--ntk-cms-font-size-group-caption);
+  font-weight: var(--ntk-cms-font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ntk-cms-letter-spacing-group-caption-mini);
   color: var(--ntk-cms-text-secondary);
   user-select: none;
 }
@@ -4587,13 +4818,13 @@ function resetToDefaults(): void {
 }
 
 .cms-settings__tabs {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: 0 calc(var(--ntk-cms-space-xs) + (var(--ntk-cms-space-xs) / 4));
 }
 
 .cms-settings__panels {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
 }
 
@@ -4642,7 +4873,7 @@ function resetToDefaults(): void {
 }
 
 .cms-theme-presets {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: var(--ntk-cms-space-md);
   margin-bottom: var(--ntk-cms-space-lg);
@@ -4656,7 +4887,7 @@ function resetToDefaults(): void {
 }
 
 .cms-color-group {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: var(--ntk-cms-space-md);
 }
@@ -4681,7 +4912,7 @@ function resetToDefaults(): void {
 .cms-color-field__picker {
   width: calc(var(--ntk-cms-preview-icon-size-lg) * 2);
   height: var(--ntk-cms-preview-search-height);
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: transparent;
   padding: calc(var(--ntk-cms-space-xs) / 2);
@@ -4717,7 +4948,7 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
   align-items: center;
   padding: var(--ntk-cms-space-sm);
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
 }
 
@@ -4762,7 +4993,7 @@ function resetToDefaults(): void {
 }
 
 .cms-notification-actions-preview__action {
-  border: 1px solid var(--ntk-cms-search-border);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-sm);
   background: var(--ntk-cms-action-bg);
   color: var(--ntk-cms-toolbar-icon);
@@ -4788,7 +5019,7 @@ function resetToDefaults(): void {
 .cms-example-section {
   margin-top: var(--ntk-cms-space-lg);
   padding-top: var(--ntk-cms-space-lg);
-  border-top: 1px dashed var(--ntk-cms-border-color);
+  border-top: var(--ntk-cms-border-width) dashed var(--ntk-cms-border-color);
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-sm);
@@ -4816,7 +5047,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-card {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: var(--ntk-cms-space-md);
   background: var(--ntk-cms-bg-card);
@@ -4834,7 +5065,7 @@ function resetToDefaults(): void {
   margin-top: var(--ntk-cms-space-xs);
   background: var(--ntk-cms-accent-soft);
   color: var(--ntk-cms-accent-text);
-  border: 1px solid var(--ntk-cms-accent);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-accent);
 }
 
 .cms-preview-card--foundation {
@@ -4869,7 +5100,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-typography__menu {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
   background: var(--ntk-cms-shell-bg);
@@ -4882,7 +5113,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-typography__menu-caption {
-  margin-top: calc(var(--ntk-cms-space-xs) * 0.6);
+  margin-top: var(--ntk-cms-item-caption-offset);
   font-size: var(--ntk-cms-font-size-item-caption);
   font-weight: var(--ntk-cms-font-weight-regular);
   color: var(--ntk-cms-text-secondary);
@@ -4900,7 +5131,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-layout__panel {
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   padding: var(--ntk-cms-space-md);
   background: var(--ntk-cms-bg-card);
@@ -4921,7 +5152,7 @@ function resetToDefaults(): void {
   align-items: center;
   gap: var(--ntk-cms-space-sm);
   width: 100%;
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-item);
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
   transition: all var(--ntk-cms-transition);
@@ -4969,7 +5200,7 @@ function resetToDefaults(): void {
   width: var(--ntk-cms-space-md);
   height: var(--ntk-cms-space-md);
   border-radius: 50%;
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   flex-shrink: 0;
 }
 
@@ -4983,7 +5214,7 @@ function resetToDefaults(): void {
 
 .cms-preview-nav-item {
   width: 100%;
-  border: 1px solid transparent;
+  border: var(--ntk-cms-border-width) solid transparent;
   border-radius: var(--ntk-cms-radius-md);
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
   color: var(--ntk-cms-item-text);
@@ -5019,7 +5250,7 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-active-bg);
   color: var(--ntk-cms-accent);
   border-color: var(--ntk-cms-accent-soft);
-  font-weight: 600;
+  font-weight: var(--ntk-cms-font-weight-semibold);
 }
 
 .cms-preview-nav-item--active .cms-preview-nav-item__icon {
@@ -5034,9 +5265,9 @@ function resetToDefaults(): void {
   min-width: var(--ntk-cms-preview-mini-caption-min-width);
   height: var(--ntk-cms-preview-mini-caption-height);
   padding: 0 var(--ntk-cms-space-xs);
-  border-radius: 999px;
+  border-radius: var(--ntk-cms-group-caption-mini-radius);
   font-size: var(--ntk-cms-font-size-group-caption-mini);
-  font-weight: 700;
+  font-weight: var(--ntk-cms-font-weight-bold);
   letter-spacing: var(--ntk-cms-letter-spacing-group-caption-mini);
   background: var(--ntk-cms-group-caption-mini-bg);
   color: var(--ntk-cms-group-caption);
@@ -5046,6 +5277,7 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-header-bg);
   color: var(--ntk-cms-header-text);
   box-shadow: var(--ntk-cms-header-shadow);
+  backdrop-filter: var(--ntk-cms-header-blur);
 }
 
 .cms-preview-header {
@@ -5075,6 +5307,7 @@ function resetToDefaults(): void {
 
 .cms-preview-header__separator {
   color: var(--ntk-cms-title-separator);
+  font-size: var(--ntk-cms-title-separator-size);
 }
 
 .cms-preview-header__title-text {
@@ -5091,7 +5324,7 @@ function resetToDefaults(): void {
   min-height: var(--ntk-cms-preview-search-height);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-md);
   border-radius: var(--ntk-cms-radius-md);
-  border: 1px solid var(--ntk-cms-search-border);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-search-border);
   background: var(--ntk-cms-search-bg);
   color: var(--ntk-cms-search-text);
   font-size: var(--ntk-cms-font-size-item-label);
@@ -5116,7 +5349,7 @@ function resetToDefaults(): void {
 
 .cms-preview-header__action {
   position: relative;
-  border: 1px solid var(--ntk-cms-search-border);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-sm);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   min-width: var(--ntk-cms-preview-action-min-width);
@@ -5132,6 +5365,7 @@ function resetToDefaults(): void {
 .cms-preview-header__action:hover {
   background: var(--ntk-cms-action-hover);
   color: var(--ntk-cms-item-hover-color);
+  transform: translateY(var(--ntk-cms-preview-action-hover-translate-y));
 }
 
 .cms-preview-header__badge {
@@ -5140,13 +5374,13 @@ function resetToDefaults(): void {
   right: calc(var(--ntk-cms-space-xs) * -1);
   min-width: var(--ntk-cms-preview-badge-min-size);
   height: var(--ntk-cms-preview-badge-min-size);
-  border-radius: 999px;
+  border-radius: var(--ntk-cms-group-caption-mini-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 var(--ntk-cms-space-xs);
   font-size: var(--ntk-cms-preview-badge-font-size);
-  font-weight: 700;
+  font-weight: var(--ntk-cms-font-weight-bold);
   letter-spacing: var(--ntk-cms-preview-badge-letter-spacing);
   background: var(--ntk-cms-notification-badge-bg);
   color: var(--ntk-cms-notification-badge-text);
@@ -5154,7 +5388,7 @@ function resetToDefaults(): void {
 
 .cms-preview-drawer {
   margin-top: var(--ntk-cms-space-sm);
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-bg-card);
   box-shadow: var(--ntk-cms-drawer-shadow);
@@ -5180,7 +5414,7 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
   width: 100%;
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
-  border-top: 1px solid var(--ntk-cms-border-color);
+  border-top: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   background: var(--ntk-cms-drawer-footer-bg);
   color: var(--ntk-cms-item-text);
   box-shadow: var(--ntk-cms-drawer-footer-shadow);
@@ -5207,7 +5441,7 @@ function resetToDefaults(): void {
   height: var(--ntk-cms-preview-brand-logo-size);
   border-radius: var(--ntk-cms-radius-lg);
   object-fit: cover;
-  border: 1px solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
 }
 
 .cms-preview-brand__copy {
@@ -5259,8 +5493,8 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-user img {
-  width: var(--ntk-cms-preview-action-min-height);
-  height: var(--ntk-cms-preview-action-min-height);
+  width: var(--ntk-cms-preview-user-avatar-size);
+  height: var(--ntk-cms-preview-user-avatar-size);
   border-radius: 50%;
   object-fit: cover;
 }
@@ -5293,7 +5527,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-menu-item {
-  border: 1px solid transparent;
+  border: var(--ntk-cms-border-width) solid transparent;
   border-radius: var(--ntk-cms-radius-md);
   background: transparent;
   color: var(--ntk-cms-item-text);
@@ -5316,7 +5550,7 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-active-bg);
   color: var(--ntk-cms-accent);
   border-color: var(--ntk-cms-accent-soft);
-  font-weight: 600;
+  font-weight: var(--ntk-cms-font-weight-semibold);
 }
 
 .cms-preview-menu-item--active :deep(.q-icon) {
@@ -5327,6 +5561,7 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-header-bg);
   color: var(--ntk-cms-header-text);
   box-shadow: var(--ntk-cms-header-shadow);
+  backdrop-filter: var(--ntk-cms-header-blur);
 }
 
 .cms-preview-topbar {
@@ -5354,7 +5589,7 @@ function resetToDefaults(): void {
   display: inline-flex;
   align-items: center;
   gap: var(--ntk-cms-space-xs);
-  border: 1px solid var(--ntk-cms-search-border);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-md);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   background: var(--ntk-cms-search-bg);
@@ -5380,7 +5615,7 @@ function resetToDefaults(): void {
 }
 
 .cms-preview-topbar__action {
-  border: 1px solid var(--ntk-cms-search-border);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-search-border);
   border-radius: var(--ntk-cms-radius-sm);
   padding: var(--ntk-cms-space-xs) var(--ntk-cms-space-sm);
   min-width: var(--ntk-cms-preview-action-min-width);
@@ -5392,11 +5627,13 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-xs);
   font-size: var(--ntk-cms-font-size-item-caption);
   line-height: var(--ntk-cms-line-height-item-caption);
+  transition: all var(--ntk-cms-transition);
 }
 
 .cms-preview-topbar__action:hover {
   background: var(--ntk-cms-action-hover);
   color: var(--ntk-cms-item-hover-color);
+  transform: translateY(var(--ntk-cms-preview-action-hover-translate-y));
 }
 
 .cms-preview-card--content {
@@ -5426,96 +5663,92 @@ function resetToDefaults(): void {
   font-size: var(--ntk-cms-font-size-item-label);
 }
 
-@media (max-width: 1280px) {
-  .cms-pages,
-  .cms-page-item__grid,
-  .cms-blocks-summary-grid,
-  .cms-blocks-fields {
-    grid-template-columns: 1fr;
-  }
-
-  .cms-page-section-row {
-    grid-template-columns: 1fr;
-  }
-
-  .cms-list-item--menu {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .cms-list-item--toolbar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.cms-shell-page--lg-compact .cms-pages,
+.cms-shell-page--lg-compact .cms-page-item__grid,
+.cms-shell-page--lg-compact .cms-blocks-summary-grid,
+.cms-shell-page--lg-compact .cms-blocks-fields {
+  grid-template-columns: 1fr;
 }
 
-@media (max-width: 1024px) {
-  .cms-shell-page__grid,
-  .cms-config-section,
-  .cms-form-grid,
-  .cms-color-grid,
-  .cms-toggle-row,
-  .cms-theme-presets__controls,
-  .cms-media-preview-item {
-    grid-template-columns: 1fr;
-  }
+.cms-shell-page--lg-compact .cms-page-section-row {
+  grid-template-columns: 1fr;
+}
 
-  .cms-shell-page__workspace {
-    padding: var(--ntk-cms-space-md);
-  }
+.cms-shell-page--lg-compact .cms-list-item--menu {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
-  .cms-toolbar-card__body {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.cms-shell-page--lg-compact .cms-list-item--toolbar {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
-  .cms-toolbar-card__separator {
-    display: none;
-  }
+.cms-shell-page--md-compact .cms-shell-page__grid,
+.cms-shell-page--md-compact .cms-config-section,
+.cms-shell-page--md-compact .cms-form-grid,
+.cms-shell-page--md-compact .cms-color-grid,
+.cms-shell-page--md-compact .cms-toggle-row,
+.cms-shell-page--md-compact .cms-theme-presets__controls,
+.cms-shell-page--md-compact .cms-media-preview-item {
+  grid-template-columns: 1fr;
+}
 
-  .cms-toolbar-card__saved-at {
-    width: 100%;
-    margin-left: 0;
-    text-align: center;
-  }
+.cms-shell-page--md-compact .cms-shell-page__workspace {
+  padding: var(--ntk-cms-space-md);
+}
 
-  .cms-preview-brand__meta {
-    grid-template-columns: 1fr;
-  }
+.cms-shell-page--md-compact .cms-toolbar-card__body {
+  flex-direction: column;
+  align-items: stretch;
+}
 
-  .cms-preview-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.cms-shell-page--md-compact .cms-toolbar-card__separator {
+  display: none;
+}
 
-  .cms-preview-header__search {
-    min-width: 0;
-    width: 100%;
-  }
+.cms-shell-page--md-compact .cms-toolbar-card__saved-at {
+  width: 100%;
+  margin-left: 0;
+  text-align: center;
+}
 
-  .cms-preview-header__actions {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
+.cms-shell-page--md-compact .cms-preview-brand__meta {
+  grid-template-columns: 1fr;
+}
 
-  .cms-preview-topbar {
-    flex-wrap: wrap;
-  }
+.cms-shell-page--md-compact .cms-preview-header {
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-  .cms-preview-topbar__search {
-    order: 3;
-    width: 100%;
-  }
+.cms-shell-page--md-compact .cms-preview-header__search {
+  min-width: 0;
+  width: 100%;
+}
 
-  .cms-preview-topbar__actions {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
+.cms-shell-page--md-compact .cms-preview-header__actions {
+  margin-left: 0;
+  width: 100%;
+  justify-content: flex-start;
+}
 
-  .cms-list-item,
-  .cms-list-item--menu,
-  .cms-list-item--toolbar {
-    grid-template-columns: 1fr;
-  }
+.cms-shell-page--md-compact .cms-preview-topbar {
+  flex-wrap: wrap;
+}
+
+.cms-shell-page--md-compact .cms-preview-topbar__search {
+  order: 3;
+  width: 100%;
+}
+
+.cms-shell-page--md-compact .cms-preview-topbar__actions {
+  margin-left: 0;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.cms-shell-page--md-compact .cms-list-item,
+.cms-shell-page--md-compact .cms-list-item--menu,
+.cms-shell-page--md-compact .cms-list-item--toolbar {
+  grid-template-columns: 1fr;
 }
 </style>

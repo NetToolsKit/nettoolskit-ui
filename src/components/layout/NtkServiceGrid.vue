@@ -90,7 +90,7 @@ function formatOrder(index: number): string {
 .ntk-service-grid__list {
   display: grid;
   grid-template-columns: repeat(var(--ntk-services-columns), minmax(0, 1fr));
-  gap: var(--space-lg);
+  gap: var(--ntk-spacing-lg);
 }
 
 @media (max-width: 1200px) {

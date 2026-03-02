@@ -193,25 +193,25 @@ const footerClasses = computed(() => ({
   font-family: var(--ntk-font-body);
 
   &--dark {
-    background-color: var(--color-footer-bg);
-    color: var(--color-footer-text);
+    background-color: var(--ntk-footer-bg);
+    color: var(--ntk-footer-text);
   }
 
   &--light {
-    background-color: var(--color-bg-light);
-    color: var(--color-text-dark);
+    background-color: var(--ntk-bg-secondary);
+    color: var(--ntk-text-dark);
   }
 
   &__container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--space-2xl) var(--space-md);
+    padding: var(--ntk-spacing-2xl) var(--ntk-spacing-md);
   }
 
   &__content {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-xl);
+    gap: var(--ntk-spacing-xl);
 
     @media (min-width: 600px) {
       grid-template-columns: 1fr 1fr;
@@ -230,27 +230,27 @@ const footerClasses = computed(() => ({
     font-family: var(--ntk-font-display);
     font-size: var(--ntk-text-xl);
     font-weight: var(--ntk-font-bold);
-    margin: 0 0 var(--space-sm) 0;
+    margin: 0 0 var(--ntk-spacing-sm) 0;
 
     .ntk-footer--dark & {
-      color: var(--color-text-inverse);
+      color: var(--ntk-text-inverse);
     }
   }
 
   &__description {
     font-size: var(--ntk-text-sm);
-    line-height: var(--line-height-relaxed);
+    line-height: var(--ntk-line-height-relaxed);
     margin: 0;
 
     .ntk-footer--dark & {
-      color: var(--color-footer-text-muted);
+      color: var(--ntk-footer-text-muted);
     }
   }
 
   &__links {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: var(--space-lg);
+    gap: var(--ntk-spacing-lg);
   }
 
   &__link-section {
@@ -262,10 +262,10 @@ const footerClasses = computed(() => ({
     font-weight: var(--ntk-font-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin: 0 0 var(--space-md) 0;
+    margin: 0 0 var(--ntk-spacing-md) 0;
 
     .ntk-footer--dark & {
-      color: var(--color-text-inverse);
+      color: var(--ntk-text-inverse);
     }
   }
 
@@ -275,28 +275,28 @@ const footerClasses = computed(() => ({
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--ntk-spacing-sm);
   }
 
   &__link {
     font-size: var(--ntk-text-sm);
     text-decoration: none;
-    transition: color var(--transition-fast);
+    transition: color var(--ntk-transition-fast);
 
     .ntk-footer--dark & {
-      color: var(--color-footer-text-muted);
+      color: var(--ntk-footer-text-muted);
 
       &:hover {
-        color: var(--color-footer-link-hover);
+        color: var(--ntk-footer-link-hover);
         text-decoration: none;
       }
     }
 
     .ntk-footer--light & {
-      color: var(--color-text-secondary);
+      color: var(--ntk-text-secondary);
 
       &:hover {
-        color: var(--color-action-primary);
+        color: var(--ntk-primary);
         text-decoration: none;
       }
     }
@@ -310,7 +310,7 @@ const footerClasses = computed(() => ({
 
   &__social-links {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--ntk-spacing-md);
 
     @media (min-width: 1024px) {
       justify-content: flex-end;
@@ -325,26 +325,26 @@ const footerClasses = computed(() => ({
     height: 40px;
     border-radius: 50%;
     text-decoration: none;
-    transition: all var(--transition-fast);
+    transition: all var(--ntk-transition-fast);
 
     .ntk-footer--dark & {
-      background-color: var(--color-footer-border);
-      color: var(--color-footer-text);
+      background-color: var(--ntk-footer-border);
+      color: var(--ntk-footer-text);
 
       &:hover {
-        background-color: var(--color-footer-link);
-        color: var(--color-text-inverse);
+        background-color: var(--ntk-footer-link);
+        color: var(--ntk-text-inverse);
         text-decoration: none;
       }
     }
 
     .ntk-footer--light & {
-      background-color: var(--color-bg-light);
-      color: var(--color-text-secondary);
+      background-color: var(--ntk-bg-secondary);
+      color: var(--ntk-text-secondary);
 
       &:hover {
-        background-color: var(--color-action-primary);
-        color: var(--color-text-inverse);
+        background-color: var(--ntk-primary);
+        color: var(--ntk-text-inverse);
         text-decoration: none;
       }
     }
@@ -352,14 +352,14 @@ const footerClasses = computed(() => ({
 
   &__divider {
     height: 1px;
-    margin: var(--space-xl) 0;
+    margin: var(--ntk-spacing-xl) 0;
 
     .ntk-footer--dark & {
-      background-color: var(--color-footer-border);
+      background-color: var(--ntk-footer-border);
     }
 
     .ntk-footer--light & {
-      background-color: var(--color-border);
+      background-color: var(--ntk-border-color);
     }
   }
 
@@ -371,11 +371,11 @@ const footerClasses = computed(() => ({
       margin: 0;
 
       .ntk-footer--dark & {
-        color: var(--color-footer-text-muted);
+        color: var(--ntk-footer-text-muted);
       }
 
       .ntk-footer--light & {
-        color: var(--color-text-muted);
+        color: var(--ntk-text-muted);
       }
     }
   }

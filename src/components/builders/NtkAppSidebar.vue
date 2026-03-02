@@ -262,9 +262,9 @@ const handleItemClick = (item: MenuItem) => {
 }
 
 .menu-item {
-  border-radius: var(--border-radius-md);
+  border-radius: var(--ntk-radius-md);
   margin-bottom: var(--ntk-spacing-xs);
-  transition: all var(--transition-base);
+  transition: all var(--ntk-transition-base);
 
   &:hover {
     background: var(--ntk-bg-hover);
@@ -285,7 +285,7 @@ const handleItemClick = (item: MenuItem) => {
 }
 
 .submenu-child {
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--ntk-radius-sm);
   margin: var(--ntk-spacing-xs) 0;
   padding-left: var(--ntk-spacing-2xl);
 

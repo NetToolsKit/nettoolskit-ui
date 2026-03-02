@@ -37,6 +37,7 @@ function extractUniqueMatches(source: string, pattern: RegExp): string[] {
 const appShellTypesSource = readRepoFile('../../../../src/components/layout/app-shell.types.ts')
 const cmsTypesSource = readRepoFile('../../../../src/modules/cms/white-label/types.ts')
 const cmsAppSource = readRepoFile('../../../../landing-page/CmsApp.vue')
+const appShellSource = readRepoFile('../../../../src/components/layout/NtkAppShell.vue')
 
 describe('CMS white-label configuration coverage', () => {
   it('exposes all AppShellTheme keys in CmsApp color fields', () => {
@@ -69,5 +70,15 @@ describe('CMS white-label configuration coverage', () => {
     const missingActionRefs = actionKeys.filter(key => !actionRefs.includes(key))
 
     expect(missingActionRefs).toEqual([])
+  })
+
+  it('avoids hardcoded numeric font declarations in shell and CMS settings UI styles', () => {
+    const hasHardcodedCmsFontSize = /font-size:\s*[0-9]/.test(cmsAppSource)
+    const hasHardcodedCmsFontWeight = /font-weight:\s*[0-9]/.test(cmsAppSource)
+    const hasHardcodedShellFontWeight = /font-weight:\s*[0-9]/.test(appShellSource)
+
+    expect(hasHardcodedCmsFontSize).toBe(false)
+    expect(hasHardcodedCmsFontWeight).toBe(false)
+    expect(hasHardcodedShellFontWeight).toBe(false)
   })
 })

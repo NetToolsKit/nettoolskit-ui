@@ -100,8 +100,8 @@ export const sentinelaTheme: ThemeConfig = {
     info: sentinelaPalette.accent[500],
   },
   fonts: {
-    display: 'Poppins',
-    body: 'Inter',
+    display: 'Sora',
+    body: 'Plus Jakarta Sans',
   },
   gradients: {
     hero: `linear-gradient(135deg, ${sentinelaPalette.primary[800]} 0%, ${sentinelaPalette.primary[600]} 100%)`,
@@ -137,8 +137,8 @@ export const plateaTheme: ThemeConfig = {
     info: plateaPalette.accent[500],
   },
   fonts: {
-    display: 'Poppins',
-    body: 'Inter',
+    display: 'Sora',
+    body: 'Plus Jakarta Sans',
   },
   gradients: {
     hero: `linear-gradient(135deg, ${plateaPalette.primary[700]} 0%, ${plateaPalette.primary[500]} 100%)`,
@@ -174,8 +174,8 @@ export const nettoolskitTheme: ThemeConfig = {
     info: nettoolskitPalette.accent[500],
   },
   fonts: {
-    display: 'Poppins',
-    body: 'Inter',
+    display: 'Sora',
+    body: 'Plus Jakarta Sans',
   },
   gradients: {
     hero: `linear-gradient(135deg, ${nettoolskitPalette.primary[700]} 0%, ${nettoolskitPalette.accent[600]} 100%)`,

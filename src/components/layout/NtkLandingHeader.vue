@@ -314,9 +314,9 @@ function handleCtaClick() {
 .header-nav-item {
   color: var(--ntk-text-secondary);
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-medium);
+  transition: color var(--ntk-transition-fast);
 
   &:hover {
     color: var(--ntk-text-primary);
@@ -339,11 +339,11 @@ function handleCtaClick() {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-semibold);
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: var(--ntk-radius-md);
+  transition: all var(--ntk-transition-fast);
 
   &.cta-primary {
     color: var(--ntk-text-inverse);
@@ -388,8 +388,8 @@ function handleCtaClick() {
   border: none;
   cursor: pointer;
   color: var(--ntk-text-secondary);
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: var(--ntk-radius-md);
+  transition: all var(--ntk-transition-fast);
   text-decoration: none;
 
   &:hover {

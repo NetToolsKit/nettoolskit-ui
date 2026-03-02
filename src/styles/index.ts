@@ -5,13 +5,12 @@
  * 
  * SISTEMA DE TOKENS:
  * - tokens.scss: Variáveis CSS globais (--ntk-*)
- * - design-system.scss: Estilos base e utilitários
  * - global.scss: Reset e estilos globais
  * 
  * USO EM PROJETOS:
  * 1. Importe os estilos no main.ts ou App.vue:
  *    @import 'nettoolskit-ui-vue/src/styles/tokens.scss';
- *    @import 'nettoolskit-ui-vue/src/styles/design-system.scss';
+ *    @import 'nettoolskit-ui-vue/src/styles/global.scss';
  * 
  * 2. Use o plugin para customizar cores:
  *    import { NtkThemePlugin } from 'nettoolskit-ui-vue';
@@ -63,12 +62,6 @@ export const DESIGN_TOKENS = {
     // Footer
     footerBg: '#1a1a2e',
     footerText: '#e0e0e0',
-    
-    // Legacy (retrocompatibilidade)
-    white: '#ffffff',
-    background: '#f5f7fa',
-    gradientStart: '#f5f7fa',
-    gradientEnd: '#c3cfe2',
   },
   
   gradients: {
@@ -99,13 +92,10 @@ export const DESIGN_TOKENS = {
   },
   
   fonts: {
-    family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
-    familyDisplay: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    family: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    familyDisplay: "'Sora', 'Plus Jakarta Sans', sans-serif",
     familyMono: "'Fira Code', 'Consolas', 'Monaco', monospace",
   },
-  
-  // Legacy (retrocompatibilidade)
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
 } as const;
 
 export type DesignTokens = typeof DESIGN_TOKENS;

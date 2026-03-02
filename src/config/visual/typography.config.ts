@@ -214,8 +214,8 @@ export interface TypographyConfig {
  * Uses system fonts if custom fonts fail to load.
  */
 export const defaultFonts: FontFamilies = {
-  display: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-  body: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  display: "'Sora', 'Plus Jakarta Sans', sans-serif",
+  body: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   mono: "'Fira Code', 'Consolas', 'Monaco', monospace",
 }
 
@@ -298,8 +298,8 @@ export const defaultLetterSpacing: LetterSpacing = {
  */
 export const sentinelaTypography: TypographyConfig = {
   fonts: {
-    display: "'Poppins', sans-serif",
-    body: "'Inter', sans-serif",
+    display: "'Sora', 'Plus Jakarta Sans', sans-serif",
+    body: "'Plus Jakarta Sans', sans-serif",
     mono: "'Fira Code', monospace",
   },
   sizes: defaultSizes,
@@ -316,8 +316,8 @@ export const sentinelaTypography: TypographyConfig = {
  */
 export const plateaTypography: TypographyConfig = {
   fonts: {
-    display: "'Poppins', sans-serif",
-    body: "'Inter', sans-serif",
+    display: "'Sora', 'Plus Jakarta Sans', sans-serif",
+    body: "'Plus Jakarta Sans', sans-serif",
     mono: "'Fira Code', monospace",
   },
   sizes: {
@@ -345,8 +345,8 @@ export const plateaTypography: TypographyConfig = {
  */
 export const nettoolskitTypography: TypographyConfig = {
   fonts: {
-    display: "'JetBrains Mono', 'Fira Code', monospace",
-    body: "'Inter', sans-serif",
+    display: "'Sora', 'Plus Jakarta Sans', sans-serif",
+    body: "'Plus Jakarta Sans', sans-serif",
     mono: "'JetBrains Mono', 'Fira Code', monospace",
   },
   sizes: defaultSizes,

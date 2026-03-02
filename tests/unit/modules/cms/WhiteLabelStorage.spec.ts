@@ -31,7 +31,7 @@ describe('white-label.storage', () => {
     window.localStorage.removeItem(CMS_WHITE_LABEL_STORAGE_KEY)
   })
 
-  it('fills new layout fields from defaults when loading legacy payloads', () => {
+  it('fills new layout fields from defaults when loading compatibility payloads', () => {
     const defaults = createDefaultWhiteLabelSettings()
     const normalized = normalizeCmsWhiteLabelSettings({
       layout: {
@@ -48,7 +48,7 @@ describe('white-label.storage', () => {
     expect(normalized.governance.workflow.version).toBe(defaults.governance.workflow.version)
   })
 
-  it('decouples legacy semantic badge expression from notification error token', () => {
+  it('decouples compatibility semantic badge expression from notification error token', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       theme: {
         notificationErrorColor: '#123456',
@@ -60,7 +60,7 @@ describe('white-label.storage', () => {
     expect(normalized.theme.notificationBadgeColor).toBe('#123456')
   })
 
-  it('migrates legacy page/search backgrounds to secondary contrast tokens', () => {
+  it('migrates old page/search backgrounds to secondary contrast tokens', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       theme: {
         pageBackground: 'var(--ntk-bg-primary)',
@@ -73,7 +73,7 @@ describe('white-label.storage', () => {
     expect(normalized.theme.searchBackground).toBe('var(--ntk-bg-hover)')
   })
 
-  it('migrates legacy flat card/page token combination to secondary page background', () => {
+  it('migrates old flat card/page token combination to secondary page background', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       theme: {
         pageBackground: 'var(--ntk-bg-card)',
@@ -100,7 +100,7 @@ describe('white-label.storage', () => {
     expect(normalized.theme.actionHoverBackground).toBe('#1f2937')
   })
 
-  it('removes deprecated legacy modules and restores required CMS core items', () => {
+  it('removes deprecated modules and restores required CMS core items', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       navGroups: [
         { id: 'core', label: 'Core' },
