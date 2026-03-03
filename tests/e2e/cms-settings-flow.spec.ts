@@ -9,6 +9,13 @@ const DEFAULT_TENANT_NAME = 'Default Tenant'
 const BLUE_TENANT_NAME = 'Blue Tenant'
 const HEADER_ACTIONS_HOVER_LABEL = 'Header actions hover background (hover only)'
 const SEARCH_BACKGROUND_LABEL = 'Search background'
+const DARK_PRESET_NAME = 'Dark'
+
+const darkThemePalette = {
+  drawerBackground: '#1e293b',
+  drawerTextColor: '#cbd5e1',
+  pageTextColor: '#f1f5f9',
+}
 
 interface NotificationPalette {
   badgeColor: string
@@ -124,6 +131,21 @@ async function selectTenantProfile(page: Page, tenantName: string): Promise<void
   }
 }
 
+async function selectThemePreset(page: Page, presetName: string): Promise<void> {
+  const selector = page
+    .locator('.cms-theme-presets .q-select, .cms-theme-presets [aria-label="Theme preset"]')
+    .first()
+  await selector.click()
+
+  const optionByRole = page.getByRole('option', { name: presetName, exact: true }).first()
+  if (await optionByRole.count() > 0) {
+    await optionByRole.click()
+    return
+  }
+
+  await page.locator('.q-menu .q-item', { hasText: presetName }).first().click()
+}
+
 async function configureNotificationPalette(page: Page, palette: NotificationPalette): Promise<void> {
   await fillTextInput(colorTokenInputByLabel(page, 'Notification badge color'), palette.badgeColor)
   await fillTextInput(colorTokenInputByLabel(page, 'Notification badge text color'), palette.badgeTextColor)
@@ -193,6 +215,28 @@ test.describe('CMS settings white-label flow', () => {
 
     await openSettingsTab(page, /colors/i)
     await expect(page.locator('input[type="color"][aria-label$="picker"]').first()).toBeVisible()
+  })
+
+  test('applies dark preset with readable sidebar and form contrast', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /colors/i)
+    await selectThemePreset(page, DARK_PRESET_NAME)
+
+    const drawer = page.locator('.ntk-app-shell__drawer').first()
+    await expect(drawer).toHaveCSS('background-color', hexToRgbRegex(darkThemePalette.drawerBackground))
+    await expect(drawer).toHaveCSS('color', hexToRgbRegex(darkThemePalette.drawerTextColor))
+
+    const inactiveCaption = page
+      .locator('.ntk-app-shell__item:not(.ntk-app-shell__item--active) .q-item__label--caption')
+      .first()
+    await expect(inactiveCaption).toHaveCSS('color', hexToRgbRegex(darkThemePalette.drawerTextColor))
+
+    const titleApp = page.locator('.ntk-app-shell__header .ntk-app-shell__title-app').first()
+    await expect(titleApp).toHaveCSS('color', hexToRgbRegex(darkThemePalette.pageTextColor))
+
+    const firstFieldInput = page.locator('.cms-shell-page .q-field__native, .cms-shell-page .q-field__input').first()
+    await expect(firstFieldInput).toHaveCSS('color', hexToRgbRegex(darkThemePalette.pageTextColor))
   })
 
   test('edits, saves, reloads and preserves notification tokens by tenant', async ({ page }) => {

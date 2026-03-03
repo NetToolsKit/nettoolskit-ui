@@ -100,6 +100,47 @@ describe('white-label.storage', () => {
     expect(normalized.theme.actionHoverBackground).toBe('#1f2937')
   })
 
+  it('normalizes legacy ntk text tokens to readable colors for active dark preset themes', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      themePresetId: 'dark',
+      theme: {
+        headerBackground: '#0f172a',
+        drawerBackground: '#1e293b',
+        searchBackground: '#1e293b',
+        pageBackground: '#334155',
+        titleAppColor: 'var(--ntk-text-primary)',
+        drawerTextColor: 'var(--ntk-text-secondary)',
+        itemTextColor: 'var(--ntk-text-primary)',
+        itemIconColor: 'var(--ntk-text-primary)',
+        searchTextColor: 'var(--ntk-text-primary)',
+        pageTextColor: 'var(--ntk-text-primary)',
+      },
+    })
+
+    expect(normalized.theme.titleAppColor).toBe('#f1f5f9')
+    expect(normalized.theme.drawerTextColor).toBe('#cbd5e1')
+    expect(normalized.theme.itemTextColor).toBe('#cbd5e1')
+    expect(normalized.theme.itemIconColor).toBe('#cbd5e1')
+    expect(normalized.theme.searchTextColor).toBe('#f1f5f9')
+    expect(normalized.theme.pageTextColor).toBe('#f1f5f9')
+  })
+
+  it('normalizes dark preset overrides that still use legacy runtime token expressions', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      themePresetOverrides: {
+        dark: {
+          titleAppColor: 'var(--ntk-text-primary)',
+          itemTextColor: 'var(--ntk-text-primary)',
+          itemIconColor: 'var(--ntk-text-primary)',
+        },
+      },
+    })
+
+    expect(normalized.themePresetOverrides.dark?.titleAppColor).toBe('#f1f5f9')
+    expect(normalized.themePresetOverrides.dark?.itemTextColor).toBe('#cbd5e1')
+    expect(normalized.themePresetOverrides.dark?.itemIconColor).toBe('#cbd5e1')
+  })
+
   it('removes deprecated modules and restores required CMS core items', () => {
     const normalized = normalizeCmsWhiteLabelSettings({
       navGroups: [

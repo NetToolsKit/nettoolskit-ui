@@ -4317,6 +4317,7 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-lg);
   font-family: var(--ntk-cms-font-family);
   font-style: var(--ntk-cms-font-style-base);
+  color: var(--ntk-cms-text-primary);
   min-width: 0;
 }
 
@@ -4328,6 +4329,48 @@ function resetToDefaults(): void {
 .cms-shell-page :deep(.q-chip) {
   font-family: var(--ntk-cms-font-family);
   font-style: var(--ntk-cms-font-style-base);
+}
+
+.cms-shell-page :deep(.q-field__native),
+.cms-shell-page :deep(.q-field__input),
+.cms-shell-page :deep(.q-field__append),
+.cms-shell-page :deep(.q-field__prepend),
+.cms-shell-page :deep(.q-field__suffix),
+.cms-shell-page :deep(.q-field__prefix),
+.cms-shell-page :deep(.q-select__dropdown-icon) {
+  color: var(--ntk-cms-text-primary) !important;
+  -webkit-text-fill-color: var(--ntk-cms-text-primary);
+}
+
+.cms-shell-page :deep(.q-field__native::placeholder),
+.cms-shell-page :deep(.q-field__input::placeholder) {
+  color: var(--ntk-cms-text-secondary) !important;
+  -webkit-text-fill-color: var(--ntk-cms-text-secondary);
+}
+
+.cms-shell-page :deep(.q-field),
+.cms-shell-page :deep(.q-item),
+.cms-shell-page :deep(.q-toggle),
+.cms-shell-page :deep(.q-toggle__label) {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-shell-page :deep(.q-field__label),
+.cms-shell-page :deep(.q-field__marginal) {
+  color: var(--ntk-cms-text-secondary) !important;
+}
+
+.cms-shell-page :deep(.q-field--outlined .q-field__control) {
+  background: var(--ntk-cms-shell-bg) !important;
+  color: var(--ntk-cms-text-primary) !important;
+}
+
+.cms-shell-page :deep(.q-field--outlined .q-field__control:before) {
+  border-color: var(--ntk-cms-border-color) !important;
+}
+
+.cms-shell-page :deep(.q-field--outlined.q-field--focused .q-field__control:after) {
+  border-color: var(--ntk-cms-focus-color) !important;
 }
 
 .cms-shell-page__workspace {
@@ -4826,6 +4869,14 @@ function resetToDefaults(): void {
 .cms-settings__panels {
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-bg-card);
+}
+
+.cms-settings__panels :deep(.q-panel),
+.cms-settings__panels :deep(.q-tab-panel),
+.cms-settings__panels :deep(.q-tab-panels) {
+  background: var(--ntk-cms-bg-card);
+  color: var(--ntk-cms-text-primary);
 }
 
 .cms-config-section {

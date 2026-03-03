@@ -1353,12 +1353,24 @@ function toggleMenuMode(): void {
   animation: ntk-pulse 2s infinite;
 }
 
-.ntk-app-shell__drawer {
-  background-color: var(--ntk-shell-drawer-bg);
-  color: var(--ntk-shell-drawer-text);
-  border-right: var(--ntk-shell-border-width) solid var(--ntk-shell-divider);
-  z-index: var(--ntk-shell-drawer-z-index);
-  box-shadow: var(--ntk-shell-drawer-shadow);
+.ntk-app-shell :deep(.q-drawer) {
+  background-color: var(--ntk-shell-drawer-bg) !important;
+  color: var(--ntk-shell-drawer-text) !important;
+  border-right: var(--ntk-shell-border-width) solid var(--ntk-shell-divider) !important;
+  z-index: var(--ntk-shell-drawer-z-index) !important;
+  box-shadow: var(--ntk-shell-drawer-shadow) !important;
+}
+
+:deep(.ntk-app-shell__drawer) {
+  background-color: var(--ntk-shell-drawer-bg) !important;
+  color: var(--ntk-shell-drawer-text) !important;
+}
+
+:deep(.ntk-app-shell__drawer .q-scrollarea),
+:deep(.ntk-app-shell__drawer .q-scrollarea__container),
+:deep(.ntk-app-shell__drawer .q-scrollarea__content) {
+  background-color: var(--ntk-shell-drawer-bg) !important;
+  color: var(--ntk-shell-drawer-text) !important;
 }
 
 .ntk-app-shell__drawer-header {
@@ -1485,6 +1497,11 @@ function toggleMenuMode(): void {
   font-weight: var(--ntk-shell-font-weight-regular);
   line-height: var(--ntk-shell-line-height-item-caption);
   margin-top: var(--ntk-shell-item-caption-offset);
+  color: var(--ntk-shell-brand-subtitle) !important;
+}
+
+.ntk-app-shell__item:hover :deep(.q-item__label--caption) {
+  color: var(--ntk-shell-item-hover-color) !important;
 }
 
 .ntk-app-shell__item--active {
@@ -1501,6 +1518,10 @@ function toggleMenuMode(): void {
 .ntk-app-shell__item--active :deep(.q-icon),
 .ntk-app-shell__item--active :deep(.q-item__label) {
   color: var(--ntk-shell-item-active-color);
+}
+
+.ntk-app-shell__item--active :deep(.q-item__label--caption) {
+  color: var(--ntk-shell-item-active-color) !important;
 }
 
 .ntk-app-shell__group-separator {
@@ -1522,7 +1543,7 @@ function toggleMenuMode(): void {
   margin-bottom: 0;
 }
 
-.ntk-app-shell__drawer :deep(.q-scrollarea__content) {
+:deep(.ntk-app-shell__drawer .q-scrollarea__content) {
   min-height: 100%;
   padding-bottom: var(--ntk-shell-drawer-scroll-padding-bottom);
 }

@@ -21,6 +21,196 @@ const REQUIRED_CMS_ITEM_IDS = new Set(['settings', 'pages', 'blocks', 'media'])
 const COMPAT_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 const COMPAT_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 2
+const THEME_RUNTIME_TOKEN_PATTERN = /^var\(--ntk-(text|bg|border)-/i
+
+type ThemeReadablePair = {
+  foreground: keyof AppShellTheme
+  background: keyof AppShellTheme
+}
+
+const DARK_THEME_READABLE_PAIRS: ReadonlyArray<ThemeReadablePair> = [
+  { foreground: 'titleAppColor', background: 'headerBackground' },
+  { foreground: 'titleTextColor', background: 'headerBackground' },
+  { foreground: 'headerTextColor', background: 'headerBackground' },
+  { foreground: 'toolbarButtonColor', background: 'headerBackground' },
+  { foreground: 'drawerTextColor', background: 'drawerBackground' },
+  { foreground: 'itemTextColor', background: 'drawerBackground' },
+  { foreground: 'itemIconColor', background: 'drawerBackground' },
+  { foreground: 'brandTitleColor', background: 'drawerBackground' },
+  { foreground: 'brandSubtitleColor', background: 'drawerBackground' },
+  { foreground: 'groupCaptionColor', background: 'drawerBackground' },
+  { foreground: 'itemHoverColor', background: 'itemHoverBackground' },
+  { foreground: 'itemIconHoverColor', background: 'itemHoverBackground' },
+  { foreground: 'searchTextColor', background: 'searchBackground' },
+  { foreground: 'searchIconColor', background: 'searchBackground' },
+  { foreground: 'pageTextColor', background: 'pageBackground' },
+  { foreground: 'notificationIconColor', background: 'headerBackground' },
+]
+
+/**
+ * Checks whether a value is still bound to generic runtime ntk tokens.
+ * These expressions can resolve to light palette values in CMS context and hurt contrast.
+ */
+function isRuntimeThemeToken(value: string | undefined): boolean {
+  const normalized = String(value ?? '').trim()
+  return THEME_RUNTIME_TOKEN_PATTERN.test(normalized)
+}
+
+/**
+ * Parses css color values in hex/rgb formats into channel tuples.
+ */
+function parseColorChannels(value: string | undefined): [number, number, number] | null {
+  const normalized = String(value ?? '').trim().toLowerCase()
+  if (!normalized) {
+    return null
+  }
+
+  const compactHex = normalized.replace('#', '')
+  if (/^[0-9a-f]{3}$/i.test(compactHex)) {
+    const [r, g, b] = compactHex.split('').map(channel => Number.parseInt(`${channel}${channel}`, 16))
+    return [r, g, b]
+  }
+
+  if (/^[0-9a-f]{6}$/i.test(compactHex)) {
+    const r = Number.parseInt(compactHex.slice(0, 2), 16)
+    const g = Number.parseInt(compactHex.slice(2, 4), 16)
+    const b = Number.parseInt(compactHex.slice(4, 6), 16)
+    return [r, g, b]
+  }
+
+  const rgbMatch = normalized.match(/^rgba?\(([^)]+)\)$/i)
+  if (!rgbMatch) {
+    return null
+  }
+
+  const channels = rgbMatch[1]
+    .split(',')
+    .slice(0, 3)
+    .map(channel => Number.parseFloat(channel.trim()))
+    .map(channel => Number.isFinite(channel) ? Math.max(0, Math.min(255, channel)) : Number.NaN)
+
+  if (channels.length !== 3 || channels.some(channel => Number.isNaN(channel))) {
+    return null
+  }
+
+  return [channels[0], channels[1], channels[2]]
+}
+
+/**
+ * Computes WCAG contrast ratio between two colors.
+ */
+function getContrastRatio(foreground: string | undefined, background: string | undefined): number | null {
+  const fg = parseColorChannels(foreground)
+  const bg = parseColorChannels(background)
+  if (!fg || !bg) {
+    return null
+  }
+
+  const toLinear = (value: number): number => {
+    const channel = value / 255
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+  }
+
+  const luminance = ([r, g, b]: [number, number, number]): number => (
+    (0.2126 * toLinear(r)) +
+    (0.7152 * toLinear(g)) +
+    (0.0722 * toLinear(b))
+  )
+
+  const fgLuminance = luminance(fg)
+  const bgLuminance = luminance(bg)
+  const light = Math.max(fgLuminance, bgLuminance)
+  const dark = Math.min(fgLuminance, bgLuminance)
+  return (light + 0.05) / (dark + 0.05)
+}
+
+/**
+ * Gets the concrete dark preset theme used as readability fallback.
+ */
+function getDarkPresetTheme(defaultTheme: AppShellTheme): Partial<AppShellTheme> {
+  return buildCmsThemePresets(defaultTheme).find(preset => preset.id === 'dark')?.theme ?? {}
+}
+
+/**
+ * Normalizes dark preset overrides that still point to generic runtime tokens or unreadable pairs.
+ */
+function normalizeDarkPresetOverrides(
+  overrides: CmsWhiteLabelSettings['themePresetOverrides'],
+  defaultTheme: AppShellTheme
+): CmsWhiteLabelSettings['themePresetOverrides'] {
+  const darkOverrides = overrides.dark
+  if (!darkOverrides) {
+    return overrides
+  }
+
+  const darkPresetTheme = getDarkPresetTheme(defaultTheme)
+  const normalizedDarkOverrides: Partial<AppShellTheme> = { ...darkOverrides }
+
+  for (const { foreground } of DARK_THEME_READABLE_PAIRS) {
+    const currentValue = String(normalizedDarkOverrides[foreground] ?? '').trim()
+    const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
+    if (!currentValue || !presetValue) {
+      continue
+    }
+
+    if (isRuntimeThemeToken(currentValue)) {
+      normalizedDarkOverrides[foreground] = presetValue
+    }
+  }
+
+  for (const { foreground, background } of DARK_THEME_READABLE_PAIRS) {
+    const foregroundValue = String(normalizedDarkOverrides[foreground] ?? darkPresetTheme[foreground] ?? '').trim()
+    const backgroundValue = String(normalizedDarkOverrides[background] ?? darkPresetTheme[background] ?? '').trim()
+    const contrast = getContrastRatio(foregroundValue, backgroundValue)
+    const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
+
+    if (contrast !== null && contrast < 3.5 && presetValue) {
+      normalizedDarkOverrides[foreground] = presetValue
+    }
+  }
+
+  return {
+    ...overrides,
+    dark: normalizedDarkOverrides,
+  }
+}
+
+/**
+ * Normalizes active dark themes so legacy token expressions cannot degrade readability.
+ */
+function normalizeDarkThemeReadability(theme: AppShellTheme, presetId: string, defaultTheme: AppShellTheme): AppShellTheme {
+  if (presetId !== 'dark') {
+    return theme
+  }
+
+  const darkPresetTheme = getDarkPresetTheme(defaultTheme)
+  const normalizedTheme: AppShellTheme = { ...theme }
+
+  for (const { foreground } of DARK_THEME_READABLE_PAIRS) {
+    const currentValue = String(normalizedTheme[foreground] ?? '').trim()
+    const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
+    if (!currentValue || !presetValue) {
+      continue
+    }
+
+    if (isRuntimeThemeToken(currentValue)) {
+      normalizedTheme[foreground] = presetValue
+    }
+  }
+
+  for (const { foreground, background } of DARK_THEME_READABLE_PAIRS) {
+    const foregroundValue = String(normalizedTheme[foreground] ?? '').trim()
+    const backgroundValue = String(normalizedTheme[background] ?? '').trim()
+    const contrast = getContrastRatio(foregroundValue, backgroundValue)
+    const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
+
+    if (contrast !== null && contrast < 3.5 && presetValue) {
+      normalizedTheme[foreground] = presetValue
+    }
+  }
+
+  return resolveAppShellTheme(normalizedTheme, APP_SHELL_DEFAULT_THEME)
+}
 
 /**
  * Creates a deep clone for plain objects used in settings payloads.
@@ -380,7 +570,10 @@ export function normalizeCmsWhiteLabelSettings(
     return defaults
   }
 
-  const themePresetOverrides = normalizeThemePresetOverrides(parsed.themePresetOverrides)
+  const themePresetOverrides = normalizeDarkPresetOverrides(
+    normalizeThemePresetOverrides(parsed.themePresetOverrides),
+    defaults.theme
+  )
   const mergedTheme = normalizeSurfaceContrast(normalizeNotificationColors({
     ...defaults.theme,
     ...(parsed.theme ?? {}),
@@ -415,6 +608,7 @@ export function normalizeCmsWhiteLabelSettings(
   merged.themePresetId = isCmsThemePresetId(parsed.themePresetId)
     ? parsed.themePresetId
     : detectCmsThemePresetId(merged.theme, themePresets, defaults.theme)
+  merged.theme = normalizeDarkThemeReadability(merged.theme, merged.themePresetId, defaults.theme)
 
   return merged
 }

@@ -48,4 +48,18 @@ describe('theme-presets', () => {
 
     expect(detected).toBe('custom')
   })
+
+  it('provides explicit dark shell surface and text tokens', () => {
+    const presets = buildCmsThemePresets(APP_SHELL_DEFAULT_THEME)
+    const darkPreset = presets.find(preset => preset.id === 'dark')
+
+    expect(darkPreset).toBeDefined()
+    expect(darkPreset?.theme.drawerBackground).toBeTruthy()
+    expect(darkPreset?.theme.drawerFooterBackground).toBeTruthy()
+    expect(darkPreset?.theme.toolbarButtonColor).toBeTruthy()
+    expect(darkPreset?.theme.titleTextColor).toBeTruthy()
+    expect(darkPreset?.theme.itemTextColor).toBeTruthy()
+    expect(darkPreset?.theme.itemIconColor).toBeTruthy()
+    expect(darkPreset?.theme.brandSubtitleColor).toBeTruthy()
+  })
 })
