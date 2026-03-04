@@ -186,8 +186,12 @@
   gap: var(--spacing-md);
 }
 
+.landing-dev__item > span:last-child {
+  color: var(--gray-300);
+}
+
 .landing-dev__check {
-  color: var(--ntk-purple);
+  color: var(--code-string);
   font-weight: var(--ntk-font-weight-bold);
 }
 </style>

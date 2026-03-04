@@ -327,6 +327,23 @@ dist/
 .vite/
 *.tsbuildinfo
 
+# Docs static assets (version images, ignore generated bundles)
+docs/index.html
+docs/assets/*.js
+docs/assets/*.css
+docs/assets/*.map
+docs/assets/*.woff
+docs/assets/*.woff2
+!docs/favicon.png
+!docs/hero-visual.png
+!docs/assets/
+!docs/assets/*.png
+!docs/assets/*.webp
+!docs/assets/*.jpg
+!docs/assets/*.jpeg
+!docs/assets/*.svg
+!docs/assets/*.gif
+
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 

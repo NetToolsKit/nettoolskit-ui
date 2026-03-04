@@ -31,7 +31,7 @@ export default defineConfig({
   plugins: [vue()],
   root: './landing-page',
   build: {
-    outDir: '../docs',
+    outDir: '../.build/landing',
     emptyOutDir: true,
     // Quasar runtime is slightly above the default 500KB warning threshold.
     // Keep a strict limit while avoiding false positives for this known vendor chunk.

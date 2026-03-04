@@ -5,8 +5,8 @@
         <div class="footer-brand">
           <div class="footer-logo">
             <picture>
-              <source srcset="../assets/nuget-icon.webp" type="image/webp">
-              <img src="../assets/nuget-icon.png" alt="NTK" loading="lazy" decoding="async">
+              <source srcset="../assets/monochrome-icon.webp" type="image/webp">
+              <img src="../assets/monochrome-icon.png" alt="NTK Monochrome" loading="lazy" decoding="async">
             </picture>
             <span>NetToolsKit UI Vue</span>
           </div>

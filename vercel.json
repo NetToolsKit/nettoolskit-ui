@@ -3,7 +3,7 @@
   "version": 2,
   "name": "nettoolskit-ui-vue",
   "buildCommand": "npm run build:landing",
-  "outputDirectory": "docs",
+  "outputDirectory": ".build/landing",
   "framework": null,
   "installCommand": "npm ci"
 }

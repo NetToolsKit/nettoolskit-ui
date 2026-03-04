@@ -11,7 +11,7 @@
           <source srcset="../assets/theme-preview.webp" type="image/webp">
           <img
             src="../assets/theme-preview.png"
-            alt="Theme Preview - Dark, Purple, Monochrome"
+            alt="Theme Preview - Dark, Light, Monochrome"
             loading="lazy"
             decoding="async"
             fetchpriority="low"
@@ -44,7 +44,7 @@
               <source srcset="../assets/positive-icon.webp" type="image/webp">
               <img
                 src="../assets/positive-icon.png"
-                alt="Purple Theme"
+                alt="Light Theme"
                 style="width: 64px; height: 64px;"
                 loading="lazy"
                 decoding="async"
@@ -52,8 +52,8 @@
             </picture>
           </div>
           <div class="theme-info">
-            <h3>Purple</h3>
-            <p>Vibrant purple theme with accessible contrast ratios</p>
+            <h3>Light</h3>
+            <p>Bright default theme with accessible contrast ratios</p>
           </div>
         </div>
         <div class="theme-card">
