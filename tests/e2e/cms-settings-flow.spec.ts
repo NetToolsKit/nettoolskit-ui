@@ -10,6 +10,12 @@ const BLUE_TENANT_NAME = 'Blue Tenant'
 const HEADER_ACTIONS_HOVER_LABEL = 'Header actions hover background (hover only)'
 const SEARCH_BACKGROUND_LABEL = 'Search background'
 const DARK_PRESET_NAME = 'Dark'
+const SECTION_BADGE_LETTER_SPACING_LABEL = 'Section badge letter spacing'
+const CTA_SUBTITLE_LINE_HEIGHT_LABEL = 'CTA subtitle line height'
+const FOOTER_LINK_TITLE_LETTER_SPACING_LABEL = 'Footer link title letter spacing'
+const SECTION_BADGE_LETTER_SPACING_VAR = '--ntk-landing-layout-section-badge-letter-spacing'
+const CTA_SUBTITLE_LINE_HEIGHT_VAR = '--ntk-landing-layout-cta-subtitle-line-height'
+const FOOTER_LINK_TITLE_LETTER_SPACING_VAR = '--ntk-landing-layout-footer-link-title-letter-spacing'
 
 const darkThemePalette = {
   drawerBackground: '#1e293b',
@@ -146,6 +152,23 @@ async function selectThemePreset(page: Page, presetName: string): Promise<void> 
   await page.locator('.q-menu .q-item', { hasText: presetName }).first().click()
 }
 
+async function enableAdvancedThemeOverrides(page: Page): Promise<void> {
+  const advancedToggle = page.locator('.cms-settings__advanced-toggle .q-toggle').first()
+  await expect(advancedToggle).toBeVisible()
+  const isEnabled = (await advancedToggle.getAttribute('aria-checked')) === 'true'
+  if (!isEnabled) {
+    await advancedToggle.click()
+  }
+}
+
+async function expectRootCssCustomProperty(page: Page, propertyName: string, expectedValue: string): Promise<void> {
+  await expect.poll(async () => {
+    return page.evaluate((cssVarName: string) => {
+      return window.getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim()
+    }, propertyName)
+  }).toBe(expectedValue)
+}
+
 async function configureNotificationPalette(page: Page, palette: NotificationPalette): Promise<void> {
   await fillTextInput(colorTokenInputByLabel(page, 'Notification badge color'), palette.badgeColor)
   await fillTextInput(colorTokenInputByLabel(page, 'Notification badge text color'), palette.badgeTextColor)
@@ -237,6 +260,68 @@ test.describe('CMS settings white-label flow', () => {
 
     const firstFieldInput = page.locator('.cms-shell-page .q-field__native, .cms-shell-page .q-field__input').first()
     await expect(firstFieldInput).toHaveCSS('color', hexToRgbRegex(darkThemePalette.pageTextColor))
+  })
+
+  test('persists advanced landing layout tokens and applies them on landing runtime', async ({ page }) => {
+    const tokenValues = {
+      sectionBadgeLetterSpacing: '0.12em',
+      ctaSubtitleLineHeight: '1.95',
+      footerLinkTitleLetterSpacing: '0.18em',
+    }
+
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /colors/i)
+    await enableAdvancedThemeOverrides(page)
+
+    await fillTextInput(colorTokenInputByLabel(page, SECTION_BADGE_LETTER_SPACING_LABEL), tokenValues.sectionBadgeLetterSpacing)
+    await fillTextInput(colorTokenInputByLabel(page, CTA_SUBTITLE_LINE_HEIGHT_LABEL), tokenValues.ctaSubtitleLineHeight)
+    await fillTextInput(colorTokenInputByLabel(page, FOOTER_LINK_TITLE_LETTER_SPACING_LABEL), tokenValues.footerLinkTitleLetterSpacing)
+    await settingsActionButton(page, 'Save').click()
+
+    await expect(colorTokenInputByLabel(page, SECTION_BADGE_LETTER_SPACING_LABEL)).toHaveValue(tokenValues.sectionBadgeLetterSpacing)
+    await expect(colorTokenInputByLabel(page, CTA_SUBTITLE_LINE_HEIGHT_LABEL)).toHaveValue(tokenValues.ctaSubtitleLineHeight)
+    await expect(colorTokenInputByLabel(page, FOOTER_LINK_TITLE_LETTER_SPACING_LABEL)).toHaveValue(tokenValues.footerLinkTitleLetterSpacing)
+
+    await page.reload()
+    await openSettingsModule(page)
+    await openSettingsTab(page, /colors/i)
+    await enableAdvancedThemeOverrides(page)
+    await expect(colorTokenInputByLabel(page, SECTION_BADGE_LETTER_SPACING_LABEL)).toHaveValue(tokenValues.sectionBadgeLetterSpacing)
+    await expect(colorTokenInputByLabel(page, CTA_SUBTITLE_LINE_HEIGHT_LABEL)).toHaveValue(tokenValues.ctaSubtitleLineHeight)
+    await expect(colorTokenInputByLabel(page, FOOTER_LINK_TITLE_LETTER_SPACING_LABEL)).toHaveValue(tokenValues.footerLinkTitleLetterSpacing)
+
+    const persistedLayoutTokens = await page.evaluate((storageKey: string) => {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) {
+        return null
+      }
+      const parsed = JSON.parse(raw) as {
+        activeProfileId: string
+        profiles: Array<{
+          id: string
+          settings: {
+            theme: {
+              landingLayoutSectionBadgeLetterSpacing?: string
+              landingLayoutCtaSubtitleLineHeight?: string
+              landingLayoutFooterLinkTitleLetterSpacing?: string
+            }
+          }
+        }>
+      }
+      const activeProfile = parsed.profiles.find(profile => profile.id === parsed.activeProfileId) ?? parsed.profiles[0]
+      return activeProfile?.settings.theme ?? null
+    }, CMS_TENANT_PROFILES_STORAGE_KEY)
+
+    expect(persistedLayoutTokens).not.toBeNull()
+    expect(persistedLayoutTokens?.landingLayoutSectionBadgeLetterSpacing).toBe(tokenValues.sectionBadgeLetterSpacing)
+    expect(persistedLayoutTokens?.landingLayoutCtaSubtitleLineHeight).toBe(tokenValues.ctaSubtitleLineHeight)
+    expect(persistedLayoutTokens?.landingLayoutFooterLinkTitleLetterSpacing).toBe(tokenValues.footerLinkTitleLetterSpacing)
+
+    await page.goto('/')
+    await expectRootCssCustomProperty(page, SECTION_BADGE_LETTER_SPACING_VAR, tokenValues.sectionBadgeLetterSpacing)
+    await expectRootCssCustomProperty(page, CTA_SUBTITLE_LINE_HEIGHT_VAR, tokenValues.ctaSubtitleLineHeight)
+    await expectRootCssCustomProperty(page, FOOTER_LINK_TITLE_LETTER_SPACING_VAR, tokenValues.footerLinkTitleLetterSpacing)
   })
 
   test('edits, saves, reloads and preserves notification tokens by tenant', async ({ page }) => {

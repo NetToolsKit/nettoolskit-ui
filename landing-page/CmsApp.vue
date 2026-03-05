@@ -325,25 +325,33 @@
                       <strong>{{ group.label }}</strong>
                       <small>{{ group.description }}</small>
                     </div>
-                    <div class="cms-color-grid">
-                      <div v-for="field in group.fields" :key="field.key" class="cms-color-field">
-                        <label>{{ field.label }}</label>
-                        <div class="cms-color-field__controls">
-                          <input
-                            v-if="field.isColor"
-                            :value="getThemeFieldPickerValue(field)"
-                            type="color"
-                            :aria-label="`${field.label} picker`"
-                            class="cms-color-field__picker"
-                            @input="onThemeColorInput(field, $event)"
-                          >
-                          <q-input
-                            :model-value="getThemeFieldValue(field)"
-                            outlined
-                            dense
-                            :placeholder="field.placeholder"
-                            @update:model-value="onThemeFieldInput(field, $event)"
-                          />
+                    <div class="cms-color-grid-sections">
+                      <div v-for="section in group.sections" :key="section.id" class="cms-color-grid-section">
+                        <div v-if="group.id === 'landing'" class="cms-color-grid-section__header">
+                          <strong>{{ section.label }}</strong>
+                          <small>{{ section.description }}</small>
+                        </div>
+                        <div class="cms-color-grid">
+                          <div v-for="field in section.fields" :key="field.key" class="cms-color-field">
+                            <label>{{ field.label }}</label>
+                            <div class="cms-color-field__controls">
+                              <input
+                                v-if="field.isColor"
+                                :value="getThemeFieldPickerValue(field)"
+                                type="color"
+                                :aria-label="`${field.label} picker`"
+                                class="cms-color-field__picker"
+                                @input="onThemeColorInput(field, $event)"
+                              >
+                              <q-input
+                                :model-value="getThemeFieldValue(field)"
+                                outlined
+                                dense
+                                :placeholder="field.placeholder"
+                                @update:model-value="onThemeFieldInput(field, $event)"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -457,6 +465,52 @@
                             <q-icon name="visibility" class="cms-icon cms-icon--sm" />
                             <span>Hover sample</span>
                           </button>
+                        </div>
+                      </template>
+
+                      <template v-else-if="group.id === 'landing'">
+                        <div class="cms-example-section__header">
+                          <strong>Landing palette example</strong>
+                          <small>Primary/secondary sections, dark shell and syntax colors used on public landing.</small>
+                        </div>
+                        <div class="cms-preview-card cms-preview-card--landing">
+                          <div class="cms-preview-landing__swatches">
+                            <span
+                              class="cms-preview-landing__swatch"
+                              :style="{ background: resolveThemeTokenValue('landingSectionBgPrimary') }"
+                            >
+                              Section primary
+                            </span>
+                            <span
+                              class="cms-preview-landing__swatch"
+                              :style="{ background: resolveThemeTokenValue('landingSectionBgSecondary') }"
+                            >
+                              Section secondary
+                            </span>
+                            <span
+                              class="cms-preview-landing__swatch cms-preview-landing__swatch--dark"
+                              :style="{ background: resolveThemeTokenValue('landingSectionBgDark'), color: resolveThemeTokenValue('landingSharedDarkText') }"
+                            >
+                              Section dark
+                            </span>
+                          </div>
+                          <div
+                            class="cms-preview-landing__hero-title"
+                            :style="{
+                              background: `linear-gradient(110deg, ${resolveThemeTokenValue('landingHeroHighlight1')} 0%, ${resolveThemeTokenValue('landingHeroHighlight2')} 24%, ${resolveThemeTokenValue('landingHeroHighlight3')} 52%, ${resolveThemeTokenValue('landingHeroHighlight4')} 78%, ${resolveThemeTokenValue('landingHeroHighlight5')} 100%)`,
+                            }"
+                          >
+                            NetToolsKit
+                          </div>
+                          <div
+                            class="cms-preview-landing__theme-band"
+                            :style="{ background: `linear-gradient(135deg, ${resolveThemeTokenValue('landingThemeGradientStart')} 0%, ${resolveThemeTokenValue('landingThemeGradientEnd')} 100%)` }"
+                          />
+                          <div class="cms-preview-landing__code">
+                            <span :style="{ color: resolveThemeTokenValue('landingCodeKeyword') }">import</span>
+                            <span :style="{ color: resolveThemeTokenValue('landingCodeComponent') }">{ BaseInput }</span>
+                            <span :style="{ color: resolveThemeTokenValue('landingCodeComment') }">// demo</span>
+                          </div>
                         </div>
                       </template>
 
@@ -1299,7 +1353,22 @@ import type {
 } from '../src/modules/cms/white-label/types'
 
 type ThemeFieldKey = keyof ReturnType<typeof createDefaultWhiteLabelSettings>['theme']
-type ThemeFieldGroup = 'foundation' | 'typography' | 'layout' | 'navigation' | 'header' | 'notifications'
+type ThemeFieldGroup = 'foundation' | 'typography' | 'layout' | 'navigation' | 'header' | 'notifications' | 'landing'
+type ThemeFieldSectionId =
+  | 'default'
+  | 'core'
+  | 'landingTypography'
+  | 'layoutSpacing'
+  | 'layoutDimensions'
+  | 'radius'
+  | 'shadows'
+  | 'motion'
+  | 'grayscale'
+  | 'sections'
+  | 'githubDark'
+  | 'sharedDark'
+  | 'syntax'
+  | 'effects'
 
 interface ThemeField {
   key: ThemeFieldKey
@@ -1315,6 +1384,19 @@ interface ThemeFieldGroupDefinition {
   id: ThemeFieldGroup
   label: string
   description: string
+}
+
+interface ThemeFieldSectionDefinition {
+  id: ThemeFieldSectionId
+  label: string
+  description: string
+}
+
+interface ThemeFieldSection {
+  id: ThemeFieldSectionId
+  label: string
+  description: string
+  fields: ThemeField[]
 }
 
 interface QuasarBrandOverrides {
@@ -1397,6 +1479,17 @@ function resolveViewportWidth(fallback: number): number {
 function themePlaceholder(key: ThemeFieldKey): string {
   const value = defaultTheme[key]
   return value ? String(value) : ''
+}
+
+/**
+ * Resolves one theme token using tenant value first and default fallback next.
+ */
+function resolveThemeTokenValue(key: ThemeFieldKey): string {
+  const explicitValue = String(settings.value.theme[key] ?? '').trim()
+  if (explicitValue.length > 0) {
+    return explicitValue
+  }
+  return String(defaultTheme[key] ?? '')
 }
 
 /**
@@ -1488,18 +1581,20 @@ const selectedThemePreset = ref<CmsThemePresetId>(
     : detectCmsThemePresetId(settings.value.theme, initialThemePresets, defaultTheme)
 )
 settings.value.themePresetId = selectedThemePreset.value
+const defaultCmsLayoutBreakpointLgPx = parseBreakpointToken(defaultTheme.cmsLayoutBreakpointLg, 1280)
+const defaultCmsLayoutBreakpointMdPx = parseBreakpointToken(defaultTheme.cmsLayoutBreakpointMd, 1024)
 
 const cmsLayoutBreakpointLgPx = computed(() => {
   return parseBreakpointToken(
-    settings.value.theme.cmsLayoutBreakpointLg || defaultTheme.cmsLayoutBreakpointLg || '1280',
-    1280
+    settings.value.theme.cmsLayoutBreakpointLg || defaultTheme.cmsLayoutBreakpointLg,
+    defaultCmsLayoutBreakpointLgPx
   )
 })
 
 const cmsLayoutBreakpointMdPx = computed(() => {
   return parseBreakpointToken(
-    settings.value.theme.cmsLayoutBreakpointMd || defaultTheme.cmsLayoutBreakpointMd || '1024',
-    1024
+    settings.value.theme.cmsLayoutBreakpointMd || defaultTheme.cmsLayoutBreakpointMd,
+    defaultCmsLayoutBreakpointMdPx
   )
 })
 
@@ -1553,6 +1648,79 @@ const colorFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
     id: 'notifications',
     label: 'Notifications and Actions',
     description: 'Badges and action highlights.',
+  },
+  {
+    id: 'landing',
+    label: 'Landing Colors',
+    description: 'Public landing palette, GitHub-like dark tones and code syntax colors.',
+  },
+]
+
+const landingColorSectionsDefinition: ThemeFieldSectionDefinition[] = [
+  {
+    id: 'core',
+    label: 'Brand Core',
+    description: 'Primary/secondary brand anchors and absolute neutral values.',
+  },
+  {
+    id: 'landingTypography',
+    label: 'Landing Typography Scale',
+    description: 'Public landing text scale used by hero, sections, cards and footer.',
+  },
+  {
+    id: 'layoutSpacing',
+    label: 'Layout Spacing',
+    description: 'Base spacing scale reused by sections, cards and component blocks.',
+  },
+  {
+    id: 'layoutDimensions',
+    label: 'Layout Dimensions',
+    description: 'Sizing, clamps and positional offsets used by hero, cards, drawer and CTA button.',
+  },
+  {
+    id: 'radius',
+    label: 'Radius Scale',
+    description: 'Rounded corner controls for cards, chips and section surfaces.',
+  },
+  {
+    id: 'shadows',
+    label: 'Shadows',
+    description: 'Primary elevation values used by header, cards and code frame.',
+  },
+  {
+    id: 'motion',
+    label: 'Motion and Interaction',
+    description: 'Durations, easing and hover/reveal behavior for landing animations.',
+  },
+  {
+    id: 'grayscale',
+    label: 'Neutral Scale',
+    description: 'Gray ramp consumed by borders, muted text and overlays.',
+  },
+  {
+    id: 'sections',
+    label: 'Section Backgrounds',
+    description: 'Main light/dark section surfaces used across the landing flow.',
+  },
+  {
+    id: 'githubDark',
+    label: 'GitHub Dark Palette',
+    description: 'GitHub-style dark tokens used in dark-mode and CTA/footer surfaces.',
+  },
+  {
+    id: 'sharedDark',
+    label: 'Shared Dark Surfaces',
+    description: 'Unified dark card background, border and text tokens.',
+  },
+  {
+    id: 'syntax',
+    label: 'Code Syntax Colors',
+    description: 'Code snippet highlighting palette for the landing developer section.',
+  },
+  {
+    id: 'effects',
+    label: 'Gradients and Highlights',
+    description: 'Theme cards gradient and metallic hero highlight stops.',
   },
 ]
 
@@ -2328,6 +2496,1201 @@ const colorFields: ThemeField[] = [
     placeholder: themePlaceholder('badgePulseScale'),
     advanced: true,
   },
+  {
+    key: 'landingFontSize2xs',
+    group: 'landing',
+    label: 'Font size 2xs',
+    placeholder: themePlaceholder('landingFontSize2xs'),
+  },
+  {
+    key: 'landingFontSizeXsTight',
+    group: 'landing',
+    label: 'Font size xs tight',
+    placeholder: themePlaceholder('landingFontSizeXsTight'),
+  },
+  {
+    key: 'landingFontSizeSmTight',
+    group: 'landing',
+    label: 'Font size sm tight',
+    placeholder: themePlaceholder('landingFontSizeSmTight'),
+  },
+  {
+    key: 'landingFontSizeSmPlus',
+    group: 'landing',
+    label: 'Font size sm plus',
+    placeholder: themePlaceholder('landingFontSizeSmPlus'),
+  },
+  {
+    key: 'landingFontSizeMdPlus',
+    group: 'landing',
+    label: 'Font size md plus',
+    placeholder: themePlaceholder('landingFontSizeMdPlus'),
+  },
+  {
+    key: 'landingFontSizeLgPlus',
+    group: 'landing',
+    label: 'Font size lg plus',
+    placeholder: themePlaceholder('landingFontSizeLgPlus'),
+  },
+  {
+    key: 'landingFontSizeXlPlus',
+    group: 'landing',
+    label: 'Font size xl plus',
+    placeholder: themePlaceholder('landingFontSizeXlPlus'),
+  },
+  {
+    key: 'landingFontSizeDisplaySm',
+    group: 'landing',
+    label: 'Display font size sm',
+    placeholder: themePlaceholder('landingFontSizeDisplaySm'),
+  },
+  {
+    key: 'landingFontSizeDisplayMd',
+    group: 'landing',
+    label: 'Display font size md',
+    placeholder: themePlaceholder('landingFontSizeDisplayMd'),
+  },
+  {
+    key: 'landingFontSizeDisplayLg',
+    group: 'landing',
+    label: 'Display font size lg',
+    placeholder: themePlaceholder('landingFontSizeDisplayLg'),
+  },
+  {
+    key: 'landingFontSizeDisplayXl',
+    group: 'landing',
+    label: 'Display font size xl',
+    placeholder: themePlaceholder('landingFontSizeDisplayXl'),
+  },
+  {
+    key: 'landingFontSizeDisplay2xl',
+    group: 'landing',
+    label: 'Display font size 2xl',
+    placeholder: themePlaceholder('landingFontSizeDisplay2xl'),
+  },
+  {
+    key: 'landingFontSizeDisplay3xl',
+    group: 'landing',
+    label: 'Display font size 3xl',
+    placeholder: themePlaceholder('landingFontSizeDisplay3xl'),
+  },
+  {
+    key: 'landingSpaceXs',
+    group: 'landing',
+    label: 'Spacing xs',
+    placeholder: themePlaceholder('landingSpaceXs'),
+  },
+  {
+    key: 'landingSpaceSm',
+    group: 'landing',
+    label: 'Spacing sm',
+    placeholder: themePlaceholder('landingSpaceSm'),
+  },
+  {
+    key: 'landingSpaceMd',
+    group: 'landing',
+    label: 'Spacing md',
+    placeholder: themePlaceholder('landingSpaceMd'),
+  },
+  {
+    key: 'landingSpaceLg',
+    group: 'landing',
+    label: 'Spacing lg',
+    placeholder: themePlaceholder('landingSpaceLg'),
+  },
+  {
+    key: 'landingSpaceXl',
+    group: 'landing',
+    label: 'Spacing xl',
+    placeholder: themePlaceholder('landingSpaceXl'),
+  },
+  {
+    key: 'landingSpace2xl',
+    group: 'landing',
+    label: 'Spacing 2xl',
+    placeholder: themePlaceholder('landingSpace2xl'),
+  },
+  {
+    key: 'landingSpace3xl',
+    group: 'landing',
+    label: 'Spacing 3xl',
+    placeholder: themePlaceholder('landingSpace3xl'),
+  },
+  {
+    key: 'landingRadiusXs',
+    group: 'landing',
+    label: 'Radius xs',
+    placeholder: themePlaceholder('landingRadiusXs'),
+  },
+  {
+    key: 'landingRadiusSm',
+    group: 'landing',
+    label: 'Radius sm',
+    placeholder: themePlaceholder('landingRadiusSm'),
+  },
+  {
+    key: 'landingRadiusMd',
+    group: 'landing',
+    label: 'Radius md',
+    placeholder: themePlaceholder('landingRadiusMd'),
+  },
+  {
+    key: 'landingRadiusLg',
+    group: 'landing',
+    label: 'Radius lg',
+    placeholder: themePlaceholder('landingRadiusLg'),
+  },
+  {
+    key: 'landingRadiusXl',
+    group: 'landing',
+    label: 'Radius xl',
+    placeholder: themePlaceholder('landingRadiusXl'),
+    advanced: true,
+  },
+  {
+    key: 'landingRadiusRound',
+    group: 'landing',
+    label: 'Radius round',
+    placeholder: themePlaceholder('landingRadiusRound'),
+    advanced: true,
+  },
+  {
+    key: 'landingRadiusPill',
+    group: 'landing',
+    label: 'Radius pill',
+    placeholder: themePlaceholder('landingRadiusPill'),
+  },
+  {
+    key: 'landingShadowHeader',
+    group: 'landing',
+    label: 'Shadow header',
+    placeholder: themePlaceholder('landingShadowHeader'),
+  },
+  {
+    key: 'landingShadowEmphasis',
+    group: 'landing',
+    label: 'Shadow emphasis',
+    placeholder: themePlaceholder('landingShadowEmphasis'),
+  },
+  {
+    key: 'landingShadowTopbarScrolled',
+    group: 'landing',
+    label: 'Shadow topbar scrolled',
+    placeholder: themePlaceholder('landingShadowTopbarScrolled'),
+  },
+  {
+    key: 'landingShadowCodeFrame',
+    group: 'landing',
+    label: 'Shadow code frame',
+    placeholder: themePlaceholder('landingShadowCodeFrame'),
+  },
+  {
+    key: 'landingShadowCodeFrameHover',
+    group: 'landing',
+    label: 'Shadow code frame hover',
+    placeholder: themePlaceholder('landingShadowCodeFrameHover'),
+  },
+  {
+    key: 'landingEasingStandard',
+    group: 'landing',
+    label: 'Easing standard',
+    placeholder: themePlaceholder('landingEasingStandard'),
+  },
+  {
+    key: 'landingTransitionFast',
+    group: 'landing',
+    label: 'Transition fast',
+    placeholder: themePlaceholder('landingTransitionFast'),
+  },
+  {
+    key: 'landingTransitionNormal',
+    group: 'landing',
+    label: 'Transition normal',
+    placeholder: themePlaceholder('landingTransitionNormal'),
+  },
+  {
+    key: 'landingTransitionSlow',
+    group: 'landing',
+    label: 'Transition slow',
+    placeholder: themePlaceholder('landingTransitionSlow'),
+  },
+  {
+    key: 'landingRevealDistance',
+    group: 'landing',
+    label: 'Reveal distance',
+    placeholder: themePlaceholder('landingRevealDistance'),
+  },
+  {
+    key: 'landingRevealDuration',
+    group: 'landing',
+    label: 'Reveal duration',
+    placeholder: themePlaceholder('landingRevealDuration'),
+  },
+  {
+    key: 'landingRevealThreshold',
+    group: 'landing',
+    label: 'Reveal threshold',
+    placeholder: themePlaceholder('landingRevealThreshold'),
+    advanced: true,
+  },
+  {
+    key: 'landingRevealRootMargin',
+    group: 'landing',
+    label: 'Reveal root margin',
+    placeholder: themePlaceholder('landingRevealRootMargin'),
+    advanced: true,
+  },
+  {
+    key: 'landingImageHoverZoomScale',
+    group: 'landing',
+    label: 'Image hover zoom scale',
+    placeholder: themePlaceholder('landingImageHoverZoomScale'),
+  },
+  {
+    key: 'landingImageHoverZoomDuration',
+    group: 'landing',
+    label: 'Image hover zoom duration',
+    placeholder: themePlaceholder('landingImageHoverZoomDuration'),
+  },
+  {
+    key: 'landingImageHoverZoomEasing',
+    group: 'landing',
+    label: 'Image hover zoom easing',
+    placeholder: themePlaceholder('landingImageHoverZoomEasing'),
+    advanced: true,
+  },
+  {
+    key: 'landingComponentCardHoverScale',
+    group: 'landing',
+    label: 'Card hover scale',
+    placeholder: themePlaceholder('landingComponentCardHoverScale'),
+  },
+  {
+    key: 'landingComponentCardHoverLift',
+    group: 'landing',
+    label: 'Card hover lift',
+    placeholder: themePlaceholder('landingComponentCardHoverLift'),
+  },
+  {
+    key: 'landingComponentCardAccentWidth',
+    group: 'landing',
+    label: 'Card accent width',
+    placeholder: themePlaceholder('landingComponentCardAccentWidth'),
+  },
+  {
+    key: 'landingComponentCardAccentOpacity',
+    group: 'landing',
+    label: 'Card accent opacity',
+    placeholder: themePlaceholder('landingComponentCardAccentOpacity'),
+  },
+  {
+    key: 'landingComponentCardAccentEasing',
+    group: 'landing',
+    label: 'Card accent easing',
+    placeholder: themePlaceholder('landingComponentCardAccentEasing'),
+    advanced: true,
+  },
+  {
+    key: 'landingCodeBlockHoverScale',
+    group: 'landing',
+    label: 'Code block hover scale',
+    placeholder: themePlaceholder('landingCodeBlockHoverScale'),
+  },
+  {
+    key: 'landingTopbarEnterDuration',
+    group: 'landing',
+    label: 'Topbar enter duration',
+    placeholder: themePlaceholder('landingTopbarEnterDuration'),
+  },
+  {
+    key: 'landingTopbarEnterOffset',
+    group: 'landing',
+    label: 'Topbar enter offset',
+    placeholder: themePlaceholder('landingTopbarEnterOffset'),
+  },
+  {
+    key: 'landingPulseDotDuration',
+    group: 'landing',
+    label: 'Pulse dot duration',
+    placeholder: themePlaceholder('landingPulseDotDuration'),
+  },
+  {
+    key: 'landingPulseDotEasing',
+    group: 'landing',
+    label: 'Pulse dot easing',
+    placeholder: themePlaceholder('landingPulseDotEasing'),
+    advanced: true,
+  },
+  {
+    key: 'landingFloatDuration',
+    group: 'landing',
+    label: 'Float duration',
+    placeholder: themePlaceholder('landingFloatDuration'),
+  },
+  {
+    key: 'landingFloatEasing',
+    group: 'landing',
+    label: 'Float easing',
+    placeholder: themePlaceholder('landingFloatEasing'),
+    advanced: true,
+  },
+  {
+    key: 'landingFloatDelaySm',
+    group: 'landing',
+    label: 'Float delay sm',
+    placeholder: themePlaceholder('landingFloatDelaySm'),
+  },
+  {
+    key: 'landingFloatDelayMd',
+    group: 'landing',
+    label: 'Float delay md',
+    placeholder: themePlaceholder('landingFloatDelayMd'),
+  },
+  {
+    key: 'landingFloatDelayLg',
+    group: 'landing',
+    label: 'Float delay lg',
+    placeholder: themePlaceholder('landingFloatDelayLg'),
+  },
+  {
+    key: 'landingFloatDelayXl',
+    group: 'landing',
+    label: 'Float delay xl',
+    placeholder: themePlaceholder('landingFloatDelayXl'),
+  },
+  {
+    key: 'landingLayoutContainIntrinsicSize',
+    group: 'landing',
+    label: 'Contain intrinsic size',
+    placeholder: themePlaceholder('landingLayoutContainIntrinsicSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutContainerMaxWidth',
+    group: 'landing',
+    label: 'Container max width',
+    placeholder: themePlaceholder('landingLayoutContainerMaxWidth'),
+  },
+  {
+    key: 'landingLayoutTopbarBackdropBlur',
+    group: 'landing',
+    label: 'Topbar backdrop blur',
+    placeholder: themePlaceholder('landingLayoutTopbarBackdropBlur'),
+  },
+  {
+    key: 'landingLayoutTopbarActionSize',
+    group: 'landing',
+    label: 'Topbar action size',
+    placeholder: themePlaceholder('landingLayoutTopbarActionSize'),
+  },
+  {
+    key: 'landingLayoutTopbarIndicatorOffset',
+    group: 'landing',
+    label: 'Topbar indicator offset',
+    placeholder: themePlaceholder('landingLayoutTopbarIndicatorOffset'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutTopbarIndicatorHeight',
+    group: 'landing',
+    label: 'Topbar indicator height',
+    placeholder: themePlaceholder('landingLayoutTopbarIndicatorHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutButtonGap',
+    group: 'landing',
+    label: 'Button gap',
+    placeholder: themePlaceholder('landingLayoutButtonGap'),
+  },
+  {
+    key: 'landingLayoutButtonPadding',
+    group: 'landing',
+    label: 'Button padding',
+    placeholder: themePlaceholder('landingLayoutButtonPadding'),
+  },
+  {
+    key: 'landingLayoutButtonHoverLift',
+    group: 'landing',
+    label: 'Button hover lift',
+    placeholder: themePlaceholder('landingLayoutButtonHoverLift'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroPaddingTop',
+    group: 'landing',
+    label: 'Hero padding top',
+    placeholder: themePlaceholder('landingLayoutHeroPaddingTop'),
+  },
+  {
+    key: 'landingLayoutHeroPaddingBottom',
+    group: 'landing',
+    label: 'Hero padding bottom',
+    placeholder: themePlaceholder('landingLayoutHeroPaddingBottom'),
+  },
+  {
+    key: 'landingLayoutHeroPaddingTopMobile',
+    group: 'landing',
+    label: 'Hero padding top mobile',
+    placeholder: themePlaceholder('landingLayoutHeroPaddingTopMobile'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroPaddingBottomMobile',
+    group: 'landing',
+    label: 'Hero padding bottom mobile',
+    placeholder: themePlaceholder('landingLayoutHeroPaddingBottomMobile'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroOrbSize',
+    group: 'landing',
+    label: 'Hero orb size',
+    placeholder: themePlaceholder('landingLayoutHeroOrbSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroTitleClamp',
+    group: 'landing',
+    label: 'Hero title clamp',
+    placeholder: themePlaceholder('landingLayoutHeroTitleClamp'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutSectionTitleClamp',
+    group: 'landing',
+    label: 'Section title clamp',
+    placeholder: themePlaceholder('landingLayoutSectionTitleClamp'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroTextMaxWidth',
+    group: 'landing',
+    label: 'Hero text max width',
+    placeholder: themePlaceholder('landingLayoutHeroTextMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroVisualMaxWidth',
+    group: 'landing',
+    label: 'Hero visual max width',
+    placeholder: themePlaceholder('landingLayoutHeroVisualMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutSectionHeaderMaxWidth',
+    group: 'landing',
+    label: 'Section header max width',
+    placeholder: themePlaceholder('landingLayoutSectionHeaderMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutMediaMaxWidth',
+    group: 'landing',
+    label: 'Media max width',
+    placeholder: themePlaceholder('landingLayoutMediaMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutComposablesVisualPaddingTop',
+    group: 'landing',
+    label: 'Composables visual top padding',
+    placeholder: themePlaceholder('landingLayoutComposablesVisualPaddingTop'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutChartHeight',
+    group: 'landing',
+    label: 'Chart height',
+    placeholder: themePlaceholder('landingLayoutChartHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutChartLabelOffset',
+    group: 'landing',
+    label: 'Chart label offset',
+    placeholder: themePlaceholder('landingLayoutChartLabelOffset'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutDrawerWidth',
+    group: 'landing',
+    label: 'Drawer width',
+    placeholder: themePlaceholder('landingLayoutDrawerWidth'),
+  },
+  {
+    key: 'landingLayoutFooterDescriptionMaxWidth',
+    group: 'landing',
+    label: 'Footer description max width',
+    placeholder: themePlaceholder('landingLayoutFooterDescriptionMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroVisualTabletMaxWidth',
+    group: 'landing',
+    label: 'Hero visual tablet max width',
+    placeholder: themePlaceholder('landingLayoutHeroVisualTabletMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutCompactGridMaxWidth',
+    group: 'landing',
+    label: 'Compact grid max width',
+    placeholder: themePlaceholder('landingLayoutCompactGridMaxWidth'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutStatMinWidthMobile',
+    group: 'landing',
+    label: 'Stat min width mobile',
+    placeholder: themePlaceholder('landingLayoutStatMinWidthMobile'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutMobileMenuButtonPadding',
+    group: 'landing',
+    label: 'Mobile menu button padding',
+    placeholder: themePlaceholder('landingLayoutMobileMenuButtonPadding'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatingButtonRight',
+    group: 'landing',
+    label: 'Floating button right',
+    placeholder: themePlaceholder('landingLayoutFloatingButtonRight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatingButtonBottom',
+    group: 'landing',
+    label: 'Floating button bottom',
+    placeholder: themePlaceholder('landingLayoutFloatingButtonBottom'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatingButtonPaddingY',
+    group: 'landing',
+    label: 'Floating button padding Y',
+    placeholder: themePlaceholder('landingLayoutFloatingButtonPaddingY'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatingButtonPaddingX',
+    group: 'landing',
+    label: 'Floating button padding X',
+    placeholder: themePlaceholder('landingLayoutFloatingButtonPaddingX'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutPulseDotSize',
+    group: 'landing',
+    label: 'Pulse dot size',
+    placeholder: themePlaceholder('landingLayoutPulseDotSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutCodeDotSize',
+    group: 'landing',
+    label: 'Code dot size',
+    placeholder: themePlaceholder('landingLayoutCodeDotSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutMetricIconSize',
+    group: 'landing',
+    label: 'Metric icon size',
+    placeholder: themePlaceholder('landingLayoutMetricIconSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutMiniIconSize',
+    group: 'landing',
+    label: 'Mini icon size',
+    placeholder: themePlaceholder('landingLayoutMiniIconSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutThemeBadgeSize',
+    group: 'landing',
+    label: 'Theme badge size',
+    placeholder: themePlaceholder('landingLayoutThemeBadgeSize'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatAmplitude',
+    group: 'landing',
+    label: 'Float amplitude',
+    placeholder: themePlaceholder('landingLayoutFloatAmplitude'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutBodyLineHeight',
+    group: 'landing',
+    label: 'Body line height',
+    placeholder: themePlaceholder('landingLayoutBodyLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutBorderThin',
+    group: 'landing',
+    label: 'Thin border width',
+    placeholder: themePlaceholder('landingLayoutBorderThin'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeaderZIndex',
+    group: 'landing',
+    label: 'Header z-index',
+    placeholder: themePlaceholder('landingLayoutHeaderZIndex'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutDrawerZIndex',
+    group: 'landing',
+    label: 'Drawer z-index',
+    placeholder: themePlaceholder('landingLayoutDrawerZIndex'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutOverlayZIndex',
+    group: 'landing',
+    label: 'Drawer overlay z-index',
+    placeholder: themePlaceholder('landingLayoutOverlayZIndex'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatingButtonZIndex',
+    group: 'landing',
+    label: 'Floating button z-index',
+    placeholder: themePlaceholder('landingLayoutFloatingButtonZIndex'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroOrbTop',
+    group: 'landing',
+    label: 'Hero orb top offset',
+    placeholder: themePlaceholder('landingLayoutHeroOrbTop'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroOrbRight',
+    group: 'landing',
+    label: 'Hero orb right offset',
+    placeholder: themePlaceholder('landingLayoutHeroOrbRight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroBadgeLetterSpacing',
+    group: 'landing',
+    label: 'Hero badge letter spacing',
+    placeholder: themePlaceholder('landingLayoutHeroBadgeLetterSpacing'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutSectionBadgeLetterSpacing',
+    group: 'landing',
+    label: 'Section badge letter spacing',
+    placeholder: themePlaceholder('landingLayoutSectionBadgeLetterSpacing'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutNavLineHeight',
+    group: 'landing',
+    label: 'Navigation line height',
+    placeholder: themePlaceholder('landingLayoutNavLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutHeroTitleLineHeight',
+    group: 'landing',
+    label: 'Hero title line height',
+    placeholder: themePlaceholder('landingLayoutHeroTitleLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFeatureTextLineHeight',
+    group: 'landing',
+    label: 'Feature text line height',
+    placeholder: themePlaceholder('landingLayoutFeatureTextLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutCtaSubtitleLineHeight',
+    group: 'landing',
+    label: 'CTA subtitle line height',
+    placeholder: themePlaceholder('landingLayoutCtaSubtitleLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutCodeLineHeight',
+    group: 'landing',
+    label: 'Code block line height',
+    placeholder: themePlaceholder('landingLayoutCodeLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFooterDescriptionLineHeight',
+    group: 'landing',
+    label: 'Footer description line height',
+    placeholder: themePlaceholder('landingLayoutFooterDescriptionLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFooterHeadingLineHeight',
+    group: 'landing',
+    label: 'Footer heading line height',
+    placeholder: themePlaceholder('landingLayoutFooterHeadingLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFooterLinkLineHeight',
+    group: 'landing',
+    label: 'Footer link line height',
+    placeholder: themePlaceholder('landingLayoutFooterLinkLineHeight'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFooterLinkTitleLetterSpacing',
+    group: 'landing',
+    label: 'Footer link title letter spacing',
+    placeholder: themePlaceholder('landingLayoutFooterLinkTitleLetterSpacing'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutFloatingButtonLetterSpacing',
+    group: 'landing',
+    label: 'Floating button letter spacing',
+    placeholder: themePlaceholder('landingLayoutFloatingButtonLetterSpacing'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutThemeBadgeHoverScale',
+    group: 'landing',
+    label: 'Theme badge hover scale',
+    placeholder: themePlaceholder('landingLayoutThemeBadgeHoverScale'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutChartBarHoverOpacity',
+    group: 'landing',
+    label: 'Chart bar hover opacity',
+    placeholder: themePlaceholder('landingLayoutChartBarHoverOpacity'),
+    advanced: true,
+  },
+  {
+    key: 'landingLayoutDrawerShadow',
+    group: 'landing',
+    label: 'Drawer shadow',
+    placeholder: themePlaceholder('landingLayoutDrawerShadow'),
+    advanced: true,
+  },
+  {
+    key: 'landingBreakpointLg',
+    group: 'landing',
+    label: 'Breakpoint large (px)',
+    placeholder: themePlaceholder('landingBreakpointLg'),
+    advanced: true,
+  },
+  {
+    key: 'landingBreakpointMd',
+    group: 'landing',
+    label: 'Breakpoint medium (px)',
+    placeholder: themePlaceholder('landingBreakpointMd'),
+    advanced: true,
+  },
+  {
+    key: 'landingBreakpointSm',
+    group: 'landing',
+    label: 'Breakpoint small (px)',
+    placeholder: themePlaceholder('landingBreakpointSm'),
+    advanced: true,
+  },
+  {
+    key: 'landingBrandPrimary',
+    group: 'landing',
+    label: 'Landing brand primary',
+    isColor: true,
+    placeholder: themePlaceholder('landingBrandPrimary'),
+  },
+  {
+    key: 'landingBrandPrimaryDark',
+    group: 'landing',
+    label: 'Landing brand primary dark',
+    isColor: true,
+    placeholder: themePlaceholder('landingBrandPrimaryDark'),
+  },
+  {
+    key: 'landingBrandPrimaryLight',
+    group: 'landing',
+    label: 'Landing brand primary light',
+    isColor: true,
+    placeholder: themePlaceholder('landingBrandPrimaryLight'),
+  },
+  {
+    key: 'landingBrandSecondary',
+    group: 'landing',
+    label: 'Landing brand secondary',
+    isColor: true,
+    placeholder: themePlaceholder('landingBrandSecondary'),
+  },
+  {
+    key: 'landingGray900',
+    group: 'landing',
+    label: 'Landing gray 900',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray900'),
+  },
+  {
+    key: 'landingGray800',
+    group: 'landing',
+    label: 'Landing gray 800',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray800'),
+  },
+  {
+    key: 'landingGray700',
+    group: 'landing',
+    label: 'Landing gray 700',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray700'),
+  },
+  {
+    key: 'landingGray600',
+    group: 'landing',
+    label: 'Landing gray 600',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray600'),
+  },
+  {
+    key: 'landingGray500',
+    group: 'landing',
+    label: 'Landing gray 500',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray500'),
+  },
+  {
+    key: 'landingGray400',
+    group: 'landing',
+    label: 'Landing gray 400',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray400'),
+  },
+  {
+    key: 'landingGray300',
+    group: 'landing',
+    label: 'Landing gray 300',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray300'),
+  },
+  {
+    key: 'landingGray200',
+    group: 'landing',
+    label: 'Landing gray 200',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray200'),
+  },
+  {
+    key: 'landingGray100',
+    group: 'landing',
+    label: 'Landing gray 100',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray100'),
+  },
+  {
+    key: 'landingGray50',
+    group: 'landing',
+    label: 'Landing gray 50',
+    isColor: true,
+    placeholder: themePlaceholder('landingGray50'),
+  },
+  {
+    key: 'landingWhite',
+    group: 'landing',
+    label: 'Landing white',
+    isColor: true,
+    placeholder: themePlaceholder('landingWhite'),
+  },
+  {
+    key: 'landingAbsoluteWhite',
+    group: 'landing',
+    label: 'Landing absolute white',
+    isColor: true,
+    placeholder: themePlaceholder('landingAbsoluteWhite'),
+    advanced: true,
+  },
+  {
+    key: 'landingBlack',
+    group: 'landing',
+    label: 'Landing black',
+    isColor: true,
+    placeholder: themePlaceholder('landingBlack'),
+    advanced: true,
+  },
+  {
+    key: 'landingSectionBgPrimary',
+    group: 'landing',
+    label: 'Section background primary',
+    isColor: true,
+    placeholder: themePlaceholder('landingSectionBgPrimary'),
+  },
+  {
+    key: 'landingSectionBgSecondary',
+    group: 'landing',
+    label: 'Section background secondary',
+    isColor: true,
+    placeholder: themePlaceholder('landingSectionBgSecondary'),
+  },
+  {
+    key: 'landingSectionBgDark',
+    group: 'landing',
+    label: 'Section background dark',
+    isColor: true,
+    placeholder: themePlaceholder('landingSectionBgDark'),
+  },
+  {
+    key: 'landingSectionBgPrimaryDark',
+    group: 'landing',
+    label: 'Section background primary dark',
+    isColor: true,
+    placeholder: themePlaceholder('landingSectionBgPrimaryDark'),
+    advanced: true,
+  },
+  {
+    key: 'landingSectionBgSecondaryDark',
+    group: 'landing',
+    label: 'Section background secondary dark',
+    isColor: true,
+    placeholder: themePlaceholder('landingSectionBgSecondaryDark'),
+    advanced: true,
+  },
+  {
+    key: 'landingSectionBgDarkDark',
+    group: 'landing',
+    label: 'Section background deep dark',
+    isColor: true,
+    placeholder: themePlaceholder('landingSectionBgDarkDark'),
+    advanced: true,
+  },
+  {
+    key: 'landingGhBgCanvas',
+    group: 'landing',
+    label: 'GitHub canvas background',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhBgCanvas'),
+  },
+  {
+    key: 'landingGhBgSubtle',
+    group: 'landing',
+    label: 'GitHub subtle background',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhBgSubtle'),
+  },
+  {
+    key: 'landingGhBgMuted',
+    group: 'landing',
+    label: 'GitHub muted background',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhBgMuted'),
+  },
+  {
+    key: 'landingGhBorderDefault',
+    group: 'landing',
+    label: 'GitHub default border',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhBorderDefault'),
+  },
+  {
+    key: 'landingGhFgDefault',
+    group: 'landing',
+    label: 'GitHub default text',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhFgDefault'),
+  },
+  {
+    key: 'landingGhFgMuted',
+    group: 'landing',
+    label: 'GitHub muted text',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhFgMuted'),
+  },
+  {
+    key: 'landingGhFgSubtle',
+    group: 'landing',
+    label: 'GitHub subtle text',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhFgSubtle'),
+    advanced: true,
+  },
+  {
+    key: 'landingGhAccent',
+    group: 'landing',
+    label: 'GitHub accent',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhAccent'),
+  },
+  {
+    key: 'landingGhAccentEmphasis',
+    group: 'landing',
+    label: 'GitHub accent emphasis',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhAccentEmphasis'),
+  },
+  {
+    key: 'landingGhAccentHover',
+    group: 'landing',
+    label: 'GitHub accent hover',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhAccentHover'),
+    advanced: true,
+  },
+  {
+    key: 'landingGhAccentSubtle',
+    group: 'landing',
+    label: 'GitHub accent subtle',
+    isColor: true,
+    placeholder: themePlaceholder('landingGhAccentSubtle'),
+    advanced: true,
+  },
+  {
+    key: 'landingSharedDarkBg',
+    group: 'landing',
+    label: 'Shared dark background',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkBg'),
+  },
+  {
+    key: 'landingSharedDarkSurface',
+    group: 'landing',
+    label: 'Shared dark surface',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkSurface'),
+  },
+  {
+    key: 'landingSharedDarkSurfaceMuted',
+    group: 'landing',
+    label: 'Shared dark surface muted',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkSurfaceMuted'),
+    advanced: true,
+  },
+  {
+    key: 'landingSharedDarkBorder',
+    group: 'landing',
+    label: 'Shared dark border',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkBorder'),
+  },
+  {
+    key: 'landingSharedDarkText',
+    group: 'landing',
+    label: 'Shared dark text',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkText'),
+  },
+  {
+    key: 'landingSharedDarkTextMuted',
+    group: 'landing',
+    label: 'Shared dark text muted',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkTextMuted'),
+  },
+  {
+    key: 'landingSharedDarkAccent',
+    group: 'landing',
+    label: 'Shared dark accent',
+    isColor: true,
+    placeholder: themePlaceholder('landingSharedDarkAccent'),
+    advanced: true,
+  },
+  {
+    key: 'landingCodeKeyword',
+    group: 'landing',
+    label: 'Code keyword color',
+    isColor: true,
+    placeholder: themePlaceholder('landingCodeKeyword'),
+  },
+  {
+    key: 'landingCodeString',
+    group: 'landing',
+    label: 'Code string color',
+    isColor: true,
+    placeholder: themePlaceholder('landingCodeString'),
+  },
+  {
+    key: 'landingCodeComponent',
+    group: 'landing',
+    label: 'Code component color',
+    isColor: true,
+    placeholder: themePlaceholder('landingCodeComponent'),
+  },
+  {
+    key: 'landingCodeProp',
+    group: 'landing',
+    label: 'Code property color',
+    isColor: true,
+    placeholder: themePlaceholder('landingCodeProp'),
+  },
+  {
+    key: 'landingCodeComment',
+    group: 'landing',
+    label: 'Code comment color',
+    isColor: true,
+    placeholder: themePlaceholder('landingCodeComment'),
+  },
+  {
+    key: 'landingThemeGradientStart',
+    group: 'landing',
+    label: 'Theme card gradient start',
+    isColor: true,
+    placeholder: themePlaceholder('landingThemeGradientStart'),
+  },
+  {
+    key: 'landingThemeGradientEnd',
+    group: 'landing',
+    label: 'Theme card gradient end',
+    isColor: true,
+    placeholder: themePlaceholder('landingThemeGradientEnd'),
+  },
+  {
+    key: 'landingHeroHighlight1',
+    group: 'landing',
+    label: 'Hero metallic highlight 1',
+    isColor: true,
+    placeholder: themePlaceholder('landingHeroHighlight1'),
+    advanced: true,
+  },
+  {
+    key: 'landingHeroHighlight2',
+    group: 'landing',
+    label: 'Hero metallic highlight 2',
+    isColor: true,
+    placeholder: themePlaceholder('landingHeroHighlight2'),
+    advanced: true,
+  },
+  {
+    key: 'landingHeroHighlight3',
+    group: 'landing',
+    label: 'Hero metallic highlight 3',
+    isColor: true,
+    placeholder: themePlaceholder('landingHeroHighlight3'),
+    advanced: true,
+  },
+  {
+    key: 'landingHeroHighlight4',
+    group: 'landing',
+    label: 'Hero metallic highlight 4',
+    isColor: true,
+    placeholder: themePlaceholder('landingHeroHighlight4'),
+    advanced: true,
+  },
+  {
+    key: 'landingHeroHighlight5',
+    group: 'landing',
+    label: 'Hero metallic highlight 5',
+    isColor: true,
+    placeholder: themePlaceholder('landingHeroHighlight5'),
+    advanced: true,
+  },
 ]
 
 /**
@@ -2335,6 +3698,108 @@ const colorFields: ThemeField[] = [
  */
 function getGroupThemeFields(groupId: ThemeFieldGroup): ThemeField[] {
   return colorFields.filter(field => field.group === groupId && (showAdvancedThemeFields.value || !field.advanced))
+}
+
+const landingColorSectionById = new Map<ThemeFieldSectionId, ThemeFieldSectionDefinition>(
+  landingColorSectionsDefinition.map(section => [section.id, section])
+)
+
+/**
+ * Resolves landing section buckets from key naming conventions.
+ */
+function resolveLandingColorSectionId(key: ThemeFieldKey): ThemeFieldSectionId {
+  if (key.startsWith('landingFontSize')) {
+    return 'landingTypography'
+  }
+
+  if (key.startsWith('landingLayout')) {
+    return 'layoutDimensions'
+  }
+
+  if (key.startsWith('landingSpace')) {
+    return 'layoutSpacing'
+  }
+
+  if (key.startsWith('landingRadius')) {
+    return 'radius'
+  }
+
+  if (key.startsWith('landingShadow')) {
+    return 'shadows'
+  }
+
+  if (
+    key.startsWith('landingEasing')
+    || key.startsWith('landingTransition')
+    || key.startsWith('landingReveal')
+    || key.startsWith('landingImageHover')
+    || key.startsWith('landingComponentCard')
+    || key.startsWith('landingCodeBlock')
+    || key.startsWith('landingTopbar')
+    || key.startsWith('landingPulse')
+    || key.startsWith('landingFloat')
+  ) {
+    return 'motion'
+  }
+
+  if (key.startsWith('landingGray')) {
+    return 'grayscale'
+  }
+
+  if (key.startsWith('landingSectionBg')) {
+    return 'sections'
+  }
+
+  if (key.startsWith('landingGh')) {
+    return 'githubDark'
+  }
+
+  if (key.startsWith('landingSharedDark')) {
+    return 'sharedDark'
+  }
+
+  if (key.startsWith('landingCode')) {
+    return 'syntax'
+  }
+
+  if (key.startsWith('landingThemeGradient') || key.startsWith('landingHeroHighlight')) {
+    return 'effects'
+  }
+
+  return 'core'
+}
+
+/**
+ * Splits group fields into section buckets to keep parameter editing organized.
+ */
+function getGroupThemeFieldSections(groupId: ThemeFieldGroup): ThemeFieldSection[] {
+  const fields = getGroupThemeFields(groupId)
+
+  if (groupId !== 'landing') {
+    return [
+      {
+        id: 'default',
+        label: '',
+        description: '',
+        fields,
+      },
+    ]
+  }
+
+  const grouped = new Map<ThemeFieldSectionId, ThemeField[]>()
+  for (const field of fields) {
+    const sectionId = resolveLandingColorSectionId(field.key)
+    const bucket = grouped.get(sectionId) ?? []
+    bucket.push(field)
+    grouped.set(sectionId, bucket)
+  }
+
+  return landingColorSectionsDefinition
+    .map(section => ({
+      ...landingColorSectionById.get(section.id)!,
+      fields: grouped.get(section.id) ?? [],
+    }))
+    .filter(section => section.fields.length > 0)
 }
 
 const typographyFieldGroups = computed(() => {
@@ -2355,6 +3820,7 @@ const colorFieldGroups = computed(() => {
   return colorFieldGroupsDefinition.map(group => ({
     ...group,
     fields: getGroupThemeFields(group.id),
+    sections: getGroupThemeFieldSections(group.id),
   }))
 })
 
@@ -4916,6 +6382,39 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
 }
 
+.cms-color-grid-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-color-grid-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-color-grid-section + .cms-color-grid-section {
+  border-top: var(--ntk-cms-border-width) dashed var(--ntk-cms-border-color);
+  padding-top: var(--ntk-cms-space-sm);
+}
+
+.cms-color-grid-section__header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) * 0.4);
+}
+
+.cms-color-grid-section__header strong {
+  color: var(--ntk-cms-text-primary);
+  font-size: var(--ntk-cms-font-size-item-label);
+}
+
+.cms-color-grid-section__header small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
 .cms-color-groups {
   display: flex;
   flex-direction: column;
@@ -5222,6 +6721,57 @@ function resetToDefaults(): void {
 
 .cms-preview-card--navigation {
   background: var(--ntk-cms-shell-bg);
+}
+
+.cms-preview-card--landing {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-preview-landing__swatches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-preview-landing__swatch {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: var(--ntk-cms-space-sm);
+  font-size: var(--ntk-cms-font-size-item-caption);
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-preview-landing__swatch--dark {
+  border-color: color-mix(in srgb, var(--ntk-cms-border-color) 70%, transparent);
+}
+
+.cms-preview-landing__hero-title {
+  font-family: var(--ntk-cms-font-display);
+  font-size: var(--ntk-cms-font-size-title-app);
+  font-weight: var(--ntk-cms-font-weight-bold);
+  letter-spacing: calc(var(--ntk-cms-letter-spacing-group-caption-mini) * 1.4);
+  text-transform: uppercase;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cms-preview-landing__theme-band {
+  height: calc(var(--ntk-cms-space-lg) * 1.8);
+  border-radius: var(--ntk-cms-radius-sm);
+}
+
+.cms-preview-landing__code {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+  font-family: var(--ntk-cms-font-display);
+  font-size: var(--ntk-cms-font-size-item-caption);
 }
 
 .cms-preview-card--theme-preset {

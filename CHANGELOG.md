@@ -18,12 +18,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Unit tests validating landing block field catalog (supported types, unknown types, unique paths)
 - **Renderer regression test for legacy props**
   - Added coverage for rendering `landing.cta` when props are empty
+- **Landing color token set exposed in CMS**
+  - Added dedicated `Landing Colors` section in CMS settings with live preview for section backgrounds, theme gradients, code syntax and dark-shared tokens
+  - Expanded `AppShellTheme` with landing-specific color keys and wired defaults/presets for `default`, `dark` and `monochrome`
+- **Landing typography scale tokenized in CMS**
+  - Added landing font-size tokens (`2xs` to `display-3xl`) to `AppShellTheme`, default theme and presets
+  - Wired landing runtime to apply these typography tokens from active CMS tenant profile
+  - Organized landing token editing into sectioned groups (core, typography, neutrals, sections, GitHub-dark, shared-dark, syntax, effects)
+- **Landing spacing/radius/shadow/motion tokenized in CMS**
+  - Added landing spacing (`xs` to `3xl`) and radius (`xs` to `pill/round`) tokens to `AppShellTheme`, default theme and presets
+  - Added landing shadow presets (`header`, `emphasis`, `topbar scrolled`, `code frame`, `code frame hover`) and interaction motion tokens (easing, transitions, reveal, hover and topbar enter behavior)
+  - Wired landing runtime CSS vars to active tenant profile for these tokens and replaced remaining hardcoded landing radius/shadow values with token-based vars
+  - Expanded CMS `Landing Colors` organization with `layout spacing`, `radius`, `shadows` and `motion` sections
+- **Landing pulse/float motion timings tokenized in CMS**
+  - Added configurable landing motion tokens for pulse/float durations, easings and float delays (`sm`, `md`, `lg`, `xl`)
+  - Wired runtime CSS vars in `landing-page/App.vue` for pulse/float animation control from tenant settings
+  - Replaced remaining fixed animation/transition values (`2s`, `4s`, `0.2s`, `0.3s`, `0.6s`, `0.9s`) with token-driven values
+- **Landing layout dimensions and reveal observer settings tokenized**
+  - Added layout tokens for container width, hero paddings/orb/title clamp, section/header/media widths, icon/chart sizes, drawer width and floating CTA offsets/padding
+  - Added reveal observer tokens (`threshold`, `root margin`) and removed fixed observer values in landing runtime
+  - Exposed the new keys in CMS `Landing Colors` under `Layout Dimensions` and `Motion`
+- **Landing residual structural literals tokenized**
+  - Added layout tokens for global line-height, thin border width, z-index layers (`header`, `drawer`, `overlay`, `floating button`), hero orb offsets, hero badge letter spacing, theme badge hover scale, chart bar hover opacity and mobile drawer shadow
+  - Replaced remaining fixed literals in `landing-page/App.vue` with token-driven CSS variables
+  - Exposed all new keys in CMS `Landing Colors` under `Layout Dimensions`
+- **Responsive breakpoints fully configurable via CMS tokens**
+  - Added `landingBreakpointLg`, `landingBreakpointMd` and `landingBreakpointSm` to theme contract/defaults/presets and CMS fields
+  - Replaced fixed `@media (max-width: 1024/768/480)` landing rules with runtime responsive classes (`landing-bp-lg/md/sm`) computed from active token values
+  - Mobile navigation visibility now follows the same configurable breakpoint tokens
+- **Shell viewport fallback aligned to tokenized CMS breakpoint**
+  - Updated `NtkAppShell` viewport fallback to derive from `cmsLayoutBreakpointLg` instead of fixed `1280`
+  - Added landing regression assertion to prevent reintroducing fixed `@media (max-width: ...)` rules
+- **Landing micro-typography hooks tokenized in runtime CSS**
+  - Wired CMS theme keys for landing nav/hero/feature/code/footer line-heights and floating button letter-spacing to actual `App.vue` CSS selectors
+  - Added regression assertions to prevent numeric `line-height` and `letter-spacing` declarations from reappearing in landing app styles
+- **Layout components responsive/style hardening without fixed max-width rules**
+  - Replaced fixed `@media (max-width: ...)` behavior in `NtkHeader`, `NtkLandingHeader`, `NtkCTASection`, `NtkServiceGrid`, `NtkStatsSection`, `NtkTechStack` and `NtkContactSection` with viewport-aware reactive logic
+  - Converted remaining numeric `line-height`/`letter-spacing` literals in layout components to tokenized CSS variables
+  - Added layout regression test to guard against reintroducing fixed max-width media rules and numeric line-height/letter-spacing declarations
+- **CMS mapping for new layout breakpoint/typography hooks**
+  - Responsive layout components now fallback to tokenized landing breakpoints (`landingBreakpointLg/Md/Sm`) when explicit props are not provided
+  - Added new landing layout theme keys for `CTA subtitle line-height`, `section badge letter-spacing` and `footer link title letter-spacing`
+  - Wired new keys through `AppShellTheme`, default theme, presets, CMS field catalog and landing runtime CSS var map
 
 ### Fixed
 
 - **Blank screen in Blocks module with legacy data**
   - Added safe defaults in landing CMS blocks (`CTA`, `Hero`, `Stats`, `Features`) to prevent runtime errors when required props are missing
   - Hardened `openPageInBlocksEditor` selection access with safer optional chaining for legacy section/block payloads
+- **Landing page hardcoded color leakage**
+  - Replaced remaining direct hex color usages in `landing-page/App.vue` with configurable CSS tokens (including gradients, dark header overlays, code palette and hero metallic highlights)
+  - Added runtime application of active tenant landing color tokens from CMS storage in landing mode
 
 ## [1.1.0] - 2025-12-25
 

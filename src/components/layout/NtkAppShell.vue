@@ -596,6 +596,8 @@ const activeItem = computed<AppShellItem>(() => {
 })
 
 const resolvedTheme = computed<AppShellTheme>(() => resolveAppShellTheme(props.theme ?? {}, APP_SHELL_DEFAULT_THEME))
+const defaultCompactBreakpointPx = parseBreakpointToken(APP_SHELL_DEFAULT_THEME.compactBreakpoint, 500)
+const defaultCmsLayoutBreakpointLgPx = parseBreakpointToken(APP_SHELL_DEFAULT_THEME.cmsLayoutBreakpointLg, 1280)
 
 /**
  * Parses breakpoint token values (e.g. "500" or "500px") into pixels.
@@ -621,8 +623,9 @@ function resolveViewportWidth(fallback: number): number {
   return fallback
 }
 
-const compactBreakpointPx = computed(() => parseBreakpointToken(resolvedTheme.value.compactBreakpoint, 500))
-const viewportWidthPx = computed(() => resolveViewportWidth(1280))
+const compactBreakpointPx = computed(() => parseBreakpointToken(resolvedTheme.value.compactBreakpoint, defaultCompactBreakpointPx))
+const cmsLayoutBreakpointLgPx = computed(() => parseBreakpointToken(resolvedTheme.value.cmsLayoutBreakpointLg, defaultCmsLayoutBreakpointLgPx))
+const viewportWidthPx = computed(() => resolveViewportWidth(cmsLayoutBreakpointLgPx.value + 1))
 const isCompactViewport = computed(() => viewportWidthPx.value <= compactBreakpointPx.value)
 const isMiniMode = computed(() => miniState.value && $q.screen.gt.sm)
 const searchModel = computed(() => localSearchValue.value)

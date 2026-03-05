@@ -61,4 +61,28 @@ describe('Landing tokenization coverage', () => {
     expect(tokensSource.includes('--border-radius-')).toBe(false)
     expect(tokensSource.includes('--line-height-')).toBe(false)
   })
+
+  it('uses configurable breakpoint classes instead of fixed media max-width queries in landing app', () => {
+    expect(landingAppSource.includes('@media (max-width')).toBe(false)
+    expect(landingAppSource.includes('landing-bp-lg')).toBe(true)
+    expect(landingAppSource.includes('landing-bp-md')).toBe(true)
+    expect(landingAppSource.includes('landing-bp-sm')).toBe(true)
+    expect(landingAppSource.includes('--layout-breakpoint-lg')).toBe(true)
+    expect(landingAppSource.includes('--layout-breakpoint-md')).toBe(true)
+    expect(landingAppSource.includes('--layout-breakpoint-sm')).toBe(true)
+  })
+
+  it('keeps landing line-height and letter-spacing style hooks tokenized', () => {
+    expect(landingAppSource).toContain('--layout-nav-line-height')
+    expect(landingAppSource).toContain('--layout-hero-title-line-height')
+    expect(landingAppSource).toContain('--layout-feature-text-line-height')
+    expect(landingAppSource).toContain('--layout-code-line-height')
+    expect(landingAppSource).toContain('--layout-footer-description-line-height')
+    expect(landingAppSource).toContain('--layout-footer-heading-line-height')
+    expect(landingAppSource).toContain('--layout-footer-link-line-height')
+    expect(landingAppSource).toContain('--layout-floating-button-letter-spacing')
+
+    expect(/^\s*line-height:\s*[0-9]/m.test(landingAppSource)).toBe(false)
+    expect(/^\s*letter-spacing:\s*[0-9.-]/m.test(landingAppSource)).toBe(false)
+  })
 })
