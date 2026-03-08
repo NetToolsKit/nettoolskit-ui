@@ -9,6 +9,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Landing + CMS i18n baseline (`en` default, `pt-BR` option)**
+  - Added landing i18n provider with locale persistence (`localStorage` + `?lang=` sync), runtime toggle in topbar, and translated copy across landing sections.
+  - Added CMS locale preset engine for shell/content labels with `Language` selector in Content tab.
+  - Added locale normalization in white-label storage compatibility layer.
+  - Added new unit suites: `LandingI18n.spec.ts` and `WhiteLabelI18n.spec.ts`.
+- **CMS i18n continuation for operational UI copy**
+  - Replaced remaining hardcoded labels/messages in `CmsApp.vue` with locale-aware mapping (`en`/`pt-BR`) for tenant/actions toolbar controls, theme preset controls, and module titles (`Pages`, `Blocks`, `Media`, `Releases`).
+  - Localized release empty states and runtime status messages used by save/reset/import/release orchestration actions.
+  - Added shared saved-at formatter and page/release label helpers tied to current CMS locale.
+  - Added `tr(en, pt-BR)` helper and localized remaining CMS form labels, toggles, buttons and example copy across `Branding`, `Menu`, `Topbar`, `Content`, `Pages`, `Blocks`, `Media` and `Releases`.
+- **Pages builder templates for faster CMS authoring**
+  - Added `page-templates` helper module with localized templates (`Landing`, `Marketing`, `Blank`) and collision-safe generation for page id/path/title.
+  - Added template selector in `Pages` module header and switched `Add page` flow to template-driven scaffolding.
+  - Added `PageTemplates.spec.ts` regression suite and validated against existing CMS config/storage/i18n tests plus `cms-settings-flow` E2E.
+- **Backend-agnostic persistence contracts for the CMS engine**
+  - Added `providers.ts` with `CmsPersistenceStore` plus options contracts for white-label settings and tenant profile persistence.
+  - Kept browser `localStorage` as the default adapter, but storage helpers now accept injected stores so the engine can later plug into external application/backoffice layers without rewriting builder logic.
+  - Added regression tests covering provider-backed white-label settings persistence and tenant profile fallback loading.
+- **Structured content models and section presets for CMS Pages**
+  - Added `content-models.ts` with localized content model catalogs (`Landing page`, `Marketing page`, `Blank canvas`) and reusable section preset definitions.
+  - Extended page/section contracts with `contentModelId` and `presetId`, plus storage migration helpers that detect and normalize legacy page payloads.
+  - Updated `Pages` authoring UX to select content models, pick section presets before adding sections, and preview the active content model directly in page cards.
+  - Added `ContentModels.spec.ts` and expanded `cms-settings-flow` E2E to validate `Content model -> Section preset -> Add section` behavior.
+- **Reusable block library for the CMS engine**
+  - Added `reusable-blocks.ts` with localized reusable block seeds, normalization helpers and clone utilities for block templates.
+  - Extended the CMS engine contracts, storage normalization and release snapshots to persist reusable block libraries independently of backend infrastructure.
+  - Added `Blocks` authoring controls to save the selected block as reusable, reinsert reusable templates into a page section, and remove obsolete templates from the shared library.
+  - Hardened cloning against Vue reactive proxies via `toRaw` + JSON fallback and stabilized Playwright E2E execution by switching the default web server to `build:landing + vite preview`.
+  - Added `ReusableBlocks.spec.ts` and expanded `cms-settings-flow` E2E to validate reusable block save/insert behavior.
+- **Schema-driven media asset references in Blocks**
+  - Added `media-asset` field support to the landing block-field catalog so block schemas can store asset references instead of only manual URLs.
+  - Extended the CMS renderer with optional `renderContext` + registry-level `resolveProps` hooks, allowing block runtimes to resolve `assetId -> url/alt` before mount without coupling the engine to a backend.
+  - Wired the `Blocks` editor to show typed media-library selectors for hero image/video/poster bindings while preserving manual URL override fields for legacy content and explicit fallbacks.
+  - Added regression coverage in `MediaLibrary.spec.ts`, `CmsRenderer.spec.ts`, `LandingBlockFields.spec.ts` and Playwright E2E for binding a media asset into a hero block and verifying preview + reload persistence.
+- **CMS media diagnostics and drag-and-drop authoring primitives**
+  - Added reusable media diagnostics (`media_asset_missing`, `media_asset_kind_mismatch`, `media_asset_url_missing`, `media_asset_unused`) plus reference and usage aggregation surfaced in `Blocks` and `Media`.
+  - Added drag-and-drop reordering for `Pages` section rows and `Blocks` rows/section containers, backed by builder-state index move helpers instead of ad-hoc UI-only swaps.
+  - Fixed page normalization so authored block ids keep priority during cross-section moves, while auto-generated placeholder blocks are renumbered when a source section becomes empty.
+  - Added Playwright regression coverage for block/section drag-and-drop and deleted-asset diagnostics.
+- **Structured content validation shared by CMS builder and releases**
+  - Added `content-validation.ts` as the engine-level validator for page, section and block integrity (`duplicate ids/paths`, `invalid content models/presets`, `empty enabled sections`, `unregistered block types`, `schema-invalid props`).
+  - Reused the same validator inside release snapshot validation so authoring and release gates now share one content-integrity contract.
+  - Surfaced content diagnostics directly in `Pages preview` and `Blocks preview`, and fixed the blocks summary cards to expose both enabled sections and enabled blocks counts.
+  - Added `ContentValidation.spec.ts`, expanded `CmsReleases.spec.ts`, and added Playwright coverage to assert the same content diagnostic appears in both `Pages` and `Blocks`.
+- **Reusable section library and richer Pages authoring**
+  - Added `reusable-sections.ts` with backend-agnostic section-template normalization, cloning and authored-section save helpers.
+  - Extended white-label settings storage and release snapshots to persist reusable section libraries alongside pages, reusable blocks and media assets.
+  - Expanded the `Pages` builder with `Save reusable`, `Insert reusable` and `Duplicate` section flows plus a reusable-sections library panel for management.
+  - Added `ReusableSections.spec.ts`, expanded storage/release regression coverage, and added Playwright coverage for saving/reinserting reusable sections in `Pages`.
+- **Locale-scoped authored content for Pages and Blocks**
+  - Added `localized-content.ts` with backend-agnostic helpers to normalize, resolve and update localized authored values while keeping English as the base content contract.
+  - Extended page, section, block, reusable block and reusable section contracts with optional localization payloads and preserved them through storage normalization, page templates and reusable libraries.
+  - Updated `CmsApp.vue` so `Pages` and `Blocks` edit locale-scoped content based on the active CMS locale (`en` / `pt-BR`) without mutating the other locale.
+  - Updated the CMS renderer to merge localized block props through `renderContext.locale`, and added unit/E2E regression coverage for locale isolation across authoring and runtime resolution.
+- **Schema-driven block presets with localized CMS seeding**
+  - Added `block-presets.ts` as a first-class engine catalog for localized starter blocks (`header`, `hero`, `stats`, `features`, `cta`, `footer`) plus preset metadata for CMS authoring.
+  - Wired content-model section presets, reusable block seeds and reusable section cloning to preserve block `presetId` and seed locale-aware starter content consistently.
+  - Hardened builder/page-schema cloning against Vue reactive nested props so inserting localized presets from the `Blocks` toolbar is stable in runtime, unit tests and Playwright E2E.
+- **Simpler Pages authoring with starter preset variants**
+  - Enriched starter preset options with source/default metadata and surfaced them as quick-pick cards in `Pages`, so authors can choose starter variants visually instead of relying only on dropdowns.
+  - Documented the platform layering in the root README to keep the boundary clear: `Quasar -> NTK UI -> NTK CMS Engine -> application/backend contracts`.
+- **Authored content-model library inside the CMS engine**
+  - Added authored content-model contracts to the engine type/config/storage/release pipeline, including localized name/description fields plus allowed/recommended section preset constraints.
+  - Extended shared content validation so authored model ids and preset compatibility are enforced both in the builder and in release validation.
+  - Added a dedicated `Content` tab authoring surface for model library selection, draft creation, preset toggles, save/delete flows and preview metadata, then validated the full flow in unit tests and Playwright E2E.
+- **Required section presets for content models**
+  - Added `requiredPresets` to builtin and authored content-model contracts so page schemas can demand mandatory sections in addition to allowed/recommended composition hints.
+  - Constrained `requiredPresets` to the allowed-preset set during normalization, storage import and authoring updates, preventing invalid schema states from leaking into the builder.
+  - Surfaced required presets in the CMS `Content` tab and extended the shared content validator to emit blocking diagnostics when a page omits a mandatory enabled section for its selected content model.
+- **Starter page scaffolds for content models**
+  - Added ordered `starterPresets` to builtin and authored content-model contracts so each model can define the initial page section sequence it wants authors to start from.
+  - Exposed scaffold authoring in the CMS `Content` tab and added a `Pages -> Apply model scaffold` action that replaces the current section list with the selected model scaffold.
+  - Added storage roundtrip regression for authored scaffolds and extended Playwright coverage to validate authored model creation, scaffold application and incremental section insertion on top of the scaffold.
+- **Content-model composition limits in the CMS engine**
+  - Added `maxSections` and per-preset repetition caps (`sectionPresetLimits`) to authored content-model contracts, normalization and storage roundtrips.
+  - Exposed those limits in the CMS `Content` tab so authors can constrain composition without backend coupling.
+  - Extended shared content validation and the `Pages` builder so invalid schemas are reported and `Add section` is disabled when the selected preset cap or total enabled-section budget is reached.
+- **Content-model default page metadata**
+  - Added `defaultPageTitle`, `defaultPageDescription` and `defaultPagePathPrefix` to builtin and authored content-model contracts.
+  - Exposed these defaults in the CMS `Content` tab preview/editor and added `Pages -> Apply model defaults` for explicit page metadata stamping.
+  - Added regression coverage in authored-content-model, content-model, storage and Playwright CMS flow tests.
+- **Schema field engine MVP for authored content models**
+  - Added page-level schema field definitions to authored content models (`id`, `label`, `description`, `placeholder`, `type`, `required`, `defaultValue`, `options`).
+  - Extended page settings with `customFields` plus localized page-field payload support, and surfaced these fields in the `Pages` builder as rendered form controls.
+  - Added shared validation and storage normalization for schema-driven page custom fields, plus unit/E2E regression coverage for authored schema fields in the CMS flow.
+- **Schema field engine completion for authored content models**
+  - Added `repeatable`, `min` and `max` field constraints to authored schema fields and normalized them through content-model creation, updates, page custom-field coercion and storage roundtrips.
+  - Added locale-aware field metadata resolution for `label`, `description` and `placeholder`, keeping English base values stable while resolving localized field copy in the CMS runtime.
+  - Extended the `Content` authoring UI and `Pages` builder to support multiline repeatable defaults/inputs, context-aware hints, and validation-aware field rendering backed by targeted unit and Playwright regression coverage.
+- **Section schema contracts and block-slot rules in the CMS engine**
+  - Added explicit section-preset composition contracts with allowed block types, single-slot metadata and min/max enabled block limits to the CMS engine.
+  - Updated `listCmsSectionStarterPresetOptions` and the `Blocks` builder so palette types, block presets and `Add block` availability now respect the active section contract instead of filtering only by raw block type.
+  - Extended shared content validation with section-level diagnostics for incompatible block types, incompatible block presets and section block-limit violations, backed by unit and Playwright regression coverage.
+- **Content-model versioning and migration diagnostics**
+  - Added `schemaVersion`, localized `migrationNotes` and `lastSchemaChangeAt` to builtin and authored content-model contracts, with schema-version bumps triggered only by structural model changes.
+  - Persisted `contentModelVersion` on pages and surfaced shared diagnostics for missing, stale and ahead page-schema versions so authored content cannot drift silently from its model.
+  - Extended the CMS `Content` and `Pages` flows with migration metadata preview plus explicit `Sync schema version` recovery, backed by focused unit and Playwright regression coverage.
 - **Structured block props editor in CMS Blocks module**
   - Dynamic field catalog for landing blocks (`header`, `hero`, `stats`, `features`, `cta`, `footer`)
   - Field-level editing for `text`, `textarea`, `number`, `toggle`, `select`, and `json`
@@ -66,6 +163,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Blank screen in Blocks module with legacy data**
   - Added safe defaults in landing CMS blocks (`CTA`, `Hero`, `Stats`, `Features`) to prevent runtime errors when required props are missing
   - Hardened `openPageInBlocksEditor` selection access with safer optional chaining for legacy section/block payloads
+- **Localized authored block presets now seed the correct locale-specific starter content**
+  - Fixed authored preset updates so `pt-BR` saves the visible localized block props instead of reusing the English base props
+  - Starter sections created from authored presets in `Pages` now open in `Blocks` with the expected localized content and metadata
 - **Landing page hardcoded color leakage**
   - Replaced remaining direct hex color usages in `landing-page/App.vue` with configurable CSS tokens (including gradients, dark header overlays, code palette and hero metallic highlights)
   - Added runtime application of active tenant landing color tokens from CMS storage in landing mode

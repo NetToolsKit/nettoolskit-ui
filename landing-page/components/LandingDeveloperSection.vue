@@ -5,25 +5,13 @@
         <div class="code-container">
           <div>
             <div class="section-header landing-dev__section-header">
-              <h2>Simple to Use</h2>
-              <p>Import components and composables with a single entry point. Full TypeScript support included.</p>
+              <h2>{{ t('developer.title') }}</h2>
+              <p>{{ t('developer.subtitle') }}</p>
             </div>
             <ul class="landing-dev__list">
-              <li class="landing-dev__item">
+              <li v-for="item in checklistItems" :key="item" class="landing-dev__item">
                 <span class="landing-dev__check">✓</span>
-                <span>Single entry point export for all components</span>
-              </li>
-              <li class="landing-dev__item">
-                <span class="landing-dev__check">✓</span>
-                <span>Full TypeScript definitions included</span>
-              </li>
-              <li class="landing-dev__item">
-                <span class="landing-dev__check">✓</span>
-                <span>Quasar-first CSS with design tokens</span>
-              </li>
-              <li class="landing-dev__item">
-                <span class="landing-dev__check">✓</span>
-                <span>Runtime theme switching</span>
+                <span>{{ item }}</span>
               </li>
             </ul>
           </div>
@@ -67,7 +55,7 @@
               <source srcset="../assets/form-components.webp" type="image/webp">
               <img
                 src="../assets/form-components.png"
-                alt="Form Components"
+                :alt="t('developer.formVisualAlt')"
                 loading="lazy"
                 decoding="async"
                 fetchpriority="low"
@@ -75,40 +63,16 @@
             </picture>
           </div>
           <div class="form-visual-content">
-            <h2>Complete Form Toolkit</h2>
-            <p>Everything you need to build complex forms with validation, accessibility, and consistent styling.</p>
+            <h2>{{ t('developer.formToolkitTitle') }}</h2>
+            <p>{{ t('developer.formToolkitSubtitle') }}</p>
             <div class="form-features">
-              <div class="form-feature">
+              <div v-for="feature in formFeatureItems" :key="feature" class="form-feature">
                 <div class="form-feature-icon">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <span>Built-in validation with useFormRules</span>
-              </div>
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <span>Date and time pickers with localization</span>
-              </div>
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <span>Multi-select with chip display</span>
-              </div>
-              <div class="form-feature">
-                <div class="form-feature-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <span>Consistent error states and messages</span>
+                <span>{{ feature }}</span>
               </div>
             </div>
           </div>
@@ -120,32 +84,12 @@
       <div class="container">
         <div class="composables-visual-container">
           <div class="composables-visual-content">
-            <h2>Powerful Composables</h2>
-            <p>Reusable Vue 3 composition functions that encapsulate common logic and state management.</p>
+            <h2>{{ t('developer.composablesTitle') }}</h2>
+            <p>{{ t('developer.composablesSubtitle') }}</p>
             <div class="composables-list">
-              <div class="composable-item">
-                <div class="composable-header"><span class="composable-icon">🎨</span><code>useTheme</code></div>
-                <p>Runtime theme switching</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header"><span class="composable-icon">🔔</span><code>useNotification</code></div>
-                <p>Toast notifications</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header"><span class="composable-icon">💬</span><code>useDialog</code></div>
-                <p>Confirmation dialogs</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header"><span class="composable-icon">✅</span><code>useFormRules</code></div>
-                <p>Validation rules</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header"><span class="composable-icon">⏱️</span><code>useDebounce</code></div>
-                <p>Debounced values</p>
-              </div>
-              <div class="composable-item">
-                <div class="composable-header"><span class="composable-icon">⚡</span><code>useAsync</code></div>
-                <p>Async state handling</p>
+              <div v-for="item in composableItems" :key="item.code" class="composable-item">
+                <div class="composable-header"><span class="composable-icon">{{ item.icon }}</span><code>{{ item.code }}</code></div>
+                <p>{{ item.description }}</p>
               </div>
             </div>
           </div>
@@ -154,7 +98,7 @@
               <source srcset="../assets/composables-visual.webp" type="image/webp">
               <img
                 src="../assets/composables-visual.png"
-                alt="Composables Architecture"
+                :alt="t('developer.composablesVisualAlt')"
                 loading="lazy"
                 decoding="async"
                 fetchpriority="low"
@@ -166,6 +110,39 @@
     </section>
   </div>
 </template>
+
+<script setup lang="ts">
+/**
+ * Landing page/components/Landing Developer Section module.
+ */
+import { computed } from 'vue'
+import { useLandingI18n } from '../composables/useLandingI18n'
+
+const { t } = useLandingI18n()
+
+const checklistItems = computed(() => [
+  t('developer.bullet1'),
+  t('developer.bullet2'),
+  t('developer.bullet3'),
+  t('developer.bullet4'),
+])
+
+const formFeatureItems = computed(() => [
+  t('developer.formFeature1'),
+  t('developer.formFeature2'),
+  t('developer.formFeature3'),
+  t('developer.formFeature4'),
+])
+
+const composableItems = computed(() => [
+  { icon: '🎨', code: 'useTheme', description: t('developer.useTheme') },
+  { icon: '🔔', code: 'useNotification', description: t('developer.useNotification') },
+  { icon: '💬', code: 'useDialog', description: t('developer.useDialog') },
+  { icon: '✅', code: 'useFormRules', description: t('developer.useFormRules') },
+  { icon: '⏱️', code: 'useDebounce', description: t('developer.useDebounce') },
+  { icon: '⚡', code: 'useAsync', description: t('developer.useAsync') },
+])
+</script>
 
 <style scoped>
 .landing-dev__section-header {

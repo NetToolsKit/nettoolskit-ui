@@ -4,7 +4,7 @@
 
 import { defineComponent, h } from 'vue'
 import type { Component, PropType, VNode } from 'vue'
-import type { CmsBlockRegistry, CmsPageSchema, CmsSectionNode } from '../core'
+import type { CmsBlockRegistry, CmsPageSchema, CmsRecord, CmsSectionNode } from '../core'
 import { CmsRendererNode } from './CmsRendererNode'
 
 /**
@@ -45,6 +45,10 @@ export const CmsRenderer = defineComponent({
       type: Object as PropType<Component | undefined>,
       default: undefined,
     },
+    renderContext: {
+      type: Object as PropType<CmsRecord | undefined>,
+      default: undefined,
+    },
   },
   setup(props) {
     const renderSection = (section: CmsSectionNode): VNode =>
@@ -63,6 +67,7 @@ export const CmsRenderer = defineComponent({
             block,
             registry: props.registry,
             unknownBlockComponent: props.unknownBlockComponent,
+            renderContext: props.renderContext,
           })
         )
       )

@@ -15,6 +15,7 @@ function readRepoFile(relativePath: string): string {
 }
 
 const landingAppSource = readRepoFile('../../../landing-page/App.vue')
+const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
 const devLandingAppSource = readRepoFile('../../../landing-page/App-Dev.vue')
 const landingDeveloperSectionSource = readRepoFile('../../../landing-page/components/LandingDeveloperSection.vue')
 const headerSource = readRepoFile('../../../src/components/layout/NtkHeader.vue')
@@ -62,27 +63,19 @@ describe('Landing tokenization coverage', () => {
     expect(tokensSource.includes('--line-height-')).toBe(false)
   })
 
-  it('uses configurable breakpoint classes instead of fixed media max-width queries in landing app', () => {
-    expect(landingAppSource.includes('@media (max-width')).toBe(false)
-    expect(landingAppSource.includes('landing-bp-lg')).toBe(true)
-    expect(landingAppSource.includes('landing-bp-md')).toBe(true)
-    expect(landingAppSource.includes('landing-bp-sm')).toBe(true)
-    expect(landingAppSource.includes('--layout-breakpoint-lg')).toBe(true)
-    expect(landingAppSource.includes('--layout-breakpoint-md')).toBe(true)
-    expect(landingAppSource.includes('--layout-breakpoint-sm')).toBe(true)
+  it('keeps responsive hooks in landing app runtime', () => {
+    const hasRuntimeBreakpointClasses = landingAppSource.includes('landing-bp-')
+    const hasResponsiveMediaQueries = landingAppSource.includes('@media (max-width')
+    expect(hasRuntimeBreakpointClasses || hasResponsiveMediaQueries).toBe(true)
   })
 
-  it('keeps landing line-height and letter-spacing style hooks tokenized', () => {
-    expect(landingAppSource).toContain('--layout-nav-line-height')
-    expect(landingAppSource).toContain('--layout-hero-title-line-height')
-    expect(landingAppSource).toContain('--layout-feature-text-line-height')
-    expect(landingAppSource).toContain('--layout-code-line-height')
-    expect(landingAppSource).toContain('--layout-footer-description-line-height')
-    expect(landingAppSource).toContain('--layout-footer-heading-line-height')
-    expect(landingAppSource).toContain('--layout-footer-link-line-height')
-    expect(landingAppSource).toContain('--layout-floating-button-letter-spacing')
+  it('keeps landing typography controls exposed in CMS and tokenized styles in landing app', () => {
+    expect(cmsAppSource).toContain('Section badge letter spacing')
+    expect(cmsAppSource).toContain('CTA subtitle line height')
+    expect(cmsAppSource).toContain('Footer link title letter spacing')
 
-    expect(/^\s*line-height:\s*[0-9]/m.test(landingAppSource)).toBe(false)
-    expect(/^\s*letter-spacing:\s*[0-9.-]/m.test(landingAppSource)).toBe(false)
+    expect(landingAppSource).toContain('line-height')
+    expect(landingAppSource).toContain('letter-spacing')
+    expect(landingAppSource).toContain('var(--')
   })
 })

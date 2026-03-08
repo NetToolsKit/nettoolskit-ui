@@ -11,6 +11,252 @@ import type {
 import type { CmsThemeBasePresetId, CmsThemePresetId } from './theme-presets'
 
 /**
+ * Locales supported by CMS copy presets.
+ */
+export type CmsLocale = 'en' | 'pt-BR'
+
+/**
+ * Locale-to-string map used for authored CMS copy overrides.
+ */
+export type CmsLocalizedTextRecord = Partial<Record<CmsLocale, string>>
+
+/**
+ * Locale-to-props map used for authored block payload overrides.
+ */
+export type CmsLocalizedPropsRecord = Partial<Record<CmsLocale, Record<string, unknown>>>
+
+/**
+ * Localized page-level authored values.
+ */
+export interface CmsPageLocalizationSettings {
+  title?: CmsLocalizedTextRecord
+  description?: CmsLocalizedTextRecord
+  fields?: CmsLocalizedPropsRecord
+}
+
+/**
+ * Localized section-level authored values.
+ */
+export interface CmsPageSectionLocalizationSettings {
+  label?: CmsLocalizedTextRecord
+}
+
+/**
+ * Localized block-level authored values.
+ */
+export interface CmsPageBlockLocalizationSettings {
+  props?: CmsLocalizedPropsRecord
+}
+
+/**
+ * Built-in content model families shipped by the CMS engine.
+ */
+export type CmsBuiltinContentModelId = 'landing-page' | 'marketing-page' | 'blank-page'
+
+/**
+ * User-authored content model identifiers persisted by the CMS engine.
+ */
+export type CmsAuthoredContentModelId = `authored-model:${string}`
+
+/**
+ * High-level content model families supported by the CMS pages builder.
+ */
+export type CmsContentModelId = CmsBuiltinContentModelId | CmsAuthoredContentModelId
+
+/**
+ * Canonical section presets supported by the CMS engine.
+ * Presets act as reusable builder blueprints for new sections.
+ */
+export type CmsSectionPresetId =
+  | 'header'
+  | 'hero'
+  | 'stats'
+  | 'metrics'
+  | 'features'
+  | 'benefits'
+  | 'installation'
+  | 'cta'
+  | 'footer'
+  | 'custom'
+
+/**
+ * Canonical block presets supported by the CMS engine starter catalog.
+ */
+export type CmsBuiltinBlockPresetId =
+  | 'landing-header-docs'
+  | 'landing-header-product'
+  | 'landing-hero-product-launch'
+  | 'landing-hero-video-showcase'
+  | 'landing-stats-proof-strip'
+  | 'landing-stats-dashboard-kpis'
+  | 'landing-features-component-library'
+  | 'landing-features-enterprise-readiness'
+  | 'landing-cta-installation-guide'
+  | 'landing-cta-final-prompt'
+  | 'landing-footer-docs'
+  | 'landing-footer-product'
+
+/**
+ * User-authored block preset ids persisted by the CMS engine.
+ */
+export type CmsAuthoredBlockPresetId = `authored:${string}`
+
+/**
+ * Canonical block preset identifiers, including user-authored presets.
+ */
+export type CmsBlockPresetId =
+  | 'custom'
+  | CmsBuiltinBlockPresetId
+  | CmsAuthoredBlockPresetId
+
+/**
+ * Localized authored values for block preset metadata and props.
+ */
+export interface CmsBlockPresetLocalizationSettings {
+  name?: CmsLocalizedTextRecord
+  description?: CmsLocalizedTextRecord
+  props?: CmsLocalizedPropsRecord
+}
+
+/**
+ * Field kinds supported by authored content-model schemas.
+ */
+export type CmsContentModelFieldType = 'text' | 'textarea' | 'number' | 'toggle' | 'select'
+
+/**
+ * Primitive field values supported by content-model schemas.
+ */
+export type CmsContentModelFieldPrimitiveValue = string | number | boolean | null
+
+/**
+ * Supported field payload values, including repeatable arrays.
+ */
+export type CmsContentModelFieldValue =
+  | CmsContentModelFieldPrimitiveValue
+  | CmsContentModelFieldPrimitiveValue[]
+
+/**
+ * Localized authored values for one schema-field metadata payload.
+ */
+export interface CmsContentModelFieldLocalizationSettings {
+  label?: CmsLocalizedTextRecord
+  description?: CmsLocalizedTextRecord
+  placeholder?: CmsLocalizedTextRecord
+}
+
+/**
+ * One selectable option inside a `select` content-model field.
+ */
+export interface CmsContentModelFieldOptionSettings {
+  value: string
+  label: string
+}
+
+/**
+ * Resolved select option contract exposed by the CMS engine at runtime.
+ */
+export interface CmsContentModelFieldOptionDefinition {
+  value: string
+  label: string
+}
+
+/**
+ * One authored field definition persisted inside a content model.
+ */
+export interface CmsContentModelFieldSettings {
+  id: string
+  type: CmsContentModelFieldType
+  label: string
+  description: string
+  placeholder: string
+  required: boolean
+  repeatable?: boolean
+  min?: number | null
+  max?: number | null
+  defaultValue?: CmsContentModelFieldValue
+  options?: CmsContentModelFieldOptionSettings[]
+  localization?: CmsContentModelFieldLocalizationSettings
+}
+
+/**
+ * Resolved field definition returned by the CMS engine for builder rendering.
+ */
+export interface CmsContentModelFieldDefinition {
+  id: string
+  type: CmsContentModelFieldType
+  label: string
+  description: string
+  placeholder: string
+  required: boolean
+  repeatable: boolean
+  min: number | null
+  max: number | null
+  defaultValue: CmsContentModelFieldValue
+  options: CmsContentModelFieldOptionDefinition[]
+}
+
+/**
+ * User-authored block preset persisted by the CMS engine for block and section composition.
+ */
+export interface CmsAuthoredBlockPresetSettings {
+  id: CmsAuthoredBlockPresetId
+  name: string
+  description: string
+  category: string
+  type: string
+  sourcePresetId?: CmsBlockPresetId
+  sourceReusableBlockId?: string
+  starterSectionPresets: CmsSectionPresetId[]
+  props: Record<string, unknown>
+  localization?: CmsBlockPresetLocalizationSettings
+}
+
+/**
+ * Localized authored values for custom content model metadata.
+ */
+export interface CmsContentModelLocalizationSettings {
+  name?: CmsLocalizedTextRecord
+  description?: CmsLocalizedTextRecord
+  pageTitle?: CmsLocalizedTextRecord
+  pageDescription?: CmsLocalizedTextRecord
+  migrationNotes?: CmsLocalizedTextRecord
+}
+
+/**
+ * Optional per-preset repetition limits used by one authored content model.
+ * Missing entries mean "unlimited".
+ */
+export type CmsSectionPresetLimitMap = Partial<Record<CmsSectionPresetId, number>>
+
+/**
+ * User-authored content model persisted by the CMS engine for page/schema composition.
+ */
+export interface CmsAuthoredContentModelSettings {
+  id: CmsAuthoredContentModelId
+  name: string
+  description: string
+  defaultPageTitle: string
+  defaultPageDescription: string
+  defaultPagePathPrefix: string
+  schemaVersion?: number
+  migrationNotes?: string
+  lastSchemaChangeAt?: string | null
+  fields?: CmsContentModelFieldSettings[]
+  allowedPresets: CmsSectionPresetId[]
+  requiredPresets: CmsSectionPresetId[]
+  starterPresets: CmsSectionPresetId[]
+  recommendedPresets: CmsSectionPresetId[]
+  maxSections: number | null
+  sectionPresetLimits: CmsSectionPresetLimitMap
+  localization?: CmsContentModelLocalizationSettings
+}
+
+/**
+ * Media asset kinds supported by the CMS engine media library.
+ */
+export type CmsMediaAssetKind = 'image' | 'video' | 'icon' | 'document' | 'other'
+
+/**
  * Branding values editable in CMS white-label settings.
  */
 export interface CmsBrandingSettings {
@@ -51,6 +297,7 @@ export interface CmsLayoutSettings {
  * Text/copy values rendered by CMS settings screens and previews.
  */
 export interface CmsContentSettings {
+  locale: CmsLocale
   tabBrandingLabel: string
   tabTypographyLabel: string
   tabLayoutLabel: string
@@ -81,8 +328,10 @@ export interface CmsContentSettings {
  */
 export interface CmsPageSectionSettings {
   id: string
+  presetId: CmsSectionPresetId
   label: string
   enabled: boolean
+  localization?: CmsPageSectionLocalizationSettings
   blocks: CmsPageBlockSettings[]
 }
 
@@ -92,8 +341,54 @@ export interface CmsPageSectionSettings {
 export interface CmsPageBlockSettings {
   id: string
   type: string
+  presetId?: CmsBlockPresetId
   enabled: boolean
   props: Record<string, unknown>
+  localization?: CmsPageBlockLocalizationSettings
+}
+
+/**
+ * Reusable block template persisted by the CMS engine for fast re-authoring.
+ */
+export interface CmsReusableBlockSettings {
+  id: string
+  name: string
+  description: string
+  category: string
+  type: string
+  presetId?: CmsBlockPresetId
+  props: Record<string, unknown>
+  localization?: CmsPageBlockLocalizationSettings
+}
+
+/**
+ * Reusable section template persisted by the CMS engine for page-level authoring.
+ */
+export interface CmsReusableSectionSettings {
+  id: string
+  name: string
+  description: string
+  category: string
+  contentModelId: CmsContentModelId
+  presetId: CmsSectionPresetId
+  label: string
+  enabled: boolean
+  localization?: CmsPageSectionLocalizationSettings
+  blocks: CmsPageBlockSettings[]
+}
+
+/**
+ * Media asset reference persisted by the CMS engine for branding and future content usage.
+ */
+export interface CmsMediaAssetSettings {
+  id: string
+  name: string
+  description: string
+  kind: CmsMediaAssetKind
+  url: string
+  alt: string
+  tags: string[]
+  usage: string[]
 }
 
 /**
@@ -101,11 +396,173 @@ export interface CmsPageBlockSettings {
  */
 export interface CmsPageSettings {
   id: string
+  contentModelId: CmsContentModelId
+  contentModelVersion?: number | null
   title: string
   path: string
   status: 'draft' | 'published'
   description: string
+  customFields?: Record<string, unknown>
+  localization?: CmsPageLocalizationSettings
   sections: CmsPageSectionSettings[]
+}
+
+/**
+ * Allowed release lifecycle states for CMS release orchestration.
+ */
+export type CmsReleaseStatus =
+  | 'draft'
+  | 'validated'
+  | 'scheduled'
+  | 'published'
+  | 'rolled_back'
+  | 'canceled'
+
+/**
+ * Runtime environments currently supported by CMS release management.
+ */
+export type CmsReleaseEnvironment = 'dev' | 'staging' | 'production'
+
+/**
+ * Promotion event status values emitted by release promotion operations.
+ */
+export type CmsReleasePromotionStatus = 'promoted' | 'blocked'
+
+/**
+ * Severity levels for release calendar conflict diagnostics.
+ */
+export type CmsReleaseConflictSeverity = 'warning' | 'error'
+
+/**
+ * Conflict categories tracked by release calendar checks.
+ */
+export type CmsReleaseConflictType = 'schedule_overlap' | 'invalid_transition' | 'stale_draft'
+
+/**
+ * Severity levels produced by release validation checks.
+ */
+export type CmsReleaseValidationSeverity = 'error' | 'warning'
+
+/**
+ * Individual validation issue emitted while validating a release snapshot.
+ */
+export interface CmsReleaseValidationIssue {
+  code: string
+  severity: CmsReleaseValidationSeverity
+  message: string
+  path?: string
+}
+
+/**
+ * Validation report persisted per release entry.
+ */
+export interface CmsReleaseValidationReport {
+  valid: boolean
+  generatedAt: string
+  errorCount: number
+  warningCount: number
+  issues: CmsReleaseValidationIssue[]
+}
+
+/**
+ * Stable tenant snapshot bundled inside releases for publish/rollback operations.
+ */
+export interface CmsReleaseSnapshot {
+  branding: CmsBrandingSettings
+  layout: CmsLayoutSettings
+  content: CmsContentSettings
+  pages: CmsPageSettings[]
+  reusableSections: CmsReusableSectionSettings[]
+  reusableBlocks: CmsReusableBlockSettings[]
+  authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
+  mediaAssets: CmsMediaAssetSettings[]
+  themePresetId: CmsThemePresetId
+  themePresetOverrides: Partial<Record<CmsThemeBasePresetId, Partial<AppShellTheme>>>
+  theme: AppShellTheme
+  navGroups: AppShellGroup[]
+  items: AppShellItem[]
+  toolbarActions: AppShellAction[]
+}
+
+/**
+ * Release entity managed by the CMS release orchestration module.
+ */
+export interface CmsReleaseEntry {
+  id: string
+  name: string
+  summary: string
+  status: CmsReleaseStatus
+  environment: CmsReleaseEnvironment
+  sourceVersion: number
+  sourceWorkflowStatus: CmsWhiteLabelWorkflowStatus
+  createdAt: string
+  createdBy: string
+  updatedAt: string
+  updatedBy: string
+  scheduledAt: string | null
+  publishedAt: string | null
+  rolledBackAt: string | null
+  rollbackTargetReleaseId: string | null
+  validation: CmsReleaseValidationReport
+  snapshot: CmsReleaseSnapshot
+}
+
+/**
+ * Environment-level policy controls for authoring, publishing and promotion access.
+ */
+export interface CmsReleaseEnvironmentPolicy {
+  environment: CmsReleaseEnvironment
+  allowedAuthorRoles: CmsWhiteLabelActorRole[]
+  allowedPublisherRoles: CmsWhiteLabelActorRole[]
+  allowedRuntimeReadRoles: CmsWhiteLabelActorRole[]
+  promoteTo: CmsReleaseEnvironment[]
+}
+
+/**
+ * Audit row for release promotions across environments.
+ */
+export interface CmsReleasePromotionEntry {
+  id: string
+  releaseId: string
+  sourceEnvironment: CmsReleaseEnvironment
+  targetEnvironment: CmsReleaseEnvironment
+  status: CmsReleasePromotionStatus
+  at: string
+  by: string
+  byRole: CmsWhiteLabelActorRole
+  reason?: string
+}
+
+/**
+ * Release calendar diagnostic row for scheduled conflicts and stale drafts.
+ */
+export interface CmsReleaseCalendarConflict {
+  id: string
+  type: CmsReleaseConflictType
+  severity: CmsReleaseConflictSeverity
+  message: string
+  environment: CmsReleaseEnvironment
+  releaseIds: string[]
+  at: string
+}
+
+/**
+ * Aggregated release state persisted per tenant.
+ */
+export interface CmsReleaseSettings {
+  schemaVersion: number
+  maxEntries: number
+  activeReleaseId: string | null
+  activeEnvironment: CmsReleaseEnvironment
+  /**
+   * When false, CMS release engine runs in pure mode and skips role-based environment guards.
+   * Permission checks can then be enforced by an external application layer.
+   */
+  enforceEnvironmentPolicies: boolean
+  environmentPolicies: CmsReleaseEnvironmentPolicy[]
+  promotions: CmsReleasePromotionEntry[]
+  items: CmsReleaseEntry[]
 }
 
 /**
@@ -116,6 +573,7 @@ export type CmsWhiteLabelActorRole =
   | 'admin'
   | 'editor'
   | 'reviewer'
+  | 'publisher'
   | 'viewer'
   | 'system'
 
@@ -126,6 +584,7 @@ export type CmsWhiteLabelWorkflowStatus =
   | 'draft'
   | 'in_review'
   | 'approved'
+  | 'scheduled'
   | 'published'
 
 /**
@@ -136,6 +595,7 @@ export type CmsWhiteLabelWorkflowAction =
   | 'submit_review'
   | 'approve'
   | 'request_changes'
+  | 'schedule_publish'
   | 'publish'
   | 'rollback'
   | 'reset_defaults'
@@ -193,12 +653,25 @@ export interface CmsWhiteLabelAuditEntry {
 }
 
 /**
+ * Role policy template with explicit allow/deny action sets.
+ */
+export interface CmsWhiteLabelRolePolicy {
+  role: CmsWhiteLabelActorRole
+  label: string
+  description: string
+  groups: string[]
+  allowActions: CmsWhiteLabelWorkflowAction[]
+  denyActions: CmsWhiteLabelWorkflowAction[]
+}
+
+/**
  * Governance envelope that stores workflow, revisions and audit trail.
  */
 export interface CmsWhiteLabelGovernance {
   workflow: CmsWhiteLabelWorkflowState
   revisions: CmsWhiteLabelRevision[]
   auditTrail: CmsWhiteLabelAuditEntry[]
+  rolePolicies: CmsWhiteLabelRolePolicy[]
   maxAuditEntries: number
 }
 
@@ -210,6 +683,12 @@ export interface CmsWhiteLabelSettings {
   layout: CmsLayoutSettings
   content: CmsContentSettings
   pages: CmsPageSettings[]
+  reusableSections: CmsReusableSectionSettings[]
+  reusableBlocks: CmsReusableBlockSettings[]
+  authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
+  mediaAssets: CmsMediaAssetSettings[]
+  releases: CmsReleaseSettings
   themePresetId: CmsThemePresetId
   themePresetOverrides: Partial<Record<CmsThemeBasePresetId, Partial<AppShellTheme>>>
   theme: AppShellTheme

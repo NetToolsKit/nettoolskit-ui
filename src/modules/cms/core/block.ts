@@ -23,6 +23,11 @@ export interface CmsBlockDefinition<TProps extends CmsRecord = CmsRecord> {
   defaults?: Partial<TProps>
   acceptsChildren?: boolean
   validateProps?: (props: CmsRecord) => props is TProps
+  resolveProps?: (input: {
+    block: CmsBlockNode<TProps>
+    props: CmsRecord
+    context?: CmsRecord
+  }) => CmsRecord
 }
 
 export interface CmsBlockFactoryInput<TProps extends CmsRecord = CmsRecord> {

@@ -3,24 +3,60 @@
  * This module loads/saves tenant settings and normalizes compatibility payloads.
  */
 import { CMS_WHITE_LABEL_STORAGE_KEY, createDefaultWhiteLabelSettings } from './config'
-import type { CmsPageSettings, CmsWhiteLabelSettings } from './types'
+import type {
+  CmsAuthoredContentModelSettings,
+  CmsPageSettings,
+  CmsWhiteLabelSettings,
+} from './types'
 import { semanticColors } from '../../../config/colors/semantic.config'
 import type { AppShellGroup, AppShellItem, AppShellTheme } from '../../../components/layout/app-shell.types'
 import { APP_SHELL_DEFAULT_THEME } from '../../../components/layout/app-shell.config'
 import { resolveAppShellTheme } from '../../../components/layout/app-shell.theme'
 import {
+  CMS_THEME_DARK_BASE_PRESET_IDS,
   buildCmsThemePresets,
   detectCmsThemePresetId,
   isCmsThemeBasePresetId,
   isCmsThemePresetId,
 } from './theme-presets'
 import { normalizeWhiteLabelGovernance } from './workflow'
+import {
+  createCmsReleaseSnapshot,
+  normalizeCmsReleaseSettings,
+} from '../releases/orchestration'
+import { resolveCmsLocale } from './i18n'
+import {
+  resolveCmsPersistenceStore,
+  type CmsPersistenceOptions,
+} from './providers'
+import {
+  detectCmsContentModelIdForPage,
+  getCmsContentModelSchemaVersion,
+  detectCmsSectionPresetId,
+  normalizeCmsAuthoredContentModels,
+  normalizeCmsPageCustomFieldsForContentModel,
+  resolveDefaultCmsBlockTypeForSection,
+} from './content-models'
+import {
+  createCmsPageBlockFromPreset,
+  getDefaultCmsBlockPresetIdForSectionPreset,
+  normalizeCmsAuthoredBlockPresets,
+  resolveCmsBlockPresetId,
+} from './block-presets'
+import {
+  normalizeCmsPageBlockLocalizationSettings,
+  normalizeCmsPageLocalizationSettings,
+  normalizeCmsPageSectionLocalizationSettings,
+} from './localized-content'
+import { createDefaultCmsMediaAssets, normalizeCmsMediaAssets } from './media-library'
+import { normalizeCmsReusableBlocks } from './reusable-blocks'
+import { normalizeCmsReusableSections } from './reusable-sections'
 
 const REMOVED_CMS_ITEM_IDS = new Set(['dashboard', 'users'])
-const REQUIRED_CMS_ITEM_IDS = new Set(['settings', 'pages', 'blocks', 'media'])
+const REQUIRED_CMS_ITEM_IDS = new Set(['settings', 'pages', 'blocks', 'media', 'releases'])
 const COMPAT_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 const COMPAT_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
-const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 2
+const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 10
 const THEME_RUNTIME_TOKEN_PATTERN = /^var\(--ntk-(text|bg|border)-/i
 
 type ThemeReadablePair = {
@@ -127,8 +163,20 @@ function getContrastRatio(foreground: string | undefined, background: string | u
 /**
  * Gets the concrete dark preset theme used as readability fallback.
  */
-function getDarkPresetTheme(defaultTheme: AppShellTheme): Partial<AppShellTheme> {
-  return buildCmsThemePresets(defaultTheme).find(preset => preset.id === 'dark')?.theme ?? {}
+function getDarkPresetTheme(defaultTheme: AppShellTheme, presetId: string): Partial<AppShellTheme> {
+  const presets = buildCmsThemePresets(defaultTheme)
+  return (
+    presets.find(preset => preset.id === presetId)?.theme
+    ?? presets.find(preset => preset.id === 'dark')?.theme
+    ?? {}
+  )
+}
+
+/**
+ * Checks whether the selected preset id belongs to the dark family.
+ */
+function isDarkPresetId(presetId: string): boolean {
+  return (CMS_THEME_DARK_BASE_PRESET_IDS as readonly string[]).includes(presetId)
 }
 
 /**
@@ -138,52 +186,57 @@ function normalizeDarkPresetOverrides(
   overrides: CmsWhiteLabelSettings['themePresetOverrides'],
   defaultTheme: AppShellTheme
 ): CmsWhiteLabelSettings['themePresetOverrides'] {
-  const darkOverrides = overrides.dark
-  if (!darkOverrides) {
-    return overrides
+  const normalizedOverrides: CmsWhiteLabelSettings['themePresetOverrides'] = {
+    ...overrides,
   }
 
-  const darkPresetTheme = getDarkPresetTheme(defaultTheme)
-  const normalizedDarkOverrides: Partial<AppShellTheme> = { ...darkOverrides }
-
-  for (const { foreground } of DARK_THEME_READABLE_PAIRS) {
-    const currentValue = String(normalizedDarkOverrides[foreground] ?? '').trim()
-    const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
-    if (!currentValue || !presetValue) {
+  for (const presetId of CMS_THEME_DARK_BASE_PRESET_IDS) {
+    const darkOverrides = normalizedOverrides[presetId]
+    if (!darkOverrides) {
       continue
     }
 
-    if (isRuntimeThemeToken(currentValue)) {
-      normalizedDarkOverrides[foreground] = presetValue
+    const darkPresetTheme = getDarkPresetTheme(defaultTheme, presetId)
+    const normalizedDarkOverrides: Partial<AppShellTheme> = { ...darkOverrides }
+
+    for (const { foreground } of DARK_THEME_READABLE_PAIRS) {
+      const currentValue = String(normalizedDarkOverrides[foreground] ?? '').trim()
+      const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
+      if (!currentValue || !presetValue) {
+        continue
+      }
+
+      if (isRuntimeThemeToken(currentValue)) {
+        normalizedDarkOverrides[foreground] = presetValue
+      }
     }
-  }
 
-  for (const { foreground, background } of DARK_THEME_READABLE_PAIRS) {
-    const foregroundValue = String(normalizedDarkOverrides[foreground] ?? darkPresetTheme[foreground] ?? '').trim()
-    const backgroundValue = String(normalizedDarkOverrides[background] ?? darkPresetTheme[background] ?? '').trim()
-    const contrast = getContrastRatio(foregroundValue, backgroundValue)
-    const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
+    for (const { foreground, background } of DARK_THEME_READABLE_PAIRS) {
+      const foregroundValue = String(normalizedDarkOverrides[foreground] ?? darkPresetTheme[foreground] ?? '').trim()
+      const backgroundValue = String(normalizedDarkOverrides[background] ?? darkPresetTheme[background] ?? '').trim()
+      const contrast = getContrastRatio(foregroundValue, backgroundValue)
+      const presetValue = String(darkPresetTheme[foreground] ?? '').trim()
 
-    if (contrast !== null && contrast < 3.5 && presetValue) {
-      normalizedDarkOverrides[foreground] = presetValue
+      if (contrast !== null && contrast < 3.5 && presetValue) {
+        normalizedDarkOverrides[foreground] = presetValue
+      }
     }
+
+    normalizedOverrides[presetId] = normalizedDarkOverrides
   }
 
-  return {
-    ...overrides,
-    dark: normalizedDarkOverrides,
-  }
+  return normalizedOverrides
 }
 
 /**
  * Normalizes active dark themes so legacy token expressions cannot degrade readability.
  */
 function normalizeDarkThemeReadability(theme: AppShellTheme, presetId: string, defaultTheme: AppShellTheme): AppShellTheme {
-  if (presetId !== 'dark') {
+  if (!isDarkPresetId(presetId)) {
     return theme
   }
 
-  const darkPresetTheme = getDarkPresetTheme(defaultTheme)
+  const darkPresetTheme = getDarkPresetTheme(defaultTheme, presetId)
   const normalizedTheme: AppShellTheme = { ...theme }
 
   for (const { foreground } of DARK_THEME_READABLE_PAIRS) {
@@ -227,10 +280,22 @@ function cloneValue<T>(value: T): T {
 }
 
 /**
+ * Normalizes positive integer schema versions loaded from persistence.
+ */
+function resolveStoredSchemaVersion(value: unknown, fallback: number): number {
+  const parsed = typeof value === 'number'
+    ? value
+    : (typeof value === 'string' && value.trim().length > 0 ? Number(value) : Number.NaN)
+  return Number.isFinite(parsed) && parsed > 0
+    ? Math.max(1, Math.floor(parsed))
+    : Math.max(1, Math.floor(fallback))
+}
+
+/**
  * Checks if current runtime supports browser storage APIs.
  */
 function isBrowserRuntime(): boolean {
-  return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
+  return typeof window !== 'undefined' && typeof document !== 'undefined'
 }
 
 /**
@@ -354,31 +419,6 @@ function toTitleCaseFromId(value: string): string {
 }
 
 /**
- * Resolves a default landing block type from canonical section identifiers.
- */
-function resolveDefaultBlockTypeForSection(sectionId: string): string {
-  const normalized = sectionId.trim().toLowerCase()
-  switch (normalized) {
-    case 'header':
-      return 'landing.header'
-    case 'hero':
-      return 'landing.hero'
-    case 'stats':
-    case 'metrics':
-      return 'landing.stats'
-    case 'features':
-      return 'landing.features'
-    case 'installation':
-    case 'cta':
-      return 'landing.cta'
-    case 'footer':
-      return 'landing.footer'
-    default:
-      return 'landing.hero'
-  }
-}
-
-/**
  * Normalizes menu items by removing invalid/deprecated entries and restoring required defaults.
  */
 function normalizeMenuItems(items: unknown, defaults: AppShellItem[]): AppShellItem[] {
@@ -484,13 +524,17 @@ function normalizeNavGroups(
 /**
  * Normalizes page builder settings and section collections for CMS pages.
  */
-function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): CmsPageSettings[] {
+function normalizePagesSettings(
+  pages: unknown,
+  defaults: CmsPageSettings[],
+  authoredContentModels: CmsAuthoredContentModelSettings[] = []
+): CmsPageSettings[] {
   if (!Array.isArray(pages)) {
     return cloneValue(defaults)
   }
 
   const normalized = pages
-    .map((rawPage, index) => {
+    .map<CmsPageSettings | null>((rawPage, index) => {
       if (!rawPage || typeof rawPage !== 'object') {
         return null
       }
@@ -499,16 +543,21 @@ function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): Cm
       const id = String(page.id ?? '').trim() || `page-${index + 1}`
       const sections = Array.isArray(page.sections)
         ? page.sections
-          .map((rawSection, sectionIndex) => {
+          .map<CmsPageSettings['sections'][number] | null>((rawSection, sectionIndex) => {
             if (!rawSection || typeof rawSection !== 'object') {
               return null
             }
             const section = rawSection as Partial<CmsPageSettings['sections'][number]>
             const resolvedSectionId = String(section.id ?? '').trim() || `${id}-section-${sectionIndex + 1}`
-            const defaultBlockType = resolveDefaultBlockTypeForSection(resolvedSectionId)
+            const sectionPresetId = detectCmsSectionPresetId({
+              presetId: section.presetId,
+              sectionId: resolvedSectionId,
+              blockType: section.blocks?.[0]?.type,
+            })
+            const defaultBlockType = resolveDefaultCmsBlockTypeForSection(resolvedSectionId, sectionPresetId)
             const blocks = Array.isArray(section.blocks)
               ? section.blocks
-                .map((rawBlock, blockIndex) => {
+                .map<CmsPageSettings['sections'][number]['blocks'][number] | null>((rawBlock, blockIndex) => {
                   if (!rawBlock || typeof rawBlock !== 'object') {
                     return null
                   }
@@ -517,10 +566,12 @@ function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): Cm
                   return {
                     id: String(block.id ?? '').trim() || `${resolvedSectionId}-block-${blockIndex + 1}`,
                     type: blockType,
+                    presetId: resolveCmsBlockPresetId(block.presetId),
                     enabled: typeof block.enabled === 'boolean' ? block.enabled : Boolean(section.enabled),
                     props: block.props && typeof block.props === 'object'
                       ? cloneValue(block.props)
                       : {},
+                    localization: normalizeCmsPageBlockLocalizationSettings(block.localization),
                   }
                 })
                 .filter((block): block is CmsPageSettings['sections'][number]['blocks'][number] => block !== null)
@@ -528,31 +579,66 @@ function normalizePagesSettings(pages: unknown, defaults: CmsPageSettings[]): Cm
 
             const normalizedBlocks = blocks.length > 0
               ? blocks
-              : [{
-                id: `${resolvedSectionId}-block-1`,
-                type: defaultBlockType,
-                enabled: Boolean(section.enabled),
-                props: {},
-              }]
+              : (() => {
+                const blockId = `${resolvedSectionId}-block-1`
+                const presetId = getDefaultCmsBlockPresetIdForSectionPreset(sectionPresetId)
+                return presetId === 'custom'
+                  ? [{
+                    id: blockId,
+                    type: defaultBlockType,
+                    presetId: 'custom' as const,
+                    enabled: Boolean(section.enabled),
+                    props: {},
+                  }]
+                  : [createCmsPageBlockFromPreset({
+                    presetId,
+                    blockId,
+                    enabled: Boolean(section.enabled),
+                  })]
+              })()
 
             return {
               id: resolvedSectionId,
+              presetId: sectionPresetId,
               label: String(section.label ?? '').trim() || `Section ${sectionIndex + 1}`,
               enabled: Boolean(section.enabled),
+              localization: normalizeCmsPageSectionLocalizationSettings(section.localization),
               blocks: normalizedBlocks,
             }
           })
           .filter((section): section is CmsPageSettings['sections'][number] => section !== null)
         : []
 
-      return {
+      const contentModelId = detectCmsContentModelIdForPage({
+        contentModelId: page.contentModelId,
         id,
+        path: page.path,
+        sections,
+      }, authoredContentModels)
+      const contentModelVersion = resolveStoredSchemaVersion(
+        page.contentModelVersion,
+        getCmsContentModelSchemaVersion(contentModelId, authoredContentModels)
+      )
+
+      const normalizedPage = {
+        id,
+        contentModelId,
+        contentModelVersion,
         title: String(page.title ?? '').trim() || `Page ${index + 1}`,
         path: String(page.path ?? '').trim() || `/${id}`,
         status: page.status === 'published' ? 'published' : 'draft',
         description: String(page.description ?? '').trim(),
+        customFields: normalizeCmsPageCustomFieldsForContentModel(
+          page.customFields,
+          contentModelId,
+          'en',
+          authoredContentModels
+        ),
+        localization: normalizeCmsPageLocalizationSettings(page.localization),
         sections,
       } satisfies CmsPageSettings
+
+      return normalizedPage
     })
     .filter((page): page is CmsPageSettings => page !== null)
 
@@ -580,21 +666,45 @@ export function normalizeCmsWhiteLabelSettings(
   }))
   const normalizedItems = normalizeMenuItems(parsed.items, defaults.items)
   const normalizedNavGroups = normalizeNavGroups(parsed.navGroups, defaults.navGroups, normalizedItems)
+  const normalizedBranding = {
+    ...defaults.branding,
+    ...(parsed.branding ?? {}),
+  }
+  const normalizedLayout = {
+    ...defaults.layout,
+    ...(parsed.layout ?? {}),
+  }
+  const normalizedContent = {
+    ...defaults.content,
+    ...(parsed.content ?? {}),
+    locale: resolveCmsLocale(parsed.content?.locale ?? defaults.content.locale),
+  }
+  const normalizedAuthoredContentModels = normalizeCmsAuthoredContentModels(
+    parsed.authoredContentModels,
+    defaults.authoredContentModels
+  )
+  const defaultMediaAssets = createDefaultCmsMediaAssets(
+    normalizedBranding,
+    normalizedContent.locale
+  )
 
-  const merged: CmsWhiteLabelSettings = {
-    branding: {
-      ...defaults.branding,
-      ...(parsed.branding ?? {}),
-    },
-    layout: {
-      ...defaults.layout,
-      ...(parsed.layout ?? {}),
-    },
-    content: {
-      ...defaults.content,
-      ...(parsed.content ?? {}),
-    },
-    pages: normalizePagesSettings(parsed.pages, defaults.pages),
+  const mergedBase: Omit<CmsWhiteLabelSettings, 'releases'> = {
+    branding: normalizedBranding,
+    layout: normalizedLayout,
+    content: normalizedContent,
+    pages: normalizePagesSettings(
+      parsed.pages,
+      defaults.pages,
+      normalizedAuthoredContentModels
+    ),
+    reusableSections: normalizeCmsReusableSections(parsed.reusableSections, defaults.reusableSections),
+    reusableBlocks: normalizeCmsReusableBlocks(parsed.reusableBlocks, defaults.reusableBlocks),
+    authoredContentModels: normalizedAuthoredContentModels,
+    authoredBlockPresets: normalizeCmsAuthoredBlockPresets(
+      parsed.authoredBlockPresets,
+      defaults.authoredBlockPresets
+    ),
+    mediaAssets: normalizeCmsMediaAssets(parsed.mediaAssets, defaultMediaAssets),
     themePresetId: defaults.themePresetId,
     themePresetOverrides,
     theme: mergedTheme,
@@ -602,6 +712,15 @@ export function normalizeCmsWhiteLabelSettings(
     items: normalizedItems,
     toolbarActions: parsed.toolbarActions ?? cloneValue(defaults.toolbarActions),
     governance: normalizeWhiteLabelGovernance(parsed.governance),
+  }
+
+  const merged: CmsWhiteLabelSettings = {
+    ...mergedBase,
+    releases: normalizeCmsReleaseSettings(parsed.releases, {
+      snapshot: createCmsReleaseSnapshot(mergedBase),
+      workflowVersion: mergedBase.governance.workflow.version,
+      workflowStatus: mergedBase.governance.workflow.status,
+    }),
   }
 
   const themePresets = buildThemePresetsWithOverrides(defaults.theme, themePresetOverrides)
@@ -640,10 +759,14 @@ export function applyCmsFavicon(faviconUrl: string): void {
 }
 
 /**
- * Persists the full normalized white-label settings object.
+ * Persists the full normalized white-label settings object using the active persistence provider.
  */
-export function saveCmsWhiteLabelSettings(settings: CmsWhiteLabelSettings): void {
-  if (!isBrowserRuntime()) {
+export function saveCmsWhiteLabelSettings(
+  settings: CmsWhiteLabelSettings,
+  options: CmsPersistenceOptions = {}
+): void {
+  const store = resolveCmsPersistenceStore(options.store)
+  if (!store) {
     return
   }
 
@@ -651,20 +774,20 @@ export function saveCmsWhiteLabelSettings(settings: CmsWhiteLabelSettings): void
     version: CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION,
     settings: normalizeCmsWhiteLabelSettings(settings),
   })
-  window.localStorage.setItem(CMS_WHITE_LABEL_STORAGE_KEY, serialized)
+  store.setItem(CMS_WHITE_LABEL_STORAGE_KEY, serialized)
 }
 
 /**
- * Loads settings from storage and returns a normalized object with defaults.
+ * Loads settings from the active persistence provider and returns a normalized object with defaults.
  */
-export function loadCmsWhiteLabelSettings(): CmsWhiteLabelSettings {
+export function loadCmsWhiteLabelSettings(options: CmsPersistenceOptions = {}): CmsWhiteLabelSettings {
   const defaults = normalizeCmsWhiteLabelSettings(undefined)
-
-  if (!isBrowserRuntime()) {
+  const store = resolveCmsPersistenceStore(options.store)
+  if (!store) {
     return defaults
   }
 
-  const rawValue = window.localStorage.getItem(CMS_WHITE_LABEL_STORAGE_KEY)
+  const rawValue = store.getItem(CMS_WHITE_LABEL_STORAGE_KEY)
   if (!rawValue) {
     return defaults
   }
@@ -696,13 +819,13 @@ export function loadCmsWhiteLabelSettings(): CmsWhiteLabelSettings {
 }
 
 /**
- * Clears persisted settings and returns current defaults.
+ * Clears persisted settings through the active persistence provider and returns current defaults.
  */
-export function resetCmsWhiteLabelSettings(): CmsWhiteLabelSettings {
+export function resetCmsWhiteLabelSettings(options: CmsPersistenceOptions = {}): CmsWhiteLabelSettings {
   const defaults = createDefaultWhiteLabelSettings()
-
-  if (isBrowserRuntime()) {
-    window.localStorage.removeItem(CMS_WHITE_LABEL_STORAGE_KEY)
+  const store = resolveCmsPersistenceStore(options.store)
+  if (store) {
+    store.removeItem(CMS_WHITE_LABEL_STORAGE_KEY)
   }
 
   return defaults

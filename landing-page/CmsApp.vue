@@ -21,7 +21,7 @@
           <div class="cms-toolbar-card">
             <div class="cms-toolbar-card__header">
               <q-icon name="business" size="18px" class="cms-toolbar-card__icon" />
-              <span class="cms-toolbar-card__title">Tenant Profile</span>
+              <span class="cms-toolbar-card__title">{{ cmsUiText.tenantProfileTitle }}</span>
             </div>
             <div class="cms-toolbar-card__body">
               <q-select
@@ -31,20 +31,20 @@
                 emit-value
                 map-options
                 :options="tenantProfileOptions"
-                label="Tenant profile"
-                aria-label="Tenant profile selector"
+                :label="cmsUiText.tenantProfileFieldLabel"
+                :aria-label="cmsUiText.tenantProfileSelectorAriaLabel"
                 class="cms-toolbar-card__select"
                 @update:model-value="onTenantProfileChange"
               />
               <div class="cms-toolbar-card__actions">
-                <q-btn flat dense no-caps icon="add" label="New" aria-label="Create tenant profile" @click="createTenantProfileFromPrompt" />
+                <q-btn flat dense no-caps icon="add" :label="cmsUiText.tenantCreateLabel" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt" />
                 <q-btn
                   flat
                   dense
                   no-caps
                   icon="delete"
-                  label="Delete"
-                  aria-label="Delete active tenant profile"
+                  :label="cmsUiText.tenantDeleteLabel"
+                  :aria-label="cmsUiText.tenantDeleteAriaLabel"
                   :disable="tenantProfilesState.profiles.length <= 1"
                   :style="dangerActionStyle"
                   @click="removeActiveTenantProfile"
@@ -57,18 +57,18 @@
           <div class="cms-toolbar-card">
             <div class="cms-toolbar-card__header">
               <q-icon name="tune" size="18px" class="cms-toolbar-card__icon" />
-              <span class="cms-toolbar-card__title">Actions</span>
+              <span class="cms-toolbar-card__title">{{ cmsUiText.actionsTitle }}</span>
               <span class="cms-toolbar-card__saved-at" role="status" aria-live="polite" aria-atomic="true">{{ savedAtLabel }}</span>
             </div>
             <div class="cms-toolbar-card__body">
               <div class="cms-toolbar-card__actions">
-                <q-btn no-caps unelevated icon="save" label="Save" aria-label="Save tenant settings" :style="primaryActionStyle" @click="saveNow" />
-                <q-btn flat no-caps icon="restart_alt" label="Reset" aria-label="Reset tenant settings to defaults" :style="dangerActionStyle" @click="resetToDefaults" />
+                <q-btn no-caps unelevated icon="save" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" :style="primaryActionStyle" @click="saveNow" />
+                <q-btn flat no-caps icon="restart_alt" :label="cmsUiText.resetLabel" :aria-label="cmsUiText.resetAriaLabel" :style="dangerActionStyle" @click="resetToDefaults" />
               </div>
               <q-separator vertical inset class="cms-toolbar-card__separator" />
               <div class="cms-toolbar-card__actions">
-                <q-btn flat dense no-caps icon="download" label="Export" aria-label="Export active tenant as JSON" @click="exportActiveTenantProfile" />
-                <q-btn flat dense no-caps icon="upload_file" label="Import" aria-label="Import tenant settings from JSON" @click="openTenantImportDialog" />
+                <q-btn flat dense no-caps icon="download" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile" />
+                <q-btn flat dense no-caps icon="upload_file" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog" />
               </div>
             </div>
           </div>
@@ -76,7 +76,7 @@
             ref="tenantImportInputRef"
             type="file"
             accept="application/json,.json"
-            aria-label="Import tenant JSON file"
+            :aria-label="cmsUiText.importInputAriaLabel"
             class="cms-file-input"
             @change="onTenantImportFileChange"
           >
@@ -84,7 +84,7 @@
 
           <!-- ── Editor Card ──────────────────────────────────────── -->
           <div class="cms-settings__editor">
-          <q-tabs v-model="activeSettingsTab" dense inline-label class="cms-settings__tabs" aria-label="CMS settings sections">
+          <q-tabs v-model="activeSettingsTab" dense inline-label class="cms-settings__tabs" :aria-label="cmsUiText.settingsTabsAriaLabel">
             <q-tab name="branding" icon="branding_watermark" :label="settings.content.tabBrandingLabel" :aria-label="settings.content.tabBrandingLabel" />
             <q-tab name="typography" icon="text_fields" :label="settings.content.tabTypographyLabel" :aria-label="settings.content.tabTypographyLabel" />
             <q-tab name="layout" icon="dashboard_customize" :label="settings.content.tabLayoutLabel" :aria-label="settings.content.tabLayoutLabel" />
@@ -94,7 +94,7 @@
             <q-tab name="content" icon="edit_note" :label="settings.content.tabContentLabel" :aria-label="settings.content.tabContentLabel" />
           </q-tabs>
           <div class="cms-settings__advanced-toggle">
-            <q-toggle v-model="showAdvancedThemeFields" dense label="Show advanced overrides" />
+            <q-toggle v-model="showAdvancedThemeFields" dense :label="cmsUiText.showAdvancedOverridesLabel" />
           </div>
 
           <q-tab-panels v-model="activeSettingsTab" animated class="cms-settings__panels">
@@ -102,15 +102,15 @@
               <div class="cms-config-section">
                 <div class="cms-config-section__form">
                   <div class="cms-form-grid">
-                    <q-input v-model="settings.branding.appName" outlined dense label="Product name" />
-                    <q-input v-model="settings.branding.appSubtitle" outlined dense label="Product subtitle" />
-                    <q-input v-model="settings.branding.brandLogo" outlined dense label="Logo URL" />
-                    <q-input v-model="settings.branding.brandLogoAlt" outlined dense label="Logo alt text" />
-                    <q-input v-model="settings.branding.faviconUrl" outlined dense label="Favicon URL" />
-                    <q-input v-model="settings.branding.userAvatar" outlined dense label="User avatar URL" />
-                    <q-input v-model="settings.branding.userTooltip" outlined dense label="User tooltip" />
-                    <q-input v-model="settings.branding.notificationsTooltip" outlined dense label="Notifications tooltip" />
-                    <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" label="Notification count" />
+                    <q-input v-model="settings.branding.appName" outlined dense :label="tr('Product name', 'Nome do produto')" />
+                    <q-input v-model="settings.branding.appSubtitle" outlined dense :label="tr('Product subtitle', 'Subtitulo do produto')" />
+                    <q-input v-model="settings.branding.brandLogo" outlined dense :label="tr('Logo URL', 'URL do logo')" />
+                    <q-input v-model="settings.branding.brandLogoAlt" outlined dense :label="tr('Logo alt text', 'Texto alternativo do logo')" />
+                    <q-input v-model="settings.branding.faviconUrl" outlined dense :label="tr('Favicon URL', 'URL do favicon')" />
+                    <q-input v-model="settings.branding.userAvatar" outlined dense :label="tr('User avatar URL', 'URL do avatar do usuario')" />
+                    <q-input v-model="settings.branding.userTooltip" outlined dense :label="tr('User tooltip', 'Tooltip do usuario')" />
+                    <q-input v-model="settings.branding.notificationsTooltip" outlined dense :label="tr('Notifications tooltip', 'Tooltip de notificacoes')" />
+                    <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" :label="tr('Notification count', 'Quantidade de notificacoes')" />
                   </div>
 
                   <q-banner rounded class="cms-banner" :style="bannerStyle">
@@ -121,8 +121,8 @@
                 <div class="cms-config-section__example">
                   <div class="cms-example-section cms-example-section--inline">
                     <div class="cms-example-section__header">
-                      <strong>Branding example</strong>
-                      <small>Live preview of logo, product identity and account information.</small>
+                      <strong>{{ tr('Branding example', 'Exemplo de branding') }}</strong>
+                      <small>{{ tr('Live preview of logo, product identity and account information.', 'Preview em tempo real do logo, identidade do produto e conta.') }}</small>
                     </div>
                     <div class="cms-preview-card cms-preview-card--branding">
                       <div class="cms-preview-brand">
@@ -134,11 +134,11 @@
                       </div>
                       <div class="cms-preview-brand__meta">
                         <div class="cms-preview-brand__meta-row">
-                          <span>Favicon</span>
+                          <span>{{ tr('Favicon', 'Favicon') }}</span>
                           <code>{{ settings.branding.faviconUrl || settings.branding.brandLogo }}</code>
                         </div>
                         <div class="cms-preview-brand__meta-row">
-                          <span>User</span>
+                          <span>{{ tr('User', 'Usuario') }}</span>
                           <div class="cms-preview-user">
                             <img v-if="settings.branding.userAvatar" :src="settings.branding.userAvatar" alt="User avatar">
                             <q-icon v-else name="account_circle" class="cms-icon cms-icon--avatar" />
@@ -154,6 +154,7 @@
                   </div>
                 </div>
               </div>
+
             </q-tab-panel>
 
             <q-tab-panel name="typography">
@@ -191,18 +192,18 @@
                   <div class="cms-config-section__example">
                     <div class="cms-example-section cms-example-section--inline">
                       <div class="cms-example-section__header">
-                        <strong>Typography example</strong>
-                        <small>Families, weights, styles and shell text scales.</small>
+                        <strong>{{ tr('Typography example', 'Exemplo de tipografia') }}</strong>
+                        <small>{{ tr('Families, weights, styles and shell text scales.', 'Familias, pesos, estilos e escalas de texto do shell.') }}</small>
                       </div>
                       <div class="cms-preview-card cms-preview-card--typography">
                         <div class="cms-preview-typography__headline">{{ settings.branding.appName }}</div>
-                        <div class="cms-preview-typography__title">Shell heading and context text</div>
+                        <div class="cms-preview-typography__title">{{ tr('Shell heading and context text', 'Titulo do shell e texto de contexto') }}</div>
                         <p class="cms-preview-typography__body">
                           This paragraph uses base family/style. Adjust fonts and sizes to match each tenant brand.
                         </p>
                         <div class="cms-preview-typography__menu">
-                          <div class="cms-preview-typography__menu-label">Menu label</div>
-                          <div class="cms-preview-typography__menu-caption">Caption for module context</div>
+                          <div class="cms-preview-typography__menu-label">{{ tr('Menu label', 'Label do menu') }}</div>
+                          <div class="cms-preview-typography__menu-caption">{{ tr('Caption for module context', 'Legenda para contexto do modulo') }}</div>
                         </div>
                       </div>
                     </div>
@@ -246,19 +247,19 @@
                   <div class="cms-config-section__example">
                     <div class="cms-example-section cms-example-section--inline">
                       <div class="cms-example-section__header">
-                        <strong>Layout and motion example</strong>
-                        <small>Spacing, radius and transition tokens on shell widgets.</small>
+                        <strong>{{ tr('Layout and motion example', 'Exemplo de layout e movimento') }}</strong>
+                        <small>{{ tr('Spacing, radius and transition tokens on shell widgets.', 'Tokens de espaco, borda e transicao em widgets do shell.') }}</small>
                       </div>
                       <div class="cms-preview-card cms-preview-card--layout">
                         <div class="cms-preview-layout__row">
-                          <div class="cms-preview-layout__panel">Panel A</div>
-                          <div class="cms-preview-layout__panel cms-preview-layout__panel--accent">Panel B</div>
+                          <div class="cms-preview-layout__panel">{{ tr('Panel A', 'Painel A') }}</div>
+                          <div class="cms-preview-layout__panel cms-preview-layout__panel--accent">{{ tr('Panel B', 'Painel B') }}</div>
                         </div>
                         <div class="cms-preview-layout__nav-item">
                           <q-icon name="tune" class="cms-icon cms-icon--sm" />
-                          <span>Hover-ready item spacing</span>
+                          <span>{{ tr('Hover-ready item spacing', 'Espacamento de item para hover') }}</span>
                         </div>
-                        <small class="cms-preview-layout__hint">Move mouse over cards/items to validate transition token.</small>
+                        <small class="cms-preview-layout__hint">{{ tr('Move mouse over cards/items to validate transition token.', 'Passe o mouse sobre os cards/itens para validar o token de transicao.') }}</small>
                       </div>
                     </div>
                   </div>
@@ -270,8 +271,8 @@
               <div class="cms-theme-presets cms-config-section">
                 <div class="cms-config-section__form">
                   <div class="cms-section-header cms-section-header--stacked">
-                    <strong>Theme values preset</strong>
-                    <small>Apply a complete set of theme values before fine tuning token fields.</small>
+                    <strong>{{ cmsUiText.themeValuesPresetTitle }}</strong>
+                    <small>{{ cmsUiText.themeValuesPresetDescription }}</small>
                   </div>
 
                   <div class="cms-theme-presets__controls">
@@ -282,10 +283,10 @@
                       emit-value
                       map-options
                       :options="themePresetOptions"
-                      label="Theme preset"
+                      :label="cmsUiText.themePresetFieldLabel"
                       @update:model-value="onThemePresetChange"
                     />
-                    <q-btn flat dense no-caps icon="sync" label="Detect from current values" @click="detectThemePresetFromCurrent" />
+                    <q-btn flat dense no-caps icon="sync" :label="cmsUiText.detectFromCurrentValuesLabel" @click="detectThemePresetFromCurrent" />
                   </div>
                 </div>
 
@@ -299,19 +300,19 @@
                     <div class="cms-preview-card cms-preview-card--theme-preset">
                       <div class="cms-theme-token">
                         <span class="cms-theme-token__dot" :style="{ background: accentColor }" />
-                        <span>Accent: <code>{{ settings.theme.itemActiveColor || defaultTheme.itemActiveColor }}</code></span>
+                        <span>{{ tr('Accent', 'Acento') }}: <code>{{ settings.theme.itemActiveColor || defaultTheme.itemActiveColor }}</code></span>
                       </div>
                       <div class="cms-theme-token">
                         <span class="cms-theme-token__dot" :style="{ background: settings.theme.headerBackground || defaultTheme.headerBackground }" />
-                        <span>Header: <code>{{ settings.theme.headerBackground || defaultTheme.headerBackground }}</code></span>
+                        <span>{{ tr('Header', 'Cabecalho') }}: <code>{{ settings.theme.headerBackground || defaultTheme.headerBackground }}</code></span>
                       </div>
                       <div class="cms-theme-token">
                         <span class="cms-theme-token__dot" :style="{ background: settings.theme.drawerBackground || defaultTheme.drawerBackground }" />
-                        <span>Surface: <code>{{ settings.theme.drawerBackground || defaultTheme.drawerBackground }}</code></span>
+                        <span>{{ tr('Surface', 'Superficie') }}: <code>{{ settings.theme.drawerBackground || defaultTheme.drawerBackground }}</code></span>
                       </div>
                       <div class="cms-theme-token">
                         <span class="cms-theme-token__dot" :style="{ background: settings.theme.pageBackground || defaultTheme.pageBackground }" />
-                        <span>Page: <code>{{ settings.theme.pageBackground || defaultTheme.pageBackground }}</code></span>
+                        <span>{{ tr('Page', 'Pagina') }}: <code>{{ settings.theme.pageBackground || defaultTheme.pageBackground }}</code></span>
                       </div>
                     </div>
                   </div>
@@ -361,34 +362,34 @@
                     <div class="cms-example-section cms-example-section--inline">
                       <template v-if="group.id === 'foundation'">
                         <div class="cms-example-section__header">
-                          <strong>Foundation example</strong>
-                          <small>Surface, text and border tokens applied together.</small>
+                          <strong>{{ tr('Foundation example', 'Exemplo de fundamentos') }}</strong>
+                          <small>{{ tr('Surface, text and border tokens applied together.', 'Tokens de superficie, texto e borda aplicados em conjunto.') }}</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--foundation">
-                          <strong>Editable shell foundation</strong>
-                          <p>This card uses the same base tokens as the shell page and CMS cards.</p>
+                          <strong>{{ tr('Editable shell foundation', 'Base editavel do shell') }}</strong>
+                          <p>{{ tr('This card uses the same base tokens as the shell page and CMS cards.', 'Este card usa os mesmos tokens base da pagina shell e dos cards CMS.') }}</p>
                           <q-chip dense square class="cms-preview-chip">{{ settings.content.statusChipLabel }}</q-chip>
                         </div>
                       </template>
 
                       <template v-else-if="group.id === 'navigation'">
                         <div class="cms-example-section__header">
-                          <strong>Navigation example</strong>
-                          <small>Sidebar text, icon, caption and active states.</small>
+                          <strong>{{ tr('Navigation example', 'Exemplo de navegacao') }}</strong>
+                          <small>{{ tr('Sidebar text, icon, caption and active states.', 'Texto, icone, legenda e estados ativos da barra lateral.') }}</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--navigation">
-                          <div class="cms-preview-nav-caption">Core</div>
+                          <div class="cms-preview-nav-caption">{{ tr('Core', 'Core') }}</div>
                           <div class="cms-preview-nav-item">
                             <q-icon name="dashboard" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
-                            <span>Overview</span>
+                            <span>{{ tr('Overview', 'Visao geral') }}</span>
                           </div>
                           <div class="cms-preview-nav-item cms-preview-nav-item--hover">
                             <q-icon name="query_stats" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
-                            <span>Analytics</span>
+                            <span>{{ tr('Analytics', 'Analises') }}</span>
                           </div>
                           <div class="cms-preview-nav-item cms-preview-nav-item--active">
                             <q-icon name="settings" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
-                            <span>Settings</span>
+                            <span>{{ tr('Settings', 'Configuracoes') }}</span>
                           </div>
                           <div class="cms-preview-nav-mini-caption">CO</div>
                         </div>
@@ -396,8 +397,8 @@
 
                       <template v-else-if="group.id === 'header'">
                         <div class="cms-example-section__header">
-                          <strong>Header and search example</strong>
-                          <small>Topbar title, search, icon colors and notification badge.</small>
+                          <strong>{{ tr('Header and search example', 'Exemplo de cabecalho e busca') }}</strong>
+                          <small>{{ tr('Topbar title, search, icon colors and notification badge.', 'Titulo da topbar, busca, cores de icones e badge de notificacao.') }}</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--header">
                           <div class="cms-preview-header">
@@ -405,21 +406,21 @@
                               <q-icon :name="settings.layout.menuIcon" class="cms-icon cms-icon--md cms-preview-header__menu-icon" />
                               <strong class="cms-preview-header__title-app">{{ settings.branding.appName }}</strong>
                               <q-icon name="chevron_right" class="cms-icon cms-icon--sm cms-preview-header__separator" />
-                              <span class="cms-preview-header__title-text">Settings</span>
+                              <span class="cms-preview-header__title-text">{{ tr('Settings', 'Configuracoes') }}</span>
                             </div>
                             <div class="cms-preview-header__search">
                               <q-icon name="search" class="cms-icon cms-icon--sm cms-preview-header__search-icon" />
                               <span>{{ settings.layout.searchPlaceholder }}</span>
                             </div>
                             <div class="cms-preview-header__actions">
-                              <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action" aria-label="Notifications action preview">
+                              <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action" :aria-label="tr('Notifications action preview', 'Preview da acao de notificacoes')">
                                 <q-icon name="notifications" class="cms-icon cms-icon--sm" />
                                 <span class="cms-preview-header__badge">{{ settings.branding.notificationCount || 2 }}</span>
                               </button>
-                              <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action" aria-label="Account action preview">
+                              <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action" :aria-label="tr('Account action preview', 'Preview da acao de conta')">
                                 <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
                               </button>
-                              <button type="button" class="cms-preview-header__action" aria-label="Home action preview">
+                              <button type="button" class="cms-preview-header__action" :aria-label="tr('Home action preview', 'Preview da acao home')">
                                 <q-icon name="home" class="cms-icon cms-icon--sm" />
                               </button>
                             </div>
@@ -427,7 +428,7 @@
                           <div class="cms-preview-drawer">
                             <div class="cms-preview-drawer__item">
                               <q-icon name="dashboard" class="cms-icon cms-icon--sm" />
-                              <span>Drawer item</span>
+                              <span>{{ tr('Drawer item', 'Item do menu lateral') }}</span>
                             </div>
                             <div class="cms-preview-drawer__footer">
                               <q-icon name="keyboard_double_arrow_left" class="cms-icon cms-icon--xs" />
@@ -439,8 +440,8 @@
 
                       <template v-else-if="group.id === 'notifications'">
                         <div class="cms-example-section__header">
-                          <strong>Notifications example</strong>
-                          <small>Success, warning, error and info chips in real time.</small>
+                          <strong>{{ tr('Notifications example', 'Exemplo de notificacoes') }}</strong>
+                          <small>{{ tr('Success, warning, error and info chips in real time.', 'Chips de sucesso, aviso, erro e info em tempo real.') }}</small>
                         </div>
                         <div class="cms-notification-preview">
                           <q-chip dense square :style="notificationChipStyles.success">{{ settings.content.previewSuccessLabel }}</q-chip>
@@ -453,25 +454,25 @@
                           <q-chip dense square :style="notificationCounterPreviewStyle">2</q-chip>
                         </div>
                         <div class="cms-notification-actions-preview">
-                          <button type="button" class="cms-notification-actions-preview__action" aria-label="Account hover preview">
+                          <button type="button" class="cms-notification-actions-preview__action" :aria-label="tr('Account hover preview', 'Preview de hover da conta')">
                             <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
-                            <span>Account</span>
+                            <span>{{ tr('Account', 'Conta') }}</span>
                           </button>
-                          <button type="button" class="cms-notification-actions-preview__action" aria-label="Landing hover preview">
+                          <button type="button" class="cms-notification-actions-preview__action" :aria-label="tr('Landing hover preview', 'Preview de hover da landing')">
                             <q-icon name="home" class="cms-icon cms-icon--sm" />
-                            <span>Landing</span>
+                            <span>{{ tr('Landing', 'Landing') }}</span>
                           </button>
                           <button type="button" class="cms-notification-actions-preview__action cms-notification-actions-preview__action--forced-hover">
                             <q-icon name="visibility" class="cms-icon cms-icon--sm" />
-                            <span>Hover sample</span>
+                            <span>{{ tr('Hover sample', 'Exemplo de hover') }}</span>
                           </button>
                         </div>
                       </template>
 
                       <template v-else-if="group.id === 'landing'">
                         <div class="cms-example-section__header">
-                          <strong>Landing palette example</strong>
-                          <small>Primary/secondary sections, dark shell and syntax colors used on public landing.</small>
+                          <strong>{{ tr('Landing palette example', 'Exemplo da paleta da landing') }}</strong>
+                          <small>{{ tr('Primary/secondary sections, dark shell and syntax colors used on public landing.', 'Secoes primaria/secundaria, shell escuro e cores de sintaxe usadas na landing publica.') }}</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--landing">
                           <div class="cms-preview-landing__swatches">
@@ -479,19 +480,19 @@
                               class="cms-preview-landing__swatch"
                               :style="{ background: resolveThemeTokenValue('landingSectionBgPrimary') }"
                             >
-                              Section primary
+                              {{ tr('Section primary', 'Secao primaria') }}
                             </span>
                             <span
                               class="cms-preview-landing__swatch"
                               :style="{ background: resolveThemeTokenValue('landingSectionBgSecondary') }"
                             >
-                              Section secondary
+                              {{ tr('Section secondary', 'Secao secundaria') }}
                             </span>
                             <span
                               class="cms-preview-landing__swatch cms-preview-landing__swatch--dark"
                               :style="{ background: resolveThemeTokenValue('landingSectionBgDark'), color: resolveThemeTokenValue('landingSharedDarkText') }"
                             >
-                              Section dark
+                              {{ tr('Section dark', 'Secao escura') }}
                             </span>
                           </div>
                           <div
@@ -528,13 +529,13 @@
               <div class="cms-config-section">
                 <div class="cms-config-section__form">
                   <div class="cms-section-header">
-                    <strong>Groups</strong>
-                    <q-btn flat dense no-caps icon="add" label="Add group" @click="addGroup" />
+                    <strong>{{ tr('Groups', 'Grupos') }}</strong>
+                    <q-btn flat dense no-caps icon="add" :label="tr('Add group', 'Adicionar grupo')" @click="addGroup" />
                   </div>
                   <div class="cms-list">
                     <div v-for="(group, index) in settings.navGroups" :key="group.id" class="cms-list-item">
-                      <q-input v-model="group.id" outlined dense label="Group ID" @blur="normalizeGroupId(index)" />
-                      <q-input v-model="group.label" outlined dense label="Group label" />
+                      <q-input v-model="group.id" outlined dense :label="tr('Group ID', 'ID do grupo')" @blur="normalizeGroupId(index)" />
+                      <q-input v-model="group.label" outlined dense :label="tr('Group label', 'Label do grupo')" />
                       <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeGroup(index)" />
                     </div>
                   </div>
@@ -542,14 +543,14 @@
                   <q-separator class="q-my-md" />
 
                   <div class="cms-section-header">
-                    <strong>Menu items</strong>
-                    <q-btn flat dense no-caps icon="add" label="Add item" @click="addMenuItem" />
+                    <strong>{{ tr('Menu items', 'Itens do menu') }}</strong>
+                    <q-btn flat dense no-caps icon="add" :label="tr('Add item', 'Adicionar item')" @click="addMenuItem" />
                   </div>
                   <div class="cms-list">
                     <div v-for="(item, index) in settings.items" :key="item.id" class="cms-list-item cms-list-item--menu">
-                      <q-input v-model="item.id" outlined dense label="Item ID" />
-                      <q-input v-model="item.label" outlined dense label="Label" />
-                      <q-input v-model="item.icon" outlined dense label="Icon" />
+                      <q-input v-model="item.id" outlined dense :label="tr('Item ID', 'ID do item')" />
+                      <q-input v-model="item.label" outlined dense :label="tr('Label', 'Label')" />
+                      <q-input v-model="item.icon" outlined dense :label="tr('Icon', 'Icone')" />
                       <q-select
                         v-model="item.group"
                         outlined
@@ -557,13 +558,13 @@
                         emit-value
                         map-options
                         :options="groupOptions"
-                        label="Group"
+                        :label="tr('Group', 'Grupo')"
                       />
-                      <q-input v-model="item.caption" outlined dense label="Caption" />
-                      <q-input v-model="item.description" outlined dense label="Description" />
-                      <q-input v-model="item.badge" outlined dense label="Badge" />
-                      <q-input v-model="item.badgeColor" outlined dense label="Badge color" />
-                      <q-input v-model="item.badgeTextColor" outlined dense label="Badge text color" />
+                      <q-input v-model="item.caption" outlined dense :label="tr('Caption', 'Legenda')" />
+                      <q-input v-model="item.description" outlined dense :label="tr('Description', 'Descricao')" />
+                      <q-input v-model="item.badge" outlined dense :label="tr('Badge', 'Badge')" />
+                      <q-input v-model="item.badgeColor" outlined dense :label="tr('Badge color', 'Cor do badge')" />
+                      <q-input v-model="item.badgeTextColor" outlined dense :label="tr('Badge text color', 'Cor do texto do badge')" />
                       <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeMenuItem(index)" />
                     </div>
                   </div>
@@ -572,8 +573,8 @@
                 <div class="cms-config-section__example">
                   <div class="cms-example-section cms-example-section--inline">
                     <div class="cms-example-section__header">
-                      <strong>Sidebar menu example</strong>
-                      <small>Groups and items structure preview with active state.</small>
+                      <strong>{{ tr('Sidebar menu example', 'Exemplo do menu lateral') }}</strong>
+                      <small>{{ tr('Groups and items structure preview with active state.', 'Preview da estrutura de grupos e itens com estado ativo.') }}</small>
                     </div>
                     <div class="cms-preview-card cms-preview-card--menu">
                       <div v-for="group in menuPreviewGroups" :key="group.id" class="cms-preview-menu-group">
@@ -610,54 +611,54 @@
               <div class="cms-config-section">
                 <div class="cms-config-section__form">
                   <div class="cms-form-grid">
-                    <q-input v-model="settings.layout.menuIcon" outlined dense label="Menu icon" />
-                    <q-input v-model="settings.layout.menuAriaLabel" outlined dense label="Menu aria-label" />
-                    <q-input v-model="settings.layout.searchPlaceholder" outlined dense label="Search placeholder" />
-                    <q-input v-model="settings.layout.collapseLabel" outlined dense label="Collapse label" />
-                    <q-input v-model="settings.layout.expandLabel" outlined dense label="Expand label" />
-                    <q-input v-model.number="settings.layout.headerHeight" outlined dense type="number" min="48" label="Header height" />
-                    <q-input v-model.number="settings.layout.drawerWidth" outlined dense type="number" min="180" label="Drawer width" />
-                    <q-input v-model.number="settings.layout.miniWidth" outlined dense type="number" min="56" label="Mini width" />
-                    <q-input v-model.number="settings.layout.breakpoint" outlined dense type="number" min="480" label="Breakpoint" />
+                    <q-input v-model="settings.layout.menuIcon" outlined dense :label="tr('Menu icon', 'Icone do menu')" />
+                    <q-input v-model="settings.layout.menuAriaLabel" outlined dense :label="tr('Menu aria-label', 'Aria-label do menu')" />
+                    <q-input v-model="settings.layout.searchPlaceholder" outlined dense :label="tr('Search placeholder', 'Placeholder da busca')" />
+                    <q-input v-model="settings.layout.collapseLabel" outlined dense :label="tr('Collapse label', 'Label de comprimir')" />
+                    <q-input v-model="settings.layout.expandLabel" outlined dense :label="tr('Expand label', 'Label de expandir')" />
+                    <q-input v-model.number="settings.layout.headerHeight" outlined dense type="number" min="48" :label="tr('Header height', 'Altura do cabecalho')" />
+                    <q-input v-model.number="settings.layout.drawerWidth" outlined dense type="number" min="180" :label="tr('Drawer width', 'Largura do menu lateral')" />
+                    <q-input v-model.number="settings.layout.miniWidth" outlined dense type="number" min="56" :label="tr('Mini width', 'Largura mini')" />
+                    <q-input v-model.number="settings.layout.breakpoint" outlined dense type="number" min="480" :label="tr('Breakpoint', 'Breakpoint')" />
                   </div>
 
                   <div class="cms-toggle-row">
-                    <q-toggle v-model="settings.layout.showSearch" label="Show search" />
-                    <q-toggle v-model="settings.layout.showNotifications" label="Show notifications" />
-                    <q-toggle v-model="settings.layout.showUserAvatar" label="Show account action" />
-                    <q-toggle v-model="settings.layout.showGroupCaptions" label="Show group captions" />
-                    <q-toggle v-model="settings.layout.collapsible" label="Allow sidebar collapse" />
-                    <q-toggle v-model="settings.layout.defaultDrawerOpen" label="Drawer open by default" />
-                    <q-toggle v-model="settings.layout.defaultMini" label="Mini mode by default" />
+                    <q-toggle v-model="settings.layout.showSearch" :label="tr('Show search', 'Mostrar busca')" />
+                    <q-toggle v-model="settings.layout.showNotifications" :label="tr('Show notifications', 'Mostrar notificacoes')" />
+                    <q-toggle v-model="settings.layout.showUserAvatar" :label="tr('Show account action', 'Mostrar acao de conta')" />
+                    <q-toggle v-model="settings.layout.showGroupCaptions" :label="tr('Show group captions', 'Mostrar legendas de grupo')" />
+                    <q-toggle v-model="settings.layout.collapsible" :label="tr('Allow sidebar collapse', 'Permitir comprimir menu lateral')" />
+                    <q-toggle v-model="settings.layout.defaultDrawerOpen" :label="tr('Drawer open by default', 'Menu lateral aberto por padrao')" />
+                    <q-toggle v-model="settings.layout.defaultMini" :label="tr('Mini mode by default', 'Modo mini por padrao')" />
                   </div>
 
                   <q-separator class="q-my-md" />
 
                   <div class="cms-section-header">
-                    <strong>Topbar actions</strong>
-                    <q-btn flat dense no-caps icon="add" label="Add action" @click="addToolbarAction" />
+                    <strong>{{ tr('Topbar actions', 'Acoes da topbar') }}</strong>
+                    <q-btn flat dense no-caps icon="add" :label="tr('Add action', 'Adicionar acao')" @click="addToolbarAction" />
                   </div>
                   <div class="cms-list">
                     <div v-for="(action, index) in settings.toolbarActions" :key="action.id" class="cms-list-item cms-list-item--toolbar">
-                      <q-input v-model="action.id" outlined dense label="Action ID" />
-                      <q-input v-model="action.icon" outlined dense label="Icon" />
-                      <q-input v-model="action.label" outlined dense label="Label" />
-                      <q-input v-model="action.tooltip" outlined dense label="Tooltip" />
-                      <q-input v-model="action.href" outlined dense label="Href" />
-                      <q-input v-model="action.color" outlined dense label="Color" />
-                      <q-input v-model="action.textColor" outlined dense label="Text color" />
-                      <q-input v-model="action.badge" outlined dense label="Badge" />
-                      <q-input v-model="action.badgeColor" outlined dense label="Badge color (or semantic)" />
-                      <q-input v-model="action.badgeTextColor" outlined dense label="Badge text color" />
-                      <q-input v-model="action.className" outlined dense label="Class name" />
-                      <q-toggle v-model="action.showLabel" label="Show label" />
-                      <q-toggle v-model="action.external" label="Open external" />
-                      <q-toggle v-model="action.flat" label="Flat" />
-                      <q-toggle v-model="action.dense" label="Dense" />
-                      <q-toggle v-model="action.round" label="Round" />
-                      <q-toggle v-model="action.unelevated" label="Unelevated" />
-                      <q-toggle v-model="action.outline" label="Outline" />
-                      <q-toggle v-model="action.noCaps" label="No caps" />
+                      <q-input v-model="action.id" outlined dense :label="tr('Action ID', 'ID da acao')" />
+                      <q-input v-model="action.icon" outlined dense :label="tr('Icon', 'Icone')" />
+                      <q-input v-model="action.label" outlined dense :label="tr('Label', 'Label')" />
+                      <q-input v-model="action.tooltip" outlined dense :label="tr('Tooltip', 'Tooltip')" />
+                      <q-input v-model="action.href" outlined dense :label="tr('Href', 'Href')" />
+                      <q-input v-model="action.color" outlined dense :label="tr('Color', 'Cor')" />
+                      <q-input v-model="action.textColor" outlined dense :label="tr('Text color', 'Cor do texto')" />
+                      <q-input v-model="action.badge" outlined dense :label="tr('Badge', 'Badge')" />
+                      <q-input v-model="action.badgeColor" outlined dense :label="tr('Badge color (or semantic)', 'Cor do badge (ou semantica)')" />
+                      <q-input v-model="action.badgeTextColor" outlined dense :label="tr('Badge text color', 'Cor do texto do badge')" />
+                      <q-input v-model="action.className" outlined dense :label="tr('Class name', 'Nome da classe')" />
+                      <q-toggle v-model="action.showLabel" :label="tr('Show label', 'Mostrar label')" />
+                      <q-toggle v-model="action.external" :label="tr('Open external', 'Abrir externo')" />
+                      <q-toggle v-model="action.flat" :label="tr('Flat', 'Flat')" />
+                      <q-toggle v-model="action.dense" :label="tr('Dense', 'Dense')" />
+                      <q-toggle v-model="action.round" :label="tr('Round', 'Round')" />
+                      <q-toggle v-model="action.unelevated" :label="tr('Unelevated', 'Sem elevacao')" />
+                      <q-toggle v-model="action.outline" :label="tr('Outline', 'Contorno')" />
+                      <q-toggle v-model="action.noCaps" :label="tr('No caps', 'Sem maiusculas')" />
                       <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeToolbarAction(index)" />
                     </div>
                   </div>
@@ -666,8 +667,8 @@
                 <div class="cms-config-section__example">
                   <div class="cms-example-section cms-example-section--inline">
                     <div class="cms-example-section__header">
-                      <strong>Topbar example</strong>
-                      <small>Header height, search visibility and actions rendered together.</small>
+                      <strong>{{ tr('Topbar example', 'Exemplo de topbar') }}</strong>
+                      <small>{{ tr('Header height, search visibility and actions rendered together.', 'Altura do cabecalho, visibilidade da busca e acoes renderizadas em conjunto.') }}</small>
                     </div>
                     <div class="cms-preview-card cms-preview-card--topbar">
                       <div class="cms-preview-topbar">
@@ -710,37 +711,54 @@
               <div class="cms-config-section">
                 <div class="cms-config-section__form">
                   <div class="cms-form-grid">
-                    <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow label="Module fallback description" />
-                    <q-input v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow label="Branding banner text" />
-                    <q-input v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow label="Colors banner text" />
-                    <q-input v-model="settings.content.statusTitle" outlined dense label="Status card title" />
-                    <q-input v-model="settings.content.statusChipLabel" outlined dense label="Status chip label" />
-                    <q-input v-model="settings.content.statusThemeText" outlined dense label="Status: theme line" />
-                    <q-input v-model="settings.content.statusBrandingText" outlined dense label="Status: branding line" />
-                    <q-input v-model="settings.content.statusMenuText" outlined dense label="Status: menu line" />
-                    <q-input v-model="settings.content.statusTopbarText" outlined dense label="Status: topbar line" />
-                    <q-input v-model="settings.content.howToTitle" outlined dense label="How-to title" />
-                    <q-input v-model="settings.content.howToBody" outlined dense type="textarea" autogrow label="How-to body" />
-                    <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow label="How-to next step" />
-                    <q-input v-model="settings.content.previewSuccessLabel" outlined dense label="Preview success label" />
-                    <q-input v-model="settings.content.previewWarningLabel" outlined dense label="Preview warning label" />
-                    <q-input v-model="settings.content.previewErrorLabel" outlined dense label="Preview error label" />
-                    <q-input v-model="settings.content.previewInfoLabel" outlined dense label="Preview info label" />
-                    <q-input v-model="settings.content.tabBrandingLabel" outlined dense label="Tab: branding label" />
-                    <q-input v-model="settings.content.tabTypographyLabel" outlined dense label="Tab: typography label" />
-                    <q-input v-model="settings.content.tabLayoutLabel" outlined dense label="Tab: layout label" />
-                    <q-input v-model="settings.content.tabColorsLabel" outlined dense label="Tab: colors label" />
-                    <q-input v-model="settings.content.tabMenuLabel" outlined dense label="Tab: menu label" />
-                    <q-input v-model="settings.content.tabTopbarLabel" outlined dense label="Tab: topbar label" />
-                    <q-input v-model="settings.content.tabContentLabel" outlined dense label="Tab: content label" />
+                    <q-select
+                      v-model="settings.content.locale"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      :options="cmsLocaleOptions"
+                      :label="tr('Language', 'Idioma')"
+                      @update:model-value="onCmsLocaleChange"
+                    />
+                    <q-btn
+                      flat
+                      no-caps
+                      icon="translate"
+                      :label="tr('Apply locale preset', 'Aplicar preset de idioma')"
+                      @click="onCmsLocaleChange(settings.content.locale)"
+                    />
+                    <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow :label="tr('Module fallback description', 'Descricao fallback do modulo')" />
+                    <q-input v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow :label="tr('Branding banner text', 'Texto do banner de branding')" />
+                    <q-input v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow :label="tr('Colors banner text', 'Texto do banner de cores')" />
+                    <q-input v-model="settings.content.statusTitle" outlined dense :label="tr('Status card title', 'Titulo do card de status')" />
+                    <q-input v-model="settings.content.statusChipLabel" outlined dense :label="tr('Status chip label', 'Label do chip de status')" />
+                    <q-input v-model="settings.content.statusThemeText" outlined dense :label="tr('Status: theme line', 'Status: linha de tema')" />
+                    <q-input v-model="settings.content.statusBrandingText" outlined dense :label="tr('Status: branding line', 'Status: linha de branding')" />
+                    <q-input v-model="settings.content.statusMenuText" outlined dense :label="tr('Status: menu line', 'Status: linha de menu')" />
+                    <q-input v-model="settings.content.statusTopbarText" outlined dense :label="tr('Status: topbar line', 'Status: linha de topbar')" />
+                    <q-input v-model="settings.content.howToTitle" outlined dense :label="tr('How-to title', 'Titulo de como usar')" />
+                    <q-input v-model="settings.content.howToBody" outlined dense type="textarea" autogrow :label="tr('How-to body', 'Texto de como usar')" />
+                    <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow :label="tr('How-to next step', 'Proximo passo de como usar')" />
+                    <q-input v-model="settings.content.previewSuccessLabel" outlined dense :label="tr('Preview success label', 'Label de preview de sucesso')" />
+                    <q-input v-model="settings.content.previewWarningLabel" outlined dense :label="tr('Preview warning label', 'Label de preview de aviso')" />
+                    <q-input v-model="settings.content.previewErrorLabel" outlined dense :label="tr('Preview error label', 'Label de preview de erro')" />
+                    <q-input v-model="settings.content.previewInfoLabel" outlined dense :label="tr('Preview info label', 'Label de preview de info')" />
+                    <q-input v-model="settings.content.tabBrandingLabel" outlined dense :label="tr('Tab: branding label', 'Aba: label de branding')" />
+                    <q-input v-model="settings.content.tabTypographyLabel" outlined dense :label="tr('Tab: typography label', 'Aba: label de tipografia')" />
+                    <q-input v-model="settings.content.tabLayoutLabel" outlined dense :label="tr('Tab: layout label', 'Aba: label de layout')" />
+                    <q-input v-model="settings.content.tabColorsLabel" outlined dense :label="tr('Tab: colors label', 'Aba: label de cores')" />
+                    <q-input v-model="settings.content.tabMenuLabel" outlined dense :label="tr('Tab: menu label', 'Aba: label de menu')" />
+                    <q-input v-model="settings.content.tabTopbarLabel" outlined dense :label="tr('Tab: topbar label', 'Aba: label de topbar')" />
+                    <q-input v-model="settings.content.tabContentLabel" outlined dense :label="tr('Tab: content label', 'Aba: label de conteudo')" />
                   </div>
                 </div>
 
                 <div class="cms-config-section__example">
                   <div class="cms-example-section cms-example-section--inline">
                     <div class="cms-example-section__header">
-                      <strong>Content copy example</strong>
-                      <small>Preview of tab labels, banners and instructional text.</small>
+                      <strong>{{ tr('Content copy example', 'Exemplo de copy de conteudo') }}</strong>
+                      <small>{{ tr('Preview of tab labels, banners and instructional text.', 'Preview de labels de abas, banners e texto instrucional.') }}</small>
                     </div>
                     <div class="cms-preview-card cms-preview-card--content">
                       <div class="cms-preview-content-tabs">
@@ -766,6 +784,476 @@
                   </div>
                 </div>
               </div>
+
+              <div class="cms-config-section">
+                <div class="cms-config-section__form">
+                  <div class="cms-form-grid">
+                    <q-select
+                      v-model="selectedAuthoredContentModelId"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      :options="cmsAuthoredContentModelOptions"
+                      :label="tr('Content model library', 'Biblioteca de modelos de conteudo')"
+                    />
+                    <q-btn
+                      flat
+                      no-caps
+                      icon="add_box"
+                      :label="tr('New content model', 'Novo modelo de conteudo')"
+                      @click="createNewAuthoredContentModelDraft"
+                    />
+                    <q-input
+                      v-model="authoredContentModelNameDraft"
+                      outlined
+                      dense
+                      :label="tr('Content model name', 'Nome do modelo de conteudo')"
+                    />
+                    <q-input
+                      v-model="authoredContentModelDescriptionDraft"
+                      outlined
+                      dense
+                      type="textarea"
+                      autogrow
+                      :label="tr('Content model description', 'Descricao do modelo de conteudo')"
+                    />
+                    <q-input
+                      v-model="authoredContentModelDefaultPageTitleDraft"
+                      outlined
+                      dense
+                      :label="tr('Default page title', 'Titulo padrao da pagina')"
+                    />
+                    <q-input
+                      v-model="authoredContentModelDefaultPageDescriptionDraft"
+                      outlined
+                      dense
+                      type="textarea"
+                      autogrow
+                      :label="tr('Default page description', 'Descricao padrao da pagina')"
+                    />
+                    <q-input
+                      v-model="authoredContentModelDefaultPagePathPrefixDraft"
+                      outlined
+                      dense
+                      :label="tr('Default page path prefix', 'Prefixo padrao do caminho da pagina')"
+                      :hint="tr('Example: /campaign', 'Exemplo: /campanha')"
+                    />
+                    <q-input
+                      v-model="authoredContentModelMigrationNotesDraft"
+                      outlined
+                      dense
+                      type="textarea"
+                      autogrow
+                      :label="tr('Migration notes', 'Notas de migracao')"
+                      :hint="tr('Explain what changed when the schema version advances.', 'Explique o que mudou quando a versao do schema avanca.')"
+                    />
+                    <div class="cms-form-grid__full cms-content-model-fields">
+                      <div class="cms-content-model-fields__header">
+                        <strong>{{ tr('Schema fields', 'Campos do schema') }}</strong>
+                        <q-btn
+                          flat
+                          dense
+                          no-caps
+                          icon="playlist_add"
+                          :label="tr('Add field', 'Adicionar campo')"
+                          @click="addAuthoredContentModelFieldDraft"
+                        />
+                      </div>
+                      <p class="cms-content-model-fields__description">
+                        {{
+                          tr(
+                            'Define page-level structured fields rendered in the Pages builder.',
+                            'Defina campos estruturados em nivel de pagina que serao renderizados no builder de Pages.'
+                          )
+                        }}
+                      </p>
+                      <div
+                        v-if="authoredContentModelFieldDrafts.length === 0"
+                        class="cms-content-model-fields__empty"
+                      >
+                        {{ tr('No schema fields yet.', 'Ainda nao ha campos de schema.') }}
+                      </div>
+                      <div
+                        v-for="(field, fieldIndex) in authoredContentModelFieldDrafts"
+                        :key="`content-model-field-${fieldIndex}`"
+                        class="cms-content-model-fields__item"
+                      >
+                        <div class="cms-content-model-fields__row">
+                          <q-input
+                            v-model="field.id"
+                            outlined
+                            dense
+                            :label="tr('Field ID', 'ID do campo')"
+                          />
+                          <q-select
+                            v-model="field.type"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="cmsContentModelFieldTypeOptions"
+                            :label="tr('Field type', 'Tipo do campo')"
+                          />
+                          <q-input
+                            v-model="field.label"
+                            outlined
+                            dense
+                            :label="tr('Field label', 'Label do campo')"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="delete"
+                            :label="tr('Remove field', 'Remover campo')"
+                            :style="dangerActionStyle"
+                            @click="removeAuthoredContentModelFieldDraft(fieldIndex)"
+                          />
+                        </div>
+                        <div class="cms-content-model-fields__row">
+                          <q-input
+                            v-model="field.description"
+                            outlined
+                            dense
+                            :label="tr('Field description', 'Descricao do campo')"
+                          />
+                          <q-input
+                            v-model="field.placeholder"
+                            outlined
+                            dense
+                            :disable="field.type === 'toggle' || field.type === 'select'"
+                            :label="tr('Placeholder', 'Placeholder')"
+                          />
+                          <q-input
+                            v-model="field.defaultValue"
+                            outlined
+                            dense
+                            :type="field.repeatable ? 'textarea' : (field.type === 'number' ? 'number' : 'text')"
+                            :autogrow="field.repeatable"
+                            :disable="field.type === 'toggle' && !field.repeatable"
+                            :label="field.repeatable ? tr('Default values (one per line)', 'Valores padrao (um por linha)') : tr('Default value', 'Valor padrao')"
+                          />
+                          <q-toggle
+                            v-model="field.required"
+                            :label="tr('Required', 'Obrigatorio')"
+                          />
+                        </div>
+                        <div class="cms-content-model-fields__row">
+                          <q-toggle
+                            v-model="field.repeatable"
+                            :label="tr('Repeatable', 'Multiplo')"
+                          />
+                          <q-input
+                            v-model="field.minValue"
+                            outlined
+                            dense
+                            type="number"
+                            :label="field.repeatable
+                              ? tr('Minimum items', 'Minimo de itens')
+                              : (field.type === 'number'
+                                ? tr('Minimum value', 'Valor minimo')
+                                : tr('Minimum length', 'Comprimento minimo'))"
+                          />
+                          <q-input
+                            v-model="field.maxValue"
+                            outlined
+                            dense
+                            type="number"
+                            :label="field.repeatable
+                              ? tr('Maximum items', 'Maximo de itens')
+                              : (field.type === 'number'
+                                ? tr('Maximum value', 'Valor maximo')
+                                : tr('Maximum length', 'Comprimento maximo'))"
+                          />
+                        </div>
+                        <div class="cms-content-model-fields__row">
+                          <q-input
+                            v-if="field.type === 'toggle' && !field.repeatable"
+                            v-model="field.defaultValue"
+                            outlined
+                            dense
+                            readonly
+                            :label="tr('Default toggle value', 'Valor padrao do toggle')"
+                          />
+                          <q-toggle
+                            v-if="field.type === 'toggle' && !field.repeatable"
+                            :model-value="field.defaultValue === 'true'"
+                            :label="tr('Enabled by default', 'Habilitado por padrao')"
+                            @update:model-value="field.defaultValue = $event ? 'true' : 'false'"
+                          />
+                          <q-input
+                            v-if="field.type === 'select'"
+                            v-model="field.optionsDraft"
+                            outlined
+                            dense
+                            type="textarea"
+                            autogrow
+                            class="cms-content-model-fields__options"
+                            :label="tr('Options (one per line)', 'Opcoes (uma por linha)')"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <q-select
+                      v-model="authoredContentModelAllowedSectionSelections"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      multiple
+                      use-chips
+                      :options="cmsContentModelPresetOptions"
+                      :label="tr('Allowed section presets', 'Presets de secao permitidos')"
+                    />
+                    <div class="cms-form-grid__inline-actions">
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="clear_all"
+                        :label="tr('Clear allowed presets', 'Limpar presets permitidos')"
+                        @click="clearAuthoredContentModelAllowedPresets"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="select_all"
+                        :label="tr('Select all presets', 'Selecionar todos os presets')"
+                        @click="selectAllAuthoredContentModelAllowedPresets"
+                      />
+                    </div>
+                    <div class="cms-preset-toggle-grid">
+                      <q-btn
+                        v-for="option in cmsContentModelPresetOptions"
+                        :key="option.value"
+                        dense
+                        no-caps
+                        :flat="!isAuthoredContentModelAllowedPresetSelected(option.value)"
+                        :unelevated="isAuthoredContentModelAllowedPresetSelected(option.value)"
+                        :label="option.label"
+                        :style="isAuthoredContentModelAllowedPresetSelected(option.value) ? primaryActionStyle : undefined"
+                        class="cms-preset-toggle-grid__button"
+                        @click="toggleAuthoredContentModelAllowedPreset(option.value)"
+                      />
+                    </div>
+                    <q-select
+                      v-model="authoredContentModelRequiredSectionSelections"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      multiple
+                      use-chips
+                      :options="cmsContentModelRequiredPresetOptions"
+                      :label="tr('Required presets', 'Presets obrigatorios')"
+                    />
+                    <q-select
+                      v-model="authoredContentModelStarterSectionSelections"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      multiple
+                      use-chips
+                      :options="cmsContentModelStarterPresetOptions"
+                      :label="tr('Starter page scaffold', 'Scaffold inicial da pagina')"
+                    />
+                    <q-select
+                      v-model="authoredContentModelRecommendedSectionSelections"
+                      outlined
+                      dense
+                      emit-value
+                      map-options
+                      multiple
+                      use-chips
+                      :options="cmsContentModelRecommendedPresetOptions"
+                      :label="tr('Recommended presets', 'Presets recomendados')"
+                    />
+                    <q-input
+                      v-model="authoredContentModelMaxSectionsDraft"
+                      outlined
+                      dense
+                      type="number"
+                      min="1"
+                      :label="tr('Maximum enabled sections', 'Maximo de secoes habilitadas')"
+                      :hint="tr('Leave blank for unlimited sections.', 'Deixe em branco para permitir secoes ilimitadas.')"
+                    />
+                    <div class="cms-preset-limit-grid">
+                      <q-input
+                        v-for="option in cmsContentModelPresetLimitOptions"
+                        :key="`content-model-limit-${option.value}`"
+                        :model-value="getAuthoredContentModelPresetLimitDraft(option.value)"
+                        outlined
+                        dense
+                        type="number"
+                        min="1"
+                        :label="`${option.label} ${tr('max instances', 'maximo de instancias')}`"
+                        :hint="tr('Leave blank for unlimited repetitions.', 'Deixe em branco para repeticoes ilimitadas.')"
+                        @update:model-value="updateAuthoredContentModelPresetLimitDraft(option.value, $event)"
+                      />
+                    </div>
+                    <q-btn
+                      no-caps
+                      unelevated
+                      icon="save"
+                      :label="tr('Save content model', 'Salvar modelo de conteudo')"
+                      :style="primaryActionStyle"
+                      @click="saveCmsAuthoredContentModelDraft"
+                    />
+                    <q-btn
+                      flat
+                      no-caps
+                      icon="delete"
+                      :label="tr('Delete content model', 'Excluir modelo de conteudo')"
+                      :style="dangerActionStyle"
+                      :disable="!selectedAuthoredContentModel || getCmsAuthoredContentModelUsageCount(selectedAuthoredContentModel.id) > 0"
+                      @click="removeSelectedCmsAuthoredContentModel"
+                    />
+                  </div>
+                </div>
+
+                <div class="cms-config-section__example">
+                  <div class="cms-example-section cms-example-section--inline">
+                    <div class="cms-example-section__header">
+                      <strong>{{ tr('Content model example', 'Exemplo de modelo de conteudo') }}</strong>
+                      <small>{{ tr('Preview of authored metadata plus allowed, required and recommended section presets.', 'Preview dos metadados authored com presets de secao permitidos, obrigatorios e recomendados.') }}</small>
+                    </div>
+                    <div class="cms-preview-card cms-preview-card--content">
+                      <div class="cms-blocks-library__header">
+                        <strong>{{ authoredContentModelNameDraft || tr('Untitled content model', 'Modelo de conteudo sem titulo') }}</strong>
+                        <q-chip dense square :style="statusChipStyle">
+                          {{ selectedAuthoredContentModel ? getCmsAuthoredContentModelUsageCount(selectedAuthoredContentModel.id) : 0 }}
+                          {{ tr('uses', 'usos') }}
+                        </q-chip>
+                      </div>
+                      <p class="cms-preview-content-text">
+                        {{
+                          authoredContentModelDescriptionDraft
+                          || tr('Use authored content models to constrain page composition and simplify authoring.', 'Use modelos de conteudo authored para restringir a composicao das paginas e simplificar a autoria.')
+                        }}
+                      </p>
+                      <div class="cms-preview-content-tabs">
+                        <q-chip
+                          v-for="presetId in authoredContentModelAllowedSectionSelections"
+                          :key="`content-model-allowed-${presetId}`"
+                          dense
+                          square
+                          :style="statusChipStyle"
+                        >
+                          {{ getCmsSectionPresetLabel(presetId) }}
+                        </q-chip>
+                      </div>
+                      <div class="cms-preview-content-tabs">
+                        <q-chip
+                          v-for="field in authoredContentModelFieldDrafts"
+                          :key="`content-model-field-preview-${field.id || field.label || 'draft'}`"
+                          dense
+                          square
+                        >
+                          {{
+                            `${field.label || tr('Untitled field', 'Campo sem titulo')} · ${field.type}${field.repeatable ? '[]' : ''}`
+                          }}
+                        </q-chip>
+                      </div>
+                      <div class="cms-preview-content-status">
+                        <span>
+                          {{ tr('Starter scaffold', 'Scaffold inicial') }}:
+                          {{
+                            authoredContentModelStarterSectionSelections.length > 0
+                              ? authoredContentModelStarterSectionSelections.map(getCmsSectionPresetLabel).join(', ')
+                              : tr('None selected', 'Nenhum selecionado')
+                          }}
+                        </span>
+                        <span>
+                          {{ tr('Required presets', 'Presets obrigatorios') }}:
+                          {{
+                            authoredContentModelRequiredSectionSelections.length > 0
+                              ? authoredContentModelRequiredSectionSelections.map(getCmsSectionPresetLabel).join(', ')
+                              : tr('None selected', 'Nenhum selecionado')
+                          }}
+                        </span>
+                        <span>
+                          {{ tr('Recommended presets', 'Presets recomendados') }}:
+                          {{
+                            authoredContentModelRecommendedSectionSelections.length > 0
+                              ? authoredContentModelRecommendedSectionSelections.map(getCmsSectionPresetLabel).join(', ')
+                              : tr('None selected', 'Nenhum selecionado')
+                          }}
+                        </span>
+                        <span>
+                          {{ tr('Maximum enabled sections', 'Maximo de secoes habilitadas') }}:
+                          {{ authoredContentModelMaxSectionsDraft.trim().length > 0 ? authoredContentModelMaxSectionsDraft : tr('Unlimited', 'Ilimitado') }}
+                        </span>
+                        <span>
+                          {{ tr('Preset limits', 'Limites por preset') }}:
+                          {{ getAuthoredContentModelPresetLimitSummary() }}
+                        </span>
+                        <span>
+                          {{ tr('Default page title', 'Titulo padrao da pagina') }}:
+                          {{ authoredContentModelDefaultPageTitleDraft.trim().length > 0 ? authoredContentModelDefaultPageTitleDraft : tr('Uses model name', 'Usa o nome do modelo') }}
+                        </span>
+                        <span>
+                          {{ tr('Default page description', 'Descricao padrao da pagina') }}:
+                          {{ authoredContentModelDefaultPageDescriptionDraft.trim().length > 0 ? authoredContentModelDefaultPageDescriptionDraft : tr('Empty', 'Vazia') }}
+                        </span>
+                        <span>
+                          {{ tr('Default page path prefix', 'Prefixo padrao do caminho da pagina') }}:
+                          {{ authoredContentModelDefaultPagePathPrefixDraft.trim().length > 0 ? authoredContentModelDefaultPagePathPrefixDraft : tr('Auto', 'Automatico') }}
+                        </span>
+                        <span>
+                          {{ tr('Schema version', 'Versao do schema') }}:
+                          {{ selectedAuthoredContentModel ? (selectedAuthoredContentModel.schemaVersion ?? 1) : 1 }}
+                        </span>
+                        <span>
+                          {{ tr('Last schema change', 'Ultima mudanca de schema') }}:
+                          {{
+                            selectedAuthoredContentModel
+                              && getCmsContentModelLastSchemaChangeAt(selectedAuthoredContentModel.id, settings.authoredContentModels)
+                              ? new Date(getCmsContentModelLastSchemaChangeAt(selectedAuthoredContentModel.id, settings.authoredContentModels) ?? '').toLocaleString()
+                              : tr('Not versioned yet', 'Ainda nao versionado')
+                          }}
+                        </span>
+                        <span>
+                          {{ tr('Migration notes', 'Notas de migracao') }}:
+                          {{ authoredContentModelMigrationNotesDraft.trim().length > 0 ? authoredContentModelMigrationNotesDraft : tr('None', 'Nenhuma') }}
+                        </span>
+                        <span>
+                          {{ tr('Allowed presets', 'Presets permitidos') }}:
+                          {{ authoredContentModelAllowedSectionSelections.length }}
+                        </span>
+                        <span>
+                          {{ tr('Schema fields', 'Campos do schema') }}:
+                          {{ authoredContentModelFieldDrafts.length }}
+                        </span>
+                        <span>
+                          {{ tr('Schema fields', 'Campos do schema') }}:
+                          {{ authoredContentModelFieldDrafts.length }}
+                        </span>
+                        <span>
+                          {{ tr('Library size', 'Tamanho da biblioteca') }}:
+                          {{ cmsAuthoredContentModelLibrary.length }}
+                        </span>
+                        <span>
+                          {{ tr('Source', 'Origem') }}:
+                          {{ selectedAuthoredContentModel ? tr('Authored model', 'Modelo authored') : tr('New draft', 'Novo rascunho') }}
+                        </span>
+                      </div>
+                      <q-banner rounded class="cms-banner" :style="bannerStyle">
+                        {{
+                          selectedAuthoredContentModel
+                            ? (
+                              getCmsContentModelMigrationNotes(settings.content.locale, selectedAuthoredContentModel.id, settings.authoredContentModels)
+                              || getCmsContentModelDescription(settings.content.locale, selectedAuthoredContentModel.id, settings.authoredContentModels)
+                            )
+                            : tr('Save the draft to make it available in the Pages builder content model selector.', 'Salve o rascunho para disponibiliza-lo no seletor de modelos de conteudo do builder de paginas.')
+                        }}
+                      </q-banner>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </q-tab-panel>
           </q-tab-panels>
           </div>
@@ -774,8 +1262,20 @@
         <div v-else-if="isPagesModule" class="cms-pages">
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
-              <strong>Pages builder</strong>
-              <q-btn flat dense no-caps icon="add" label="Add page" @click="addCmsPage" />
+              <strong>{{ cmsUiText.pagesBuilderTitle }}</strong>
+              <div class="cms-pages__header-actions">
+                <q-select
+                  v-model="selectedPageTemplateId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsPageTemplateOptions"
+                  :label="tr('Page template', 'Template de pagina')"
+                  class="cms-pages__template-select"
+                />
+                <q-btn flat dense no-caps icon="add" :label="cmsUiText.addPageLabel" @click="addCmsPage" />
+              </div>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__editor">
@@ -785,9 +1285,25 @@
                 class="cms-page-item"
               >
                 <div class="cms-page-item__grid">
-                  <q-input v-model="page.id" outlined dense label="Page ID" @blur="normalizeCmsPageId(pageIndex)" />
-                  <q-input v-model="page.title" outlined dense label="Title" />
-                  <q-input v-model="page.path" outlined dense label="Path" @blur="normalizeCmsPagePath(pageIndex)" />
+                  <q-input v-model="page.id" outlined dense :label="tr('Page ID', 'ID da pagina')" @blur="normalizeCmsPageId(pageIndex)" />
+                  <q-select
+                    :model-value="page.contentModelId"
+                    outlined
+                    dense
+                    emit-value
+                    map-options
+                    :options="cmsContentModelOptions"
+                    :label="tr('Content model', 'Modelo de conteudo')"
+                    @update:model-value="updateCmsPageContentModel(pageIndex, $event)"
+                  />
+                  <q-input
+                    :model-value="getCmsPageTitleValue(page)"
+                    outlined
+                    dense
+                    :label="tr('Title', 'Titulo')"
+                    @update:model-value="updateCmsPageTitleValue(page, $event)"
+                  />
+                  <q-input v-model="page.path" outlined dense :label="tr('Path', 'Caminho')" @blur="normalizeCmsPagePath(pageIndex)" />
                   <q-select
                     v-model="page.status"
                     outlined
@@ -795,38 +1311,274 @@
                     emit-value
                     map-options
                     :options="pageStatusOptions"
-                    label="Status"
+                    :label="tr('Status', 'Status')"
                   />
                   <q-input
-                    v-model="page.description"
+                    :model-value="getCmsPageDescriptionValue(page)"
                     outlined
                     dense
                     type="textarea"
                     autogrow
-                    label="Description"
+                    :label="tr('Description', 'Descricao')"
                     class="cms-page-item__description"
+                    @update:model-value="updateCmsPageDescriptionValue(page, $event)"
                   />
+                </div>
+
+                <div
+                  v-if="getCmsPageContentModelFields(page).length > 0"
+                  class="cms-page-item__custom-fields"
+                >
+                  <div class="cms-page-item__custom-fields-header">
+                    <strong>{{ tr('Schema fields', 'Campos do schema') }}</strong>
+                    <small>
+                      {{
+                        tr(
+                          'Page-level values driven by the selected content model.',
+                          'Valores em nivel de pagina guiados pelo modelo de conteudo selecionado.'
+                        )
+                      }}
+                    </small>
+                  </div>
+                  <div class="cms-page-item__custom-fields-grid">
+                    <template
+                      v-for="field in getCmsPageContentModelFields(page)"
+                      :key="`page-field-${page.id}-${field.id}`"
+                    >
+                      <q-select
+                        v-if="field.repeatable && field.type === 'select'"
+                        :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
+                        outlined
+                        dense
+                        multiple
+                        use-chips
+                        emit-value
+                        map-options
+                        :options="field.options"
+                        option-label="label"
+                        option-value="value"
+                        :label="field.label"
+                        :hint="getCmsContentModelFieldHint(field)"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                      <q-input
+                        v-else-if="field.repeatable"
+                        :model-value="formatCmsRepeatableFieldValue(getCmsPageCustomFieldValue(page, field))"
+                        outlined
+                        dense
+                        type="textarea"
+                        autogrow
+                        :label="field.label"
+                        :hint="getCmsContentModelFieldHint(field)"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                      <q-input
+                        v-else-if="field.type === 'text'"
+                        :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                        outlined
+                        dense
+                        :label="field.label"
+                        :hint="getCmsContentModelFieldHint(field)"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                      <q-input
+                        v-else-if="field.type === 'textarea'"
+                        :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                        outlined
+                        dense
+                        type="textarea"
+                        autogrow
+                        :label="field.label"
+                        :hint="getCmsContentModelFieldHint(field)"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                      <q-input
+                        v-else-if="field.type === 'number'"
+                        :model-value="getCmsPageCustomFieldValue(page, field) == null ? '' : String(getCmsPageCustomFieldValue(page, field))"
+                        outlined
+                        dense
+                        type="number"
+                        :label="field.label"
+                        :hint="getCmsContentModelFieldHint(field)"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                      <q-toggle
+                        v-else-if="field.type === 'toggle'"
+                        :model-value="Boolean(getCmsPageCustomFieldValue(page, field))"
+                        :label="field.label"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                      <q-select
+                        v-else
+                        :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="field.options"
+                        option-label="label"
+                        option-value="value"
+                        :label="field.label"
+                        :hint="getCmsContentModelFieldHint(field)"
+                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                      />
+                    </template>
+                  </div>
                 </div>
 
                 <div class="cms-page-item__sections">
                   <div class="cms-page-item__sections-header">
-                    <strong>Sections</strong>
-                    <q-btn flat dense no-caps icon="add" label="Add section" @click="addCmsPageSection(pageIndex)" />
+                    <strong>{{ tr('Sections', 'Secoes') }}</strong>
+                    <div class="cms-page-item__sections-actions">
+                      <q-select
+                        :model-value="getSelectedSectionPresetForPage(pageIndex)"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="getCmsSectionPresetOptions(page)"
+                        :label="tr('Section preset', 'Preset de secao')"
+                        class="cms-page-item__section-preset-select"
+                        @update:model-value="setSelectedSectionPresetForPage(pageIndex, $event)"
+                      />
+                      <q-select
+                        :model-value="getSelectedSectionStarterPresetForPage(pageIndex)"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="getCmsSectionStarterPresetOptions(pageIndex)"
+                        :label="tr('Starter preset', 'Preset inicial')"
+                        class="cms-page-item__section-preset-select"
+                        @update:model-value="setSelectedSectionStarterPresetForPage(pageIndex, $event)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="add"
+                        :label="tr('Add section', 'Adicionar secao')"
+                        :disable="isCmsPageSectionAddBlocked(pageIndex)"
+                        @click="addCmsPageSection(pageIndex)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="view_stream"
+                        :label="tr('Apply model scaffold', 'Aplicar scaffold do modelo')"
+                        @click="applyCmsPageContentModelStarterSections(pageIndex)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="drive_file_rename_outline"
+                        :label="tr('Apply model defaults', 'Aplicar defaults do modelo')"
+                        @click="applyCmsPageContentModelDefaults(pageIndex)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="sync"
+                        :label="tr('Sync schema version', 'Sincronizar versao do schema')"
+                        @click="syncCmsPageContentModelVersion(pageIndex)"
+                      />
+                      <q-select
+                        :model-value="getSelectedReusableSectionForPage(pageIndex)"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="getCmsReusableSectionOptions(page)"
+                        :label="tr('Reusable section', 'Secao reutilizavel')"
+                        class="cms-page-item__section-preset-select"
+                        @update:model-value="setSelectedReusableSectionForPage(pageIndex, $event)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="library_add"
+                        :label="tr('Insert reusable', 'Inserir reutilizavel')"
+                        :disable="getCmsReusableSectionOptions(page).length === 0"
+                        @click="insertSelectedReusableSection(pageIndex)"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    v-if="getCmsSectionStarterPresetVariants(pageIndex).length > 0"
+                    class="cms-page-item__starter-variants"
+                  >
+                    <button
+                      v-for="variant in getCmsSectionStarterPresetVariants(pageIndex)"
+                      :key="`${page.id}-${variant.value}`"
+                      type="button"
+                      class="cms-page-item__starter-card"
+                      :class="{ 'cms-page-item__starter-card--active': isCmsSectionStarterPresetSelected(pageIndex, variant.value) }"
+                      :aria-label="`${variant.label}: ${variant.description}`"
+                      @click="setSelectedSectionStarterPresetForPage(pageIndex, variant.value)"
+                    >
+                      <div class="cms-page-item__starter-card-header">
+                        <strong>{{ variant.label }}</strong>
+                        <q-chip
+                          dense
+                          square
+                          :style="isCmsSectionStarterPresetSelected(pageIndex, variant.value) ? primaryActionStyle : statusChipStyle"
+                        >
+                          {{ getCmsStarterPresetSourceLabel(variant) }}
+                        </q-chip>
+                      </div>
+                      <small>{{ variant.description }}</small>
+                    </button>
                   </div>
                   <div
                     v-for="(section, sectionIndex) in page.sections"
                     :key="`${page.id}-${section.id}-${sectionIndex}`"
                     class="cms-page-section-row"
+                    :class="{
+                      'cms-page-section-row--dragging': draggedPageSection?.pageId === page.id && draggedPageSection?.sectionId === section.id,
+                      'cms-page-section-row--drop-target': pageSectionDropTargetKey === section.id,
+                    }"
+                    draggable="true"
+                    @dragstart="onCmsPageSectionDragStart(page.id, section.id, $event)"
+                    @dragend="onCmsPageSectionDragEnd"
+                    @dragover="onCmsPageSectionDragOver(page.id, section.id, $event)"
+                    @drop="onCmsPageSectionDrop(pageIndex, section.id, sectionIndex, $event)"
                   >
-                    <q-input v-model="section.id" outlined dense label="Section ID" />
-                    <q-input v-model="section.label" outlined dense label="Section label" />
-                    <q-toggle v-model="section.enabled" label="Enabled" />
+                    <q-input v-model="section.id" outlined dense :label="tr('Section ID', 'ID da secao')" />
+                    <q-input :model-value="getCmsSectionPresetLabel(section.presetId)" outlined dense readonly :label="tr('Preset', 'Preset')" />
+                    <q-input
+                      :model-value="getCmsSectionLabelValue(section)"
+                      outlined
+                      dense
+                      :label="tr('Section label', 'Label da secao')"
+                      @update:model-value="updateCmsSectionLabelValue(section, $event)"
+                    />
+                    <q-toggle v-model="section.enabled" :label="tr('Enabled', 'Ativado')" />
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      icon="content_copy"
+                      :label="tr('Duplicate', 'Duplicar')"
+                      @click="duplicateCmsPageSection(pageIndex, sectionIndex)"
+                    />
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      icon="bookmark_add"
+                      :label="tr('Save reusable', 'Salvar reutilizavel')"
+                      @click="saveCmsPageSectionAsReusable(pageIndex, sectionIndex)"
+                    />
                     <q-btn
                       flat
                       dense
                       no-caps
                       icon="widgets"
-                      label="Open blocks"
+                      :label="tr('Open blocks', 'Abrir blocos')"
                       @click="openPageInBlocksEditor(page.id, section.id)"
                     />
                     <q-btn
@@ -846,7 +1598,7 @@
                     dense
                     no-caps
                     icon="widgets"
-                    label="Open blocks"
+                    :label="tr('Open blocks', 'Abrir blocos')"
                     @click="openPageInBlocksEditor(page.id)"
                   />
                   <q-btn
@@ -854,11 +1606,46 @@
                     dense
                     no-caps
                     icon="delete"
-                    label="Delete page"
+                    :label="tr('Delete page', 'Excluir pagina')"
                     :style="dangerActionStyle"
                     :disable="settings.pages.length <= 1"
                     @click="removeCmsPage(pageIndex)"
                   />
+                </div>
+              </div>
+
+              <div class="cms-pages__reusable-library">
+                <div class="cms-shell-card__header">
+                  <strong>{{ tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis') }}</strong>
+                  <q-chip dense square :style="statusChipStyle">{{ settings.reusableSections.length }}</q-chip>
+                </div>
+                <q-separator />
+                <div class="cms-pages__reusable-list">
+                  <div v-if="settings.reusableSections.length === 0" class="cms-block-item__empty">
+                    {{ tr('No reusable sections saved yet.', 'Nenhuma secao reutilizavel salva ainda.') }}
+                  </div>
+                  <article
+                    v-for="reusableSection in settings.reusableSections"
+                    :key="reusableSection.id"
+                    class="cms-reusable-block-row"
+                  >
+                    <div class="cms-reusable-block-row__meta">
+                      <strong>{{ reusableSection.name }}</strong>
+                      <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
+                      <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
+                      <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
+                    </div>
+                    <div class="cms-reusable-block-row__actions">
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="delete"
+                        :style="dangerActionStyle"
+                        @click="removeReusableSection(reusableSection.id)"
+                      />
+                    </div>
+                  </article>
                 </div>
               </div>
             </div>
@@ -866,23 +1653,52 @@
 
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
-              <strong>Pages preview</strong>
+              <strong>{{ tr('Pages preview', 'Preview de paginas') }}</strong>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__preview">
               <article
-                v-for="page in settings.pages"
+                v-for="(page, pageIndex) in settings.pages"
                 :key="`preview-${page.id}`"
                 class="cms-page-preview"
               >
                 <div class="cms-page-preview__header">
-                  <strong>{{ page.title }}</strong>
-                  <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
-                    {{ page.status }}
-                  </q-chip>
+                  <strong>{{ getCmsPageTitleValue(page) }}</strong>
+                  <div class="cms-page-preview__chips">
+                    <q-chip dense square :style="statusChipStyle">
+                      {{ getCmsContentModelLabel(settings.content.locale, page.contentModelId, settings.authoredContentModels) }}
+                    </q-chip>
+                    <q-chip dense square :style="statusChipStyle">
+                      {{
+                        `schema v${page.contentModelVersion ?? '?'} / v${getCmsPageCurrentSchemaVersion(page)}`
+                      }}
+                    </q-chip>
+                    <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
+                      {{ page.status }}
+                    </q-chip>
+                  </div>
                 </div>
                 <small class="cms-page-preview__path">{{ page.path }}</small>
-                <p>{{ page.description || 'No description provided.' }}</p>
+                <p>{{ getCmsPageDescriptionValue(page) || tr('No description provided.', 'Nenhuma descricao informada.') }}</p>
+                <div v-if="getCmsPageDiagnostics(page.id, pageIndex).length > 0" class="cms-diagnostics-list">
+                  <div class="cms-diagnostics-list__header">
+                    <strong>{{ tr('Content diagnostics', 'Diagnosticos de conteudo') }}</strong>
+                    <q-chip dense square :style="statusChipStyle">{{ getCmsPageDiagnostics(page.id, pageIndex).length }}</q-chip>
+                  </div>
+                  <article
+                    v-for="diagnostic in getCmsPageDiagnostics(page.id, pageIndex)"
+                    :key="diagnostic.id"
+                    class="cms-diagnostics-item"
+                  >
+                    <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
+                      {{ diagnostic.severity }}
+                    </q-chip>
+                    <div class="cms-diagnostics-item__body">
+                      <strong>{{ diagnostic.code }}</strong>
+                      <small>{{ diagnostic.message }}</small>
+                    </div>
+                  </article>
+                </div>
                 <div class="cms-page-preview__sections">
                   <q-chip
                     v-for="section in page.sections"
@@ -902,7 +1718,7 @@
         <div v-else-if="isBlocksModule" class="cms-shell-page__grid">
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
-              <strong>Blocks manager</strong>
+              <strong>{{ cmsUiText.blocksManagerTitle }}</strong>
               <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} blocks</q-chip>
             </div>
             <q-separator />
@@ -915,7 +1731,7 @@
                   emit-value
                   map-options
                   :options="blocksPageOptions"
-                  label="Target page"
+                  :label="tr('Target page', 'Pagina alvo')"
                 />
                 <q-select
                   v-model="activeBlocksSectionId"
@@ -924,7 +1740,7 @@
                   emit-value
                   map-options
                   :options="blocksSectionOptions"
-                  label="Target section"
+                  :label="tr('Target section', 'Secao alvo')"
                 />
                 <q-select
                   v-model="activeBlocksBlockId"
@@ -933,7 +1749,7 @@
                   emit-value
                   map-options
                   :options="activeBlocksBlockOptions"
-                  label="Target block"
+                  :label="tr('Target block', 'Bloco alvo')"
                 />
                 <q-select
                   v-model="selectedPaletteBlockType"
@@ -942,17 +1758,224 @@
                   emit-value
                   map-options
                   :options="cmsBlockPaletteOptions"
-                  label="Palette block"
+                  :label="tr('Palette block', 'Bloco da paleta')"
+                />
+                <q-select
+                  v-model="selectedPaletteBlockPresetId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsBlockPresetOptions"
+                  option-label="label"
+                  option-value="value"
+                  :label="tr('Block preset', 'Preset de bloco')"
                 />
                 <q-btn
                   no-caps
                   unelevated
                   icon="add"
-                  label="Add block"
+                  :label="tr('Add block', 'Adicionar bloco')"
                   :style="primaryActionStyle"
-                  :disable="!activeBlocksSectionId || !selectedPaletteBlockType"
+                  :disable="!canAddPaletteBlockToActiveSection"
                   @click="addCmsBuilderBlockFromPalette"
                 />
+              </div>
+              <p v-if="activeBlocksSectionContractSummary" class="cms-config-caption cms-blocks-toolbar__hint">
+                {{ activeBlocksSectionContractSummary }}
+              </p>
+
+              <div class="cms-form-grid cms-blocks-reusable-toolbar">
+                <q-input
+                  v-model="reusableBlockNameDraft"
+                  outlined
+                  dense
+                  :label="tr('Reusable block name', 'Nome do bloco reutilizavel')"
+                  :placeholder="activeBlocksSelectedBlockRecord ? resolveCmsBlockDisplayName(activeBlocksSelectedBlockRecord.type) : tr('Select a block first', 'Selecione um bloco primeiro')"
+                />
+                <q-input
+                  v-model="reusableBlockDescriptionDraft"
+                  outlined
+                  dense
+                  :label="tr('Reusable description', 'Descricao reutilizavel')"
+                  :placeholder="tr('Optional description for your library item', 'Descricao opcional para o item da biblioteca')"
+                />
+                <q-select
+                  v-model="selectedReusableBlockId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsReusableBlockOptions"
+                  :label="tr('Reusable library', 'Biblioteca reutilizavel')"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="library_add"
+                  :label="tr('Save selection', 'Salvar selecao')"
+                  :disable="!activeBlocksSelectedBlockRecord"
+                  @click="saveSelectedBlockAsReusable"
+                />
+                <q-btn
+                  no-caps
+                  unelevated
+                  icon="content_paste"
+                  :label="tr('Insert reusable', 'Inserir reutilizavel')"
+                  :style="primaryActionStyle"
+                  :disable="!selectedReusableBlockId || !activeBlocksSectionId"
+                  @click="insertSelectedReusableBlock"
+                />
+              </div>
+
+              <div class="cms-form-grid cms-blocks-reusable-toolbar">
+                <q-input
+                  v-model="authoredBlockPresetNameDraft"
+                  outlined
+                  dense
+                  :label="tr('Preset name', 'Nome do preset')"
+                  :placeholder="tr('Use the selected block or reusable item as source', 'Use o bloco selecionado ou item reutilizavel como origem')"
+                />
+                <q-input
+                  v-model="authoredBlockPresetDescriptionDraft"
+                  outlined
+                  dense
+                  :label="tr('Preset description', 'Descricao do preset')"
+                  :placeholder="tr('Optional preset description', 'Descricao opcional do preset')"
+                />
+                <q-select
+                  v-model="selectedAuthoredBlockPresetId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsAuthoredBlockPresetOptions"
+                  :label="tr('Preset library', 'Biblioteca de presets')"
+                />
+                <q-select
+                  v-model="authoredPresetStarterSectionSelections"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  multiple
+                  use-chips
+                  :options="cmsPresetStarterSectionOptions"
+                  :label="tr('Starter sections', 'Secoes iniciais')"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="style"
+                  :label="tr('Save as preset', 'Salvar como preset')"
+                  :disable="!activeBlocksSelectedBlockRecord && !selectedReusableBlockId"
+                  @click="saveCmsPresetFromCurrentSelection"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="save"
+                  :label="tr('Update preset', 'Atualizar preset')"
+                  :disable="selectedAuthoredBlockPresetId === 'custom'"
+                  @click="updateSelectedCmsPreset"
+                />
+                <q-btn
+                  no-caps
+                  unelevated
+                  icon="auto_fix_high"
+                  :label="tr('Apply preset', 'Aplicar preset')"
+                  :style="primaryActionStyle"
+                  :disable="selectedAuthoredBlockPresetId === 'custom' || !activeBlocksSelectedBlockRecord"
+                  @click="applySelectedCmsPresetToBlock"
+                />
+              </div>
+
+              <div class="cms-blocks-library">
+                <div class="cms-blocks-library__header">
+                  <strong>{{ tr('Reusable block library', 'Biblioteca de blocos reutilizaveis') }}</strong>
+                  <q-chip dense square :style="statusChipStyle">{{ settings.reusableBlocks.length }}</q-chip>
+                </div>
+
+                <div v-if="settings.reusableBlocks.length === 0" class="cms-block-item__empty">
+                  {{ tr('No reusable blocks saved yet.', 'Nenhum bloco reutilizavel salvo ainda.') }}
+                </div>
+
+                <div
+                  v-for="reusableBlock in settings.reusableBlocks"
+                  :key="reusableBlock.id"
+                  class="cms-reusable-block-row"
+                  :class="{ 'cms-reusable-block-row--active': reusableBlock.id === selectedReusableBlockId }"
+                >
+                  <div class="cms-reusable-block-row__meta">
+                    <strong>{{ reusableBlock.name }}</strong>
+                    <small>{{ resolveCmsBlockDisplayName(reusableBlock.type) }} · {{ reusableBlock.category }}</small>
+                    <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
+                  </div>
+                  <div class="cms-reusable-block-row__actions">
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      icon="ads_click"
+                      :label="tr('Use', 'Usar')"
+                      @click="selectedReusableBlockId = reusableBlock.id"
+                    />
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      icon="delete"
+                      :style="dangerActionStyle"
+                      @click="removeReusableBlock(reusableBlock.id)"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="cms-blocks-library">
+                <div class="cms-blocks-library__header">
+                  <strong>{{ tr('Authored preset library', 'Biblioteca de presets authored') }}</strong>
+                  <q-chip dense square :style="statusChipStyle">{{ settings.authoredBlockPresets.length }}</q-chip>
+                </div>
+
+                <div v-if="settings.authoredBlockPresets.length === 0" class="cms-block-item__empty">
+                  {{ tr('No authored presets saved yet.', 'Nenhum preset authored salvo ainda.') }}
+                </div>
+
+                <div
+                  v-for="preset in settings.authoredBlockPresets"
+                  :key="preset.id"
+                  class="cms-reusable-block-row"
+                  :class="{ 'cms-reusable-block-row--active': preset.id === selectedAuthoredBlockPresetId }"
+                >
+                  <div class="cms-reusable-block-row__meta">
+                    <strong>{{ getCmsAuthoredBlockPresetNameValue(preset) }}</strong>
+                    <small>{{ resolveCmsBlockDisplayName(preset.type) }} · {{ preset.category }}</small>
+                    <small>{{ getCmsAuthoredPresetStarterSectionsLabel(preset) }}</small>
+                    <small v-if="getCmsAuthoredBlockPresetDescriptionValue(preset)">{{ getCmsAuthoredBlockPresetDescriptionValue(preset) }}</small>
+                  </div>
+                  <div class="cms-reusable-block-row__actions">
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      icon="ads_click"
+                      :label="tr('Use', 'Usar')"
+                      @click="selectCmsAuthoredPreset(preset.id)"
+                    />
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      icon="delete"
+                      :style="dangerActionStyle"
+                      @click="removeCmsAuthoredPreset(preset.id)"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div class="cms-blocks-list">
@@ -960,21 +1983,32 @@
                   v-for="section in activeBlocksSections"
                   :key="section.id"
                   class="cms-block-item"
+                  :class="{ 'cms-block-item--drop-target': blockDropTargetKey === section.id }"
+                  @dragover="onCmsBuilderBlockDragOver(section.id, $event)"
+                  @drop="onCmsBuilderSectionDrop(section.id, section.blocks.length, $event)"
                 >
                   <div class="cms-block-item__meta">
                     <strong>{{ section.label }}</strong>
-                    <small>{{ section.blocks.length }} blocks</small>
+                    <small>{{ tr(`${section.blocks.length} blocks`, `${section.blocks.length} blocos`) }}</small>
                   </div>
 
                   <div v-if="section.blocks.length === 0" class="cms-block-item__empty">
-                    No blocks in this section yet.
+                    {{ tr('No blocks in this section yet.', 'Ainda nao existem blocos nesta secao.') }}
                   </div>
 
                   <div
                     v-for="block in section.blocks"
                     :key="`${section.id}-${block.id}`"
                     class="cms-block-row"
-                    :class="{ 'cms-block-row--active': block.id === activeBlocksBlockId }"
+                    :class="{
+                      'cms-block-row--active': block.id === activeBlocksBlockId,
+                      'cms-block-row--dragging': draggedBlock?.pageId === block.pageId && draggedBlock?.sectionId === block.sectionId && draggedBlock?.blockId === block.id,
+                    }"
+                    draggable="true"
+                    @dragstart="onCmsBuilderBlockDragStart(block, $event)"
+                    @dragend="onCmsBuilderBlockDragEnd"
+                    @dragover.stop="onCmsBuilderBlockDragOver(block.sectionId, $event)"
+                    @drop.stop="onCmsBuilderBlockDrop(block, $event)"
                   >
                     <div class="cms-block-row__meta">
                       <q-chip dense square :style="getCmsPageSectionStyle(block.enabled)">
@@ -989,12 +2023,12 @@
                         dense
                         no-caps
                         icon="ads_click"
-                        label="Select"
+                        :label="tr('Select', 'Selecionar')"
                         @click="setActiveBlocksSelection(block.sectionId, block.id)"
                       />
                       <q-toggle
                         :model-value="block.enabled"
-                        label="Enabled"
+                        :label="tr('Enabled', 'Ativado')"
                         @update:model-value="updateCmsBuilderBlockEnabled(block, $event)"
                       />
                       <q-btn
@@ -1030,32 +2064,76 @@
 
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
-              <strong>Blocks preview</strong>
+              <strong>{{ tr('Blocks preview', 'Preview de blocos') }}</strong>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-blocks__preview">
               <div class="cms-blocks-summary-grid">
                 <div class="cms-blocks-summary-card">
-                  <span>Total pages</span>
+                  <span>{{ tr('Total pages', 'Total de paginas') }}</span>
                   <strong>{{ settings.pages.length }}</strong>
                 </div>
                 <div class="cms-blocks-summary-card">
-                  <span>Published pages</span>
+                  <span>{{ tr('Published pages', 'Paginas publicadas') }}</span>
                   <strong>{{ cmsPublishedPagesCount }}</strong>
                 </div>
                 <div class="cms-blocks-summary-card">
-                  <span>Enabled blocks</span>
+                  <span>{{ tr('Enabled sections', 'Secoes ativadas') }}</span>
                   <strong>{{ cmsEnabledSectionsCount }}</strong>
                 </div>
+                <div class="cms-blocks-summary-card">
+                  <span>{{ tr('Enabled blocks', 'Blocos ativados') }}</span>
+                  <strong>{{ cmsEnabledBlocksCount }}</strong>
+                </div>
+              </div>
+
+              <div v-if="activeBlocksContentDiagnostics.length > 0" class="cms-diagnostics-list">
+                <div class="cms-diagnostics-list__header">
+                  <strong>{{ tr('Content diagnostics', 'Diagnosticos de conteudo') }}</strong>
+                  <q-chip dense square :style="statusChipStyle">{{ activeBlocksContentDiagnostics.length }}</q-chip>
+                </div>
+                <article
+                  v-for="diagnostic in activeBlocksContentDiagnostics"
+                  :key="diagnostic.id"
+                  class="cms-diagnostics-item"
+                >
+                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
+                    {{ diagnostic.severity }}
+                  </q-chip>
+                  <div class="cms-diagnostics-item__body">
+                    <strong>{{ diagnostic.code }}</strong>
+                    <small>{{ diagnostic.message }}</small>
+                  </div>
+                </article>
+              </div>
+
+              <div v-if="activeBlocksMediaDiagnostics.length > 0" class="cms-diagnostics-list">
+                <div class="cms-diagnostics-list__header">
+                  <strong>{{ tr('Media diagnostics', 'Diagnosticos de midia') }}</strong>
+                  <q-chip dense square :style="statusChipStyle">{{ activeBlocksMediaDiagnostics.length }}</q-chip>
+                </div>
+                <article
+                  v-for="diagnostic in activeBlocksMediaDiagnostics"
+                  :key="diagnostic.id"
+                  class="cms-diagnostics-item"
+                >
+                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
+                    {{ diagnostic.severity }}
+                  </q-chip>
+                  <div class="cms-diagnostics-item__body">
+                    <strong>{{ diagnostic.code }}</strong>
+                    <small>{{ diagnostic.message }}</small>
+                  </div>
+                </article>
               </div>
 
               <div class="cms-blocks-props">
                 <div class="cms-blocks-props__header">
-                  <strong>Selected block props</strong>
+                  <strong>{{ tr('Selected block props', 'Props do bloco selecionado') }}</strong>
                   <small v-if="activeBlocksSelectedBlockRecord">
-                    {{ resolveCmsBlockDisplayName(activeBlocksSelectedBlockRecord.type) }} · {{ activeBlocksSelectedBlockRecord.id }}
+                    {{ resolveCmsBlockDisplayName(activeBlocksSelectedBlockRecord.type) }} · {{ getCmsBlockPresetLabel(settings.content.locale, activeBlocksSelectedBlockRecord.presetId, settings.authoredBlockPresets) }} · {{ activeBlocksSelectedBlockRecord.id }} · {{ getActiveCmsAuthoringLocale() }}
                   </small>
-                  <small v-else>No block selected</small>
+                  <small v-else>{{ tr('No block selected', 'Nenhum bloco selecionado') }}</small>
                 </div>
                 <div
                   v-if="activeBlocksSelectedBlock && activeBlocksFieldDefinitions.length > 0"
@@ -1070,6 +2148,18 @@
                       v-if="field.type === 'toggle'"
                       :model-value="Boolean(getActiveBlocksFieldModelValue(field))"
                       :label="field.label"
+                      @update:model-value="updateActiveBlocksFieldValue(field, $event)"
+                    />
+                    <q-select
+                      v-else-if="field.type === 'media-asset'"
+                      :model-value="String(getActiveBlocksFieldModelValue(field) ?? '') || null"
+                      outlined
+                      dense
+                      clearable
+                      emit-value
+                      map-options
+                      :label="field.label"
+                      :options="getActiveBlocksMediaFieldOptions(field)"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
                     <q-select
@@ -1122,7 +2212,7 @@
                         dense
                         no-caps
                         icon="save"
-                        label="Apply field JSON"
+                        :label="tr('Apply field JSON', 'Aplicar JSON do campo')"
                         @click="applyActiveBlocksJsonFieldValue(field)"
                       />
                     </div>
@@ -1144,7 +2234,7 @@
                   dense
                   type="textarea"
                   autogrow
-                  label="Block props JSON"
+                  :label="tr('Block props JSON', 'JSON de props do bloco')"
                   :disable="!activeBlocksSelectedBlock"
                 />
                 <div class="cms-blocks-props__actions">
@@ -1153,7 +2243,7 @@
                     dense
                     no-caps
                     icon="format_align_left"
-                    label="Format JSON"
+                    :label="tr('Format JSON', 'Formatar JSON')"
                     :disable="!activeBlocksSelectedBlock"
                     @click="formatSelectedBlockPropsDraft"
                   />
@@ -1161,7 +2251,7 @@
                     no-caps
                     unelevated
                     icon="save"
-                    label="Apply props"
+                    :label="tr('Apply props', 'Aplicar props')"
                     :style="primaryActionStyle"
                     :disable="!activeBlocksSelectedBlock"
                     @click="applySelectedBlockPropsDraft"
@@ -1174,8 +2264,9 @@
                   v-if="activeBlocksSchema"
                   :page="activeBlocksSchema"
                   :registry="landingRegistry"
+                  :render-context="activeBlocksRenderContext"
                 />
-                <p v-else>No page selected for preview.</p>
+                <p v-else>{{ tr('No page selected for preview.', 'Nenhuma pagina selecionada para preview.') }}</p>
               </div>
             </div>
           </q-card>
@@ -1184,47 +2275,382 @@
         <div v-else-if="isMediaModule" class="cms-shell-page__grid">
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
-              <strong>Media settings</strong>
+              <strong>{{ cmsUiText.mediaSettingsTitle }}</strong>
+              <q-chip dense square :style="statusChipStyle">{{ settings.mediaAssets.length }}</q-chip>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-media__editor">
               <div class="cms-form-grid">
-                <q-input v-model="settings.branding.brandLogo" outlined dense label="Brand logo URL" />
-                <q-input v-model="settings.branding.faviconUrl" outlined dense label="Favicon URL" />
-                <q-input v-model="settings.branding.userAvatar" outlined dense label="User avatar URL" />
-                <q-input v-model="settings.branding.brandLogoAlt" outlined dense label="Brand logo alt text" />
+                <q-select
+                  v-model="selectedMediaAssetId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsMediaAssetOptions"
+                  :label="tr('Media library asset', 'Asset da biblioteca de midia')"
+                  :hint="tr('Select an asset to edit it or start a blank draft.', 'Selecione um asset para editar ou inicie um rascunho em branco.')"
+                />
+                <q-select
+                  v-model="mediaAssetDraft.kind"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsMediaAssetKindOptions"
+                  :label="tr('Asset kind', 'Tipo do asset')"
+                />
+                <q-input v-model="mediaAssetDraft.name" outlined dense :label="tr('Asset name', 'Nome do asset')" />
+                <q-input v-model="mediaAssetDraft.alt" outlined dense :label="tr('Asset alt text', 'Texto alternativo do asset')" />
+                <q-input v-model="mediaAssetDraft.url" outlined dense :label="tr('Asset URL', 'URL do asset')" />
+                <q-input v-model="mediaAssetDraft.tags" outlined dense :label="tr('Tags (comma separated)', 'Tags (separadas por virgula)')" />
+                <q-input v-model="mediaAssetDraft.usage" outlined dense :label="tr('Usage tags (comma separated)', 'Tags de uso (separadas por virgula)')" />
+                <q-input v-model="mediaAssetDraft.description" outlined dense type="textarea" autogrow :label="tr('Asset description', 'Descricao do asset')" />
+              </div>
+
+              <div class="cms-media__actions">
+                <q-btn flat no-caps icon="add_photo_alternate" :label="tr('New asset', 'Novo asset')" @click="createNewMediaAssetDraft" />
+                <q-btn no-caps unelevated icon="save" :label="tr('Save asset', 'Salvar asset')" :style="primaryActionStyle" @click="saveMediaAssetDraft" />
+                <q-btn flat no-caps icon="delete" :label="tr('Delete asset', 'Excluir asset')" :disable="!selectedMediaAssetId" :style="dangerActionStyle" @click="removeSelectedMediaAsset" />
+              </div>
+
+              <div class="cms-media__actions cms-media__actions--secondary">
+                <q-btn flat dense no-caps icon="branding_watermark" :label="tr('Apply as brand logo', 'Aplicar como logo da marca')" :disable="!selectedMediaAssetId" @click="applySelectedMediaAssetToBranding('brandLogo')" />
+                <q-btn flat dense no-caps icon="web" :label="tr('Apply as favicon', 'Aplicar como favicon')" :disable="!selectedMediaAssetId" @click="applySelectedMediaAssetToBranding('faviconUrl')" />
+                <q-btn flat dense no-caps icon="account_circle" :label="tr('Apply as user avatar', 'Aplicar como avatar do usuario')" :disable="!selectedMediaAssetId" @click="applySelectedMediaAssetToBranding('userAvatar')" />
               </div>
               <q-banner rounded class="cms-banner" :style="bannerStyle">
-                Media values are tenant-scoped and update shell branding immediately.
+                {{ tr('Media references are tenant-scoped and remain backend-agnostic. Apply any saved asset to branding slots immediately.', 'Referencias de midia sao por tenant e continuam desacopladas de backend. Aplique qualquer asset salvo nos slots de branding imediatamente.') }}
               </q-banner>
             </div>
           </q-card>
 
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
-              <strong>Media preview</strong>
+              <strong>{{ tr('Media preview', 'Preview de midia') }}</strong>
+              <q-chip v-if="cmsMediaDiagnostics.length > 0" dense square :style="getCmsDiagnosticStyle('warning')">
+                {{ cmsMediaDiagnostics.length }} {{ tr('diagnostics', 'diagnosticos') }}
+              </q-chip>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-media__preview">
+              <div v-if="cmsMediaDiagnostics.length > 0" class="cms-diagnostics-list">
+                <div class="cms-diagnostics-list__header">
+                  <strong>{{ tr('Library diagnostics', 'Diagnosticos da biblioteca') }}</strong>
+                </div>
+                <article
+                  v-for="diagnostic in cmsMediaDiagnostics"
+                  :key="diagnostic.id"
+                  class="cms-diagnostics-item"
+                >
+                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
+                    {{ diagnostic.severity }}
+                  </q-chip>
+                  <div class="cms-diagnostics-item__body">
+                    <strong>{{ diagnostic.code }}</strong>
+                    <small>{{ diagnostic.message }}</small>
+                  </div>
+                </article>
+              </div>
+              <div v-if="selectedMediaAssetDiagnostics.length > 0" class="cms-diagnostics-list">
+                <div class="cms-diagnostics-list__header">
+                  <strong>{{ tr('Selected asset diagnostics', 'Diagnosticos do asset selecionado') }}</strong>
+                </div>
+                <article
+                  v-for="diagnostic in selectedMediaAssetDiagnostics"
+                  :key="diagnostic.id"
+                  class="cms-diagnostics-item"
+                >
+                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
+                    {{ diagnostic.severity }}
+                  </q-chip>
+                  <div class="cms-diagnostics-item__body">
+                    <strong>{{ diagnostic.code }}</strong>
+                    <small>{{ diagnostic.message }}</small>
+                  </div>
+                </article>
+              </div>
+              <article
+                v-for="binding in cmsBrandingMediaBindings"
+                :key="binding.id"
+                class="cms-media-preview-item cms-media-preview-item--binding"
+              >
+                <div class="cms-media-preview-item__meta">
+                  <strong>{{ binding.label }}</strong>
+                  <small>{{ binding.description }}</small>
+                </div>
+                <div class="cms-media-preview-item__tags">
+                  <q-chip dense square :style="statusChipStyle">{{ binding.assetName }}</q-chip>
+                </div>
+                <code class="cms-media-preview-item__url">{{ binding.url || tr('No URL configured', 'Nenhuma URL configurada') }}</code>
+              </article>
               <article
                 v-for="asset in cmsMediaAssets"
                 :key="asset.id"
                 class="cms-media-preview-item"
+                :class="{ 'cms-media-preview-item--active': asset.id === selectedMediaAssetId }"
               >
                 <div class="cms-media-preview-item__meta">
-                  <strong>{{ asset.label }}</strong>
-                  <small>{{ asset.description }}</small>
+                  <strong>{{ asset.name }}</strong>
+                  <small>{{ asset.description || getCmsMediaKindLabel(asset.kind) }}</small>
                 </div>
                 <div class="cms-media-preview-item__visual">
                   <img
                     v-if="isPreviewImageAsset(asset.url)"
                     :src="asset.url"
-                    :alt="asset.label"
+                    :alt="asset.alt || asset.name"
                   >
                   <q-icon v-else name="image_not_supported" class="cms-icon cms-icon--lg" />
                 </div>
-                <code class="cms-media-preview-item__url">{{ asset.url || 'No URL configured' }}</code>
+                <div class="cms-media-preview-item__tags">
+                  <q-chip dense square :style="statusChipStyle">{{ getCmsMediaKindLabel(asset.kind) }}</q-chip>
+                  <q-chip dense square :style="previewChipStyle">
+                    {{ getCmsMediaUsageCount(asset.id) }} {{ tr('refs', 'refs') }}
+                  </q-chip>
+                  <q-chip
+                    v-for="tag in asset.tags"
+                    :key="`${asset.id}-${tag}`"
+                    dense
+                    square
+                    :style="previewChipStyle"
+                  >
+                    {{ tag }}
+                  </q-chip>
+                  <q-chip
+                    v-for="diagnostic in getCmsMediaDiagnosticsForAsset(asset.id)"
+                    :key="diagnostic.id"
+                    dense
+                    square
+                    :style="getCmsDiagnosticStyle(diagnostic.severity)"
+                  >
+                    {{ diagnostic.code }}
+                  </q-chip>
+                </div>
+                <code class="cms-media-preview-item__url">{{ asset.url || tr('No URL configured', 'Nenhuma URL configurada') }}</code>
               </article>
+            </div>
+          </q-card>
+        </div>
+
+        <div v-else-if="isReleasesModule" class="cms-shell-page__grid">
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>{{ cmsUiText.releaseOrchestrationTitle }}</strong>
+              <q-chip dense square :style="statusChipStyle">{{ releaseCountLabel }}</q-chip>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-releases__editor">
+              <div class="cms-form-grid">
+                <q-select
+                  v-model="activeReleaseEnvironment"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="releaseEnvironmentOptions"
+                  :label="tr('Environment', 'Ambiente')"
+                />
+                <q-select
+                  v-model="selectedReleaseId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="releaseOptions"
+                  :label="tr('Active release', 'Release ativo')"
+                />
+                <q-input
+                  v-model="releaseScheduleAt"
+                  outlined
+                  dense
+                  type="datetime-local"
+                  :label="tr('Schedule publish at', 'Agendar publicacao para')"
+                />
+                <q-select
+                  v-model="releaseRollbackTargetId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="rollbackTargetOptions"
+                  :label="tr('Rollback target', 'Alvo do rollback')"
+                />
+                <q-select
+                  v-model="releasePromotionTargetEnvironment"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="promotionTargetEnvironmentOptions"
+                  :label="tr('Promote to environment', 'Promover para ambiente')"
+                />
+              </div>
+
+              <div class="cms-releases__actions">
+                <q-btn
+                  no-caps
+                  unelevated
+                  icon="add"
+                  :label="tr('New draft', 'Novo rascunho')"
+                  :style="primaryActionStyle"
+                  @click="createReleaseDraftFromCurrentSettings"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="fact_check"
+                  :label="tr('Validate', 'Validar')"
+                  :disable="!selectedReleaseId"
+                  @click="validateSelectedReleaseEntry"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="schedule"
+                  :label="tr('Schedule', 'Agendar')"
+                  :disable="!selectedReleaseId || !releaseScheduleAt"
+                  @click="scheduleSelectedReleaseEntry"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="publish"
+                  :label="tr('Publish now', 'Publicar agora')"
+                  :disable="!selectedReleaseId"
+                  @click="publishSelectedReleaseEntry"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="event_available"
+                  :label="tr('Run scheduled', 'Executar agendados')"
+                  :disable="!releaseEntriesAll.some(item => item.status === 'scheduled')"
+                  @click="processDueScheduledReleaseEntries"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="north_east"
+                  :label="tr('Promote', 'Promover')"
+                  :disable="!selectedReleaseId || !releasePromotionTargetEnvironment || releasePromotionTargetEnvironment === activeReleaseEnvironment"
+                  @click="promoteSelectedReleaseEntry"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="restore"
+                  :label="tr('Rollback', 'Rollback')"
+                  :style="dangerActionStyle"
+                  :disable="!selectedReleaseId || !releaseRollbackTargetId"
+                  @click="rollbackSelectedReleaseEntry"
+                />
+              </div>
+
+              <q-banner rounded class="cms-banner" :style="bannerStyle">
+                <template v-if="selectedRelease">
+                  {{ selectedRelease.name }} · {{ tr('status', 'status') }} {{ selectedRelease.status }} · {{ selectedRelease.validation.errorCount }} {{ tr('errors', 'erros') }} · {{ selectedRelease.validation.warningCount }} {{ tr('warnings', 'avisos') }} · {{ selectedRelease.environment }}
+                </template>
+                <template v-else>
+                  {{ tr('Create a draft release to validate, schedule and publish tenant snapshots.', 'Crie um rascunho de release para validar, agendar e publicar snapshots do tenant.') }}
+                </template>
+              </q-banner>
+
+              <ul v-if="selectedReleaseGateIssues.length > 0" class="cms-release-diagnostics">
+                <li v-for="issue in selectedReleaseGateIssues" :key="`${issue.code}-${issue.path}`">
+                  <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
+                </li>
+              </ul>
+            </div>
+          </q-card>
+
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>{{ cmsUiText.releaseTimelineTitle }}</strong>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-releases__timeline">
+              <article
+                v-for="release in releaseTimelineEntries"
+                :key="release.id"
+                class="cms-release-item"
+                :class="{ 'cms-release-item--active': release.id === selectedReleaseId }"
+              >
+                <div class="cms-release-item__header">
+                  <strong>{{ release.name }}</strong>
+                  <q-chip dense square :style="getReleaseStatusStyle(release.status)">
+                    {{ release.status }}
+                  </q-chip>
+                </div>
+                <small class="cms-release-item__meta">
+                  {{ release.id }} · {{ tr('workflow', 'workflow') }} v{{ release.sourceVersion }} · {{ release.environment }}
+                </small>
+                <p class="cms-release-item__summary">{{ release.summary || tr('No summary provided.', 'Nenhum resumo informado.') }}</p>
+                <div class="cms-release-item__metrics">
+                  <q-chip dense square :style="release.validation.errorCount > 0 ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('validated')">
+                    {{ tr('Errors', 'Erros') }}: {{ release.validation.errorCount }}
+                  </q-chip>
+                  <q-chip dense square :style="getReleaseStatusStyle('draft')">
+                    {{ tr('Warnings', 'Avisos') }}: {{ release.validation.warningCount }}
+                  </q-chip>
+                </div>
+                <div class="cms-release-item__dates">
+                  <span>{{ tr('Created', 'Criado') }}: {{ formatReleaseTimestamp(release.createdAt) }}</span>
+                  <span>{{ tr('Scheduled', 'Agendado') }}: {{ formatReleaseTimestamp(release.scheduledAt) }}</span>
+                  <span>{{ tr('Published', 'Publicado') }}: {{ formatReleaseTimestamp(release.publishedAt) }}</span>
+                  <span>{{ tr('Rolled back', 'Revertido') }}: {{ formatReleaseTimestamp(release.rolledBackAt) }}</span>
+                </div>
+              </article>
+
+              <p v-if="releaseTimelineEntries.length === 0" class="cms-release-item__empty">
+                {{ cmsUiText.noReleasesYetMessage }}
+              </p>
+            </div>
+          </q-card>
+
+          <q-card flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>{{ cmsUiText.releaseCalendarTitle }}</strong>
+              <q-chip dense square :style="statusChipStyle">{{ tr(`${scheduledReleaseCalendarEntries.length} scheduled`, `${scheduledReleaseCalendarEntries.length} agendados`) }}</q-chip>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-releases__calendar">
+              <article
+                v-for="entry in scheduledReleaseCalendarEntries"
+                :key="entry.id"
+                class="cms-release-calendar-item"
+              >
+                <strong>{{ entry.name }}</strong>
+                <small>{{ formatReleaseTimestamp(entry.scheduledAt) }} · {{ entry.environment }}</small>
+              </article>
+              <p v-if="scheduledReleaseCalendarEntries.length === 0" class="cms-release-item__empty">
+                {{ cmsUiText.noScheduledReleasesMessage }}
+              </p>
+
+              <q-separator spaced />
+
+              <article
+                v-for="conflict in releaseCalendarConflicts"
+                :key="conflict.id"
+                class="cms-release-calendar-conflict"
+              >
+                <q-chip
+                  dense
+                  square
+                  :style="conflict.severity === 'error' ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('draft')"
+                >
+                  {{ conflict.type }}
+                </q-chip>
+                <p>{{ conflict.message }}</p>
+              </article>
+              <p v-if="releaseCalendarConflicts.length === 0" class="cms-release-item__empty">
+                {{ cmsUiText.noCalendarConflictsMessage }}
+              </p>
             </div>
           </q-card>
         </div>
@@ -1295,6 +2721,12 @@ import {
   mapWhiteLabelToShellSnapshot,
 } from '../src/modules/cms/white-label/config'
 import {
+  applyCmsLocalePreset,
+  CMS_LOCALE_OPTIONS,
+  getCmsTenantProfilePromptLabel,
+  resolveCmsLocale,
+} from '../src/modules/cms/white-label/i18n'
+import {
   applyCmsFavicon,
   loadCmsWhiteLabelSettings,
   normalizeCmsWhiteLabelSettings,
@@ -1331,20 +2763,131 @@ import {
   insertCmsBuilderBlock,
   listCmsBuilderPalette,
   moveCmsBuilderBlock,
+  moveCmsBuilderBlockToIndex,
+  moveCmsBuilderSectionToIndex,
   removeCmsBuilderBlock,
   selectCmsBuilderNode,
   type CmsBuilderSelection,
   type CmsBuilderState,
 } from '../src/modules/cms/white-label/builder.state'
+import {
+  createCmsAuthoredContentModel,
+  createCmsPageCustomFieldsFromContentModel,
+  createCmsPageSectionsFromContentModel,
+  createCmsPageSectionFromPreset,
+  coerceCmsContentModelFieldValue,
+  getCmsContentModelDefaultPageDescription,
+  getCmsContentModelDefaultPagePathPrefix,
+  getCmsContentModelDefaultPageTitle,
+  getCmsContentModelDescription,
+  getCmsContentModelFieldDefinitions,
+  getCmsContentModelLastSchemaChangeAt,
+  getCmsContentModelLabel,
+  getCmsContentModelMaxSections,
+  getCmsContentModelMigrationNotes,
+  getCmsContentModelSectionPresetLimitMap,
+  getCmsContentModelSchemaVersion,
+  getCmsSectionPresetAllowedBlockTypes,
+  getCmsSectionPresetBlockLimits,
+  getCmsSectionPresetDefinition,
+  getDefaultCmsSectionPresetId,
+  isCmsBlockPresetAllowedForSectionPreset,
+  isCmsBlockTypeAllowedForSectionPreset,
+  isCmsSectionPresetAllowedForContentModel,
+  listAllCmsSectionPresetOptions,
+  listCmsContentModelOptions,
+  listCmsSectionPresetOptions,
+  listCmsSectionStarterPresetOptions,
+  normalizeCmsPageCustomFieldsForContentModel,
+  updateCmsAuthoredContentModel,
+  resolveCmsContentModelId,
+  resolveDefaultCmsBlockTypeForSection,
+  resolveCmsSectionPresetId,
+  type CmsSectionPresetOption,
+  type CmsSectionStarterPresetOption,
+} from '../src/modules/cms/white-label/content-models'
+import {
+  createCmsAuthoredBlockPresetFromBlock,
+  createCmsPageBlockFromPreset,
+  getCmsBlockPresetLabel,
+  getDefaultCmsBlockPresetIdForSectionPreset,
+  getCmsBlockPresetDescription,
+  isCmsBlockPresetAllowedForType,
+  listCmsBlockPresetOptions,
+  resolveCmsBlockPresetId,
+  updateCmsAuthoredBlockPreset,
+  type CmsBlockPresetOption,
+} from '../src/modules/cms/white-label/block-presets'
+import {
+  applyCmsLocalizedPropsUpdate,
+  applyCmsLocalizedTextUpdate,
+  resolveCmsLocalizedProps,
+  resolveCmsLocalizedText,
+} from '../src/modules/cms/white-label/localized-content'
+import {
+  validateCmsContentPages,
+  type CmsContentValidationIssue,
+} from '../src/modules/cms/white-label/content-validation'
+import {
+  cloneCmsReusableBlockIntoPageBlock,
+  createCmsReusableBlockFromBlock,
+} from '../src/modules/cms/white-label/reusable-blocks'
+import {
+  cloneCmsReusableSectionIntoPageSection,
+  createCmsReusableSectionFromSection,
+} from '../src/modules/cms/white-label/reusable-sections'
+import {
+  collectCmsMediaBindingReferences,
+  collectCmsMediaDiagnostics,
+  createCmsMediaAsset,
+  type CmsMediaDiagnostic,
+} from '../src/modules/cms/white-label/media-library'
+import {
+  createCmsPageFromTemplate,
+  listCmsPageTemplateOptions,
+  resolveCmsPageTemplateId,
+  type CmsPageTemplateId,
+} from '../src/modules/cms/white-label/page-templates'
 import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms'
+import {
+  applyCmsReleaseSnapshot,
+  detectCmsReleaseCalendarConflicts,
+  createCmsReleaseDraft,
+  createCmsReleaseSnapshot,
+  processDueScheduledCmsReleases,
+  promoteCmsReleaseEnvironment,
+  publishCmsRelease,
+  rollbackCmsRelease,
+  scheduleCmsRelease,
+  validateCmsReleasePrePublishGate,
+  validateCmsRelease,
+} from '../src/modules/cms/releases'
 import { createLandingRegistry } from './cms/landing.registry'
 import {
   getLandingBlockFieldDefinitions,
+  getLandingBlockMediaBindingDefinitions,
   type CmsBlockFieldDefinition,
 } from './cms/landing.block-fields'
 import type {
+  CmsAuthoredBlockPresetSettings,
+  CmsAuthoredContentModelSettings,
+  CmsBlockPresetId,
+  CmsContentModelId,
+  CmsContentModelFieldDefinition,
+  CmsContentModelFieldType,
+  CmsReleaseEnvironment,
+  CmsReleaseValidationIssue,
+  CmsMediaAssetKind,
+  CmsMediaAssetSettings,
   CmsPageBlockSettings,
+  CmsPageSectionSettings,
   CmsPageSettings,
+  CmsReleaseSettings,
+  CmsReleaseStatus,
+  CmsLocale,
+  CmsReusableBlockSettings,
+  CmsReusableSectionSettings,
+  CmsSectionPresetId,
   CmsTenantProfile,
   CmsTenantProfilesState,
   CmsWhiteLabelActor,
@@ -1412,6 +2955,7 @@ interface QuasarBrandOverrides {
 interface CmsSectionBlockRecord {
   id: string
   type: string
+  presetId?: CmsBlockPresetId
   enabled: boolean
   sectionId: string
   sectionLabel: string
@@ -1424,11 +2968,114 @@ interface CmsSectionBlockRecord {
   blockIndex: number
 }
 
-interface CmsMediaAssetPreview {
+interface CmsUiText {
+  autoSaveEnabled: string
+  savedAtPrefix: string
+  tenantProfileTitle: string
+  tenantProfileFieldLabel: string
+  tenantProfileSelectorAriaLabel: string
+  tenantCreateLabel: string
+  tenantCreateAriaLabel: string
+  tenantDeleteLabel: string
+  tenantDeleteAriaLabel: string
+  actionsTitle: string
+  saveLabel: string
+  saveAriaLabel: string
+  resetLabel: string
+  resetAriaLabel: string
+  exportLabel: string
+  exportAriaLabel: string
+  importLabel: string
+  importAriaLabel: string
+  importInputAriaLabel: string
+  settingsTabsAriaLabel: string
+  showAdvancedOverridesLabel: string
+  themeValuesPresetTitle: string
+  themeValuesPresetDescription: string
+  themePresetFieldLabel: string
+  detectFromCurrentValuesLabel: string
+  pagesBuilderTitle: string
+  addPageLabel: string
+  blocksManagerTitle: string
+  mediaSettingsTitle: string
+  releaseOrchestrationTitle: string
+  releaseTimelineTitle: string
+  releaseCalendarTitle: string
+  noReleasesYetMessage: string
+  noScheduledReleasesMessage: string
+  noCalendarConflictsMessage: string
+  pageStatusDraftLabel: string
+  pageStatusPublishedLabel: string
+  themePresetAppliedSuffix: string
+  localePresetAppliedLabel: string
+  tenantLoadedSuffix: string
+  tenantCreatedSuffix: string
+  tenantRemovedSuffix: string
+  tenantExportedSuffix: string
+  tenantImportedWithVersionLabel: (name: string, version: string | number) => string
+  tenantDeleteConfirmLabel: (name: string) => string
+  tenantReplaceConfirmLabel: (id: string) => string
+  environmentDevelopmentLabel: string
+  environmentStagingLabel: string
+  environmentProductionLabel: string
+  releaseCountLabel: (count: number) => string
+  releaseCommandFailedLabel: string
+  releaseDraftSummaryPrefix: string
+  releaseDraftCreatedLabel: string
+  releaseValidatedLabel: string
+  releaseScheduledLabel: string
+  releasePublishedLabel: string
+  releaseRolledBackLabel: string
+  releasePromotedLabel: string
+  selectReleaseFirstLabel: string
+  defineScheduleBeforeSchedulingLabel: string
+  selectSourceReleaseFirstLabel: string
+  selectRollbackTargetReleaseLabel: string
+  selectPromotionTargetEnvironmentLabel: string
+  noScheduledReleasesPublishedLabel: string
+  scheduledReleasesPublishedLabel: (count: number) => string
+  releaseNotSetLabel: string
+  releaseInvalidDateLabel: string
+  invalidJsonForFieldLabel: (fieldLabel: string) => string
+  blockPropsMustBeObjectLabel: string
+  invalidBlockPropsJsonLabel: string
+  blockPropsUpdatedAtLabel: string
+  importFailedInvalidJsonLabel: string
+  defaultsRestoredLabel: string
+  settingsSavedManuallySummary: string
+  defaultsRestoredSummary: string
+}
+
+interface CmsContentModelFieldDraft {
+  id: string
+  type: CmsContentModelFieldType
+  label: string
+  description: string
+  placeholder: string
+  required: boolean
+  repeatable: boolean
+  minValue: string
+  maxValue: string
+  defaultValue: string
+  optionsDraft: string
+}
+
+interface CmsMediaAssetDraft {
+  name: string
+  description: string
+  kind: CmsMediaAssetKind
+  url: string
+  alt: string
+  tags: string
+  usage: string
+}
+
+interface CmsBrandingMediaBindingPreview {
   id: string
   label: string
   description: string
   url: string
+  assetName: string
 }
 
 interface CmsBlocksSectionRow {
@@ -1439,6 +3086,17 @@ interface CmsBlocksSectionRow {
   blocks: CmsSectionBlockRecord[]
 }
 
+interface CmsDraggedPageSection {
+  pageId: string
+  sectionId: string
+}
+
+interface CmsDraggedBlock {
+  pageId: string
+  sectionId: string
+  blockId: string
+}
+
 const defaultSettings = createDefaultWhiteLabelSettings()
 const defaultTheme = defaultSettings.theme
 const defaultMenuId = defaultSettings.items[0]?.id ?? ''
@@ -1446,6 +3104,7 @@ const defaultSettingsModuleId = defaultSettings.items.find(item => item.icon ===
 const defaultPagesModuleId = defaultSettings.items.find(item => item.id === 'pages')?.id ?? 'pages'
 const defaultBlocksModuleId = defaultSettings.items.find(item => item.id === 'blocks')?.id ?? 'blocks'
 const defaultMediaModuleId = defaultSettings.items.find(item => item.id === 'media')?.id ?? 'media'
+const defaultReleasesModuleId = defaultSettings.items.find(item => item.id === 'releases')?.id ?? 'releases'
 const baseThemePresets: CmsThemePreset[] = buildCmsThemePresets(defaultTheme)
 const $q = useQuasar()
 
@@ -1507,6 +3166,73 @@ function cloneWhiteLabelSettings(value: CmsWhiteLabelSettings): CmsWhiteLabelSet
   return JSON.parse(JSON.stringify(rawValue)) as CmsWhiteLabelSettings
 }
 
+/**
+ * Creates a defensive clone for plain serializable records used by builder drafts.
+ */
+function cloneSerializableValue<T>(value: T): T {
+  if (typeof structuredClone === 'function') {
+    try {
+      return structuredClone(value)
+    } catch {
+      return JSON.parse(JSON.stringify(value)) as T
+    }
+  }
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
+/**
+ * Resets the media asset draft to a new or existing asset payload.
+ */
+function setMediaAssetDraft(asset: CmsMediaAssetSettings | null = null): void {
+  mediaAssetDraft.value = asset
+    ? {
+      name: asset.name,
+      description: asset.description,
+      kind: asset.kind,
+      url: asset.url,
+      alt: asset.alt,
+      tags: asset.tags.join(', '),
+      usage: asset.usage.join(', '),
+    }
+    : {
+      name: '',
+      description: '',
+      kind: 'image',
+      url: '',
+      alt: '',
+      tags: '',
+      usage: '',
+    }
+}
+
+/**
+ * Splits comma-separated media metadata into normalized string arrays.
+ */
+function parseMediaDraftList(value: string): string[] {
+  return value
+    .split(',')
+    .map(entry => entry.trim())
+    .filter(Boolean)
+}
+
+/**
+ * Resolves media kind labels for previews.
+ */
+function getCmsMediaKindLabel(kind: CmsMediaAssetKind): string {
+  switch (kind) {
+    case 'image':
+      return tr('Image', 'Imagem')
+    case 'video':
+      return tr('Video', 'Video')
+    case 'icon':
+      return tr('Icon', 'Icone')
+    case 'document':
+      return tr('Document', 'Documento')
+    default:
+      return tr('Other', 'Outro')
+  }
+}
+
 const tenantProfilesState = ref<CmsTenantProfilesState>(loadCmsTenantProfilesState())
 const activeTenantProfileId = ref(tenantProfilesState.value.activeProfileId)
 const tenantImportInputRef = ref<HTMLInputElement | null>(null)
@@ -1545,6 +3271,176 @@ const settings = ref<CmsWhiteLabelSettings>(
   cloneWhiteLabelSettings(getActiveTenantProfileSnapshot().settings)
 )
 
+const cmsUiText = computed<CmsUiText>(() => {
+  if (resolveCmsLocale(settings.value.content.locale) === 'pt-BR') {
+    return {
+      autoSaveEnabled: 'Auto-save ativado',
+      savedAtPrefix: 'Salvo as',
+      tenantProfileTitle: 'Perfil do tenant',
+      tenantProfileFieldLabel: 'Perfil do tenant',
+      tenantProfileSelectorAriaLabel: 'Seletor de perfil do tenant',
+      tenantCreateLabel: 'Novo',
+      tenantCreateAriaLabel: 'Criar perfil do tenant',
+      tenantDeleteLabel: 'Excluir',
+      tenantDeleteAriaLabel: 'Excluir perfil ativo do tenant',
+      actionsTitle: 'Acoes',
+      saveLabel: 'Salvar',
+      saveAriaLabel: 'Salvar configuracoes do tenant',
+      resetLabel: 'Resetar',
+      resetAriaLabel: 'Resetar configuracoes do tenant para o padrao',
+      exportLabel: 'Exportar',
+      exportAriaLabel: 'Exportar tenant ativo em JSON',
+      importLabel: 'Importar',
+      importAriaLabel: 'Importar configuracoes do tenant de JSON',
+      importInputAriaLabel: 'Importar arquivo JSON do tenant',
+      settingsTabsAriaLabel: 'Secoes de configuracao do CMS',
+      showAdvancedOverridesLabel: 'Mostrar overrides avancados',
+      themeValuesPresetTitle: 'Preset de valores de tema',
+      themeValuesPresetDescription: 'Aplique um conjunto completo de tema antes de ajustar tokens finos.',
+      themePresetFieldLabel: 'Preset de tema',
+      detectFromCurrentValuesLabel: 'Detectar a partir dos valores atuais',
+      pagesBuilderTitle: 'Construtor de paginas',
+      addPageLabel: 'Adicionar pagina',
+      blocksManagerTitle: 'Gerenciador de blocos',
+      mediaSettingsTitle: 'Configuracoes de midia',
+      releaseOrchestrationTitle: 'Orquestracao de releases',
+      releaseTimelineTitle: 'Timeline de releases',
+      releaseCalendarTitle: 'Calendario de releases',
+      noReleasesYetMessage: 'Nenhum release ainda. Crie o primeiro rascunho a partir do snapshot atual do tenant.',
+      noScheduledReleasesMessage: 'Nenhum release agendado para este ambiente.',
+      noCalendarConflictsMessage: 'Nenhum conflito de calendario detectado.',
+      pageStatusDraftLabel: 'Rascunho',
+      pageStatusPublishedLabel: 'Publicado',
+      themePresetAppliedSuffix: 'preset aplicado',
+      localePresetAppliedLabel: 'Preset de idioma aplicado',
+      tenantLoadedSuffix: 'carregado',
+      tenantCreatedSuffix: 'criado',
+      tenantRemovedSuffix: 'removido',
+      tenantExportedSuffix: 'exportado',
+      tenantImportedWithVersionLabel: (name: string, version: string | number) => `${name} importado (v${version})`,
+      tenantDeleteConfirmLabel: (name: string) => `Excluir perfil do tenant "${name}"?`,
+      tenantReplaceConfirmLabel: (id: string) => `Substituir tenant existente "${id}"?`,
+      environmentDevelopmentLabel: 'Desenvolvimento',
+      environmentStagingLabel: 'Homologacao',
+      environmentProductionLabel: 'Producao',
+      releaseCountLabel: (count: number) => `${count} releases`,
+      releaseCommandFailedLabel: 'Falha no comando de release',
+      releaseDraftSummaryPrefix: 'Snapshot de',
+      releaseDraftCreatedLabel: 'Rascunho de release criado',
+      releaseValidatedLabel: 'Release validado',
+      releaseScheduledLabel: 'Release agendado',
+      releasePublishedLabel: 'Release publicado',
+      releaseRolledBackLabel: 'Release revertido',
+      releasePromotedLabel: 'Release promovido',
+      selectReleaseFirstLabel: 'Selecione um release primeiro',
+      defineScheduleBeforeSchedulingLabel: 'Defina uma data de agendamento antes de agendar',
+      selectSourceReleaseFirstLabel: 'Selecione primeiro o release de origem',
+      selectRollbackTargetReleaseLabel: 'Selecione o release alvo para rollback',
+      selectPromotionTargetEnvironmentLabel: 'Selecione o ambiente alvo para promocao',
+      noScheduledReleasesPublishedLabel: 'Nenhum release agendado publicado',
+      scheduledReleasesPublishedLabel: (count: number) => `${count} release(s) agendado(s) publicado(s)`,
+      releaseNotSetLabel: 'Nao definido',
+      releaseInvalidDateLabel: 'Data invalida',
+      invalidJsonForFieldLabel: (fieldLabel: string) => `JSON invalido para o campo: ${fieldLabel}`,
+      blockPropsMustBeObjectLabel: 'As propriedades do bloco devem ser um objeto JSON',
+      invalidBlockPropsJsonLabel: 'JSON invalido para propriedades do bloco selecionado',
+      blockPropsUpdatedAtLabel: 'Propriedades do bloco atualizadas as',
+      importFailedInvalidJsonLabel: 'Falha na importacao: payload JSON invalido',
+      defaultsRestoredLabel: 'Padroes restaurados',
+      settingsSavedManuallySummary: 'Configuracoes salvas manualmente',
+      defaultsRestoredSummary: 'Padroes restaurados',
+    }
+  }
+
+  return {
+    autoSaveEnabled: 'Auto-save enabled',
+    savedAtPrefix: 'Saved at',
+    tenantProfileTitle: 'Tenant Profile',
+    tenantProfileFieldLabel: 'Tenant profile',
+    tenantProfileSelectorAriaLabel: 'Tenant profile selector',
+    tenantCreateLabel: 'New',
+    tenantCreateAriaLabel: 'Create tenant profile',
+    tenantDeleteLabel: 'Delete',
+    tenantDeleteAriaLabel: 'Delete active tenant profile',
+    actionsTitle: 'Actions',
+    saveLabel: 'Save',
+    saveAriaLabel: 'Save tenant settings',
+    resetLabel: 'Reset',
+    resetAriaLabel: 'Reset tenant settings to defaults',
+    exportLabel: 'Export',
+    exportAriaLabel: 'Export active tenant as JSON',
+    importLabel: 'Import',
+    importAriaLabel: 'Import tenant settings from JSON',
+    importInputAriaLabel: 'Import tenant JSON file',
+    settingsTabsAriaLabel: 'CMS settings sections',
+    showAdvancedOverridesLabel: 'Show advanced overrides',
+    themeValuesPresetTitle: 'Theme values preset',
+    themeValuesPresetDescription: 'Apply a complete set of theme values before fine tuning token fields.',
+    themePresetFieldLabel: 'Theme preset',
+    detectFromCurrentValuesLabel: 'Detect from current values',
+    pagesBuilderTitle: 'Pages builder',
+    addPageLabel: 'Add page',
+    blocksManagerTitle: 'Blocks manager',
+    mediaSettingsTitle: 'Media settings',
+    releaseOrchestrationTitle: 'Release orchestration',
+    releaseTimelineTitle: 'Release timeline',
+    releaseCalendarTitle: 'Release calendar',
+    noReleasesYetMessage: 'No releases yet. Create your first draft from the current tenant snapshot.',
+    noScheduledReleasesMessage: 'No scheduled releases for this environment.',
+    noCalendarConflictsMessage: 'No calendar conflicts detected.',
+    pageStatusDraftLabel: 'Draft',
+    pageStatusPublishedLabel: 'Published',
+    themePresetAppliedSuffix: 'preset applied',
+    localePresetAppliedLabel: 'Locale preset applied',
+    tenantLoadedSuffix: 'loaded',
+    tenantCreatedSuffix: 'created',
+    tenantRemovedSuffix: 'removed',
+    tenantExportedSuffix: 'exported',
+    tenantImportedWithVersionLabel: (name: string, version: string | number) => `${name} imported (v${version})`,
+    tenantDeleteConfirmLabel: (name: string) => `Delete tenant profile "${name}"?`,
+    tenantReplaceConfirmLabel: (id: string) => `Replace existing tenant "${id}"?`,
+    environmentDevelopmentLabel: 'Development',
+    environmentStagingLabel: 'Staging',
+    environmentProductionLabel: 'Production',
+    releaseCountLabel: (count: number) => `${count} releases`,
+    releaseCommandFailedLabel: 'Release command failed',
+    releaseDraftSummaryPrefix: 'Snapshot from',
+    releaseDraftCreatedLabel: 'Release draft created',
+    releaseValidatedLabel: 'Release validated',
+    releaseScheduledLabel: 'Release scheduled',
+    releasePublishedLabel: 'Release published',
+    releaseRolledBackLabel: 'Release rolled back',
+    releasePromotedLabel: 'Release promoted',
+    selectReleaseFirstLabel: 'Select a release first',
+    defineScheduleBeforeSchedulingLabel: 'Define a schedule date before scheduling',
+    selectSourceReleaseFirstLabel: 'Select the source release first',
+    selectRollbackTargetReleaseLabel: 'Select rollback target release',
+    selectPromotionTargetEnvironmentLabel: 'Select promotion target environment',
+    noScheduledReleasesPublishedLabel: 'No scheduled releases published',
+    scheduledReleasesPublishedLabel: (count: number) => `${count} scheduled release(s) published`,
+    releaseNotSetLabel: 'Not set',
+    releaseInvalidDateLabel: 'Invalid date',
+    invalidJsonForFieldLabel: (fieldLabel: string) => `Invalid JSON for field: ${fieldLabel}`,
+    blockPropsMustBeObjectLabel: 'Block props must be a JSON object',
+    invalidBlockPropsJsonLabel: 'Invalid JSON for selected block props',
+    blockPropsUpdatedAtLabel: 'Block props updated at',
+    importFailedInvalidJsonLabel: 'Import failed: invalid JSON payload',
+    defaultsRestoredLabel: 'Defaults restored',
+    settingsSavedManuallySummary: 'Settings saved manually',
+    defaultsRestoredSummary: 'Defaults restored',
+  }
+})
+
+function buildSavedAtLabel(): string {
+  return `${cmsUiText.value.savedAtPrefix} ${new Date().toLocaleTimeString()}`
+}
+
+const isPtBrLocale = computed(() => resolveCmsLocale(settings.value.content.locale) === 'pt-BR')
+
+function tr(en: string, ptBr: string): string {
+  return isPtBrLocale.value ? ptBr : en
+}
+
 /**
  * Resolves theme presets with overrides.
  */
@@ -1569,11 +3465,111 @@ const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
 const activeSettingsTab = ref<'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
 const showAdvancedThemeFields = ref(false)
-const savedAtLabel = ref('Auto-save enabled')
-const pageStatusOptions = [
-  { label: 'Draft', value: 'draft' },
-  { label: 'Published', value: 'published' },
-] as const
+const savedAtLabel = ref(cmsUiText.value.autoSaveEnabled)
+const pageStatusOptions = computed(() => ([
+  { label: cmsUiText.value.pageStatusDraftLabel, value: 'draft' },
+  { label: cmsUiText.value.pageStatusPublishedLabel, value: 'published' },
+]))
+const selectedPageTemplateId = ref<CmsPageTemplateId>('landing-default')
+const pageSectionPresetSelections = ref<Record<number, CmsSectionPresetId>>({})
+const pageSectionStarterPresetSelections = ref<Record<number, CmsBlockPresetId>>({})
+const pageReusableSectionSelections = ref<Record<number, string>>({})
+const selectedAuthoredContentModelId = ref<CmsContentModelId | ''>('')
+const authoredContentModelNameDraft = ref('')
+const authoredContentModelDescriptionDraft = ref('')
+const authoredContentModelDefaultPageTitleDraft = ref('')
+const authoredContentModelDefaultPageDescriptionDraft = ref('')
+const authoredContentModelDefaultPagePathPrefixDraft = ref('')
+const authoredContentModelMigrationNotesDraft = ref('')
+const authoredContentModelAllowedSectionSelections = ref<CmsSectionPresetId[]>([])
+const authoredContentModelRequiredSectionSelections = ref<CmsSectionPresetId[]>([])
+const authoredContentModelStarterSectionSelections = ref<CmsSectionPresetId[]>([])
+const authoredContentModelRecommendedSectionSelections = ref<CmsSectionPresetId[]>([])
+const authoredContentModelMaxSectionsDraft = ref('')
+const authoredContentModelPresetLimitDrafts = ref<Partial<Record<CmsSectionPresetId, string>>>({})
+const authoredContentModelFieldDrafts = ref<CmsContentModelFieldDraft[]>([])
+const draggedPageSection = ref<CmsDraggedPageSection | null>(null)
+const pageSectionDropTargetKey = ref('')
+const reusableBlockNameDraft = ref('')
+const reusableBlockDescriptionDraft = ref('')
+const selectedReusableBlockId = ref('')
+const authoredBlockPresetNameDraft = ref('')
+const authoredBlockPresetDescriptionDraft = ref('')
+const selectedAuthoredBlockPresetId = ref<CmsBlockPresetId>('custom')
+const authoredPresetStarterSectionSelections = ref<CmsSectionPresetId[]>([])
+const selectedMediaAssetId = ref('')
+const draggedBlock = ref<CmsDraggedBlock | null>(null)
+const blockDropTargetKey = ref('')
+const mediaAssetDraft = ref<CmsMediaAssetDraft>({
+  name: '',
+  description: '',
+  kind: 'image',
+  url: '',
+  alt: '',
+  tags: '',
+  usage: '',
+})
+const cmsPageTemplateOptions = computed(() => {
+  return listCmsPageTemplateOptions(settings.value.content.locale).map(option => ({
+    label: option.label,
+    value: option.value,
+    description: option.description,
+  }))
+})
+const cmsContentModelOptions = computed(() => {
+  return listCmsContentModelOptions(
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  ).map(option => ({
+    label: option.label,
+    value: option.value,
+    description: option.description,
+  }))
+})
+const cmsContentModelFieldTypeOptions = computed(() => ([
+  { label: tr('Text', 'Texto'), value: 'text' as const },
+  { label: tr('Textarea', 'Textarea'), value: 'textarea' as const },
+  { label: tr('Number', 'Numero'), value: 'number' as const },
+  { label: tr('Toggle', 'Alternancia'), value: 'toggle' as const },
+  { label: tr('Select', 'Selecao'), value: 'select' as const },
+]))
+const cmsAuthoredContentModelLibrary = computed<CmsAuthoredContentModelSettings[]>(() => {
+  return settings.value.authoredContentModels
+})
+const cmsAuthoredContentModelOptions = computed(() => {
+  return settings.value.authoredContentModels.map(model => ({
+    label: getCmsAuthoredContentModelNameValue(model),
+    value: model.id,
+    description: getCmsAuthoredContentModelDescriptionValue(model),
+  }))
+})
+const cmsContentModelPresetOptions = computed<CmsSectionPresetOption[]>(() => {
+  return listAllCmsSectionPresetOptions(settings.value.content.locale)
+})
+const cmsContentModelRecommendedPresetOptions = computed<CmsSectionPresetOption[]>(() => {
+  const allowedPresetIds = new Set(authoredContentModelAllowedSectionSelections.value)
+  return cmsContentModelPresetOptions.value.filter(option => allowedPresetIds.has(option.value))
+})
+const cmsContentModelRequiredPresetOptions = computed<CmsSectionPresetOption[]>(() => {
+  const allowedPresetIds = new Set(authoredContentModelAllowedSectionSelections.value)
+  return cmsContentModelPresetOptions.value.filter(option => allowedPresetIds.has(option.value))
+})
+const cmsContentModelStarterPresetOptions = computed<CmsSectionPresetOption[]>(() => {
+  const allowedPresetIds = new Set(authoredContentModelAllowedSectionSelections.value)
+  return cmsContentModelPresetOptions.value.filter(option => allowedPresetIds.has(option.value))
+})
+const cmsContentModelPresetLimitOptions = computed<CmsSectionPresetOption[]>(() => {
+  const allowedPresetIds = new Set(authoredContentModelAllowedSectionSelections.value)
+  return cmsContentModelPresetOptions.value.filter(option => allowedPresetIds.has(option.value))
+})
+const cmsLocaleOptions = CMS_LOCALE_OPTIONS
+const cmsMediaAssetKindOptions = computed(() => ([
+  { label: tr('Image', 'Imagem'), value: 'image' },
+  { label: tr('Video', 'Video'), value: 'video' },
+  { label: tr('Icon', 'Icone'), value: 'icon' },
+  { label: tr('Document', 'Documento'), value: 'document' },
+  { label: tr('Other', 'Outro'), value: 'other' },
+]))
 const initialThemePresets = getCurrentThemePresets()
 const selectedThemePreset = ref<CmsThemePresetId>(
   isCmsThemePresetId(settings.value.themePresetId)
@@ -1610,6 +3606,10 @@ const tenantProfileOptions = computed(() => {
     label: profile.name,
     value: profile.id,
   }))
+})
+const activeTenantProfileName = computed(() => {
+  return tenantProfilesState.value.profiles.find(profile => profile.id === activeTenantProfileId.value)?.name
+    ?? (resolveCmsLocale(settings.value.content.locale) === 'pt-BR' ? 'Tenant atual' : 'Current Tenant')
 })
 
 const typographyFieldGroupsDefinition: ThemeFieldGroupDefinition[] = [
@@ -4057,6 +6057,12 @@ const statusChipStyle = computed(() => ({
   border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
 }))
 
+const previewChipStyle = computed(() => ({
+  background: accentSoftBackground.value,
+  color: accentTextColor.value,
+  border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
+}))
+
 const primaryActionStyle = computed(() => ({
   background: accentColor.value,
   color: notificationBadgeTextColor.value,
@@ -4088,6 +6094,28 @@ const notificationChipStyles = computed(() => ({
 const notificationBellPreviewStyle = computed(() => ({
   color: notificationIconColor.value,
 }))
+
+/**
+ * Resolves inline chip styles for diagnostics based on severity.
+ */
+function getCmsDiagnosticStyle(
+  severity:
+    | CmsMediaDiagnostic['severity']
+    | CmsReleaseValidationIssue['severity']
+    | CmsContentValidationIssue['severity']
+): Record<string, string> {
+  if (severity === 'error') {
+    return {
+      background: notificationErrorColor.value,
+      color: notificationErrorTextColor.value,
+    }
+  }
+
+  return {
+    background: notificationWarningColor.value,
+    color: notificationWarningTextColor.value,
+  }
+}
 
 const notificationCounterPreviewStyle = computed(() => ({
   background: notificationBadgeColor.value,
@@ -4189,7 +6217,7 @@ const toolbarPreviewActions = computed(() => {
     {
       id: 'preview-action',
       icon: 'bolt',
-      label: 'Action',
+      label: tr('Action', 'Acao'),
       showLabel: true,
     },
   ]
@@ -4218,8 +6246,420 @@ const mediaModuleId = computed(() => {
     ?? settings.value.items.find(item => item.icon === 'photo_library')?.id
     ?? defaultMediaModuleId
 })
+const releasesModuleId = computed(() => {
+  return settings.value.items.find(item => item.id === 'releases')?.id
+    ?? settings.value.items.find(item => item.icon === 'rocket_launch')?.id
+    ?? defaultReleasesModuleId
+})
 const isBlocksModule = computed(() => activeMenuId.value === blocksModuleId.value)
 const isMediaModule = computed(() => activeMenuId.value === mediaModuleId.value)
+const isReleasesModule = computed(() => activeMenuId.value === releasesModuleId.value)
+
+const governanceActor: CmsWhiteLabelActor = {
+  id: 'cms-admin',
+  role: 'admin',
+  name: 'CMS Admin',
+}
+
+const releaseScheduleAt = ref('')
+const releaseRollbackTargetId = ref('')
+const releasePromotionTargetEnvironment = ref<CmsReleaseEnvironment | ''>('')
+const releaseDisplayLimit = 20
+
+const activeReleaseEnvironment = computed<CmsReleaseEnvironment>({
+  get: () => settings.value.releases.activeEnvironment ?? 'dev',
+  set: value => {
+    settings.value.releases.activeEnvironment = value
+    const firstEntryInEnvironment = settings.value.releases.items.find(item => item.environment === value)
+    if (firstEntryInEnvironment) {
+      settings.value.releases.activeReleaseId = firstEntryInEnvironment.id
+    }
+  },
+})
+
+const releaseEnvironmentOptions = computed(() => ([
+  { label: cmsUiText.value.environmentDevelopmentLabel, value: 'dev' },
+  { label: cmsUiText.value.environmentStagingLabel, value: 'staging' },
+  { label: cmsUiText.value.environmentProductionLabel, value: 'production' },
+]))
+
+const selectedReleaseId = computed<string>({
+  get: () => {
+    const activeReleaseId = settings.value.releases.activeReleaseId
+    const currentEnvironment = activeReleaseEnvironment.value
+    const activeRelease = settings.value.releases.items.find(item => item.id === activeReleaseId)
+    if (activeRelease && activeRelease.environment === currentEnvironment) {
+      return activeRelease.id
+    }
+    return settings.value.releases.items.find(item => item.environment === currentEnvironment)?.id ?? ''
+  },
+  set: value => {
+    const nextId = String(value ?? '').trim()
+    if (!nextId || !settings.value.releases.items.some(item => item.id === nextId && item.environment === activeReleaseEnvironment.value)) {
+      settings.value.releases.activeReleaseId = settings.value.releases.items.find(item => item.environment === activeReleaseEnvironment.value)?.id ?? null
+      return
+    }
+    settings.value.releases.activeReleaseId = nextId
+  },
+})
+
+const releaseEntries = computed(() => settings.value.releases.items
+  .filter(item => item.environment === activeReleaseEnvironment.value))
+const releaseEntriesAll = computed(() => settings.value.releases.items)
+const selectedRelease = computed(() => {
+  return releaseEntries.value.find(item => item.id === selectedReleaseId.value) ?? null
+})
+const releaseCountLabel = computed(() => cmsUiText.value.releaseCountLabel(releaseEntries.value.length))
+const releaseOptions = computed(() => releaseEntries.value.map(item => ({
+  label: `${item.name} (${item.status})`,
+  value: item.id,
+})))
+const rollbackTargetOptions = computed(() => releaseEntries.value
+  .filter(item => item.id !== selectedReleaseId.value)
+  .map(item => ({
+    label: `${item.name} (${item.status})`,
+    value: item.id,
+  })))
+const promotionTargetEnvironmentOptions = computed(() => releaseEnvironmentOptions.value
+  .filter(option => option.value !== activeReleaseEnvironment.value))
+const releaseTimelineEntries = computed(() => releaseEntries.value.slice(0, releaseDisplayLimit))
+const scheduledReleaseCalendarEntries = computed(() => releaseEntries.value
+  .filter(item => item.status === 'scheduled' && Boolean(item.scheduledAt))
+  .sort((left, right) => new Date(left.scheduledAt ?? '').getTime() - new Date(right.scheduledAt ?? '').getTime()))
+const releaseCalendarConflicts = computed(() => detectCmsReleaseCalendarConflicts(settings.value.releases)
+  .filter(conflict => conflict.environment === activeReleaseEnvironment.value))
+
+const selectedReleaseGateIssues = computed<CmsReleaseValidationIssue[]>(() => {
+  const release = selectedRelease.value
+  if (!release) {
+    return []
+  }
+
+  const gate = validateCmsReleasePrePublishGate(settings.value.releases, release.id, {
+    actorId: governanceActor.id,
+    actorRole: governanceActor.role,
+  })
+  return gate.issues
+})
+
+/**
+ * Formats ISO dates into datetime-local input values.
+ */
+function toDateTimeLocalValue(value: string | null): string {
+  if (!value) {
+    return ''
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return ''
+  }
+  const pad = (item: number) => String(item).padStart(2, '0')
+  return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())}T${pad(parsed.getHours())}:${pad(parsed.getMinutes())}`
+}
+
+/**
+ * Formats release timestamps for timeline cards.
+ */
+function formatReleaseTimestamp(value: string | null): string {
+  if (!value) {
+    return cmsUiText.value.releaseNotSetLabel
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return cmsUiText.value.releaseInvalidDateLabel
+  }
+  return parsed.toLocaleString()
+}
+
+/**
+ * Resolves semantic styles for release status chips.
+ */
+function getReleaseStatusStyle(status: CmsReleaseStatus): Record<string, string> {
+  switch (status) {
+    case 'published':
+      return {
+        background: notificationSuccessColor.value,
+        color: notificationSuccessTextColor.value,
+      }
+    case 'validated':
+      return {
+        background: notificationInfoColor.value,
+        color: notificationInfoTextColor.value,
+      }
+    case 'scheduled':
+      return {
+        background: accentSoftBackground.value,
+        color: accentTextColor.value,
+        border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
+      }
+    case 'rolled_back':
+      return {
+        background: notificationWarningColor.value,
+        color: notificationWarningTextColor.value,
+      }
+    case 'canceled':
+      return {
+        background: settings.value.theme.pageBackground || defaultTheme.pageBackground || '',
+        color: settings.value.theme.pageTextColor || defaultTheme.pageTextColor || '',
+      }
+    case 'draft':
+    default:
+      return {
+        background: settings.value.theme.drawerBackground || defaultTheme.drawerBackground || '',
+        color: settings.value.theme.drawerTextColor || defaultTheme.drawerTextColor || '',
+      }
+  }
+}
+
+/**
+ * Applies release settings and keeps selected release id consistent.
+ */
+function applyReleaseSettings(nextReleases: CmsReleaseSettings): void {
+  settings.value.releases = nextReleases
+  if (!settings.value.releases.activeEnvironment) {
+    settings.value.releases.activeEnvironment = 'dev'
+  }
+
+  const hasActiveRelease = Boolean(
+    settings.value.releases.activeReleaseId
+    && nextReleases.items.some(item => item.id === settings.value.releases.activeReleaseId)
+  )
+
+  if (!hasActiveRelease) {
+    const firstInEnvironment = nextReleases.items.find(item => item.environment === settings.value.releases.activeEnvironment)
+    const fallbackRelease = firstInEnvironment ?? nextReleases.items[0] ?? null
+    settings.value.releases.activeReleaseId = fallbackRelease?.id ?? null
+    if (fallbackRelease) {
+      settings.value.releases.activeEnvironment = fallbackRelease.environment
+    }
+  }
+}
+
+/**
+ * Commits release command result into settings and optional snapshot apply.
+ */
+function commitReleaseResult(
+  result: ReturnType<typeof createCmsReleaseDraft>,
+  successLabel: string,
+  applySnapshot = false
+): boolean {
+  applyReleaseSettings(result.settings)
+  if (!result.ok) {
+    savedAtLabel.value = result.error ?? cmsUiText.value.releaseCommandFailedLabel
+    return false
+  }
+
+  if (applySnapshot) {
+    const latestPublishedReleaseId = result.publishedReleaseIds?.[result.publishedReleaseIds.length - 1] ?? null
+    const snapshotToApply = result.snapshot
+      ?? (result.releaseId ? result.settings.items.find(item => item.id === result.releaseId)?.snapshot : null)
+      ?? (latestPublishedReleaseId
+        ? result.settings.items.find(item => item.id === latestPublishedReleaseId)?.snapshot
+        : null)
+
+    if (snapshotToApply) {
+      const withReleaseSnapshot = applyCmsReleaseSnapshot(settings.value, snapshotToApply)
+      withReleaseSnapshot.releases = result.settings
+      settings.value = normalizeCmsWhiteLabelSettings(withReleaseSnapshot)
+      applySelectedThemePresetFromSettings()
+      applyCmsFavicon(settings.value.branding.faviconUrl)
+      if (!settings.value.items.some(item => item.id === activeMenuId.value)) {
+        activeMenuId.value = settingsModuleId.value
+      }
+    }
+  }
+
+  if (result.releaseId) {
+    settings.value.releases.activeReleaseId = result.releaseId
+  }
+  savedAtLabel.value = successLabel
+  return true
+}
+
+/**
+ * Creates a release draft from current tenant settings.
+ */
+function createReleaseDraftFromCurrentSettings(): void {
+  const result = createCmsReleaseDraft(
+    settings.value.releases,
+    {
+      snapshot: createCmsReleaseSnapshot(settings.value),
+      workflowVersion: settings.value.governance.workflow.version,
+      workflowStatus: settings.value.governance.workflow.status,
+    },
+    {
+      actorId: governanceActor.id,
+      actorRole: governanceActor.role,
+      summary: `${cmsUiText.value.releaseDraftSummaryPrefix} ${activeTenantProfileName.value}`,
+      environment: activeReleaseEnvironment.value,
+    }
+  )
+  commitReleaseResult(result, cmsUiText.value.releaseDraftCreatedLabel)
+}
+
+/**
+ * Validates selected release entry.
+ */
+function validateSelectedReleaseEntry(): void {
+  if (!selectedReleaseId.value) {
+    savedAtLabel.value = cmsUiText.value.selectReleaseFirstLabel
+    return
+  }
+
+  const result = validateCmsRelease(
+    settings.value.releases,
+    selectedReleaseId.value,
+    governanceActor.id,
+    undefined,
+    governanceActor.role
+  )
+  commitReleaseResult(result, cmsUiText.value.releaseValidatedLabel)
+}
+
+/**
+ * Schedules selected release for future publication.
+ */
+function scheduleSelectedReleaseEntry(): void {
+  if (!selectedReleaseId.value) {
+    savedAtLabel.value = cmsUiText.value.selectReleaseFirstLabel
+    return
+  }
+  if (!releaseScheduleAt.value) {
+    savedAtLabel.value = cmsUiText.value.defineScheduleBeforeSchedulingLabel
+    return
+  }
+
+  const result = scheduleCmsRelease(
+    settings.value.releases,
+    selectedReleaseId.value,
+    releaseScheduleAt.value,
+    governanceActor.id,
+    undefined,
+    governanceActor.role
+  )
+  commitReleaseResult(result, cmsUiText.value.releaseScheduledLabel)
+}
+
+/**
+ * Publishes selected release immediately.
+ */
+function publishSelectedReleaseEntry(): void {
+  if (!selectedReleaseId.value) {
+    savedAtLabel.value = cmsUiText.value.selectReleaseFirstLabel
+    return
+  }
+
+  const result = publishCmsRelease(
+    settings.value.releases,
+    selectedReleaseId.value,
+    governanceActor.id,
+    undefined,
+    governanceActor.role
+  )
+  commitReleaseResult(result, cmsUiText.value.releasePublishedLabel, true)
+}
+
+/**
+ * Processes due scheduled releases and publishes them automatically.
+ */
+function processDueScheduledReleaseEntries(): void {
+  const result = processDueScheduledCmsReleases(
+    settings.value.releases,
+    governanceActor.id,
+    undefined,
+    governanceActor.role
+  )
+  const publishedCount = result.publishedReleaseIds?.length ?? 0
+  commitReleaseResult(
+    result,
+    publishedCount > 0
+      ? cmsUiText.value.scheduledReleasesPublishedLabel(publishedCount)
+      : cmsUiText.value.noScheduledReleasesPublishedLabel,
+    true
+  )
+}
+
+/**
+ * Rolls back current selected release to chosen historical release snapshot.
+ */
+function rollbackSelectedReleaseEntry(): void {
+  if (!selectedReleaseId.value) {
+    savedAtLabel.value = cmsUiText.value.selectSourceReleaseFirstLabel
+    return
+  }
+  if (!releaseRollbackTargetId.value) {
+    savedAtLabel.value = cmsUiText.value.selectRollbackTargetReleaseLabel
+    return
+  }
+
+  const result = rollbackCmsRelease(
+    settings.value.releases,
+    selectedReleaseId.value,
+    releaseRollbackTargetId.value,
+    governanceActor.id,
+    undefined,
+    governanceActor.role
+  )
+  commitReleaseResult(result, cmsUiText.value.releaseRolledBackLabel, true)
+}
+
+/**
+ * Promotes selected release into another environment.
+ */
+function promoteSelectedReleaseEntry(): void {
+  if (!selectedReleaseId.value) {
+    savedAtLabel.value = cmsUiText.value.selectReleaseFirstLabel
+    return
+  }
+  if (!releasePromotionTargetEnvironment.value) {
+    savedAtLabel.value = cmsUiText.value.selectPromotionTargetEnvironmentLabel
+    return
+  }
+
+  const result = promoteCmsReleaseEnvironment(
+    settings.value.releases,
+    selectedReleaseId.value,
+    releasePromotionTargetEnvironment.value,
+    governanceActor.id,
+    undefined,
+    governanceActor.role
+  )
+  commitReleaseResult(result, cmsUiText.value.releasePromotedLabel)
+}
+
+watch(
+  activeReleaseEnvironment,
+  value => {
+    const hasReleaseInEnvironment = releaseEntries.value.some(item => item.environment === value)
+    if (!hasReleaseInEnvironment) {
+      settings.value.releases.activeReleaseId = releaseEntriesAll.value.find(item => item.environment === value)?.id ?? null
+    }
+    if (releaseRollbackTargetId.value && !releaseEntries.value.some(item => item.id === releaseRollbackTargetId.value)) {
+      releaseRollbackTargetId.value = ''
+    }
+    if (releasePromotionTargetEnvironment.value === value) {
+      releasePromotionTargetEnvironment.value = ''
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  selectedRelease,
+  value => {
+    if (value && settings.value.releases.activeEnvironment !== value.environment) {
+      settings.value.releases.activeEnvironment = value.environment
+    }
+    releaseScheduleAt.value = toDateTimeLocalValue(value?.scheduledAt ?? null)
+    if (releaseRollbackTargetId.value && !releaseEntries.value.some(item => item.id === releaseRollbackTargetId.value)) {
+      releaseRollbackTargetId.value = ''
+    }
+    if (releasePromotionTargetEnvironment.value === activeReleaseEnvironment.value) {
+      releasePromotionTargetEnvironment.value = ''
+    }
+  },
+  { immediate: true }
+)
 
 const landingRegistry = createLandingRegistry()
 const cmsBlockPalette = listCmsBuilderPalette(landingRegistry)
@@ -4228,41 +6668,61 @@ const activeBlocksPageId = ref(settings.value.pages[0]?.id ?? '')
 const activeBlocksSectionId = ref('')
 const activeBlocksBlockId = ref('')
 const selectedPaletteBlockType = ref(cmsBlockPalette[0]?.type ?? '')
+const selectedPaletteBlockPresetId = ref<CmsBlockPresetId>('custom')
 const activeBlocksPropsDraft = ref('{}')
 const activeBlocksFieldJsonDrafts = ref<Record<string, string>>({})
 
 /**
- * Resolves default landing block type from section identifiers.
+ * Creates collision-safe block ids while keeping section-local naming.
  */
-function resolveDefaultLandingBlockType(sectionId: string): string {
-  const normalized = sectionId.trim().toLowerCase()
-  switch (normalized) {
-    case 'header':
-      return 'landing.header'
-    case 'hero':
-      return 'landing.hero'
-    case 'stats':
-    case 'metrics':
-      return 'landing.stats'
-    case 'features':
-      return 'landing.features'
-    case 'installation':
-    case 'cta':
-      return 'landing.cta'
-    case 'footer':
-      return 'landing.footer'
-    default:
-      return 'landing.hero'
+function createUniquePageBlockId(
+  occupiedIds: Set<string>,
+  sectionId: string,
+  preferredId: string | undefined,
+  index = 1
+): string {
+  const normalizedPreferredId = normalizeIdSegment(preferredId)
+  if (normalizedPreferredId && !occupiedIds.has(normalizedPreferredId)) {
+    occupiedIds.add(normalizedPreferredId)
+    return normalizedPreferredId
   }
+
+  let nextIndex = Math.max(1, index)
+  let candidate = `${sectionId}-block-${nextIndex}`
+  while (occupiedIds.has(candidate)) {
+    nextIndex += 1
+    candidate = `${sectionId}-block-${nextIndex}`
+  }
+
+  occupiedIds.add(candidate)
+  return candidate
 }
 
 /**
  * Creates a default block scaffold for a page section.
  */
-function createDefaultSectionBlock(sectionId: string, index = 1, enabled = true): CmsPageBlockSettings {
+function createDefaultSectionBlock(
+  sectionId: string,
+  occupiedIds: Set<string>,
+  index = 1,
+  enabled = true,
+  presetId?: CmsSectionPresetId
+): CmsPageBlockSettings {
+  const blockId = createUniquePageBlockId(occupiedIds, sectionId, undefined, index)
+  const blockPresetId = getDefaultCmsBlockPresetIdForSectionPreset(presetId ?? 'custom')
+  if (blockPresetId !== 'custom') {
+    return createCmsPageBlockFromPreset({
+      presetId: blockPresetId,
+      blockId,
+      enabled,
+      authoredPresets: settings.value.authoredBlockPresets,
+    })
+  }
+
   return {
-    id: `${sectionId}-block-${index}`,
-    type: resolveDefaultLandingBlockType(sectionId),
+    id: blockId,
+    type: resolveDefaultCmsBlockTypeForSection(sectionId, presetId),
+    presetId: 'custom',
     enabled,
     props: {},
   }
@@ -4272,21 +6732,40 @@ function createDefaultSectionBlock(sectionId: string, index = 1, enabled = true)
  * Ensures page sections always contain at least one editable block.
  */
 function ensurePageSectionBlocks(page: CmsPageSettings): CmsPageSettings {
+  const occupiedBlockIds = new Set<string>()
+  const normalizedSections = page.sections.map(section => {
+    const presetId = section.presetId ?? 'custom'
+    const normalizedBlocks = Array.isArray(section.blocks) && section.blocks.length > 0
+      ? section.blocks.map((block, index) => ({
+        id: createUniquePageBlockId(occupiedBlockIds, section.id, String(block.id ?? '').trim(), index + 1),
+        type: String(block.type ?? '').trim() || resolveDefaultCmsBlockTypeForSection(section.id, presetId),
+        presetId: resolveCmsBlockPresetId(block.presetId),
+        enabled: typeof block.enabled === 'boolean' ? block.enabled : section.enabled,
+        props: block.props && typeof block.props === 'object'
+          ? cloneSerializableValue(block.props)
+          : {},
+        localization: block.localization ? cloneSerializableValue(block.localization) : undefined,
+      }))
+      : null
+
+    return {
+      section,
+      presetId,
+      normalizedBlocks,
+    }
+  })
+
   return {
     ...page,
-    sections: page.sections.map(section => {
-      const normalizedBlocks = Array.isArray(section.blocks) && section.blocks.length > 0
-        ? section.blocks.map((block, index) => ({
-          id: String(block.id ?? '').trim() || `${section.id}-block-${index + 1}`,
-          type: String(block.type ?? '').trim() || resolveDefaultLandingBlockType(section.id),
-          enabled: typeof block.enabled === 'boolean' ? block.enabled : section.enabled,
-          props: block.props && typeof block.props === 'object' ? { ...block.props } : {},
-        }))
-        : [createDefaultSectionBlock(section.id, 1, section.enabled)]
-
+    contentModelId: resolveCmsContentModelId(
+      page.contentModelId,
+      settings.value.authoredContentModels
+    ),
+    sections: normalizedSections.map(({ section, presetId, normalizedBlocks }) => {
       return {
         ...section,
-        blocks: normalizedBlocks,
+        presetId,
+        blocks: normalizedBlocks ?? [createDefaultSectionBlock(section.id, occupiedBlockIds, 1, section.enabled, presetId)],
       }
     }),
   }
@@ -4309,11 +6788,19 @@ function toCmsPageSchema(page: CmsPageSettings): CmsPageSchema {
       settings: {
         label: section.label,
         enabled: section.enabled,
+        presetId: section.presetId,
       },
       blocks: section.blocks.map(block => ({
         id: block.id,
         type: block.type,
-        props: { ...block.props },
+        props: cloneSerializableValue(block.props),
+        settings: {
+          enabled: block.enabled,
+          presetId: resolveCmsBlockPresetId(block.presetId),
+        },
+        localization: block.localization?.props
+          ? { props: cloneSerializableValue(block.localization.props) }
+          : undefined,
       })),
     })),
   }
@@ -4324,6 +6811,61 @@ function toCmsPageSchema(page: CmsPageSettings): CmsPageSchema {
  */
 function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings): CmsPageSettings {
   const previousSectionsById = new Map(originalPage.sections.map(section => [section.id, section]))
+  const occupiedBlockIds = new Set<string>()
+  const normalizedSections = schema.sections.map((section, sectionIndex) => {
+    const normalizedSectionId = String(section.id ?? '').trim() || `${originalPage.id}-section-${sectionIndex + 1}`
+    const previousSection = previousSectionsById.get(normalizedSectionId) ?? previousSectionsById.get(section.id)
+    const previousBlocksById = new Map((previousSection?.blocks ?? []).map(block => [block.id, block]))
+    const settingsLabel = section.settings && typeof section.settings.label === 'string'
+      ? section.settings.label.trim()
+      : ''
+    const settingsEnabled = section.settings && typeof section.settings.enabled === 'boolean'
+      ? section.settings.enabled
+      : undefined
+    const settingsPresetId = section.settings && typeof section.settings.presetId === 'string'
+      ? section.settings.presetId
+      : undefined
+    const presetId = resolveCmsSectionPresetId(
+      String(settingsPresetId ?? previousSection?.presetId ?? '').trim() || 'custom'
+    )
+    const normalizedBlocks = section.blocks.length > 0
+      ? section.blocks.map((block, blockIndex) => {
+        const previousBlock = previousBlocksById.get(block.id)
+        const normalizedBlockId = createUniquePageBlockId(
+          occupiedBlockIds,
+          normalizedSectionId,
+          String(block.id ?? '').trim(),
+          blockIndex + 1
+        )
+        const blockSettings = block.settings && typeof block.settings === 'object'
+          ? block.settings as Record<string, unknown>
+          : undefined
+        return {
+          id: normalizedBlockId,
+          type: String(block.type ?? '').trim() || resolveDefaultCmsBlockTypeForSection(normalizedSectionId, presetId),
+          presetId: resolveCmsBlockPresetId(blockSettings?.presetId ?? previousBlock?.presetId),
+          enabled: typeof blockSettings?.enabled === 'boolean'
+            ? blockSettings.enabled
+            : previousBlock?.enabled ?? previousSection?.enabled ?? true,
+          props: block.props && typeof block.props === 'object'
+            ? cloneSerializableValue(block.props)
+            : {},
+          localization: block.localization?.props
+            ? { props: cloneSerializableValue(block.localization.props) }
+            : previousBlock?.localization,
+        }
+      })
+      : null
+
+    return {
+      normalizedSectionId,
+      previousSection,
+      settingsLabel,
+      settingsEnabled,
+      presetId,
+      normalizedBlocks,
+    }
+  })
 
   return {
     ...originalPage,
@@ -4331,38 +6873,24 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
     path: String(schema.slug ?? '').trim() || originalPage.path,
     title: String(schema.title ?? '').trim() || originalPage.title,
     status: schema.status === 'published' ? 'published' : 'draft',
-    sections: schema.sections.map((section, sectionIndex) => {
-      const previousSection = previousSectionsById.get(section.id)
-      const previousBlocksById = new Map((previousSection?.blocks ?? []).map(block => [block.id, block]))
-      const normalizedSectionId = String(section.id ?? '').trim() || `${originalPage.id}-section-${sectionIndex + 1}`
-      const settingsLabel = section.settings && typeof section.settings.label === 'string'
-        ? section.settings.label.trim()
-        : ''
-      const settingsEnabled = section.settings && typeof section.settings.enabled === 'boolean'
-        ? section.settings.enabled
-        : undefined
-
-      const normalizedBlocks = section.blocks.length > 0
-        ? section.blocks.map((block, blockIndex) => {
-          const previousBlock = previousBlocksById.get(block.id)
-          return {
-            id: String(block.id ?? '').trim() || `${normalizedSectionId}-block-${blockIndex + 1}`,
-            type: String(block.type ?? '').trim() || resolveDefaultLandingBlockType(normalizedSectionId),
-            enabled: previousBlock?.enabled ?? previousSection?.enabled ?? true,
-            props: block.props && typeof block.props === 'object'
-              ? { ...block.props }
-              : {},
-          }
-        })
-        : [createDefaultSectionBlock(normalizedSectionId, 1, previousSection?.enabled ?? true)]
-
+    sections: normalizedSections.map((section, sectionIndex) => {
       return {
-        id: normalizedSectionId,
-        label: settingsLabel || previousSection?.label || `Section ${sectionIndex + 1}`,
-        enabled: typeof settingsEnabled === 'boolean'
-          ? settingsEnabled
-          : previousSection?.enabled ?? true,
-        blocks: normalizedBlocks,
+        id: section.normalizedSectionId,
+        presetId: section.presetId,
+        label: section.settingsLabel || section.previousSection?.label || `Section ${sectionIndex + 1}`,
+        enabled: typeof section.settingsEnabled === 'boolean'
+          ? section.settingsEnabled
+          : section.previousSection?.enabled ?? true,
+        localization: section.previousSection?.localization,
+        blocks: section.normalizedBlocks ?? [
+          createDefaultSectionBlock(
+            section.normalizedSectionId,
+            occupiedBlockIds,
+            1,
+            section.previousSection?.enabled ?? true,
+            section.presetId
+          ),
+        ],
       }
     }),
   }
@@ -4370,7 +6898,7 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
 
 const blocksPageOptions = computed(() => {
   return settings.value.pages.map(page => ({
-    label: `${page.title} (${page.path})`,
+    label: `${getCmsPageTitleValue(page)} (${page.path})`,
     value: page.id,
   }))
 })
@@ -4386,6 +6914,15 @@ const activeBlocksPage = computed(() => {
   return ensurePageSectionBlocks(settings.value.pages[activeBlocksPageIndex.value] as CmsPageSettings)
 })
 
+const activeBlocksSection = computed<CmsPageSectionSettings | null>(() => {
+  const page = activeBlocksPage.value
+  if (!page) {
+    return null
+  }
+
+  return page.sections.find(section => section.id === activeBlocksSectionId.value) ?? null
+})
+
 const activeBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
   const page = activeBlocksPage.value
   if (!page) {
@@ -4395,19 +6932,20 @@ const activeBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
   return page.sections.map((section, sectionIndex) => ({
     id: section.id,
     label: section.label,
-    enabled: section.enabled,
-    sectionIndex,
-    blocks: section.blocks.map((block, blockIndex) => ({
-      id: block.id,
-      type: block.type,
-      enabled: block.enabled,
-      sectionId: section.id,
-      sectionLabel: section.label,
-      pageId: page.id,
-      pageTitle: page.title,
-      pagePath: page.path,
-      pageStatus: page.status,
-      pageIndex: activeBlocksPageIndex.value,
+      enabled: section.enabled,
+      sectionIndex,
+      blocks: section.blocks.map((block, blockIndex) => ({
+        id: block.id,
+        type: block.type,
+        presetId: block.presetId,
+        enabled: block.enabled,
+        sectionId: section.id,
+        sectionLabel: getCmsSectionLabelValue(section),
+        pageId: page.id,
+        pageTitle: getCmsPageTitleValue(page),
+        pagePath: page.path,
+        pageStatus: page.status,
+        pageIndex: activeBlocksPageIndex.value,
       sectionIndex,
       blockIndex,
     })),
@@ -4430,14 +6968,157 @@ const activeBlocksBlockOptions = computed(() => {
   return section.blocks.map(block => ({
     label: `${resolveCmsBlockDisplayName(block.type)} (${block.id})`,
     value: block.id,
+    description: getCmsBlockPresetLabel(
+      settings.value.content.locale,
+      block.presetId,
+      settings.value.authoredBlockPresets
+    ),
   }))
 })
 
 const cmsBlockPaletteOptions = computed(() => {
-  return cmsBlockPalette.map(item => ({
+  const activeSection = activeBlocksSection.value
+  const allowedTypes = activeSection
+    ? new Set(getCmsSectionPresetAllowedBlockTypes(activeSection.presetId))
+    : null
+
+  return cmsBlockPalette
+    .filter(item => !allowedTypes || allowedTypes.has(item.type))
+    .map(item => ({
     label: `${item.displayName} (${item.category})`,
     value: item.type,
   }))
+})
+
+const cmsBlockPresetOptions = computed<CmsBlockPresetOption[]>(() => {
+  const activeSection = activeBlocksSection.value
+
+  return listCmsBlockPresetOptions(
+    settings.value.content.locale,
+    selectedPaletteBlockType.value,
+    settings.value.authoredBlockPresets
+  ).filter(option => {
+    if (!activeSection) {
+      return true
+    }
+
+    return isCmsBlockPresetAllowedForSectionPreset(
+      activeSection.presetId,
+      option.value,
+      settings.value.authoredBlockPresets
+    )
+  })
+})
+
+const activeBlocksSectionContract = computed(() => {
+  const activeSection = activeBlocksSection.value
+  if (!activeSection) {
+    return null
+  }
+
+  return getCmsSectionPresetDefinition(settings.value.content.locale, activeSection.presetId)
+})
+
+const activeBlocksSectionEnabledBlockCount = computed(() => {
+  const activeSection = activeBlocksSection.value
+  if (!activeSection) {
+    return 0
+  }
+
+  return activeSection.blocks.filter(block => block.enabled).length
+})
+
+const activeBlocksSectionLimitReached = computed(() => {
+  const limits = activeBlocksSection.value
+    ? getCmsSectionPresetBlockLimits(activeBlocksSection.value.presetId)
+    : null
+  if (!limits || limits.maxBlocks == null) {
+    return false
+  }
+
+  return activeBlocksSectionEnabledBlockCount.value >= limits.maxBlocks
+})
+
+const canAddPaletteBlockToActiveSection = computed(() => {
+  const activeSection = activeBlocksSection.value
+  if (!activeSection || !selectedPaletteBlockType.value) {
+    return false
+  }
+
+  if (activeBlocksSectionLimitReached.value) {
+    return false
+  }
+
+  return isCmsBlockTypeAllowedForSectionPreset(
+    activeSection.presetId,
+    selectedPaletteBlockType.value
+  )
+})
+
+const activeBlocksSectionContractSummary = computed(() => {
+  const contract = activeBlocksSectionContract.value
+  if (!contract) {
+    return ''
+  }
+
+  const blockLabels = contract.allowedBlockTypes
+    .map(type => resolveCmsBlockDisplayName(type))
+    .join(', ')
+  const limitLabel = contract.maxBlocks == null
+    ? tr('Unlimited blocks', 'Blocos ilimitados')
+    : tr('Max blocks', 'Maximo de blocos')
+      + `: ${contract.maxBlocks}`
+
+  return `${contract.slots[0]?.label ?? tr('Main slot', 'Slot principal')} · ${blockLabels} · ${limitLabel}`
+})
+
+const cmsReusableBlockOptions = computed(() => {
+  return settings.value.reusableBlocks.map(reusableBlock => ({
+    label: `${reusableBlock.name} (${reusableBlock.category})`,
+    value: reusableBlock.id,
+    description: reusableBlock.description,
+  }))
+})
+
+const cmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>(() => {
+  return settings.value.reusableSections
+})
+
+const cmsAuthoredContentModelUsageCountById = computed(() => {
+  const counts = new Map<string, number>()
+
+  for (const page of settings.value.pages) {
+    counts.set(page.contentModelId, (counts.get(page.contentModelId) ?? 0) + 1)
+  }
+
+  for (const reusableSection of settings.value.reusableSections) {
+    counts.set(
+      reusableSection.contentModelId,
+      (counts.get(reusableSection.contentModelId) ?? 0) + 1
+    )
+  }
+
+  return counts
+})
+
+const selectedAuthoredContentModel = computed<CmsAuthoredContentModelSettings | null>(() => {
+  return settings.value.authoredContentModels.find(model => model.id === selectedAuthoredContentModelId.value) ?? null
+})
+
+const cmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>(() => {
+  return settings.value.authoredBlockPresets
+})
+
+const cmsAuthoredBlockPresetOptions = computed(() => {
+  return settings.value.authoredBlockPresets.map(preset => ({
+    label: `${getCmsAuthoredBlockPresetNameValue(preset)} (${resolveCmsBlockDisplayName(preset.type)})`,
+    value: preset.id,
+    description: getCmsAuthoredBlockPresetDescriptionValue(preset),
+  }))
+})
+
+const cmsPresetStarterSectionOptions = computed<CmsSectionPresetOption[]>(() => {
+  return listCmsSectionPresetOptions(settings.value.content.locale, 'blank-page')
 })
 
 const activeBlocksSchema = computed<CmsPageSchema | null>(() => {
@@ -4452,11 +7133,12 @@ const cmsSectionBlocks = computed<CmsSectionBlockRecord[]>(() => {
       return section.blocks.map((block, blockIndex) => ({
         id: block.id,
         type: block.type,
+        presetId: block.presetId,
         enabled: block.enabled,
         sectionId: section.id,
-        sectionLabel: section.label,
+        sectionLabel: getCmsSectionLabelValue(section),
         pageId: normalizedPage.id,
-        pageTitle: normalizedPage.title,
+        pageTitle: getCmsPageTitleValue(normalizedPage),
         pagePath: normalizedPage.path,
         pageStatus: normalizedPage.status,
         pageIndex,
@@ -4467,12 +7149,27 @@ const cmsSectionBlocks = computed<CmsSectionBlockRecord[]>(() => {
   })
 })
 
+const cmsContentValidation = computed(() => validateCmsContentPages({
+  pages: settings.value.pages,
+  registry: landingRegistry,
+  authoredContentModels: settings.value.authoredContentModels,
+  authoredBlockPresets: settings.value.authoredBlockPresets,
+}))
+
+const cmsContentDiagnostics = computed<CmsContentValidationIssue[]>(() => {
+  return cmsContentValidation.value.issues
+})
+
 const cmsPublishedPagesCount = computed(() => {
-  return settings.value.pages.filter(page => page.status === 'published').length
+  return cmsContentValidation.value.summary.publishedPagesCount
 })
 
 const cmsEnabledSectionsCount = computed(() => {
-  return cmsSectionBlocks.value.filter(section => section.enabled).length
+  return cmsContentValidation.value.summary.enabledSectionsCount
+})
+
+const cmsEnabledBlocksCount = computed(() => {
+  return cmsContentValidation.value.summary.enabledBlocksCount
 })
 
 const activeBlocksSelectedBlockRecord = computed(() => {
@@ -4499,11 +7196,507 @@ const activeBlocksFieldDefinitions = computed<CmsBlockFieldDefinition[]>(() => {
   return getLandingBlockFieldDefinitions(blockType)
 })
 
+const activeBlocksRenderContext = computed(() => ({
+  mediaAssets: settings.value.mediaAssets,
+  locale: getActiveCmsAuthoringLocale(),
+}))
+
+const cmsMediaReferences = computed(() => collectCmsMediaBindingReferences({
+  pages: settings.value.pages,
+  resolveBindings: getLandingBlockMediaBindingDefinitions,
+}))
+
+const cmsMediaDiagnostics = computed<CmsMediaDiagnostic[]>(() => collectCmsMediaDiagnostics({
+  pages: settings.value.pages,
+  mediaAssets: settings.value.mediaAssets,
+  resolveBindings: getLandingBlockMediaBindingDefinitions,
+}))
+
+const cmsMediaUsageCountByAssetId = computed(() => {
+  const counts = new Map<string, number>()
+  for (const reference of cmsMediaReferences.value) {
+    counts.set(reference.assetId, (counts.get(reference.assetId) ?? 0) + 1)
+  }
+  return counts
+})
+
+/**
+ * Filters content diagnostics for one page preview card.
+ */
+function getCmsPageDiagnostics(pageId: string, pageIndex: number): CmsContentValidationIssue[] {
+  return cmsContentDiagnostics.value.filter(issue => {
+    if (issue.pageId && issue.pageId === pageId) {
+      return true
+    }
+
+    return issue.path.startsWith(`pages[${pageIndex}]`)
+      || issue.path.startsWith(`pages.${pageId || 'unknown'}`)
+  })
+}
+
+const activeBlocksContentDiagnostics = computed(() => {
+  const pageId = activeBlocksPageId.value
+  const pageIndex = activeBlocksPageIndex.value
+  if (pageIndex < 0) {
+    return []
+  }
+
+  return getCmsPageDiagnostics(pageId, pageIndex).filter(issue => {
+    if (activeBlocksSectionId.value && issue.sectionId && issue.sectionId !== activeBlocksSectionId.value) {
+      return false
+    }
+
+    if (activeBlocksBlockId.value && issue.blockId && issue.blockId !== activeBlocksBlockId.value) {
+      return false
+    }
+
+    return true
+  })
+})
+
+const activeBlocksMediaDiagnostics = computed(() => {
+  const pageId = activeBlocksPageId.value
+  return cmsMediaDiagnostics.value.filter(diagnostic => {
+    if (diagnostic.pageId !== pageId) {
+      return false
+    }
+
+    if (activeBlocksSectionId.value && diagnostic.sectionId !== activeBlocksSectionId.value) {
+      return false
+    }
+
+    if (activeBlocksBlockId.value && diagnostic.blockId && diagnostic.blockId !== activeBlocksBlockId.value) {
+      return false
+    }
+
+    return true
+  })
+})
+
+const selectedMediaAssetDiagnostics = computed(() => {
+  const assetId = selectedMediaAssetId.value
+  if (!assetId) {
+    return []
+  }
+
+  return cmsMediaDiagnostics.value.filter(diagnostic => diagnostic.assetId === assetId)
+})
+
+/**
+ * Returns the number of runtime references for one media asset id.
+ */
+function getCmsMediaUsageCount(assetId: string): number {
+  return cmsMediaUsageCountByAssetId.value.get(assetId) ?? 0
+}
+
+/**
+ * Filters diagnostics by media asset id for preview cards.
+ */
+function getCmsMediaDiagnosticsForAsset(assetId: string): CmsMediaDiagnostic[] {
+  return cmsMediaDiagnostics.value.filter(diagnostic => diagnostic.assetId === assetId)
+}
+
+/**
+ * Returns the number of references using one authored content model.
+ */
+function getCmsAuthoredContentModelUsageCount(contentModelId: string): number {
+  return cmsAuthoredContentModelUsageCountById.value.get(contentModelId) ?? 0
+}
+
+const selectedReusableBlock = computed<CmsReusableBlockSettings | null>(() => {
+  return settings.value.reusableBlocks.find(reusableBlock => reusableBlock.id === selectedReusableBlockId.value) ?? null
+})
+
+const selectedAuthoredBlockPreset = computed<CmsAuthoredBlockPresetSettings | null>(() => {
+  return settings.value.authoredBlockPresets.find(preset => preset.id === selectedAuthoredBlockPresetId.value) ?? null
+})
+
 /**
  * Checks whether a value is a plain object record.
  */
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+/**
+ * Resolves the locale currently being authored in CMS content modules.
+ */
+function getActiveCmsAuthoringLocale(): CmsLocale {
+  return resolveCmsLocale(settings.value.content.locale)
+}
+
+/**
+ * Resolves one page title for the active authoring locale.
+ */
+function getCmsPageTitleValue(page: CmsPageSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: page.title,
+    localized: page.localization?.title,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one page description for the active authoring locale.
+ */
+function getCmsPageDescriptionValue(page: CmsPageSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: page.description,
+    localized: page.localization?.description,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Returns one empty field draft scaffold for authored content-model editing.
+ */
+function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
+  return {
+    id: '',
+    type: 'text',
+    label: '',
+    description: '',
+    placeholder: '',
+    required: false,
+    repeatable: false,
+    minValue: '',
+    maxValue: '',
+    defaultValue: '',
+    optionsDraft: '',
+  }
+}
+
+/**
+ * Builds one editable field draft from a persisted content-model field.
+ */
+function createCmsContentModelFieldDraftFromDefinition(
+  field: CmsContentModelFieldDefinition
+): CmsContentModelFieldDraft {
+  return {
+    id: field.id,
+    type: field.type,
+    label: field.label,
+    description: field.description,
+    placeholder: field.placeholder,
+    required: field.required,
+    repeatable: field.repeatable,
+    minValue: field.min == null ? '' : String(field.min),
+    maxValue: field.max == null ? '' : String(field.max),
+    defaultValue: field.repeatable
+      ? formatCmsRepeatableFieldValue(field.defaultValue)
+      : (field.defaultValue == null ? '' : String(field.defaultValue)),
+    optionsDraft: field.options.map(option => option.value).join('\n'),
+  }
+}
+
+/**
+ * Parses textarea-based option drafts into stable select option arrays.
+ */
+function parseCmsContentModelFieldOptionsDraft(value: string): string[] {
+  return value
+    .split(/\r?\n/)
+    .map(entry => entry.trim())
+    .filter((entry, index, entries) => entry.length > 0 && entries.indexOf(entry) === index)
+}
+
+/**
+ * Formats repeatable field values as one-entry-per-line strings for the Pages builder.
+ */
+function formatCmsRepeatableFieldValue(value: unknown): string {
+  if (!Array.isArray(value)) {
+    return ''
+  }
+
+  return value.map(entry => String(entry ?? '')).join('\n')
+}
+
+/**
+ * Parses repeatable field values from one-entry-per-line strings.
+ */
+function parseCmsRepeatableFieldValue(value: string): string[] {
+  return value
+    .split(/\r?\n/)
+    .map(entry => entry.trim())
+    .filter(entry => entry.length > 0)
+}
+
+/**
+ * Builds a compact field hint with optional validation constraints.
+ */
+function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): string {
+  const detailParts = [field.description || field.placeholder].filter(Boolean)
+
+  if (field.repeatable) {
+    if (field.min != null || field.max != null) {
+      detailParts.push(tr(
+        `Items: ${field.min ?? 0}-${field.max ?? '∞'}`,
+        `Itens: ${field.min ?? 0}-${field.max ?? '∞'}`
+      ))
+    }
+    return detailParts.join(' · ')
+  }
+
+  if ((field.type === 'text' || field.type === 'textarea') && (field.min != null || field.max != null)) {
+    detailParts.push(tr(
+      `Length: ${field.min ?? 0}-${field.max ?? '∞'}`,
+      `Comprimento: ${field.min ?? 0}-${field.max ?? '∞'}`
+    ))
+  }
+
+  if (field.type === 'number' && (field.min != null || field.max != null)) {
+    detailParts.push(tr(
+      `Range: ${field.min ?? '−∞'}-${field.max ?? '∞'}`,
+      `Faixa: ${field.min ?? '−∞'}-${field.max ?? '∞'}`
+    ))
+  }
+
+  return detailParts.join(' · ')
+}
+
+/**
+ * Resolves the field schema attached to one page content model.
+ */
+function getCmsPageContentModelFields(page: CmsPageSettings): CmsContentModelFieldDefinition[] {
+  return getCmsContentModelFieldDefinitions(
+    settings.value.content.locale,
+    page.contentModelId,
+    settings.value.authoredContentModels
+  )
+}
+
+/**
+ * Resolves one page custom-fields payload for the active locale.
+ */
+function getCmsPageCustomFieldsValue(page: CmsPageSettings): Record<string, unknown> {
+  return resolveCmsLocalizedProps({
+    baseProps: isObjectRecord(page.customFields) ? page.customFields : {},
+    localized: page.localization?.fields,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one visible page custom-field value for the active locale.
+ */
+function getCmsPageCustomFieldValue(
+  page: CmsPageSettings,
+  field: CmsContentModelFieldDefinition
+): unknown {
+  const visibleFields = getCmsPageCustomFieldsValue(page)
+  return visibleFields[field.id] ?? field.defaultValue
+}
+
+/**
+ * Applies one localized page custom-field edit while preserving english base values.
+ */
+function updateCmsPageCustomFieldValue(
+  page: CmsPageSettings,
+  field: CmsContentModelFieldDefinition,
+  value: unknown
+): void {
+  const normalizedInput = field.repeatable && typeof value === 'string'
+    ? parseCmsRepeatableFieldValue(value)
+    : value
+  const visibleFields = getCmsPageCustomFieldsValue(page)
+  const nextVisibleFields = {
+    ...visibleFields,
+    [field.id]: coerceCmsContentModelFieldValue(field, normalizedInput),
+  }
+  const nextValue = applyCmsLocalizedPropsUpdate({
+    baseProps: isObjectRecord(page.customFields) ? page.customFields : {},
+    localized: page.localization?.fields,
+    localeInput: getActiveCmsAuthoringLocale(),
+    nextValue: nextVisibleFields,
+  })
+
+  page.customFields = nextValue.baseProps
+  page.localization = {
+    ...(page.localization ?? {}),
+    fields: nextValue.localized,
+  }
+}
+
+/**
+ * Resolves one section label for the active authoring locale.
+ */
+function getCmsSectionLabelValue(section: CmsPageSettings['sections'][number]): string {
+  return resolveCmsLocalizedText({
+    baseValue: section.label,
+    localized: section.localization?.label,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one reusable-section label for the active authoring locale.
+ */
+function getCmsReusableSectionLabelValue(section: CmsReusableSectionSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: section.label,
+    localized: section.localization?.label,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored content model name for the active authoring locale.
+ */
+function getCmsAuthoredContentModelNameValue(model: CmsAuthoredContentModelSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: model.name,
+    localized: model.localization?.name,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored content model description for the active authoring locale.
+ */
+function getCmsAuthoredContentModelDescriptionValue(model: CmsAuthoredContentModelSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: model.description,
+    localized: model.localization?.description,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored content-model default page title for the active authoring locale.
+ */
+function getCmsAuthoredContentModelDefaultPageTitleValue(model: CmsAuthoredContentModelSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: model.defaultPageTitle,
+    localized: model.localization?.pageTitle,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored content-model default page description for the active authoring locale.
+ */
+function getCmsAuthoredContentModelDefaultPageDescriptionValue(model: CmsAuthoredContentModelSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: model.defaultPageDescription,
+    localized: model.localization?.pageDescription,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves authored content-model migration notes for the active authoring locale.
+ */
+function getCmsAuthoredContentModelMigrationNotesValue(model: CmsAuthoredContentModelSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: String(model.migrationNotes ?? ''),
+    localized: model.localization?.migrationNotes,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored block preset name for the active authoring locale.
+ */
+function getCmsAuthoredBlockPresetNameValue(preset: CmsAuthoredBlockPresetSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: preset.name,
+    localized: preset.localization?.name,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored block preset description for the active authoring locale.
+ */
+function getCmsAuthoredBlockPresetDescriptionValue(preset: CmsAuthoredBlockPresetSettings): string {
+  return resolveCmsLocalizedText({
+    baseValue: preset.description,
+    localized: preset.localization?.description,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Applies a localized page title edit to the page payload.
+ */
+function updateCmsPageTitleValue(page: CmsPageSettings, value: unknown): void {
+  const nextValue = applyCmsLocalizedTextUpdate({
+    baseValue: page.title,
+    localized: page.localization?.title,
+    localeInput: getActiveCmsAuthoringLocale(),
+    nextValue: value,
+  })
+  page.title = nextValue.baseValue
+  page.localization = {
+    ...(page.localization ?? {}),
+    title: nextValue.localized,
+  }
+}
+
+/**
+ * Applies a localized page description edit to the page payload.
+ */
+function updateCmsPageDescriptionValue(page: CmsPageSettings, value: unknown): void {
+  const nextValue = applyCmsLocalizedTextUpdate({
+    baseValue: page.description,
+    localized: page.localization?.description,
+    localeInput: getActiveCmsAuthoringLocale(),
+    nextValue: value,
+  })
+  page.description = nextValue.baseValue
+  page.localization = {
+    ...(page.localization ?? {}),
+    description: nextValue.localized,
+  }
+}
+
+/**
+ * Applies a localized section label edit to the section payload.
+ */
+function updateCmsSectionLabelValue(section: CmsPageSettings['sections'][number], value: unknown): void {
+  const nextValue = applyCmsLocalizedTextUpdate({
+    baseValue: section.label,
+    localized: section.localization?.label,
+    localeInput: getActiveCmsAuthoringLocale(),
+    nextValue: value,
+  })
+  section.label = nextValue.baseValue
+  section.localization = {
+    ...(section.localization ?? {}),
+    label: nextValue.localized,
+  }
+}
+
+/**
+ * Resolves effective block props for the currently selected authoring locale.
+ */
+function getActiveBlocksResolvedProps(target: CmsPageBlockSettings | null): Record<string, unknown> {
+  if (!target) {
+    return {}
+  }
+
+  return resolveCmsLocalizedProps({
+    baseProps: target.props,
+    localized: target.localization?.props,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Applies a full localized props update to the selected block payload.
+ */
+function applyLocalizedPropsToBlock(target: CmsPageBlockSettings, nextProps: Record<string, unknown>): void {
+  const nextLocalizationValue = applyCmsLocalizedPropsUpdate({
+    baseProps: target.props,
+    localized: target.localization?.props,
+    localeInput: getActiveCmsAuthoringLocale(),
+    nextValue: nextProps,
+  })
+
+  target.props = nextLocalizationValue.baseProps
+  target.localization = {
+    ...(target.localization ?? {}),
+    props: nextLocalizationValue.localized,
+  }
 }
 
 /**
@@ -4559,7 +7752,7 @@ function setNestedPropByPath(source: Record<string, unknown>, path: string, valu
  * Synchronizes full block props JSON draft from selected block state.
  */
 function syncSelectedBlockPropsDraft(): void {
-  activeBlocksPropsDraft.value = JSON.stringify(activeBlocksSelectedBlock.value?.props ?? {}, null, 2)
+  activeBlocksPropsDraft.value = JSON.stringify(getActiveBlocksResolvedProps(activeBlocksSelectedBlock.value), null, 2)
 }
 
 /**
@@ -4567,6 +7760,7 @@ function syncSelectedBlockPropsDraft(): void {
  */
 function syncSelectedBlockFieldJsonDrafts(): void {
   const target = activeBlocksSelectedBlock.value
+  const resolvedProps = getActiveBlocksResolvedProps(target)
   const nextDrafts: Record<string, string> = {}
 
   for (const field of activeBlocksFieldDefinitions.value) {
@@ -4574,7 +7768,7 @@ function syncSelectedBlockFieldJsonDrafts(): void {
       continue
     }
 
-    const rawValue = target ? getNestedPropByPath(target.props, field.path) : undefined
+    const rawValue = getNestedPropByPath(resolvedProps, field.path)
     if (rawValue === undefined) {
       nextDrafts[field.path] = field.help?.toLowerCase().includes('array') ? '[]' : '{}'
       continue
@@ -4591,7 +7785,7 @@ function syncSelectedBlockFieldJsonDrafts(): void {
  */
 function getActiveBlocksFieldModelValue(field: CmsBlockFieldDefinition): string | number | boolean {
   const target = activeBlocksSelectedBlock.value
-  const rawValue = target ? getNestedPropByPath(target.props, field.path) : undefined
+  const rawValue = getNestedPropByPath(getActiveBlocksResolvedProps(target), field.path)
 
   if (field.type === 'toggle') {
     return Boolean(rawValue)
@@ -4627,6 +7821,28 @@ function getActiveBlocksNumberFieldModelValue(field: CmsBlockFieldDefinition): s
 }
 
 /**
+ * Returns filtered media asset options for block fields bound to the media library.
+ */
+function getActiveBlocksMediaFieldOptions(field: CmsBlockFieldDefinition): Array<{
+  label: string
+  value: string
+  description: string
+}> {
+  if (field.type !== 'media-asset') {
+    return []
+  }
+
+  const allowedKinds = field.mediaKinds ?? []
+  return settings.value.mediaAssets
+    .filter(asset => allowedKinds.length === 0 || allowedKinds.includes(asset.kind))
+    .map(asset => ({
+      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
+      value: asset.id,
+      description: asset.description,
+    }))
+}
+
+/**
  * Updates selected block value for primitive/select/toggle fields.
  */
 function updateActiveBlocksFieldValue(field: CmsBlockFieldDefinition, value: unknown): void {
@@ -4635,8 +7851,11 @@ function updateActiveBlocksFieldValue(field: CmsBlockFieldDefinition, value: unk
     return
   }
 
+  const nextProps = getActiveBlocksResolvedProps(target)
+
   if (field.type === 'toggle') {
-    setNestedPropByPath(target.props, field.path, Boolean(value))
+    setNestedPropByPath(nextProps, field.path, Boolean(value))
+    applyLocalizedPropsToBlock(target, nextProps)
     syncSelectedBlockPropsDraft()
     return
   }
@@ -4644,20 +7863,42 @@ function updateActiveBlocksFieldValue(field: CmsBlockFieldDefinition, value: unk
   if (field.type === 'number') {
     const raw = String(value ?? '').trim()
     if (raw.length === 0) {
-      setNestedPropByPath(target.props, field.path, undefined)
+      setNestedPropByPath(nextProps, field.path, undefined)
+      applyLocalizedPropsToBlock(target, nextProps)
       syncSelectedBlockPropsDraft()
       return
     }
     const parsed = Number(raw)
     if (Number.isFinite(parsed)) {
-      setNestedPropByPath(target.props, field.path, parsed)
+      setNestedPropByPath(nextProps, field.path, parsed)
+      applyLocalizedPropsToBlock(target, nextProps)
       syncSelectedBlockPropsDraft()
     }
     return
   }
 
+  if (field.type === 'media-asset') {
+    const assetId = String(value ?? '').trim()
+    const selectedAsset = settings.value.mediaAssets.find(asset => asset.id === assetId)
+
+    setNestedPropByPath(nextProps, field.path, assetId || undefined)
+
+    if (selectedAsset && field.mediaTargetPath) {
+      setNestedPropByPath(nextProps, field.mediaTargetPath, selectedAsset.url || undefined)
+    }
+
+    if (selectedAsset && field.mediaAltTargetPath && selectedAsset.alt.trim().length > 0) {
+      setNestedPropByPath(nextProps, field.mediaAltTargetPath, selectedAsset.alt)
+    }
+
+    applyLocalizedPropsToBlock(target, nextProps)
+    syncSelectedBlockPropsDraft()
+    return
+  }
+
   const normalized = String(value ?? '')
-  setNestedPropByPath(target.props, field.path, normalized)
+  setNestedPropByPath(nextProps, field.path, normalized)
+  applyLocalizedPropsToBlock(target, nextProps)
   syncSelectedBlockPropsDraft()
 }
 
@@ -4681,41 +7922,70 @@ function applyActiveBlocksJsonFieldValue(field: CmsBlockFieldDefinition): void {
   }
 
   const draft = String(activeBlocksFieldJsonDrafts.value[field.path] ?? '').trim()
+  const nextProps = getActiveBlocksResolvedProps(target)
   if (!draft) {
-    setNestedPropByPath(target.props, field.path, undefined)
+    setNestedPropByPath(nextProps, field.path, undefined)
+    applyLocalizedPropsToBlock(target, nextProps)
     syncSelectedBlockPropsDraft()
     return
   }
 
   try {
     const parsed = JSON.parse(draft) as unknown
-    setNestedPropByPath(target.props, field.path, parsed)
+    setNestedPropByPath(nextProps, field.path, parsed)
+    applyLocalizedPropsToBlock(target, nextProps)
     syncSelectedBlockPropsDraft()
     syncSelectedBlockFieldJsonDrafts()
   } catch {
-    savedAtLabel.value = `Invalid JSON for field: ${field.label}`
+    savedAtLabel.value = cmsUiText.value.invalidJsonForFieldLabel(field.label)
   }
 }
 
-const cmsMediaAssets = computed<CmsMediaAssetPreview[]>(() => {
+const cmsMediaAssetOptions = computed(() => {
+  return settings.value.mediaAssets.map(asset => ({
+    label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
+    value: asset.id,
+    description: asset.description,
+  }))
+})
+
+const selectedMediaAsset = computed<CmsMediaAssetSettings | null>(() => {
+  return settings.value.mediaAssets.find(asset => asset.id === selectedMediaAssetId.value) ?? null
+})
+
+const cmsMediaAssets = computed<CmsMediaAssetSettings[]>(() => {
+  return settings.value.mediaAssets
+})
+
+const cmsBrandingMediaBindings = computed<CmsBrandingMediaBindingPreview[]>(() => {
+  const resolveAssetName = (url: string): string => {
+    const matchedAsset = settings.value.mediaAssets.find(asset => asset.url === url)
+    return matchedAsset?.name ?? tr('Custom URL', 'URL customizada')
+  }
+
+  const faviconUrl = settings.value.branding.faviconUrl || settings.value.branding.brandLogo
+
   return [
     {
       id: 'brand-logo',
-      label: 'Brand logo',
-      description: 'Top-left product identity used by shell and previews.',
+      label: tr('Brand logo binding', 'Vinculo do logo da marca'),
+      description: tr('Shell and landing identity asset.', 'Asset de identidade do shell e da landing page.'),
       url: settings.value.branding.brandLogo,
+      assetName: resolveAssetName(settings.value.branding.brandLogo),
     },
     {
       id: 'favicon',
-      label: 'Favicon',
-      description: 'Browser tab icon and bookmark image.',
-      url: settings.value.branding.faviconUrl || settings.value.branding.brandLogo,
+      label: tr('Favicon binding', 'Vinculo do favicon'),
+      description: tr('Browser tab and bookmark icon asset.', 'Asset do icone da aba do navegador e favoritos.'),
+      url: faviconUrl,
+      assetName: resolveAssetName(faviconUrl),
     },
     {
       id: 'user-avatar',
-      label: 'User avatar',
-      description: 'Topbar account icon/avatar source.',
+      label: tr('User avatar binding', 'Vinculo do avatar do usuario'),
+      description: tr('Topbar account avatar asset.', 'Asset do avatar de conta na topbar.'),
       url: settings.value.branding.userAvatar,
+      assetName: resolveAssetName(settings.value.branding.userAvatar),
     },
   ]
 })
@@ -4756,6 +8026,22 @@ function buildActivePageBuilderState(): CmsBuilderState | null {
 }
 
 /**
+ * Persists builder schema output back into one page settings entry.
+ */
+function applyBuilderStateToPage(pageIndex: number, state: CmsBuilderState): void {
+  const currentPage = settings.value.pages[pageIndex]
+  if (!currentPage) {
+    return
+  }
+
+  settings.value.pages[pageIndex] = fromCmsPageSchema(state.page, currentPage)
+  if (pageIndex === activeBlocksPageIndex.value) {
+    activeBlocksSectionId.value = state.selection?.sectionId ?? ''
+    activeBlocksBlockId.value = state.selection?.blockId ?? ''
+  }
+}
+
+/**
  * Persists builder schema output back into active page settings.
  */
 function applyBuilderStateToActivePage(state: CmsBuilderState): void {
@@ -4764,14 +8050,7 @@ function applyBuilderStateToActivePage(state: CmsBuilderState): void {
     return
   }
 
-  const currentPage = settings.value.pages[pageIndex]
-  if (!currentPage) {
-    return
-  }
-
-  settings.value.pages[pageIndex] = fromCmsPageSchema(state.page, currentPage)
-  activeBlocksSectionId.value = state.selection?.sectionId ?? ''
-  activeBlocksBlockId.value = state.selection?.blockId ?? ''
+  applyBuilderStateToPage(pageIndex, state)
 }
 
 /**
@@ -4802,6 +8081,616 @@ function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
 }
 
 /**
+ * Saves the currently selected block as a reusable library entry.
+ */
+function saveSelectedBlockAsReusable(): void {
+  const block = activeBlocksSelectedBlock.value
+  const blockRecord = activeBlocksSelectedBlockRecord.value
+  if (!block || !blockRecord) {
+    savedAtLabel.value = tr('Select a block before saving it as reusable.', 'Selecione um bloco antes de salva-lo como reutilizavel.')
+    return
+  }
+
+  const paletteEntry = cmsBlockPaletteByType.get(block.type)
+  const reusableBlock = createCmsReusableBlockFromBlock({
+    block,
+    existingBlocks: settings.value.reusableBlocks,
+    displayName: resolveCmsBlockDisplayName(block.type),
+    name: reusableBlockNameDraft.value,
+    description: reusableBlockDescriptionDraft.value,
+    category: paletteEntry?.category ?? 'custom',
+  })
+
+  settings.value.reusableBlocks = [reusableBlock, ...settings.value.reusableBlocks]
+  selectedReusableBlockId.value = reusableBlock.id
+  reusableBlockNameDraft.value = ''
+  reusableBlockDescriptionDraft.value = ''
+  savedAtLabel.value = `${tr('Reusable block saved at', 'Bloco reutilizavel salvo as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Inserts the selected reusable block into the current section and restores its authored props.
+ */
+function insertSelectedReusableBlock(): void {
+  const reusableBlock = selectedReusableBlock.value
+  const state = buildActivePageBuilderState()
+  if (!reusableBlock || !state) {
+    return
+  }
+
+  const sectionId = activeBlocksSectionId.value || state.selection?.sectionId || state.page.sections[0]?.id
+  if (!sectionId) {
+    savedAtLabel.value = tr('Select a section before inserting a reusable block.', 'Selecione uma secao antes de inserir um bloco reutilizavel.')
+    return
+  }
+
+  const nextState = insertCmsBuilderBlock(state, landingRegistry, {
+    sectionId,
+    type: reusableBlock.type,
+  })
+  applyBuilderStateToActivePage(nextState)
+
+  const pageIndex = activeBlocksPageIndex.value
+  const insertedBlockId = nextState.selection?.blockId
+  const insertedSectionId = nextState.selection?.sectionId
+  const page = pageIndex >= 0 ? settings.value.pages[pageIndex] : null
+  const section = page?.sections.find(entry => entry.id === insertedSectionId)
+  const insertedBlock = section?.blocks.find(entry => entry.id === insertedBlockId)
+  if (!insertedBlock) {
+    return
+  }
+
+  const clonedBlock = cloneCmsReusableBlockIntoPageBlock({
+    reusableBlock,
+    blockId: insertedBlock.id,
+  })
+  insertedBlock.type = clonedBlock.type
+  insertedBlock.presetId = clonedBlock.presetId
+  insertedBlock.props = cloneSerializableValue(clonedBlock.props)
+  insertedBlock.enabled = clonedBlock.enabled
+  insertedBlock.localization = clonedBlock.localization
+    ? cloneSerializableValue(clonedBlock.localization)
+    : undefined
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = `${tr('Reusable block inserted at', 'Bloco reutilizavel inserido as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Removes a reusable block template from the local CMS library.
+ */
+function removeReusableBlock(reusableBlockId: string): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.filter(reusableBlock => reusableBlock.id !== reusableBlockId)
+  if (selectedReusableBlockId.value === reusableBlockId) {
+    selectedReusableBlockId.value = settings.value.reusableBlocks[0]?.id ?? ''
+  }
+}
+
+/**
+ * Clears authored content-model selection and starts a new draft.
+ */
+function createNewAuthoredContentModelDraft(): void {
+  selectedAuthoredContentModelId.value = ''
+  authoredContentModelNameDraft.value = ''
+  authoredContentModelDescriptionDraft.value = ''
+  authoredContentModelDefaultPageTitleDraft.value = ''
+  authoredContentModelDefaultPageDescriptionDraft.value = ''
+  authoredContentModelDefaultPagePathPrefixDraft.value = ''
+  authoredContentModelMigrationNotesDraft.value = ''
+  authoredContentModelAllowedSectionSelections.value = [...cmsContentModelPresetOptions.value.map(option => option.value)]
+  authoredContentModelRequiredSectionSelections.value = []
+  authoredContentModelStarterSectionSelections.value = ['hero']
+  authoredContentModelRecommendedSectionSelections.value = ['hero']
+  authoredContentModelMaxSectionsDraft.value = ''
+  authoredContentModelPresetLimitDrafts.value = {}
+  authoredContentModelFieldDrafts.value = []
+}
+
+/**
+ * Adds one empty field row to the authored content-model draft.
+ */
+function addAuthoredContentModelFieldDraft(): void {
+  authoredContentModelFieldDrafts.value = [
+    ...authoredContentModelFieldDrafts.value,
+    createEmptyCmsContentModelFieldDraft(),
+  ]
+}
+
+/**
+ * Removes one field row from the authored content-model draft.
+ */
+function removeAuthoredContentModelFieldDraft(fieldIndex: number): void {
+  authoredContentModelFieldDrafts.value = authoredContentModelFieldDrafts.value
+    .filter((_, index) => index !== fieldIndex)
+}
+
+/**
+ * Clears allowed section-preset selections for the authored content-model draft.
+ */
+function clearAuthoredContentModelAllowedPresets(): void {
+  authoredContentModelAllowedSectionSelections.value = []
+  authoredContentModelRequiredSectionSelections.value = []
+  authoredContentModelStarterSectionSelections.value = []
+  authoredContentModelRecommendedSectionSelections.value = []
+  authoredContentModelPresetLimitDrafts.value = {}
+}
+
+/**
+ * Selects the full preset library for the authored content-model draft.
+ */
+function selectAllAuthoredContentModelAllowedPresets(): void {
+  authoredContentModelAllowedSectionSelections.value = [...cmsContentModelPresetOptions.value.map(option => option.value)]
+}
+
+/**
+ * Checks whether an authored content-model draft already allows a section preset.
+ */
+function isAuthoredContentModelAllowedPresetSelected(presetId: CmsSectionPresetId): boolean {
+  return authoredContentModelAllowedSectionSelections.value.includes(presetId)
+}
+
+/**
+ * Toggles one allowed section preset inside the authored content-model draft.
+ */
+function toggleAuthoredContentModelAllowedPreset(presetId: CmsSectionPresetId): void {
+  if (isAuthoredContentModelAllowedPresetSelected(presetId)) {
+    authoredContentModelAllowedSectionSelections.value = authoredContentModelAllowedSectionSelections.value
+      .filter(value => value !== presetId)
+    return
+  }
+
+  authoredContentModelAllowedSectionSelections.value = [
+    ...authoredContentModelAllowedSectionSelections.value,
+    presetId,
+  ]
+}
+
+/**
+ * Returns the authored draft repetition limit for one allowed section preset.
+ */
+function getAuthoredContentModelPresetLimitDraft(presetId: CmsSectionPresetId): string {
+  return authoredContentModelPresetLimitDrafts.value[presetId] ?? ''
+}
+
+/**
+ * Updates the authored draft repetition limit for one allowed section preset.
+ */
+function updateAuthoredContentModelPresetLimitDraft(presetId: CmsSectionPresetId, value: unknown): void {
+  const normalizedValue = String(value ?? '').trim()
+  const nextDrafts = {
+    ...authoredContentModelPresetLimitDrafts.value,
+  }
+
+  if (!normalizedValue) {
+    delete nextDrafts[presetId]
+  } else {
+    nextDrafts[presetId] = normalizedValue
+  }
+
+  authoredContentModelPresetLimitDrafts.value = nextDrafts
+}
+
+/**
+ * Builds a concise preview string for authored preset repetition limits.
+ */
+function getAuthoredContentModelPresetLimitSummary(): string {
+  const limitEntries = cmsContentModelPresetLimitOptions.value
+    .map(option => {
+      const limit = getAuthoredContentModelPresetLimitDraft(option.value)
+      if (!limit) {
+        return ''
+      }
+
+      return `${option.label} x${limit}`
+    })
+    .filter(Boolean)
+
+  return limitEntries.length > 0
+    ? limitEntries.join(', ')
+    : tr('Unlimited', 'Ilimitado')
+}
+
+/**
+ * Synchronizes authored content-model drafts with the selected library entry.
+ */
+function syncSelectedAuthoredContentModelDrafts(): void {
+  const model = selectedAuthoredContentModel.value
+  if (!model) {
+    createNewAuthoredContentModelDraft()
+    return
+  }
+
+  authoredContentModelNameDraft.value = getCmsAuthoredContentModelNameValue(model)
+  authoredContentModelDescriptionDraft.value = getCmsAuthoredContentModelDescriptionValue(model)
+  authoredContentModelDefaultPageTitleDraft.value = getCmsAuthoredContentModelDefaultPageTitleValue(model)
+  authoredContentModelDefaultPageDescriptionDraft.value = getCmsAuthoredContentModelDefaultPageDescriptionValue(model)
+  authoredContentModelDefaultPagePathPrefixDraft.value = model.defaultPagePathPrefix
+  authoredContentModelMigrationNotesDraft.value = getCmsAuthoredContentModelMigrationNotesValue(model)
+  authoredContentModelAllowedSectionSelections.value = [...model.allowedPresets]
+  authoredContentModelRequiredSectionSelections.value = [...model.requiredPresets]
+  authoredContentModelStarterSectionSelections.value = [...model.starterPresets]
+  authoredContentModelRecommendedSectionSelections.value = [...model.recommendedPresets]
+  authoredContentModelMaxSectionsDraft.value = model.maxSections == null ? '' : String(model.maxSections)
+  authoredContentModelPresetLimitDrafts.value = Object.fromEntries(
+    Object.entries(model.sectionPresetLimits).map(([presetId, limit]) => [presetId, String(limit)])
+  ) as Partial<Record<CmsSectionPresetId, string>>
+  authoredContentModelFieldDrafts.value = getCmsContentModelFieldDefinitions(
+    settings.value.content.locale,
+    model.id,
+    settings.value.authoredContentModels
+  ).map(createCmsContentModelFieldDraftFromDefinition)
+}
+
+/**
+ * Creates or updates an authored content model from the current draft values.
+ */
+function saveCmsAuthoredContentModelDraft(): void {
+  const locale = getActiveCmsAuthoringLocale()
+  const selectedModel = selectedAuthoredContentModel.value
+
+  if (!selectedModel) {
+    const nextModel = createCmsAuthoredContentModel({
+      existingModels: settings.value.authoredContentModels,
+      localeInput: locale,
+      name: authoredContentModelNameDraft.value,
+      description: authoredContentModelDescriptionDraft.value,
+      defaultPageTitle: authoredContentModelDefaultPageTitleDraft.value,
+      defaultPageDescription: authoredContentModelDefaultPageDescriptionDraft.value,
+      defaultPagePathPrefix: authoredContentModelDefaultPagePathPrefixDraft.value,
+      migrationNotes: authoredContentModelMigrationNotesDraft.value,
+      allowedPresets: authoredContentModelAllowedSectionSelections.value,
+      requiredPresets: authoredContentModelRequiredSectionSelections.value,
+      starterPresets: authoredContentModelStarterSectionSelections.value,
+      recommendedPresets: authoredContentModelRecommendedSectionSelections.value,
+      maxSections: authoredContentModelMaxSectionsDraft.value,
+      sectionPresetLimits: authoredContentModelPresetLimitDrafts.value,
+      fields: authoredContentModelFieldDrafts.value.map(field => ({
+        id: field.id,
+        type: field.type,
+        label: field.label,
+        description: field.description,
+        placeholder: field.placeholder,
+        required: field.required,
+        repeatable: field.repeatable,
+        min: field.minValue,
+        max: field.maxValue,
+        defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
+        options: parseCmsContentModelFieldOptionsDraft(field.optionsDraft),
+      })),
+    })
+
+    settings.value.authoredContentModels = [nextModel, ...settings.value.authoredContentModels]
+    selectedAuthoredContentModelId.value = nextModel.id
+    savedAtLabel.value = `${tr('Content model saved at', 'Modelo de conteudo salvo as')} ${new Date().toLocaleTimeString()}`
+    return
+  }
+
+  const updatedModel = updateCmsAuthoredContentModel({
+    model: selectedModel,
+    localeInput: locale,
+    name: authoredContentModelNameDraft.value,
+    description: authoredContentModelDescriptionDraft.value,
+    defaultPageTitle: authoredContentModelDefaultPageTitleDraft.value,
+    defaultPageDescription: authoredContentModelDefaultPageDescriptionDraft.value,
+    defaultPagePathPrefix: authoredContentModelDefaultPagePathPrefixDraft.value,
+    migrationNotes: authoredContentModelMigrationNotesDraft.value,
+    allowedPresets: authoredContentModelAllowedSectionSelections.value,
+    requiredPresets: authoredContentModelRequiredSectionSelections.value,
+    starterPresets: authoredContentModelStarterSectionSelections.value,
+    recommendedPresets: authoredContentModelRecommendedSectionSelections.value,
+    maxSections: authoredContentModelMaxSectionsDraft.value,
+    sectionPresetLimits: authoredContentModelPresetLimitDrafts.value,
+    fields: authoredContentModelFieldDrafts.value.map(field => ({
+      id: field.id,
+      type: field.type,
+      label: field.label,
+      description: field.description,
+      placeholder: field.placeholder,
+      required: field.required,
+      repeatable: field.repeatable,
+      min: field.minValue,
+      max: field.maxValue,
+      defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
+      options: parseCmsContentModelFieldOptionsDraft(field.optionsDraft),
+    })),
+  })
+
+  settings.value.authoredContentModels = settings.value.authoredContentModels.map(entry => (
+    entry.id === selectedModel.id
+      ? updatedModel
+      : entry
+  ))
+  selectedAuthoredContentModelId.value = updatedModel.id
+  savedAtLabel.value = `${tr('Content model updated at', 'Modelo de conteudo atualizado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Removes the selected authored content model when it is not referenced by pages or reusable sections.
+ */
+function removeSelectedCmsAuthoredContentModel(): void {
+  const model = selectedAuthoredContentModel.value
+  if (!model) {
+    createNewAuthoredContentModelDraft()
+    return
+  }
+
+  if (getCmsAuthoredContentModelUsageCount(model.id) > 0) {
+    savedAtLabel.value = tr(
+      'This content model is still referenced by pages or reusable sections.',
+      'Este modelo de conteudo ainda esta sendo usado por paginas ou secoes reutilizaveis.'
+    )
+    return
+  }
+
+  settings.value.authoredContentModels = settings.value.authoredContentModels
+    .filter(entry => entry.id !== model.id)
+  selectedAuthoredContentModelId.value = settings.value.authoredContentModels[0]?.id ?? ''
+  syncSelectedAuthoredContentModelDrafts()
+  savedAtLabel.value = `${tr('Content model removed at', 'Modelo de conteudo removido as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Builds one preset-authoring source from the selected block or reusable library item.
+ */
+function getCmsPresetAuthoringSource(): {
+  block: CmsPageBlockSettings
+  displayName: string
+  category: string
+  sourceReusableBlockId?: string
+} | null {
+  const selectedBlock = activeBlocksSelectedBlock.value
+  const selectedBlockRecord = activeBlocksSelectedBlockRecord.value
+  if (selectedBlock && selectedBlockRecord) {
+    const paletteEntry = cmsBlockPaletteByType.get(selectedBlock.type)
+    return {
+      block: selectedBlock,
+      displayName: resolveCmsBlockDisplayName(selectedBlock.type),
+      category: paletteEntry?.category ?? 'custom',
+    }
+  }
+
+  const reusableBlock = selectedReusableBlock.value
+  if (!reusableBlock) {
+    return null
+  }
+
+  return {
+    block: {
+      id: reusableBlock.id,
+      type: reusableBlock.type,
+      presetId: reusableBlock.presetId,
+      enabled: true,
+      props: cloneSerializableValue(reusableBlock.props),
+      localization: reusableBlock.localization
+        ? cloneSerializableValue(reusableBlock.localization)
+        : undefined,
+    },
+    displayName: reusableBlock.name || resolveCmsBlockDisplayName(reusableBlock.type),
+    category: reusableBlock.category,
+    sourceReusableBlockId: reusableBlock.id,
+  }
+}
+
+/**
+ * Resolves a readable starter-sections label for one authored preset.
+ */
+function getCmsAuthoredPresetStarterSectionsLabel(preset: CmsAuthoredBlockPresetSettings): string {
+  if (preset.starterSectionPresets.length === 0) {
+    return tr('Starter sections: none', 'Secoes iniciais: nenhuma')
+  }
+
+  return `${tr('Starter sections', 'Secoes iniciais')}: ${preset.starterSectionPresets.map(getCmsSectionPresetLabel).join(', ')}`
+}
+
+/**
+ * Applies one authored preset selection to both the preset library and block palette.
+ */
+function selectCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  const preset = settings.value.authoredBlockPresets.find(entry => entry.id === presetId)
+  selectedAuthoredBlockPresetId.value = preset?.id ?? 'custom'
+  if (!preset) {
+    return
+  }
+
+  selectedPaletteBlockType.value = preset.type
+  selectedPaletteBlockPresetId.value = preset.id
+}
+
+/**
+ * Synchronizes authored preset drafts with the currently selected library entry.
+ */
+function syncSelectedAuthoredPresetDrafts(): void {
+  const preset = selectedAuthoredBlockPreset.value
+  if (!preset) {
+    authoredBlockPresetNameDraft.value = ''
+    authoredBlockPresetDescriptionDraft.value = ''
+    authoredPresetStarterSectionSelections.value = []
+    return
+  }
+
+  authoredBlockPresetNameDraft.value = getCmsAuthoredBlockPresetNameValue(preset)
+  authoredBlockPresetDescriptionDraft.value = getCmsAuthoredBlockPresetDescriptionValue(preset)
+  authoredPresetStarterSectionSelections.value = [...preset.starterSectionPresets]
+}
+
+/**
+ * Saves the selected block/reusable item as an authored preset entry.
+ */
+function saveCmsPresetFromCurrentSelection(): void {
+  const source = getCmsPresetAuthoringSource()
+  if (!source) {
+    savedAtLabel.value = tr(
+      'Select a block or reusable item before saving a preset.',
+      'Selecione um bloco ou item reutilizavel antes de salvar um preset.'
+    )
+    return
+  }
+
+  const authoredPreset = createCmsAuthoredBlockPresetFromBlock({
+    block: source.block,
+    existingPresets: settings.value.authoredBlockPresets,
+    localeInput: getActiveCmsAuthoringLocale(),
+    displayName: source.displayName,
+    name: authoredBlockPresetNameDraft.value,
+    description: authoredBlockPresetDescriptionDraft.value,
+    category: source.category,
+    starterSectionPresets: authoredPresetStarterSectionSelections.value,
+    sourceReusableBlockId: source.sourceReusableBlockId,
+  })
+
+  settings.value.authoredBlockPresets = [authoredPreset, ...settings.value.authoredBlockPresets]
+  selectCmsAuthoredPreset(authoredPreset.id)
+  savedAtLabel.value = `${tr('Preset saved at', 'Preset salvo as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Updates the selected authored preset using current locale metadata and optional block props.
+ */
+function updateSelectedCmsPreset(): void {
+  const preset = selectedAuthoredBlockPreset.value
+  if (!preset) {
+    savedAtLabel.value = tr('Select a preset before updating it.', 'Selecione um preset antes de atualiza-lo.')
+    return
+  }
+
+  const source = getCmsPresetAuthoringSource()
+  const updatedPreset = updateCmsAuthoredBlockPreset({
+    preset,
+    block: source?.block ?? null,
+    localeInput: getActiveCmsAuthoringLocale(),
+    name: authoredBlockPresetNameDraft.value,
+    description: authoredBlockPresetDescriptionDraft.value,
+    starterSectionPresets: authoredPresetStarterSectionSelections.value,
+  })
+
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets.map(entry => (
+    entry.id === preset.id
+      ? updatedPreset
+      : entry
+  ))
+  selectCmsAuthoredPreset(updatedPreset.id)
+  savedAtLabel.value = `${tr('Preset updated at', 'Preset atualizado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Applies the selected authored preset to the active block in the builder.
+ */
+function applySelectedCmsPresetToBlock(): void {
+  const preset = selectedAuthoredBlockPreset.value
+  const target = activeBlocksSelectedBlock.value
+  if (!preset || !target) {
+    return
+  }
+
+  const presetBlock = createCmsPageBlockFromPreset({
+    presetId: preset.id,
+    blockId: target.id,
+    enabled: target.enabled,
+    authoredPresets: settings.value.authoredBlockPresets,
+  })
+
+  target.type = presetBlock.type
+  target.presetId = presetBlock.presetId
+  target.props = cloneSerializableValue(presetBlock.props)
+  target.localization = presetBlock.localization
+    ? cloneSerializableValue(presetBlock.localization)
+    : undefined
+  selectedPaletteBlockType.value = preset.type
+  selectedPaletteBlockPresetId.value = preset.id
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = `${tr('Preset applied at', 'Preset aplicado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Removes one authored preset from the local CMS engine library.
+ */
+function removeCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets.filter(entry => entry.id !== presetId)
+  if (selectedAuthoredBlockPresetId.value === presetId) {
+    selectedAuthoredBlockPresetId.value = settings.value.authoredBlockPresets[0]?.id ?? 'custom'
+  }
+}
+
+/**
+ * Clears the selected media asset and opens a blank draft for new entries.
+ */
+function createNewMediaAssetDraft(): void {
+  selectedMediaAssetId.value = ''
+  setMediaAssetDraft(null)
+}
+
+/**
+ * Persists the current media draft as a new or existing asset entry.
+ */
+function saveMediaAssetDraft(): void {
+  const assetDraft = mediaAssetDraft.value
+  const normalizedName = assetDraft.name.trim()
+  if (normalizedName.length === 0) {
+    savedAtLabel.value = tr('Provide an asset name before saving.', 'Informe um nome do asset antes de salvar.')
+    return
+  }
+
+  const normalizedAsset = createCmsMediaAsset({
+    existingAssets: settings.value.mediaAssets.filter(asset => asset.id !== selectedMediaAssetId.value),
+    name: normalizedName,
+    description: assetDraft.description,
+    kind: assetDraft.kind,
+    url: assetDraft.url,
+    alt: assetDraft.alt,
+    tags: parseMediaDraftList(assetDraft.tags),
+    usage: parseMediaDraftList(assetDraft.usage),
+  })
+
+  if (selectedMediaAssetId.value) {
+    settings.value.mediaAssets = settings.value.mediaAssets.map(asset => (
+      asset.id === selectedMediaAssetId.value
+        ? {
+          ...normalizedAsset,
+          id: asset.id,
+        }
+        : asset
+    ))
+    selectedMediaAssetId.value = selectedMediaAssetId.value
+    savedAtLabel.value = `${tr('Media asset updated at', 'Asset de midia atualizado as')} ${new Date().toLocaleTimeString()}`
+    return
+  }
+
+  settings.value.mediaAssets = [normalizedAsset, ...settings.value.mediaAssets]
+  selectedMediaAssetId.value = normalizedAsset.id
+  savedAtLabel.value = `${tr('Media asset saved at', 'Asset de midia salvo as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Removes the selected media asset from the tenant-scoped media library.
+ */
+function removeSelectedMediaAsset(): void {
+  if (!selectedMediaAssetId.value) {
+    return
+  }
+
+  settings.value.mediaAssets = settings.value.mediaAssets.filter(asset => asset.id !== selectedMediaAssetId.value)
+  createNewMediaAssetDraft()
+}
+
+/**
+ * Applies the selected media asset URL to one branding slot.
+ */
+function applySelectedMediaAssetToBranding(slot: 'brandLogo' | 'faviconUrl' | 'userAvatar'): void {
+  const asset = selectedMediaAsset.value
+  if (!asset) {
+    savedAtLabel.value = tr('Select a media asset before applying it to branding.', 'Selecione um asset de midia antes de aplica-lo ao branding.')
+    return
+  }
+
+  settings.value.branding[slot] = asset.url
+  if (slot === 'brandLogo' && asset.alt.trim().length > 0) {
+    settings.value.branding.brandLogoAlt = asset.alt
+  }
+  savedAtLabel.value = `${tr('Branding binding updated at', 'Vinculo de branding atualizado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
  * Adds a new block from selected palette type into the selected section.
  */
 function addCmsBuilderBlockFromPalette(): void {
@@ -4816,11 +8705,77 @@ function addCmsBuilderBlockFromPalette(): void {
     return
   }
 
+  const pageIndex = activeBlocksPageIndex.value
+  const targetPage = pageIndex >= 0 ? settings.value.pages[pageIndex] : null
+  const targetSection = targetPage?.sections.find(entry => entry.id === sectionId)
+  if (!targetSection) {
+    return
+  }
+
+  if (!isCmsBlockTypeAllowedForSectionPreset(targetSection.presetId, type)) {
+    return
+  }
+
+  const sectionBlockLimits = getCmsSectionPresetBlockLimits(targetSection.presetId)
+  const enabledBlocksCount = targetSection.blocks.filter(block => block.enabled).length
+  if (
+    sectionBlockLimits.maxBlocks != null
+    && enabledBlocksCount >= sectionBlockLimits.maxBlocks
+  ) {
+    return
+  }
+
+  const presetId = resolveCmsBlockPresetId(selectedPaletteBlockPresetId.value)
+  const resolvedPresetId = isCmsBlockPresetAllowedForType(
+    type,
+    presetId,
+    settings.value.authoredBlockPresets
+  )
+    && isCmsBlockPresetAllowedForSectionPreset(
+      targetSection.presetId,
+      presetId,
+      settings.value.authoredBlockPresets
+    )
+    ? presetId
+    : 'custom'
+
   const nextState = insertCmsBuilderBlock(state, landingRegistry, {
     sectionId,
     type,
   })
   applyBuilderStateToActivePage(nextState)
+
+  const insertedSectionId = nextState.selection?.sectionId
+  const insertedBlockId = nextState.selection?.blockId
+  const page = pageIndex >= 0 ? settings.value.pages[pageIndex] : null
+  const section = page?.sections.find(entry => entry.id === insertedSectionId)
+  const insertedBlock = section?.blocks.find(entry => entry.id === insertedBlockId)
+  if (!insertedBlock) {
+    return
+  }
+
+  if (resolvedPresetId === 'custom') {
+    insertedBlock.presetId = 'custom'
+    syncSelectedBlockPropsDraft()
+    syncSelectedBlockFieldJsonDrafts()
+    return
+  }
+
+  const presetBlock = createCmsPageBlockFromPreset({
+    presetId: resolvedPresetId,
+    blockId: insertedBlock.id,
+    enabled: insertedBlock.enabled,
+    authoredPresets: settings.value.authoredBlockPresets,
+  })
+
+  insertedBlock.type = presetBlock.type
+  insertedBlock.presetId = presetBlock.presetId
+  insertedBlock.props = cloneSerializableValue(presetBlock.props)
+  insertedBlock.localization = presetBlock.localization
+    ? cloneSerializableValue(presetBlock.localization)
+    : undefined
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
 }
 
 /**
@@ -4834,12 +8789,12 @@ function formatSelectedBlockPropsDraft(): void {
   try {
     const parsed = JSON.parse(activeBlocksPropsDraft.value) as unknown
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      savedAtLabel.value = 'Block props must be a JSON object'
+      savedAtLabel.value = cmsUiText.value.blockPropsMustBeObjectLabel
       return
     }
     activeBlocksPropsDraft.value = JSON.stringify(parsed, null, 2)
   } catch {
-    savedAtLabel.value = 'Invalid JSON for selected block props'
+    savedAtLabel.value = cmsUiText.value.invalidBlockPropsJsonLabel
   }
 }
 
@@ -4855,16 +8810,16 @@ function applySelectedBlockPropsDraft(): void {
   try {
     const parsed = JSON.parse(activeBlocksPropsDraft.value) as unknown
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      savedAtLabel.value = 'Block props must be a JSON object'
+      savedAtLabel.value = cmsUiText.value.blockPropsMustBeObjectLabel
       return
     }
 
-    target.props = parsed as Record<string, unknown>
+    applyLocalizedPropsToBlock(target, parsed as Record<string, unknown>)
     syncSelectedBlockPropsDraft()
     syncSelectedBlockFieldJsonDrafts()
-    savedAtLabel.value = `Block props updated at ${new Date().toLocaleTimeString()}`
+    savedAtLabel.value = `${cmsUiText.value.blockPropsUpdatedAtLabel} ${new Date().toLocaleTimeString()}`
   } catch {
-    savedAtLabel.value = 'Invalid JSON for selected block props'
+    savedAtLabel.value = cmsUiText.value.invalidBlockPropsJsonLabel
   }
 }
 
@@ -4905,6 +8860,96 @@ function moveCmsBuilderBlockByRecord(
 }
 
 /**
+ * Starts dragging one block row in the blocks manager.
+ */
+function onCmsBuilderBlockDragStart(block: CmsSectionBlockRecord, event: DragEvent): void {
+  draggedBlock.value = {
+    pageId: block.pageId,
+    sectionId: block.sectionId,
+    blockId: block.id,
+  }
+  blockDropTargetKey.value = block.sectionId
+  setActiveBlocksSelection(block.sectionId, block.id)
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', `${block.pageId}:${block.sectionId}:${block.id}`)
+  }
+}
+
+/**
+ * Clears temporary block drag state.
+ */
+function onCmsBuilderBlockDragEnd(): void {
+  draggedBlock.value = null
+  blockDropTargetKey.value = ''
+}
+
+/**
+ * Tracks the current section drop target while dragging blocks.
+ */
+function onCmsBuilderBlockDragOver(sectionId: string, event: DragEvent): void {
+  if (!draggedBlock.value || draggedBlock.value.pageId !== activeBlocksPageId.value) {
+    return
+  }
+
+  event.preventDefault()
+  blockDropTargetKey.value = sectionId
+}
+
+/**
+ * Repositions a dragged block relative to one block row.
+ */
+function onCmsBuilderBlockDrop(block: CmsSectionBlockRecord, event: DragEvent): void {
+  if (!draggedBlock.value || draggedBlock.value.pageId !== activeBlocksPageId.value) {
+    return
+  }
+
+  event.preventDefault()
+
+  const state = buildActivePageBuilderState()
+  if (!state) {
+    onCmsBuilderBlockDragEnd()
+    return
+  }
+
+  const nextState = moveCmsBuilderBlockToIndex(state, {
+    sourceSectionId: draggedBlock.value.sectionId,
+    blockId: draggedBlock.value.blockId,
+    targetSectionId: block.sectionId,
+    targetIndex: resolveVerticalDropIndex(event, block.blockIndex),
+  })
+  applyBuilderStateToActivePage(nextState)
+  onCmsBuilderBlockDragEnd()
+}
+
+/**
+ * Appends a dragged block into a section container, including empty sections.
+ */
+function onCmsBuilderSectionDrop(sectionId: string, targetIndex: number, event: DragEvent): void {
+  if (!draggedBlock.value || draggedBlock.value.pageId !== activeBlocksPageId.value) {
+    return
+  }
+
+  event.preventDefault()
+
+  const state = buildActivePageBuilderState()
+  if (!state) {
+    onCmsBuilderBlockDragEnd()
+    return
+  }
+
+  const nextState = moveCmsBuilderBlockToIndex(state, {
+    sourceSectionId: draggedBlock.value.sectionId,
+    blockId: draggedBlock.value.blockId,
+    targetSectionId: sectionId,
+    targetIndex,
+  })
+  applyBuilderStateToActivePage(nextState)
+  onCmsBuilderBlockDragEnd()
+}
+
+/**
  * Toggles block enabled flag in active page settings.
  */
 function updateCmsBuilderBlockEnabled(block: CmsSectionBlockRecord, enabled: boolean): void {
@@ -4916,12 +8961,6 @@ function updateCmsBuilderBlockEnabled(block: CmsSectionBlockRecord, enabled: boo
   }
   target.enabled = enabled
   section.enabled = section.blocks.some(entry => entry.enabled)
-}
-
-const governanceActor: CmsWhiteLabelActor = {
-  id: 'cms-admin',
-  role: 'admin',
-  name: 'CMS Admin',
 }
 
 /**
@@ -4962,16 +9001,44 @@ function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): v
 }
 
 watch(
-  () => settings.value.pages.map(page => page.id),
-  pageIds => {
-    if (pageIds.length === 0) {
+  () => settings.value.pages.map(page => `${page.id}:${page.contentModelId}`),
+  pageEntries => {
+    if (pageEntries.length === 0) {
       activeBlocksPageId.value = ''
+      pageSectionPresetSelections.value = {}
+      pageSectionStarterPresetSelections.value = {}
+      pageReusableSectionSelections.value = {}
       return
     }
 
+    const nextSelections: Record<number, CmsSectionPresetId> = {}
+    const nextStarterSelections: Record<number, CmsBlockPresetId> = {}
+    const nextReusableSelections: Record<number, string> = {}
+    settings.value.pages.forEach((page, pageIndex) => {
+      nextSelections[pageIndex] = getSelectedSectionPresetForPage(pageIndex)
+      nextStarterSelections[pageIndex] = getSelectedSectionStarterPresetForPage(pageIndex)
+      nextReusableSelections[pageIndex] = getSelectedReusableSectionForPage(pageIndex)
+    })
+    pageSectionPresetSelections.value = nextSelections
+    pageSectionStarterPresetSelections.value = nextStarterSelections
+    pageReusableSectionSelections.value = nextReusableSelections
+
+    const pageIds = settings.value.pages.map(page => page.id)
     if (!pageIds.includes(activeBlocksPageId.value)) {
       activeBlocksPageId.value = pageIds[0] ?? ''
     }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => settings.value.reusableSections.map(reusableSection => `${reusableSection.id}:${reusableSection.presetId}:${reusableSection.contentModelId}`),
+  () => {
+    const nextSelections: Record<number, string> = {}
+    settings.value.pages.forEach((_, pageIndex) => {
+      nextSelections[pageIndex] = getSelectedReusableSectionForPage(pageIndex)
+    })
+    pageReusableSectionSelections.value = nextSelections
   },
   { immediate: true, deep: true }
 )
@@ -5027,12 +9094,192 @@ watch(
 )
 
 watch(
+  cmsBlockPresetOptions,
+  options => {
+    if (options.length === 0) {
+      selectedPaletteBlockPresetId.value = 'custom'
+      return
+    }
+
+    const hasPreset = options.some(option => option.value === selectedPaletteBlockPresetId.value)
+    if (!hasPreset) {
+      selectedPaletteBlockPresetId.value = options[0]?.value ?? 'custom'
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  cmsReusableBlockOptions,
+  options => {
+    if (options.length === 0) {
+      selectedReusableBlockId.value = ''
+      return
+    }
+
+    const hasReusableBlock = options.some(option => option.value === selectedReusableBlockId.value)
+    if (!hasReusableBlock) {
+      selectedReusableBlockId.value = String(options[0]?.value ?? '')
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  cmsAuthoredBlockPresetOptions,
+  options => {
+    if (options.length === 0) {
+      selectedAuthoredBlockPresetId.value = 'custom'
+      syncSelectedAuthoredPresetDrafts()
+      return
+    }
+
+    const hasPreset = options.some(option => option.value === selectedAuthoredBlockPresetId.value)
+    if (!hasPreset) {
+      selectedAuthoredBlockPresetId.value = options[0]?.value ?? 'custom'
+      return
+    }
+
+    syncSelectedAuthoredPresetDrafts()
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => [selectedAuthoredBlockPresetId.value, settings.value.content.locale],
+  () => {
+    syncSelectedAuthoredPresetDrafts()
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  cmsAuthoredContentModelOptions,
+  options => {
+    if (options.length === 0) {
+      createNewAuthoredContentModelDraft()
+      return
+    }
+
+    const hasContentModel = options.some(option => option.value === selectedAuthoredContentModelId.value)
+    if (!hasContentModel) {
+      selectedAuthoredContentModelId.value = (options[0]?.value ?? '') as CmsContentModelId | ''
+      return
+    }
+
+    syncSelectedAuthoredContentModelDrafts()
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => [selectedAuthoredContentModelId.value, settings.value.content.locale],
+  () => {
+    syncSelectedAuthoredContentModelDrafts()
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  authoredContentModelAllowedSectionSelections,
+  value => {
+    const allowedPresetIds = new Set(value)
+    const filteredRequiredPresets = authoredContentModelRequiredSectionSelections.value
+      .filter(presetId => allowedPresetIds.has(presetId))
+    let nextStarterPresets = authoredContentModelStarterSectionSelections.value
+      .filter(presetId => allowedPresetIds.has(presetId))
+    let nextRecommendedPresets = authoredContentModelRecommendedSectionSelections.value
+      .filter(presetId => allowedPresetIds.has(presetId))
+    const nextPresetLimitDrafts = Object.fromEntries(
+      Object.entries(authoredContentModelPresetLimitDrafts.value)
+        .filter(([presetId]) => allowedPresetIds.has(presetId as CmsSectionPresetId))
+    ) as Partial<Record<CmsSectionPresetId, string>>
+
+    if (filteredRequiredPresets.length !== authoredContentModelRequiredSectionSelections.value.length) {
+      authoredContentModelRequiredSectionSelections.value = filteredRequiredPresets
+    }
+
+    if (nextRecommendedPresets.length === 0 && value.length > 0) {
+      nextRecommendedPresets = [value[0] as CmsSectionPresetId]
+    }
+
+    if (nextRecommendedPresets.length !== authoredContentModelRecommendedSectionSelections.value.length) {
+      authoredContentModelRecommendedSectionSelections.value = nextRecommendedPresets
+    }
+
+    if (nextStarterPresets.length === 0 && nextRecommendedPresets.length > 0) {
+      nextStarterPresets = [...nextRecommendedPresets]
+    }
+
+    if (nextStarterPresets.length !== authoredContentModelStarterSectionSelections.value.length) {
+      authoredContentModelStarterSectionSelections.value = nextStarterPresets
+    }
+
+    if (Object.keys(nextPresetLimitDrafts).length !== Object.keys(authoredContentModelPresetLimitDrafts.value).length) {
+      authoredContentModelPresetLimitDrafts.value = nextPresetLimitDrafts
+    }
+  },
+  { deep: true }
+)
+
+watch(
+  cmsMediaAssetOptions,
+  options => {
+    if (options.length === 0) {
+      createNewMediaAssetDraft()
+      return
+    }
+
+    const hasSelectedAsset = options.some(option => option.value === selectedMediaAssetId.value)
+    if (!hasSelectedAsset && selectedMediaAssetId.value) {
+      selectedMediaAssetId.value = ''
+    }
+
+    if (!selectedMediaAssetId.value) {
+      const firstAssetId = String(options[0]?.value ?? '')
+      selectedMediaAssetId.value = firstAssetId
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => selectedMediaAssetId.value,
+  value => {
+    if (!value) {
+      setMediaAssetDraft(null)
+      return
+    }
+
+    const asset = settings.value.mediaAssets.find(entry => entry.id === value) ?? null
+    setMediaAssetDraft(asset)
+  },
+  { immediate: true }
+)
+
+watch(
+  () => selectedPageTemplateId.value,
+  value => {
+    selectedPageTemplateId.value = resolveCmsPageTemplateId(value)
+  },
+  { immediate: true }
+)
+
+watch(
   () => `${activeBlocksPageId.value}|${activeBlocksSectionId.value}|${activeBlocksBlockId.value}`,
   () => {
     syncSelectedBlockPropsDraft()
     syncSelectedBlockFieldJsonDrafts()
   },
   { immediate: true }
+)
+
+watch(
+  () => settings.value.content.locale,
+  () => {
+    syncSelectedBlockPropsDraft()
+    syncSelectedBlockFieldJsonDrafts()
+  }
 )
 
 watch(
@@ -5050,7 +9297,7 @@ watch(
   value => {
     syncActiveTenantProfileSettings(value)
     saveCmsWhiteLabelSettings(value)
-    savedAtLabel.value = `Saved at ${new Date().toLocaleTimeString()}`
+    savedAtLabel.value = buildSavedAtLabel()
   },
   { deep: true, immediate: true }
 )
@@ -5265,7 +9512,7 @@ function onThemePresetChange(value: CmsThemePresetId | null): void {
   }
 
   applyThemePresetById(presetId)
-  savedAtLabel.value = `${activeThemePresetLabel.value} preset applied`
+  savedAtLabel.value = `${activeThemePresetLabel.value} ${cmsUiText.value.themePresetAppliedSuffix}`
 }
 
 /**
@@ -5288,6 +9535,15 @@ function applySelectedThemePresetFromSettings(): void {
 }
 
 /**
+ * Applies locale preset to CMS copy/shell labels.
+ */
+function onCmsLocaleChange(value: CmsLocale | string | null): void {
+  const locale = applyCmsLocalePreset(settings.value, value)
+  settings.value.content.locale = locale
+  savedAtLabel.value = cmsUiText.value.localePresetAppliedLabel
+}
+
+/**
  * Handles on tenant profile change.
  */
 function onTenantProfileChange(value: string | null): void {
@@ -5302,10 +9558,11 @@ function onTenantProfileChange(value: string | null): void {
   saveCmsTenantProfilesState(tenantProfilesState.value)
 
   settings.value = cloneWhiteLabelSettings(normalizeCmsWhiteLabelSettings(profile.settings))
+  settings.value.content.locale = resolveCmsLocale(settings.value.content.locale)
   applySelectedThemePresetFromSettings()
   activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
   searchQuery.value = ''
-  savedAtLabel.value = `${profile.name} loaded`
+  savedAtLabel.value = `${profile.name} ${cmsUiText.value.tenantLoadedSuffix}`
 }
 
 /**
@@ -5317,7 +9574,8 @@ function createTenantProfileFromPrompt(): void {
   }
 
   const suggestedName = `Tenant ${tenantProfilesState.value.profiles.length + 1}`
-  const inputName = window.prompt('Tenant profile name', suggestedName)
+  const tenantPromptLabel = getCmsTenantProfilePromptLabel(settings.value.content.locale)
+  const inputName = window.prompt(tenantPromptLabel, suggestedName)
   if (!inputName) {
     return
   }
@@ -5336,7 +9594,7 @@ function createTenantProfileFromPrompt(): void {
   tenantProfilesState.value.activeProfileId = profileId
   saveCmsTenantProfilesState(tenantProfilesState.value)
   onTenantProfileChange(profileId)
-  savedAtLabel.value = `${profileName} created`
+  savedAtLabel.value = `${profileName} ${cmsUiText.value.tenantCreatedSuffix}`
 }
 
 /**
@@ -5348,7 +9606,7 @@ function removeActiveTenantProfile(): void {
   }
 
   const activeProfile = getActiveTenantProfileSnapshot()
-  const confirmed = window.confirm(`Delete tenant profile "${activeProfile.name}"?`)
+  const confirmed = window.confirm(cmsUiText.value.tenantDeleteConfirmLabel(activeProfile.name))
   if (!confirmed) {
     return
   }
@@ -5357,7 +9615,7 @@ function removeActiveTenantProfile(): void {
   activeTenantProfileId.value = tenantProfilesState.value.activeProfileId
   saveCmsTenantProfilesState(tenantProfilesState.value)
   onTenantProfileChange(activeTenantProfileId.value)
-  savedAtLabel.value = `${activeProfile.name} removed`
+  savedAtLabel.value = `${activeProfile.name} ${cmsUiText.value.tenantRemovedSuffix}`
 }
 
 /**
@@ -5375,7 +9633,7 @@ function toJsonFileName(value: string): string {
 /**
  * Normalizes id segment.
  */
-function normalizeIdSegment(value: string): string {
+function normalizeIdSegment(value: string | undefined | null): string {
   return String(value ?? '')
     .trim()
     .toLowerCase()
@@ -5403,7 +9661,7 @@ function exportActiveTenantProfile(): void {
   anchor.download = fileName
   anchor.click()
   window.URL.revokeObjectURL(url)
-  savedAtLabel.value = `${profile.name} exported`
+  savedAtLabel.value = `${profile.name} ${cmsUiText.value.tenantExportedSuffix}`
 }
 
 /**
@@ -5431,7 +9689,7 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
     const parsed = JSON.parse(fileContent) as unknown
     const imported = parseCmsTenantImportPayload(parsed, file.name)
     if (!imported) {
-      savedAtLabel.value = 'Import failed: invalid JSON payload'
+      savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
       return
     }
 
@@ -5441,7 +9699,7 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
     const hasRequestedId = existingIds.includes(requestedId)
     const shouldReplace = hasRequestedId
       && typeof window !== 'undefined'
-      && window.confirm(`Replace existing tenant "${requestedId}"?`)
+      && window.confirm(cmsUiText.value.tenantReplaceConfirmLabel(requestedId))
     const profileId = shouldReplace
       ? requestedId
       : createTenantProfileId(requestedId, existingIds)
@@ -5455,15 +9713,15 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
     saveCmsTenantProfilesState(tenantProfilesState.value)
     onTenantProfileChange(profileId)
     applyGovernanceAction('import_settings', {
-      summary: `${imported.name.trim() || profileId} imported`,
+      summary: `${imported.name.trim() || profileId} ${tr('imported', 'importado')}`,
       metadata: {
         sourceVersion: String(imported.sourceVersion),
         profileId,
       },
     })
-    savedAtLabel.value = `${imported.name.trim() || profileId} imported (v${imported.sourceVersion})`
+    savedAtLabel.value = cmsUiText.value.tenantImportedWithVersionLabel(imported.name.trim() || profileId, imported.sourceVersion)
   } catch {
-    savedAtLabel.value = 'Import failed: invalid JSON payload'
+    savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
   }
 }
 
@@ -5500,38 +9758,401 @@ function normalizeCmsPagePath(pageIndex: number): void {
 }
 
 /**
+ * Returns localized section preset options for a page content model.
+ */
+function getCmsSectionPresetOptions(page: CmsPageSettings): CmsSectionPresetOption[] {
+  return listCmsSectionPresetOptions(
+    settings.value.content.locale,
+    page.contentModelId,
+    settings.value.authoredContentModels
+  )
+}
+
+/**
+ * Returns localized starter block preset options for the currently selected section preset.
+ */
+function getCmsSectionStarterPresetOptions(pageIndex: number): CmsSectionStarterPresetOption[] {
+  return listCmsSectionStarterPresetOptions(
+    settings.value.content.locale,
+    getSelectedSectionPresetForPage(pageIndex),
+    settings.value.authoredBlockPresets
+  )
+}
+
+/**
+ * Returns visible starter preset variants for the page builder.
+ * Custom/manual mode stays in the select control to keep the quick-pick UI focused.
+ */
+function getCmsSectionStarterPresetVariants(pageIndex: number): CmsSectionStarterPresetOption[] {
+  return getCmsSectionStarterPresetOptions(pageIndex)
+    .filter(option => option.value !== 'custom')
+}
+
+/**
+ * Checks whether one starter preset variant is currently selected for the page.
+ */
+function isCmsSectionStarterPresetSelected(pageIndex: number, presetId: CmsBlockPresetId): boolean {
+  return getSelectedSectionStarterPresetForPage(pageIndex) === presetId
+}
+
+/**
+ * Returns a concise source label for starter preset quick-pick cards.
+ */
+function getCmsStarterPresetSourceLabel(option: CmsSectionStarterPresetOption): string {
+  if (option.isDefault) {
+    return tr('Default', 'Padrao')
+  }
+
+  return option.source === 'authored'
+    ? tr('Authored', 'Authored')
+    : tr('Built-in', 'Nativo')
+}
+
+/**
+ * Returns reusable section options compatible with a given page content model.
+ */
+function getCmsReusableSectionOptions(page: CmsPageSettings): Array<{
+  label: string
+  value: string
+  description: string
+}> {
+  return cmsReusableSectionLibrary.value
+    .filter(reusableSection => isCmsSectionPresetAllowedForContentModel(
+      page.contentModelId,
+      reusableSection.presetId,
+      settings.value.authoredContentModels
+    ))
+    .map(reusableSection => ({
+      label: `${reusableSection.name} (${getCmsSectionPresetLabel(reusableSection.presetId)})`,
+      value: reusableSection.id,
+      description: reusableSection.description || `${getCmsContentModelLabel(settings.value.content.locale, reusableSection.contentModelId, settings.value.authoredContentModels)} · ${getCmsReusableSectionLabelValue(reusableSection)}`,
+    }))
+}
+
+/**
+ * Counts enabled sections currently rendered in one page.
+ */
+function getCmsEnabledSectionCount(page: CmsPageSettings): number {
+  return page.sections.filter(section => section.enabled).length
+}
+
+/**
+ * Counts enabled sections using a given preset inside one page.
+ */
+function getCmsEnabledSectionPresetUsageCount(
+  page: CmsPageSettings,
+  presetId: CmsSectionPresetId
+): number {
+  return page.sections.filter(section => (
+    section.enabled
+    && resolveCmsSectionPresetId(section.presetId) === presetId
+  )).length
+}
+
+/**
+ * Checks whether the selected preset can still be inserted into one page according to its content model rules.
+ */
+function isCmsPageSectionAddBlocked(pageIndex: number): boolean {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return true
+  }
+
+  const maxSections = getCmsContentModelMaxSections(page.contentModelId, settings.value.authoredContentModels)
+  if (maxSections != null && getCmsEnabledSectionCount(page) >= maxSections) {
+    return true
+  }
+
+  const selectedPresetId = getSelectedSectionPresetForPage(pageIndex)
+  const presetLimits = getCmsContentModelSectionPresetLimitMap(page.contentModelId, settings.value.authoredContentModels)
+  const selectedPresetLimit = presetLimits[selectedPresetId]
+
+  return typeof selectedPresetLimit === 'number'
+    && getCmsEnabledSectionPresetUsageCount(page, selectedPresetId) >= selectedPresetLimit
+}
+
+/**
+ * Resolves the currently selected section preset for a page editor card.
+ */
+function getSelectedSectionPresetForPage(pageIndex: number): CmsSectionPresetId {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return 'hero'
+  }
+
+  const storedPresetId = pageSectionPresetSelections.value[pageIndex]
+  const allowedPresetIds = new Set(getCmsSectionPresetOptions(page).map(option => option.value))
+  if (storedPresetId && allowedPresetIds.has(storedPresetId)) {
+    return storedPresetId
+  }
+
+  const resolvedFallbackPresetId = getDefaultCmsSectionPresetId(
+    page.contentModelId,
+    settings.value.authoredContentModels
+  )
+  return allowedPresetIds.has(resolvedFallbackPresetId)
+    ? resolvedFallbackPresetId
+    : (getCmsSectionPresetOptions(page)[0]?.value ?? 'hero')
+}
+
+/**
+ * Updates the temporary section preset selection used by the page editor.
+ */
+function setSelectedSectionPresetForPage(pageIndex: number, value: unknown): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const nextPresetId = resolveCmsSectionPresetId(value)
+  const allowedPresetIds = new Set(getCmsSectionPresetOptions(page).map(option => option.value))
+  pageSectionPresetSelections.value = {
+    ...pageSectionPresetSelections.value,
+    [pageIndex]: allowedPresetIds.has(nextPresetId)
+      ? nextPresetId
+      : getSelectedSectionPresetForPage(pageIndex),
+  }
+  setSelectedSectionStarterPresetForPage(
+    pageIndex,
+    getDefaultCmsBlockPresetIdForSectionPreset(pageSectionPresetSelections.value[pageIndex])
+  )
+}
+
+/**
+ * Resolves the selected starter block preset for one page card.
+ */
+function getSelectedSectionStarterPresetForPage(pageIndex: number): CmsBlockPresetId {
+  const options = getCmsSectionStarterPresetOptions(pageIndex)
+  const storedPresetId = pageSectionStarterPresetSelections.value[pageIndex]
+  if (storedPresetId && options.some(option => option.value === storedPresetId)) {
+    return storedPresetId
+  }
+
+  const fallbackPresetId = resolveCmsBlockPresetId(
+    getDefaultCmsBlockPresetIdForSectionPreset(getSelectedSectionPresetForPage(pageIndex))
+  )
+  return options.some(option => option.value === fallbackPresetId)
+    ? fallbackPresetId
+    : (options[0]?.value ?? 'custom')
+}
+
+/**
+ * Updates the starter block preset used when inserting a new section.
+ */
+function setSelectedSectionStarterPresetForPage(pageIndex: number, value: unknown): void {
+  const options = getCmsSectionStarterPresetOptions(pageIndex)
+  const nextPresetId = resolveCmsBlockPresetId(value)
+  pageSectionStarterPresetSelections.value = {
+    ...pageSectionStarterPresetSelections.value,
+    [pageIndex]: options.some(option => option.value === nextPresetId)
+      ? nextPresetId
+      : getSelectedSectionStarterPresetForPage(pageIndex),
+  }
+}
+
+/**
+ * Resolves the selected reusable section template for a page card.
+ */
+function getSelectedReusableSectionForPage(pageIndex: number): string {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return ''
+  }
+
+  const storedReusableSectionId = pageReusableSectionSelections.value[pageIndex]
+  const options = getCmsReusableSectionOptions(page)
+  if (storedReusableSectionId && options.some(option => option.value === storedReusableSectionId)) {
+    return storedReusableSectionId
+  }
+
+  return String(options[0]?.value ?? '')
+}
+
+/**
+ * Updates the temporary reusable-section selection used by one page editor card.
+ */
+function setSelectedReusableSectionForPage(pageIndex: number, value: unknown): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const normalizedId = String(value ?? '').trim()
+  const options = getCmsReusableSectionOptions(page)
+  pageReusableSectionSelections.value = {
+    ...pageReusableSectionSelections.value,
+    [pageIndex]: options.some(option => option.value === normalizedId)
+      ? normalizedId
+      : getSelectedReusableSectionForPage(pageIndex),
+  }
+}
+
+/**
+ * Resolves a localized preset label for section rows and preview chips.
+ */
+function getCmsSectionPresetLabel(presetId: CmsSectionPresetId): string {
+  const option = listCmsSectionPresetOptions(
+    settings.value.content.locale,
+    'blank-page',
+    settings.value.authoredContentModels
+  )
+    .find(entry => entry.value === presetId)
+  return option?.label ?? presetId
+}
+
+/**
+ * Creates a collision-safe page path from a content-model default prefix.
+ */
+function createUniqueCmsPagePathFromPrefix(pathPrefix: string, pageIndex: number): string {
+  const normalizedBaseSegment = String(pathPrefix ?? '')
+    .trim()
+    .replace(/^\/+/, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9/_-]/g, '')
+    .toLowerCase()
+  const fallbackSegment = normalizeIdSegment(settings.value.pages[pageIndex]?.id) || `page-${pageIndex + 1}`
+  const baseSegment = normalizedBaseSegment || fallbackSegment
+  const occupiedSegments = new Set(
+    settings.value.pages
+      .filter((_, index) => index !== pageIndex)
+      .map(page => String(page.path ?? '').trim().replace(/^\/+/, '').toLowerCase())
+      .filter(Boolean)
+  )
+
+  if (!occupiedSegments.has(baseSegment)) {
+    return `/${baseSegment}`
+  }
+
+  let suffix = 2
+  let candidate = `${baseSegment}-${suffix}`
+  while (occupiedSegments.has(candidate)) {
+    suffix += 1
+    candidate = `${baseSegment}-${suffix}`
+  }
+
+  return `/${candidate}`
+}
+
+/**
+ * Resolves the current schema version for one page content model.
+ */
+function getCmsPageCurrentSchemaVersion(page: CmsPageSettings): number {
+  return getCmsContentModelSchemaVersion(
+    page.contentModelId,
+    settings.value.authoredContentModels
+  )
+}
+
+/**
+ * Updates one page to the current schema version while normalizing page-level custom fields.
+ */
+function syncCmsPageContentModelVersion(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  page.customFields = normalizeCmsPageCustomFieldsForContentModel(
+    page.customFields,
+    page.contentModelId,
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  )
+  page.contentModelVersion = getCmsPageCurrentSchemaVersion(page)
+  savedAtLabel.value = `${tr('Schema version synced at', 'Versao do schema sincronizada as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Applies one content-model default title/description/path scaffold to a page.
+ */
+function applyCmsPageContentModelDefaults(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const locale = settings.value.content.locale
+  updateCmsPageTitleValue(
+    page,
+    getCmsContentModelDefaultPageTitle(locale, page.contentModelId, settings.value.authoredContentModels)
+  )
+  updateCmsPageDescriptionValue(
+    page,
+    getCmsContentModelDefaultPageDescription(locale, page.contentModelId, settings.value.authoredContentModels)
+  )
+  page.path = createUniqueCmsPagePathFromPrefix(
+    getCmsContentModelDefaultPagePathPrefix(page.contentModelId, settings.value.authoredContentModels),
+    pageIndex
+  )
+  page.customFields = createCmsPageCustomFieldsFromContentModel(
+    page.contentModelId,
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  )
+  page.contentModelVersion = getCmsPageCurrentSchemaVersion(page)
+  savedAtLabel.value = `${tr('Content-model defaults applied at', 'Defaults do modelo aplicados as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Updates the page content model without rewriting authored content.
+ */
+function updateCmsPageContentModel(pageIndex: number, value: CmsContentModelId | string | null): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  page.contentModelId = resolveCmsContentModelId(value, settings.value.authoredContentModels)
+  page.contentModelVersion = getCmsPageCurrentSchemaVersion(page)
+  setSelectedSectionPresetForPage(
+    pageIndex,
+    getDefaultCmsSectionPresetId(page.contentModelId, settings.value.authoredContentModels)
+  )
+  setSelectedSectionStarterPresetForPage(
+    pageIndex,
+    getDefaultCmsBlockPresetIdForSectionPreset(getSelectedSectionPresetForPage(pageIndex))
+  )
+
+  page.customFields = normalizeCmsPageCustomFieldsForContentModel(
+    page.customFields,
+    page.contentModelId,
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  )
+
+  if (page.sections.length === 0) {
+    applyCmsPageContentModelStarterSections(pageIndex)
+  }
+}
+
+/**
+ * Replaces one page section list with the scaffold defined by its content model.
+ */
+function applyCmsPageContentModelStarterSections(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  page.sections = createCmsPageSectionsFromContentModel({
+    contentModelId: page.contentModelId,
+    localeInput: settings.value.content.locale,
+    authoredModels: settings.value.authoredContentModels,
+    authoredPresets: settings.value.authoredBlockPresets,
+  })
+  page.contentModelVersion = getCmsPageCurrentSchemaVersion(page)
+}
+
+/**
  * Handles add cms page.
  */
 function addCmsPage(): void {
-  const index = settings.value.pages.length + 1
-  const pageId = `page-${index}`
-  settings.value.pages.push({
-    id: pageId,
-    title: `Page ${index}`,
-    path: `/${pageId}`,
-    status: 'draft',
-    description: 'Describe purpose and expected audience.',
-    sections: [
-      {
-        id: 'header',
-        label: 'Header',
-        enabled: true,
-        blocks: [createDefaultSectionBlock('header', 1, true)],
-      },
-      {
-        id: 'hero',
-        label: 'Hero',
-        enabled: true,
-        blocks: [createDefaultSectionBlock('hero', 1, true)],
-      },
-      {
-        id: 'footer',
-        label: 'Footer',
-        enabled: true,
-        blocks: [createDefaultSectionBlock('footer', 1, true)],
-      },
-    ],
+  const page = createCmsPageFromTemplate({
+    templateId: selectedPageTemplateId.value,
+    existingPages: settings.value.pages,
+    localeInput: settings.value.content.locale,
   })
+  settings.value.pages.push(page)
 }
 
 /**
@@ -5549,18 +10170,89 @@ function removeCmsPage(pageIndex: number): void {
  */
 function addCmsPageSection(pageIndex: number): void {
   const page = settings.value.pages[pageIndex]
+  if (!page || isCmsPageSectionAddBlocked(pageIndex)) {
+    return
+  }
+
+  const presetId = getSelectedSectionPresetForPage(pageIndex)
+  page.sections.push(createCmsPageSectionFromPreset({
+    presetId,
+    existingSections: page.sections,
+    localeInput: settings.value.content.locale,
+    starterPresetId: getSelectedSectionStarterPresetForPage(pageIndex),
+    authoredPresets: settings.value.authoredBlockPresets,
+  }))
+}
+
+/**
+ * Saves an authored section into the reusable library.
+ */
+function saveCmsPageSectionAsReusable(pageIndex: number, sectionIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  const section = page?.sections[sectionIndex]
+  if (!page || !section) {
+    return
+  }
+
+  const reusableSection = createCmsReusableSectionFromSection({
+    page,
+    section,
+    existingSections: settings.value.reusableSections,
+  })
+
+  settings.value.reusableSections = [reusableSection, ...settings.value.reusableSections]
+  pageReusableSectionSelections.value = {
+    ...pageReusableSectionSelections.value,
+    [pageIndex]: reusableSection.id,
+  }
+  savedAtLabel.value = `${tr('Reusable section saved at', 'Secao reutilizavel salva as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Inserts the selected reusable section into the target page.
+ */
+function insertSelectedReusableSection(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
   if (!page) {
     return
   }
 
-  const sectionIndex = page.sections.length + 1
-  const sectionId = `section-${sectionIndex}`
-  page.sections.push({
-    id: sectionId,
-    label: `Section ${sectionIndex}`,
-    enabled: true,
-    blocks: [createDefaultSectionBlock(sectionId, 1, true)],
+  const reusableSectionId = getSelectedReusableSectionForPage(pageIndex)
+  const reusableSection = settings.value.reusableSections.find(entry => entry.id === reusableSectionId)
+  if (!reusableSection) {
+    savedAtLabel.value = tr('Select a reusable section before inserting it.', 'Selecione uma secao reutilizavel antes de inseri-la.')
+    return
+  }
+
+  page.sections.push(cloneCmsReusableSectionIntoPageSection({
+    reusableSection,
+    existingSections: page.sections,
+  }))
+  savedAtLabel.value = `${tr('Reusable section inserted at', 'Secao reutilizavel inserida as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Creates a local duplicate of a page section without saving it to the reusable library.
+ */
+function duplicateCmsPageSection(pageIndex: number, sectionIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  const section = page?.sections[sectionIndex]
+  if (!page || !section) {
+    return
+  }
+
+  const reusableSection = createCmsReusableSectionFromSection({
+    page,
+    section,
+    existingSections: [],
+    name: `${getCmsSectionLabelValue(section) || section.id} Copy`,
   })
+
+  const duplicatedSection = cloneCmsReusableSectionIntoPageSection({
+    reusableSection,
+    existingSections: page.sections,
+  })
+  page.sections.splice(sectionIndex + 1, 0, duplicatedSection)
 }
 
 /**
@@ -5572,6 +10264,86 @@ function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
     return
   }
   page.sections.splice(sectionIndex, 1)
+}
+
+/**
+ * Removes a reusable section template from the local CMS library.
+ */
+function removeReusableSection(reusableSectionId: string): void {
+  settings.value.reusableSections = settings.value.reusableSections.filter(reusableSection => reusableSection.id !== reusableSectionId)
+}
+
+/**
+ * Resolves drag-and-drop target index using the hovered row midpoint.
+ */
+function resolveVerticalDropIndex(event: DragEvent, rowIndex: number): number {
+  const currentTarget = event.currentTarget as HTMLElement | null
+  if (!currentTarget) {
+    return rowIndex
+  }
+
+  const { top, height } = currentTarget.getBoundingClientRect()
+  return event.clientY >= top + (height / 2)
+    ? rowIndex + 1
+    : rowIndex
+}
+
+/**
+ * Starts dragging one page section inside the pages builder.
+ */
+function onCmsPageSectionDragStart(pageId: string, sectionId: string, event: DragEvent): void {
+  draggedPageSection.value = { pageId, sectionId }
+  pageSectionDropTargetKey.value = sectionId
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', `${pageId}:${sectionId}`)
+  }
+}
+
+/**
+ * Clears temporary page-section drag state.
+ */
+function onCmsPageSectionDragEnd(): void {
+  draggedPageSection.value = null
+  pageSectionDropTargetKey.value = ''
+}
+
+/**
+ * Tracks the current section drop target while dragging.
+ */
+function onCmsPageSectionDragOver(pageId: string, sectionId: string, event: DragEvent): void {
+  if (!draggedPageSection.value || draggedPageSection.value.pageId !== pageId) {
+    return
+  }
+
+  event.preventDefault()
+  pageSectionDropTargetKey.value = sectionId
+}
+
+/**
+ * Reorders sections inside a page editor card using builder-state helpers.
+ */
+function onCmsPageSectionDrop(pageIndex: number, sectionId: string, sectionIndex: number, event: DragEvent): void {
+  if (!draggedPageSection.value) {
+    return
+  }
+
+  event.preventDefault()
+
+  const page = settings.value.pages[pageIndex]
+  if (!page || draggedPageSection.value.pageId !== page.id) {
+    onCmsPageSectionDragEnd()
+    return
+  }
+
+  const state = createCmsBuilderState(toCmsPageSchema(page))
+  const nextState = moveCmsBuilderSectionToIndex(state, {
+    sectionId: draggedPageSection.value.sectionId,
+    targetIndex: resolveVerticalDropIndex(event, sectionIndex),
+  })
+  applyBuilderStateToPage(pageIndex, nextState)
+  onCmsPageSectionDragEnd()
 }
 
 /**
@@ -5704,8 +10476,8 @@ function addToolbarAction(): void {
   settings.value.toolbarActions.push({
     id: `action-${Math.random().toString(36).slice(2, 7)}`,
     icon: 'bolt',
-    label: 'Action',
-    tooltip: 'Custom action',
+    label: tr('Action', 'Acao'),
+    tooltip: tr('Custom action', 'Acao customizada'),
     flat: true,
     dense: true,
     round: false,
@@ -5738,13 +10510,13 @@ function onToolbarAction(action: AppShellAction): void {
  */
 function saveNow(): void {
   applyGovernanceAction('save_draft', {
-    summary: 'Settings saved manually',
+    summary: cmsUiText.value.settingsSavedManuallySummary,
     metadata: {
       source: 'toolbar',
     },
   })
   saveCmsWhiteLabelSettings(settings.value)
-  savedAtLabel.value = `Saved at ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = buildSavedAtLabel()
 }
 
 /**
@@ -5754,7 +10526,7 @@ function resetToDefaults(): void {
   const previousGovernance = settings.value.governance
   const nextGovernance = canApplyWhiteLabelWorkflowAction(previousGovernance, 'reset_defaults', governanceActor.role)
     ? applyWhiteLabelWorkflowAction(previousGovernance, 'reset_defaults', governanceActor, {
-      summary: 'Defaults restored',
+      summary: cmsUiText.value.defaultsRestoredSummary,
       metadata: {
         source: 'toolbar',
       },
@@ -5772,7 +10544,7 @@ function resetToDefaults(): void {
   searchQuery.value = ''
   activeSettingsTab.value = 'branding'
   applyCmsFavicon(settings.value.branding.faviconUrl)
-  savedAtLabel.value = 'Defaults restored'
+  savedAtLabel.value = cmsUiText.value.defaultsRestoredLabel
 }
 </script>
 
@@ -5894,6 +10666,18 @@ function resetToDefaults(): void {
   align-items: start;
 }
 
+.cms-pages__header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__template-select {
+  min-width: 15.5rem;
+}
+
 .cms-pages__editor {
   display: flex;
   flex-direction: column;
@@ -5922,6 +10706,27 @@ function resetToDefaults(): void {
   align-items: end;
 }
 
+.cms-blocks-toolbar__hint {
+  margin-top: calc(var(--ntk-cms-space-xs) * -1);
+}
+
+.cms-blocks-reusable-toolbar {
+  align-items: end;
+}
+
+.cms-blocks-library {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-blocks-library__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
 .cms-blocks-list {
   display: flex;
   flex-direction: column;
@@ -5936,6 +10741,11 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-block-item--drop-target {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 30%, transparent);
 }
 
 .cms-block-item__meta {
@@ -5963,6 +10773,11 @@ function resetToDefaults(): void {
   justify-content: space-between;
   gap: var(--ntk-cms-space-sm);
   flex-wrap: wrap;
+  cursor: grab;
+}
+
+.cms-block-row--dragging {
+  opacity: 0.56;
 }
 
 .cms-block-row--active {
@@ -5987,6 +10802,39 @@ function resetToDefaults(): void {
   align-items: center;
   gap: var(--ntk-cms-space-xs);
   flex-wrap: wrap;
+}
+
+.cms-reusable-block-row {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-reusable-block-row--active {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 35%, transparent);
+}
+
+.cms-reusable-block-row__meta {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-reusable-block-row__meta small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-reusable-block-row__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-blocks__summary {
@@ -6019,6 +10867,41 @@ function resetToDefaults(): void {
 
 .cms-blocks-summary-card strong {
   color: var(--ntk-cms-text-primary);
+}
+
+.cms-diagnostics-list {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-diagnostics-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-diagnostics-item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-diagnostics-item__body {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-diagnostics-item__body small {
+  color: var(--ntk-cms-text-secondary);
 }
 
 .cms-blocks-props {
@@ -6075,6 +10958,17 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
 }
 
+.cms-media__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-media__actions--secondary {
+  padding-top: calc(var(--ntk-cms-space-xs) / 2);
+  border-top: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+}
+
 .cms-media__preview {
   display: flex;
   flex-direction: column;
@@ -6090,6 +10984,15 @@ function resetToDefaults(): void {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--ntk-cms-space-sm);
   align-items: center;
+}
+
+.cms-media-preview-item--binding {
+  background: var(--ntk-cms-bg-card);
+}
+
+.cms-media-preview-item--active {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: var(--ntk-cms-shadow-sm);
 }
 
 .cms-media-preview-item__meta {
@@ -6120,11 +11023,133 @@ function resetToDefaults(): void {
   object-fit: contain;
 }
 
+.cms-media-preview-item__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
 .cms-media-preview-item__url {
   grid-column: 1 / -1;
   font-size: var(--ntk-cms-font-size-item-caption);
   color: var(--ntk-cms-text-secondary);
   word-break: break-all;
+}
+
+.cms-releases__editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-releases__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-releases__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+  max-height: var(--ntk-cms-editor-max-height);
+  overflow: auto;
+  padding-right: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-releases__calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-diagnostics {
+  margin: 0;
+  padding-left: var(--ntk-cms-space-lg);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+  font-size: var(--ntk-cms-font-size-item-caption);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-item--active {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 35%, transparent);
+}
+
+.cms-release-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-item__meta {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-item__summary {
+  margin: 0;
+}
+
+.cms-release-item__metrics {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-release-item__dates {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-release-item__empty {
+  margin: 0;
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-calendar-item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  color: var(--ntk-cms-text-secondary);
+  background: var(--ntk-cms-shell-bg);
+}
+
+.cms-release-calendar-item strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-release-calendar-conflict {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+  background: var(--ntk-cms-bg-card);
+}
+
+.cms-release-calendar-conflict p {
+  margin: 0;
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
 }
 
 .cms-page-item {
@@ -6147,6 +11172,32 @@ function resetToDefaults(): void {
   grid-column: 1 / -1;
 }
 
+.cms-page-item__custom-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-item__custom-fields-header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) * 0.4);
+}
+
+.cms-page-item__custom-fields-header strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-page-item__custom-fields-header small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-page-item__custom-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-md);
+}
+
 .cms-page-item__sections {
   display: flex;
   flex-direction: column;
@@ -6160,21 +11211,99 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
 }
 
+.cms-page-item__sections-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-page-item__section-preset-select {
+  min-width: 14rem;
+}
+
+.cms-page-item__starter-variants {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-item__starter-card {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-card-bg);
+  color: var(--ntk-cms-text-primary);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-xs);
+  text-align: left;
+  transition: border-color var(--ntk-cms-transition-base), transform var(--ntk-cms-transition-base), box-shadow var(--ntk-cms-transition-base);
+}
+
+.cms-page-item__starter-card:hover {
+  border-color: var(--ntk-cms-accent);
+  transform: translateY(-1px);
+  box-shadow: var(--ntk-cms-shadow-sm);
+}
+
+.cms-page-item__starter-card--active {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 28%, transparent);
+}
+
+.cms-page-item__starter-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-item__starter-card small {
+  color: var(--ntk-cms-text-secondary);
+}
+
 .cms-page-section-row {
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-sm);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto auto auto auto;
   gap: var(--ntk-cms-space-sm);
   align-items: center;
+  cursor: grab;
+}
+
+.cms-page-section-row--dragging {
+  opacity: 0.56;
+}
+
+.cms-page-section-row--drop-target {
+  border-color: var(--ntk-cms-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 30%, transparent);
 }
 
 .cms-page-item__actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__reusable-library {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-shell-bg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__reusable-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding: 0 var(--ntk-cms-space-md) var(--ntk-cms-space-md);
 }
 
 .cms-page-preview {
@@ -6192,6 +11321,14 @@ function resetToDefaults(): void {
   align-items: center;
   justify-content: space-between;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-preview__chips {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: calc(var(--ntk-cms-space-xs) * 0.8);
+  flex-wrap: wrap;
 }
 
 .cms-page-preview__path {
@@ -6374,6 +11511,78 @@ function resetToDefaults(): void {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--ntk-cms-space-md);
   margin-bottom: var(--ntk-cms-space-lg);
+}
+
+.cms-form-grid__full {
+  grid-column: 1 / -1;
+}
+
+.cms-form-grid__inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-sm);
+  align-items: center;
+  grid-column: 1 / -1;
+}
+
+.cms-content-model-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-md);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: color-mix(in srgb, var(--ntk-cms-bg-card) 92%, transparent);
+}
+
+.cms-content-model-fields__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-content-model-fields__description,
+.cms-content-model-fields__empty {
+  margin: 0;
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-content-model-fields__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding-top: var(--ntk-cms-space-sm);
+  border-top: var(--ntk-cms-border-width) dashed var(--ntk-cms-border-color);
+}
+
+.cms-content-model-fields__row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-md);
+  align-items: center;
+}
+
+.cms-content-model-fields__options {
+  grid-column: 1 / -1;
+}
+
+.cms-preset-toggle-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-sm);
+  grid-column: 1 / -1;
+}
+
+.cms-preset-toggle-grid__button {
+  min-width: unset;
+}
+
+.cms-preset-limit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-md);
+  grid-column: 1 / -1;
 }
 
 .cms-color-grid {
@@ -7293,6 +12502,10 @@ function resetToDefaults(): void {
   grid-template-columns: 1fr;
 }
 
+.cms-shell-page--md-compact .cms-releases__actions {
+  justify-content: flex-start;
+}
+
 .cms-shell-page--md-compact .cms-shell-page__workspace {
   padding: var(--ntk-cms-space-md);
 }
@@ -7300,6 +12513,16 @@ function resetToDefaults(): void {
 .cms-shell-page--md-compact .cms-toolbar-card__body {
   flex-direction: column;
   align-items: stretch;
+}
+
+.cms-shell-page--md-compact .cms-pages__header-actions {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.cms-shell-page--md-compact .cms-pages__template-select {
+  min-width: 0;
+  width: 100%;
 }
 
 .cms-shell-page--md-compact .cms-toolbar-card__separator {

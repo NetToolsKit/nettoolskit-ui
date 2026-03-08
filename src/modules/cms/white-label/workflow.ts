@@ -6,6 +6,7 @@ import type {
   CmsWhiteLabelActorRole,
   CmsWhiteLabelAuditEntry,
   CmsWhiteLabelGovernance,
+  CmsWhiteLabelRolePolicy,
   CmsWhiteLabelRevision,
   CmsWhiteLabelWorkflowAction,
   CmsWhiteLabelWorkflowStatus,
@@ -15,6 +16,7 @@ import type {
  * Default max number of audit entries retained per tenant profile.
  */
 export const CMS_WHITE_LABEL_DEFAULT_MAX_AUDIT_ENTRIES = 200
+export const CMS_WHITE_LABEL_ROLE_POLICY_VERSION = 1
 
 const MIN_AUDIT_ENTRIES = 20
 const MAX_AUDIT_ENTRIES = 1000
@@ -23,6 +25,7 @@ const WORKFLOW_ACTIONS: readonly CmsWhiteLabelWorkflowAction[] = [
   'submit_review',
   'approve',
   'request_changes',
+  'schedule_publish',
   'publish',
   'rollback',
   'reset_defaults',
@@ -34,16 +37,28 @@ const STATUS_TRANSITIONS: Record<CmsWhiteLabelWorkflowAction, CmsWhiteLabelWorkf
   submit_review: 'in_review',
   approve: 'approved',
   request_changes: 'draft',
+  schedule_publish: 'scheduled',
   publish: 'published',
   rollback: 'draft',
   reset_defaults: 'draft',
   import_settings: 'draft',
 }
 
+const ROLE_POLICY_ORDER: readonly CmsWhiteLabelActorRole[] = [
+  'owner',
+  'admin',
+  'editor',
+  'reviewer',
+  'publisher',
+  'viewer',
+  'system',
+]
+
 const STATUS_ALLOWED_ACTIONS: Record<CmsWhiteLabelWorkflowStatus, readonly CmsWhiteLabelWorkflowAction[]> = {
   draft: ['save_draft', 'submit_review', 'reset_defaults', 'import_settings'],
   in_review: ['approve', 'request_changes', 'save_draft', 'reset_defaults', 'import_settings'],
-  approved: ['publish', 'request_changes', 'save_draft', 'reset_defaults', 'import_settings'],
+  approved: ['schedule_publish', 'publish', 'request_changes', 'save_draft', 'reset_defaults', 'import_settings'],
+  scheduled: ['publish', 'request_changes', 'save_draft', 'reset_defaults', 'import_settings'],
   published: ['save_draft', 'rollback', 'reset_defaults', 'import_settings'],
 }
 
@@ -52,8 +67,49 @@ const ROLE_ALLOWED_ACTIONS: Record<CmsWhiteLabelActorRole, readonly CmsWhiteLabe
   admin: WORKFLOW_ACTIONS,
   editor: ['save_draft', 'submit_review', 'import_settings'],
   reviewer: ['approve', 'request_changes'],
+  publisher: ['schedule_publish', 'publish', 'rollback'],
   viewer: [],
   system: WORKFLOW_ACTIONS,
+}
+
+const ROLE_DENIED_ACTIONS: Record<CmsWhiteLabelActorRole, readonly CmsWhiteLabelWorkflowAction[]> = {
+  owner: [],
+  admin: [],
+  editor: ['approve', 'schedule_publish', 'publish', 'rollback', 'reset_defaults'],
+  reviewer: ['save_draft', 'submit_review', 'schedule_publish', 'publish', 'rollback', 'reset_defaults', 'import_settings'],
+  publisher: ['save_draft', 'submit_review', 'approve', 'request_changes', 'reset_defaults', 'import_settings'],
+  viewer: WORKFLOW_ACTIONS,
+  system: [],
+}
+
+const ROLE_POLICY_LABELS: Record<CmsWhiteLabelActorRole, string> = {
+  owner: 'Owner',
+  admin: 'Admin',
+  editor: 'Editor',
+  reviewer: 'Reviewer',
+  publisher: 'Publisher',
+  viewer: 'Viewer',
+  system: 'System',
+}
+
+const ROLE_POLICY_DESCRIPTIONS: Record<CmsWhiteLabelActorRole, string> = {
+  owner: 'Full platform governance and emergency control.',
+  admin: 'Operational administration and workflow supervision.',
+  editor: 'Creates and updates draft content and submits for review.',
+  reviewer: 'Reviews content quality and decides approval/request changes.',
+  publisher: 'Schedules, publishes approved releases and performs controlled rollback.',
+  viewer: 'Read-only access with no workflow mutations.',
+  system: 'Automation actor used by scheduled and internal operations.',
+}
+
+const ROLE_POLICY_GROUPS: Record<CmsWhiteLabelActorRole, readonly string[]> = {
+  owner: ['org:owners'],
+  admin: ['org:admins'],
+  editor: ['org:editors'],
+  reviewer: ['org:reviewers'],
+  publisher: ['org:publishers'],
+  viewer: ['org:viewers'],
+  system: ['org:system'],
 }
 
 const VERSION_BUMP_ACTIONS = new Set<CmsWhiteLabelWorkflowAction>([
@@ -67,7 +123,11 @@ const VERSION_BUMP_ACTIONS = new Set<CmsWhiteLabelWorkflowAction>([
  * Validates workflow status string values.
  */
 function isWorkflowStatus(value: unknown): value is CmsWhiteLabelWorkflowStatus {
-  return value === 'draft' || value === 'in_review' || value === 'approved' || value === 'published'
+  return value === 'draft'
+    || value === 'in_review'
+    || value === 'approved'
+    || value === 'scheduled'
+    || value === 'published'
 }
 
 /**
@@ -85,8 +145,151 @@ function isActorRole(value: unknown): value is CmsWhiteLabelActorRole {
     || value === 'admin'
     || value === 'editor'
     || value === 'reviewer'
+    || value === 'publisher'
     || value === 'viewer'
     || value === 'system'
+}
+
+/**
+ * Creates default role policy templates used by governance RBAC.
+ */
+export function createDefaultWhiteLabelRolePolicies(): CmsWhiteLabelRolePolicy[] {
+  return ROLE_POLICY_ORDER.map(role => ({
+    role,
+    label: ROLE_POLICY_LABELS[role],
+    description: ROLE_POLICY_DESCRIPTIONS[role],
+    groups: [...ROLE_POLICY_GROUPS[role]],
+    allowActions: [...ROLE_ALLOWED_ACTIONS[role]],
+    denyActions: [...ROLE_DENIED_ACTIONS[role]],
+  }))
+}
+
+/**
+ * Sanitizes workflow action arrays against supported action identifiers.
+ */
+function normalizePolicyActions(value: unknown): CmsWhiteLabelWorkflowAction[] {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .filter(isWorkflowAction)
+    .filter((action, index, list) => list.indexOf(action) === index)
+}
+
+/**
+ * Sanitizes role group arrays.
+ */
+function normalizePolicyGroups(value: unknown, fallback: readonly string[]): string[] {
+  if (!Array.isArray(value)) {
+    return [...fallback]
+  }
+
+  const normalized = value
+    .map(group => String(group ?? '').trim())
+    .filter(group => group.length > 0)
+    .filter((group, index, list) => list.indexOf(group) === index)
+
+  return normalized.length > 0 ? normalized : [...fallback]
+}
+
+/**
+ * Normalizes persisted role policy payloads and merges with default templates.
+ */
+function normalizeRolePolicies(value: unknown): CmsWhiteLabelRolePolicy[] {
+  const defaults = createDefaultWhiteLabelRolePolicies()
+  const defaultByRole = new Map<CmsWhiteLabelActorRole, CmsWhiteLabelRolePolicy>(
+    defaults.map(policy => [policy.role, policy])
+  )
+  const mapByRole = new Map<CmsWhiteLabelActorRole, CmsWhiteLabelRolePolicy>(
+    defaults.map(policy => [policy.role, policy])
+  )
+
+  if (Array.isArray(value)) {
+    for (const rawPolicy of value) {
+      if (!rawPolicy || typeof rawPolicy !== 'object') {
+        continue
+      }
+
+      const role = isActorRole((rawPolicy as { role?: unknown }).role)
+        ? (rawPolicy as { role: CmsWhiteLabelActorRole }).role
+        : null
+      if (!role) {
+        continue
+      }
+
+      const base = mapByRole.get(role)
+      if (!base) {
+        continue
+      }
+
+      const allowActions = normalizePolicyActions((rawPolicy as { allowActions?: unknown }).allowActions)
+      const denyActions = normalizePolicyActions((rawPolicy as { denyActions?: unknown }).denyActions)
+      const label = String((rawPolicy as { label?: unknown }).label ?? '').trim() || base.label
+      const description = String((rawPolicy as { description?: unknown }).description ?? '').trim() || base.description
+
+      mapByRole.set(role, {
+        role,
+        label,
+        description,
+        groups: normalizePolicyGroups((rawPolicy as { groups?: unknown }).groups, base.groups),
+        allowActions: allowActions.length > 0 ? allowActions : [...base.allowActions],
+        denyActions,
+      })
+    }
+  }
+
+  return ROLE_POLICY_ORDER.map(role => mapByRole.get(role) ?? defaultByRole.get(role) ?? {
+    role,
+    label: ROLE_POLICY_LABELS[role],
+    description: ROLE_POLICY_DESCRIPTIONS[role],
+    groups: [...ROLE_POLICY_GROUPS[role]],
+    allowActions: [...ROLE_ALLOWED_ACTIONS[role]],
+    denyActions: [...ROLE_DENIED_ACTIONS[role]],
+  })
+}
+
+/**
+ * Resolves one role policy from governance policies or falls back to defaults.
+ */
+function resolveRolePolicy(
+  role: CmsWhiteLabelActorRole,
+  rolePolicies?: CmsWhiteLabelRolePolicy[]
+): CmsWhiteLabelRolePolicy {
+  const defaultPolicy = createDefaultWhiteLabelRolePolicies().find(policy => policy.role === role)
+  if (!defaultPolicy) {
+    return {
+      role,
+      label: role,
+      description: '',
+      groups: [],
+      allowActions: [],
+      denyActions: [],
+    }
+  }
+
+  const override = rolePolicies?.find(policy => policy.role === role)
+  if (!override) {
+    return defaultPolicy
+  }
+
+  return {
+    role,
+    label: String(override.label ?? '').trim() || defaultPolicy.label,
+    description: String(override.description ?? '').trim() || defaultPolicy.description,
+    groups: override.groups?.length ? [...override.groups] : [...defaultPolicy.groups],
+    allowActions: override.allowActions?.length ? [...override.allowActions] : [...defaultPolicy.allowActions],
+    denyActions: override.denyActions?.length ? [...override.denyActions] : [...defaultPolicy.denyActions],
+  }
+}
+
+/**
+ * Returns role policies sorted by canonical role order.
+ */
+export function getWhiteLabelRolePolicies(
+  governance?: Pick<CmsWhiteLabelGovernance, 'rolePolicies'>
+): CmsWhiteLabelRolePolicy[] {
+  return normalizeRolePolicies(governance?.rolePolicies)
 }
 
 /**
@@ -121,6 +324,9 @@ function fallbackActionByStatus(status: CmsWhiteLabelWorkflowStatus): CmsWhiteLa
   if (status === 'approved') {
     return 'approve'
   }
+  if (status === 'scheduled') {
+    return 'schedule_publish'
+  }
   if (status === 'published') {
     return 'publish'
   }
@@ -143,11 +349,13 @@ function buildActionSummary(action: CmsWhiteLabelWorkflowAction, toStatus: CmsWh
  */
 export function getAllowedWhiteLabelWorkflowActions(
   status: CmsWhiteLabelWorkflowStatus,
-  role: CmsWhiteLabelActorRole
+  role: CmsWhiteLabelActorRole,
+  rolePolicies?: CmsWhiteLabelRolePolicy[]
 ): CmsWhiteLabelWorkflowAction[] {
   const statusActions = STATUS_ALLOWED_ACTIONS[status]
-  const roleActions = ROLE_ALLOWED_ACTIONS[role]
-  return statusActions.filter(action => roleActions.includes(action))
+  const policy = resolveRolePolicy(role, rolePolicies)
+  const denied = new Set(policy.denyActions)
+  return statusActions.filter(action => policy.allowActions.includes(action) && !denied.has(action))
 }
 
 /**
@@ -158,7 +366,7 @@ export function canApplyWhiteLabelWorkflowAction(
   action: CmsWhiteLabelWorkflowAction,
   role: CmsWhiteLabelActorRole
 ): boolean {
-  const allowed = getAllowedWhiteLabelWorkflowActions(governance.workflow.status, role)
+  const allowed = getAllowedWhiteLabelWorkflowActions(governance.workflow.status, role, governance.rolePolicies)
   return allowed.includes(action)
 }
 
@@ -187,6 +395,7 @@ export function createDefaultWhiteLabelGovernance(now: string = new Date().toISO
       },
     ],
     auditTrail: [],
+    rolePolicies: createDefaultWhiteLabelRolePolicies(),
     maxAuditEntries: CMS_WHITE_LABEL_DEFAULT_MAX_AUDIT_ENTRIES,
   }
 }
@@ -381,6 +590,7 @@ export function normalizeWhiteLabelGovernance(
     : []
 
   const maxAuditEntries = normalizeMaxAuditEntries(payload.maxAuditEntries)
+  const rolePolicies = normalizeRolePolicies((payload as { rolePolicies?: unknown }).rolePolicies)
 
   return {
     workflow: {
@@ -393,6 +603,7 @@ export function normalizeWhiteLabelGovernance(
     },
     revisions: normalizedRevisions,
     auditTrail: normalizedAuditTrail.slice(Math.max(0, normalizedAuditTrail.length - maxAuditEntries)),
+    rolePolicies,
     maxAuditEntries,
   }
 }

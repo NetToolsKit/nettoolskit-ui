@@ -5,4 +5,5 @@
 export * from './core'
 export * from './renderer'
 export * from './blocks'
+export * from './releases'
 export * from './white-label'

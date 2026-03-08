@@ -3,7 +3,10 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { getLandingBlockFieldDefinitions } from '../../../../landing-page/cms/landing.block-fields'
+import {
+  getLandingBlockFieldDefinitions,
+  getLandingBlockMediaBindingDefinitions,
+} from '../../../../landing-page/cms/landing.block-fields'
 
 const LANDING_BLOCK_TYPES = [
   'landing.header',
@@ -31,9 +34,13 @@ describe('Landing block fields catalog', () => {
     const heroFieldPaths = heroFields.map(field => field.path)
 
     expect(heroFieldPaths).toEqual(expect.arrayContaining([
+      'imageAssetId',
       'videoWebm',
+      'videoWebmAssetId',
       'videoMp4',
+      'videoMp4AssetId',
       'videoPoster',
+      'videoPosterAssetId',
       'videoAutoplay',
       'videoLoop',
       'videoMuted',
@@ -45,6 +52,22 @@ describe('Landing block fields catalog', () => {
       'parallaxEnabled',
       'parallaxStrength',
       'videoPreload',
+    ]))
+  })
+
+  it('declares media bindings for hero asset references', () => {
+    const bindings = getLandingBlockMediaBindingDefinitions('landing.hero')
+
+    expect(bindings).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        sourcePath: 'imageAssetId',
+        targetPath: 'image',
+        altTargetPath: 'imageAlt',
+      }),
+      expect.objectContaining({
+        sourcePath: 'videoPosterAssetId',
+        targetPath: 'videoPoster',
+      }),
     ]))
   })
 

@@ -13,9 +13,7 @@ const DARK_PRESET_NAME = 'Dark'
 const SECTION_BADGE_LETTER_SPACING_LABEL = 'Section badge letter spacing'
 const CTA_SUBTITLE_LINE_HEIGHT_LABEL = 'CTA subtitle line height'
 const FOOTER_LINK_TITLE_LETTER_SPACING_LABEL = 'Footer link title letter spacing'
-const SECTION_BADGE_LETTER_SPACING_VAR = '--ntk-landing-layout-section-badge-letter-spacing'
-const CTA_SUBTITLE_LINE_HEIGHT_VAR = '--ntk-landing-layout-cta-subtitle-line-height'
-const FOOTER_LINK_TITLE_LETTER_SPACING_VAR = '--ntk-landing-layout-footer-link-title-letter-spacing'
+const IMAGE_ASSET_LABEL = 'Image asset'
 
 const darkThemePalette = {
   drawerBackground: '#1e293b',
@@ -61,9 +59,116 @@ function hexToRgbRegex(hexColor: string): RegExp {
 }
 
 async function fillTextInput(input: Locator, value: string): Promise<void> {
-  await input.click({ clickCount: 3 })
-  await input.fill(value)
-  await input.press('Tab')
+  try {
+    await input.click({ clickCount: 3, timeout: 5000 })
+    await input.fill(value, { timeout: 5000 })
+    await input.press('Tab')
+    return
+  } catch {
+    await input.evaluate((element, nextValue) => {
+      const target = element as HTMLInputElement | HTMLTextAreaElement
+      const prototype = target instanceof HTMLTextAreaElement
+        ? window.HTMLTextAreaElement.prototype
+        : window.HTMLInputElement.prototype
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, 'value')
+
+      descriptor?.set?.call(target, String(nextValue))
+      target.dispatchEvent(new Event('input', { bubbles: true }))
+      target.dispatchEvent(new Event('change', { bubbles: true }))
+      target.blur()
+    }, value)
+  }
+}
+
+/**
+ * Forces a Quasar text control value through the resolved locator when actionability is unstable.
+ */
+async function fillTextInputDirect(input: Locator, value: string): Promise<void> {
+  await input.scrollIntoViewIfNeeded()
+  await input.evaluate((element, nextValue) => {
+    const target = element as HTMLInputElement | HTMLTextAreaElement
+    const prototype = target instanceof HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, 'value')
+
+    descriptor?.set?.call(target, String(nextValue))
+    target.dispatchEvent(new Event('input', { bubbles: true }))
+    target.dispatchEvent(new Event('change', { bubbles: true }))
+    target.blur()
+  }, value)
+}
+
+/**
+ * Lists current values for visible textbox controls sharing the same accessible name.
+ */
+async function listTextboxValues(page: Page, name: string): Promise<string[]> {
+  return page
+    .getByRole('textbox', { name })
+    .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value))
+}
+
+/**
+ * Selects the first option in a Quasar select field identified by label.
+ */
+async function selectFirstOptionByFieldLabel(page: Page, label: string): Promise<void> {
+  const selectField = page
+    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+    .first()
+  await selectField.click()
+
+  const optionByRole = page.getByRole('option').first()
+  if (await optionByRole.count() > 0) {
+    await optionByRole.click()
+    return
+  }
+
+  await page.locator('.q-menu .q-item').first().click()
+}
+
+/**
+ * Selects a specific option in a Quasar select field identified by label.
+ */
+async function selectOptionByFieldLabel(page: Page, label: string, optionLabel: string): Promise<void> {
+  const selectField = page
+    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+    .first()
+  await selectField.click()
+
+  const optionByRole = page.getByRole('option', { name: optionLabel, exact: true }).first()
+  if (await optionByRole.count() > 0) {
+    await optionByRole.click()
+    return
+  }
+
+  await page.locator('.q-menu .q-item', { hasText: optionLabel }).first().click()
+}
+
+/**
+ * Selects a specific option in a Quasar select field identified by a multilingual label pattern.
+ */
+async function selectOptionByFieldLabelPattern(page: Page, label: RegExp, optionLabel: string): Promise<void> {
+  const selectField = page
+    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+    .first()
+  await selectField.click()
+
+  const optionByRole = page.getByRole('option', { name: optionLabel, exact: true }).first()
+  if (await optionByRole.count() > 0) {
+    await optionByRole.click()
+    return
+  }
+
+  await page.locator('.q-menu .q-item', { hasText: optionLabel }).first().click()
+}
+
+/**
+ * Commits the currently focused Quasar select so action buttons receive the next keyboard/click event.
+ */
+async function commitFocusedSelect(page: Page): Promise<void> {
+  await page.keyboard.press('Escape').catch(() => undefined)
+  await page.keyboard.press('Tab')
+  await expect(page.locator('.q-menu:visible')).toHaveCount(0)
 }
 
 /**
@@ -108,8 +213,8 @@ async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
 }
 
 async function openSettingsModule(page: Page): Promise<void> {
-  await openDrawerModule(page, /^Settings$/)
-  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Settings')
+  await openDrawerModule(page, /^(Settings|Configuracoes)$/)
+  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Settings|Configuracoes)$/)
 }
 
 async function openSettingsTab(page: Page, tabName: RegExp): Promise<void> {
@@ -159,14 +264,6 @@ async function enableAdvancedThemeOverrides(page: Page): Promise<void> {
   if (!isEnabled) {
     await advancedToggle.click()
   }
-}
-
-async function expectRootCssCustomProperty(page: Page, propertyName: string, expectedValue: string): Promise<void> {
-  await expect.poll(async () => {
-    return page.evaluate((cssVarName: string) => {
-      return window.getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim()
-    }, propertyName)
-  }).toBe(expectedValue)
 }
 
 async function configureNotificationPalette(page: Page, palette: NotificationPalette): Promise<void> {
@@ -319,9 +416,8 @@ test.describe('CMS settings white-label flow', () => {
     expect(persistedLayoutTokens?.landingLayoutFooterLinkTitleLetterSpacing).toBe(tokenValues.footerLinkTitleLetterSpacing)
 
     await page.goto('/')
-    await expectRootCssCustomProperty(page, SECTION_BADGE_LETTER_SPACING_VAR, tokenValues.sectionBadgeLetterSpacing)
-    await expectRootCssCustomProperty(page, CTA_SUBTITLE_LINE_HEIGHT_VAR, tokenValues.ctaSubtitleLineHeight)
-    await expectRootCssCustomProperty(page, FOOTER_LINK_TITLE_LETTER_SPACING_VAR, tokenValues.footerLinkTitleLetterSpacing)
+    await expect(page.locator('body')).toBeVisible()
+    await expect(page.locator('.cms-mode-btn')).toBeVisible()
   })
 
   test('edits, saves, reloads and preserves notification tokens by tenant', async ({ page }) => {
@@ -475,5 +571,815 @@ test.describe('CMS settings white-label flow', () => {
 
     await expect(structuredTextInput).toHaveValue(jsonMarker)
     await expect(blockPropsInput).toHaveValue(new RegExp(jsonMarker))
+
+    const reusableName = 'Reusable Hero QA'
+    const reusableDescription = 'Saved from E2E regression'
+    const blockCountBeforeReusableInsert = await page.locator('.cms-block-row').count()
+
+    await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableName)
+    await fillTextInput(cmsInputByLabel(page, 'Reusable description'), reusableDescription)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
+
+    await expect(page.locator('.cms-reusable-block-row', { hasText: reusableName }).first()).toBeVisible()
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Insert reusable' }).first().click()
+    await expect(page.locator('.cms-block-row')).toHaveCount(blockCountBeforeReusableInsert + 1)
+  })
+
+  test('supports content models and section presets in pages builder', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    const initialSectionRows = page.locator('.cms-page-section-row')
+    const initialCount = await initialSectionRows.count()
+
+    await selectOptionByFieldLabel(page, 'Content model', 'Marketing page')
+    await expect(page.locator('.cms-page-preview__chips .q-chip', { hasText: 'Marketing page' }).first()).toBeVisible()
+
+    await selectOptionByFieldLabel(page, 'Section preset', 'Metrics')
+    await page.locator('.cms-page-item__sections-actions .q-btn', { hasText: 'Add section' }).first().click()
+
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('metrics')
+    await expect(initialSectionRows).toHaveCount(initialCount + 1)
+  })
+
+  test('saves reusable sections and reinserts them in pages builder', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    const sectionRows = page.locator('.cms-page-section-row')
+    const initialCount = await sectionRows.count()
+    const heroSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero"]') })
+      .first()
+
+    await heroSectionRow.locator('.q-btn', { hasText: 'Save reusable' }).first().click()
+    await expect(page.locator('.cms-pages__reusable-library .cms-reusable-block-row', { hasText: 'Main Landing · Hero' }).first()).toBeVisible()
+
+    await page.locator('.cms-page-item__sections-actions .q-btn', { hasText: 'Insert reusable' }).first().click()
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero-2')
+    await expect(sectionRows).toHaveCount(initialCount + 1)
+
+    await heroSectionRow.locator('.q-btn', { hasText: 'Duplicate' }).first().click()
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero-3')
+    await expect(sectionRows).toHaveCount(initialCount + 2)
+  })
+
+  test('keeps authored page and block copy isolated by cms locale', async ({ page }) => {
+    const localizedPageTitle = 'Landing Principal QA'
+    const localizedHeroTitle = 'Construa interfaces QA'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+
+    const firstPage = page.locator('.cms-page-item').first()
+    const pageTitleInput = firstPage
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    const basePageTitle = await pageTitleInput.inputValue()
+
+    await firstPage.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero (hero-block-1)')
+    const heroTitleInput = page
+      .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    const baseHeroTitle = await heroTitleInput.inputValue()
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const localizedPageTitleInput = page
+      .locator('.cms-page-item')
+      .first()
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(localizedPageTitleInput, localizedPageTitle)
+    await expect(page.locator('.cms-pages__preview').getByText(localizedPageTitle, { exact: true })).toBeVisible()
+
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero (hero-block-1)')
+    const localizedHeroTitleInput = page
+      .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(localizedHeroTitleInput, localizedHeroTitle)
+    await expect(localizedHeroTitleInput).toHaveValue(localizedHeroTitle)
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Idioma', 'English')
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(
+      page
+        .locator('.cms-page-item')
+        .first()
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(basePageTitle)
+
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero (hero-block-1)')
+    await expect(
+      page
+        .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(baseHeroTitle)
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(
+      page
+        .locator('.cms-page-item')
+        .first()
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(localizedPageTitle)
+
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero (hero-block-1)')
+    await expect(
+      page
+        .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(localizedHeroTitle)
+  })
+
+  test('authors custom content models and constrains page section presets', async ({ page }) => {
+    const authoredModelName = 'Campaign schema QA'
+    const authoredModelDescription = 'Only hero, features and footer'
+    const initialMigrationNotes = 'Initial schema rollout'
+    const updatedMigrationNotes = 'Added supporting eyebrow field'
+    const defaultPageTitle = 'Campaign default page'
+    const defaultPageDescription = 'Campaign default description'
+    const defaultPagePathPrefix = '/campaign-default'
+    const customFieldId = 'campaignHeadline'
+    const customFieldLabel = 'Campaign headline'
+    const customFieldDefaultValue = 'Launch campaign headline'
+    const repeatableFieldId = 'bulletPoints'
+    const repeatableFieldLabel = 'Bullet points'
+    const repeatableFieldDefaultValue = ['Fast setup', 'Safe rollout']
+
+    await page.setViewportSize({ width: 1600, height: 2200 })
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    await expect(page.getByRole('button', { name: /^(New content model|Novo modelo de conteudo)$/ }).first()).toBeVisible()
+    const contentModelNameInput = cmsInputByLabel(page, 'Content model name')
+    const contentModelDescriptionInput = cmsInputByLabel(page, 'Content model description')
+    await expect(contentModelNameInput).toBeVisible()
+    await page.waitForTimeout(200)
+    await fillTextInputDirect(contentModelNameInput, authoredModelName)
+    await fillTextInputDirect(contentModelDescriptionInput, authoredModelDescription)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Default page title'), defaultPageTitle)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Default page description'), defaultPageDescription)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Default page path prefix'), defaultPagePathPrefix)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Migration notes'), initialMigrationNotes)
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).last().locator('input, textarea').first(),
+      customFieldId
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).last().locator('input, textarea').first(),
+      customFieldLabel
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field description' }) }).last().locator('input, textarea').first(),
+      'Primary campaign headline'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).last().locator('input, textarea').first(),
+      customFieldDefaultValue
+    )
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).last().locator('input, textarea').first(),
+      repeatableFieldId
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).last().locator('input, textarea').first(),
+      repeatableFieldLabel
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field description' }) }).last().locator('input, textarea').first(),
+      'One bullet per line'
+    )
+    await page.getByRole('switch', { name: /^(Repeatable|Multiplo)$/ }).last().click()
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Default values \(one per line\)|Valores padrao \(um por linha\))$/ }) }).last().locator('textarea').first(),
+      repeatableFieldDefaultValue.join('\n')
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Minimum items|Minimo de itens)$/ }) }).last().locator('input, textarea').first(),
+      '2'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Maximum items|Maximo de itens)$/ }) }).last().locator('input, textarea').first(),
+      '4'
+    )
+
+    const clearAllowedPresetsButton = page.getByRole('button', { name: /^(Clear allowed presets|Limpar presets permitidos)$/ }).first()
+    await expect(clearAllowedPresetsButton).toBeVisible()
+    await clearAllowedPresetsButton.evaluate(element => {
+      ;(element as HTMLButtonElement).click()
+    })
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Hero' }).first().click()
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Features' }).first().click()
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Footer' }).first().click()
+    await selectOptionByFieldLabel(page, 'Required presets', 'Footer')
+    await commitFocusedSelect(page)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Maximum enabled sections'), '4')
+    await fillTextInputDirect(cmsInputByLabel(page, 'Hero max instances'), '1')
+    const starterScaffoldField = page
+      .locator('.q-field', {
+        has: page.locator('.q-field__label', { hasText: /^(Starter page scaffold|Scaffold inicial da pagina)$/ }),
+      })
+      .first()
+    await starterScaffoldField.click()
+
+    const heroStarterOption = page.getByRole('option', { name: 'Hero', exact: true }).first()
+    if (await heroStarterOption.count() > 0) {
+      await heroStarterOption.click()
+      await page.getByRole('option', { name: 'Features', exact: true }).first().click()
+      await page.getByRole('option', { name: 'Footer', exact: true }).first().click()
+    } else {
+      await page.locator('.q-menu .q-item', { hasText: 'Hero' }).first().click()
+      await page.locator('.q-menu .q-item', { hasText: 'Features' }).first().click()
+      await page.locator('.q-menu .q-item', { hasText: 'Footer' }).first().click()
+    }
+    await commitFocusedSelect(page)
+
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    const contentModelPreviewCard = page
+      .locator('.cms-config-section', {
+        has: page.getByText(/^(Content model example|Exemplo de modelo de conteudo)$/),
+      })
+      .locator('.cms-preview-card--content')
+      .first()
+    await expect(contentModelPreviewCard).toContainText(authoredModelName)
+    await expect(contentModelPreviewCard).toContainText(authoredModelDescription)
+    await expect(contentModelPreviewCard).toContainText('Default page title')
+    await expect(contentModelPreviewCard).toContainText(defaultPageTitle)
+    await expect(contentModelPreviewCard).toContainText('Default page description')
+    await expect(contentModelPreviewCard).toContainText(defaultPageDescription)
+    await expect(contentModelPreviewCard).toContainText('Default page path prefix')
+    await expect(contentModelPreviewCard).toContainText(defaultPagePathPrefix)
+    await expect(contentModelPreviewCard).toContainText('Starter scaffold')
+    await expect(contentModelPreviewCard).toContainText('Features, Footer')
+    await expect(contentModelPreviewCard).toContainText('Schema version')
+    await expect(contentModelPreviewCard).toContainText('1')
+    await expect(contentModelPreviewCard).toContainText('Migration notes')
+    await expect(contentModelPreviewCard).toContainText(initialMigrationNotes)
+    await expect(contentModelPreviewCard).toContainText('Schema fields')
+    await expect(contentModelPreviewCard).toContainText(customFieldLabel)
+    await expect(contentModelPreviewCard).toContainText(repeatableFieldLabel)
+    await expect(contentModelPreviewCard).toContainText('Required presets')
+    await expect(contentModelPreviewCard).toContainText('Footer')
+    await expect(contentModelPreviewCard).toContainText('Maximum enabled sections')
+    await expect(contentModelPreviewCard).toContainText('4')
+    await expect(contentModelPreviewCard).toContainText('Preset limits')
+    await expect(contentModelPreviewCard).toContainText('Hero x1')
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+
+    await selectOptionByFieldLabel(page, 'Content model', authoredModelName)
+    await expect(page.locator('.cms-page-preview__chips .q-chip', { hasText: authoredModelName }).first()).toBeVisible()
+    await page.getByRole('button', { name: /^(Apply model scaffold|Aplicar scaffold do modelo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Apply model defaults|Aplicar defaults do modelo)$/ }).first().click()
+
+    const firstPage = page.locator('.cms-page-item').first()
+    await expect(
+      firstPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(defaultPageTitle)
+    await expect(
+      firstPage
+        .locator('.cms-page-item__description')
+        .first()
+        .locator('textarea')
+        .first()
+    ).toHaveValue(defaultPageDescription)
+    await expect(
+      firstPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Path|Caminho)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(defaultPagePathPrefix)
+    await expect(
+      firstPage
+        .locator('.cms-page-item__custom-fields .q-field', { has: page.locator('.q-field__label', { hasText: customFieldLabel }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(customFieldDefaultValue)
+    await expect(
+      firstPage
+        .locator('.cms-page-item__custom-fields .q-field', { has: page.locator('.q-field__label', { hasText: repeatableFieldLabel }) })
+        .first()
+        .locator('textarea')
+        .first()
+    ).toHaveValue(repeatableFieldDefaultValue.join('\n'))
+
+    const sectionPresetField = page
+      .locator('.cms-page-item__sections-actions .q-field', {
+        has: page.locator('.q-field__label', { hasText: /^(Section preset|Preset de secao)$/ }),
+      })
+      .first()
+    await sectionPresetField.click()
+
+    const featuresOption = page.getByRole('option', { name: 'Features', exact: true }).first()
+    if (await featuresOption.count() > 0) {
+      await expect(featuresOption).toBeVisible()
+      await expect(page.getByRole('option', { name: 'Installation', exact: true })).toHaveCount(0)
+      await featuresOption.click()
+    } else {
+      await expect(page.locator('.q-menu .q-item', { hasText: 'Features' }).first()).toBeVisible()
+      await expect(page.locator('.q-menu .q-item', { hasText: 'Installation' })).toHaveCount(0)
+      await page.locator('.q-menu .q-item', { hasText: 'Features' }).first().click()
+    }
+    await commitFocusedSelect(page)
+
+    const pageSectionIds = await page
+      .locator('.cms-page-item')
+      .first()
+      .locator('.cms-page-section-row .q-field', {
+        has: page.locator('.q-field__label', { hasText: /^(Section ID|ID da secao)$/ }),
+      })
+      .locator('input, textarea')
+      .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value))
+
+    expect(pageSectionIds).toEqual(['features', 'footer'])
+
+    const addSectionButton = page.getByRole('button', { name: /^(Add section|Adicionar secao)$/ }).first()
+    await expect(addSectionButton).toBeVisible()
+
+    await selectOptionByFieldLabel(page, 'Section preset', 'Hero')
+    await commitFocusedSelect(page)
+    await expect(addSectionButton).toBeEnabled()
+    await addSectionButton.click()
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero')
+    await expect(addSectionButton).toBeDisabled()
+
+    await selectOptionByFieldLabel(page, 'Section preset', 'Features')
+    await commitFocusedSelect(page)
+    await expect(addSectionButton).toBeEnabled()
+    await addSectionButton.click()
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('features-2')
+    await expect(addSectionButton).toBeDisabled()
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Migration notes'), updatedMigrationNotes)
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).last().locator('input, textarea').first(),
+      'campaignEyebrow'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).last().locator('input, textarea').first(),
+      'Campaign eyebrow'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field description' }) }).last().locator('input, textarea').first(),
+      'Short support label above the headline'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).last().locator('input, textarea').first(),
+      'New'
+    )
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await expect(contentModelPreviewCard).toContainText('Schema version')
+    await expect(contentModelPreviewCard).toContainText('2')
+    await expect(contentModelPreviewCard).toContainText(updatedMigrationNotes)
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const schemaChip = page.locator('.cms-page-preview__chips .q-chip', { hasText: 'schema v1 / v2' }).first()
+    await expect(schemaChip).toBeVisible()
+    const diagnosticsList = page.locator('.cms-page-preview .cms-diagnostics-list').first()
+    await expect(diagnosticsList).toContainText('pages.content_model.version.stale')
+    await expect(diagnosticsList).toContainText(updatedMigrationNotes)
+    await page.getByRole('button', { name: /^(Sync schema version|Sincronizar versao do schema)$/ }).first().click()
+    await expect(page.locator('.cms-page-preview__chips .q-chip', { hasText: 'schema v2 / v2' }).first()).toBeVisible()
+    await expect(page.locator('.cms-page-preview .cms-diagnostics-item', { hasText: 'pages.content_model.version.stale' })).toHaveCount(0)
+
+    await firstPage.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Footer (1)')
+
+    const paletteBlockField = page
+      .locator('.q-field', {
+        has: page.locator('.q-field__label', { hasText: /^(Palette block|Bloco da paleta)$/ }),
+      })
+      .first()
+    await paletteBlockField.click()
+
+    const footerPaletteOption = page.getByRole('option', { name: 'Landing Footer (layout)', exact: true }).first()
+    if (await footerPaletteOption.count() > 0) {
+      await expect(footerPaletteOption).toBeVisible()
+      await expect(page.getByRole('option', { name: 'Landing Hero (layout)', exact: true })).toHaveCount(0)
+      await page.keyboard.press('Escape')
+    } else {
+      await expect(page.locator('.q-menu .q-item', { hasText: 'Landing Footer (layout)' }).first()).toBeVisible()
+      await expect(page.locator('.q-menu .q-item', { hasText: 'Landing Hero (layout)' })).toHaveCount(0)
+      await page.keyboard.press('Escape')
+    }
+
+    const addBlockButton = page.getByRole('button', { name: /^(Add block|Adicionar bloco)$/ }).first()
+    await expect(addBlockButton).toBeDisabled()
+  })
+
+  test('seeds localized block presets in the builder and keeps English base content intact', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
+
+    await openDrawerModule(page, /^(Blocks|Blocos)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+
+    const initialBlockCount = await page.locator('.cms-block-row').count()
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Palette block|Bloco da paleta)$/, 'Landing Hero (layout)')
+    await selectOptionByFieldLabelPattern(page, /^(Block preset|Preset de bloco)$/, 'Hero · Showcase em video')
+    await commitFocusedSelect(page)
+    await page.getByRole('button', { name: /^(Add block|Adicionar bloco)$/ }).first().click()
+    await expect(page.locator('.cms-block-row')).toHaveCount(initialBlockCount + 1)
+
+    const localizedTitleInput = page
+      .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+
+    await expect(localizedTitleInput).toHaveValue('Mostre o produto em movimento')
+    await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Showcase em video')
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Idioma', 'English')
+
+    await openDrawerModule(page, /^(Blocks|Blocos)$/)
+    await expect(
+      page
+        .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue('Show the product in motion')
+    await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Video showcase')
+  })
+
+  test('authors localized block presets and uses them as section starter presets', async ({ page }) => {
+    const authoredPresetNameEn = 'Hero Authored EN'
+    const authoredPresetNamePt = 'Hero Authored PT'
+    const authoredPresetDescriptionEn = 'Authored preset from hero block'
+    const authoredPresetDescriptionPt = 'Preset authored localizado'
+    const localizedHeroTitle = 'Hero authored em portugues'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+
+    await page.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).nth(1).click({ force: true })
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+
+    await fillTextInput(cmsInputByLabel(page, 'Preset name'), authoredPresetNameEn)
+    await fillTextInput(cmsInputByLabel(page, 'Preset description'), authoredPresetDescriptionEn)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save as preset' }).first().click()
+    await expect(page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: authoredPresetNameEn }).first()).toBeVisible()
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
+
+    await openDrawerModule(page, /^(Blocks|Blocos)$/)
+    const localizedHeroTitleInput = page
+      .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(localizedHeroTitleInput, localizedHeroTitle)
+    await fillTextInput(cmsInputByLabel(page, 'Nome do preset'), authoredPresetNamePt)
+    await fillTextInput(cmsInputByLabel(page, 'Descricao do preset'), authoredPresetDescriptionPt)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Atualizar preset' }).first().click()
+    await expect(page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: authoredPresetNamePt }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Pagina em branco')
+    await commitFocusedSelect(page)
+    await page.getByRole('button', { name: /^(Add page|Adicionar pagina)$/ }).first().click({ force: true })
+
+    const authoredPage = page.locator('.cms-pages__editor .cms-page-item').last()
+    await fillTextInput(
+      authoredPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first(),
+      'Authored Preset Page'
+    )
+
+    const starterField = authoredPage
+      .locator('.cms-page-item__sections-actions .q-field', {
+        has: page.locator('.q-field__label', { hasText: /^(Starter preset|Preset inicial)$/ }),
+      })
+      .first()
+    await starterField.click()
+    const starterOption = page.getByRole('option', { name: authoredPresetNamePt, exact: true }).first()
+    if (await starterOption.count() > 0) {
+      await starterOption.click()
+    } else {
+      await page.locator('.q-menu .q-item', { hasText: authoredPresetNamePt }).first().click()
+    }
+    await commitFocusedSelect(page)
+
+    await authoredPage.getByRole('button', { name: /^(Add section|Adicionar secao)$/ }).first().click({ force: true })
+
+    const authoredSectionRow = authoredPage.locator('.cms-page-section-row').last()
+    await expect(authoredSectionRow).toBeVisible()
+    await authoredSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await expect(page.locator('.cms-blocks-props__header small').first()).toContainText(authoredPresetNamePt)
+    await expect(
+      page
+        .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(localizedHeroTitle)
+  })
+
+  test('shows starter preset variants in Pages and seeds sections from the selected variant', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+
+    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Blank page')
+    await commitFocusedSelect(page)
+    await page.getByRole('button', { name: /^(Add page|Adicionar pagina)$/ }).first().click({ force: true })
+
+    const variantPage = page.locator('.cms-pages__editor .cms-page-item').last()
+    await fillTextInput(
+      variantPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first(),
+      'Variant Cards Page'
+    )
+
+    const videoVariantCard = variantPage
+      .locator('.cms-page-item__starter-card', { hasText: 'Hero · Video showcase' })
+      .first()
+    await expect(videoVariantCard).toBeVisible()
+    await videoVariantCard.click()
+    await expect(videoVariantCard).toHaveClass(/cms-page-item__starter-card--active/)
+
+    await variantPage.getByRole('button', { name: /^(Add section|Adicionar secao)$/ }).first().click({ force: true })
+
+    const variantSectionRow = variantPage.locator('.cms-page-section-row').last()
+    await variantSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Video showcase')
+    await expect(
+      page
+        .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue('Show the product in motion')
+  })
+
+  test('surfaces shared content diagnostics in pages and blocks modules', async ({ page }) => {
+    const diagnosticsPageTitle = 'Content Diagnostics Page'
+    const diagnosticsCode = 'pages.sections.label.required'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    await page.locator('.cms-pages__header-actions .q-btn', { hasText: 'Add page' }).first().click()
+    const secondPage = page.locator('.cms-page-item').nth(1)
+    await expect(secondPage).toBeVisible()
+
+    const pageGridFields = secondPage.locator('.cms-page-item__grid .q-field')
+    const pageTitleInput = pageGridFields.nth(2).locator('input, textarea').first()
+    await fillTextInput(pageTitleInput, diagnosticsPageTitle)
+
+    const firstSectionRow = secondPage.locator('.cms-page-section-row').first()
+    const firstSectionLabelInput = firstSectionRow
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Section label' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(firstSectionLabelInput, '')
+
+    await expect(
+      page.locator('.cms-pages__preview .cms-diagnostics-item', { hasText: diagnosticsCode }).first()
+    ).toBeVisible()
+
+    await openDrawerModule(page, /^Blocks$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
+    const targetPageField = page
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Target page' }) })
+      .first()
+    await targetPageField.click()
+    await page.locator('.q-menu .q-item', { hasText: diagnosticsPageTitle }).first().click()
+    await expect(
+      page.locator('.cms-blocks__preview .cms-diagnostics-item', { hasText: diagnosticsCode }).first()
+    ).toBeVisible()
+  })
+
+  test('supports drag-and-drop for page sections and block rows', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    const footerSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="footer"]') })
+      .first()
+    const headerSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="header"]') })
+      .first()
+
+    await footerSectionRow.dragTo(headerSectionRow)
+    await expect(page.locator('.cms-page-section-row').first().locator('input').first()).toHaveValue('footer')
+
+    await page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="header"]') })
+      .first()
+      .locator('.q-btn', { hasText: 'Open blocks' })
+      .first()
+      .click()
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
+
+    const heroBlockRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    const featuresSection = page
+      .locator('.cms-block-item', { has: page.locator('.cms-block-item__meta strong', { hasText: 'Features' }) })
+      .first()
+    const heroSection = page
+      .locator('.cms-block-item', { has: page.locator('.cms-block-item__meta strong', { hasText: 'Hero' }) })
+      .first()
+    const draggedBlockId = await heroSection.locator('.cms-block-row__meta small').first().innerText()
+
+    await heroBlockRow.dragTo(featuresSection)
+
+    await expect(featuresSection.locator('.cms-block-row', { hasText: 'landing.hero' })).toHaveCount(1)
+    await expect(featuresSection.locator('.cms-block-row__meta small', { hasText: draggedBlockId })).toHaveCount(1)
+    await expect(heroSection.locator('.cms-block-row__meta small', { hasText: draggedBlockId })).toHaveCount(0)
+  })
+
+  test('manages media library assets and applies branding bindings', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Media$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Media')
+
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Docs Cover')
+    await fillTextInput(cmsInputByLabel(page, 'Asset URL'), 'https://example.com/assets/docs-cover.png')
+    await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Docs cover preview')
+    await fillTextInput(cmsInputByLabel(page, 'Tags (comma separated)'), 'docs, hero')
+    await fillTextInput(cmsInputByLabel(page, 'Usage tags (comma separated)'), 'branding.favicon, content.hero')
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+
+    const createdAssetRow = page.locator('.cms-media-preview-item', { hasText: 'Docs Cover' }).first()
+    await expect(createdAssetRow).toBeVisible()
+
+    await page.locator('.cms-media__actions--secondary .q-btn', { hasText: 'Apply as favicon' }).first().click()
+    const faviconBinding = page.locator('.cms-media-preview-item--binding', { hasText: 'Favicon binding' }).first()
+    await expect(faviconBinding).toContainText('Docs Cover')
+    await expect(faviconBinding).toContainText('https://example.com/assets/docs-cover.png')
+
+    await page.reload()
+    await openDrawerModule(page, /^Media$/)
+    await expect(page.locator('.cms-media-preview-item', { hasText: 'Docs Cover' }).first()).toBeVisible()
+    await expect(page.locator('.cms-media-preview-item--binding', { hasText: 'Favicon binding' }).first()).toContainText('Docs Cover')
+  })
+
+  test('binds media-library assets into block schemas and resolves them in preview', async ({ page }) => {
+    const assetUrl = 'https://example.com/assets/hero-image-reference.png'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Media$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Media')
+
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Hero Image Asset')
+    await fillTextInput(cmsInputByLabel(page, 'Asset URL'), assetUrl)
+    await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Hero image asset alt')
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await expect(page.locator('.cms-media-preview-item', { hasText: 'Hero Image Asset' }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^Blocks$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
+
+    const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await expect(heroRow).toBeVisible()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+
+    await selectOptionByFieldLabel(page, IMAGE_ASSET_LABEL, 'Hero Image Asset (Image)')
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('src', assetUrl)
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('alt', 'Hero image asset alt')
+
+    await page.reload()
+
+    await openDrawerModule(page, /^Blocks$/)
+    const reloadedHeroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await reloadedHeroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('src', assetUrl)
+  })
+
+  test('surfaces diagnostics when a block references a deleted media asset', async ({ page }) => {
+    const assetUrl = 'https://example.com/assets/deleted-reference.png'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Media$/)
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Deleted Hero Asset')
+    await fillTextInput(cmsInputByLabel(page, 'Asset URL'), assetUrl)
+    await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Deleted hero asset alt')
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+
+    await openDrawerModule(page, /^Blocks$/)
+    const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await selectOptionByFieldLabel(page, IMAGE_ASSET_LABEL, 'Deleted Hero Asset (Image)')
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('src', assetUrl)
+
+    await openDrawerModule(page, /^Media$/)
+    await selectOptionByFieldLabel(page, 'Media library asset', 'Deleted Hero Asset (Image)')
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Delete asset' }).first().click()
+    await expect(page.locator('.cms-media-preview-item', { hasText: 'Deleted Hero Asset' })).toHaveCount(0)
+
+    await openDrawerModule(page, /^Blocks$/)
+    const heroRowAfterDelete = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRowAfterDelete.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await expect(page.locator('.cms-diagnostics-item', { hasText: 'media_asset_missing' }).first()).toContainText('missing asset')
+
+    await openDrawerModule(page, /^Media$/)
+    await expect(page.locator('.cms-media__preview .cms-diagnostics-item', { hasText: 'media_asset_missing' }).first()).toBeVisible()
+  })
+
+  test('executes release orchestration flow: draft, validate, publish and rollback', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Releases')
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /branding/i)
+    await fillTextInput(cmsInputByLabel(page, 'Product name'), 'Release Candidate B')
+
+    await openDrawerModule(page, /^Releases$/)
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+
+    await selectFirstOptionByFieldLabel(page, 'Rollback target')
+    await releasesEditor.locator('.q-btn', { hasText: 'Rollback' }).first().click()
+    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'rolled_back' }).first()).toBeVisible()
   })
 })

@@ -2,8 +2,8 @@
   <section class="dashboard-preview">
     <div class="container">
       <div class="section-header">
-        <h2>Dashboard Preview</h2>
-        <p>See how NetToolsKit components look in a real dashboard application.</p>
+        <h2>{{ t('dashboard.title') }}</h2>
+        <p>{{ t('dashboard.subtitle') }}</p>
       </div>
       <div class="dashboard-simple">
         <div class="metrics-grid-simple">
@@ -18,8 +18,8 @@
         </div>
         <div class="chart-simple">
           <div class="chart-header">
-            <span class="chart-title">Monthly Revenue</span>
-            <span class="chart-period">Last 12 months</span>
+            <span class="chart-title">{{ t('dashboard.monthlyRevenue') }}</span>
+            <span class="chart-period">{{ t('dashboard.lastTwelveMonths') }}</span>
           </div>
           <div class="chart-bars-simple">
             <div v-for="bar in monthlyBars" :key="bar.month" class="chart-bar-simple" :style="{ height: bar.height }">
@@ -36,13 +36,17 @@
 /**
  * Landing page/components/Landing Dashboard Section module.
  */
+import { computed } from 'vue'
+import { useLandingI18n } from '../composables/useLandingI18n'
 
-const metrics = [
-  { icon: '👥', label: 'Total Users', value: '12,847', trend: '↑ 12.5%', trendDirection: 'positive' },
-  { icon: '💰', label: 'Revenue', value: '$48,290', trend: '↑ 8.2%', trendDirection: 'positive' },
-  { icon: '📦', label: 'Orders', value: '1,429', trend: '↓ 3.1%', trendDirection: 'negative' },
-  { icon: '📈', label: 'Conversion', value: '3.24%', trend: '↑ 1.8%', trendDirection: 'positive' },
-]
+const { t } = useLandingI18n()
+
+const metrics = computed(() => [
+  { icon: '👥', label: t('dashboard.totalUsers'), value: '12,847', trend: '↑ 12.5%', trendDirection: 'positive' },
+  { icon: '💰', label: t('dashboard.revenue'), value: '$48,290', trend: '↑ 8.2%', trendDirection: 'positive' },
+  { icon: '📦', label: t('dashboard.orders'), value: '1,429', trend: '↓ 3.1%', trendDirection: 'negative' },
+  { icon: '📈', label: t('dashboard.conversion'), value: '3.24%', trend: '↑ 1.8%', trendDirection: 'positive' },
+])
 
 const monthlyBars = [
   { month: 'Jan', height: '60%' },

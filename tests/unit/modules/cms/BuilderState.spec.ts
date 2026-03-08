@@ -3,6 +3,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
+import { reactive } from 'vue'
 import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'
 import { landingPageSchema } from '../../../../landing-page/cms/landing.schema'
 import {
@@ -10,6 +11,8 @@ import {
   insertCmsBuilderBlock,
   listCmsBuilderPalette,
   moveCmsBuilderBlock,
+  moveCmsBuilderBlockToIndex,
+  moveCmsBuilderSectionToIndex,
   removeCmsBuilderBlock,
   selectCmsBuilderNode,
 } from '../../../../src/modules/cms/white-label/builder.state'
@@ -79,6 +82,36 @@ describe('builder.state', () => {
     expect(movedUpSection?.blocks[0]?.id).toBe(insertedBlockId)
   })
 
+  it('repositions sections by index for drag-and-drop flows', () => {
+    const initial = createCmsBuilderState(landingPageSchema)
+
+    const moved = moveCmsBuilderSectionToIndex(initial, {
+      sectionId: 'footer',
+      targetIndex: 1,
+    })
+
+    expect(moved.page.sections[1]?.id).toBe('footer')
+    expect(moved.selection?.sectionId).toBe(initial.selection?.sectionId)
+  })
+
+  it('moves blocks across sections by index for drag-and-drop flows', () => {
+    const initial = createCmsBuilderState(landingPageSchema)
+    const moved = moveCmsBuilderBlockToIndex(initial, {
+      sourceSectionId: 'hero',
+      blockId: 'hero-main',
+      targetSectionId: 'features',
+      targetIndex: 1,
+    })
+
+    const heroSection = moved.page.sections.find(section => section.id === 'hero')
+    const featuresSection = moved.page.sections.find(section => section.id === 'features')
+
+    expect(heroSection?.blocks.some(block => block.id === 'hero-main')).toBe(false)
+    expect(featuresSection?.blocks[1]?.id).toBe('hero-main')
+    expect(moved.selection?.sectionId).toBe('features')
+    expect(moved.selection?.blockId).toBe('hero-main')
+  })
+
   it('removes a block and keeps selection on neighbor', () => {
     const initial = createCmsBuilderState(landingPageSchema)
     const sectionId = 'hero'
@@ -106,5 +139,48 @@ describe('builder.state', () => {
 
     expect(selected.selection?.sectionId).toBe('features')
     expect(selected.selection?.blockId).toBe('features-main')
+  })
+
+  it('clones schemas containing reactive nested props without throwing', () => {
+    const reactiveSchema = reactive({
+      version: 1,
+      id: 'page-1',
+      slug: '/',
+      title: 'Landing',
+      status: 'draft' as const,
+      sections: [
+        {
+          id: 'hero',
+          layout: 'single' as const,
+          settings: {
+            label: 'Hero',
+            enabled: true,
+            presetId: 'hero',
+          },
+          blocks: [
+            {
+              id: 'hero-block-1',
+              type: 'landing.hero',
+              props: {
+                title: 'Reactive hero',
+                items: reactive([
+                  { label: 'One', value: '1' },
+                  { label: 'Two', value: '2' },
+                ]),
+              },
+              settings: {
+                enabled: true,
+                presetId: 'landing-hero-product-launch',
+              },
+            },
+          ],
+        },
+      ],
+    })
+
+    const state = createCmsBuilderState(reactiveSchema)
+
+    expect(state.page.sections[0]?.blocks[0]?.id).toBe('hero-block-1')
+    expect(Array.isArray((state.page.sections[0]?.blocks[0]?.props as { items?: unknown[] })?.items)).toBe(true)
   })
 })

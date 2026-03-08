@@ -30,8 +30,9 @@ describe('theme-presets', () => {
     const presets = buildCmsThemePresets(APP_SHELL_DEFAULT_THEME)
     const detected = detectCmsThemePresetId(APP_SHELL_DEFAULT_THEME, presets, APP_SHELL_DEFAULT_THEME)
 
-    expect(presets).toHaveLength(3)
-    expect(presets.map(preset => preset.id)).toEqual(['default', 'dark', 'monochrome'])
+    expect(presets).toHaveLength(4)
+    expect(presets.map(preset => preset.id)).toEqual(['default', 'dark', 'darkLanding', 'monochrome'])
+    expect(presets.find(preset => preset.id === 'default')?.label).toBe('Light')
     expect(detected).toBe('default')
   })
 
@@ -52,6 +53,7 @@ describe('theme-presets', () => {
   it('provides explicit dark shell surface and text tokens', () => {
     const presets = buildCmsThemePresets(APP_SHELL_DEFAULT_THEME)
     const darkPreset = presets.find(preset => preset.id === 'dark')
+    const darkLandingPreset = presets.find(preset => preset.id === 'darkLanding')
 
     expect(darkPreset).toBeDefined()
     expect(darkPreset?.theme.drawerBackground).toBeTruthy()
@@ -61,5 +63,10 @@ describe('theme-presets', () => {
     expect(darkPreset?.theme.itemTextColor).toBeTruthy()
     expect(darkPreset?.theme.itemIconColor).toBeTruthy()
     expect(darkPreset?.theme.brandSubtitleColor).toBeTruthy()
+    expect(darkLandingPreset).toBeDefined()
+    expect(darkLandingPreset?.theme.pageBackground).toBe('#0d1117')
+    expect(darkLandingPreset?.theme.searchBackground).toBe('#161b22')
+    expect(darkLandingPreset?.theme.drawerBackground).toBe('#0d1117')
+    expect(darkLandingPreset?.theme.itemTextColor).toBe('#c9d1d9')
   })
 })

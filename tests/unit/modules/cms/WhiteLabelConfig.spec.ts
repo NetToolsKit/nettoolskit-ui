@@ -26,6 +26,7 @@ describe('white-label.config', () => {
     expect(itemIds).toContain('pages')
     expect(itemIds).toContain('blocks')
     expect(itemIds).toContain('media')
+    expect(itemIds).toContain('releases')
   })
 
   it('creates default pages with section blocks for builder integration', () => {
@@ -37,7 +38,16 @@ describe('white-label.config', () => {
     expect(firstPage).toBeDefined()
     expect(firstSection).toBeDefined()
     expect(firstBlock).toBeDefined()
+    expect(firstPage?.title).toBe('Main Landing')
+    expect(firstPage?.localization?.title?.['pt-BR']).toBe('Landing Principal')
+    expect(firstSection?.label).toBe('Header')
+    expect(firstSection?.localization?.label?.['pt-BR']).toBe('Cabecalho')
     expect(firstBlock?.type).toContain('landing.')
+    expect(firstBlock?.presetId).toBe('landing-header-product')
+    expect(firstBlock?.props).toMatchObject({
+      ctaText: 'Test CMS',
+    })
+    expect(settings.reusableSections).toEqual([])
   })
 
   it('maps layout and branding settings to shell snapshot', () => {
@@ -147,5 +157,20 @@ describe('white-label.config', () => {
     expect(settings.governance.workflow.version).toBe(1)
     expect(settings.governance.workflow.publishedVersion).toBeNull()
     expect(settings.governance.revisions.length).toBeGreaterThanOrEqual(1)
+    expect(settings.releases.items).toHaveLength(0)
+    expect(settings.releases.schemaVersion).toBe(2)
+    expect(settings.releases.activeEnvironment).toBe('dev')
+    expect(settings.releases.enforceEnvironmentPolicies).toBe(false)
+    expect(settings.releases.environmentPolicies.length).toBe(3)
+  })
+
+  it('supports localized seeds with English default and optional pt-BR', () => {
+    const english = createDefaultWhiteLabelSettings()
+    const portuguese = createDefaultWhiteLabelSettings(undefined, 'pt-BR')
+
+    expect(english.content.locale).toBe('en')
+    expect(portuguese.content.locale).toBe('pt-BR')
+    expect(portuguese.layout.searchPlaceholder).toBe('Buscar modulo')
+    expect(portuguese.items.find(item => item.id === 'settings')?.label).toBe('Configuracoes')
   })
 })

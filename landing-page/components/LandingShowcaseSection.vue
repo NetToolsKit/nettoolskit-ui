@@ -2,8 +2,8 @@
   <section id="components" class="showcase">
     <div class="container">
       <div class="section-header">
-        <h2>Component Library</h2>
-        <p>22+ production-ready components organized by category.</p>
+        <h2>{{ t('showcase.title') }}</h2>
+        <p>{{ t('showcase.subtitle') }}</p>
       </div>
 
       <div class="component-tabs">
@@ -37,6 +37,8 @@
 /**
  * Landing page/components/Landing Showcase Section module.
  */
+import { computed } from 'vue'
+import { useLandingI18n } from '../composables/useLandingI18n'
 
 interface TabItem {
   id: string
@@ -57,47 +59,49 @@ defineEmits<{
   (e: 'update:active-tab', value: string): void
 }>()
 
-const showcaseItems: Record<string, ShowcaseItem[]> = {
+const { t } = useLandingI18n()
+
+const showcaseItems = computed<Record<string, ShowcaseItem[]>>(() => ({
   form: [
-    { name: 'BaseInput', description: 'Text input with validation' },
-    { name: 'BaseSelect', description: 'Single select dropdown' },
-    { name: 'BaseMultiSelect', description: 'Multi-select with chips' },
-    { name: 'BaseTextarea', description: 'Multiline text input' },
-    { name: 'BaseDatePicker', description: 'Date selection' },
-    { name: 'BaseTimePicker', description: 'Time selection' },
+    { name: 'BaseInput', description: t('showcase.items.baseInput') },
+    { name: 'BaseSelect', description: t('showcase.items.baseSelect') },
+    { name: 'BaseMultiSelect', description: t('showcase.items.baseMultiSelect') },
+    { name: 'BaseTextarea', description: t('showcase.items.baseTextarea') },
+    { name: 'BaseDatePicker', description: t('showcase.items.baseDatePicker') },
+    { name: 'BaseTimePicker', description: t('showcase.items.baseTimePicker') },
   ],
   layout: [
-    { name: 'BaseHeader', description: 'Application header' },
-    { name: 'BaseSidebar', description: 'Navigation sidebar' },
-    { name: 'BaseFooter', description: 'Application footer' },
-    { name: 'BaseHero', description: 'Landing page hero section' },
-    { name: 'BaseSection', description: 'Content section wrapper' },
+    { name: 'BaseHeader', description: t('showcase.items.baseHeader') },
+    { name: 'BaseSidebar', description: t('showcase.items.baseSidebar') },
+    { name: 'BaseFooter', description: t('showcase.items.baseFooter') },
+    { name: 'BaseHero', description: t('showcase.items.baseHero') },
+    { name: 'BaseSection', description: t('showcase.items.baseSection') },
   ],
   ui: [
-    { name: 'BaseCard', description: 'Content container' },
-    { name: 'BaseButton', description: 'Action button' },
-    { name: 'BaseChip', description: 'Tag/label chip' },
-    { name: 'BaseLogo', description: 'Brand logo display' },
-    { name: 'MetricCard', description: 'Dashboard metrics' },
-    { name: 'InfoCard', description: 'Information display' },
-    { name: 'BaseFeatureCard', description: 'Feature showcase' },
-    { name: 'BasePricingCard', description: 'Pricing plans' },
-    { name: 'BaseCreditCard', description: 'Payment card display' },
-    { name: 'BaseSteps', description: 'Step indicator' },
-    { name: 'SectionHeader', description: 'Section title' },
+    { name: 'BaseCard', description: t('showcase.items.baseCard') },
+    { name: 'BaseButton', description: t('showcase.items.baseButton') },
+    { name: 'BaseChip', description: t('showcase.items.baseChip') },
+    { name: 'BaseLogo', description: t('showcase.items.baseLogo') },
+    { name: 'MetricCard', description: t('showcase.items.metricCard') },
+    { name: 'InfoCard', description: t('showcase.items.infoCard') },
+    { name: 'BaseFeatureCard', description: t('showcase.items.baseFeatureCard') },
+    { name: 'BasePricingCard', description: t('showcase.items.basePricingCard') },
+    { name: 'BaseCreditCard', description: t('showcase.items.baseCreditCard') },
+    { name: 'BaseSteps', description: t('showcase.items.baseSteps') },
+    { name: 'SectionHeader', description: t('showcase.items.sectionHeader') },
   ],
   composables: [
-    { name: 'useTheme', description: 'Theme management' },
-    { name: 'useNotification', description: 'Toast notifications' },
-    { name: 'useDialog', description: 'Modal state management' },
-    { name: 'useFormRules', description: 'Form validation rules' },
-    { name: 'useResponsive', description: 'Breakpoint detection' },
-    { name: 'useDebounce', description: 'Debounced values' },
-    { name: 'useAsync', description: 'Async operation handling' },
-    { name: 'useFilters', description: 'Data filtering' },
-    { name: 'useTableColumns', description: 'Table column config' },
-    { name: 'useBaseField', description: 'Form field base' },
-    { name: 'useDialogActions', description: 'Dialog action handlers' },
+    { name: 'useTheme', description: t('showcase.items.useTheme') },
+    { name: 'useNotification', description: t('showcase.items.useNotification') },
+    { name: 'useDialog', description: t('showcase.items.useDialog') },
+    { name: 'useFormRules', description: t('showcase.items.useFormRules') },
+    { name: 'useResponsive', description: t('showcase.items.useResponsive') },
+    { name: 'useDebounce', description: t('showcase.items.useDebounce') },
+    { name: 'useAsync', description: t('showcase.items.useAsync') },
+    { name: 'useFilters', description: t('showcase.items.useFilters') },
+    { name: 'useTableColumns', description: t('showcase.items.useTableColumns') },
+    { name: 'useBaseField', description: t('showcase.items.useBaseField') },
+    { name: 'useDialogActions', description: t('showcase.items.useDialogActions') },
   ],
-}
+}))
 </script>

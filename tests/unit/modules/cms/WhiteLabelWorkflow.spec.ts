@@ -7,7 +7,9 @@ import {
   applyWhiteLabelWorkflowAction,
   canApplyWhiteLabelWorkflowAction,
   createDefaultWhiteLabelGovernance,
+  createDefaultWhiteLabelRolePolicies,
   getAllowedWhiteLabelWorkflowActions,
+  getWhiteLabelRolePolicies,
   normalizeWhiteLabelGovernance,
 } from '../../../../src/modules/cms/white-label/workflow'
 
@@ -26,6 +28,8 @@ describe('white-label.workflow', () => {
       by: 'system',
       byRole: 'system',
     })
+    expect(governance.rolePolicies.length).toBeGreaterThanOrEqual(7)
+    expect(governance.rolePolicies.some(policy => policy.role === 'publisher')).toBe(true)
   })
 
   it('enforces RBAC and status-based action constraints', () => {
@@ -49,6 +53,28 @@ describe('white-label.workflow', () => {
     governance = applyWhiteLabelWorkflowAction(governance, 'approve', actorReviewer)
     expect(canApplyWhiteLabelWorkflowAction(governance, 'reset_defaults', actorAdmin.role)).toBe(true)
     expect(canApplyWhiteLabelWorkflowAction(governance, 'import_settings', actorAdmin.role)).toBe(true)
+  })
+
+  it('supports publisher role and applies deny precedence in policy templates', () => {
+    const actorEditor = { id: 'editor-1', role: 'editor' } as const
+    const actorReviewer = { id: 'reviewer-1', role: 'reviewer' } as const
+
+    let governance = createDefaultWhiteLabelGovernance()
+    governance = applyWhiteLabelWorkflowAction(governance, 'submit_review', actorEditor)
+    governance = applyWhiteLabelWorkflowAction(governance, 'approve', actorReviewer)
+
+    expect(canApplyWhiteLabelWorkflowAction(governance, 'publish', 'publisher')).toBe(true)
+    expect(canApplyWhiteLabelWorkflowAction(governance, 'save_draft', 'publisher')).toBe(false)
+
+    const governedWithDeniedPublish = {
+      ...governance,
+      rolePolicies: governance.rolePolicies.map(policy => (
+        policy.role === 'publisher'
+          ? { ...policy, denyActions: [...policy.denyActions, 'publish'] }
+          : policy
+      )),
+    }
+    expect(canApplyWhiteLabelWorkflowAction(governedWithDeniedPublish, 'publish', 'publisher')).toBe(false)
   })
 
   it('applies lifecycle transitions with versioning and audit trail', () => {
@@ -154,6 +180,21 @@ describe('white-label.workflow', () => {
         } as never,
       ],
       maxAuditEntries: 2,
+      rolePolicies: [
+        {
+          role: 'publisher',
+          label: 'Publisher',
+          description: '',
+          groups: [],
+          allowActions: ['publish', 'rollback'],
+          denyActions: ['invalid-action'],
+        },
+        {
+          role: 'invalid-role',
+          allowActions: ['save_draft'],
+          denyActions: [],
+        },
+      ],
     }, '2026-02-27T10:30:00.000Z')
 
     expect(normalized.workflow.status).toBe('draft')
@@ -163,5 +204,24 @@ describe('white-label.workflow', () => {
     expect(normalized.auditTrail).toHaveLength(1)
     expect(normalized.maxAuditEntries).toBeGreaterThanOrEqual(20)
     expect(normalized.maxAuditEntries).toBeLessThanOrEqual(1000)
+    expect(normalized.rolePolicies.some(policy => policy.role === 'publisher')).toBe(true)
+    expect(normalized.rolePolicies.find(policy => policy.role === 'publisher')?.allowActions).toContain('publish')
+  })
+
+  it('returns canonical role policy templates and governance role ordering', () => {
+    const defaultPolicies = createDefaultWhiteLabelRolePolicies()
+    const governance = createDefaultWhiteLabelGovernance()
+    const resolvedPolicies = getWhiteLabelRolePolicies(governance)
+
+    expect(defaultPolicies.map(policy => policy.role)).toEqual([
+      'owner',
+      'admin',
+      'editor',
+      'reviewer',
+      'publisher',
+      'viewer',
+      'system',
+    ])
+    expect(resolvedPolicies.map(policy => policy.role)).toEqual(defaultPolicies.map(policy => policy.role))
   })
 })

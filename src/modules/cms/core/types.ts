@@ -14,6 +14,10 @@ export type CmsSectionLayout = 'single' | 'two-column' | 'three-column' | 'grid'
 
 export type CmsRecord = Record<string, unknown>
 
+export interface CmsBlockLocalizationNode {
+  props?: Record<string, CmsRecord | undefined>
+}
+
 export interface CmsThemeRef {
   tenantId: string
   themeName: string
@@ -31,6 +35,8 @@ export interface CmsBlockNode<TProps extends CmsRecord = CmsRecord> {
   id: string
   type: string
   props: TProps
+  settings?: CmsRecord
+  localization?: CmsBlockLocalizationNode
   children?: CmsBlockNode[]
 }
 

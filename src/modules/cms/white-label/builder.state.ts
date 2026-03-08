@@ -8,6 +8,18 @@ import type { CmsBlockRegistry } from '..'
 
 export type CmsBuilderMoveDirection = 'up' | 'down'
 
+export interface CmsBuilderSectionPositionInput {
+  sectionId: string
+  targetIndex: number
+}
+
+export interface CmsBuilderBlockPositionInput {
+  sourceSectionId: string
+  blockId: string
+  targetSectionId: string
+  targetIndex: number
+}
+
 export interface CmsBuilderSelection {
   sectionId: string
   blockId?: string
@@ -31,7 +43,11 @@ export interface CmsBuilderState {
  */
 function clonePageSchema(schema: CmsPageSchema): CmsPageSchema {
   if (typeof structuredClone === 'function') {
-    return structuredClone(schema)
+    try {
+      return structuredClone(schema)
+    } catch {
+      return JSON.parse(JSON.stringify(schema)) as CmsPageSchema
+    }
   }
   return JSON.parse(JSON.stringify(schema)) as CmsPageSchema
 }
@@ -60,6 +76,17 @@ function findSectionById(page: CmsPageSchema, sectionId: string): CmsSectionNode
     throw new Error(`Section "${sectionId}" was not found in CMS page schema.`)
   }
   return section
+}
+
+/**
+ * Finds a section index by id or throws a descriptive error.
+ */
+function findSectionIndexById(page: CmsPageSchema, sectionId: string): number {
+  const sectionIndex = page.sections.findIndex(entry => entry.id === sectionId)
+  if (sectionIndex < 0) {
+    throw new Error(`Section "${sectionId}" was not found in CMS page schema.`)
+  }
+  return sectionIndex
 }
 
 /**
@@ -237,6 +264,96 @@ export function moveCmsBuilderBlock(
     page,
     selection: {
       sectionId: input.sectionId,
+      blockId: input.blockId,
+    },
+  }
+}
+
+/**
+ * Repositions a section to a specific index for drag-and-drop flows.
+ */
+export function moveCmsBuilderSectionToIndex(
+  state: CmsBuilderState,
+  input: CmsBuilderSectionPositionInput
+): CmsBuilderState {
+  const page = clonePageSchema(state.page)
+  const sourceIndex = findSectionIndexById(page, input.sectionId)
+  const sectionCount = page.sections.length
+  const targetIndex = Math.max(0, Math.min(input.targetIndex, sectionCount - 1))
+
+  if (sourceIndex === targetIndex) {
+    return {
+      page,
+      selection: state.selection
+        ? { ...state.selection }
+        : null,
+    }
+  }
+
+  const [section] = page.sections.splice(sourceIndex, 1)
+  page.sections.splice(targetIndex, 0, section as CmsSectionNode)
+
+  return {
+    page,
+    selection: state.selection
+      ? { ...state.selection }
+      : resolveInitialSelection(page),
+  }
+}
+
+/**
+ * Repositions a block inside the same section or across sections for drag-and-drop flows.
+ */
+export function moveCmsBuilderBlockToIndex(
+  state: CmsBuilderState,
+  input: CmsBuilderBlockPositionInput
+): CmsBuilderState {
+  const page = clonePageSchema(state.page)
+  const sourceSection = findSectionById(page, input.sourceSectionId)
+  const blockIndex = sourceSection.blocks.findIndex(block => block.id === input.blockId)
+
+  if (blockIndex < 0) {
+    throw new Error(`Block "${input.blockId}" was not found in section "${input.sourceSectionId}".`)
+  }
+
+  const targetSection = findSectionById(page, input.targetSectionId)
+  const targetIndexBase = Math.max(0, Math.min(input.targetIndex, targetSection.blocks.length))
+
+  if (input.sourceSectionId === input.targetSectionId) {
+    const clampedTargetIndex = targetIndexBase >= sourceSection.blocks.length
+      ? sourceSection.blocks.length - 1
+      : targetIndexBase
+
+    if (blockIndex === clampedTargetIndex) {
+      return {
+        page,
+        selection: {
+          sectionId: input.sourceSectionId,
+          blockId: input.blockId,
+        },
+      }
+    }
+
+    const [block] = sourceSection.blocks.splice(blockIndex, 1)
+    sourceSection.blocks.splice(clampedTargetIndex, 0, block as CmsBlockNode)
+
+    return {
+      page,
+      selection: {
+        sectionId: input.sourceSectionId,
+        blockId: input.blockId,
+      },
+    }
+  }
+
+  const [block] = sourceSection.blocks.splice(blockIndex, 1)
+  const targetIndex = Math.max(0, Math.min(targetIndexBase, targetSection.blocks.length))
+  targetSection.blocks.splice(targetIndex, 0, block as CmsBlockNode)
+
+  return {
+    page,
+    selection: {
+      sectionId: input.targetSectionId,
       blockId: input.blockId,
     },
   }

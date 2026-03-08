@@ -25,9 +25,9 @@
     <a
       href="/?cms=1"
       class="cms-mode-btn"
-      aria-label="Open CMS mode"
+      :aria-label="t('app.testCms')"
     >
-      Test CMS
+      {{ t('app.testCms') }}
     </a>
   </div>
 </template>
@@ -37,7 +37,7 @@
  * Landing page/App module.
  */
 
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import LandingDashboardSection from './components/LandingDashboardSection.vue'
 import LandingDeveloperSection from './components/LandingDeveloperSection.vue'
 import LandingFeaturesSection from './components/LandingFeaturesSection.vue'
@@ -47,6 +47,15 @@ import LandingHeroSection from './components/LandingHeroSection.vue'
 import LandingInstallationSection from './components/LandingInstallationSection.vue'
 import LandingShowcaseSection from './components/LandingShowcaseSection.vue'
 import LandingThemesSection from './components/LandingThemesSection.vue'
+import { createLandingI18n, provideLandingI18n } from './composables/useLandingI18n'
+
+const landingI18n = createLandingI18n(
+  typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('lang')
+    : null
+)
+provideLandingI18n(landingI18n)
+const { t } = landingI18n
 
 const isDark = ref(false)
 const drawerOpen = ref(false)
@@ -89,12 +98,12 @@ const landingAnimationBlueprints: LandingAnimationBlueprint[] = [
 
 let revealObserver: IntersectionObserver | null = null
 
-const tabs = [
-  { id: 'form', label: 'Form' },
-  { id: 'layout', label: 'Layout' },
-  { id: 'ui', label: 'UI' },
-  { id: 'composables', label: 'Composables' },
-]
+const tabs = computed(() => [
+  { id: 'form', label: t('showcase.tabs.form') },
+  { id: 'layout', label: t('showcase.tabs.layout') },
+  { id: 'ui', label: t('showcase.tabs.ui') },
+  { id: 'composables', label: t('showcase.tabs.composables') },
+])
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
@@ -1655,6 +1664,14 @@ body.dark-mode .chart-title {
   justify-content: center;
   color: var(--gray-700);
   transition: all var(--transition-fast);
+}
+
+.lang-toggle {
+  min-width: 56px;
+  padding: 0.5rem 0.65rem;
+  font-size: var(--ntk-font-size-xs);
+  font-weight: var(--ntk-font-weight-semibold);
+  letter-spacing: var(--landing-layout-floating-button-letter-spacing);
 }
 
 .theme-toggle:hover {

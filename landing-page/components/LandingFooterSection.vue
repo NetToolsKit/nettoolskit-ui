@@ -6,13 +6,12 @@
           <div class="footer-logo">
             <picture>
               <source srcset="../assets/monochrome-icon.webp" type="image/webp">
-              <img src="../assets/monochrome-icon.png" alt="NTK Monochrome" loading="lazy" decoding="async">
+              <img :alt="t('footer.brandName')" src="../assets/monochrome-icon.png" loading="lazy" decoding="async">
             </picture>
-            <span>NetToolsKit UI Vue</span>
+            <span>{{ t('footer.brandName') }}</span>
           </div>
           <p class="footer-description">
-            A comprehensive Vue 3 + Quasar component library with theme system, composables, and design tokens for
-            building consistent enterprise applications.
+            {{ t('footer.description') }}
           </p>
           <div class="footer-social">
             <a href="https://github.com/ThiagoGuislotti" target="_blank" rel="noopener noreferrer" title="GitHub">
@@ -30,29 +29,38 @@
 
         <div class="footer-links-grid">
           <div class="footer-column">
-            <h4>Resources</h4>
+            <h4>{{ t('footer.resources') }}</h4>
             <ul class="footer-links-list">
-              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/README.md">Documentation</a></li>
-              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/samples/DemoPage.vue">Demo Page</a></li>
-              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/components">Components</a></li>
-              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/composables">Composables</a></li>
+              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/README.md">{{ t('footer.documentation') }}</a></li>
+              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/samples/DemoPage.vue">{{ t('footer.demoPage') }}</a></li>
+              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/components">{{ t('footer.components') }}</a></li>
+              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/tree/main/src/composables">{{ t('footer.composables') }}</a></li>
             </ul>
           </div>
 
           <div class="footer-column">
-            <h4>Related</h4>
+            <h4>{{ t('footer.related') }}</h4>
             <ul class="footer-links-list">
-              <li><a href="https://github.com/ThiagoGuislotti/copilot-instructions">Copilot Instructions</a></li>
-              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-cli">NTK CLI (Rust)</a></li>
+              <li><a href="https://github.com/ThiagoGuislotti/copilot-instructions">{{ t('footer.copilotInstructions') }}</a></li>
+              <li><a href="https://github.com/ThiagoGuislotti/nettoolskit-cli">{{ t('footer.ntkCli') }}</a></li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; 2024 NetToolsKit. Built with Vue 3 + Quasar.</p>
-        <p>Created by <a href="https://github.com/ThiagoGuislotti">Thiago Guislotti</a></p>
+        <p>&copy; 2024 NetToolsKit. {{ t('footer.builtWith') }}</p>
+        <p>{{ t('footer.createdBy') }} <a href="https://github.com/ThiagoGuislotti">Thiago Guislotti</a></p>
       </div>
     </div>
   </footer>
 </template>
+
+<script setup lang="ts">
+/**
+ * Landing page/components/Landing Footer Section module.
+ */
+import { useLandingI18n } from '../composables/useLandingI18n'
+
+const { t } = useLandingI18n()
+</script>

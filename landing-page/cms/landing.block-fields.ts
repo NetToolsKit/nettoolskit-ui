@@ -1,6 +1,7 @@
 /**
  * Landing block field catalog used by CMS blocks editor forms.
  */
+import type { CmsMediaAssetKind } from '../../src/modules/cms/white-label/types'
 
 export type CmsBlockFieldType =
   | 'text'
@@ -9,6 +10,7 @@ export type CmsBlockFieldType =
   | 'toggle'
   | 'select'
   | 'json'
+  | 'media-asset'
 
 export interface CmsBlockFieldOption {
   label: string
@@ -23,6 +25,16 @@ export interface CmsBlockFieldDefinition {
   options?: CmsBlockFieldOption[]
   rows?: number
   help?: string
+  mediaKinds?: CmsMediaAssetKind[]
+  mediaTargetPath?: string
+  mediaAltTargetPath?: string
+}
+
+export interface CmsBlockMediaBindingDefinition {
+  sourcePath: string
+  targetPath: string
+  altTargetPath?: string
+  allowedKinds?: CmsMediaAssetKind[]
 }
 
 const variantOptions = [
@@ -68,11 +80,44 @@ const landingBlockFieldCatalog: Record<string, CmsBlockFieldDefinition[]> = {
     { path: 'badge', label: 'Badge', type: 'text' },
     { path: 'title', label: 'Title', type: 'text' },
     { path: 'subtitle', label: 'Subtitle', type: 'textarea', rows: 3 },
-    { path: 'image', label: 'Image URL', type: 'text' },
+    {
+      path: 'imageAssetId',
+      label: 'Image asset',
+      type: 'media-asset',
+      mediaKinds: ['image', 'icon'],
+      mediaTargetPath: 'image',
+      mediaAltTargetPath: 'imageAlt',
+      help: 'Select a media-library asset. The runtime resolves the asset URL automatically.',
+    },
+    { path: 'image', label: 'Image URL override', type: 'text' },
     { path: 'imageAlt', label: 'Image alt', type: 'text' },
-    { path: 'videoWebm', label: 'Video WebM URL', type: 'text' },
-    { path: 'videoMp4', label: 'Video MP4 URL', type: 'text' },
-    { path: 'videoPoster', label: 'Video poster URL', type: 'text' },
+    {
+      path: 'videoWebmAssetId',
+      label: 'Video WebM asset',
+      type: 'media-asset',
+      mediaKinds: ['video'],
+      mediaTargetPath: 'videoWebm',
+      help: 'Optional asset reference for the WebM source.',
+    },
+    { path: 'videoWebm', label: 'Video WebM URL override', type: 'text' },
+    {
+      path: 'videoMp4AssetId',
+      label: 'Video MP4 asset',
+      type: 'media-asset',
+      mediaKinds: ['video'],
+      mediaTargetPath: 'videoMp4',
+      help: 'Optional asset reference for the MP4 source.',
+    },
+    { path: 'videoMp4', label: 'Video MP4 URL override', type: 'text' },
+    {
+      path: 'videoPosterAssetId',
+      label: 'Video poster asset',
+      type: 'media-asset',
+      mediaKinds: ['image', 'icon'],
+      mediaTargetPath: 'videoPoster',
+      help: 'Optional asset reference for the poster image.',
+    },
+    { path: 'videoPoster', label: 'Video poster URL override', type: 'text' },
     { path: 'videoAutoplay', label: 'Video autoplay', type: 'toggle' },
     { path: 'videoLoop', label: 'Video loop', type: 'toggle' },
     { path: 'videoMuted', label: 'Video muted', type: 'toggle' },
@@ -272,4 +317,21 @@ const landingBlockFieldCatalog: Record<string, CmsBlockFieldDefinition[]> = {
  */
 export function getLandingBlockFieldDefinitions(type: string): CmsBlockFieldDefinition[] {
   return landingBlockFieldCatalog[type] ?? []
+}
+
+/**
+ * Returns media-binding definitions declared in landing block field schemas.
+ */
+export function getLandingBlockMediaBindingDefinitions(type: string): CmsBlockMediaBindingDefinition[] {
+  return getLandingBlockFieldDefinitions(type)
+    .filter(
+      (field): field is CmsBlockFieldDefinition & Required<Pick<CmsBlockFieldDefinition, 'mediaTargetPath'>> =>
+        field.type === 'media-asset' && typeof field.mediaTargetPath === 'string' && field.mediaTargetPath.length > 0
+    )
+    .map(field => ({
+      sourcePath: field.path,
+      targetPath: field.mediaTargetPath,
+      altTargetPath: field.mediaAltTargetPath,
+      allowedKinds: field.mediaKinds,
+    }))
 }

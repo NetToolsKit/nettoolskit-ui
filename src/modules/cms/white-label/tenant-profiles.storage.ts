@@ -5,6 +5,11 @@
 import { createDefaultWhiteLabelSettings } from './config'
 import { loadCmsWhiteLabelSettings, normalizeCmsWhiteLabelSettings } from './storage'
 import type { CmsTenantProfile, CmsTenantProfilesState, CmsWhiteLabelSettings } from './types'
+import {
+  resolveCmsPersistenceStore,
+  type CmsPersistenceStore,
+  type CmsTenantProfilesPersistenceOptions,
+} from './providers'
 
 /**
  * Storage key that persists all tenant profiles for CMS white-label settings.
@@ -32,13 +37,6 @@ function cloneValue<T>(value: T): T {
     return structuredClone(value)
   }
   return JSON.parse(JSON.stringify(value)) as T
-}
-
-/**
- * Checks if browser storage APIs are available in current runtime.
- */
-function isBrowserRuntime(): boolean {
-  return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 }
 
 /**
@@ -186,15 +184,21 @@ export function createTenantProfileId(name: string, existingIds: Iterable<string
 }
 
 /**
- * Loads profile state from storage with compatibility fallback from single-profile settings.
+ * Loads profile state from the active persistence providers with compatibility fallback from single-profile settings.
  */
-export function loadCmsTenantProfilesState(): CmsTenantProfilesState {
-  const fallback = createDefaultTenantProfilesState(loadCmsWhiteLabelSettings())
-  if (!isBrowserRuntime()) {
+export function loadCmsTenantProfilesState(
+  options: CmsTenantProfilesPersistenceOptions = {}
+): CmsTenantProfilesState {
+  const settingsStore = resolveCmsPersistenceStore(options.settingsStore ?? options.profilesStore)
+  const profilesStore = resolveCmsPersistenceStore(options.profilesStore)
+  const fallback = createDefaultTenantProfilesState(
+    loadCmsWhiteLabelSettings(settingsStore ? { store: settingsStore } : undefined)
+  )
+  if (!profilesStore) {
     return fallback
   }
 
-  const rawValue = window.localStorage.getItem(CMS_TENANT_PROFILES_STORAGE_KEY)
+  const rawValue = profilesStore.getItem(CMS_TENANT_PROFILES_STORAGE_KEY)
   if (!rawValue) {
     return fallback
   }
@@ -208,18 +212,43 @@ export function loadCmsTenantProfilesState(): CmsTenantProfilesState {
 }
 
 /**
- * Saves a normalized tenant profiles state snapshot.
+ * Saves a normalized tenant profiles state snapshot through the active persistence provider.
  */
-export function saveCmsTenantProfilesState(state: CmsTenantProfilesState): void {
-  if (!isBrowserRuntime()) {
+export function saveCmsTenantProfilesState(
+  state: CmsTenantProfilesState,
+  storeOrOptions?: CmsPersistenceStore | CmsTenantProfilesPersistenceOptions | null
+): void {
+  const options = isPersistenceStore(storeOrOptions)
+    ? { profilesStore: storeOrOptions }
+    : storeOrOptions ?? {}
+  const profilesStore = resolveCmsPersistenceStore(options.profilesStore)
+  if (!profilesStore) {
     return
   }
 
-  const normalized = normalizeParsedTenantProfilesState(state) ?? createDefaultTenantProfilesState(loadCmsWhiteLabelSettings())
-  window.localStorage.setItem(CMS_TENANT_PROFILES_STORAGE_KEY, JSON.stringify({
+  const settingsStore = resolveCmsPersistenceStore(options.settingsStore ?? options.profilesStore)
+  const normalized = normalizeParsedTenantProfilesState(state)
+    ?? createDefaultTenantProfilesState(
+      loadCmsWhiteLabelSettings(settingsStore ? { store: settingsStore } : undefined)
+    )
+  profilesStore.setItem(CMS_TENANT_PROFILES_STORAGE_KEY, JSON.stringify({
     version: CMS_TENANT_PROFILES_SCHEMA_VERSION,
     ...normalized,
   }))
+}
+
+/**
+ * Checks whether an arbitrary value matches the low-level persistence store contract.
+ */
+function isPersistenceStore(value: unknown): value is CmsPersistenceStore {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const candidate = value as Partial<CmsPersistenceStore>
+  return typeof candidate.getItem === 'function'
+    && typeof candidate.setItem === 'function'
+    && typeof candidate.removeItem === 'function'
 }
 
 /**

@@ -11,6 +11,7 @@ import { themeColors } from '../../../config/colors/theme-mode.config'
 export const CMS_THEME_PRESET_IDS = [
   'default',
   'dark',
+  'darkLanding',
   'monochrome',
   'custom',
 ] as const
@@ -21,7 +22,16 @@ export const CMS_THEME_PRESET_IDS = [
 export const CMS_THEME_BASE_PRESET_IDS = [
   'default',
   'dark',
+  'darkLanding',
   'monochrome',
+] as const
+
+/**
+ * Preset ids treated as dark families for readability normalization.
+ */
+export const CMS_THEME_DARK_BASE_PRESET_IDS = [
+  'dark',
+  'darkLanding',
 ] as const
 
 export type CmsThemePresetId = (typeof CMS_THEME_PRESET_IDS)[number]
@@ -121,6 +131,60 @@ function createThemeFromMode(palette: ThemeColorPalette): Partial<AppShellTheme>
 }
 
 /**
+ * Builds a dark preset aligned with landing GitHub-like dark surfaces.
+ */
+function createLandingDarkTheme(): Partial<AppShellTheme> {
+  const accent = '#6e7681'
+  const accentSoft = hexToRgba(accent, 0.2)
+  const accentActive = hexToRgba(accent, 0.3)
+
+  return {
+    shellBackground: 'linear-gradient(135deg, #010409 0%, #0d1117 100%)',
+    headerBackground: '#010409',
+    headerTextColor: '#8b949e',
+    toolbarButtonColor: '#8b949e',
+    titleAppColor: '#c9d1d9',
+    titleTextColor: '#8b949e',
+    titleSeparatorColor: '#30363d',
+    drawerBackground: '#0d1117',
+    drawerFooterBackground: '#0d1117',
+    drawerTextColor: '#c9d1d9',
+    dividerColor: '#30363d',
+    searchBackground: '#161b22',
+    searchTextColor: '#c9d1d9',
+    searchIconColor: '#8b949e',
+    searchBorder: '#30363d',
+    searchBorderHover: '#6e7681',
+    pageBackground: '#0d1117',
+    pageTextColor: '#c9d1d9',
+    brandTitleColor: '#c9d1d9',
+    brandSubtitleColor: '#8b949e',
+    groupCaptionColor: '#7d8590',
+    itemTextColor: '#c9d1d9',
+    itemIconColor: '#8b949e',
+    itemActiveColor: '#c9d1d9',
+    itemHoverColor: '#c9d1d9',
+    itemIconHoverColor: '#c9d1d9',
+    itemHoverBackground: accentSoft,
+    itemActiveBackground: accentActive,
+    groupCaptionMiniBackground: '#161b22',
+    actionBackground: 'transparent',
+    actionHoverBackground: '#21262d',
+    notificationSuccessColor: '#22c55e',
+    notificationWarningColor: '#f59e0b',
+    notificationErrorColor: '#ef4444',
+    notificationInfoColor: '#3b82f6',
+    notificationBadgeColor: '#ef4444',
+    notificationBadgeTextColor: '#ffffff',
+    notificationIconColor: '#8b949e',
+    notificationSuccessTextColor: '#ffffff',
+    notificationWarningTextColor: '#111827',
+    notificationErrorTextColor: '#ffffff',
+    notificationInfoTextColor: '#ffffff',
+  }
+}
+
+/**
  * Builds a monochrome app-shell partial theme.
  */
 function createMonochromeTheme(): Partial<AppShellTheme> {
@@ -203,8 +267,8 @@ export function buildCmsThemePresets(defaultTheme: AppShellTheme): CmsThemePrese
   return [
     {
       id: 'default',
-      label: 'Purple',
-      description: 'Light shell with purple accents.',
+      label: 'Light',
+      description: 'Default light shell with brand accents.',
       theme: { ...defaultTheme },
     },
     {
@@ -212,6 +276,12 @@ export function buildCmsThemePresets(defaultTheme: AppShellTheme): CmsThemePrese
       label: 'Dark',
       description: 'Preload dark palette values into shell tokens.',
       theme: createThemeFromMode(themeColors.dark),
+    },
+    {
+      id: 'darkLanding',
+      label: 'Dark (Landing)',
+      description: 'Dark shell aligned with landing GitHub-like surfaces.',
+      theme: createLandingDarkTheme(),
     },
     {
       id: 'monochrome',

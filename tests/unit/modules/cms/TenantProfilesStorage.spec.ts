@@ -14,7 +14,9 @@ import {
   upsertCmsTenantProfile,
 } from '../../../../src/modules/cms/white-label/tenant-profiles.storage'
 import { createDefaultWhiteLabelSettings } from '../../../../src/modules/cms/white-label/config'
+import { saveCmsWhiteLabelSettings } from '../../../../src/modules/cms/white-label/storage'
 import { applyWhiteLabelWorkflowAction } from '../../../../src/modules/cms/white-label/workflow'
+import type { CmsPersistenceStore } from '../../../../src/modules/cms/white-label/providers'
 
 /**
  * Handles install memory local storage.
@@ -33,6 +35,22 @@ function installMemoryLocalStorage(): void {
       },
     },
   })
+}
+
+/**
+ * Creates an isolated in-memory persistence store for provider contract tests.
+ */
+function createMemoryStore(): CmsPersistenceStore {
+  const storage = new Map<string, string>()
+  return {
+    getItem: (key: string) => storage.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      storage.set(key, String(value))
+    },
+    removeItem: (key: string) => {
+      storage.delete(key)
+    },
+  }
 }
 
 describe('tenant-profiles.storage', () => {
@@ -119,6 +137,24 @@ describe('tenant-profiles.storage', () => {
     const loaded = loadCmsTenantProfilesState()
     expect(loaded.profiles.length).toBeGreaterThanOrEqual(1)
     expect(loaded.profiles[0]?.id).toBe(CMS_DEFAULT_TENANT_PROFILE_ID)
+  })
+
+  it('supports isolated provider contracts for settings fallback and tenant collections', () => {
+    const settingsStore = createMemoryStore()
+    const profilesStore = createMemoryStore()
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.appName = 'Provider Workspace'
+
+    saveCmsWhiteLabelSettings(settings, { store: settingsStore })
+    const fallbackState = loadCmsTenantProfilesState({ profilesStore, settingsStore })
+
+    expect(fallbackState.profiles[0]?.settings.branding.appName).toBe('Provider Workspace')
+
+    saveCmsTenantProfilesState(fallbackState, { profilesStore, settingsStore })
+    const reloaded = loadCmsTenantProfilesState({ profilesStore, settingsStore })
+
+    expect(reloaded.profiles[0]?.settings.branding.appName).toBe('Provider Workspace')
+    expect(window.localStorage.getItem(CMS_TENANT_PROFILES_STORAGE_KEY)).toBeNull()
   })
 
   it('keeps tenant settings isolated and preserves rollback history per profile', () => {

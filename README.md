@@ -42,6 +42,7 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 - [Documentation](#documentation)
 - [Design System](#design-system)
 - [Project Structure](#project-structure)
+  - [Architecture Layers](#architecture-layers)
 - [Contributing](#contributing)
 - [Dependencies](#dependencies)
 - [References](#references)
@@ -894,6 +895,28 @@ interface ThemeGradients {
 ---
 
 ## Project Structure
+
+### Architecture Layers
+
+NetToolsKit UI Vue is intentionally layered so the project stays simple to consume, especially for teams coming from backend-heavy stacks:
+
+1. **Quasar Base**
+   - Provides the foundation: layout primitives, responsive utilities, dialogs, inputs, drawers, tables, and ecosystem integration.
+   - NetToolsKit does **not** replace Quasar and should not reimplement generic framework features without a product-specific reason.
+
+2. **NTK UI**
+   - Adds opinionated product-facing components, design tokens, branding, landing sections, and the shared app shell.
+   - This is the layer that standardizes how NetToolsKit applications look and behave on top of Quasar.
+
+3. **NTK CMS Engine**
+   - Adds schema-driven authoring, page/section/block composition, reusable presets, drag-and-drop builder flows, preview, validation, and release orchestration.
+   - This layer stays frontend-first and backend-agnostic.
+
+4. **Application / Backend Contracts**
+   - Persistence providers, auth, permissions, media storage, audit workflows, and business rules should plug into the CMS engine through contracts.
+   - These concerns should live outside the core engine so the builder remains reusable and simple.
+
+**Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
 
 ```
 nettoolskit-ui-vue/

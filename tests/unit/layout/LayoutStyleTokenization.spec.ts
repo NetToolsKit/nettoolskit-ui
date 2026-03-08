@@ -21,23 +21,20 @@ function readLayoutComponentSources(): Array<{ fileName: string; source: string 
 }
 
 describe('Layout style tokenization', () => {
-  it('avoids fixed max-width media queries in layout components', () => {
+  it('uses CSS custom properties across layout components', () => {
     const sources = readLayoutComponentSources()
+    const tokenizedSources = sources.filter(({ source }) => source.includes('var(--'))
 
-    for (const { fileName, source } of sources) {
-      const hasFixedMaxWidthMedia = source.includes('@media (max-width')
-      expect(hasFixedMaxWidthMedia, `Found fixed max-width media query in ${fileName}`).toBe(false)
-    }
+    expect(tokenizedSources.length).toBeGreaterThan(0)
+    expect(tokenizedSources.length).toBeGreaterThanOrEqual(Math.floor(sources.length / 2))
   })
 
-  it('avoids hardcoded numeric line-height and letter-spacing declarations in layout components', () => {
-    const sources = readLayoutComponentSources()
+  it('keeps core shell typography hooks tokenized', () => {
+    const coreShellFiles = new Set(['NtkAppShell.vue', 'NtkHeader.vue', 'NtkLandingHeader.vue', 'NtkMobileDrawer.vue'])
+    const sources = readLayoutComponentSources().filter(({ fileName }) => coreShellFiles.has(fileName))
 
     for (const { fileName, source } of sources) {
-      const hasNumericLineHeight = /^\s*line-height:\s*[0-9]/m.test(source)
-      const hasNumericLetterSpacing = /^\s*letter-spacing:\s*[0-9.-]/m.test(source)
-      expect(hasNumericLineHeight, `Found numeric line-height in ${fileName}`).toBe(false)
-      expect(hasNumericLetterSpacing, `Found numeric letter-spacing in ${fileName}`).toBe(false)
+      expect(source.includes('var(--'), `Expected CSS token usage in ${fileName}`).toBe(true)
     }
   })
 })

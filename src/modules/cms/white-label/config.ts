@@ -10,8 +10,26 @@ import { APP_SHELL_DEFAULT_THEME, createAppShellConfig } from '../../../componen
 import type { AppShellConfig, AppShellItem, AppShellTheme } from '../../../components/layout/app-shell.types'
 import { semanticColors } from '../../../config/colors/semantic.config'
 import { resolveAppShellTheme } from '../../../components/layout/app-shell.theme'
-import type { CmsContentSettings, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './types'
+import type { CmsContentSettings, CmsLocale, CmsPageSettings, CmsShellSnapshot, CmsWhiteLabelSettings } from './types'
 import { createDefaultWhiteLabelGovernance } from './workflow'
+import { createDefaultCmsReleaseSettings } from '../releases/orchestration'
+import {
+  createCmsPageSectionFromPreset,
+  createDefaultCmsAuthoredContentModels,
+  getCmsContentModelSchemaVersion,
+} from './content-models'
+import { createDefaultCmsReusableBlocks } from './reusable-blocks'
+import { createDefaultCmsReusableSections } from './reusable-sections'
+import { createDefaultCmsMediaAssets } from './media-library'
+import { createDefaultCmsAuthoredBlockPresets } from './block-presets'
+import {
+  createLocalizedContentDefaults,
+  createLocalizedShellActions,
+  createLocalizedShellGroups,
+  createLocalizedShellItems,
+  getCmsLocalePack,
+  resolveCmsLocale,
+} from './i18n'
 
 /**
  * Storage key for the current tenant white-label settings payload.
@@ -34,69 +52,22 @@ function cloneValue<T>(value: T): T {
  * Builds a minimal library-level shell configuration seed.
  * This provides sensible structural defaults without imposing any specific branding.
  */
-function createDefaultShellConfig(): AppShellConfig {
+function createDefaultShellConfig(localeInput: CmsLocale | string = 'en'): AppShellConfig {
+  const locale = resolveCmsLocale(localeInput)
+  const localePack = getCmsLocalePack(locale)
   return createAppShellConfig({
-    appName: 'White-Label App',
-    appSubtitle: 'CMS Workspace',
-    navGroups: [
-      { id: 'configuration', label: 'Configuration' },
-      { id: 'content', label: 'Content' },
-    ],
-    items: [
-      {
-        id: 'settings',
-        group: 'configuration',
-        label: 'Settings',
-        icon: 'settings',
-        caption: 'White-label',
-        description: 'Theme tokens, branding and tenant configuration.',
-      },
-      {
-        id: 'pages',
-        group: 'content',
-        label: 'Pages',
-        icon: 'description',
-        caption: 'Landing pages',
-        description: 'Manage page routes, status and section composition.',
-      },
-      {
-        id: 'blocks',
-        group: 'content',
-        label: 'Blocks',
-        icon: 'widgets',
-        caption: 'Reusable blocks',
-        description: 'Manage reusable CMS blocks for landing experiences.',
-      },
-      {
-        id: 'media',
-        group: 'content',
-        label: 'Media',
-        icon: 'photo_library',
-        caption: 'Assets',
-        description: 'Manage images and media references used by CMS pages.',
-      },
-    ],
-    toolbarActions: [
-      {
-        id: 'notifications',
-        icon: 'notifications',
-        tooltip: 'Notifications',
-        flat: true,
-        dense: true,
-        round: true,
-        badge: 0,
-      },
-      {
-        id: 'account',
-        icon: 'account_circle',
-        tooltip: 'Account',
-        flat: true,
-        dense: true,
-        round: true,
-      },
-    ],
+    appName: localePack.appName,
+    appSubtitle: localePack.appSubtitle,
+    navGroups: createLocalizedShellGroups(locale),
+    items: createLocalizedShellItems(locale),
+    toolbarActions: createLocalizedShellActions(locale),
     activeItem: 'settings',
-    searchPlaceholder: 'Search module',
+    searchPlaceholder: localePack.searchPlaceholder,
+    menuAriaLabel: localePack.menuAriaLabel,
+    collapseLabel: localePack.collapseLabel,
+    expandLabel: localePack.expandLabel,
+    userTooltip: localePack.userTooltip,
+    notificationsTooltip: localePack.notificationsTooltip,
   })
 }
 
@@ -153,89 +124,44 @@ function normalizeShellSurfaceContrast(theme: AppShellTheme): AppShellTheme {
 /**
  * Provides default copy used by CMS settings UI sections and previews.
  */
-function createDefaultContentSettings(): CmsContentSettings {
-  return {
-    tabBrandingLabel: 'Branding',
-    tabTypographyLabel: 'Typography',
-    tabLayoutLabel: 'Layout',
-    tabColorsLabel: 'Colors',
-    tabMenuLabel: 'Sidebar Menu',
-    tabTopbarLabel: 'Topbar',
-    tabContentLabel: 'Content',
-    moduleFallbackDescription: 'Select a module in the sidebar.',
-    brandingBannerText: 'Branding changes are applied immediately to the shell and favicon.',
-    colorsBannerText: 'Core color fields cascade to related tokens. You can use plain values (e.g. #1c19d2) or CSS expressions.',
-    previewSuccessLabel: 'Success',
-    previewWarningLabel: 'Warning',
-    previewErrorLabel: 'Error',
-    previewInfoLabel: 'Info',
-    statusTitle: 'White-label status',
-    statusChipLabel: 'Live',
-    statusThemeText: 'Theme colors are fully editable',
-    statusBrandingText: 'Brand logo and favicon are configurable',
-    statusMenuText: 'Sidebar groups/items are configurable',
-    statusTopbarText: 'Topbar actions are configurable',
-    howToTitle: 'How to use',
-    howToBody: 'Open the Settings module in the sidebar to edit white-label settings. Changes are auto-saved in local storage.',
-    howToNextStep: 'Next step: bind these settings to CMS schemas by tenant.',
-  }
-}
-
-/**
- * Resolves a landing block type from canonical section identifiers.
- */
-function resolveDefaultBlockTypeForSection(sectionId: string): string {
-  const normalized = sectionId.trim().toLowerCase()
-  switch (normalized) {
-    case 'header':
-      return 'landing.header'
-    case 'hero':
-      return 'landing.hero'
-    case 'stats':
-    case 'metrics':
-      return 'landing.stats'
-    case 'features':
-      return 'landing.features'
-    case 'installation':
-    case 'cta':
-      return 'landing.cta'
-    case 'footer':
-      return 'landing.footer'
-    default:
-      return 'landing.hero'
-  }
+function createDefaultContentSettings(localeInput: CmsLocale | string = 'en'): CmsContentSettings {
+  return createLocalizedContentDefaults(localeInput)
 }
 
 /**
  * Provides default CMS pages metadata for landing-page orchestration.
  */
 function createDefaultPagesSettings(): CmsPageSettings[] {
-  const mainSections = [
-    { id: 'header', label: 'Header', enabled: true },
-    { id: 'hero', label: 'Hero', enabled: true },
-    { id: 'features', label: 'Features', enabled: true },
-    { id: 'installation', label: 'Installation', enabled: true },
-    { id: 'footer', label: 'Footer', enabled: true },
-  ]
+  const mainPresetIds = ['header', 'hero', 'features', 'installation', 'footer'] as const
+  const sections = mainPresetIds.reduce<CmsPageSettings['sections']>((accumulator, presetId) => {
+    accumulator.push(createCmsPageSectionFromPreset({
+      presetId,
+      existingSections: accumulator,
+      localeInput: 'en',
+    }))
+    return accumulator
+  }, [])
 
   return [
     {
       id: 'landing-main',
+      contentModelId: 'landing-page',
+      contentModelVersion: getCmsContentModelSchemaVersion('landing-page'),
       title: 'Main Landing',
       path: '/',
       status: 'published',
       description: 'Primary public landing page.',
-      sections: mainSections.map(section => ({
-        ...section,
-        blocks: [
-          {
-            id: `${section.id}-block-1`,
-            type: resolveDefaultBlockTypeForSection(section.id),
-            enabled: section.enabled,
-            props: {},
-          },
-        ],
-      })),
+      localization: {
+        title: {
+          en: 'Main Landing',
+          'pt-BR': 'Landing Principal',
+        },
+        description: {
+          en: 'Primary public landing page.',
+          'pt-BR': 'Pagina publica principal de landing.',
+        },
+      },
+      sections,
     },
   ]
 }
@@ -247,21 +173,26 @@ function createDefaultPagesSettings(): CmsPageSettings[] {
  *   library-level default is used. Consumers (e.g. demo apps) can inject their
  *   own branded shell config to customize the initial settings.
  */
-export function createDefaultWhiteLabelSettings(shellConfig?: AppShellConfig): CmsWhiteLabelSettings {
-  const shell = shellConfig ?? createDefaultShellConfig()
+export function createDefaultWhiteLabelSettings(
+  shellConfig?: AppShellConfig,
+  localeInput: CmsLocale | string = 'en'
+): CmsWhiteLabelSettings {
+  const locale = resolveCmsLocale(localeInput)
+  const shell = shellConfig ?? createDefaultShellConfig(locale)
+  const branding = {
+    appName: shell.appName,
+    appSubtitle: shell.appSubtitle,
+    brandLogo: shell.brandLogo,
+    brandLogoAlt: shell.brandLogoAlt,
+    faviconUrl: shell.brandLogo,
+    userAvatar: shell.userAvatar,
+    userTooltip: shell.userTooltip,
+    notificationsTooltip: shell.notificationsTooltip,
+    notificationCount: shell.notificationCount,
+  }
 
   return {
-    branding: {
-      appName: shell.appName,
-      appSubtitle: shell.appSubtitle,
-      brandLogo: shell.brandLogo,
-      brandLogoAlt: shell.brandLogoAlt,
-      faviconUrl: shell.brandLogo,
-      userAvatar: shell.userAvatar,
-      userTooltip: shell.userTooltip,
-      notificationsTooltip: shell.notificationsTooltip,
-      notificationCount: shell.notificationCount,
-    },
+    branding,
     layout: {
       menuIcon: shell.menuIcon,
       menuAriaLabel: shell.menuAriaLabel,
@@ -280,8 +211,14 @@ export function createDefaultWhiteLabelSettings(shellConfig?: AppShellConfig): C
       defaultDrawerOpen: shell.defaultDrawerOpen,
       defaultMini: shell.defaultMini,
     },
-    content: createDefaultContentSettings(),
+    content: createDefaultContentSettings(locale),
     pages: createDefaultPagesSettings(),
+    reusableSections: createDefaultCmsReusableSections(),
+    reusableBlocks: createDefaultCmsReusableBlocks(locale),
+    authoredContentModels: createDefaultCmsAuthoredContentModels(),
+    authoredBlockPresets: createDefaultCmsAuthoredBlockPresets(),
+    mediaAssets: createDefaultCmsMediaAssets(branding, locale),
+    releases: createDefaultCmsReleaseSettings(),
     themePresetId: 'default',
     themePresetOverrides: {},
     theme: createDefaultWhiteLabelTheme(cloneValue(shell.theme)),

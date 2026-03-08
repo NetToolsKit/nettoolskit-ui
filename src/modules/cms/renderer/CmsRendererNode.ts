@@ -4,9 +4,59 @@
 
 import { defineComponent, h, toRaw } from 'vue'
 import type { Component, PropType, VNode } from 'vue'
-import type { CmsBlockNode } from '../core'
-import type { CmsBlockRegistry } from '../core'
+import type { CmsBlockNode, CmsBlockRegistry, CmsRecord } from '../core'
 import { CmsUnknownBlock } from './CmsUnknownBlock'
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+function cloneValue<T>(value: T): T {
+  if (typeof structuredClone === 'function') {
+    try {
+      return structuredClone(value)
+    } catch {
+      // JSON fallback covers proxies and non-cloneable objects.
+    }
+  }
+
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
+function deepMergeRecords(
+  base: Record<string, unknown>,
+  override: Record<string, unknown>
+): Record<string, unknown> {
+  const merged = cloneValue(base)
+
+  for (const [key, overrideValue] of Object.entries(override)) {
+    const baseValue = merged[key]
+    if (isObjectRecord(baseValue) && isObjectRecord(overrideValue)) {
+      merged[key] = deepMergeRecords(baseValue, overrideValue)
+      continue
+    }
+
+    merged[key] = cloneValue(overrideValue)
+  }
+
+  return merged
+}
+
+function resolveBlockLocalizedProps(
+  block: CmsBlockNode,
+  context?: CmsRecord
+): CmsRecord {
+  const baseProps = isObjectRecord(block.props)
+    ? cloneValue(block.props)
+    : {}
+  const locale = String(context?.locale ?? 'en').trim() || 'en'
+  const localizedProps = block.localization?.props?.[locale]
+  if (!isObjectRecord(localizedProps)) {
+    return baseProps
+  }
+
+  return deepMergeRecords(baseProps, localizedProps)
+}
 
 /**
  * Recursive block renderer used by CmsRenderer.
@@ -26,6 +76,10 @@ export const CmsRendererNode = defineComponent({
       type: Object as PropType<Component | undefined>,
       default: undefined,
     },
+    renderContext: {
+      type: Object as PropType<CmsRecord | undefined>,
+      default: undefined,
+    },
   },
   setup(props) {
     const renderNode = (block: CmsBlockNode): VNode => {
@@ -34,15 +88,23 @@ export const CmsRendererNode = defineComponent({
       const component = definition?.component ?? props.unknownBlockComponent ?? CmsUnknownBlock
       const baseProps = {
         ...(definition?.defaults ?? {}),
-        ...(block.props ?? {}),
+        ...resolveBlockLocalizedProps(block, props.renderContext),
         'data-cms-block-id': block.id,
         'data-cms-block-type': block.type,
       } as Record<string, unknown>
 
+      const resolvedBaseProps = definition?.resolveProps
+        ? definition.resolveProps({
+          block,
+          props: baseProps,
+          context: props.renderContext,
+        })
+        : baseProps
+
       const resolvedProps = definition
-        ? baseProps
+        ? resolvedBaseProps
         : {
-            ...baseProps,
+            ...resolvedBaseProps,
             block,
           }
 
