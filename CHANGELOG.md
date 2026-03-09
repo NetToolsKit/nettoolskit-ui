@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Engine-level visual regression and release-quality gates**
+  - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
+  - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.
+  - Added a dedicated `visual-regression` GitHub Actions job on `windows-latest` with failure artifact upload for `test-results` and Playwright report output.
 - **Backend-oriented authoring UX hardening in the CMS engine**
   - Added snapshot-based `undo/redo` history for CMS settings authoring through a reusable `snapshot-history` helper and integrated it into the Settings actions toolbar.
   - Added `Blocks` productivity actions for block duplication, bulk enable/disable, cleanup of disabled blocks and clearer guided empty states for section/page authoring.
