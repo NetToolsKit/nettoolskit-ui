@@ -18,10 +18,16 @@ import {
   normalizeCmsPageBlockLocalizationSettings,
   normalizeCmsPageSectionLocalizationSettings,
 } from './localized-content'
+import {
+  detachCmsPageBlockFromReusable,
+  resolveCmsReusableBlockReference,
+} from './reusable-blocks'
 import type {
   CmsPageBlockSettings,
   CmsPageSectionSettings,
   CmsPageSettings,
+  CmsReusableBlockSettings,
+  CmsReusableReferenceMode,
   CmsReusableSectionSettings,
 } from './types'
 
@@ -110,6 +116,10 @@ function normalizeReusableSectionBlocks(
         type: String(block.type ?? '').trim() || defaultBlockType,
         presetId: resolveCmsBlockPresetId(block.presetId),
         enabled: typeof block.enabled === 'boolean' ? block.enabled : enabled,
+        reusableMode: block.reusableMode === 'linked' || block.reusableMode === 'detached'
+          ? block.reusableMode
+          : undefined,
+        reusableSourceId: String(block.reusableSourceId ?? '').trim() || undefined,
         props: isObjectRecord(block.props) ? cloneValue(block.props) : {},
         localization: normalizeCmsPageBlockLocalizationSettings(block.localization),
       } satisfies CmsPageBlockSettings
@@ -237,11 +247,96 @@ export function createCmsReusableSectionFromSection(input: {
 }
 
 /**
+ * Resolves one page section against the reusable section library when it is still linked.
+ */
+export function resolveCmsReusableSectionReference(input: {
+  section: CmsPageSectionSettings
+  reusableSections?: CmsReusableSectionSettings[]
+  reusableBlocks?: CmsReusableBlockSettings[]
+}): CmsPageSectionSettings {
+  const section = cloneValue(input.section)
+  const localBlocks = Array.isArray(section.blocks) ? section.blocks : []
+
+  const resolveLocalBlocks = (blocks: CmsPageBlockSettings[]): CmsPageBlockSettings[] => {
+    return blocks.map(block => resolveCmsReusableBlockReference({
+      block,
+      reusableBlocks: input.reusableBlocks,
+    }))
+  }
+
+  if (section.reusableMode !== 'linked' || !section.reusableSourceId) {
+    return {
+      ...section,
+      blocks: resolveLocalBlocks(localBlocks),
+    }
+  }
+
+  const reusableSection = input.reusableSections?.find(entry => entry.id === section.reusableSourceId)
+  if (!reusableSection) {
+    return {
+      ...section,
+      blocks: resolveLocalBlocks(localBlocks),
+    }
+  }
+
+  const resolvedBlocks = reusableSection.blocks.map((block, index) => {
+    const localBlock = localBlocks[index]
+    const fallbackId = `${section.id}-block-${index + 1}`
+    const resolvedBlock = resolveCmsReusableBlockReference({
+      block,
+      reusableBlocks: input.reusableBlocks,
+    })
+
+    return {
+      ...resolvedBlock,
+      id: String(localBlock?.id ?? '').trim() || fallbackId,
+      enabled: typeof localBlock?.enabled === 'boolean'
+        ? localBlock.enabled
+        : (typeof resolvedBlock.enabled === 'boolean' ? resolvedBlock.enabled : section.enabled),
+      reusableMode: localBlock?.reusableMode ?? resolvedBlock.reusableMode,
+      reusableSourceId: localBlock?.reusableSourceId ?? resolvedBlock.reusableSourceId,
+    } satisfies CmsPageBlockSettings
+  })
+
+  return {
+    ...section,
+    presetId: reusableSection.presetId,
+    label: reusableSection.label,
+    localization: normalizeCmsPageSectionLocalizationSettings(reusableSection.localization),
+    blocks: resolvedBlocks.length > 0
+      ? resolvedBlocks
+      : normalizeReusableSectionBlocks([], section.id, reusableSection.presetId, section.enabled),
+  }
+}
+
+/**
+ * Converts a linked page section into a detached local copy while keeping its resolved payload.
+ */
+export function detachCmsPageSectionFromReusable(input: {
+  section: CmsPageSectionSettings
+  reusableSections?: CmsReusableSectionSettings[]
+  reusableBlocks?: CmsReusableBlockSettings[]
+}): CmsPageSectionSettings {
+  const resolvedSection = resolveCmsReusableSectionReference(input)
+
+  return {
+    ...resolvedSection,
+    reusableMode: 'detached',
+    reusableSourceId: input.section.reusableSourceId,
+    blocks: resolvedSection.blocks.map(block => detachCmsPageBlockFromReusable({
+      block,
+      reusableBlocks: input.reusableBlocks,
+    })),
+  }
+}
+
+/**
  * Clones a reusable section template into a page section payload with unique ids.
  */
 export function cloneCmsReusableSectionIntoPageSection(input: {
   reusableSection: CmsReusableSectionSettings
   existingSections: CmsPageSectionSettings[]
+  mode?: CmsReusableReferenceMode
 }): CmsPageSectionSettings {
   const occupiedSectionIds = new Set(
     input.existingSections.map(section => String(section.id ?? '').trim()).filter(Boolean)
@@ -277,11 +372,15 @@ export function cloneCmsReusableSectionIntoPageSection(input: {
     } satisfies CmsPageBlockSettings
   })
 
+  const reusableMode = input.mode === 'linked' ? 'linked' : 'detached'
+
   return {
     id: sectionId,
     presetId: input.reusableSection.presetId,
     label: input.reusableSection.label || input.reusableSection.name,
     enabled: input.reusableSection.enabled,
+    reusableMode,
+    reusableSourceId: input.reusableSection.id,
     localization: normalizeCmsPageSectionLocalizationSettings(input.reusableSection.localization),
     blocks: blocks.length > 0
       ? blocks

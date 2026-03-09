@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Backend-oriented authoring UX hardening in the CMS engine**
+  - Added snapshot-based `undo/redo` history for CMS settings authoring through a reusable `snapshot-history` helper and integrated it into the Settings actions toolbar.
+  - Added `Blocks` productivity actions for block duplication, bulk enable/disable, cleanup of disabled blocks and clearer guided empty states for section/page authoring.
+  - Hardened the duplicate-block mutation with immutable page/section updates and stabilized Playwright authoring coverage by resetting browser storage once per E2E test case instead of leaking state across runs.
 - **Landing + CMS i18n baseline (`en` default, `pt-BR` option)**
   - Added landing i18n provider with locale persistence (`localStorage` + `?lang=` sync), runtime toggle in topbar, and translated copy across landing sections.
   - Added CMS locale preset engine for shell/content labels with `Language` selector in Content tab.
@@ -78,6 +82,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `requiredPresets` to builtin and authored content-model contracts so page schemas can demand mandatory sections in addition to allowed/recommended composition hints.
   - Constrained `requiredPresets` to the allowed-preset set during normalization, storage import and authoring updates, preventing invalid schema states from leaking into the builder.
   - Surfaced required presets in the CMS `Content` tab and extended the shared content validator to emit blocking diagnostics when a page omits a mandatory enabled section for its selected content model.
+- **Media engine hardening for enterprise authoring**
+  - Extended media assets with focal-point metadata and optional replacement targets while preserving backend-agnostic storage contracts.
+  - Added branding-aware media usage aggregation plus shared diagnostics for missing alt text, invalid focal points and broken replacement-target references.
+  - Added an explicit `Replace references` flow in the `Media` module that rewires page block bindings and branding URLs to a new asset without manually editing each consumer.
+  - Expanded regression coverage with unit tests for usage/replacement flows and Playwright coverage for asset replacement across `Media` and `Blocks`.
 - **Starter page scaffolds for content models**
   - Added ordered `starterPresets` to builtin and authored content-model contracts so each model can define the initial page section sequence it wants authors to start from.
   - Exposed scaffold authoring in the CMS `Content` tab and added a `Pages -> Apply model scaffold` action that replaces the current section list with the selected model scaffold.
@@ -106,6 +115,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `schemaVersion`, localized `migrationNotes` and `lastSchemaChangeAt` to builtin and authored content-model contracts, with schema-version bumps triggered only by structural model changes.
   - Persisted `contentModelVersion` on pages and surfaced shared diagnostics for missing, stale and ahead page-schema versions so authored content cannot drift silently from its model.
   - Extended the CMS `Content` and `Pages` flows with migration metadata preview plus explicit `Sync schema version` recovery, backed by focused unit and Playwright regression coverage.
+- **Advanced CMS preview modes backed by engine snapshots**
+  - Added `preview.ts` with backend-agnostic snapshot resolution for `draft` and release-backed `published` preview modes, including deterministic published-release fallback selection by active environment.
+  - Extended `Pages preview` and `Blocks preview` with independent `preview source`, `locale` and `viewport` controls, plus responsive preview frames for `desktop`, `tablet` and `mobile`.
+  - Rewired preview validation/diagnostics/media resolution to consume the resolved preview snapshot instead of only the live draft, and added unit + Playwright regression coverage for `draft vs published` preview behavior.
+- **Linked vs detached reusable content in the CMS engine**
+  - Added explicit `reusableMode` / `reusableSourceId` provenance to page sections and blocks so reusable content can stay linked to library entries or be inserted as detached snapshots intentionally.
+  - Added reusable-reference resolution and detach helpers for blocks/sections, then wired the same contract through builder runtime, preview resolution, content validation and release orchestration diagnostics.
+- **Backend-agnostic repository contracts for content, assets and releases**
+  - Expanded `providers.ts` from raw key-value persistence into engine-facing repository contracts for `content`, `assets` and `releases`, including async-friendly provider interfaces and domain snapshot extract/apply helpers.
+  - Added storage-level load/save wrappers for each repository domain so the current `localStorage` demo already uses the same split contracts that future backend integrations can implement.
+  - Added focused provider regression coverage to guarantee content, asset and release snapshots round-trip independently without cross-domain mutation.
+  - Updated `Pages` and `Blocks` authoring flows with `Insert detached`, `Insert linked`, reusable-source chips, read-only linked editing behavior and explicit detach actions, backed by focused unit and Playwright regression coverage.
 - **Structured block props editor in CMS Blocks module**
   - Dynamic field catalog for landing blocks (`header`, `hero`, `stats`, `features`, `cta`, `footer`)
   - Field-level editing for `text`, `textarea`, `number`, `toggle`, `select`, and `json`

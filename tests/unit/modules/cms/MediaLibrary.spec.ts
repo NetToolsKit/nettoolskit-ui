@@ -4,11 +4,14 @@
 import { describe, expect, it } from 'vitest'
 import { createDefaultWhiteLabelSettings } from '../../../../src/modules/cms/white-label/config'
 import {
+  collectCmsBrandingMediaBindingReferences,
   collectCmsMediaBindingReferences,
   collectCmsMediaDiagnostics,
+  collectCmsMediaUsageSummary,
   createCmsMediaAsset,
   createDefaultCmsMediaAssets,
   normalizeCmsMediaAssets,
+  replaceCmsMediaAssetReferences,
   resolveCmsMediaBindingProps,
 } from '../../../../src/modules/cms/white-label/media-library'
 import { getLandingBlockMediaBindingDefinitions } from '../../../../landing-page/cms/landing.block-fields'
@@ -35,6 +38,8 @@ describe('media-library', () => {
           kind: 'image',
           url: '/assets/logo.svg',
           alt: 'Logo',
+          focalPoint: null,
+          replaceTargetAssetId: null,
           tags: ['branding'],
           usage: ['branding.logo'],
         },
@@ -44,11 +49,15 @@ describe('media-library', () => {
       kind: 'image',
       url: '/assets/logo-dark.svg',
       alt: 'Dark logo',
+      focalPoint: { x: 50, y: 40 },
+      replaceTargetAssetId: 'brand-logo',
       tags: 'branding, dark',
       usage: 'branding.logo, landing.hero',
     })
 
     expect(asset.id).toBe('brand-logo-2')
+    expect(asset.focalPoint).toEqual({ x: 50, y: 40 })
+    expect(asset.replaceTargetAssetId).toBe('brand-logo')
     expect(asset.tags).toEqual(['branding', 'dark'])
     expect(asset.usage).toEqual(['branding.logo', 'landing.hero'])
   })
@@ -73,6 +82,8 @@ describe('media-library', () => {
     expect(normalized[0]?.name).toBe('Media Asset 2')
     expect(normalized[0]?.kind).toBe('other')
     expect(normalized[0]?.url).toBe('[object Object]')
+    expect(normalized[0]?.focalPoint).toBeNull()
+    expect(normalized[0]?.replaceTargetAssetId).toBeNull()
     expect(normalized[0]?.tags).toEqual([])
     expect(normalized[0]?.usage).toEqual([])
   })
@@ -106,6 +117,8 @@ describe('media-library', () => {
           kind: 'image',
           url: '/assets/hero.png',
           alt: 'Hero visual',
+          focalPoint: null,
+          replaceTargetAssetId: null,
           tags: [],
           usage: ['content.hero'],
         },
@@ -116,6 +129,8 @@ describe('media-library', () => {
           kind: 'image',
           url: '/assets/hero-poster.png',
           alt: 'Poster visual',
+          focalPoint: null,
+          replaceTargetAssetId: null,
           tags: [],
           usage: ['content.hero'],
         },
@@ -178,6 +193,8 @@ describe('media-library', () => {
         kind: 'document',
         url: '',
         alt: '',
+        focalPoint: { x: 120, y: -5 },
+        replaceTargetAssetId: 'wrong-kind',
         tags: [],
         usage: [],
       },
@@ -187,7 +204,9 @@ describe('media-library', () => {
         description: '',
         kind: 'image',
         url: '/assets/orphan.png',
-        alt: 'Orphan',
+        alt: '',
+        focalPoint: null,
+        replaceTargetAssetId: 'missing-target',
         tags: [],
         usage: [],
       },
@@ -195,6 +214,7 @@ describe('media-library', () => {
 
     const diagnostics = collectCmsMediaDiagnostics({
       pages: settings.pages,
+      branding: settings.branding,
       mediaAssets: settings.mediaAssets,
       resolveBindings: getLandingBlockMediaBindingDefinitions,
     })
@@ -202,6 +222,146 @@ describe('media-library', () => {
     expect(diagnostics.some(item => item.code === 'media_asset_missing' && item.assetId === 'missing-image')).toBe(true)
     expect(diagnostics.some(item => item.code === 'media_asset_kind_mismatch' && item.assetId === 'wrong-kind')).toBe(true)
     expect(diagnostics.some(item => item.code === 'media_asset_url_missing' && item.assetId === 'wrong-kind')).toBe(true)
+    expect(diagnostics.some(item => item.code === 'media_asset_focal_point_invalid' && item.assetId === 'wrong-kind')).toBe(true)
+    expect(diagnostics.some(item => item.code === 'media_asset_alt_missing' && item.assetId === 'orphan-image')).toBe(true)
+    expect(diagnostics.some(item => item.code === 'media_asset_replace_target_self' && item.assetId === 'wrong-kind')).toBe(true)
+    expect(diagnostics.some(item => item.code === 'media_asset_replace_target_missing' && item.assetId === 'orphan-image')).toBe(true)
     expect(diagnostics.some(item => item.code === 'media_asset_unused' && item.assetId === 'orphan-image')).toBe(true)
+  })
+
+  it('counts block, branding and static usage for one asset', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.faviconUrl = 'https://example.com/assets/favicon-managed.png'
+    settings.mediaAssets = [
+      {
+        id: 'favicon-managed',
+        name: 'Managed favicon',
+        description: '',
+        kind: 'icon',
+        url: 'https://example.com/assets/favicon-managed.png',
+        alt: 'Managed favicon',
+        focalPoint: null,
+        replaceTargetAssetId: null,
+        tags: ['branding'],
+        usage: ['branding.favicon'],
+      },
+    ]
+
+    const brandingReferences = collectCmsBrandingMediaBindingReferences({
+      branding: settings.branding,
+      mediaAssets: settings.mediaAssets,
+    })
+    const summary = collectCmsMediaUsageSummary({
+      pages: settings.pages,
+      branding: settings.branding,
+      mediaAssets: settings.mediaAssets,
+      resolveBindings: getLandingBlockMediaBindingDefinitions,
+    })
+
+    expect(brandingReferences[0]?.assetId).toBe('favicon-managed')
+    expect(summary.get('favicon-managed')).toEqual({
+      assetId: 'favicon-managed',
+      blockReferences: 0,
+      brandingReferences: 1,
+      usageTags: 1,
+      totalReferences: 1,
+    })
+  })
+
+  it('replaces media references across blocks and branding bindings', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.faviconUrl = 'https://example.com/assets/original-favicon.png'
+    settings.mediaAssets = [
+      {
+        id: 'hero-image',
+        name: 'Hero image',
+        description: '',
+        kind: 'image',
+        url: 'https://example.com/assets/hero-image.png',
+        alt: 'Hero image alt',
+        focalPoint: { x: 42, y: 54 },
+        replaceTargetAssetId: null,
+        tags: [],
+        usage: [],
+      },
+      {
+        id: 'replacement-image',
+        name: 'Replacement image',
+        description: '',
+        kind: 'image',
+        url: 'https://example.com/assets/replacement-image.png',
+        alt: 'Replacement image alt',
+        focalPoint: null,
+        replaceTargetAssetId: null,
+        tags: [],
+        usage: [],
+      },
+      {
+        id: 'favicon-original',
+        name: 'Favicon original',
+        description: '',
+        kind: 'icon',
+        url: 'https://example.com/assets/original-favicon.png',
+        alt: 'Original favicon',
+        focalPoint: null,
+        replaceTargetAssetId: null,
+        tags: [],
+        usage: [],
+      },
+      {
+        id: 'favicon-next',
+        name: 'Favicon next',
+        description: '',
+        kind: 'icon',
+        url: 'https://example.com/assets/next-favicon.png',
+        alt: 'Next favicon',
+        focalPoint: null,
+        replaceTargetAssetId: null,
+        tags: [],
+        usage: [],
+      },
+    ]
+
+    settings.pages[0]!.sections = [{
+      id: 'hero',
+      presetId: 'hero',
+      label: 'Hero',
+      enabled: true,
+      blocks: [
+        {
+          id: 'hero-main',
+          type: 'landing.hero',
+          enabled: true,
+          props: {
+            imageAssetId: 'hero-image',
+            imageAlt: 'Hero image alt',
+          },
+        },
+      ],
+    }]
+
+    const replacedHero = replaceCmsMediaAssetReferences({
+      pages: settings.pages,
+      branding: settings.branding,
+      mediaAssets: settings.mediaAssets,
+      sourceAssetId: 'hero-image',
+      replacementAssetId: 'replacement-image',
+      resolveBindings: getLandingBlockMediaBindingDefinitions,
+    })
+
+    const replacedFavicon = replaceCmsMediaAssetReferences({
+      pages: replacedHero.pages,
+      branding: replacedHero.branding,
+      mediaAssets: settings.mediaAssets,
+      sourceAssetId: 'favicon-original',
+      replacementAssetId: 'favicon-next',
+      resolveBindings: getLandingBlockMediaBindingDefinitions,
+    })
+
+    expect(replacedHero.replacedBlockReferences).toBe(1)
+    expect(replacedHero.pages[0]?.sections[0]?.blocks[0]?.props.imageAssetId).toBe('replacement-image')
+    expect(replacedHero.pages[0]?.sections[0]?.blocks[0]?.props.imageAlt).toBe('Replacement image alt')
+    expect(replacedFavicon.replacedBrandingReferences).toBe(1)
+    expect(replacedFavicon.branding.faviconUrl).toBe('https://example.com/assets/next-favicon.png')
   })
 })

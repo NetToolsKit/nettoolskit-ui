@@ -49,6 +49,11 @@ export interface CmsPageBlockLocalizationSettings {
 }
 
 /**
+ * Reusable authoring mode for page content sourced from the reusable libraries.
+ */
+export type CmsReusableReferenceMode = 'linked' | 'detached'
+
+/**
  * Built-in content model families shipped by the CMS engine.
  */
 export type CmsBuiltinContentModelId = 'landing-page' | 'marketing-page' | 'blank-page'
@@ -257,6 +262,15 @@ export interface CmsAuthoredContentModelSettings {
 export type CmsMediaAssetKind = 'image' | 'video' | 'icon' | 'document' | 'other'
 
 /**
+ * Optional focal-point coordinates used by hosts/renderers to crop visual assets consistently.
+ * Values are stored as percentages in the range `0..100`.
+ */
+export interface CmsMediaAssetFocalPointSettings {
+  x: number
+  y: number
+}
+
+/**
  * Branding values editable in CMS white-label settings.
  */
 export interface CmsBrandingSettings {
@@ -331,6 +345,8 @@ export interface CmsPageSectionSettings {
   presetId: CmsSectionPresetId
   label: string
   enabled: boolean
+  reusableMode?: CmsReusableReferenceMode
+  reusableSourceId?: string
   localization?: CmsPageSectionLocalizationSettings
   blocks: CmsPageBlockSettings[]
 }
@@ -343,6 +359,8 @@ export interface CmsPageBlockSettings {
   type: string
   presetId?: CmsBlockPresetId
   enabled: boolean
+  reusableMode?: CmsReusableReferenceMode
+  reusableSourceId?: string
   props: Record<string, unknown>
   localization?: CmsPageBlockLocalizationSettings
 }
@@ -387,6 +405,8 @@ export interface CmsMediaAssetSettings {
   kind: CmsMediaAssetKind
   url: string
   alt: string
+  focalPoint: CmsMediaAssetFocalPointSettings | null
+  replaceTargetAssetId: string | null
   tags: string[]
   usage: string[]
 }
@@ -731,4 +751,33 @@ export interface CmsTenantProfile {
 export interface CmsTenantProfilesState {
   activeProfileId: string
   profiles: CmsTenantProfile[]
+}
+
+/**
+ * Preview source modes supported by the CMS engine.
+ */
+export type CmsPreviewSource = 'draft' | 'published'
+
+/**
+ * Preview viewport presets supported by the CMS engine.
+ */
+export type CmsPreviewViewport = 'desktop' | 'tablet' | 'mobile'
+
+/**
+ * Resolved preview snapshot returned by the CMS engine for builder/runtime previews.
+ */
+export interface CmsPreviewSnapshot {
+  source: CmsPreviewSource
+  locale: CmsLocale
+  branding: CmsBrandingSettings
+  pages: CmsPageSettings[]
+  authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
+  reusableSections: CmsReusableSectionSettings[]
+  reusableBlocks: CmsReusableBlockSettings[]
+  mediaAssets: CmsMediaAssetSettings[]
+  releaseId: string | null
+  releaseName: string | null
+  releaseEnvironment: CmsReleaseEnvironment | null
+  publishedAt: string | null
 }

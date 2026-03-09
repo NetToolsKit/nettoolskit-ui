@@ -7,7 +7,9 @@ import {
   cloneCmsReusableSectionIntoPageSection,
   createCmsReusableSectionFromSection,
   createDefaultCmsReusableSections,
+  detachCmsPageSectionFromReusable,
   normalizeCmsReusableSections,
+  resolveCmsReusableSectionReference,
 } from '../../../../src/modules/cms/white-label/reusable-sections'
 
 describe('reusable-sections', () => {
@@ -149,6 +151,73 @@ describe('reusable-sections', () => {
         label: 'Edit',
         href: '#builder',
       },
+    })
+  })
+
+  it('resolves linked reusable sections and detaches them into local snapshots', () => {
+    const reusableSection = createCmsReusableSectionFromSection({
+      page: {
+        id: 'landing-main',
+        contentModelId: 'landing-page',
+        title: 'Main Landing',
+        path: '/',
+        status: 'published',
+        description: '',
+        sections: [],
+      },
+      section: {
+        id: 'hero',
+        presetId: 'hero',
+        label: 'Hero',
+        enabled: true,
+        blocks: [{
+          id: 'hero-block-1',
+          type: 'landing.hero',
+          presetId: 'landing-hero-product-launch',
+          enabled: true,
+          props: {
+            title: 'Reusable section title',
+          },
+        }],
+      },
+      existingSections: [],
+    })
+
+    const linkedSection = cloneCmsReusableSectionIntoPageSection({
+      reusableSection,
+      existingSections: [],
+      mode: 'linked',
+    })
+    linkedSection.label = 'Stale local label'
+    if (linkedSection.blocks[0]) {
+      linkedSection.blocks[0].props = {
+        title: 'Stale local block',
+      }
+    }
+
+    const resolvedSection = resolveCmsReusableSectionReference({
+      section: linkedSection,
+      reusableSections: [reusableSection],
+    })
+
+    expect(resolvedSection.reusableMode).toBe('linked')
+    expect(resolvedSection.reusableSourceId).toBe(reusableSection.id)
+    expect(resolvedSection.label).toBe('Hero')
+    expect(resolvedSection.blocks[0]?.id).toBe(linkedSection.blocks[0]?.id)
+    expect(resolvedSection.blocks[0]?.props).toEqual({
+      title: 'Reusable section title',
+    })
+
+    const detachedSection = detachCmsPageSectionFromReusable({
+      section: linkedSection,
+      reusableSections: [reusableSection],
+    })
+
+    expect(detachedSection.reusableMode).toBe('detached')
+    expect(detachedSection.reusableSourceId).toBe(reusableSection.id)
+    expect(detachedSection.label).toBe('Hero')
+    expect(detachedSection.blocks[0]?.props).toEqual({
+      title: 'Reusable section title',
     })
   })
 })

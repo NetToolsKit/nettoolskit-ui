@@ -626,4 +626,65 @@ describe('content-validation', () => {
     expect(result.issues.some(issue => issue.code === 'pages.custom_fields.min' && issue.message.includes('Headline'))).toBe(true)
     expect(result.issues.some(issue => issue.code === 'pages.custom_fields.max' && issue.message.includes('Score'))).toBe(true)
   })
+
+  it('flags missing linked reusable section and block references', () => {
+    const pages: CmsPageSettings[] = [
+      {
+        id: 'missing-linked-section',
+        contentModelId: 'landing-page',
+        title: 'Missing linked section',
+        path: '/missing-linked-section',
+        status: 'draft',
+        description: 'Broken linked section',
+        sections: [
+          {
+            id: 'hero',
+            presetId: 'hero',
+            label: 'Hero',
+            enabled: true,
+            reusableMode: 'linked',
+            reusableSourceId: 'missing-section',
+            blocks: [],
+          },
+        ],
+      },
+      {
+        id: 'missing-linked-block',
+        contentModelId: 'landing-page',
+        title: 'Missing linked block',
+        path: '/missing-linked-block',
+        status: 'draft',
+        description: 'Broken linked block',
+        sections: [
+          {
+            id: 'hero',
+            presetId: 'hero',
+            label: 'Hero',
+            enabled: true,
+            blocks: [
+              {
+                id: 'hero-block-1',
+                type: 'landing.hero',
+                enabled: true,
+                reusableMode: 'linked',
+                reusableSourceId: 'missing-block',
+                props: {},
+              },
+            ],
+          },
+        ],
+      },
+    ]
+
+    const result = validateCmsContentPages({
+      pages,
+      registry: createLandingRegistry(),
+      reusableSections: [],
+      reusableBlocks: [],
+    })
+
+    expect(result.valid).toBe(false)
+    expect(result.issues.map(issue => issue.code)).toContain('pages.sections.reusable.link.not_found')
+    expect(result.issues.map(issue => issue.code)).toContain('pages.sections.blocks.reusable.link.not_found')
+  })
 })

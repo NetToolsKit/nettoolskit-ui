@@ -7,6 +7,7 @@ import type {
   CmsBrandingSettings,
   CmsLocale,
   CmsMediaAssetKind,
+  CmsMediaAssetFocalPointSettings,
   CmsMediaAssetSettings,
   CmsPageBlockSettings,
   CmsPageSettings,
@@ -25,6 +26,10 @@ export type CmsMediaDiagnosticCode =
   | 'media_asset_missing'
   | 'media_asset_kind_mismatch'
   | 'media_asset_url_missing'
+  | 'media_asset_alt_missing'
+  | 'media_asset_focal_point_invalid'
+  | 'media_asset_replace_target_missing'
+  | 'media_asset_replace_target_self'
   | 'media_asset_unused'
 
 export interface CmsMediaBindingReference {
@@ -40,6 +45,21 @@ export interface CmsMediaBindingReference {
   sectionLabel: string
   blockId: string
   blockType: string
+}
+
+export interface CmsBrandingMediaBindingReference {
+  assetId: string
+  slot: CmsMediaBrandingSlot
+  brandingPath: `branding.${CmsMediaBrandingSlot}`
+  label: string
+}
+
+export interface CmsMediaUsageSummary {
+  assetId: string
+  blockReferences: number
+  brandingReferences: number
+  usageTags: number
+  totalReferences: number
 }
 
 export interface CmsMediaDiagnostic {
@@ -190,6 +210,23 @@ function normalizeMediaKind(value: unknown): CmsMediaAssetKind {
   }
 }
 
+function normalizeMediaFocalPoint(value: unknown): CmsMediaAssetFocalPointSettings | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null
+  }
+
+  const x = Number((value as Record<string, unknown>).x)
+  const y = Number((value as Record<string, unknown>).y)
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    return null
+  }
+
+  return {
+    x,
+    y,
+  }
+}
+
 function getNestedValueByPath(record: Record<string, unknown>, path: string): unknown {
   const segments = path.split('.').filter(Boolean)
   if (segments.length === 0) {
@@ -254,6 +291,14 @@ function normalizeAllowedKindsLabel(kinds: CmsMediaAssetKind[] | undefined): str
   return kinds.join(', ')
 }
 
+function hasRecommendedAltText(kind: CmsMediaAssetKind): boolean {
+  return kind === 'image' || kind === 'icon'
+}
+
+function supportsFocalPoint(kind: CmsMediaAssetKind): boolean {
+  return kind === 'image' || kind === 'video'
+}
+
 function createCmsMediaReferenceId(reference: CmsMediaBindingReference): string {
   return [
     reference.pageId,
@@ -286,6 +331,8 @@ export function createDefaultCmsMediaAssets(
       kind: asset.kind,
       url,
       alt: asset.alt(branding, locale),
+      focalPoint: null,
+      replaceTargetAssetId: null,
       tags: [...asset.tags],
       usage: [...asset.usage],
     }
@@ -325,6 +372,8 @@ export function normalizeCmsMediaAssets(
         kind: normalizeMediaKind(mediaAsset.kind),
         url: String(mediaAsset.url ?? '').trim(),
         alt: String(mediaAsset.alt ?? '').trim(),
+        focalPoint: normalizeMediaFocalPoint(mediaAsset.focalPoint),
+        replaceTargetAssetId: String(mediaAsset.replaceTargetAssetId ?? '').trim() || null,
         tags: normalizeStringArray(mediaAsset.tags),
         usage: normalizeStringArray(mediaAsset.usage),
       } satisfies CmsMediaAssetSettings
@@ -344,6 +393,8 @@ export function createCmsMediaAsset(input: {
   kind?: unknown
   url?: unknown
   alt?: unknown
+  focalPoint?: unknown
+  replaceTargetAssetId?: unknown
   tags?: unknown
   usage?: unknown
 }): CmsMediaAssetSettings {
@@ -363,12 +414,188 @@ export function createCmsMediaAsset(input: {
     kind: normalizeMediaKind(input.kind),
     url: String(input.url ?? '').trim(),
     alt: String(input.alt ?? '').trim(),
+    focalPoint: normalizeMediaFocalPoint(input.focalPoint),
+    replaceTargetAssetId: String(input.replaceTargetAssetId ?? '').trim() || null,
     tags: Array.isArray(input.tags)
       ? normalizeStringArray(input.tags)
       : normalizeStringArray(String(input.tags ?? '').split(',')),
     usage: Array.isArray(input.usage)
       ? normalizeStringArray(input.usage)
       : normalizeStringArray(String(input.usage ?? '').split(',')),
+  }
+}
+
+/**
+ * Collects branding-level media bindings by matching configured URLs against the media library.
+ */
+export function collectCmsBrandingMediaBindingReferences(input: {
+  branding: CmsBrandingSettings
+  mediaAssets: CmsMediaAssetSettings[]
+}): CmsBrandingMediaBindingReference[] {
+  const brandingBindings: Array<{ slot: CmsMediaBrandingSlot; url: string; label: string }> = [
+    {
+      slot: 'brandLogo',
+      url: String(input.branding.brandLogo ?? '').trim(),
+      label: 'Brand logo',
+    },
+    {
+      slot: 'faviconUrl',
+      url: String(input.branding.faviconUrl || input.branding.brandLogo || '').trim(),
+      label: 'Favicon',
+    },
+    {
+      slot: 'userAvatar',
+      url: String(input.branding.userAvatar ?? '').trim(),
+      label: 'User avatar',
+    },
+  ]
+
+  return brandingBindings.flatMap(binding => {
+    if (!binding.url) {
+      return []
+    }
+
+    const asset = input.mediaAssets.find(entry => entry.url.trim() === binding.url)
+    if (!asset) {
+      return []
+    }
+
+    return [{
+      assetId: asset.id,
+      slot: binding.slot,
+      brandingPath: `branding.${binding.slot}`,
+      label: binding.label,
+    } satisfies CmsBrandingMediaBindingReference]
+  })
+}
+
+/**
+ * Aggregates runtime and static usage information for media-library assets.
+ */
+export function collectCmsMediaUsageSummary(input: {
+  pages: CmsPageSettings[]
+  branding: CmsBrandingSettings
+  mediaAssets: CmsMediaAssetSettings[]
+  resolveBindings: (blockType: string) => CmsMediaBindingDefinition[]
+}): Map<string, CmsMediaUsageSummary> {
+  const summary = new Map<string, CmsMediaUsageSummary>()
+
+  const ensureSummary = (assetId: string): CmsMediaUsageSummary => {
+    const existing = summary.get(assetId)
+    if (existing) {
+      return existing
+    }
+
+    const created: CmsMediaUsageSummary = {
+      assetId,
+      blockReferences: 0,
+      brandingReferences: 0,
+      usageTags: 0,
+      totalReferences: 0,
+    }
+    summary.set(assetId, created)
+    return created
+  }
+
+  for (const asset of input.mediaAssets) {
+    const entry = ensureSummary(asset.id)
+    entry.usageTags = asset.usage.length
+  }
+
+  for (const reference of collectCmsMediaBindingReferences(input)) {
+    const entry = ensureSummary(reference.assetId)
+    entry.blockReferences += 1
+    entry.totalReferences += 1
+  }
+
+  for (const reference of collectCmsBrandingMediaBindingReferences(input)) {
+    const entry = ensureSummary(reference.assetId)
+    entry.brandingReferences += 1
+    entry.totalReferences += 1
+  }
+
+  return summary
+}
+
+/**
+ * Replaces all page-level and branding-level references from one asset to another.
+ */
+export function replaceCmsMediaAssetReferences(input: {
+  pages: CmsPageSettings[]
+  branding: CmsBrandingSettings
+  mediaAssets: CmsMediaAssetSettings[]
+  sourceAssetId: string
+  replacementAssetId: string
+  resolveBindings: (blockType: string) => CmsMediaBindingDefinition[]
+}): {
+  pages: CmsPageSettings[]
+  branding: CmsBrandingSettings
+  replacedBlockReferences: number
+  replacedBrandingReferences: number
+} {
+  const sourceAsset = findCmsMediaAssetById(input.mediaAssets, input.sourceAssetId)
+  const replacementAsset = findCmsMediaAssetById(input.mediaAssets, input.replacementAssetId)
+  const nextPages = cloneValue(input.pages)
+  const nextBranding = cloneValue(input.branding)
+
+  if (!sourceAsset || !replacementAsset || sourceAsset.id === replacementAsset.id) {
+    return {
+      pages: nextPages,
+      branding: nextBranding,
+      replacedBlockReferences: 0,
+      replacedBrandingReferences: 0,
+    }
+  }
+
+  let replacedBlockReferences = 0
+  for (const page of nextPages) {
+    for (const section of page.sections) {
+      for (const block of section.blocks) {
+        for (const binding of input.resolveBindings(block.type)) {
+          const currentAssetId = String(getNestedValueByPath(block.props, binding.sourcePath) ?? '').trim()
+          if (currentAssetId !== sourceAsset.id) {
+            continue
+          }
+
+          setNestedValueByPath(block.props, binding.sourcePath, replacementAsset.id)
+          if (binding.altTargetPath && replacementAsset.alt.trim().length > 0) {
+            const currentAlt = String(getNestedValueByPath(block.props, binding.altTargetPath) ?? '').trim()
+            if (!currentAlt || currentAlt === sourceAsset.alt.trim()) {
+              setNestedValueByPath(block.props, binding.altTargetPath, replacementAsset.alt)
+            }
+          }
+          replacedBlockReferences += 1
+        }
+      }
+    }
+  }
+
+  let replacedBrandingReferences = 0
+  const brandingSlots: CmsMediaBrandingSlot[] = ['brandLogo', 'faviconUrl', 'userAvatar']
+  for (const slot of brandingSlots) {
+    if (String(nextBranding[slot] ?? '').trim() !== sourceAsset.url.trim()) {
+      continue
+    }
+
+    nextBranding[slot] = replacementAsset.url
+    replacedBrandingReferences += 1
+  }
+
+  if (
+    String(nextBranding.brandLogo ?? '').trim() === replacementAsset.url.trim()
+    && replacementAsset.alt.trim().length > 0
+  ) {
+    const currentBrandLogoAlt = String(nextBranding.brandLogoAlt ?? '').trim()
+    if (!currentBrandLogoAlt || currentBrandLogoAlt === sourceAsset.alt.trim()) {
+      nextBranding.brandLogoAlt = replacementAsset.alt
+    }
+  }
+
+  return {
+    pages: nextPages,
+    branding: nextBranding,
+    replacedBlockReferences,
+    replacedBrandingReferences,
   }
 }
 
@@ -457,10 +684,12 @@ export function collectCmsMediaBindingReferences(input: {
  */
 export function collectCmsMediaDiagnostics(input: {
   pages: CmsPageSettings[]
+  branding: CmsBrandingSettings
   mediaAssets: CmsMediaAssetSettings[]
   resolveBindings: (blockType: string) => CmsMediaBindingDefinition[]
 }): CmsMediaDiagnostic[] {
   const references = collectCmsMediaBindingReferences(input)
+  const brandingReferences = collectCmsBrandingMediaBindingReferences(input)
   const diagnostics: CmsMediaDiagnostic[] = []
   const mediaAssetIds = new Set(input.mediaAssets.map(asset => asset.id))
   const referencedAssetIds = new Set<string>()
@@ -515,7 +744,59 @@ export function collectCmsMediaDiagnostics(input: {
     }
   }
 
+  for (const reference of brandingReferences) {
+    referencedAssetIds.add(reference.assetId)
+  }
+
   for (const asset of input.mediaAssets) {
+    if (hasRecommendedAltText(asset.kind) && asset.url.trim().length > 0 && asset.alt.trim().length === 0) {
+      diagnostics.push({
+        id: `${asset.id}:alt`,
+        code: 'media_asset_alt_missing',
+        severity: 'warning',
+        message: `Asset "${asset.name}" should include alt text for accessible authoring.`,
+        assetId: asset.id,
+      })
+    }
+
+    if (asset.focalPoint) {
+      const focalPointOutOfRange = asset.focalPoint.x < 0
+        || asset.focalPoint.x > 100
+        || asset.focalPoint.y < 0
+        || asset.focalPoint.y > 100
+      if (focalPointOutOfRange || !supportsFocalPoint(asset.kind)) {
+        diagnostics.push({
+          id: `${asset.id}:focal-point`,
+          code: 'media_asset_focal_point_invalid',
+          severity: 'warning',
+          message: supportsFocalPoint(asset.kind)
+            ? `Asset "${asset.name}" has focal point values outside the supported 0..100 range.`
+            : `Asset "${asset.name}" defines a focal point but "${asset.kind}" assets do not support focal-point metadata.`,
+          assetId: asset.id,
+        })
+      }
+    }
+
+    if (asset.replaceTargetAssetId) {
+      if (asset.replaceTargetAssetId === asset.id) {
+        diagnostics.push({
+          id: `${asset.id}:replace-self`,
+          code: 'media_asset_replace_target_self',
+          severity: 'error',
+          message: `Asset "${asset.name}" cannot replace itself.`,
+          assetId: asset.id,
+        })
+      } else if (!mediaAssetIds.has(asset.replaceTargetAssetId)) {
+        diagnostics.push({
+          id: `${asset.id}:replace-target-missing`,
+          code: 'media_asset_replace_target_missing',
+          severity: 'warning',
+          message: `Asset "${asset.name}" points to replacement target "${asset.replaceTargetAssetId}" but that asset does not exist.`,
+          assetId: asset.id,
+        })
+      }
+    }
+
     if (referencedAssetIds.has(asset.id)) {
       continue
     }

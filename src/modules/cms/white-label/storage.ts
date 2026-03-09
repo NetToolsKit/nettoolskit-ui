@@ -26,8 +26,17 @@ import {
 } from '../releases/orchestration'
 import { resolveCmsLocale } from './i18n'
 import {
+  applyCmsAssetRepositorySnapshot,
+  applyCmsContentRepositorySnapshot,
+  applyCmsReleaseRepositorySnapshot,
+  createCmsAssetRepositorySnapshot,
+  createCmsContentRepositorySnapshot,
+  createCmsReleaseRepositorySnapshot,
   resolveCmsPersistenceStore,
+  type CmsAssetRepositorySnapshot,
+  type CmsContentRepositorySnapshot,
   type CmsPersistenceOptions,
+  type CmsReleaseRepositorySnapshot,
 } from './providers'
 import {
   detectCmsContentModelIdForPage,
@@ -568,6 +577,10 @@ function normalizePagesSettings(
                     type: blockType,
                     presetId: resolveCmsBlockPresetId(block.presetId),
                     enabled: typeof block.enabled === 'boolean' ? block.enabled : Boolean(section.enabled),
+                    reusableMode: block.reusableMode === 'linked' || block.reusableMode === 'detached'
+                      ? block.reusableMode
+                      : undefined,
+                    reusableSourceId: String(block.reusableSourceId ?? '').trim() || undefined,
                     props: block.props && typeof block.props === 'object'
                       ? cloneValue(block.props)
                       : {},
@@ -602,6 +615,10 @@ function normalizePagesSettings(
               presetId: sectionPresetId,
               label: String(section.label ?? '').trim() || `Section ${sectionIndex + 1}`,
               enabled: Boolean(section.enabled),
+              reusableMode: section.reusableMode === 'linked' || section.reusableMode === 'detached'
+                ? section.reusableMode
+                : undefined,
+              reusableSourceId: String(section.reusableSourceId ?? '').trim() || undefined,
               localization: normalizeCmsPageSectionLocalizationSettings(section.localization),
               blocks: normalizedBlocks,
             }
@@ -816,6 +833,80 @@ export function loadCmsWhiteLabelSettings(options: CmsPersistenceOptions = {}): 
   } catch {
     return defaults
   }
+}
+
+/**
+ * Loads only the content-domain repository snapshot from the active persistence provider.
+ * This lets external application layers integrate content storage separately from assets and releases.
+ */
+export function loadCmsContentRepositorySnapshot(
+  options: CmsPersistenceOptions = {}
+): CmsContentRepositorySnapshot {
+  return createCmsContentRepositorySnapshot(loadCmsWhiteLabelSettings(options))
+}
+
+/**
+ * Persists only the content-domain repository snapshot through the active persistence provider.
+ * Internally this merges the snapshot into current white-label settings and saves the normalized aggregate.
+ */
+export function saveCmsContentRepositorySnapshot(
+  snapshot: CmsContentRepositorySnapshot,
+  options: CmsPersistenceOptions = {}
+): CmsWhiteLabelSettings {
+  const nextSettings = applyCmsContentRepositorySnapshot(
+    loadCmsWhiteLabelSettings(options),
+    snapshot
+  )
+  saveCmsWhiteLabelSettings(nextSettings, options)
+  return nextSettings
+}
+
+/**
+ * Loads only the asset-domain repository snapshot from the active persistence provider.
+ */
+export function loadCmsAssetRepositorySnapshot(
+  options: CmsPersistenceOptions = {}
+): CmsAssetRepositorySnapshot {
+  return createCmsAssetRepositorySnapshot(loadCmsWhiteLabelSettings(options))
+}
+
+/**
+ * Persists only the asset-domain repository snapshot through the active persistence provider.
+ */
+export function saveCmsAssetRepositorySnapshot(
+  snapshot: CmsAssetRepositorySnapshot,
+  options: CmsPersistenceOptions = {}
+): CmsWhiteLabelSettings {
+  const nextSettings = applyCmsAssetRepositorySnapshot(
+    loadCmsWhiteLabelSettings(options),
+    snapshot
+  )
+  saveCmsWhiteLabelSettings(nextSettings, options)
+  return nextSettings
+}
+
+/**
+ * Loads only the release-domain repository snapshot from the active persistence provider.
+ */
+export function loadCmsReleaseRepositorySnapshot(
+  options: CmsPersistenceOptions = {}
+): CmsReleaseRepositorySnapshot {
+  return createCmsReleaseRepositorySnapshot(loadCmsWhiteLabelSettings(options))
+}
+
+/**
+ * Persists only the release-domain repository snapshot through the active persistence provider.
+ */
+export function saveCmsReleaseRepositorySnapshot(
+  snapshot: CmsReleaseRepositorySnapshot,
+  options: CmsPersistenceOptions = {}
+): CmsWhiteLabelSettings {
+  const nextSettings = applyCmsReleaseRepositorySnapshot(
+    loadCmsWhiteLabelSettings(options),
+    snapshot
+  )
+  saveCmsWhiteLabelSettings(nextSettings, options)
+  return nextSettings
 }
 
 /**

@@ -64,6 +64,24 @@
               <div class="cms-toolbar-card__actions">
                 <q-btn no-caps unelevated icon="save" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" :style="primaryActionStyle" @click="saveNow" />
                 <q-btn flat no-caps icon="restart_alt" :label="cmsUiText.resetLabel" :aria-label="cmsUiText.resetAriaLabel" :style="dangerActionStyle" @click="resetToDefaults" />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="undo"
+                  :label="tr('Undo', 'Desfazer')"
+                  :disable="!canUndoCmsAuthoringHistory"
+                  @click="undoCmsAuthoringChange"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="redo"
+                  :label="tr('Redo', 'Refazer')"
+                  :disable="!canRedoCmsAuthoringHistory"
+                  @click="redoCmsAuthoringChange"
+                />
               </div>
               <q-separator vertical inset class="cms-toolbar-card__separator" />
               <div class="cms-toolbar-card__actions">
@@ -1501,9 +1519,18 @@
                         dense
                         no-caps
                         icon="library_add"
-                        :label="tr('Insert reusable', 'Inserir reutilizavel')"
+                        :label="tr('Insert detached', 'Inserir desvinculado')"
                         :disable="getCmsReusableSectionOptions(page).length === 0"
                         @click="insertSelectedReusableSection(pageIndex)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="link"
+                        :label="tr('Insert linked', 'Inserir vinculado')"
+                        :disable="getCmsReusableSectionOptions(page).length === 0"
+                        @click="insertSelectedLinkedReusableSection(pageIndex)"
                       />
                     </div>
                   </div>
@@ -1547,16 +1574,29 @@
                     @dragover="onCmsPageSectionDragOver(page.id, section.id, $event)"
                     @drop="onCmsPageSectionDrop(pageIndex, section.id, sectionIndex, $event)"
                   >
-                    <q-input v-model="section.id" outlined dense :label="tr('Section ID', 'ID da secao')" />
-                    <q-input :model-value="getCmsSectionPresetLabel(section.presetId)" outlined dense readonly :label="tr('Preset', 'Preset')" />
+                    <q-input v-model="section.id" outlined dense :disable="isCmsPageSectionLinked(section)" :label="tr('Section ID', 'ID da secao')" />
+                    <q-input :model-value="getCmsSectionPresetLabel(resolveCmsPageSectionForAuthoring(section).presetId)" outlined dense readonly :label="tr('Preset', 'Preset')" />
                     <q-input
-                      :model-value="getCmsSectionLabelValue(section)"
+                      :model-value="getCmsSectionLabelValue(resolveCmsPageSectionForAuthoring(section))"
                       outlined
                       dense
+                      :disable="isCmsPageSectionLinked(section)"
                       :label="tr('Section label', 'Label da secao')"
                       @update:model-value="updateCmsSectionLabelValue(section, $event)"
                     />
                     <q-toggle v-model="section.enabled" :label="tr('Enabled', 'Ativado')" />
+                    <q-chip
+                      v-if="section.reusableMode"
+                      dense
+                      square
+                      :style="statusChipStyle"
+                    >
+                      {{
+                        section.reusableMode === 'linked'
+                          ? `${tr('Linked', 'Vinculado')} · ${getCmsReusableSourceLabel(section.reusableSourceId, 'section')}`
+                          : `${tr('Detached', 'Desvinculado')} · ${getCmsReusableSourceLabel(section.reusableSourceId, 'section')}`
+                      }}
+                    </q-chip>
                     <q-btn
                       flat
                       dense
@@ -1572,6 +1612,15 @@
                       icon="bookmark_add"
                       :label="tr('Save reusable', 'Salvar reutilizavel')"
                       @click="saveCmsPageSectionAsReusable(pageIndex, sectionIndex)"
+                    />
+                    <q-btn
+                      v-if="isCmsPageSectionLinked(section)"
+                      flat
+                      dense
+                      no-caps
+                      icon="link_off"
+                      :label="tr('Detach', 'Desvincular')"
+                      @click="detachCmsPageSection(pageIndex, sectionIndex)"
                     />
                     <q-btn
                       flat
@@ -1657,60 +1706,119 @@
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__preview">
-              <article
-                v-for="(page, pageIndex) in settings.pages"
-                :key="`preview-${page.id}`"
-                class="cms-page-preview"
+              <div
+                class="cms-preview-toolbar"
+                :data-cms-preview-source="cmsPreviewSource"
+                :data-cms-preview-viewport="cmsPreviewViewport"
               >
-                <div class="cms-page-preview__header">
-                  <strong>{{ getCmsPageTitleValue(page) }}</strong>
-                  <div class="cms-page-preview__chips">
-                    <q-chip dense square :style="statusChipStyle">
-                      {{ getCmsContentModelLabel(settings.content.locale, page.contentModelId, settings.authoredContentModels) }}
-                    </q-chip>
-                    <q-chip dense square :style="statusChipStyle">
-                      {{
-                        `schema v${page.contentModelVersion ?? '?'} / v${getCmsPageCurrentSchemaVersion(page)}`
-                      }}
-                    </q-chip>
-                    <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
-                      {{ page.status }}
-                    </q-chip>
-                  </div>
-                </div>
-                <small class="cms-page-preview__path">{{ page.path }}</small>
-                <p>{{ getCmsPageDescriptionValue(page) || tr('No description provided.', 'Nenhuma descricao informada.') }}</p>
-                <div v-if="getCmsPageDiagnostics(page.id, pageIndex).length > 0" class="cms-diagnostics-list">
-                  <div class="cms-diagnostics-list__header">
-                    <strong>{{ tr('Content diagnostics', 'Diagnosticos de conteudo') }}</strong>
-                    <q-chip dense square :style="statusChipStyle">{{ getCmsPageDiagnostics(page.id, pageIndex).length }}</q-chip>
-                  </div>
-                  <article
-                    v-for="diagnostic in getCmsPageDiagnostics(page.id, pageIndex)"
-                    :key="diagnostic.id"
-                    class="cms-diagnostics-item"
-                  >
-                    <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
-                      {{ diagnostic.severity }}
-                    </q-chip>
-                    <div class="cms-diagnostics-item__body">
-                      <strong>{{ diagnostic.code }}</strong>
-                      <small>{{ diagnostic.message }}</small>
-                    </div>
-                  </article>
-                </div>
-                <div class="cms-page-preview__sections">
-                  <q-chip
-                    v-for="section in page.sections"
-                    :key="`${page.id}-${section.id}`"
-                    dense
-                    square
-                    :style="getCmsPageSectionStyle(section.enabled)"
-                  >
-                    {{ section.label }}
+                <q-select
+                  v-model="cmsPreviewSource"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsPreviewSourceOptions"
+                  :label="tr('Preview source', 'Origem do preview')"
+                />
+                <q-select
+                  v-model="cmsPreviewLocale"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsLocaleOptions"
+                  :label="tr('Preview locale', 'Locale do preview')"
+                />
+                <q-select
+                  v-model="cmsPreviewViewport"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsPreviewViewportOptions"
+                  :label="tr('Preview viewport', 'Viewport do preview')"
+                />
+                <div class="cms-preview-toolbar__chips">
+                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewSource }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewViewport }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewLocale }}</q-chip>
+                  <q-chip v-if="cmsPreviewPublishedReleaseLabel" dense square :style="statusChipStyle">
+                    {{ cmsPreviewPublishedReleaseLabel }}
                   </q-chip>
                 </div>
-              </article>
+              </div>
+
+              <q-banner v-if="cmsPreviewEmptyMessage" rounded class="cms-banner" :style="bannerStyle">
+                {{ cmsPreviewEmptyMessage }}
+              </q-banner>
+
+              <template v-else>
+                <article
+                  v-for="(page, pageIndex) in cmsPreviewPagesForRender"
+                  :key="`preview-${cmsPreviewSource}-${page.id}`"
+                  class="cms-page-preview"
+                >
+                  <div class="cms-page-preview__header">
+                    <strong>{{ getCmsPageTitleValue(page) }}</strong>
+                    <div class="cms-page-preview__chips">
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ getCmsContentModelLabel(cmsPreviewLocale, page.contentModelId, cmsPreviewAuthoredContentModels) }}
+                      </q-chip>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{
+                          `schema v${page.contentModelVersion ?? '?'} / v${getCmsPageCurrentSchemaVersion(page, cmsPreviewAuthoredContentModels)}`
+                        }}
+                      </q-chip>
+                      <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
+                        {{ page.status }}
+                      </q-chip>
+                    </div>
+                  </div>
+                  <small class="cms-page-preview__path">{{ page.path }}</small>
+                  <p>{{ getCmsPageDescriptionValue(page) || tr('No description provided.', 'Nenhuma descricao informada.') }}</p>
+
+                  <div class="cms-runtime-preview">
+                    <div class="cms-runtime-preview__frame" :data-preview-viewport="cmsPreviewViewport">
+                      <CmsRenderer
+                        :page="toCmsPreviewPageSchema(page)"
+                        :registry="landingRegistry"
+                        :render-context="cmsPreviewRenderContext"
+                      />
+                    </div>
+                  </div>
+
+                  <div v-if="getCmsPreviewPageDiagnostics(page.id, pageIndex).length > 0" class="cms-diagnostics-list">
+                    <div class="cms-diagnostics-list__header">
+                      <strong>{{ tr('Content diagnostics', 'Diagnosticos de conteudo') }}</strong>
+                      <q-chip dense square :style="statusChipStyle">{{ getCmsPreviewPageDiagnostics(page.id, pageIndex).length }}</q-chip>
+                    </div>
+                    <article
+                      v-for="diagnostic in getCmsPreviewPageDiagnostics(page.id, pageIndex)"
+                      :key="diagnostic.id"
+                      class="cms-diagnostics-item"
+                    >
+                      <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
+                        {{ diagnostic.severity }}
+                      </q-chip>
+                      <div class="cms-diagnostics-item__body">
+                        <strong>{{ diagnostic.code }}</strong>
+                        <small>{{ diagnostic.message }}</small>
+                      </div>
+                    </article>
+                  </div>
+                  <div class="cms-page-preview__sections">
+                    <q-chip
+                      v-for="section in page.sections"
+                      :key="`${page.id}-${section.id}`"
+                      dense
+                      square
+                      :style="getCmsPageSectionStyle(section.enabled)"
+                    >
+                      {{ getCmsSectionLabelValue(section) }}
+                    </q-chip>
+                  </div>
+                </article>
+              </template>
             </div>
           </q-card>
         </div>
@@ -1784,6 +1892,35 @@
               <p v-if="activeBlocksSectionContractSummary" class="cms-config-caption cms-blocks-toolbar__hint">
                 {{ activeBlocksSectionContractSummary }}
               </p>
+              <div class="cms-blocks-toolbar__bulk">
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="done_all"
+                  :label="tr('Enable all blocks', 'Ativar todos os blocos')"
+                  :disable="!canToggleActiveSectionBlocks"
+                  @click="setCmsBuilderSectionBlocksEnabled(true)"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="remove_done"
+                  :label="tr('Disable all blocks', 'Desativar todos os blocos')"
+                  :disable="!canToggleActiveSectionBlocks"
+                  @click="setCmsBuilderSectionBlocksEnabled(false)"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="auto_fix_off"
+                  :label="tr('Remove disabled blocks', 'Remover blocos desativados')"
+                  :disable="!canRemoveDisabledBlocksFromActiveSection"
+                  @click="removeDisabledBlocksFromActiveSection"
+                />
+              </div>
 
               <div class="cms-form-grid cms-blocks-reusable-toolbar">
                 <q-input
@@ -1822,10 +1959,19 @@
                   no-caps
                   unelevated
                   icon="content_paste"
-                  :label="tr('Insert reusable', 'Inserir reutilizavel')"
+                  :label="tr('Insert detached', 'Inserir desvinculado')"
                   :style="primaryActionStyle"
-                  :disable="!selectedReusableBlockId || !activeBlocksSectionId"
+                  :disable="!selectedReusableBlockId || !activeBlocksSectionId || activeBlocksSectionIsLinked"
                   @click="insertSelectedReusableBlock"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="link"
+                  :label="tr('Insert linked', 'Inserir vinculado')"
+                  :disable="!selectedReusableBlockId || !activeBlocksSectionId || activeBlocksSectionIsLinked"
+                  @click="insertSelectedLinkedReusableBlock"
                 />
               </div>
 
@@ -1888,7 +2034,7 @@
                   icon="auto_fix_high"
                   :label="tr('Apply preset', 'Aplicar preset')"
                   :style="primaryActionStyle"
-                  :disable="selectedAuthoredBlockPresetId === 'custom' || !activeBlocksSelectedBlockRecord"
+                  :disable="selectedAuthoredBlockPresetId === 'custom' || !activeBlocksSelectedBlockRecord || activeBlocksSelectionReadOnly"
                   @click="applySelectedCmsPresetToBlock"
                 />
               </div>
@@ -1900,7 +2046,15 @@
                 </div>
 
                 <div v-if="settings.reusableBlocks.length === 0" class="cms-block-item__empty">
-                  {{ tr('No reusable blocks saved yet.', 'Nenhum bloco reutilizavel salvo ainda.') }}
+                  <strong>{{ tr('No reusable blocks saved yet.', 'Nenhum bloco reutilizavel salvo ainda.') }}</strong>
+                  <small>
+                    {{
+                      tr(
+                        'Select one authored block and use "Save selection" to build your first reusable library item.',
+                        'Selecione um bloco authored e use "Salvar selecao" para criar o primeiro item reutilizavel da biblioteca.'
+                      )
+                    }}
+                  </small>
                 </div>
 
                 <div
@@ -1942,7 +2096,15 @@
                 </div>
 
                 <div v-if="settings.authoredBlockPresets.length === 0" class="cms-block-item__empty">
-                  {{ tr('No authored presets saved yet.', 'Nenhum preset authored salvo ainda.') }}
+                  <strong>{{ tr('No authored presets saved yet.', 'Nenhum preset authored salvo ainda.') }}</strong>
+                  <small>
+                    {{
+                      tr(
+                        'Start from a selected block or reusable item, then save it as a preset for repeatable authoring.',
+                        'Comece por um bloco selecionado ou item reutilizavel e depois salve como preset para autoria repetivel.'
+                      )
+                    }}
+                  </small>
                 </div>
 
                 <div
@@ -1978,7 +2140,22 @@
                 </div>
               </div>
 
-              <div class="cms-blocks-list">
+              <div v-if="activeBlocksSections.length === 0" class="cms-block-item__empty cms-block-item__empty--card">
+                <strong>{{ tr('This page does not have sections yet.', 'Esta pagina ainda nao possui secoes.') }}</strong>
+                <small>
+                  {{
+                    tr(
+                      'Open Pages and apply the content-model scaffold or add your first section before editing blocks.',
+                      'Abra Paginas e aplique o scaffold do modelo de conteudo ou adicione a primeira secao antes de editar blocos.'
+                    )
+                  }}
+                </small>
+                <div class="cms-empty-state__actions">
+                  <q-btn flat dense no-caps icon="web_asset" :label="tr('Open pages', 'Abrir paginas')" @click="openPagesModule" />
+                </div>
+              </div>
+
+              <div v-else class="cms-blocks-list">
                 <div
                   v-for="section in activeBlocksSections"
                   :key="section.id"
@@ -1990,10 +2167,41 @@
                   <div class="cms-block-item__meta">
                     <strong>{{ section.label }}</strong>
                     <small>{{ tr(`${section.blocks.length} blocks`, `${section.blocks.length} blocos`) }}</small>
+                    <small v-if="section.reusableMode === 'linked'">
+                      {{ tr('Linked section - detach in Pages to edit blocks.', 'Secao vinculada - desvincule em Paginas para editar blocos.') }}
+                    </small>
                   </div>
 
                   <div v-if="section.blocks.length === 0" class="cms-block-item__empty">
-                    {{ tr('No blocks in this section yet.', 'Ainda nao existem blocos nesta secao.') }}
+                    <strong>{{ tr('No blocks in this section yet.', 'Ainda nao existem blocos nesta secao.') }}</strong>
+                    <small>
+                      {{
+                        tr(
+                          'Focus this section, choose a compatible palette block and add it, or insert one reusable block.',
+                          'Foque esta secao, escolha um bloco compativel da paleta e adicione-o, ou insira um bloco reutilizavel.'
+                        )
+                      }}
+                    </small>
+                    <div class="cms-empty-state__actions">
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="ads_click"
+                        :label="tr('Focus section', 'Focar secao')"
+                        @click="setActiveBlocksSelection(section.id)"
+                      />
+                      <q-btn
+                        v-if="activeBlocksSectionId === section.id"
+                        flat
+                        dense
+                        no-caps
+                        icon="add"
+                        :label="tr('Add first block', 'Adicionar primeiro bloco')"
+                        :disable="!canAddPaletteBlockToActiveSection"
+                        @click="addCmsBuilderBlockFromPalette"
+                      />
+                    </div>
                   </div>
 
                   <div
@@ -2014,6 +2222,18 @@
                       <q-chip dense square :style="getCmsPageSectionStyle(block.enabled)">
                         {{ resolveCmsBlockDisplayName(block.type) }}
                       </q-chip>
+                      <q-chip
+                        v-if="block.reusableMode"
+                        dense
+                        square
+                        :style="statusChipStyle"
+                      >
+                        {{
+                          block.reusableMode === 'linked'
+                            ? `${tr('Linked', 'Vinculado')} · ${getCmsReusableSourceLabel(block.reusableSourceId, 'block')}`
+                            : `${tr('Detached', 'Desvinculado')} · ${getCmsReusableSourceLabel(block.reusableSourceId, 'block')}`
+                        }}
+                      </q-chip>
                       <small>{{ block.id }}</small>
                       <small>{{ block.type }}</small>
                     </div>
@@ -2029,14 +2249,33 @@
                       <q-toggle
                         :model-value="block.enabled"
                         :label="tr('Enabled', 'Ativado')"
+                        :disable="activeBlocksSectionIsLinked"
                         @update:model-value="updateCmsBuilderBlockEnabled(block, $event)"
+                      />
+                      <q-btn
+                        v-if="block.reusableMode === 'linked' && !activeBlocksSectionIsLinked"
+                        flat
+                        dense
+                        no-caps
+                        icon="link_off"
+                        :label="tr('Detach', 'Desvincular')"
+                        @click="detachCmsBuilderBlockByRecord(block)"
+                      />
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="content_copy"
+                        :aria-label="tr('Duplicate block', 'Duplicar bloco')"
+                        :disable="activeBlocksSectionIsLinked || block.reusableMode === 'linked'"
+                        @click="duplicateCmsBuilderBlockByRecord(block)"
                       />
                       <q-btn
                         flat
                         round
                         dense
                         icon="arrow_upward"
-                        :disable="block.blockIndex === 0"
+                        :disable="activeBlocksSectionIsLinked || block.blockIndex === 0"
                         @click="moveCmsBuilderBlockByRecord(block, 'up')"
                       />
                       <q-btn
@@ -2044,7 +2283,7 @@
                         round
                         dense
                         icon="arrow_downward"
-                        :disable="block.blockIndex >= section.blocks.length - 1"
+                        :disable="activeBlocksSectionIsLinked || block.blockIndex >= section.blocks.length - 1"
                         @click="moveCmsBuilderBlockByRecord(block, 'down')"
                       />
                       <q-btn
@@ -2053,6 +2292,7 @@
                         dense
                         icon="delete"
                         :style="dangerActionStyle"
+                        :disable="activeBlocksSectionIsLinked"
                         @click="removeCmsBuilderBlockByRecord(block)"
                       />
                     </div>
@@ -2068,24 +2308,83 @@
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-blocks__preview">
+              <div
+                class="cms-preview-toolbar"
+                :data-cms-preview-source="cmsPreviewSource"
+                :data-cms-preview-viewport="cmsPreviewViewport"
+              >
+                <q-select
+                  v-model="cmsPreviewSource"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsPreviewSourceOptions"
+                  :label="tr('Preview source', 'Origem do preview')"
+                />
+                <q-select
+                  v-model="cmsPreviewLocale"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsLocaleOptions"
+                  :label="tr('Preview locale', 'Locale do preview')"
+                />
+                <q-select
+                  v-model="cmsPreviewViewport"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsPreviewViewportOptions"
+                  :label="tr('Preview viewport', 'Viewport do preview')"
+                />
+                <div class="cms-preview-toolbar__chips">
+                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewSource }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewViewport }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewLocale }}</q-chip>
+                  <q-chip v-if="cmsPreviewPublishedReleaseLabel" dense square :style="statusChipStyle">
+                    {{ cmsPreviewPublishedReleaseLabel }}
+                  </q-chip>
+                </div>
+              </div>
+
               <div class="cms-blocks-summary-grid">
                 <div class="cms-blocks-summary-card">
                   <span>{{ tr('Total pages', 'Total de paginas') }}</span>
-                  <strong>{{ settings.pages.length }}</strong>
+                  <strong>{{ cmsPreviewPages.length }}</strong>
                 </div>
                 <div class="cms-blocks-summary-card">
                   <span>{{ tr('Published pages', 'Paginas publicadas') }}</span>
-                  <strong>{{ cmsPublishedPagesCount }}</strong>
+                  <strong>{{ cmsPreviewPublishedPagesCount }}</strong>
                 </div>
                 <div class="cms-blocks-summary-card">
                   <span>{{ tr('Enabled sections', 'Secoes ativadas') }}</span>
-                  <strong>{{ cmsEnabledSectionsCount }}</strong>
+                  <strong>{{ cmsPreviewEnabledSectionsCount }}</strong>
                 </div>
                 <div class="cms-blocks-summary-card">
                   <span>{{ tr('Enabled blocks', 'Blocos ativados') }}</span>
-                  <strong>{{ cmsEnabledBlocksCount }}</strong>
+                  <strong>{{ cmsPreviewEnabledBlocksCount }}</strong>
                 </div>
               </div>
+
+              <q-banner v-if="cmsPreviewEmptyMessage" rounded class="cms-banner" :style="bannerStyle">
+                {{ cmsPreviewEmptyMessage }}
+              </q-banner>
+              <q-banner
+                v-else-if="activeBlocksPreviewMissingFromPublished"
+                rounded
+                class="cms-banner"
+                :style="bannerStyle"
+              >
+                {{
+                  tr(
+                    'The selected draft page does not exist in the published snapshot.',
+                    'A pagina selecionada no rascunho nao existe no snapshot publicado.'
+                  )
+                }}
+              </q-banner>
 
               <div v-if="activeBlocksContentDiagnostics.length > 0" class="cms-diagnostics-list">
                 <div class="cms-diagnostics-list__header">
@@ -2135,6 +2434,18 @@
                   </small>
                   <small v-else>{{ tr('No block selected', 'Nenhum bloco selecionado') }}</small>
                 </div>
+                <q-banner
+                  v-if="activeBlocksSelectionReadOnly"
+                  rounded
+                  class="cms-banner"
+                  :style="bannerStyle"
+                >
+                  {{
+                    activeBlocksSectionIsLinked
+                      ? tr('This section is linked to the reusable library. Detach the section in Pages before editing its blocks.', 'Esta secao esta vinculada a biblioteca reutilizavel. Desvincule a secao em Paginas antes de editar seus blocos.')
+                      : tr('This block is linked to the reusable library. Detach it before editing props.', 'Este bloco esta vinculado a biblioteca reutilizavel. Desvincule-o antes de editar props.')
+                  }}
+                </q-banner>
                 <div
                   v-if="activeBlocksSelectedBlock && activeBlocksFieldDefinitions.length > 0"
                   class="cms-blocks-fields"
@@ -2148,6 +2459,7 @@
                       v-if="field.type === 'toggle'"
                       :model-value="Boolean(getActiveBlocksFieldModelValue(field))"
                       :label="field.label"
+                      :disable="activeBlocksSelectionReadOnly"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
                     <q-select
@@ -2159,6 +2471,7 @@
                       emit-value
                       map-options
                       :label="field.label"
+                      :disable="activeBlocksSelectionReadOnly"
                       :options="getActiveBlocksMediaFieldOptions(field)"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
@@ -2170,6 +2483,7 @@
                       emit-value
                       map-options
                       :label="field.label"
+                      :disable="activeBlocksSelectionReadOnly"
                       :options="field.options ?? []"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
@@ -2183,6 +2497,7 @@
                       :rows="field.rows ?? 3"
                       :label="field.label"
                       :placeholder="field.placeholder"
+                      :disable="activeBlocksSelectionReadOnly"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
                     <q-input
@@ -2193,6 +2508,7 @@
                       type="number"
                       :label="field.label"
                       :placeholder="field.placeholder"
+                      :disable="activeBlocksSelectionReadOnly"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
                     <div v-else-if="field.type === 'json'" class="cms-blocks-field__json">
@@ -2205,6 +2521,7 @@
                         :rows="field.rows ?? 6"
                         :label="field.label"
                         :placeholder="field.placeholder"
+                        :disable="activeBlocksSelectionReadOnly"
                         @update:model-value="updateActiveBlocksJsonFieldDraft(field, $event)"
                       />
                       <q-btn
@@ -2213,6 +2530,7 @@
                         no-caps
                         icon="save"
                         :label="tr('Apply field JSON', 'Aplicar JSON do campo')"
+                        :disable="activeBlocksSelectionReadOnly"
                         @click="applyActiveBlocksJsonFieldValue(field)"
                       />
                     </div>
@@ -2223,6 +2541,7 @@
                       dense
                       :label="field.label"
                       :placeholder="field.placeholder"
+                      :disable="activeBlocksSelectionReadOnly"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
                     <small v-if="field.help">{{ field.help }}</small>
@@ -2235,7 +2554,7 @@
                   type="textarea"
                   autogrow
                   :label="tr('Block props JSON', 'JSON de props do bloco')"
-                  :disable="!activeBlocksSelectedBlock"
+                  :disable="!activeBlocksSelectedBlock || activeBlocksSelectionReadOnly"
                 />
                 <div class="cms-blocks-props__actions">
                   <q-btn
@@ -2244,7 +2563,7 @@
                     no-caps
                     icon="format_align_left"
                     :label="tr('Format JSON', 'Formatar JSON')"
-                    :disable="!activeBlocksSelectedBlock"
+                    :disable="!activeBlocksSelectedBlock || activeBlocksSelectionReadOnly"
                     @click="formatSelectedBlockPropsDraft"
                   />
                   <q-btn
@@ -2253,19 +2572,25 @@
                     icon="save"
                     :label="tr('Apply props', 'Aplicar props')"
                     :style="primaryActionStyle"
-                    :disable="!activeBlocksSelectedBlock"
+                    :disable="!activeBlocksSelectedBlock || activeBlocksSelectionReadOnly"
                     @click="applySelectedBlockPropsDraft"
                   />
                 </div>
               </div>
 
               <div class="cms-preview-card cms-preview-card--content">
-                <CmsRenderer
-                  v-if="activeBlocksSchema"
-                  :page="activeBlocksSchema"
-                  :registry="landingRegistry"
-                  :render-context="activeBlocksRenderContext"
-                />
+                <div
+                  v-if="activeBlocksSchema && !cmsPreviewEmptyMessage && !activeBlocksPreviewMissingFromPublished"
+                  class="cms-runtime-preview"
+                >
+                  <div class="cms-runtime-preview__frame" :data-preview-viewport="cmsPreviewViewport">
+                    <CmsRenderer
+                      :page="activeBlocksSchema"
+                      :registry="landingRegistry"
+                      :render-context="cmsPreviewRenderContext"
+                    />
+                  </div>
+                </div>
                 <p v-else>{{ tr('No page selected for preview.', 'Nenhuma pagina selecionada para preview.') }}</p>
               </div>
             </div>
@@ -2303,8 +2628,21 @@
                 <q-input v-model="mediaAssetDraft.name" outlined dense :label="tr('Asset name', 'Nome do asset')" />
                 <q-input v-model="mediaAssetDraft.alt" outlined dense :label="tr('Asset alt text', 'Texto alternativo do asset')" />
                 <q-input v-model="mediaAssetDraft.url" outlined dense :label="tr('Asset URL', 'URL do asset')" />
+                <q-input v-model="mediaAssetDraft.focalPointX" outlined dense type="number" min="0" max="100" :label="tr('Focal point X (0-100)', 'Ponto focal X (0-100)')" />
+                <q-input v-model="mediaAssetDraft.focalPointY" outlined dense type="number" min="0" max="100" :label="tr('Focal point Y (0-100)', 'Ponto focal Y (0-100)')" />
                 <q-input v-model="mediaAssetDraft.tags" outlined dense :label="tr('Tags (comma separated)', 'Tags (separadas por virgula)')" />
                 <q-input v-model="mediaAssetDraft.usage" outlined dense :label="tr('Usage tags (comma separated)', 'Tags de uso (separadas por virgula)')" />
+                <q-select
+                  v-model="mediaAssetDraft.replaceTargetAssetId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  clearable
+                  :options="cmsMediaReplacementOptions"
+                  :label="tr('Replace target asset', 'Asset alvo da substituicao')"
+                  :hint="tr('Optional. Use with Replace references to swap runtime bindings safely.', 'Opcional. Use com Substituir referencias para trocar vinculos de runtime com seguranca.')"
+                />
                 <q-input v-model="mediaAssetDraft.description" outlined dense type="textarea" autogrow :label="tr('Asset description', 'Descricao do asset')" />
               </div>
 
@@ -2312,6 +2650,14 @@
                 <q-btn flat no-caps icon="add_photo_alternate" :label="tr('New asset', 'Novo asset')" @click="createNewMediaAssetDraft" />
                 <q-btn no-caps unelevated icon="save" :label="tr('Save asset', 'Salvar asset')" :style="primaryActionStyle" @click="saveMediaAssetDraft" />
                 <q-btn flat no-caps icon="delete" :label="tr('Delete asset', 'Excluir asset')" :disable="!selectedMediaAssetId" :style="dangerActionStyle" @click="removeSelectedMediaAsset" />
+                <q-btn
+                  flat
+                  no-caps
+                  icon="swap_horiz"
+                  :label="tr('Replace references', 'Substituir referencias')"
+                  :disable="!selectedMediaAssetId || !mediaAssetDraft.replaceTargetAssetId"
+                  @click="replaceSelectedMediaAssetReferences"
+                />
               </div>
 
               <div class="cms-media__actions cms-media__actions--secondary">
@@ -2381,6 +2727,7 @@
                 </div>
                 <div class="cms-media-preview-item__tags">
                   <q-chip dense square :style="statusChipStyle">{{ binding.assetName }}</q-chip>
+                  <q-chip v-if="binding.assetId" dense square :style="previewChipStyle">{{ binding.assetId }}</q-chip>
                 </div>
                 <code class="cms-media-preview-item__url">{{ binding.url || tr('No URL configured', 'Nenhuma URL configurada') }}</code>
               </article>
@@ -2406,6 +2753,15 @@
                   <q-chip dense square :style="statusChipStyle">{{ getCmsMediaKindLabel(asset.kind) }}</q-chip>
                   <q-chip dense square :style="previewChipStyle">
                     {{ getCmsMediaUsageCount(asset.id) }} {{ tr('refs', 'refs') }}
+                  </q-chip>
+                  <q-chip dense square :style="previewChipStyle">
+                    {{ getCmsMediaUsageSummaryLabel(asset.id) }}
+                  </q-chip>
+                  <q-chip v-if="asset.focalPoint" dense square :style="previewChipStyle">
+                    FP {{ asset.focalPoint.x }}, {{ asset.focalPoint.y }}
+                  </q-chip>
+                  <q-chip v-if="asset.replaceTargetAssetId" dense square :style="previewChipStyle">
+                    {{ tr('replaces to', 'substitui para') }} {{ asset.replaceTargetAssetId }}
                   </q-chip>
                   <q-chip
                     v-for="tag in asset.tags"
@@ -2831,15 +3187,22 @@ import {
 import {
   cloneCmsReusableBlockIntoPageBlock,
   createCmsReusableBlockFromBlock,
+  detachCmsPageBlockFromReusable,
+  resolveCmsReusableBlockReference,
 } from '../src/modules/cms/white-label/reusable-blocks'
 import {
   cloneCmsReusableSectionIntoPageSection,
   createCmsReusableSectionFromSection,
+  detachCmsPageSectionFromReusable,
+  resolveCmsReusableSectionReference,
 } from '../src/modules/cms/white-label/reusable-sections'
 import {
+  collectCmsBrandingMediaBindingReferences,
   collectCmsMediaBindingReferences,
   collectCmsMediaDiagnostics,
+  collectCmsMediaUsageSummary,
   createCmsMediaAsset,
+  replaceCmsMediaAssetReferences,
   type CmsMediaDiagnostic,
 } from '../src/modules/cms/white-label/media-library'
 import {
@@ -2848,6 +3211,14 @@ import {
   resolveCmsPageTemplateId,
   type CmsPageTemplateId,
 } from '../src/modules/cms/white-label/page-templates'
+import { resolveCmsPreviewSnapshot } from '../src/modules/cms/white-label/preview'
+import {
+  createCmsSnapshotHistoryState,
+  recordCmsSnapshot,
+  redoCmsSnapshot,
+  resetCmsSnapshotHistoryState,
+  undoCmsSnapshot,
+} from '../src/modules/cms/white-label/snapshot-history'
 import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms'
 import {
   applyCmsReleaseSnapshot,
@@ -2878,14 +3249,18 @@ import type {
   CmsReleaseEnvironment,
   CmsReleaseValidationIssue,
   CmsMediaAssetKind,
+  CmsMediaAssetFocalPointSettings,
   CmsMediaAssetSettings,
   CmsPageBlockSettings,
   CmsPageSectionSettings,
   CmsPageSettings,
+  CmsPreviewSource,
+  CmsPreviewViewport,
   CmsReleaseSettings,
   CmsReleaseStatus,
   CmsLocale,
   CmsReusableBlockSettings,
+  CmsReusableReferenceMode,
   CmsReusableSectionSettings,
   CmsSectionPresetId,
   CmsTenantProfile,
@@ -2957,6 +3332,8 @@ interface CmsSectionBlockRecord {
   type: string
   presetId?: CmsBlockPresetId
   enabled: boolean
+  reusableMode?: CmsReusableReferenceMode
+  reusableSourceId?: string
   sectionId: string
   sectionLabel: string
   pageId: string
@@ -3066,6 +3443,9 @@ interface CmsMediaAssetDraft {
   kind: CmsMediaAssetKind
   url: string
   alt: string
+  focalPointX: string
+  focalPointY: string
+  replaceTargetAssetId: string
   tags: string
   usage: string
 }
@@ -3076,12 +3456,15 @@ interface CmsBrandingMediaBindingPreview {
   description: string
   url: string
   assetName: string
+  assetId?: string
 }
 
 interface CmsBlocksSectionRow {
   id: string
   label: string
   enabled: boolean
+  reusableMode?: CmsReusableReferenceMode
+  reusableSourceId?: string
   sectionIndex: number
   blocks: CmsSectionBlockRecord[]
 }
@@ -3181,6 +3564,16 @@ function cloneSerializableValue<T>(value: T): T {
 }
 
 /**
+ * Compares two settings snapshots with stable serialization for authoring history.
+ */
+function areCmsSettingsSnapshotsEqual(
+  left: CmsWhiteLabelSettings,
+  right: CmsWhiteLabelSettings
+): boolean {
+  return JSON.stringify(left) === JSON.stringify(right)
+}
+
+/**
  * Resets the media asset draft to a new or existing asset payload.
  */
 function setMediaAssetDraft(asset: CmsMediaAssetSettings | null = null): void {
@@ -3191,6 +3584,9 @@ function setMediaAssetDraft(asset: CmsMediaAssetSettings | null = null): void {
       kind: asset.kind,
       url: asset.url,
       alt: asset.alt,
+      focalPointX: asset.focalPoint ? String(asset.focalPoint.x) : '',
+      focalPointY: asset.focalPoint ? String(asset.focalPoint.y) : '',
+      replaceTargetAssetId: asset.replaceTargetAssetId ?? '',
       tags: asset.tags.join(', '),
       usage: asset.usage.join(', '),
     }
@@ -3200,6 +3596,9 @@ function setMediaAssetDraft(asset: CmsMediaAssetSettings | null = null): void {
       kind: 'image',
       url: '',
       alt: '',
+      focalPointX: '',
+      focalPointY: '',
+      replaceTargetAssetId: '',
       tags: '',
       usage: '',
     }
@@ -3213,6 +3612,28 @@ function parseMediaDraftList(value: string): string[] {
     .split(',')
     .map(entry => entry.trim())
     .filter(Boolean)
+}
+
+/**
+ * Parses focal-point authoring inputs into persisted metadata.
+ */
+function parseMediaDraftFocalPoint(assetDraft: CmsMediaAssetDraft): CmsMediaAssetFocalPointSettings | null {
+  const normalizedX = assetDraft.focalPointX.trim()
+  const normalizedY = assetDraft.focalPointY.trim()
+  if (!normalizedX && !normalizedY) {
+    return null
+  }
+
+  const x = Number(normalizedX)
+  const y = Number(normalizedY)
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    return null
+  }
+
+  return {
+    x,
+    y,
+  }
 }
 
 /**
@@ -3270,6 +3691,16 @@ function getActiveTenantProfileSnapshot(): CmsTenantProfile {
 const settings = ref<CmsWhiteLabelSettings>(
   cloneWhiteLabelSettings(getActiveTenantProfileSnapshot().settings)
 )
+const cmsAuthoringHistoryLimit = 40
+const isApplyingCmsAuthoringHistory = ref(false)
+const cmsAuthoringHistory = ref(
+  createCmsSnapshotHistoryState(
+    cloneWhiteLabelSettings(settings.value),
+    cmsAuthoringHistoryLimit
+  )
+)
+const canUndoCmsAuthoringHistory = computed(() => cmsAuthoringHistory.value.past.length > 0)
+const canRedoCmsAuthoringHistory = computed(() => cmsAuthoringHistory.value.future.length > 0)
 
 const cmsUiText = computed<CmsUiText>(() => {
   if (resolveCmsLocale(settings.value.content.locale) === 'pt-BR') {
@@ -3506,6 +3937,9 @@ const mediaAssetDraft = ref<CmsMediaAssetDraft>({
   kind: 'image',
   url: '',
   alt: '',
+  focalPointX: '',
+  focalPointY: '',
+  replaceTargetAssetId: '',
   tags: '',
   usage: '',
 })
@@ -3563,6 +3997,18 @@ const cmsContentModelPresetLimitOptions = computed<CmsSectionPresetOption[]>(() 
   return cmsContentModelPresetOptions.value.filter(option => allowedPresetIds.has(option.value))
 })
 const cmsLocaleOptions = CMS_LOCALE_OPTIONS
+const cmsPreviewSource = ref<CmsPreviewSource>('draft')
+const cmsPreviewViewport = ref<CmsPreviewViewport>('desktop')
+const cmsPreviewLocale = ref<CmsLocale>(resolveCmsLocale(settings.value.content.locale))
+const cmsPreviewSourceOptions = computed(() => ([
+  { label: tr('Draft', 'Rascunho'), value: 'draft' },
+  { label: tr('Published', 'Publicado'), value: 'published' },
+]))
+const cmsPreviewViewportOptions = computed(() => ([
+  { label: tr('Desktop', 'Desktop'), value: 'desktop' },
+  { label: tr('Tablet', 'Tablet'), value: 'tablet' },
+  { label: tr('Mobile', 'Mobile'), value: 'mobile' },
+]))
 const cmsMediaAssetKindOptions = computed(() => ([
   { label: tr('Image', 'Imagem'), value: 'image' },
   { label: tr('Video', 'Video'), value: 'video' },
@@ -6706,7 +7152,8 @@ function createDefaultSectionBlock(
   occupiedIds: Set<string>,
   index = 1,
   enabled = true,
-  presetId?: CmsSectionPresetId
+  presetId?: CmsSectionPresetId,
+  authoredPresets: CmsAuthoredBlockPresetSettings[] = settings.value.authoredBlockPresets
 ): CmsPageBlockSettings {
   const blockId = createUniquePageBlockId(occupiedIds, sectionId, undefined, index)
   const blockPresetId = getDefaultCmsBlockPresetIdForSectionPreset(presetId ?? 'custom')
@@ -6715,7 +7162,7 @@ function createDefaultSectionBlock(
       presetId: blockPresetId,
       blockId,
       enabled,
-      authoredPresets: settings.value.authoredBlockPresets,
+      authoredPresets,
     })
   }
 
@@ -6732,15 +7179,42 @@ function createDefaultSectionBlock(
  * Ensures page sections always contain at least one editable block.
  */
 function ensurePageSectionBlocks(page: CmsPageSettings): CmsPageSettings {
+  return ensurePageSectionBlocksWithContext(page, {
+    authoredContentModels: settings.value.authoredContentModels,
+    authoredBlockPresets: settings.value.authoredBlockPresets,
+    reusableSections: settings.value.reusableSections,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
+}
+
+/**
+ * Ensures page sections always contain blocks while resolving authored presets/models from the supplied source.
+ */
+function ensurePageSectionBlocksWithContext(
+  page: CmsPageSettings,
+  context: {
+    authoredContentModels: CmsAuthoredContentModelSettings[]
+    authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
+    reusableSections: CmsReusableSectionSettings[]
+    reusableBlocks: CmsReusableBlockSettings[]
+  }
+): CmsPageSettings {
   const occupiedBlockIds = new Set<string>()
   const normalizedSections = page.sections.map(section => {
-    const presetId = section.presetId ?? 'custom'
-    const normalizedBlocks = Array.isArray(section.blocks) && section.blocks.length > 0
-      ? section.blocks.map((block, index) => ({
+    const resolvedSection = resolveCmsReusableSectionReference({
+      section,
+      reusableSections: context.reusableSections,
+      reusableBlocks: context.reusableBlocks,
+    })
+    const presetId = resolvedSection.presetId ?? 'custom'
+    const normalizedBlocks = Array.isArray(resolvedSection.blocks) && resolvedSection.blocks.length > 0
+      ? resolvedSection.blocks.map((block, index) => ({
         id: createUniquePageBlockId(occupiedBlockIds, section.id, String(block.id ?? '').trim(), index + 1),
         type: String(block.type ?? '').trim() || resolveDefaultCmsBlockTypeForSection(section.id, presetId),
         presetId: resolveCmsBlockPresetId(block.presetId),
         enabled: typeof block.enabled === 'boolean' ? block.enabled : section.enabled,
+        reusableMode: block.reusableMode,
+        reusableSourceId: block.reusableSourceId,
         props: block.props && typeof block.props === 'object'
           ? cloneSerializableValue(block.props)
           : {},
@@ -6749,7 +7223,13 @@ function ensurePageSectionBlocks(page: CmsPageSettings): CmsPageSettings {
       : null
 
     return {
-      section,
+      section: {
+        ...section,
+        label: resolvedSection.label,
+        presetId,
+        localization: resolvedSection.localization,
+        blocks: resolvedSection.blocks,
+      },
       presetId,
       normalizedBlocks,
     }
@@ -6759,13 +7239,13 @@ function ensurePageSectionBlocks(page: CmsPageSettings): CmsPageSettings {
     ...page,
     contentModelId: resolveCmsContentModelId(
       page.contentModelId,
-      settings.value.authoredContentModels
+      context.authoredContentModels
     ),
     sections: normalizedSections.map(({ section, presetId, normalizedBlocks }) => {
       return {
         ...section,
         presetId,
-        blocks: normalizedBlocks ?? [createDefaultSectionBlock(section.id, occupiedBlockIds, 1, section.enabled, presetId)],
+        blocks: normalizedBlocks ?? [createDefaultSectionBlock(section.id, occupiedBlockIds, 1, section.enabled, presetId, context.authoredBlockPresets)],
       }
     }),
   }
@@ -6774,8 +7254,21 @@ function ensurePageSectionBlocks(page: CmsPageSettings): CmsPageSettings {
 /**
  * Converts editable page settings into schema format consumed by CMS builder helpers.
  */
-function toCmsPageSchema(page: CmsPageSettings): CmsPageSchema {
-  const normalizedPage = ensurePageSectionBlocks(page)
+function toCmsPageSchema(
+  page: CmsPageSettings,
+  context: {
+    authoredContentModels: CmsAuthoredContentModelSettings[]
+    authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
+    reusableSections: CmsReusableSectionSettings[]
+    reusableBlocks: CmsReusableBlockSettings[]
+  } = {
+    authoredContentModels: settings.value.authoredContentModels,
+    authoredBlockPresets: settings.value.authoredBlockPresets,
+    reusableSections: settings.value.reusableSections,
+    reusableBlocks: settings.value.reusableBlocks,
+  }
+): CmsPageSchema {
+  const normalizedPage = ensurePageSectionBlocksWithContext(page, context)
   return {
     version: CMS_SCHEMA_VERSION,
     id: normalizedPage.id,
@@ -6789,6 +7282,8 @@ function toCmsPageSchema(page: CmsPageSettings): CmsPageSchema {
         label: section.label,
         enabled: section.enabled,
         presetId: section.presetId,
+        reusableMode: section.reusableMode,
+        reusableSourceId: section.reusableSourceId,
       },
       blocks: section.blocks.map(block => ({
         id: block.id,
@@ -6797,6 +7292,8 @@ function toCmsPageSchema(page: CmsPageSettings): CmsPageSchema {
         settings: {
           enabled: block.enabled,
           presetId: resolveCmsBlockPresetId(block.presetId),
+          reusableMode: block.reusableMode,
+          reusableSourceId: block.reusableSourceId,
         },
         localization: block.localization?.props
           ? { props: cloneSerializableValue(block.localization.props) }
@@ -6825,6 +7322,9 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
     const settingsPresetId = section.settings && typeof section.settings.presetId === 'string'
       ? section.settings.presetId
       : undefined
+    const sectionSettings = section.settings && typeof section.settings === 'object'
+      ? section.settings as Record<string, unknown>
+      : undefined
     const presetId = resolveCmsSectionPresetId(
       String(settingsPresetId ?? previousSection?.presetId ?? '').trim() || 'custom'
     )
@@ -6847,6 +7347,10 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
           enabled: typeof blockSettings?.enabled === 'boolean'
             ? blockSettings.enabled
             : previousBlock?.enabled ?? previousSection?.enabled ?? true,
+          reusableMode: typeof blockSettings?.reusableMode === 'string'
+            ? blockSettings.reusableMode as CmsReusableReferenceMode
+            : previousBlock?.reusableMode,
+          reusableSourceId: String(blockSettings?.reusableSourceId ?? previousBlock?.reusableSourceId ?? '').trim() || undefined,
           props: block.props && typeof block.props === 'object'
             ? cloneSerializableValue(block.props)
             : {},
@@ -6860,6 +7364,7 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
     return {
       normalizedSectionId,
       previousSection,
+      sectionSettings,
       settingsLabel,
       settingsEnabled,
       presetId,
@@ -6881,6 +7386,10 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
         enabled: typeof section.settingsEnabled === 'boolean'
           ? section.settingsEnabled
           : section.previousSection?.enabled ?? true,
+        reusableMode: typeof section.sectionSettings?.reusableMode === 'string'
+          ? section.sectionSettings.reusableMode as CmsReusableReferenceMode
+          : section.previousSection?.reusableMode,
+        reusableSourceId: String(section.sectionSettings?.reusableSourceId ?? section.previousSection?.reusableSourceId ?? '').trim() || undefined,
         localization: section.previousSection?.localization,
         blocks: section.normalizedBlocks ?? [
           createDefaultSectionBlock(
@@ -6923,6 +7432,10 @@ const activeBlocksSection = computed<CmsPageSectionSettings | null>(() => {
   return page.sections.find(section => section.id === activeBlocksSectionId.value) ?? null
 })
 
+const activeBlocksSectionIsLinked = computed(() => {
+  return isCmsPageSectionLinked(activeBlocksSection.value)
+})
+
 const activeBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
   const page = activeBlocksPage.value
   if (!page) {
@@ -6932,20 +7445,24 @@ const activeBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
   return page.sections.map((section, sectionIndex) => ({
     id: section.id,
     label: section.label,
-      enabled: section.enabled,
-      sectionIndex,
-      blocks: section.blocks.map((block, blockIndex) => ({
-        id: block.id,
-        type: block.type,
-        presetId: block.presetId,
-        enabled: block.enabled,
-        sectionId: section.id,
-        sectionLabel: getCmsSectionLabelValue(section),
-        pageId: page.id,
-        pageTitle: getCmsPageTitleValue(page),
-        pagePath: page.path,
-        pageStatus: page.status,
-        pageIndex: activeBlocksPageIndex.value,
+    enabled: section.enabled,
+    reusableMode: section.reusableMode,
+    reusableSourceId: section.reusableSourceId,
+    sectionIndex,
+    blocks: section.blocks.map((block, blockIndex) => ({
+      id: block.id,
+      type: block.type,
+      presetId: block.presetId,
+      enabled: block.enabled,
+      reusableMode: block.reusableMode,
+      reusableSourceId: block.reusableSourceId,
+      sectionId: section.id,
+      sectionLabel: getCmsSectionLabelValue(section),
+      pageId: page.id,
+      pageTitle: getCmsPageTitleValue(page),
+      pagePath: page.path,
+      pageStatus: page.status,
+      pageIndex: activeBlocksPageIndex.value,
       sectionIndex,
       blockIndex,
     })),
@@ -7039,9 +7556,30 @@ const activeBlocksSectionLimitReached = computed(() => {
   return activeBlocksSectionEnabledBlockCount.value >= limits.maxBlocks
 })
 
+const activeBlocksSectionDisabledBlockCount = computed(() => {
+  const activeSection = activeBlocksSection.value
+  if (!activeSection) {
+    return 0
+  }
+
+  return activeSection.blocks.filter(block => !block.enabled).length
+})
+
+const canToggleActiveSectionBlocks = computed(() => {
+  return Boolean(activeBlocksSection.value) && !activeBlocksSectionIsLinked.value
+})
+
+const canRemoveDisabledBlocksFromActiveSection = computed(() => {
+  return canToggleActiveSectionBlocks.value && activeBlocksSectionDisabledBlockCount.value > 0
+})
+
 const canAddPaletteBlockToActiveSection = computed(() => {
   const activeSection = activeBlocksSection.value
   if (!activeSection || !selectedPaletteBlockType.value) {
+    return false
+  }
+
+  if (activeBlocksSectionIsLinked.value) {
     return false
   }
 
@@ -7121,9 +7659,76 @@ const cmsPresetStarterSectionOptions = computed<CmsSectionPresetOption[]>(() => 
   return listCmsSectionPresetOptions(settings.value.content.locale, 'blank-page')
 })
 
+const cmsPreviewSnapshot = computed(() => resolveCmsPreviewSnapshot(settings.value, {
+  source: cmsPreviewSource.value,
+  localeInput: cmsPreviewLocale.value,
+  selectedReleaseId: selectedReleaseId.value || null,
+  activeEnvironment: activeReleaseEnvironment.value,
+}))
+
+const cmsPreviewPages = computed<CmsPageSettings[]>(() => {
+  return cmsPreviewSnapshot.value?.pages ?? []
+})
+
+const cmsPreviewAuthoredContentModels = computed<CmsAuthoredContentModelSettings[]>(() => {
+  return cmsPreviewSnapshot.value?.authoredContentModels ?? settings.value.authoredContentModels
+})
+
+const cmsPreviewAuthoredBlockPresets = computed<CmsAuthoredBlockPresetSettings[]>(() => {
+  return cmsPreviewSnapshot.value?.authoredBlockPresets ?? settings.value.authoredBlockPresets
+})
+
+const cmsPreviewMediaAssets = computed<CmsMediaAssetSettings[]>(() => {
+  return cmsPreviewSnapshot.value?.mediaAssets ?? settings.value.mediaAssets
+})
+
+const cmsPreviewPagesForRender = computed<CmsPageSettings[]>(() => {
+  return cmsPreviewPages.value.map(page => ensurePageSectionBlocksWithContext(page, {
+    authoredContentModels: cmsPreviewAuthoredContentModels.value,
+    authoredBlockPresets: cmsPreviewAuthoredBlockPresets.value,
+    reusableSections: cmsPreviewSnapshot.value?.reusableSections ?? settings.value.reusableSections,
+    reusableBlocks: cmsPreviewSnapshot.value?.reusableBlocks ?? settings.value.reusableBlocks,
+  }))
+})
+
+const cmsPreviewPublishedReleaseLabel = computed(() => {
+  if (cmsPreviewSource.value !== 'published' || !cmsPreviewSnapshot.value?.releaseName) {
+    return ''
+  }
+
+  const environment = cmsPreviewSnapshot.value.releaseEnvironment
+  return environment
+    ? `${cmsPreviewSnapshot.value.releaseName} · ${environment}`
+    : cmsPreviewSnapshot.value.releaseName
+})
+
+const cmsPreviewEmptyMessage = computed(() => {
+  if (cmsPreviewSource.value !== 'published') {
+    return ''
+  }
+
+  if (!cmsPreviewSnapshot.value) {
+    return tr(
+      'No published release snapshot is available for preview yet.',
+      'Nenhum snapshot publicado esta disponivel para preview ainda.'
+    )
+  }
+
+  return ''
+})
+
 const activeBlocksSchema = computed<CmsPageSchema | null>(() => {
-  const page = activeBlocksPage.value
-  return page ? toCmsPageSchema(page) : null
+  const page = cmsPreviewPages.value.find(entry => entry.id === activeBlocksPageId.value)
+  if (!page) {
+    return null
+  }
+
+  return toCmsPageSchema(page, {
+    authoredContentModels: cmsPreviewAuthoredContentModels.value,
+    authoredBlockPresets: cmsPreviewAuthoredBlockPresets.value,
+    reusableSections: cmsPreviewSnapshot.value?.reusableSections ?? settings.value.reusableSections,
+    reusableBlocks: cmsPreviewSnapshot.value?.reusableBlocks ?? settings.value.reusableBlocks,
+  })
 })
 
 const cmsSectionBlocks = computed<CmsSectionBlockRecord[]>(() => {
@@ -7149,27 +7754,29 @@ const cmsSectionBlocks = computed<CmsSectionBlockRecord[]>(() => {
   })
 })
 
-const cmsContentValidation = computed(() => validateCmsContentPages({
-  pages: settings.value.pages,
+const cmsPreviewContentValidation = computed(() => validateCmsContentPages({
+  pages: cmsPreviewPages.value,
   registry: landingRegistry,
-  authoredContentModels: settings.value.authoredContentModels,
-  authoredBlockPresets: settings.value.authoredBlockPresets,
+  authoredContentModels: cmsPreviewAuthoredContentModels.value,
+  authoredBlockPresets: cmsPreviewAuthoredBlockPresets.value,
+  reusableSections: cmsPreviewSnapshot.value?.reusableSections ?? settings.value.reusableSections,
+  reusableBlocks: cmsPreviewSnapshot.value?.reusableBlocks ?? settings.value.reusableBlocks,
 }))
 
-const cmsContentDiagnostics = computed<CmsContentValidationIssue[]>(() => {
-  return cmsContentValidation.value.issues
+const cmsPreviewContentDiagnostics = computed<CmsContentValidationIssue[]>(() => {
+  return cmsPreviewContentValidation.value.issues
 })
 
-const cmsPublishedPagesCount = computed(() => {
-  return cmsContentValidation.value.summary.publishedPagesCount
+const cmsPreviewPublishedPagesCount = computed(() => {
+  return cmsPreviewContentValidation.value.summary.publishedPagesCount
 })
 
-const cmsEnabledSectionsCount = computed(() => {
-  return cmsContentValidation.value.summary.enabledSectionsCount
+const cmsPreviewEnabledSectionsCount = computed(() => {
+  return cmsPreviewContentValidation.value.summary.enabledSectionsCount
 })
 
-const cmsEnabledBlocksCount = computed(() => {
-  return cmsContentValidation.value.summary.enabledBlocksCount
+const cmsPreviewEnabledBlocksCount = computed(() => {
+  return cmsPreviewContentValidation.value.summary.enabledBlocksCount
 })
 
 const activeBlocksSelectedBlockRecord = computed(() => {
@@ -7191,40 +7798,72 @@ const activeBlocksSelectedBlock = computed<CmsPageBlockSettings | null>(() => {
   return section?.blocks[block.blockIndex] ?? null
 })
 
+const activeBlocksSelectionReadOnly = computed(() => {
+  return activeBlocksSectionIsLinked.value || isCmsPageBlockLinked(activeBlocksSelectedBlock.value)
+})
+
 const activeBlocksFieldDefinitions = computed<CmsBlockFieldDefinition[]>(() => {
   const blockType = activeBlocksSelectedBlockRecord.value?.type ?? ''
   return getLandingBlockFieldDefinitions(blockType)
 })
 
-const activeBlocksRenderContext = computed(() => ({
-  mediaAssets: settings.value.mediaAssets,
-  locale: getActiveCmsAuthoringLocale(),
+const cmsPreviewRenderContext = computed(() => ({
+  mediaAssets: cmsPreviewMediaAssets.value,
+  locale: cmsPreviewSnapshot.value?.locale ?? cmsPreviewLocale.value,
 }))
 
+const cmsResolvedDraftPages = computed<CmsPageSettings[]>(() => {
+  return settings.value.pages.map(page => ensurePageSectionBlocks(page))
+})
+
 const cmsMediaReferences = computed(() => collectCmsMediaBindingReferences({
-  pages: settings.value.pages,
+  pages: cmsResolvedDraftPages.value,
   resolveBindings: getLandingBlockMediaBindingDefinitions,
 }))
 
+const cmsBrandingMediaReferences = computed(() => collectCmsBrandingMediaBindingReferences({
+  branding: settings.value.branding,
+  mediaAssets: settings.value.mediaAssets,
+}))
+
 const cmsMediaDiagnostics = computed<CmsMediaDiagnostic[]>(() => collectCmsMediaDiagnostics({
-  pages: settings.value.pages,
+  pages: cmsResolvedDraftPages.value,
+  branding: settings.value.branding,
+  mediaAssets: settings.value.mediaAssets,
+  resolveBindings: getLandingBlockMediaBindingDefinitions,
+}))
+
+const cmsPreviewMediaDiagnostics = computed<CmsMediaDiagnostic[]>(() => collectCmsMediaDiagnostics({
+  pages: cmsPreviewPagesForRender.value,
+  branding: cmsPreviewSnapshot.value?.branding ?? settings.value.branding,
+  mediaAssets: cmsPreviewMediaAssets.value,
+  resolveBindings: getLandingBlockMediaBindingDefinitions,
+}))
+
+const cmsMediaUsageSummaryByAssetId = computed(() => collectCmsMediaUsageSummary({
+  pages: cmsResolvedDraftPages.value,
+  branding: settings.value.branding,
   mediaAssets: settings.value.mediaAssets,
   resolveBindings: getLandingBlockMediaBindingDefinitions,
 }))
 
 const cmsMediaUsageCountByAssetId = computed(() => {
   const counts = new Map<string, number>()
-  for (const reference of cmsMediaReferences.value) {
-    counts.set(reference.assetId, (counts.get(reference.assetId) ?? 0) + 1)
+  for (const [assetId, summary] of cmsMediaUsageSummaryByAssetId.value.entries()) {
+    counts.set(assetId, summary.totalReferences)
   }
   return counts
 })
 
 /**
- * Filters content diagnostics for one page preview card.
+ * Filters content diagnostics for one page preview card from an explicit issues collection.
  */
-function getCmsPageDiagnostics(pageId: string, pageIndex: number): CmsContentValidationIssue[] {
-  return cmsContentDiagnostics.value.filter(issue => {
+function getCmsPageDiagnosticsFromIssues(
+  pageId: string,
+  pageIndex: number,
+  issues: CmsContentValidationIssue[]
+): CmsContentValidationIssue[] {
+  return issues.filter(issue => {
     if (issue.pageId && issue.pageId === pageId) {
       return true
     }
@@ -7234,14 +7873,33 @@ function getCmsPageDiagnostics(pageId: string, pageIndex: number): CmsContentVal
   })
 }
 
+/**
+ * Filters preview diagnostics for one page preview card.
+ */
+function getCmsPreviewPageDiagnostics(pageId: string, pageIndex: number): CmsContentValidationIssue[] {
+  return getCmsPageDiagnosticsFromIssues(pageId, pageIndex, cmsPreviewContentDiagnostics.value)
+}
+
+/**
+ * Converts one preview page into schema format using the resolved preview snapshot contracts.
+ */
+function toCmsPreviewPageSchema(page: CmsPageSettings): CmsPageSchema {
+  return toCmsPageSchema(page, {
+    authoredContentModels: cmsPreviewAuthoredContentModels.value,
+    authoredBlockPresets: cmsPreviewAuthoredBlockPresets.value,
+    reusableSections: cmsPreviewSnapshot.value?.reusableSections ?? settings.value.reusableSections,
+    reusableBlocks: cmsPreviewSnapshot.value?.reusableBlocks ?? settings.value.reusableBlocks,
+  })
+}
+
 const activeBlocksContentDiagnostics = computed(() => {
   const pageId = activeBlocksPageId.value
-  const pageIndex = activeBlocksPageIndex.value
+  const pageIndex = cmsPreviewPages.value.findIndex(page => page.id === pageId)
   if (pageIndex < 0) {
     return []
   }
 
-  return getCmsPageDiagnostics(pageId, pageIndex).filter(issue => {
+  return getCmsPageDiagnosticsFromIssues(pageId, pageIndex, cmsPreviewContentDiagnostics.value).filter(issue => {
     if (activeBlocksSectionId.value && issue.sectionId && issue.sectionId !== activeBlocksSectionId.value) {
       return false
     }
@@ -7256,7 +7914,7 @@ const activeBlocksContentDiagnostics = computed(() => {
 
 const activeBlocksMediaDiagnostics = computed(() => {
   const pageId = activeBlocksPageId.value
-  return cmsMediaDiagnostics.value.filter(diagnostic => {
+  return cmsPreviewMediaDiagnostics.value.filter(diagnostic => {
     if (diagnostic.pageId !== pageId) {
       return false
     }
@@ -7273,6 +7931,13 @@ const activeBlocksMediaDiagnostics = computed(() => {
   })
 })
 
+const activeBlocksPreviewMissingFromPublished = computed(() => {
+  return cmsPreviewSource.value === 'published'
+    && cmsPreviewSnapshot.value != null
+    && activeBlocksPageId.value.length > 0
+    && !cmsPreviewPages.value.some(page => page.id === activeBlocksPageId.value)
+})
+
 const selectedMediaAssetDiagnostics = computed(() => {
   const assetId = selectedMediaAssetId.value
   if (!assetId) {
@@ -7287,6 +7952,21 @@ const selectedMediaAssetDiagnostics = computed(() => {
  */
 function getCmsMediaUsageCount(assetId: string): number {
   return cmsMediaUsageCountByAssetId.value.get(assetId) ?? 0
+}
+
+/**
+ * Returns aggregated usage details for one media asset id.
+ */
+function getCmsMediaUsageSummaryLabel(assetId: string): string {
+  const summary = cmsMediaUsageSummaryByAssetId.value.get(assetId)
+  if (!summary) {
+    return tr('No runtime usage detected', 'Nenhum uso em runtime detectado')
+  }
+
+  return tr(
+    `${summary.blockReferences} block refs · ${summary.brandingReferences} branding refs · ${summary.usageTags} usage tags`,
+    `${summary.blockReferences} refs em blocos · ${summary.brandingReferences} refs em branding · ${summary.usageTags} tags de uso`
+  )
 }
 
 /**
@@ -7528,6 +8208,49 @@ function getCmsSectionLabelValue(section: CmsPageSettings['sections'][number]): 
 }
 
 /**
+ * Resolves one section with linked reusable references for authoring previews and labels.
+ */
+function resolveCmsPageSectionForAuthoring(section: CmsPageSectionSettings): CmsPageSectionSettings {
+  return resolveCmsReusableSectionReference({
+    section,
+    reusableSections: settings.value.reusableSections,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
+}
+
+/**
+ * Returns whether one page section is still linked to the reusable section library.
+ */
+function isCmsPageSectionLinked(section: CmsPageSectionSettings | null | undefined): boolean {
+  return Boolean(section && section.reusableMode === 'linked' && String(section.reusableSourceId ?? '').trim().length > 0)
+}
+
+/**
+ * Returns whether one page block is still linked to the reusable block library.
+ */
+function isCmsPageBlockLinked(block: CmsPageBlockSettings | null | undefined): boolean {
+  return Boolean(block && block.reusableMode === 'linked' && String(block.reusableSourceId ?? '').trim().length > 0)
+}
+
+/**
+ * Resolves a concise reusable-source label for section and block chips.
+ */
+function getCmsReusableSourceLabel(sourceId: string | null | undefined, kind: 'section' | 'block'): string {
+  const normalizedId = String(sourceId ?? '').trim()
+  if (!normalizedId) {
+    return tr('Unknown source', 'Origem desconhecida')
+  }
+
+  if (kind === 'section') {
+    const reusableSection = settings.value.reusableSections.find(entry => entry.id === normalizedId)
+    return reusableSection?.name || normalizedId
+  }
+
+  const reusableBlock = settings.value.reusableBlocks.find(entry => entry.id === normalizedId)
+  return reusableBlock?.name || normalizedId
+}
+
+/**
  * Resolves one reusable-section label for the active authoring locale.
  */
 function getCmsReusableSectionLabelValue(section: CmsReusableSectionSettings): string {
@@ -7674,9 +8397,14 @@ function getActiveBlocksResolvedProps(target: CmsPageBlockSettings | null): Reco
     return {}
   }
 
+  const resolvedTarget = resolveCmsReusableBlockReference({
+    block: target,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
+
   return resolveCmsLocalizedProps({
-    baseProps: target.props,
-    localized: target.localization?.props,
+    baseProps: resolvedTarget.props,
+    localized: resolvedTarget.localization?.props,
     localeInput: getActiveCmsAuthoringLocale(),
   })
 }
@@ -7847,7 +8575,7 @@ function getActiveBlocksMediaFieldOptions(field: CmsBlockFieldDefinition): Array
  */
 function updateActiveBlocksFieldValue(field: CmsBlockFieldDefinition, value: unknown): void {
   const target = activeBlocksSelectedBlock.value
-  if (!target || field.type === 'json') {
+  if (!target || field.type === 'json' || activeBlocksSelectionReadOnly.value) {
     return
   }
 
@@ -7917,7 +8645,7 @@ function updateActiveBlocksJsonFieldDraft(field: CmsBlockFieldDefinition, value:
  */
 function applyActiveBlocksJsonFieldValue(field: CmsBlockFieldDefinition): void {
   const target = activeBlocksSelectedBlock.value
-  if (!target || field.type !== 'json') {
+  if (!target || field.type !== 'json' || activeBlocksSelectionReadOnly.value) {
     return
   }
 
@@ -7949,6 +8677,16 @@ const cmsMediaAssetOptions = computed(() => {
   }))
 })
 
+const cmsMediaReplacementOptions = computed(() => {
+  return settings.value.mediaAssets
+    .filter(asset => asset.id !== selectedMediaAssetId.value)
+    .map(asset => ({
+      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
+      value: asset.id,
+      description: asset.description,
+    }))
+})
+
 const selectedMediaAsset = computed<CmsMediaAssetSettings | null>(() => {
   return settings.value.mediaAssets.find(asset => asset.id === selectedMediaAssetId.value) ?? null
 })
@@ -7958,9 +8696,9 @@ const cmsMediaAssets = computed<CmsMediaAssetSettings[]>(() => {
 })
 
 const cmsBrandingMediaBindings = computed<CmsBrandingMediaBindingPreview[]>(() => {
-  const resolveAssetName = (url: string): string => {
-    const matchedAsset = settings.value.mediaAssets.find(asset => asset.url === url)
-    return matchedAsset?.name ?? tr('Custom URL', 'URL customizada')
+  const brandingReferences = cmsBrandingMediaReferences.value
+  const resolveAssetRecord = (url: string): CmsMediaAssetSettings | null => {
+    return settings.value.mediaAssets.find(asset => asset.url === url) ?? null
   }
 
   const faviconUrl = settings.value.branding.faviconUrl || settings.value.branding.brandLogo
@@ -7971,21 +8709,24 @@ const cmsBrandingMediaBindings = computed<CmsBrandingMediaBindingPreview[]>(() =
       label: tr('Brand logo binding', 'Vinculo do logo da marca'),
       description: tr('Shell and landing identity asset.', 'Asset de identidade do shell e da landing page.'),
       url: settings.value.branding.brandLogo,
-      assetName: resolveAssetName(settings.value.branding.brandLogo),
+      assetName: resolveAssetRecord(settings.value.branding.brandLogo)?.name ?? tr('Custom URL', 'URL customizada'),
+      assetId: brandingReferences.find(reference => reference.slot === 'brandLogo')?.assetId,
     },
     {
       id: 'favicon',
       label: tr('Favicon binding', 'Vinculo do favicon'),
       description: tr('Browser tab and bookmark icon asset.', 'Asset do icone da aba do navegador e favoritos.'),
       url: faviconUrl,
-      assetName: resolveAssetName(faviconUrl),
+      assetName: resolveAssetRecord(faviconUrl)?.name ?? tr('Custom URL', 'URL customizada'),
+      assetId: brandingReferences.find(reference => reference.slot === 'faviconUrl')?.assetId,
     },
     {
       id: 'user-avatar',
       label: tr('User avatar binding', 'Vinculo do avatar do usuario'),
       description: tr('Topbar account avatar asset.', 'Asset do avatar de conta na topbar.'),
       url: settings.value.branding.userAvatar,
-      assetName: resolveAssetName(settings.value.branding.userAvatar),
+      assetName: resolveAssetRecord(settings.value.branding.userAvatar)?.name ?? tr('Custom URL', 'URL customizada'),
+      assetId: brandingReferences.find(reference => reference.slot === 'userAvatar')?.assetId,
     },
   ]
 })
@@ -8062,6 +8803,13 @@ function setActiveBlocksSelection(sectionId: string, blockId = ''): void {
 }
 
 /**
+ * Switches the shell back to the Pages module.
+ */
+function openPagesModule(): void {
+  activeMenuId.value = pagesModuleId.value
+}
+
+/**
  * Opens the blocks module focused on a specific page/section.
  */
 function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
@@ -8084,13 +8832,17 @@ function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
  * Saves the currently selected block as a reusable library entry.
  */
 function saveSelectedBlockAsReusable(): void {
-  const block = activeBlocksSelectedBlock.value
+  const rawBlock = activeBlocksSelectedBlock.value
   const blockRecord = activeBlocksSelectedBlockRecord.value
-  if (!block || !blockRecord) {
+  if (!rawBlock || !blockRecord) {
     savedAtLabel.value = tr('Select a block before saving it as reusable.', 'Selecione um bloco antes de salva-lo como reutilizavel.')
     return
   }
 
+  const block = resolveCmsReusableBlockReference({
+    block: rawBlock,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
   const paletteEntry = cmsBlockPaletteByType.get(block.type)
   const reusableBlock = createCmsReusableBlockFromBlock({
     block,
@@ -8143,6 +8895,7 @@ function insertSelectedReusableBlock(): void {
   const clonedBlock = cloneCmsReusableBlockIntoPageBlock({
     reusableBlock,
     blockId: insertedBlock.id,
+    mode: 'detached',
   })
   insertedBlock.type = clonedBlock.type
   insertedBlock.presetId = clonedBlock.presetId
@@ -8154,6 +8907,78 @@ function insertSelectedReusableBlock(): void {
   syncSelectedBlockPropsDraft()
   syncSelectedBlockFieldJsonDrafts()
   savedAtLabel.value = `${tr('Reusable block inserted at', 'Bloco reutilizavel inserido as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Inserts the selected reusable block as a linked reference.
+ */
+function insertSelectedLinkedReusableBlock(): void {
+  const reusableBlock = selectedReusableBlock.value
+  const state = buildActivePageBuilderState()
+  if (!reusableBlock || !state) {
+    return
+  }
+
+  const sectionId = activeBlocksSectionId.value || state.selection?.sectionId || state.page.sections[0]?.id
+  if (!sectionId) {
+    savedAtLabel.value = tr('Select a section before inserting a reusable block.', 'Selecione uma secao antes de inserir um bloco reutilizavel.')
+    return
+  }
+
+  const nextState = insertCmsBuilderBlock(state, landingRegistry, {
+    sectionId,
+    type: reusableBlock.type,
+  })
+  applyBuilderStateToActivePage(nextState)
+
+  const pageIndex = activeBlocksPageIndex.value
+  const insertedBlockId = nextState.selection?.blockId
+  const insertedSectionId = nextState.selection?.sectionId
+  const page = pageIndex >= 0 ? settings.value.pages[pageIndex] : null
+  const section = page?.sections.find(entry => entry.id === insertedSectionId)
+  const insertedBlock = section?.blocks.find(entry => entry.id === insertedBlockId)
+  if (!insertedBlock) {
+    return
+  }
+
+  const linkedBlock = cloneCmsReusableBlockIntoPageBlock({
+    reusableBlock,
+    blockId: insertedBlock.id,
+    mode: 'linked',
+  })
+  insertedBlock.type = linkedBlock.type
+  insertedBlock.presetId = linkedBlock.presetId
+  insertedBlock.props = cloneSerializableValue(linkedBlock.props)
+  insertedBlock.enabled = linkedBlock.enabled
+  insertedBlock.reusableMode = linkedBlock.reusableMode
+  insertedBlock.reusableSourceId = linkedBlock.reusableSourceId
+  insertedBlock.localization = linkedBlock.localization
+    ? cloneSerializableValue(linkedBlock.localization)
+    : undefined
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = `${tr('Linked reusable block inserted at', 'Bloco reutilizavel vinculado inserido as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Detaches a linked block from its reusable source while preserving the resolved content snapshot.
+ */
+function detachCmsBuilderBlockByRecord(blockRecord: CmsSectionBlockRecord): void {
+  const page = settings.value.pages[blockRecord.pageIndex]
+  const section = page?.sections[blockRecord.sectionIndex]
+  const block = section?.blocks[blockRecord.blockIndex]
+  if (!page || !section || !block || !isCmsPageBlockLinked(block)) {
+    return
+  }
+
+  const detachedBlock = detachCmsPageBlockFromReusable({
+    block,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
+  section.blocks.splice(blockRecord.blockIndex, 1, detachedBlock)
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = `${tr('Reusable block detached at', 'Bloco reutilizavel desvinculado as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -8441,11 +9266,16 @@ function getCmsPresetAuthoringSource(): {
   const selectedBlock = activeBlocksSelectedBlock.value
   const selectedBlockRecord = activeBlocksSelectedBlockRecord.value
   if (selectedBlock && selectedBlockRecord) {
-    const paletteEntry = cmsBlockPaletteByType.get(selectedBlock.type)
-    return {
+    const resolvedBlock = resolveCmsReusableBlockReference({
       block: selectedBlock,
-      displayName: resolveCmsBlockDisplayName(selectedBlock.type),
+      reusableBlocks: settings.value.reusableBlocks,
+    })
+    const paletteEntry = cmsBlockPaletteByType.get(resolvedBlock.type)
+    return {
+      block: resolvedBlock,
+      displayName: resolveCmsBlockDisplayName(resolvedBlock.type),
       category: paletteEntry?.category ?? 'custom',
+      sourceReusableBlockId: selectedBlock.reusableSourceId,
     }
   }
 
@@ -8578,7 +9408,7 @@ function updateSelectedCmsPreset(): void {
 function applySelectedCmsPresetToBlock(): void {
   const preset = selectedAuthoredBlockPreset.value
   const target = activeBlocksSelectedBlock.value
-  if (!preset || !target) {
+  if (!preset || !target || activeBlocksSelectionReadOnly.value) {
     return
   }
 
@@ -8638,6 +9468,8 @@ function saveMediaAssetDraft(): void {
     kind: assetDraft.kind,
     url: assetDraft.url,
     alt: assetDraft.alt,
+    focalPoint: parseMediaDraftFocalPoint(assetDraft),
+    replaceTargetAssetId: assetDraft.replaceTargetAssetId,
     tags: parseMediaDraftList(assetDraft.tags),
     usage: parseMediaDraftList(assetDraft.usage),
   })
@@ -8659,6 +9491,49 @@ function saveMediaAssetDraft(): void {
   settings.value.mediaAssets = [normalizedAsset, ...settings.value.mediaAssets]
   selectedMediaAssetId.value = normalizedAsset.id
   savedAtLabel.value = `${tr('Media asset saved at', 'Asset de midia salvo as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Replaces all page and branding references from the selected asset to the chosen replacement asset.
+ */
+function replaceSelectedMediaAssetReferences(): void {
+  const sourceAsset = selectedMediaAsset.value
+  const replacementAssetId = mediaAssetDraft.value.replaceTargetAssetId.trim()
+  if (!sourceAsset || !replacementAssetId) {
+    savedAtLabel.value = tr(
+      'Select an existing asset and a replacement target before replacing references.',
+      'Selecione um asset existente e um alvo de substituicao antes de substituir referencias.'
+    )
+    return
+  }
+
+  const replacementAsset = settings.value.mediaAssets.find(asset => asset.id === replacementAssetId) ?? null
+  if (!replacementAsset || replacementAsset.id === sourceAsset.id) {
+    savedAtLabel.value = tr(
+      'Choose a valid replacement asset different from the selected asset.',
+      'Escolha um asset de substituicao valido e diferente do asset selecionado.'
+    )
+    return
+  }
+
+  const replacement = replaceCmsMediaAssetReferences({
+    pages: settings.value.pages,
+    branding: settings.value.branding,
+    mediaAssets: settings.value.mediaAssets,
+    sourceAssetId: sourceAsset.id,
+    replacementAssetId: replacementAsset.id,
+    resolveBindings: getLandingBlockMediaBindingDefinitions,
+  })
+
+  settings.value.pages = replacement.pages
+  settings.value.branding = replacement.branding
+  settings.value.mediaAssets = settings.value.mediaAssets.filter(asset => asset.id !== sourceAsset.id)
+  selectedMediaAssetId.value = replacementAsset.id
+  setMediaAssetDraft(replacementAsset)
+  savedAtLabel.value = tr(
+    `Replaced ${replacement.replacedBlockReferences} block refs and ${replacement.replacedBrandingReferences} branding refs at ${new Date().toLocaleTimeString()}`,
+    `Substituiu ${replacement.replacedBlockReferences} refs em blocos e ${replacement.replacedBrandingReferences} refs em branding as ${new Date().toLocaleTimeString()}`
+  )
 }
 
 /**
@@ -8779,10 +9654,133 @@ function addCmsBuilderBlockFromPalette(): void {
 }
 
 /**
+ * Duplicates one editable block inside the current active section.
+ */
+function duplicateCmsBuilderBlockByRecord(block: CmsSectionBlockRecord): void {
+  const page = settings.value.pages[block.pageIndex]
+  const section = page?.sections[block.sectionIndex]
+  const sourceBlock = section?.blocks[block.blockIndex]
+  if (!page || !section || !sourceBlock || isCmsPageBlockLinked(sourceBlock) || activeBlocksSectionIsLinked.value) {
+    return
+  }
+
+  const sectionBlockLimits = getCmsSectionPresetBlockLimits(section.presetId)
+  const enabledBlocksCount = section.blocks.filter(entry => entry.enabled).length
+  if (
+    sourceBlock.enabled
+    && sectionBlockLimits.maxBlocks != null
+    && enabledBlocksCount >= sectionBlockLimits.maxBlocks
+  ) {
+    return
+  }
+
+  const occupiedBlockIds = new Set(
+    page.sections.flatMap(entry => entry.blocks.map(sectionBlock => sectionBlock.id))
+  )
+  const duplicateId = createUniquePageBlockId(
+    occupiedBlockIds,
+    section.id,
+    `${sourceBlock.id}-copy`,
+    section.blocks.length + 1
+  )
+  const duplicatedBlock: CmsPageBlockSettings = {
+    id: duplicateId,
+    type: sourceBlock.type,
+    presetId: sourceBlock.presetId,
+    enabled: sourceBlock.enabled,
+    reusableMode: sourceBlock.reusableMode,
+    reusableSourceId: sourceBlock.reusableSourceId,
+    props: cloneSerializableValue(sourceBlock.props ?? {}),
+    localization: sourceBlock.localization
+      ? cloneSerializableValue(sourceBlock.localization)
+      : undefined,
+  }
+
+  const nextBlocks = [...section.blocks]
+  nextBlocks.splice(block.blockIndex + 1, 0, duplicatedBlock)
+  const nextSections = [...page.sections]
+  nextSections[block.sectionIndex] = {
+    ...section,
+    enabled: section.enabled || duplicatedBlock.enabled,
+    blocks: nextBlocks,
+  }
+  settings.value.pages[block.pageIndex] = {
+    ...page,
+    sections: nextSections,
+  }
+  setActiveBlocksSelection(section.id, duplicatedBlock.id)
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = `${tr('Block duplicated at', 'Bloco duplicado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Enables or disables every block in the active section while respecting section limits.
+ */
+function setCmsBuilderSectionBlocksEnabled(enabled: boolean): void {
+  const pageIndex = activeBlocksPageIndex.value
+  const page = pageIndex >= 0 ? settings.value.pages[pageIndex] : null
+  const section = page?.sections.find(entry => entry.id === activeBlocksSectionId.value)
+  if (!page || !section || activeBlocksSectionIsLinked.value) {
+    return
+  }
+
+  const sectionBlockLimits = getCmsSectionPresetBlockLimits(section.presetId)
+  const maxEnabledBlocks = enabled && sectionBlockLimits.maxBlocks != null
+    ? sectionBlockLimits.maxBlocks
+    : Number.POSITIVE_INFINITY
+
+  section.blocks.forEach((block, index) => {
+    block.enabled = enabled ? index < maxEnabledBlocks : false
+  })
+  section.enabled = section.blocks.some(block => block.enabled)
+
+  const actionLabel = enabled
+    ? tr('All section blocks enabled.', 'Todos os blocos da secao foram ativados.')
+    : tr('All section blocks disabled.', 'Todos os blocos da secao foram desativados.')
+  savedAtLabel.value = actionLabel
+}
+
+/**
+ * Removes disabled blocks from the active section and keeps one editable placeholder when needed.
+ */
+function removeDisabledBlocksFromActiveSection(): void {
+  const pageIndex = activeBlocksPageIndex.value
+  const page = pageIndex >= 0 ? settings.value.pages[pageIndex] : null
+  const section = page?.sections.find(entry => entry.id === activeBlocksSectionId.value)
+  if (!page || !section || activeBlocksSectionIsLinked.value) {
+    return
+  }
+
+  const removedBlocksCount = section.blocks.filter(block => !block.enabled).length
+  if (removedBlocksCount === 0) {
+    return
+  }
+
+  section.blocks = section.blocks.filter(block => block.enabled)
+
+  if (section.blocks.length === 0) {
+    const occupiedBlockIds = new Set(
+      page.sections.flatMap(entry => entry.blocks.map(sectionBlock => sectionBlock.id))
+    )
+    section.blocks = [createDefaultSectionBlock(section.id, occupiedBlockIds, 1, true, section.presetId)]
+  }
+
+  section.enabled = section.blocks.some(block => block.enabled)
+  activeBlocksBlockId.value = section.blocks[0]?.id ?? ''
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = tr(
+    `Removed ${removedBlocksCount} disabled block(s).`,
+    `Removeu ${removedBlocksCount} bloco(s) desativado(s).`
+  )
+}
+
+/**
  * Pretty-formats selected block props JSON editor value.
  */
 function formatSelectedBlockPropsDraft(): void {
-  if (!activeBlocksSelectedBlock.value) {
+  if (!activeBlocksSelectedBlock.value || activeBlocksSelectionReadOnly.value) {
     return
   }
 
@@ -8803,7 +9801,7 @@ function formatSelectedBlockPropsDraft(): void {
  */
 function applySelectedBlockPropsDraft(): void {
   const target = activeBlocksSelectedBlock.value
-  if (!target) {
+  if (!target || activeBlocksSelectionReadOnly.value) {
     return
   }
 
@@ -8998,6 +9996,66 @@ function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): v
   tenantProfilesState.value.activeProfileId = activeProfile.id
   activeTenantProfileId.value = activeProfile.id
   saveCmsTenantProfilesState(tenantProfilesState.value)
+}
+
+/**
+ * Resets authoring undo/redo stacks around the current tenant snapshot.
+ */
+function resetCmsAuthoringHistory(): void {
+  cmsAuthoringHistory.value = resetCmsSnapshotHistoryState(
+    cloneWhiteLabelSettings(settings.value),
+    cmsAuthoringHistoryLimit
+  )
+}
+
+/**
+ * Applies one settings snapshot back into the editor and refreshes dependent drafts.
+ */
+function applyCmsSettingsSnapshot(snapshot: CmsWhiteLabelSettings): void {
+  settings.value = cloneWhiteLabelSettings(normalizeCmsWhiteLabelSettings(snapshot))
+  settings.value.content.locale = resolveCmsLocale(settings.value.content.locale)
+  applySelectedThemePresetFromSettings()
+  if (!settings.value.items.some(item => item.id === activeMenuId.value)) {
+    activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
+  }
+  applyCmsFavicon(settings.value.branding.faviconUrl)
+  savedAtLabel.value = buildSavedAtLabel()
+}
+
+/**
+ * Restores the previous authoring snapshot when available.
+ */
+function undoCmsAuthoringChange(): void {
+  const transition = undoCmsSnapshot(cmsAuthoringHistory.value)
+  if (!transition) {
+    return
+  }
+
+  isApplyingCmsAuthoringHistory.value = true
+  cmsAuthoringHistory.value = transition.history
+  applyCmsSettingsSnapshot(transition.snapshot)
+  savedAtLabel.value = tr('Undo applied.', 'Desfazer aplicado.')
+  nextTick(() => {
+    isApplyingCmsAuthoringHistory.value = false
+  })
+}
+
+/**
+ * Restores the next redo snapshot when available.
+ */
+function redoCmsAuthoringChange(): void {
+  const transition = redoCmsSnapshot(cmsAuthoringHistory.value)
+  if (!transition) {
+    return
+  }
+
+  isApplyingCmsAuthoringHistory.value = true
+  cmsAuthoringHistory.value = transition.history
+  applyCmsSettingsSnapshot(transition.snapshot)
+  savedAtLabel.value = tr('Redo applied.', 'Refazer aplicado.')
+  nextTick(() => {
+    isApplyingCmsAuthoringHistory.value = false
+  })
 }
 
 watch(
@@ -9295,6 +10353,24 @@ watch(
 watch(
   settings,
   value => {
+    if (isApplyingCmsAuthoringHistory.value) {
+      return
+    }
+
+    cmsAuthoringHistory.value = recordCmsSnapshot(
+      cmsAuthoringHistory.value,
+      cloneWhiteLabelSettings(value),
+      {
+        equals: areCmsSettingsSnapshotsEqual,
+      }
+    )
+  },
+  { deep: true }
+)
+
+watch(
+  settings,
+  value => {
     syncActiveTenantProfileSettings(value)
     saveCmsWhiteLabelSettings(value)
     savedAtLabel.value = buildSavedAtLabel()
@@ -9562,6 +10638,7 @@ function onTenantProfileChange(value: string | null): void {
   applySelectedThemePresetFromSettings()
   activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
   searchQuery.value = ''
+  resetCmsAuthoringHistory()
   savedAtLabel.value = `${profile.name} ${cmsUiText.value.tenantLoadedSuffix}`
 }
 
@@ -10036,10 +11113,13 @@ function createUniqueCmsPagePathFromPrefix(pathPrefix: string, pageIndex: number
 /**
  * Resolves the current schema version for one page content model.
  */
-function getCmsPageCurrentSchemaVersion(page: CmsPageSettings): number {
+function getCmsPageCurrentSchemaVersion(
+  page: CmsPageSettings,
+  authoredContentModels: CmsAuthoredContentModelSettings[] = settings.value.authoredContentModels
+): number {
   return getCmsContentModelSchemaVersion(
     page.contentModelId,
-    settings.value.authoredContentModels
+    authoredContentModels
   )
 }
 
@@ -10189,11 +11269,16 @@ function addCmsPageSection(pageIndex: number): void {
  */
 function saveCmsPageSectionAsReusable(pageIndex: number, sectionIndex: number): void {
   const page = settings.value.pages[pageIndex]
-  const section = page?.sections[sectionIndex]
-  if (!page || !section) {
+  const rawSection = page?.sections[sectionIndex]
+  if (!page || !rawSection) {
     return
   }
 
+  const section = resolveCmsReusableSectionReference({
+    section: rawSection,
+    reusableSections: settings.value.reusableSections,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
   const reusableSection = createCmsReusableSectionFromSection({
     page,
     section,
@@ -10227,8 +11312,33 @@ function insertSelectedReusableSection(pageIndex: number): void {
   page.sections.push(cloneCmsReusableSectionIntoPageSection({
     reusableSection,
     existingSections: page.sections,
+    mode: 'detached',
   }))
   savedAtLabel.value = `${tr('Reusable section inserted at', 'Secao reutilizavel inserida as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Inserts the selected reusable section into the target page as a linked reference.
+ */
+function insertSelectedLinkedReusableSection(pageIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  if (!page) {
+    return
+  }
+
+  const reusableSectionId = getSelectedReusableSectionForPage(pageIndex)
+  const reusableSection = settings.value.reusableSections.find(entry => entry.id === reusableSectionId)
+  if (!reusableSection) {
+    savedAtLabel.value = tr('Select a reusable section before inserting it.', 'Selecione uma secao reutilizavel antes de inseri-la.')
+    return
+  }
+
+  page.sections.push(cloneCmsReusableSectionIntoPageSection({
+    reusableSection,
+    existingSections: page.sections,
+    mode: 'linked',
+  }))
+  savedAtLabel.value = `${tr('Linked reusable section inserted at', 'Secao reutilizavel vinculada inserida as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -10252,6 +11362,13 @@ function duplicateCmsPageSection(pageIndex: number, sectionIndex: number): void 
     reusableSection,
     existingSections: page.sections,
   })
+  duplicatedSection.reusableMode = section.reusableMode
+  duplicatedSection.reusableSourceId = section.reusableSourceId
+  duplicatedSection.blocks = duplicatedSection.blocks.map((block, blockIndex) => ({
+    ...block,
+    reusableMode: section.blocks[blockIndex]?.reusableMode,
+    reusableSourceId: section.blocks[blockIndex]?.reusableSourceId,
+  }))
   page.sections.splice(sectionIndex + 1, 0, duplicatedSection)
 }
 
@@ -10271,6 +11388,24 @@ function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
  */
 function removeReusableSection(reusableSectionId: string): void {
   settings.value.reusableSections = settings.value.reusableSections.filter(reusableSection => reusableSection.id !== reusableSectionId)
+}
+
+/**
+ * Detaches a linked page section from its reusable source while preserving the resolved snapshot.
+ */
+function detachCmsPageSection(pageIndex: number, sectionIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  const section = page?.sections[sectionIndex]
+  if (!page || !section || !isCmsPageSectionLinked(section)) {
+    return
+  }
+
+  page.sections.splice(sectionIndex, 1, detachCmsPageSectionFromReusable({
+    section,
+    reusableSections: settings.value.reusableSections,
+    reusableBlocks: settings.value.reusableBlocks,
+  }))
+  savedAtLabel.value = `${tr('Reusable section detached at', 'Secao reutilizavel desvinculada as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -10710,6 +11845,13 @@ function resetToDefaults(): void {
   margin-top: calc(var(--ntk-cms-space-xs) * -1);
 }
 
+.cms-blocks-toolbar__bulk {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
+}
+
 .cms-blocks-reusable-toolbar {
   align-items: end;
 }
@@ -10759,8 +11901,35 @@ function resetToDefaults(): void {
 }
 
 .cms-block-item__empty {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
   color: var(--ntk-cms-text-secondary);
   font-size: var(--ntk-cms-font-size-item-label);
+}
+
+.cms-block-item__empty strong {
+  color: var(--ntk-cms-text-primary);
+  font-size: var(--ntk-cms-font-size-item-label);
+}
+
+.cms-block-item__empty small {
+  color: var(--ntk-cms-text-secondary);
+  line-height: 1.5;
+}
+
+.cms-block-item__empty--card {
+  border: var(--ntk-cms-border-width) dashed var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+}
+
+.cms-empty-state__actions {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-block-row {
@@ -11345,6 +12514,44 @@ function resetToDefaults(): void {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-preview-toolbar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, auto);
+  gap: var(--ntk-cms-space-sm);
+  align-items: start;
+}
+
+.cms-preview-toolbar__chips {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-runtime-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.cms-runtime-preview__frame {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--ntk-cms-radius-lg);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+}
+
+.cms-runtime-preview__frame[data-preview-viewport='tablet'] {
+  max-width: 54rem;
+}
+
+.cms-runtime-preview__frame[data-preview-viewport='mobile'] {
+  max-width: 27rem;
 }
 
 .cms-shell-card {
@@ -12498,8 +13705,13 @@ function resetToDefaults(): void {
 .cms-shell-page--md-compact .cms-color-grid,
 .cms-shell-page--md-compact .cms-toggle-row,
 .cms-shell-page--md-compact .cms-theme-presets__controls,
-.cms-shell-page--md-compact .cms-media-preview-item {
+.cms-shell-page--md-compact .cms-media-preview-item,
+.cms-shell-page--md-compact .cms-preview-toolbar {
   grid-template-columns: 1fr;
+}
+
+.cms-shell-page--md-compact .cms-preview-toolbar__chips {
+  justify-content: flex-start;
 }
 
 .cms-shell-page--md-compact .cms-releases__actions {

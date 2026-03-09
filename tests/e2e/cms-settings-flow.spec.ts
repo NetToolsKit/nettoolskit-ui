@@ -123,7 +123,7 @@ async function selectFirstOptionByFieldLabel(page: Page, label: string): Promise
     return
   }
 
-  await page.locator('.q-menu .q-item').first().click()
+  await page.locator('.q-menu:visible .q-item').first().click()
 }
 
 /**
@@ -141,7 +141,7 @@ async function selectOptionByFieldLabel(page: Page, label: string, optionLabel: 
     return
   }
 
-  await page.locator('.q-menu .q-item', { hasText: optionLabel }).first().click()
+  await page.locator('.q-menu:visible .q-item', { hasText: optionLabel }).first().click()
 }
 
 /**
@@ -159,7 +159,7 @@ async function selectOptionByFieldLabelPattern(page: Page, label: RegExp, option
     return
   }
 
-  await page.locator('.q-menu .q-item', { hasText: optionLabel }).first().click()
+  await page.locator('.q-menu:visible .q-item', { hasText: optionLabel }).first().click()
 }
 
 /**
@@ -315,6 +315,14 @@ async function expectTenantSnapshots(page: Page, snapshotId: string): Promise<vo
 }
 
 test.describe('CMS settings white-label flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/')
+    await page.evaluate(() => {
+      window.localStorage.clear()
+      window.sessionStorage.clear()
+    })
+  })
+
   test('exposes accessible controls for settings toolbar and tabs', async ({ page }) => {
     await page.goto('/?cms=1')
     await openSettingsModule(page)
@@ -581,7 +589,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
 
     await expect(page.locator('.cms-reusable-block-row', { hasText: reusableName }).first()).toBeVisible()
-    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Insert reusable' }).first().click()
+    await page.getByRole('button', { name: /^(Insert detached|Inserir desvinculado)$/ }).first().click()
     await expect(page.locator('.cms-block-row')).toHaveCount(blockCountBeforeReusableInsert + 1)
   })
 
@@ -617,13 +625,65 @@ test.describe('CMS settings white-label flow', () => {
     await heroSectionRow.locator('.q-btn', { hasText: 'Save reusable' }).first().click()
     await expect(page.locator('.cms-pages__reusable-library .cms-reusable-block-row', { hasText: 'Main Landing · Hero' }).first()).toBeVisible()
 
-    await page.locator('.cms-page-item__sections-actions .q-btn', { hasText: 'Insert reusable' }).first().click()
+    await page.getByRole('button', { name: /^(Insert detached|Inserir desvinculado)$/ }).first().click()
     await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero-2')
     await expect(sectionRows).toHaveCount(initialCount + 1)
 
     await heroSectionRow.locator('.q-btn', { hasText: 'Duplicate' }).first().click()
     await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero-3')
     await expect(sectionRows).toHaveCount(initialCount + 2)
+  })
+
+  test('supports linked reusable sections with explicit detach flow and linked block readonly authoring', async ({ page }) => {
+    const reusableBlockName = 'Linked Hero Block QA'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    const sectionRows = page.locator('.cms-page-section-row')
+    const initialSectionCount = await sectionRows.count()
+    const heroSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero"]') })
+      .first()
+
+    await heroSectionRow.locator('.q-btn', { hasText: 'Save reusable' }).first().click()
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+    await expect(sectionRows).toHaveCount(initialSectionCount + 1)
+
+    const linkedSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
+      .first()
+    await expect(linkedSectionRow.locator('.q-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
+
+    await linkedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await expect(page.locator('.cms-banner')).toContainText(/linked to the reusable library|vinculad/i)
+
+    await openDrawerModule(page, /^Pages$/)
+    await linkedSectionRow.getByRole('button', { name: /^(Detach|Desvincular)$/ }).first().click({ force: true })
+    await expect(linkedSectionRow.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
+
+    await linkedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await expect(page.locator('.cms-banner')).toHaveCount(0)
+
+    const titleInput = page
+      .locator('.cms-blocks-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Title' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await expect(titleInput).toBeEnabled()
+
+    const initialBlockCount = await page.locator('.cms-block-row').count()
+    await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableBlockName)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
+    await expect(page.locator('.cms-reusable-block-row', { hasText: reusableBlockName }).first()).toBeVisible()
+
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+    await expect(page.locator('.cms-block-row')).toHaveCount(initialBlockCount + 1)
+    await expect(page.locator('.cms-banner')).toContainText(/Detach it before editing props|Desvincule-o antes de editar props/i)
+
+    const linkedBlockRow = page.locator('.cms-block-row', { hasText: reusableBlockName }).first()
+    await expect(linkedBlockRow.locator('.q-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
   })
 
   test('keeps authored page and block copy isolated by cms locale', async ({ page }) => {
@@ -1267,6 +1327,36 @@ test.describe('CMS settings white-label flow', () => {
     await expect(heroSection.locator('.cms-block-row__meta small', { hasText: draggedBlockId })).toHaveCount(0)
   })
 
+  test('supports authoring undo redo plus block duplication and bulk cleanup', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+
+    const productNameInput = cmsInputByLabel(page, 'Product name')
+    const originalProductName = await productNameInput.inputValue()
+    await fillTextInput(productNameInput, 'History Driven Tenant')
+
+    await settingsActionButton(page, 'Undo').click()
+    await expect(productNameInput).toHaveValue(originalProductName)
+
+    await settingsActionButton(page, 'Redo').click()
+    await expect(productNameInput).toHaveValue('History Driven Tenant')
+
+    await openDrawerModule(page, /^Blocks$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
+
+    const heroSection = page
+      .locator('.cms-block-item', { has: page.locator('.cms-block-item__meta strong', { hasText: 'Hero' }) })
+      .first()
+    const heroRow = heroSection.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await heroRow.locator('.q-btn[aria-label=\"Duplicate block\"]').first().click()
+    await expect(heroSection.locator('.cms-block-row')).toHaveCount(2)
+
+    await page.locator('.cms-blocks-toolbar__bulk .q-btn', { hasText: 'Disable all blocks' }).first().click()
+    await page.locator('.cms-blocks-toolbar__bulk .q-btn', { hasText: 'Remove disabled blocks' }).first().click()
+    await expect(heroSection.locator('.cms-block-row')).toHaveCount(1)
+  })
+
   test('manages media library assets and applies branding bindings', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Media$/)
@@ -1353,9 +1443,53 @@ test.describe('CMS settings white-label flow', () => {
     const heroRowAfterDelete = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
     await heroRowAfterDelete.locator('.q-btn', { hasText: 'Select' }).first().click()
     await expect(page.locator('.cms-diagnostics-item', { hasText: 'media_asset_missing' }).first()).toContainText('missing asset')
+  })
+
+  test('replaces managed media references across branding and block bindings', async ({ page }) => {
+    const originalAssetUrl = 'https://example.com/assets/original-managed-hero.png'
+    const replacementAssetUrl = 'https://example.com/assets/replacement-managed-hero.png'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Media$/)
+
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Original Managed Hero')
+    await fillTextInput(cmsInputByLabel(page, 'Asset URL'), originalAssetUrl)
+    await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Original managed hero alt')
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await expect(page.locator('.cms-media-preview-item', { hasText: 'Original Managed Hero' }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^Blocks$/)
+    const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await selectOptionByFieldLabel(page, IMAGE_ASSET_LABEL, 'Original Managed Hero (Image)')
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('src', originalAssetUrl)
 
     await openDrawerModule(page, /^Media$/)
-    await expect(page.locator('.cms-media__preview .cms-diagnostics-item', { hasText: 'media_asset_missing' }).first()).toBeVisible()
+    await selectOptionByFieldLabel(page, 'Media library asset', 'Original Managed Hero (Image)')
+    await page.locator('.cms-media__actions--secondary .q-btn', { hasText: 'Apply as brand logo' }).first().click()
+    await expect(page.locator('.cms-media-preview-item--binding', { hasText: 'Brand logo binding' }).first()).toContainText('Original Managed Hero')
+
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Replacement Managed Hero')
+    await fillTextInput(cmsInputByLabel(page, 'Asset URL'), replacementAssetUrl)
+    await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Replacement managed hero alt')
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await expect(page.locator('.cms-media-preview-item', { hasText: 'Replacement Managed Hero' }).first()).toBeVisible()
+
+    await selectOptionByFieldLabel(page, 'Media library asset', 'Original Managed Hero (Image)')
+    await selectOptionByFieldLabel(page, 'Replace target asset', 'Replacement Managed Hero (Image)')
+    await commitFocusedSelect(page)
+    await page.locator('.cms-media__actions .q-btn', { hasText: 'Replace references' }).first().click()
+
+    await expect(page.locator('.cms-media-preview-item', { hasText: 'Original Managed Hero' })).toHaveCount(0)
+    await expect(page.locator('.cms-media-preview-item--binding', { hasText: 'Brand logo binding' }).first()).toContainText('Replacement Managed Hero')
+
+    await openDrawerModule(page, /^Blocks$/)
+    const heroRowAfterReplace = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRowAfterReplace.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('src', replacementAssetUrl)
+    await expect(page.locator('img.cms-landing-hero-media__image').first()).toHaveAttribute('alt', 'Replacement managed hero alt')
   })
 
   test('executes release orchestration flow: draft, validate, publish and rollback', async ({ page }) => {
@@ -1381,5 +1515,42 @@ test.describe('CMS settings white-label flow', () => {
     await selectFirstOptionByFieldLabel(page, 'Rollback target')
     await releasesEditor.locator('.q-btn', { hasText: 'Rollback' }).first().click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'rolled_back' }).first()).toBeVisible()
+  })
+
+  test('supports draft vs published preview with viewport and locale controls', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Blocks$/)
+
+    const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+
+    const blocksPreview = page.locator('.cms-blocks__preview').first()
+    const previewCard = blocksPreview.locator('.cms-preview-card--content').first()
+
+    await expect(previewCard).toContainText('Build page experiences faster')
+
+    await openDrawerModule(page, /^Releases$/)
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^Blocks$/)
+    await page.locator('.cms-block-row', { hasText: 'landing.hero' }).first().locator('.q-btn', { hasText: 'Select' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Title'), 'Draft preview title')
+    await expect(previewCard).toContainText('Draft preview title')
+
+    await selectOptionByFieldLabel(page, 'Preview source', 'Published')
+    await expect(blocksPreview.locator('.cms-preview-toolbar')).toHaveAttribute('data-cms-preview-source', 'published')
+    await expect(previewCard).not.toContainText('Draft preview title')
+    await expect(previewCard).toContainText('Build page experiences faster')
+
+    await selectOptionByFieldLabel(page, 'Preview locale', 'Portuguese (Brazil)')
+    await expect(previewCard).toContainText('Monte paginas mais rapido')
+
+    await selectOptionByFieldLabel(page, 'Preview viewport', 'Mobile')
+    await expect(blocksPreview.locator('.cms-preview-toolbar')).toHaveAttribute('data-cms-preview-viewport', 'mobile')
+    await expect(blocksPreview.locator('.cms-runtime-preview__frame').first()).toHaveAttribute('data-preview-viewport', 'mobile')
   })
 })

@@ -10,7 +10,11 @@ import {
   resolveCmsBlockPresetId,
 } from './block-presets'
 import { normalizeCmsPageBlockLocalizationSettings } from './localized-content'
-import type { CmsPageBlockSettings, CmsReusableBlockSettings } from './types'
+import type {
+  CmsPageBlockSettings,
+  CmsReusableBlockSettings,
+  CmsReusableReferenceMode,
+} from './types'
 
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
@@ -172,17 +176,64 @@ export function createCmsReusableBlockFromBlock(input: {
 }
 
 /**
+ * Resolves one page block against the reusable block library when it is still linked.
+ */
+export function resolveCmsReusableBlockReference(input: {
+  block: CmsPageBlockSettings
+  reusableBlocks?: CmsReusableBlockSettings[]
+}): CmsPageBlockSettings {
+  const block = cloneValue(input.block)
+  if (block.reusableMode !== 'linked' || !block.reusableSourceId) {
+    return block
+  }
+
+  const reusableBlock = input.reusableBlocks?.find(entry => entry.id === block.reusableSourceId)
+  if (!reusableBlock) {
+    return block
+  }
+
+  return {
+    ...block,
+    type: reusableBlock.type,
+    presetId: reusableBlock.presetId,
+    props: cloneValue(reusableBlock.props),
+    localization: normalizeCmsPageBlockLocalizationSettings(reusableBlock.localization),
+  }
+}
+
+/**
+ * Converts a linked page block into a detached local copy while keeping its resolved payload.
+ */
+export function detachCmsPageBlockFromReusable(input: {
+  block: CmsPageBlockSettings
+  reusableBlocks?: CmsReusableBlockSettings[]
+}): CmsPageBlockSettings {
+  const resolvedBlock = resolveCmsReusableBlockReference(input)
+
+  return {
+    ...resolvedBlock,
+    reusableMode: 'detached',
+    reusableSourceId: input.block.reusableSourceId,
+  }
+}
+
+/**
  * Clones a reusable template into a block instance payload with a fresh id.
  */
 export function cloneCmsReusableBlockIntoPageBlock(input: {
   reusableBlock: CmsReusableBlockSettings
   blockId: string
+  mode?: CmsReusableReferenceMode
 }): CmsPageBlockSettings {
+  const reusableMode = input.mode === 'linked' ? 'linked' : 'detached'
+
   return {
     id: input.blockId,
     type: input.reusableBlock.type,
     presetId: input.reusableBlock.presetId,
     enabled: true,
+    reusableMode,
+    reusableSourceId: input.reusableBlock.id,
     props: cloneValue(input.reusableBlock.props),
     localization: normalizeCmsPageBlockLocalizationSettings(input.reusableBlock.localization),
   }

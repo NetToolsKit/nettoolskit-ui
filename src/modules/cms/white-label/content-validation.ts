@@ -25,6 +25,8 @@ import {
   resolveCmsContentModelId,
   resolveCmsSectionPresetId,
 } from './content-models'
+import { resolveCmsReusableBlockReference } from './reusable-blocks'
+import { resolveCmsReusableSectionReference } from './reusable-sections'
 import type {
   CmsAuthoredBlockPresetSettings,
   CmsAuthoredContentModelSettings,
@@ -32,6 +34,8 @@ import type {
   CmsPageBlockSettings,
   CmsPageSectionSettings,
   CmsPageSettings,
+  CmsReusableBlockSettings,
+  CmsReusableSectionSettings,
 } from './types'
 
 export type CmsContentValidationSeverity = 'error' | 'warning'
@@ -67,6 +71,8 @@ export interface CmsContentValidationOptions {
   registry?: CmsBlockRegistry
   authoredContentModels?: CmsAuthoredContentModelSettings[]
   authoredBlockPresets?: CmsAuthoredBlockPresetSettings[]
+  reusableBlocks?: CmsReusableBlockSettings[]
+  reusableSections?: CmsReusableSectionSettings[]
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -344,13 +350,43 @@ function validateBlock(
   blockIndex: number,
   issues: CmsContentValidationIssue[],
   registry?: CmsBlockRegistry,
-  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = []
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = [],
+  reusableBlocks: CmsReusableBlockSettings[] = []
 ): void {
-  const blockId = trimValue(block?.id)
-  const blockType = trimValue(block?.type)
-  const rawBlockPresetId = trimValue(block?.presetId)
-  const blockPresetId = resolveCmsBlockPresetId(block?.presetId)
   const pathBase = `pages.${page.id || 'unknown'}.sections.${section.id || 'unknown'}.blocks[${blockIndex}]`
+  const blockId = trimValue(block?.id)
+
+  if (block.reusableMode === 'linked') {
+    if (!trimValue(block.reusableSourceId)) {
+      pushIssue(issues, {
+        code: 'pages.sections.blocks.reusable.link.missing_source',
+        severity: 'error',
+        message: `Linked block "${blockId || `#${blockIndex + 1}`}" is missing its reusable source id.`,
+        path: `${pathBase}.reusableSourceId`,
+        pageId: page.id,
+        sectionId: section.id,
+        blockId,
+      })
+    } else if (!reusableBlocks.some(entry => entry.id === block.reusableSourceId)) {
+      pushIssue(issues, {
+        code: 'pages.sections.blocks.reusable.link.not_found',
+        severity: 'error',
+        message: `Linked block "${blockId || `#${blockIndex + 1}`}" references missing reusable block "${block.reusableSourceId}".`,
+        path: `${pathBase}.reusableSourceId`,
+        pageId: page.id,
+        sectionId: section.id,
+        blockId,
+      })
+    }
+  }
+
+  const resolvedBlock = resolveCmsReusableBlockReference({
+    block,
+    reusableBlocks,
+  })
+  const blockType = trimValue(resolvedBlock?.type)
+  const rawBlockPresetId = trimValue(resolvedBlock?.presetId)
+  const blockPresetId = resolveCmsBlockPresetId(resolvedBlock?.presetId)
 
   if (!blockId) {
     pushIssue(issues, {
@@ -442,7 +478,7 @@ function validateBlock(
     })
   }
 
-  if (!isRecord(block?.props)) {
+  if (!isRecord(resolvedBlock?.props)) {
     pushIssue(issues, {
       code: 'pages.sections.blocks.props.invalid',
       severity: 'error',
@@ -459,7 +495,7 @@ function validateBlock(
   if (definition?.validateProps) {
     const mergedProps = {
       ...(definition.defaults ?? {}),
-      ...block.props,
+      ...resolvedBlock.props,
     }
 
     if (!definition.validateProps(mergedProps)) {
@@ -483,17 +519,48 @@ function validateSection(
   issues: CmsContentValidationIssue[],
   registry?: CmsBlockRegistry,
   authoredContentModels: CmsAuthoredContentModelSettings[] = [],
-  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = []
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = [],
+  reusableSections: CmsReusableSectionSettings[] = [],
+  reusableBlocks: CmsReusableBlockSettings[] = []
 ): {
   enabledBlocksCount: number
 } {
-  const sectionId = trimValue(section?.id)
-  const sectionLabel = trimValue(section?.label)
-  const sectionPresetId = trimValue(section?.presetId)
+  const pathBase = `pages.${page.id || 'unknown'}.sections[${sectionIndex}]`
+  const rawSectionId = trimValue(section?.id)
+
+  if (section.reusableMode === 'linked') {
+    if (!trimValue(section.reusableSourceId)) {
+      pushIssue(issues, {
+        code: 'pages.sections.reusable.link.missing_source',
+        severity: 'error',
+        message: `Linked section "${rawSectionId || `#${sectionIndex + 1}`}" is missing its reusable source id.`,
+        path: `${pathBase}.reusableSourceId`,
+        pageId: page.id,
+        sectionId: rawSectionId,
+      })
+    } else if (!reusableSections.some(entry => entry.id === section.reusableSourceId)) {
+      pushIssue(issues, {
+        code: 'pages.sections.reusable.link.not_found',
+        severity: 'error',
+        message: `Linked section "${rawSectionId || `#${sectionIndex + 1}`}" references missing reusable section "${section.reusableSourceId}".`,
+        path: `${pathBase}.reusableSourceId`,
+        pageId: page.id,
+        sectionId: rawSectionId,
+      })
+    }
+  }
+
+  const resolvedSection = resolveCmsReusableSectionReference({
+    section,
+    reusableSections,
+    reusableBlocks,
+  })
+  const sectionId = trimValue(resolvedSection?.id)
+  const sectionLabel = trimValue(resolvedSection?.label)
+  const sectionPresetId = trimValue(resolvedSection?.presetId)
   const normalizedPresetId = resolveCmsSectionPresetId(sectionPresetId)
   const rawPresetIsValid = sectionPresetId === normalizedPresetId
-  const pathBase = `pages.${page.id || 'unknown'}.sections[${sectionIndex}]`
-  const blocks = Array.isArray(section?.blocks) ? section.blocks : []
+  const blocks = Array.isArray(resolvedSection?.blocks) ? resolvedSection.blocks : []
 
   if (!sectionId) {
     pushIssue(issues, {
@@ -538,7 +605,7 @@ function validateSection(
 
   const enabledBlocks = blocks.filter(block => block.enabled)
   const sectionBlockLimits = getCmsSectionPresetBlockLimits(normalizedPresetId)
-  if (section.enabled && enabledBlocks.length === 0) {
+  if (resolvedSection.enabled && enabledBlocks.length === 0) {
     pushIssue(issues, {
       code: 'pages.sections.blocks.empty',
       severity: 'error',
@@ -550,7 +617,7 @@ function validateSection(
   }
 
   if (
-    section.enabled
+    resolvedSection.enabled
     && enabledBlocks.length > 0
     && enabledBlocks.length < sectionBlockLimits.minBlocks
   ) {
@@ -565,7 +632,7 @@ function validateSection(
   }
 
   if (
-    section.enabled
+    resolvedSection.enabled
     && sectionBlockLimits.maxBlocks != null
     && enabledBlocks.length > sectionBlockLimits.maxBlocks
   ) {
@@ -597,7 +664,7 @@ function validateSection(
       blockIds.add(blockId)
     }
 
-    validateBlock(block, section, page, blockIndex, issues, registry, authoredBlockPresets)
+    validateBlock(block, resolvedSection, page, blockIndex, issues, registry, authoredBlockPresets, reusableBlocks)
   })
 
   return {
@@ -617,6 +684,12 @@ export function validateCmsContentPages(
     : []
   const authoredBlockPresets = Array.isArray(options.authoredBlockPresets)
     ? options.authoredBlockPresets
+    : []
+  const reusableBlocks = Array.isArray(options.reusableBlocks)
+    ? options.reusableBlocks
+    : []
+  const reusableSections = Array.isArray(options.reusableSections)
+    ? options.reusableSections
     : []
   const issues: CmsContentValidationIssue[] = []
   const summary: CmsContentValidationSummary = {
@@ -777,13 +850,18 @@ export function validateCmsContentPages(
       return
     }
 
+    const resolvedSections = sections.map(section => resolveCmsReusableSectionReference({
+      section,
+      reusableSections,
+      reusableBlocks,
+    }))
     const enabledSectionPresetIds = new Set(
-      sections
+      resolvedSections
         .filter(section => section?.enabled)
         .map(section => resolveCmsSectionPresetId(section?.presetId))
     )
     const enabledPresetUsageCounts = new Map<string, number>()
-    sections
+    resolvedSections
       .filter(section => section?.enabled)
       .forEach(section => {
         const presetId = resolveCmsSectionPresetId(section?.presetId)
@@ -817,7 +895,9 @@ export function validateCmsContentPages(
         issues,
         options.registry,
         authoredContentModels,
-        authoredBlockPresets
+        authoredBlockPresets,
+        reusableSections,
+        reusableBlocks
       )
       summary.enabledBlocksCount += sectionResult.enabledBlocksCount
     })

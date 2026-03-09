@@ -7,7 +7,9 @@ import {
   cloneCmsReusableBlockIntoPageBlock,
   createCmsReusableBlockFromBlock,
   createDefaultCmsReusableBlocks,
+  detachCmsPageBlockFromReusable,
   normalizeCmsReusableBlocks,
+  resolveCmsReusableBlockReference,
 } from '../../../../src/modules/cms/white-label/reusable-blocks'
 
 describe('reusable-blocks', () => {
@@ -110,6 +112,55 @@ describe('reusable-blocks', () => {
         label: 'Open builder',
         href: '#builder',
       },
+    })
+  })
+
+  it('resolves linked reusable blocks and detaches them into local snapshots', () => {
+    const reusableBlock = createCmsReusableBlockFromBlock({
+      block: {
+        id: 'hero-block-1',
+        type: 'landing.hero',
+        presetId: 'landing-hero-product-launch',
+        enabled: true,
+        props: {
+          title: 'Reusable source title',
+        },
+      },
+      existingBlocks: [],
+      displayName: 'Reusable Hero',
+      category: 'hero',
+    })
+
+    const linkedBlock = cloneCmsReusableBlockIntoPageBlock({
+      reusableBlock,
+      blockId: 'hero-block-linked',
+      mode: 'linked',
+    })
+
+    linkedBlock.props = {
+      title: 'Stale local copy',
+    }
+
+    const resolvedBlock = resolveCmsReusableBlockReference({
+      block: linkedBlock,
+      reusableBlocks: [reusableBlock],
+    })
+
+    expect(resolvedBlock.reusableMode).toBe('linked')
+    expect(resolvedBlock.reusableSourceId).toBe(reusableBlock.id)
+    expect(resolvedBlock.props).toEqual({
+      title: 'Reusable source title',
+    })
+
+    const detachedBlock = detachCmsPageBlockFromReusable({
+      block: linkedBlock,
+      reusableBlocks: [reusableBlock],
+    })
+
+    expect(detachedBlock.reusableMode).toBe('detached')
+    expect(detachedBlock.reusableSourceId).toBe(reusableBlock.id)
+    expect(detachedBlock.props).toEqual({
+      title: 'Reusable source title',
     })
   })
 })
