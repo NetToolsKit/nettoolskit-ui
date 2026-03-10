@@ -88,6 +88,40 @@
                 <q-btn flat dense no-caps icon="download" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile" />
                 <q-btn flat dense no-caps icon="upload_file" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog" />
               </div>
+              <q-separator vertical inset class="cms-toolbar-card__separator" />
+              <div class="cms-toolbar-card__domain-transfer">
+                <q-select
+                  v-model="selectedDomainTransfer"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsDomainTransferOptions"
+                  :label="tr('Domain package', 'Pacote de dominio')"
+                  :aria-label="tr('Domain package selector', 'Seletor de pacote de dominio')"
+                  class="cms-toolbar-card__domain-select"
+                />
+                <div class="cms-toolbar-card__actions">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="file_download"
+                    :label="tr('Export package', 'Exportar pacote')"
+                    :aria-label="tr('Export selected domain package', 'Exportar pacote do dominio selecionado')"
+                    @click="exportSelectedDomainSnapshot"
+                  />
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="file_upload"
+                    :label="tr('Import package', 'Importar pacote')"
+                    :aria-label="tr('Import selected domain package', 'Importar pacote do dominio selecionado')"
+                    @click="openDomainImportDialog"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <input
@@ -97,6 +131,14 @@
             :aria-label="cmsUiText.importInputAriaLabel"
             class="cms-file-input"
             @change="onTenantImportFileChange"
+          >
+          <input
+            ref="domainImportInputRef"
+            type="file"
+            accept="application/json,.json"
+            :aria-label="tr('Import domain JSON file', 'Importar arquivo JSON do dominio')"
+            class="cms-file-input"
+            @change="onDomainImportFileChange"
           >
           </div>
 
@@ -3430,6 +3472,11 @@ import {
   parseCmsTenantImportPayload,
 } from '../src/modules/cms/white-label/tenant-payload'
 import {
+  createCmsDomainExportPayload,
+  parseCmsDomainImportPayload,
+  type CmsDomainPayloadDomain,
+} from '../src/modules/cms/white-label/domain-payload'
+import {
   applyWhiteLabelWorkflowAction,
   canApplyWhiteLabelWorkflowAction,
 } from '../src/modules/cms/white-label/workflow'
@@ -3542,6 +3589,17 @@ import {
   replaceCmsMediaAssetReferences,
   type CmsMediaDiagnostic,
 } from '../src/modules/cms/white-label/media-library'
+import {
+  applyCmsAssetRepositorySnapshot,
+  applyCmsContentRepositorySnapshot,
+  applyCmsReleaseRepositorySnapshot,
+  createCmsAssetRepositorySnapshot,
+  createCmsContentRepositorySnapshot,
+  createCmsReleaseRepositorySnapshot,
+  type CmsAssetRepositorySnapshot,
+  type CmsContentRepositorySnapshot,
+  type CmsReleaseRepositorySnapshot,
+} from '../src/modules/cms/white-label/providers'
 import {
   createCmsPageFromTemplate,
   listCmsPageQuickStartOptions,
@@ -4024,6 +4082,8 @@ function getCmsMediaKindLabel(kind: CmsMediaAssetKind): string {
 const tenantProfilesState = ref<CmsTenantProfilesState>(loadCmsTenantProfilesState())
 const activeTenantProfileId = ref(tenantProfilesState.value.activeProfileId)
 const tenantImportInputRef = ref<HTMLInputElement | null>(null)
+const domainImportInputRef = ref<HTMLInputElement | null>(null)
+const selectedDomainTransfer = ref<CmsDomainPayloadDomain>('content')
 
 /**
  * Handles get active tenant profile snapshot.
@@ -4238,6 +4298,51 @@ const isPtBrLocale = computed(() => resolveCmsLocale(settings.value.content.loca
 function tr(en: string, ptBr: string): string {
   return isPtBrLocale.value ? ptBr : en
 }
+
+function getCmsDomainTransferLabel(domain: CmsDomainPayloadDomain): string {
+  switch (domain) {
+    case 'content':
+      return tr('Content', 'Conteudo')
+    case 'assets':
+      return tr('Assets', 'Assets')
+    case 'releases':
+      return tr('Releases', 'Releases')
+  }
+}
+
+function getCmsDomainTransferImportedLabel(
+  domain: CmsDomainPayloadDomain,
+  profileName: string,
+  version: string | number
+): string {
+  const domainLabel = getCmsDomainTransferLabel(domain)
+  return tr(
+    `${domainLabel} imported from ${profileName} (v${version})`,
+    `${domainLabel} importado de ${profileName} (v${version})`
+  )
+}
+
+function getCmsDomainTransferExportedLabel(domain: CmsDomainPayloadDomain): string {
+  return tr(
+    `${getCmsDomainTransferLabel(domain)} package exported`,
+    `Pacote de ${getCmsDomainTransferLabel(domain)} exportado`
+  )
+}
+
+const cmsDomainTransferOptions = computed(() => ([
+  {
+    label: getCmsDomainTransferLabel('content'),
+    value: 'content' as CmsDomainPayloadDomain,
+  },
+  {
+    label: getCmsDomainTransferLabel('assets'),
+    value: 'assets' as CmsDomainPayloadDomain,
+  },
+  {
+    label: getCmsDomainTransferLabel('releases'),
+    value: 'releases' as CmsDomainPayloadDomain,
+  },
+]))
 
 /**
  * Resolves theme presets with overrides.
@@ -11799,6 +11904,65 @@ function normalizeIdSegment(value: string | undefined | null): string {
     .replace(/^-|-$/g, '')
 }
 
+function createSelectedDomainSnapshot(
+  domain: CmsDomainPayloadDomain
+): CmsContentRepositorySnapshot | CmsAssetRepositorySnapshot | CmsReleaseRepositorySnapshot {
+  const snapshotSource = cloneWhiteLabelSettings(settings.value)
+
+  switch (domain) {
+    case 'content':
+      return createCmsContentRepositorySnapshot(snapshotSource)
+    case 'assets':
+      return createCmsAssetRepositorySnapshot(snapshotSource)
+    case 'releases':
+      return createCmsReleaseRepositorySnapshot(snapshotSource)
+  }
+}
+
+function applySelectedDomainSnapshot(
+  currentSettings: CmsWhiteLabelSettings,
+  domain: CmsDomainPayloadDomain,
+  snapshot: CmsContentRepositorySnapshot | CmsAssetRepositorySnapshot | CmsReleaseRepositorySnapshot
+): CmsWhiteLabelSettings {
+  switch (domain) {
+    case 'content':
+      return applyCmsContentRepositorySnapshot(currentSettings, snapshot as CmsContentRepositorySnapshot)
+    case 'assets':
+      return applyCmsAssetRepositorySnapshot(currentSettings, snapshot as CmsAssetRepositorySnapshot)
+    case 'releases':
+      return applyCmsReleaseRepositorySnapshot(currentSettings, snapshot as CmsReleaseRepositorySnapshot)
+  }
+}
+
+function downloadJsonPayload(fileName: string, payload: unknown): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  ;(window as Window & {
+    __NTK_CMS_LAST_DOWNLOAD__?: {
+      fileName: string
+      payload: string
+    }
+  }).__NTK_CMS_LAST_DOWNLOAD__ = {
+    fileName,
+    payload: JSON.stringify(payload, null, 2),
+  }
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+  const url = window.URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = fileName
+  anchor.style.display = 'none'
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  window.setTimeout(() => {
+    window.URL.revokeObjectURL(url)
+  }, 0)
+}
+
 /**
  * Handles export active tenant profile.
  */
@@ -11810,15 +11974,33 @@ function exportActiveTenantProfile(): void {
   const profile = getActiveTenantProfileSnapshot()
   const payload = createCmsTenantExportPayload(profile)
 
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const fileName = `ntk-cms-tenant-${toJsonFileName(profile.id)}.json`
-  const url = window.URL.createObjectURL(blob)
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = fileName
-  anchor.click()
-  window.URL.revokeObjectURL(url)
+  downloadJsonPayload(fileName, payload)
   savedAtLabel.value = `${profile.name} ${cmsUiText.value.tenantExportedSuffix}`
+}
+
+/**
+ * Handles export the selected repository domain snapshot.
+ */
+function exportSelectedDomainSnapshot(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  const activeProfile = getActiveTenantProfileSnapshot()
+  const domain = selectedDomainTransfer.value
+  const payload = createCmsDomainExportPayload({
+    domain,
+    snapshot: createSelectedDomainSnapshot(domain) as never,
+    profile: {
+      id: activeProfile.id,
+      name: activeProfile.name,
+    },
+  })
+
+  const fileName = `ntk-cms-${domain}-${toJsonFileName(activeProfile.id)}.json`
+  downloadJsonPayload(fileName, payload)
+  savedAtLabel.value = getCmsDomainTransferExportedLabel(domain)
 }
 
 /**
@@ -11832,6 +12014,19 @@ function openTenantImportDialog(): void {
 
   tenantImportInputRef.value.value = ''
   tenantImportInputRef.value.click()
+}
+
+/**
+ * Handles open domain import dialog.
+ */
+function openDomainImportDialog(): void {
+  if (!domainImportInputRef.value) {
+    nextTick(() => domainImportInputRef.value?.click())
+    return
+  }
+
+  domainImportInputRef.value.value = ''
+  domainImportInputRef.value.click()
 }
 
 async function onTenantImportFileChange(event: Event): Promise<void> {
@@ -11877,6 +12072,48 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
       },
     })
     savedAtLabel.value = cmsUiText.value.tenantImportedWithVersionLabel(imported.name.trim() || profileId, imported.sourceVersion)
+  } catch {
+    savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
+  }
+}
+
+async function onDomainImportFileChange(event: Event): Promise<void> {
+  const target = event.target as HTMLInputElement | null
+  const file = target?.files?.[0]
+  if (!file) {
+    return
+  }
+
+  try {
+    const fileContent = await file.text()
+    const parsed = JSON.parse(fileContent) as unknown
+    const imported = parseCmsDomainImportPayload(parsed, file.name, selectedDomainTransfer.value)
+    if (!imported) {
+      savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
+      return
+    }
+
+    selectedDomainTransfer.value = imported.domain
+    const nextSettings = applySelectedDomainSnapshot(
+      settings.value,
+      imported.domain,
+      imported.snapshot
+    )
+
+    applyCmsSettingsSnapshot(nextSettings)
+    savedAtLabel.value = getCmsDomainTransferImportedLabel(
+      imported.domain,
+      imported.profileName.trim() || imported.profileId,
+      imported.sourceVersion
+    )
+    applyGovernanceAction('import_settings', {
+      summary: `${getCmsDomainTransferLabel(imported.domain)} ${tr('imported', 'importado')}`,
+      metadata: {
+        domain: imported.domain,
+        sourceProfileId: imported.profileId,
+        sourceVersion: String(imported.sourceVersion),
+      },
+    })
   } catch {
     savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
   }
@@ -13898,6 +14135,19 @@ function resetToDefaults(): void {
   display: inline-flex;
   align-items: center;
   gap: var(--ntk-cms-space-xs);
+}
+
+.cms-toolbar-card__domain-transfer {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+  flex: 1 1 340px;
+}
+
+.cms-toolbar-card__domain-select {
+  min-width: 220px;
+  flex: 1 1 220px;
 }
 
 .cms-toolbar-card__separator {

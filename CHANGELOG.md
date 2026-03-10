@@ -30,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Reused the existing topbar search as the single search surface for authoring, filtering page quick-starts, page cards, reusable sections, block sections, reusable blocks and authored preset libraries without breaking sidebar module navigation.
   - Added module-aware quick command pickers in `Pages` and `Blocks` for common actions such as create/open page, apply model scaffold/defaults, sync schema version, focus sections/blocks and select reusable content.
   - Added focused Playwright coverage for shared search filtering plus command execution across `Pages` and `Blocks`.
+- **Domain-level import/export flows for content, assets and releases**
+  - Added a versioned domain-payload contract so `content`, `assets` and `releases` can be exported and imported independently without replacing the broader tenant-level JSON package flow.
+  - Added CMS `Settings` actions for domain package selection plus `Export package` / `Import package`, backed by provider-domain snapshot extract/apply helpers.
+  - Added unit coverage for payload parsing and focused Playwright coverage for importing and exporting each domain while preserving the untouched domains in storage.
 - **Engine-level visual regression and release-quality gates**
   - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
   - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.

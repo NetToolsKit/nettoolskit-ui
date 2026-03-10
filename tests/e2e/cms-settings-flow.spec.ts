@@ -5,6 +5,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
+const CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
 const DEFAULT_TENANT_NAME = 'Default Tenant'
 const BLUE_TENANT_NAME = 'Blue Tenant'
 const HEADER_ACTIONS_HOVER_LABEL = 'Header actions hover background (hover only)'
@@ -521,6 +522,240 @@ test.describe('CMS settings white-label flow', () => {
     expect(governanceByTenant[BLUE_TENANT_NAME]?.version).toBeGreaterThanOrEqual(2)
     expect(governanceByTenant[DEFAULT_TENANT_NAME]?.status).toBe('draft')
     expect(governanceByTenant[BLUE_TENANT_NAME]?.status).toBe('draft')
+  })
+
+  test('imports and exports domain snapshots independently', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+
+    const readStoredSettings = async (): Promise<Record<string, unknown> | null> => {
+      return page.evaluate((storageKey: string) => {
+        const raw = window.localStorage.getItem(storageKey)
+        if (!raw) {
+          return null
+        }
+
+        const parsed = JSON.parse(raw)
+        return parsed?.settings ?? null
+      }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
+    }
+
+    const initialSettings = await page.evaluate((storageKey: string) => {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) {
+        return null
+      }
+
+      const parsed = JSON.parse(raw)
+      return parsed?.settings ?? null
+    }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
+
+    expect(initialSettings).not.toBeNull()
+    const initialMediaName = initialSettings?.mediaAssets?.[0]?.name ?? null
+    const initialEnvironment = initialSettings?.releases?.activeEnvironment ?? 'dev'
+
+    const contentFileName = await page.evaluate(() => {
+      const exportButton = document.querySelector(
+        'button[aria-label="Exportar pacote do dominio selecionado"], button[aria-label="Export selected domain package"]'
+      )
+
+      if (!exportButton) {
+        return null
+      }
+
+      ;(exportButton as HTMLButtonElement).click()
+      return (window as Window & {
+        __NTK_CMS_LAST_DOWNLOAD__?: { fileName: string }
+      }).__NTK_CMS_LAST_DOWNLOAD__?.fileName ?? null
+    })
+    expect(contentFileName).toMatch(/^ntk-cms-content-/i)
+
+    const importedContentName = 'Imported Content Tenant'
+    const contentPayload = {
+      kind: 'ntk-cms-domain-snapshot',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile: {
+        id: 'source-content',
+        name: 'Source Content',
+      },
+      domain: 'content',
+      snapshot: {
+        branding: {
+          ...initialSettings?.branding,
+          appName: importedContentName,
+        },
+        layout: initialSettings?.layout,
+        content: initialSettings?.content,
+        pages: initialSettings?.pages,
+        reusableSections: initialSettings?.reusableSections,
+        reusableBlocks: initialSettings?.reusableBlocks,
+        authoredContentModels: initialSettings?.authoredContentModels,
+        authoredContentModelFieldPresets: initialSettings?.authoredContentModelFieldPresets,
+        authoredBlockPresets: initialSettings?.authoredBlockPresets,
+        themePresetId: initialSettings?.themePresetId,
+        themePresetOverrides: initialSettings?.themePresetOverrides,
+        theme: initialSettings?.theme,
+        navGroups: initialSettings?.navGroups,
+        items: initialSettings?.items,
+        toolbarActions: initialSettings?.toolbarActions,
+        governance: initialSettings?.governance,
+      },
+    }
+
+    await page
+      .locator('input[type="file"][aria-label="Importar arquivo JSON do dominio"], input[type="file"][aria-label="Import domain JSON file"]')
+      .setInputFiles({
+        name: 'content-domain.json',
+        mimeType: 'application/json',
+        buffer: Buffer.from(JSON.stringify(contentPayload, null, 2)),
+      })
+
+    await expect.poll(async () => {
+      const parsed = await readStoredSettings()
+      if (!parsed) {
+        return null
+      }
+
+      return {
+        appName: (parsed.branding as Record<string, unknown> | undefined)?.appName ?? null,
+        mediaName: Array.isArray(parsed.mediaAssets) ? (parsed.mediaAssets[0] as Record<string, unknown> | undefined)?.name ?? null : null,
+        activeEnvironment: (parsed.releases as Record<string, unknown> | undefined)?.activeEnvironment ?? null,
+      }
+    }).toEqual({
+      appName: importedContentName,
+      mediaName: initialMediaName,
+      activeEnvironment: initialEnvironment,
+    })
+
+    const afterContentImport = await readStoredSettings()
+
+    await selectOptionByFieldLabelPattern(page, /^(Domain package|Pacote de dominio)$/, 'Assets')
+    const assetsFileName = await page.evaluate(() => {
+      const exportButton = document.querySelector(
+        'button[aria-label="Exportar pacote do dominio selecionado"], button[aria-label="Export selected domain package"]'
+      )
+
+      if (!exportButton) {
+        return null
+      }
+
+      ;(exportButton as HTMLButtonElement).click()
+      return (window as Window & {
+        __NTK_CMS_LAST_DOWNLOAD__?: { fileName: string }
+      }).__NTK_CMS_LAST_DOWNLOAD__?.fileName ?? null
+    })
+    expect(assetsFileName).toMatch(/^ntk-cms-assets-/i)
+
+    const importedAssetName = 'Imported Asset Domain'
+    const assetsPayload = {
+      kind: 'ntk-cms-domain-snapshot',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile: {
+        id: 'source-assets',
+        name: 'Source Assets',
+      },
+      domain: 'assets',
+      snapshot: {
+        mediaAssets: Array.isArray(afterContentImport?.mediaAssets) && afterContentImport.mediaAssets.length > 0
+          ? afterContentImport.mediaAssets.map((asset: Record<string, unknown>, index: number) => (
+            index === 0
+              ? {
+                ...asset,
+                name: importedAssetName,
+              }
+              : asset
+          ))
+          : [],
+      },
+    }
+
+    await page
+      .locator('input[type="file"][aria-label="Importar arquivo JSON do dominio"], input[type="file"][aria-label="Import domain JSON file"]')
+      .setInputFiles({
+        name: 'assets-domain.json',
+        mimeType: 'application/json',
+        buffer: Buffer.from(JSON.stringify(assetsPayload, null, 2)),
+      })
+
+    await expect.poll(async () => {
+      const parsed = await readStoredSettings()
+      if (!parsed) {
+        return null
+      }
+
+      return {
+        appName: (parsed.branding as Record<string, unknown> | undefined)?.appName ?? null,
+        mediaName: Array.isArray(parsed.mediaAssets) ? (parsed.mediaAssets[0] as Record<string, unknown> | undefined)?.name ?? null : null,
+        activeEnvironment: (parsed.releases as Record<string, unknown> | undefined)?.activeEnvironment ?? null,
+      }
+    }).toEqual({
+      appName: importedContentName,
+      mediaName: importedAssetName,
+      activeEnvironment: initialEnvironment,
+    })
+
+    const afterAssetImport = await readStoredSettings()
+
+    await selectOptionByFieldLabelPattern(page, /^(Domain package|Pacote de dominio)$/, 'Releases')
+    const releasesFileName = await page.evaluate(() => {
+      const exportButton = document.querySelector(
+        'button[aria-label="Exportar pacote do dominio selecionado"], button[aria-label="Export selected domain package"]'
+      )
+
+      if (!exportButton) {
+        return null
+      }
+
+      ;(exportButton as HTMLButtonElement).click()
+      return (window as Window & {
+        __NTK_CMS_LAST_DOWNLOAD__?: { fileName: string }
+      }).__NTK_CMS_LAST_DOWNLOAD__?.fileName ?? null
+    })
+    expect(releasesFileName).toMatch(/^ntk-cms-releases-/i)
+
+    const releasesPayload = {
+      kind: 'ntk-cms-domain-snapshot',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile: {
+        id: 'source-releases',
+        name: 'Source Releases',
+      },
+      domain: 'releases',
+      snapshot: {
+        releases: {
+          ...afterAssetImport?.releases,
+          activeEnvironment: 'production',
+        },
+      },
+    }
+
+    await page
+      .locator('input[type="file"][aria-label="Importar arquivo JSON do dominio"], input[type="file"][aria-label="Import domain JSON file"]')
+      .setInputFiles({
+        name: 'releases-domain.json',
+        mimeType: 'application/json',
+        buffer: Buffer.from(JSON.stringify(releasesPayload, null, 2)),
+      })
+
+    await expect.poll(async () => {
+      const parsed = await readStoredSettings()
+      if (!parsed) {
+        return null
+      }
+
+      return {
+        appName: (parsed.branding as Record<string, unknown> | undefined)?.appName ?? null,
+        mediaName: Array.isArray(parsed.mediaAssets) ? (parsed.mediaAssets[0] as Record<string, unknown> | undefined)?.name ?? null : null,
+        activeEnvironment: (parsed.releases as Record<string, unknown> | undefined)?.activeEnvironment ?? null,
+      }
+    }).toEqual({
+      appName: importedContentName,
+      mediaName: importedAssetName,
+      activeEnvironment: 'production',
+    })
   })
 
   test('navigates from pages to blocks and keeps block props editors in sync', async ({ page }) => {
