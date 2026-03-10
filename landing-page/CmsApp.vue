@@ -1450,10 +1450,35 @@
                   class="cms-pages__template-select"
                 />
                 <q-btn flat dense no-caps icon="add" :label="cmsUiText.addPageLabel" @click="addCmsPage" />
+                <q-select
+                  v-if="cmsBuilderCommandOptions.length > 0"
+                  v-model="selectedBuilderCommandId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsBuilderCommandOptions"
+                  option-label="label"
+                  option-value="value"
+                  :label="tr('Quick command', 'Comando rapido')"
+                  class="cms-builder-command-select"
+                />
+                <q-btn
+                  v-if="cmsBuilderCommandOptions.length > 0"
+                  flat
+                  dense
+                  no-caps
+                  icon="play_arrow"
+                  :label="tr('Run', 'Executar')"
+                  @click="executeSelectedBuilderCommand"
+                />
               </div>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__editor">
+              <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
+                {{ selectedCmsBuilderCommandOption.description }}
+              </p>
               <div class="cms-pages__quick-starts">
                 <div class="cms-pages__quick-starts-header">
                   <div>
@@ -1468,12 +1493,12 @@
                     </small>
                   </div>
                   <q-chip dense square :style="statusChipStyle">
-                    {{ cmsPageQuickStartOptions.length }}
+                    {{ hasCmsBuilderSearch ? `${filteredCmsPageQuickStartOptions.length}/${cmsPageQuickStartOptions.length}` : cmsPageQuickStartOptions.length }}
                   </q-chip>
                 </div>
                 <div class="cms-pages__quick-start-grid">
                   <article
-                    v-for="quickStart in cmsPageQuickStartOptions"
+                    v-for="quickStart in filteredCmsPageQuickStartOptions"
                     :key="`quick-start-${quickStart.value}`"
                     class="cms-page-quick-start-card"
                   >
@@ -1514,10 +1539,13 @@
                     </div>
                   </article>
                 </div>
+                <div v-if="hasCmsBuilderSearch && filteredCmsPageQuickStartOptions.length === 0" class="cms-block-item__empty">
+                  <strong>{{ tr('No quick-start matched the current search.', 'Nenhum quick-start corresponde a busca atual.') }}</strong>
+                </div>
               </div>
 
               <div
-                v-for="(page, pageIndex) in settings.pages"
+                v-for="{ page, pageIndex } in filteredCmsPageRows"
                 :key="page.id"
                 class="cms-page-item"
               >
@@ -1900,18 +1928,36 @@
                 </div>
               </div>
 
+              <div v-if="hasCmsBuilderSearch && filteredCmsPageRows.length === 0" class="cms-block-item__empty cms-block-item__empty--card">
+                <strong>{{ tr('No pages matched the current search.', 'Nenhuma pagina corresponde a busca atual.') }}</strong>
+                <small>
+                  {{
+                    tr(
+                      'Try another search term or run one quick command from the current template.',
+                      'Tente outro termo de busca ou execute um comando rapido a partir do template atual.'
+                    )
+                  }}
+                </small>
+              </div>
+
               <div class="cms-pages__reusable-library">
                 <div class="cms-shell-card__header">
                   <strong>{{ tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">{{ settings.reusableSections.length }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">
+                    {{ hasCmsBuilderSearch ? `${filteredCmsReusableSectionLibrary.length}/${settings.reusableSections.length}` : settings.reusableSections.length }}
+                  </q-chip>
                 </div>
                 <q-separator />
                 <div class="cms-pages__reusable-list">
-                  <div v-if="settings.reusableSections.length === 0" class="cms-block-item__empty">
-                    {{ tr('No reusable sections saved yet.', 'Nenhuma secao reutilizavel salva ainda.') }}
+                  <div v-if="filteredCmsReusableSectionLibrary.length === 0" class="cms-block-item__empty">
+                    {{
+                      hasCmsBuilderSearch
+                        ? tr('No reusable section matched the current search.', 'Nenhuma secao reutilizavel corresponde a busca atual.')
+                        : tr('No reusable sections saved yet.', 'Nenhuma secao reutilizavel salva ainda.')
+                    }}
                   </div>
                   <article
-                    v-for="reusableSection in settings.reusableSections"
+                    v-for="reusableSection in filteredCmsReusableSectionLibrary"
                     :key="reusableSection.id"
                     class="cms-reusable-block-row"
                   >
@@ -2064,10 +2110,37 @@
           <q-card flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ cmsUiText.blocksManagerTitle }}</strong>
-              <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} blocks</q-chip>
+              <div class="cms-blocks__header-actions">
+                <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} blocks</q-chip>
+                <q-select
+                  v-if="cmsBuilderCommandOptions.length > 0"
+                  v-model="selectedBuilderCommandId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsBuilderCommandOptions"
+                  option-label="label"
+                  option-value="value"
+                  :label="tr('Quick command', 'Comando rapido')"
+                  class="cms-builder-command-select"
+                />
+                <q-btn
+                  v-if="cmsBuilderCommandOptions.length > 0"
+                  flat
+                  dense
+                  no-caps
+                  icon="play_arrow"
+                  :label="tr('Run', 'Executar')"
+                  @click="executeSelectedBuilderCommand"
+                />
+              </div>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-blocks__editor">
+              <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
+                {{ selectedCmsBuilderCommandOption.description }}
+              </p>
               <div class="cms-form-grid cms-blocks-toolbar">
                 <q-select
                   v-model="activeBlocksPageId"
@@ -2279,23 +2352,27 @@
               <div class="cms-blocks-library">
                 <div class="cms-blocks-library__header">
                   <strong>{{ tr('Reusable block library', 'Biblioteca de blocos reutilizaveis') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">{{ settings.reusableBlocks.length }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">
+                    {{ hasCmsBuilderSearch ? `${filteredCmsReusableBlockLibrary.length}/${settings.reusableBlocks.length}` : settings.reusableBlocks.length }}
+                  </q-chip>
                 </div>
 
-                <div v-if="settings.reusableBlocks.length === 0" class="cms-block-item__empty">
+                <div v-if="filteredCmsReusableBlockLibrary.length === 0" class="cms-block-item__empty">
                   <strong>{{ tr('No reusable blocks saved yet.', 'Nenhum bloco reutilizavel salvo ainda.') }}</strong>
                   <small>
                     {{
-                      tr(
-                        'Select one authored block and use "Save selection" to build your first reusable library item.',
-                        'Selecione um bloco authored e use "Salvar selecao" para criar o primeiro item reutilizavel da biblioteca.'
-                      )
+                      hasCmsBuilderSearch
+                        ? tr('No reusable block matched the current search.', 'Nenhum bloco reutilizavel corresponde a busca atual.')
+                        : tr(
+                          'Select one authored block and use "Save selection" to build your first reusable library item.',
+                          'Selecione um bloco authored e use "Salvar selecao" para criar o primeiro item reutilizavel da biblioteca.'
+                        )
                     }}
                   </small>
                 </div>
 
                 <div
-                  v-for="reusableBlock in settings.reusableBlocks"
+                  v-for="reusableBlock in filteredCmsReusableBlockLibrary"
                   :key="reusableBlock.id"
                   class="cms-reusable-block-row"
                   :class="{ 'cms-reusable-block-row--active': reusableBlock.id === selectedReusableBlockId }"
@@ -2329,23 +2406,27 @@
               <div class="cms-blocks-library">
                 <div class="cms-blocks-library__header">
                   <strong>{{ tr('Authored preset library', 'Biblioteca de presets authored') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">{{ settings.authoredBlockPresets.length }}</q-chip>
+                  <q-chip dense square :style="statusChipStyle">
+                    {{ hasCmsBuilderSearch ? `${filteredCmsAuthoredBlockPresetLibrary.length}/${settings.authoredBlockPresets.length}` : settings.authoredBlockPresets.length }}
+                  </q-chip>
                 </div>
 
-                <div v-if="settings.authoredBlockPresets.length === 0" class="cms-block-item__empty">
+                <div v-if="filteredCmsAuthoredBlockPresetLibrary.length === 0" class="cms-block-item__empty">
                   <strong>{{ tr('No authored presets saved yet.', 'Nenhum preset authored salvo ainda.') }}</strong>
                   <small>
                     {{
-                      tr(
-                        'Start from a selected block or reusable item, then save it as a preset for repeatable authoring.',
-                        'Comece por um bloco selecionado ou item reutilizavel e depois salve como preset para autoria repetivel.'
-                      )
+                      hasCmsBuilderSearch
+                        ? tr('No preset matched the current search.', 'Nenhum preset corresponde a busca atual.')
+                        : tr(
+                          'Start from a selected block or reusable item, then save it as a preset for repeatable authoring.',
+                          'Comece por um bloco selecionado ou item reutilizavel e depois salve como preset para autoria repetivel.'
+                        )
                     }}
                   </small>
                 </div>
 
                 <div
-                  v-for="preset in settings.authoredBlockPresets"
+                  v-for="preset in filteredCmsAuthoredBlockPresetLibrary"
                   :key="preset.id"
                   class="cms-reusable-block-row"
                   :class="{ 'cms-reusable-block-row--active': preset.id === selectedAuthoredBlockPresetId }"
@@ -2391,10 +2472,21 @@
                   <q-btn flat dense no-caps icon="web_asset" :label="tr('Open pages', 'Abrir paginas')" @click="openPagesModule" />
                 </div>
               </div>
+              <div v-else-if="hasCmsBuilderSearch && filteredActiveBlocksSections.length === 0" class="cms-block-item__empty cms-block-item__empty--card">
+                <strong>{{ tr('No sections matched the current search.', 'Nenhuma secao corresponde a busca atual.') }}</strong>
+                <small>
+                  {{
+                    tr(
+                      'Try another search term or use one quick command to focus a section or block.',
+                      'Tente outro termo de busca ou use um comando rapido para focar uma secao ou bloco.'
+                    )
+                  }}
+                </small>
+              </div>
 
               <div v-else class="cms-blocks-list">
                 <div
-                  v-for="section in activeBlocksSections"
+                  v-for="section in filteredActiveBlocksSections"
                   :key="section.id"
                   class="cms-block-item"
                   :class="{ 'cms-block-item--drop-target': blockDropTargetKey === section.id }"
@@ -3733,6 +3825,17 @@ interface CmsBlocksSectionRow {
   blocks: CmsSectionBlockRecord[]
 }
 
+interface CmsFilteredPageRow {
+  page: CmsPageSettings
+  pageIndex: number
+}
+
+interface CmsBuilderCommandOption {
+  label: string
+  value: string
+  description: string
+}
+
 interface CmsDraggedPageSection {
   pageId: string
   sectionId: string
@@ -4158,6 +4261,7 @@ function getCurrentThemePresets(): CmsThemePreset[] {
 
 const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
+const selectedBuilderCommandId = ref('')
 const activeSettingsTab = ref<'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
 const showAdvancedThemeFields = ref(false)
 const savedAtLabel = ref(cmsUiText.value.autoSaveEnabled)
@@ -4221,6 +4325,43 @@ const cmsPageQuickStartOptions = computed(() => {
     settings.value.authoredContentModels
   )
 })
+const normalizedCmsBuilderSearch = computed(() => normalizeCmsBuilderSearchValue(searchQuery.value))
+const hasCmsBuilderSearch = computed(() => normalizedCmsBuilderSearch.value.length > 0)
+const filteredCmsPageQuickStartOptions = computed(() => {
+  if (!hasCmsBuilderSearch.value) {
+    return cmsPageQuickStartOptions.value
+  }
+
+  return cmsPageQuickStartOptions.value.filter(option => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    option.label,
+    option.description,
+    option.contentModelLabel,
+    option.sectionLabels.join(' '),
+  ))
+})
+const filteredCmsPageRows = computed<CmsFilteredPageRow[]>(() => {
+  const rows = settings.value.pages.map((page, pageIndex) => ({
+    page,
+    pageIndex,
+  }))
+
+  if (!hasCmsBuilderSearch.value) {
+    return rows
+  }
+
+  return rows.filter(({ page }) => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    page.id,
+    getCmsPageTitleValue(page),
+    getCmsPageDescriptionValue(page),
+    page.path,
+    page.status,
+    getCmsContentModelLabel(settings.value.content.locale, page.contentModelId, settings.value.authoredContentModels),
+    page.sections.map(section => getCmsSectionLabelValue(section)).join(' '),
+    page.sections.map(section => section.presetId).join(' '),
+  ))
+})
 const cmsContentModelOptions = computed(() => {
   return listCmsContentModelOptions(
     settings.value.content.locale,
@@ -4264,6 +4405,24 @@ const cmsAuthoredContentModelOptions = computed(() => {
 const cmsAuthoredContentModelFieldPresetLibrary = computed<CmsAuthoredContentModelFieldPresetSettings[]>(() => {
   return settings.value.authoredContentModelFieldPresets
 })
+
+/**
+ * Normalizes free-text builder search input.
+ */
+function normalizeCmsBuilderSearchValue(value: unknown): string {
+  return String(value ?? '').trim().toLowerCase()
+}
+
+/**
+ * Evaluates whether any provided tokens match the current builder search query.
+ */
+function matchesCmsBuilderSearch(searchValue: string, ...tokens: unknown[]): boolean {
+  if (!searchValue) {
+    return true
+  }
+
+  return tokens.some(token => normalizeCmsBuilderSearchValue(token).includes(searchValue))
+}
 const cmsAuthoredContentModelFieldPresetOptions = computed<CmsContentModelFieldPresetOption[]>(() => {
   return listCmsContentModelFieldPresetOptions(
     settings.value.content.locale,
@@ -6588,7 +6747,9 @@ const activeThemePresetDescription = computed(() => {
 const shellSnapshot = computed(() => {
   return mapWhiteLabelToShellSnapshot(settings.value, {
     activeItem: activeMenuId.value,
-    searchValue: searchQuery.value,
+    searchValue: isPagesModule.value || isBlocksModule.value
+      ? ''
+      : searchQuery.value,
   })
 })
 
@@ -7762,6 +7923,21 @@ const activeBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
   }))
 })
 
+const filteredActiveBlocksSections = computed<CmsBlocksSectionRow[]>(() => {
+  if (!hasCmsBuilderSearch.value) {
+    return activeBlocksSections.value
+  }
+
+  return activeBlocksSections.value.filter(section => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    section.id,
+    section.label,
+    section.blocks.map(block => block.id).join(' '),
+    section.blocks.map(block => resolveCmsBlockDisplayName(block.type)).join(' '),
+    section.blocks.map(block => block.presetId).join(' '),
+  ))
+})
+
 const blocksSectionOptions = computed(() => {
   return activeBlocksSections.value.map(section => ({
     label: `${section.label} (${section.blocks.length})`,
@@ -7915,6 +8091,22 @@ const cmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>(() => {
   return settings.value.reusableSections
 })
 
+const filteredCmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>(() => {
+  if (!hasCmsBuilderSearch.value) {
+    return cmsReusableSectionLibrary.value
+  }
+
+  return cmsReusableSectionLibrary.value.filter(section => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    section.id,
+    section.name,
+    section.description,
+    getCmsReusableSectionLabelValue(section),
+    getCmsContentModelLabel(settings.value.content.locale, section.contentModelId, settings.value.authoredContentModels),
+    getCmsSectionPresetLabel(section.presetId),
+  ))
+})
+
 const cmsAuthoredContentModelUsageCountById = computed(() => {
   const counts = new Map<string, number>()
 
@@ -7962,6 +8154,37 @@ const cmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>
   return settings.value.authoredBlockPresets
 })
 
+const filteredCmsReusableBlockLibrary = computed<CmsReusableBlockSettings[]>(() => {
+  if (!hasCmsBuilderSearch.value) {
+    return settings.value.reusableBlocks
+  }
+
+  return settings.value.reusableBlocks.filter(block => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    block.id,
+    block.name,
+    block.description,
+    block.category,
+    resolveCmsBlockDisplayName(block.type),
+  ))
+})
+
+const filteredCmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>(() => {
+  if (!hasCmsBuilderSearch.value) {
+    return cmsAuthoredBlockPresetLibrary.value
+  }
+
+  return cmsAuthoredBlockPresetLibrary.value.filter(preset => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    preset.id,
+    getCmsAuthoredBlockPresetNameValue(preset),
+    getCmsAuthoredBlockPresetDescriptionValue(preset),
+    preset.category,
+    resolveCmsBlockDisplayName(preset.type),
+    getCmsAuthoredPresetStarterSectionsLabel(preset),
+  ))
+})
+
 const cmsAuthoredBlockPresetOptions = computed(() => {
   return settings.value.authoredBlockPresets.map(preset => ({
     label: `${getCmsAuthoredBlockPresetNameValue(preset)} (${resolveCmsBlockDisplayName(preset.type)})`,
@@ -7972,6 +8195,105 @@ const cmsAuthoredBlockPresetOptions = computed(() => {
 
 const cmsPresetStarterSectionOptions = computed<CmsSectionPresetOption[]>(() => {
   return listCmsSectionPresetOptions(settings.value.content.locale, 'blank-page')
+})
+
+const cmsBuilderCommandOptions = computed<CmsBuilderCommandOption[]>(() => {
+  const options: CmsBuilderCommandOption[] = []
+
+  if (isPagesModule.value) {
+    const selectedTemplate = cmsPageTemplateOptions.value.find(option => option.value === selectedPageTemplateId.value)
+    options.push(
+      {
+        label: tr('Create page from selected template', 'Criar pagina a partir do template selecionado'),
+        value: `pages:create:${selectedPageTemplateId.value}`,
+        description: selectedTemplate?.label ?? selectedPageTemplateId.value,
+      },
+      {
+        label: tr('Create and open blocks', 'Criar e abrir blocos'),
+        value: `pages:create-open:${selectedPageTemplateId.value}`,
+        description: selectedTemplate?.label ?? selectedPageTemplateId.value,
+      },
+    )
+
+    for (const quickStart of filteredCmsPageQuickStartOptions.value.slice(0, 4)) {
+      options.push({
+        label: `${tr('Quick-start', 'Quick-start')}: ${quickStart.label}`,
+        value: `pages:quick-start:${quickStart.value}`,
+        description: quickStart.description,
+      })
+    }
+
+    for (const { page } of filteredCmsPageRows.value.slice(0, 4)) {
+      options.push(
+        {
+          label: `${tr('Open in Blocks', 'Abrir em Blocos')}: ${getCmsPageTitleValue(page)}`,
+          value: `pages:open:${page.id}`,
+          description: page.path,
+        },
+        {
+          label: `${tr('Apply model scaffold', 'Aplicar scaffold do modelo')}: ${getCmsPageTitleValue(page)}`,
+          value: `pages:scaffold:${page.id}`,
+          description: getCmsContentModelLabel(settings.value.content.locale, page.contentModelId, settings.value.authoredContentModels),
+        },
+        {
+          label: `${tr('Apply model defaults', 'Aplicar defaults do modelo')}: ${getCmsPageTitleValue(page)}`,
+          value: `pages:defaults:${page.id}`,
+          description: page.path,
+        },
+        {
+          label: `${tr('Sync schema version', 'Sincronizar versao do schema')}: ${getCmsPageTitleValue(page)}`,
+          value: `pages:sync:${page.id}`,
+          description: `v${page.contentModelVersion ?? '?'}`,
+        },
+      )
+    }
+  }
+
+  if (isBlocksModule.value) {
+    options.push({
+      label: tr('Open Pages module', 'Abrir modulo de Paginas'),
+      value: 'blocks:open-pages',
+      description: tr('Switch back to page authoring.', 'Voltar para a autoria de paginas.'),
+    })
+
+    for (const section of filteredActiveBlocksSections.value.slice(0, 6)) {
+      options.push({
+        label: `${tr('Focus section', 'Focar secao')}: ${section.label}`,
+        value: `blocks:section:${section.id}`,
+        description: tr(`${section.blocks.length} blocks`, `${section.blocks.length} blocos`),
+      })
+    }
+
+    for (const block of filteredActiveBlocksSections.value.flatMap(section => section.blocks).slice(0, 8)) {
+      options.push({
+        label: `${tr('Select block', 'Selecionar bloco')}: ${resolveCmsBlockDisplayName(block.type)}`,
+        value: `blocks:block:${block.sectionId}:${block.id}`,
+        description: `${block.sectionLabel} · ${block.id}`,
+      })
+    }
+
+    for (const reusableBlock of filteredCmsReusableBlockLibrary.value.slice(0, 4)) {
+      options.push({
+        label: `${tr('Use reusable block', 'Usar bloco reutilizavel')}: ${reusableBlock.name}`,
+        value: `blocks:reusable:${reusableBlock.id}`,
+        description: reusableBlock.description || reusableBlock.category,
+      })
+    }
+
+    for (const preset of filteredCmsAuthoredBlockPresetLibrary.value.slice(0, 4)) {
+      options.push({
+        label: `${tr('Select preset', 'Selecionar preset')}: ${getCmsAuthoredBlockPresetNameValue(preset)}`,
+        value: `blocks:preset:${preset.id}`,
+        description: getCmsAuthoredBlockPresetDescriptionValue(preset) || preset.category,
+      })
+    }
+  }
+
+  return options
+})
+
+const selectedCmsBuilderCommandOption = computed(() => {
+  return cmsBuilderCommandOptions.value.find(option => option.value === selectedBuilderCommandId.value) ?? null
 })
 
 const cmsPreviewSnapshot = computed(() => resolveCmsPreviewSnapshot(settings.value, {
@@ -9421,6 +9743,105 @@ function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
 }
 
 /**
+ * Resolves page index from persistent page id.
+ */
+function findCmsPageIndexById(pageId: string): number {
+  return settings.value.pages.findIndex(page => page.id === pageId)
+}
+
+/**
+ * Runs the currently selected builder command for Pages or Blocks.
+ */
+function executeSelectedBuilderCommand(): void {
+  const commandValue = String(selectedBuilderCommandId.value ?? '').trim()
+  if (!commandValue) {
+    return
+  }
+
+  const [scope, action, ...payloadParts] = commandValue.split(':')
+  const payload = payloadParts.join(':')
+
+  if (scope === 'pages') {
+    if (action === 'create') {
+      createCmsPageFromSelectedTemplate(resolveCmsPageTemplateId(payload))
+      return
+    }
+    if (action === 'create-open') {
+      createCmsPageFromSelectedTemplate(resolveCmsPageTemplateId(payload), { openBlocksAfterCreate: true })
+      return
+    }
+    if (action === 'quick-start') {
+      runCmsPageQuickStart(resolveCmsPageTemplateId(payload))
+      return
+    }
+
+    const pageIndex = findCmsPageIndexById(payload)
+    if (pageIndex < 0) {
+      return
+    }
+
+    if (action === 'open') {
+      openPageInBlocksEditor(payload)
+      return
+    }
+    if (action === 'scaffold') {
+      applyCmsPageContentModelStarterSections(pageIndex)
+      return
+    }
+    if (action === 'defaults') {
+      applyCmsPageContentModelDefaults(pageIndex)
+      return
+    }
+    if (action === 'sync') {
+      syncCmsPageContentModelVersion(pageIndex)
+      return
+    }
+    return
+  }
+
+  if (scope === 'blocks') {
+    if (action === 'open-pages') {
+      openPagesModule()
+      return
+    }
+    if (action === 'section') {
+      const section = activeBlocksSections.value.find(entry => entry.id === payload)
+      if (!section) {
+        return
+      }
+      setActiveBlocksSelection(section.id, section.blocks[0]?.id ?? '')
+      savedAtLabel.value = `${tr('Section focused at', 'Secao focada as')} ${new Date().toLocaleTimeString()}`
+      return
+    }
+    if (action === 'block') {
+      const [sectionId, blockId] = payloadParts
+      if (!sectionId || !blockId) {
+        return
+      }
+      setActiveBlocksSelection(sectionId, blockId)
+      savedAtLabel.value = `${tr('Block selected at', 'Bloco selecionado as')} ${new Date().toLocaleTimeString()}`
+      return
+    }
+    if (action === 'reusable') {
+      if (!settings.value.reusableBlocks.some(block => block.id === payload)) {
+        return
+      }
+      selectedReusableBlockId.value = payload
+      savedAtLabel.value = `${tr('Reusable block selected at', 'Bloco reutilizavel selecionado as')} ${new Date().toLocaleTimeString()}`
+      return
+    }
+    if (action === 'preset') {
+      const presetId = resolveCmsBlockPresetId(payload)
+      if (!settings.value.authoredBlockPresets.some(preset => preset.id === presetId)) {
+        return
+      }
+      selectCmsAuthoredPreset(presetId)
+      savedAtLabel.value = `${tr('Preset selected at', 'Preset selecionado as')} ${new Date().toLocaleTimeString()}`
+    }
+  }
+}
+
+/**
  * Saves the currently selected block as a reusable library entry.
  */
 function saveSelectedBlockAsReusable(): void {
@@ -10826,6 +11247,22 @@ watch(
     }
 
     syncSelectedAuthoredPresetDrafts()
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  cmsBuilderCommandOptions,
+  options => {
+    if (options.length === 0) {
+      selectedBuilderCommandId.value = ''
+      return
+    }
+
+    const hasCommand = options.some(option => option.value === selectedBuilderCommandId.value)
+    if (!hasCommand) {
+      selectedBuilderCommandId.value = String(options[0]?.value ?? '')
+    }
   },
   { immediate: true, deep: true }
 )
@@ -12502,6 +12939,15 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
 }
 
+.cms-builder-command-select {
+  min-width: 18rem;
+  flex: 1 1 18rem;
+}
+
+.cms-pages__toolbar-hint {
+  margin-top: calc(var(--ntk-cms-space-xs) * -1);
+}
+
 .cms-pages__template-select {
   min-width: 15.5rem;
 }
@@ -12592,6 +13038,14 @@ function resetToDefaults(): void {
   max-height: var(--ntk-cms-editor-max-height);
   overflow: auto;
   padding-right: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-blocks__header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-blocks-toolbar {
@@ -14532,7 +14986,17 @@ function resetToDefaults(): void {
   justify-content: flex-start;
 }
 
+.cms-shell-page--md-compact .cms-blocks__header-actions {
+  width: 100%;
+  justify-content: flex-start;
+}
+
 .cms-shell-page--md-compact .cms-pages__template-select {
+  min-width: 0;
+  width: 100%;
+}
+
+.cms-shell-page--md-compact .cms-builder-command-select {
   min-width: 0;
   width: 100%;
 }

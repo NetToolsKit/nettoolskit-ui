@@ -1305,6 +1305,39 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-page-item')).toHaveCount(initialPageCount + 2)
   })
 
+  test('uses shared builder search and quick commands across Pages and Blocks', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Marketing funnel')
+    await fillTextInput(page.getByPlaceholder('Search module').first(), 'funnel')
+
+    await expect(page.locator('.cms-page-quick-start-card')).toHaveCount(1)
+    await expect(page.locator('.cms-page-quick-start-card').first()).toContainText('Marketing funnel')
+    await expect(page.locator('.cms-page-item')).toHaveCount(0)
+
+    await selectOptionByFieldLabelPattern(page, /^(Quick command|Comando rapido)$/, 'Create and open blocks')
+    await page.getByRole('button', { name: /^(Run|Executar)$/ }).first().click()
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    const targetPageField = page.locator('.q-field', {
+      has: page.locator('.q-field__label', { hasText: /^(Target page|Pagina alvo)$/ }),
+    }).first()
+    await expect(targetPageField).toContainText('Marketing Page (/marketing)')
+
+    await fillTextInput(page.getByPlaceholder('Search module').first(), 'hero')
+    await expect(page.locator('.cms-blocks-list .cms-block-item')).toHaveCount(1)
+    await expect(page.locator('.cms-blocks-list .cms-block-item .cms-block-item__meta strong').first()).toHaveText('Hero')
+
+    await selectOptionByFieldLabelPattern(page, /^(Quick command|Comando rapido)$/, 'Focus section: Hero')
+    await page.getByRole('button', { name: /^(Run|Executar)$/ }).first().click()
+
+    const targetSectionField = page.locator('.q-field', {
+      has: page.locator('.q-field__label', { hasText: /^(Target section|Secao alvo)$/ }),
+    }).first()
+    await expect(targetSectionField).toContainText('Hero')
+  })
+
   test('authors localized block presets and uses them as section starter presets', async ({ page }) => {
     const authoredPresetNameEn = 'Hero Authored EN'
     const authoredPresetNamePt = 'Hero Authored PT'

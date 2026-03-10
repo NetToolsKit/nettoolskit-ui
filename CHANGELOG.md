@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added quick-start cards in `Pages` for common template-driven flows (`Landing`, `Marketing funnel`, `Blank page`) so authors can create a page without manually selecting a template first.
   - Added a one-click `Create + open blocks` action that creates the page, initializes authoring selections and jumps directly into the `Blocks` module on the first editable section.
   - Added unit coverage for quick-start metadata and Playwright coverage for the guided create/open workflow.
+- **Shared builder search and quick commands for Pages and Blocks**
+  - Reused the existing topbar search as the single search surface for authoring, filtering page quick-starts, page cards, reusable sections, block sections, reusable blocks and authored preset libraries without breaking sidebar module navigation.
+  - Added module-aware quick command pickers in `Pages` and `Blocks` for common actions such as create/open page, apply model scaffold/defaults, sync schema version, focus sections/blocks and select reusable content.
+  - Added focused Playwright coverage for shared search filtering plus command execution across `Pages` and `Blocks`.
 - **Engine-level visual regression and release-quality gates**
   - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
   - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.
