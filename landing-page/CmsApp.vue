@@ -931,6 +931,21 @@
                         </div>
                         <div class="cms-content-model-fields__row">
                           <q-input
+                            v-model="field.group"
+                            outlined
+                            dense
+                            :label="tr('Field group', 'Grupo do campo')"
+                            :hint="tr('Leave blank to place the field in General.', 'Deixe em branco para colocar o campo em Geral.')"
+                          />
+                          <q-input
+                            v-model="field.orderValue"
+                            outlined
+                            dense
+                            type="number"
+                            min="1"
+                            :label="tr('Field order', 'Ordem do campo')"
+                          />
+                          <q-input
                             v-model="field.description"
                             outlined
                             dense
@@ -1171,7 +1186,7 @@
                           square
                         >
                           {{
-                            `${field.label || tr('Untitled field', 'Campo sem titulo')} · ${field.type}${field.repeatable ? '[]' : ''}`
+                            `${field.label || tr('Untitled field', 'Campo sem titulo')} · ${field.group || tr('General', 'Geral')} · #${field.orderValue || '1'} · ${field.type}${field.repeatable ? '[]' : ''}`
                           }}
                         </q-chip>
                       </div>
@@ -1358,89 +1373,107 @@
                       }}
                     </small>
                   </div>
-                  <div class="cms-page-item__custom-fields-grid">
-                    <template
-                      v-for="field in getCmsPageContentModelFields(page)"
-                      :key="`page-field-${page.id}-${field.id}`"
+                  <div class="cms-page-item__custom-fields-groups">
+                    <div
+                      v-for="group in getCmsPageContentModelFieldGroups(page)"
+                      :key="`page-field-group-${page.id}-${group.id}`"
+                      class="cms-page-item__custom-fields-group"
                     >
-                      <q-select
-                        v-if="field.repeatable && field.type === 'select'"
-                        :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
-                        outlined
-                        dense
-                        multiple
-                        use-chips
-                        emit-value
-                        map-options
-                        :options="field.options"
-                        option-label="label"
-                        option-value="value"
-                        :label="field.label"
-                        :hint="getCmsContentModelFieldHint(field)"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                      <q-input
-                        v-else-if="field.repeatable"
-                        :model-value="formatCmsRepeatableFieldValue(getCmsPageCustomFieldValue(page, field))"
-                        outlined
-                        dense
-                        type="textarea"
-                        autogrow
-                        :label="field.label"
-                        :hint="getCmsContentModelFieldHint(field)"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                      <q-input
-                        v-else-if="field.type === 'text'"
-                        :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
-                        outlined
-                        dense
-                        :label="field.label"
-                        :hint="getCmsContentModelFieldHint(field)"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                      <q-input
-                        v-else-if="field.type === 'textarea'"
-                        :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
-                        outlined
-                        dense
-                        type="textarea"
-                        autogrow
-                        :label="field.label"
-                        :hint="getCmsContentModelFieldHint(field)"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                      <q-input
-                        v-else-if="field.type === 'number'"
-                        :model-value="getCmsPageCustomFieldValue(page, field) == null ? '' : String(getCmsPageCustomFieldValue(page, field))"
-                        outlined
-                        dense
-                        type="number"
-                        :label="field.label"
-                        :hint="getCmsContentModelFieldHint(field)"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                      <q-toggle
-                        v-else-if="field.type === 'toggle'"
-                        :model-value="Boolean(getCmsPageCustomFieldValue(page, field))"
-                        :label="field.label"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                      <q-select
-                        v-else
-                        :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="field.options"
-                        option-label="label"
-                        option-value="value"
-                        :label="field.label"
-                        :hint="getCmsContentModelFieldHint(field)"
-                        @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
-                      />
-                    </template>
+                      <div class="cms-page-item__custom-fields-group-header">
+                        <strong>{{ group.label }}</strong>
+                        <small>
+                          {{
+                            group.fields.length === 1
+                              ? tr('1 field', '1 campo')
+                              : tr(`${group.fields.length} fields`, `${group.fields.length} campos`)
+                          }}
+                        </small>
+                      </div>
+                      <div class="cms-page-item__custom-fields-grid">
+                        <template
+                          v-for="field in group.fields"
+                          :key="`page-field-${page.id}-${field.id}`"
+                        >
+                          <q-select
+                            v-if="field.repeatable && field.type === 'select'"
+                            :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
+                            outlined
+                            dense
+                            multiple
+                            use-chips
+                            emit-value
+                            map-options
+                            :options="field.options"
+                            option-label="label"
+                            option-value="value"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-input
+                            v-else-if="field.repeatable"
+                            :model-value="formatCmsRepeatableFieldValue(getCmsPageCustomFieldValue(page, field))"
+                            outlined
+                            dense
+                            type="textarea"
+                            autogrow
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-input
+                            v-else-if="field.type === 'text'"
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-input
+                            v-else-if="field.type === 'textarea'"
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            type="textarea"
+                            autogrow
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-input
+                            v-else-if="field.type === 'number'"
+                            :model-value="getCmsPageCustomFieldValue(page, field) == null ? '' : String(getCmsPageCustomFieldValue(page, field))"
+                            outlined
+                            dense
+                            type="number"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-toggle
+                            v-else-if="field.type === 'toggle'"
+                            :model-value="Boolean(getCmsPageCustomFieldValue(page, field))"
+                            :label="field.label"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-select
+                            v-else
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="field.options"
+                            option-label="label"
+                            option-value="value"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                        </template>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -3429,12 +3462,20 @@ interface CmsContentModelFieldDraft {
   label: string
   description: string
   placeholder: string
+  group: string
+  orderValue: string
   required: boolean
   repeatable: boolean
   minValue: string
   maxValue: string
   defaultValue: string
   optionsDraft: string
+}
+
+interface CmsPageContentFieldGroup {
+  id: string
+  label: string
+  fields: CmsContentModelFieldDefinition[]
 }
 
 interface CmsMediaAssetDraft {
@@ -8037,6 +8078,8 @@ function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
     label: '',
     description: '',
     placeholder: '',
+    group: '',
+    orderValue: '',
     required: false,
     repeatable: false,
     minValue: '',
@@ -8058,6 +8101,8 @@ function createCmsContentModelFieldDraftFromDefinition(
     label: field.label,
     description: field.description,
     placeholder: field.placeholder,
+    group: field.group,
+    orderValue: String(field.order),
     required: field.required,
     repeatable: field.repeatable,
     minValue: field.min == null ? '' : String(field.min),
@@ -8134,6 +8179,13 @@ function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): str
 }
 
 /**
+ * Resolves the visible group label for one content-model field.
+ */
+function getCmsContentModelFieldGroupLabel(field: Pick<CmsContentModelFieldDefinition, 'group'>): string {
+  return String(field.group ?? '').trim() || tr('General', 'Geral')
+}
+
+/**
  * Resolves the field schema attached to one page content model.
  */
 function getCmsPageContentModelFields(page: CmsPageSettings): CmsContentModelFieldDefinition[] {
@@ -8142,6 +8194,31 @@ function getCmsPageContentModelFields(page: CmsPageSettings): CmsContentModelFie
     page.contentModelId,
     settings.value.authoredContentModels
   )
+}
+
+/**
+ * Groups resolved page custom fields by their visible group label while preserving field order.
+ */
+function getCmsPageContentModelFieldGroups(page: CmsPageSettings): CmsPageContentFieldGroup[] {
+  const groups = new Map<string, CmsPageContentFieldGroup>()
+
+  for (const field of getCmsPageContentModelFields(page)) {
+    const label = getCmsContentModelFieldGroupLabel(field)
+    const id = label.trim().toLowerCase() || 'general'
+    const existingGroup = groups.get(id)
+    if (existingGroup) {
+      existingGroup.fields.push(field)
+      continue
+    }
+
+    groups.set(id, {
+      id,
+      label,
+      fields: [field],
+    })
+  }
+
+  return [...groups.values()]
 }
 
 /**
@@ -9175,6 +9252,8 @@ function saveCmsAuthoredContentModelDraft(): void {
         label: field.label,
         description: field.description,
         placeholder: field.placeholder,
+        group: field.group,
+        order: field.orderValue,
         required: field.required,
         repeatable: field.repeatable,
         min: field.minValue,
@@ -9211,6 +9290,8 @@ function saveCmsAuthoredContentModelDraft(): void {
       label: field.label,
       description: field.description,
       placeholder: field.placeholder,
+      group: field.group,
+      order: field.orderValue,
       required: field.required,
       repeatable: field.repeatable,
       min: field.minValue,
@@ -12365,6 +12446,38 @@ function resetToDefaults(): void {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--ntk-cms-space-md);
+}
+
+.cms-page-item__custom-fields-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-page-item__custom-fields-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-sm);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: color-mix(in srgb, var(--ntk-cms-bg-card) 72%, transparent);
+}
+
+.cms-page-item__custom-fields-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-page-item__custom-fields-group-header strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-page-item__custom-fields-group-header small {
+  color: var(--ntk-cms-text-secondary);
 }
 
 .cms-page-item__sections {

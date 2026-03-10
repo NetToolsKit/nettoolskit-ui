@@ -535,8 +535,9 @@ function normalizeCmsContentModelFieldLocalizationSettings(
   const label = normalizeCmsLocalizedTextRecord(value.label)
   const description = normalizeCmsLocalizedTextRecord(value.description)
   const placeholder = normalizeCmsLocalizedTextRecord(value.placeholder)
+  const group = normalizeCmsLocalizedTextRecord(value.group)
 
-  if (!label && !description && !placeholder) {
+  if (!label && !description && !placeholder && !group) {
     return undefined
   }
 
@@ -544,7 +545,30 @@ function normalizeCmsContentModelFieldLocalizationSettings(
     ...(label ? { label } : {}),
     ...(description ? { description } : {}),
     ...(placeholder ? { placeholder } : {}),
+    ...(group ? { group } : {}),
   }
+}
+
+function normalizeCmsContentModelFieldGroup(
+  value: unknown,
+  fallback = ''
+): string {
+  return String(value ?? fallback).trim()
+}
+
+function resolveCmsContentModelFieldOrder(
+  value: unknown,
+  fallback: number
+): number {
+  const parsed = typeof value === 'number'
+    ? value
+    : (typeof value === 'string' && value.trim().length > 0 ? Number(value) : NaN)
+
+  if (!Number.isFinite(parsed)) {
+    return fallback
+  }
+
+  return Math.max(1, Math.floor(parsed))
 }
 
 function resolveCmsContentModelFieldConstraint(
@@ -747,9 +771,11 @@ function normalizeCmsContentModelFieldSettings(
       const baseLabel = matchedFallbackField?.label || fallbackLabel
       const baseDescription = matchedFallbackField?.description || ''
       const basePlaceholder = matchedFallbackField?.placeholder || ''
+      const baseGroup = matchedFallbackField?.group || ''
       const rawLabel = String(entry.label ?? '').trim()
       const rawDescription = String(entry.description ?? '').trim()
       const rawPlaceholder = String(entry.placeholder ?? '').trim()
+      const rawGroup = normalizeCmsContentModelFieldGroup(entry.group, baseGroup)
       const nextLabel = applyCmsLocalizedTextUpdate({
         baseValue: locale === 'en' ? (rawLabel || baseLabel) : baseLabel,
         localized: existingLocalization.label,
@@ -768,6 +794,12 @@ function normalizeCmsContentModelFieldSettings(
         localeInput: locale,
         nextValue: rawPlaceholder,
       })
+      const nextGroup = applyCmsLocalizedTextUpdate({
+        baseValue: locale === 'en' ? rawGroup : baseGroup,
+        localized: existingLocalization.group,
+        localeInput: locale,
+        nextValue: rawGroup,
+      })
       const repeatable = Boolean(entry.repeatable ?? matchedFallbackField?.repeatable)
       const min = resolveCmsContentModelFieldConstraint(
         entry.min,
@@ -783,7 +815,12 @@ function normalizeCmsContentModelFieldSettings(
         label: nextLabel.localized,
         description: nextDescription.localized,
         placeholder: nextPlaceholder.localized,
+        group: nextGroup.localized,
       })
+      const order = resolveCmsContentModelFieldOrder(
+        entry.order,
+        matchedFallbackField?.order ?? (index + 1)
+      )
 
       return {
         id,
@@ -791,6 +828,8 @@ function normalizeCmsContentModelFieldSettings(
         label: nextLabel.baseValue,
         description: nextDescription.baseValue,
         placeholder: nextPlaceholder.baseValue,
+        group: nextGroup.baseValue,
+        order,
         required: Boolean(entry.required),
         repeatable,
         min,
@@ -819,31 +858,47 @@ function resolveCmsContentModelFieldDefinitions(
   fields: CmsContentModelFieldSettings[] | undefined,
   localeInput: unknown = 'en'
 ): CmsContentModelFieldDefinition[] {
-  return (fields ?? []).map(field => ({
-    id: field.id,
-    type: field.type,
-    label: resolveCmsLocalizedText({
-      baseValue: field.label,
-      localized: field.localization?.label,
-      localeInput,
-    }),
-    description: resolveCmsLocalizedText({
-      baseValue: field.description,
-      localized: field.localization?.description,
-      localeInput,
-    }),
-    placeholder: resolveCmsLocalizedText({
-      baseValue: field.placeholder,
-      localized: field.localization?.placeholder,
-      localeInput,
-    }),
-    required: field.required,
-    repeatable: Boolean(field.repeatable),
-    min: field.min ?? null,
-    max: field.max ?? null,
-    defaultValue: normalizeCmsContentModelFieldValue(field, field.defaultValue),
-    options: cloneValue(field.options ?? []),
-  }))
+  return (fields ?? [])
+    .map((field, index) => ({
+      id: field.id,
+      type: field.type,
+      label: resolveCmsLocalizedText({
+        baseValue: field.label,
+        localized: field.localization?.label,
+        localeInput,
+      }),
+      description: resolveCmsLocalizedText({
+        baseValue: field.description,
+        localized: field.localization?.description,
+        localeInput,
+      }),
+      placeholder: resolveCmsLocalizedText({
+        baseValue: field.placeholder,
+        localized: field.localization?.placeholder,
+        localeInput,
+      }),
+      group: resolveCmsLocalizedText({
+        baseValue: field.group,
+        localized: field.localization?.group,
+        localeInput,
+      }),
+      order: resolveCmsContentModelFieldOrder(field.order, index + 1),
+      required: field.required,
+      repeatable: Boolean(field.repeatable),
+      min: field.min ?? null,
+      max: field.max ?? null,
+      defaultValue: normalizeCmsContentModelFieldValue(field, field.defaultValue),
+      options: cloneValue(field.options ?? []),
+      __sortIndex: index,
+    }))
+    .sort((left, right) => {
+      if (left.order !== right.order) {
+        return left.order - right.order
+      }
+
+      return left.__sortIndex - right.__sortIndex
+    })
+    .map(({ __sortIndex: _sortIndex, ...field }) => field)
 }
 
 function buildCmsContentModelCustomFieldDefaults(
@@ -1174,6 +1229,8 @@ function buildCmsContentModelSchemaFieldSignature(
   return {
     id: field.id,
     type: field.type,
+    group: field.group,
+    order: field.order ?? null,
     required: field.required,
     repeatable: Boolean(field.repeatable),
     min: field.min ?? null,

@@ -147,6 +147,7 @@ export interface CmsContentModelFieldLocalizationSettings {
   label?: CmsLocalizedTextRecord
   description?: CmsLocalizedTextRecord
   placeholder?: CmsLocalizedTextRecord
+  group?: CmsLocalizedTextRecord
 }
 
 /**
@@ -174,6 +175,8 @@ export interface CmsContentModelFieldSettings {
   label: string
   description: string
   placeholder: string
+  group: string
+  order?: number
   required: boolean
   repeatable?: boolean
   min?: number | null
@@ -192,6 +195,8 @@ export interface CmsContentModelFieldDefinition {
   label: string
   description: string
   placeholder: string
+  group: string
+  order: number
   required: boolean
   repeatable: boolean
   min: number | null

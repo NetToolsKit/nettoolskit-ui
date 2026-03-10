@@ -803,9 +803,11 @@ test.describe('CMS settings white-label flow', () => {
     const customFieldId = 'campaignHeadline'
     const customFieldLabel = 'Campaign headline'
     const customFieldDefaultValue = 'Launch campaign headline'
+    const customFieldGroup = 'Campaign'
     const repeatableFieldId = 'bulletPoints'
     const repeatableFieldLabel = 'Bullet points'
     const repeatableFieldDefaultValue = ['Fast setup', 'Safe rollout']
+    const repeatableFieldGroup = 'Content'
 
     await page.setViewportSize({ width: 1600, height: 2200 })
     await page.goto('/?cms=1')
@@ -837,6 +839,14 @@ test.describe('CMS settings white-label flow', () => {
       'Primary campaign headline'
     )
     await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) }).last().locator('input, textarea').first(),
+      customFieldGroup
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field order' }) }).last().locator('input, textarea').first(),
+      '2'
+    )
+    await fillTextInputDirect(
       page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).last().locator('input, textarea').first(),
       customFieldDefaultValue
     )
@@ -852,6 +862,14 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInputDirect(
       page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field description' }) }).last().locator('input, textarea').first(),
       'One bullet per line'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) }).last().locator('input, textarea').first(),
+      repeatableFieldGroup
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field order' }) }).last().locator('input, textarea').first(),
+      '1'
     )
     await page.getByRole('switch', { name: /^(Repeatable|Multiplo)$/ }).last().click()
     await fillTextInputDirect(
@@ -973,6 +991,8 @@ test.describe('CMS settings white-label flow', () => {
         .locator('textarea')
         .first()
     ).toHaveValue(repeatableFieldDefaultValue.join('\n'))
+    await expect(firstPage.locator('.cms-page-item__custom-fields-group-header strong').nth(0)).toHaveText(repeatableFieldGroup)
+    await expect(firstPage.locator('.cms-page-item__custom-fields-group-header strong').nth(1)).toHaveText(customFieldGroup)
 
     const sectionPresetField = page
       .locator('.cms-page-item__sections-actions .q-field', {

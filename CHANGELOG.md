@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Grouped and ordered schema fields for content-model page authoring**
+  - Added `group` and explicit `order` to authored content-model schema fields so page-level custom fields can be organized into stable authoring sections instead of a single flat list.
+  - Extended field localization metadata to support localized group labels and wired ordered/grouped resolution through the content-model engine signatures used by normalization and schema versioning.
+  - Updated the CMS `Content` tab to author field group and order metadata, and updated the `Pages` builder to render grouped custom-field sections with preserved field order.
+  - Expanded unit and Playwright regression coverage for authored content models to validate grouped field authoring and grouped rendering in `Pages`.
 - **Engine-level visual regression and release-quality gates**
   - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
   - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.

@@ -165,6 +165,48 @@ describe('content-models', () => {
     expect(getCmsContentModelDefaultPagePathPrefix(authoredModel.id, [authoredModel])).toBe('/campaign-default')
   })
 
+  it('resolves authored schema fields with group labels and explicit order', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Grouped schema',
+      description: 'Groups fields for backend-oriented authoring',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'campaignHeadline',
+          type: 'text',
+          label: 'Campaign headline',
+          description: 'Primary campaign message',
+          placeholder: 'Type a headline',
+          group: 'Campaign',
+          order: 2,
+          required: true,
+          defaultValue: 'Launch campaign',
+        },
+        {
+          id: 'bulletPoints',
+          type: 'textarea',
+          label: 'Bullet points',
+          description: 'Support copy',
+          placeholder: 'One point per line',
+          group: 'Content',
+          order: 1,
+          repeatable: true,
+          defaultValue: ['Fast setup'],
+        },
+      ],
+    })
+
+    const fields = getCmsContentModelFieldDefinitions('en', authoredModel.id, [authoredModel])
+
+    expect(fields.map(field => `${field.group}:${field.id}:${field.order}`)).toEqual([
+      'Content:bulletpoints:1',
+      'Campaign:campaignheadline:2',
+    ])
+  })
+
   it('resolves authored schema version and migration metadata with locale-aware notes', () => {
     const authoredModel = createCmsAuthoredContentModel({
       existingModels: [],
