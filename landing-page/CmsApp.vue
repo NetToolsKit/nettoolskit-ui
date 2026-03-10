@@ -869,14 +869,35 @@
                     <div class="cms-form-grid__full cms-content-model-fields">
                       <div class="cms-content-model-fields__header">
                         <strong>{{ tr('Schema fields', 'Campos do schema') }}</strong>
-                        <q-btn
-                          flat
-                          dense
-                          no-caps
-                          icon="playlist_add"
-                          :label="tr('Add field', 'Adicionar campo')"
-                          @click="addAuthoredContentModelFieldDraft"
-                        />
+                        <div class="cms-content-model-fields__header-actions">
+                          <q-select
+                            v-model="selectedAuthoredContentModelFieldPresetId"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="cmsAuthoredContentModelFieldPresetOptions"
+                            :label="tr('Field preset library', 'Biblioteca de presets de campo')"
+                            class="cms-content-model-fields__preset-select"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="file_download"
+                            :label="tr('Insert preset', 'Inserir preset')"
+                            :disable="!selectedAuthoredContentModelFieldPresetSettings"
+                            @click="insertSelectedAuthoredContentModelFieldPreset"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="playlist_add"
+                            :label="tr('Add field', 'Adicionar campo')"
+                            @click="addAuthoredContentModelFieldDraft"
+                          />
+                        </div>
                       </div>
                       <p class="cms-content-model-fields__description">
                         {{
@@ -918,6 +939,14 @@
                             outlined
                             dense
                             :label="tr('Field label', 'Label do campo')"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="bookmark_add"
+                            :label="tr('Save as preset', 'Salvar como preset')"
+                            @click="saveAuthoredContentModelFieldDraftAsPreset(fieldIndex)"
                           />
                           <q-btn
                             flat
@@ -997,7 +1026,64 @@
                               ? tr('Maximum items', 'Maximo de itens')
                               : (field.type === 'number'
                                 ? tr('Maximum value', 'Valor maximo')
-                                : tr('Maximum length', 'Comprimento maximo'))"
+                              : tr('Maximum length', 'Comprimento maximo'))"
+                          />
+                        </div>
+                        <div class="cms-content-model-fields__row">
+                          <q-toggle
+                            v-model="field.visibilityEnabled"
+                            :label="tr('Conditional visibility', 'Visibilidade condicional')"
+                            @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
+                          />
+                          <q-select
+                            v-if="field.visibilityEnabled"
+                            v-model="field.visibilitySource"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="cmsContentModelFieldVisibilitySourceOptions"
+                            :label="tr('Visibility source', 'Origem da visibilidade')"
+                            @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
+                          />
+                          <q-select
+                            v-if="field.visibilityEnabled && field.visibilitySource === 'field'"
+                            v-model="field.visibilityFieldId"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="getCmsContentModelFieldVisibilityTargetOptions(fieldIndex)"
+                            :label="tr('Depends on field', 'Depende do campo')"
+                            @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
+                          />
+                          <q-select
+                            v-if="field.visibilityEnabled"
+                            v-model="field.visibilityOperator"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="getCmsContentModelFieldVisibilityOperatorOptions(field.visibilitySource)"
+                            :label="tr('Condition', 'Condicao')"
+                            @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
+                          />
+                          <q-select
+                            v-if="field.visibilityEnabled && field.visibilitySource === 'page-status' && doesCmsContentModelFieldVisibilityOperatorRequireValue(field.visibilityOperator)"
+                            v-model="field.visibilityValue"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="pageStatusOptions"
+                            :label="tr('Expected status', 'Status esperado')"
+                          />
+                          <q-input
+                            v-else-if="field.visibilityEnabled && doesCmsContentModelFieldVisibilityOperatorRequireValue(field.visibilityOperator)"
+                            v-model="field.visibilityValue"
+                            outlined
+                            dense
+                            :label="tr('Expected value', 'Valor esperado')"
                           />
                         </div>
                         <div class="cms-content-model-fields__row">
@@ -1025,6 +1111,62 @@
                             class="cms-content-model-fields__options"
                             :label="tr('Options (one per line)', 'Opcoes (uma por linha)')"
                           />
+                        </div>
+                      </div>
+                      <div class="cms-blocks-library">
+                        <div class="cms-blocks-library__header">
+                          <strong>{{ tr('Field preset library', 'Biblioteca de presets de campo') }}</strong>
+                          <q-chip dense square :style="statusChipStyle">{{ settings.authoredContentModelFieldPresets.length }}</q-chip>
+                        </div>
+
+                        <div v-if="settings.authoredContentModelFieldPresets.length === 0" class="cms-block-item__empty">
+                          <strong>{{ tr('No field presets saved yet.', 'Nenhum preset de campo salvo ainda.') }}</strong>
+                          <small>
+                            {{
+                              tr(
+                                'Save one schema field as a preset to reuse the same contract across content models.',
+                                'Salve um campo do schema como preset para reutilizar o mesmo contrato em outros modelos de conteudo.'
+                              )
+                            }}
+                          </small>
+                        </div>
+
+                        <div
+                          v-for="preset in cmsAuthoredContentModelFieldPresetLibrary"
+                          :key="preset.id"
+                          class="cms-reusable-block-row"
+                          :class="{ 'cms-reusable-block-row--active': preset.id === selectedAuthoredContentModelFieldPresetId }"
+                        >
+                          <div class="cms-reusable-block-row__meta">
+                            <strong>{{ getCmsAuthoredContentModelFieldPresetNameValue(preset) }}</strong>
+                            <small>{{ preset.field.type }} · {{ preset.category || tr('General', 'Geral') }}</small>
+                            <small>
+                              {{
+                                `${preset.field.id} · ${preset.field.repeatable ? tr('Repeatable', 'Multiplo') : tr('Single value', 'Valor unico')}`
+                              }}
+                            </small>
+                            <small v-if="getCmsAuthoredContentModelFieldPresetDescriptionValue(preset)">
+                              {{ getCmsAuthoredContentModelFieldPresetDescriptionValue(preset) }}
+                            </small>
+                          </div>
+                          <div class="cms-reusable-block-row__actions">
+                            <q-btn
+                              flat
+                              dense
+                              no-caps
+                              icon="ads_click"
+                              :label="tr('Use', 'Usar')"
+                              @click="selectedAuthoredContentModelFieldPresetId = preset.id"
+                            />
+                            <q-btn
+                              flat
+                              round
+                              dense
+                              icon="delete"
+                              :style="dangerActionStyle"
+                              @click="removeCmsAuthoredContentModelFieldPreset(preset.id)"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1312,6 +1454,68 @@
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__editor">
+              <div class="cms-pages__quick-starts">
+                <div class="cms-pages__quick-starts-header">
+                  <div>
+                    <strong>{{ tr('Quick-start workflows', 'Fluxos de quick-start') }}</strong>
+                    <small>
+                      {{
+                        tr(
+                          'Create a ready-to-edit page in one click, then optionally jump straight into Blocks.',
+                          'Crie uma pagina pronta para edicao em um clique e, se quiser, abra Blocos em seguida.'
+                        )
+                      }}
+                    </small>
+                  </div>
+                  <q-chip dense square :style="statusChipStyle">
+                    {{ cmsPageQuickStartOptions.length }}
+                  </q-chip>
+                </div>
+                <div class="cms-pages__quick-start-grid">
+                  <article
+                    v-for="quickStart in cmsPageQuickStartOptions"
+                    :key="`quick-start-${quickStart.value}`"
+                    class="cms-page-quick-start-card"
+                  >
+                    <div class="cms-page-quick-start-card__header">
+                      <strong>{{ quickStart.label }}</strong>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ quickStart.sectionCount }}
+                      </q-chip>
+                    </div>
+                    <small class="cms-page-quick-start-card__description">{{ quickStart.description }}</small>
+                    <div class="cms-page-quick-start-card__meta">
+                      <span>
+                        {{ tr('Content model', 'Modelo de conteudo') }}:
+                        <strong>{{ quickStart.contentModelLabel }}</strong>
+                      </span>
+                      <span>
+                        {{ tr('Sections', 'Secoes') }}:
+                        <strong>{{ quickStart.sectionLabels.join(', ') }}</strong>
+                      </span>
+                    </div>
+                    <div class="cms-page-quick-start-card__actions">
+                      <q-btn
+                        no-caps
+                        unelevated
+                        icon="note_add"
+                        :label="tr('Create page', 'Criar pagina')"
+                        :style="primaryActionStyle"
+                        @click="runCmsPageQuickStart(quickStart.value)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="widgets"
+                        :label="tr('Create + open blocks', 'Criar + abrir blocos')"
+                        @click="runCmsPageQuickStart(quickStart.value, true)"
+                      />
+                    </div>
+                  </article>
+                </div>
+              </div>
+
               <div
                 v-for="(page, pageIndex) in settings.pages"
                 :key="page.id"
@@ -3165,6 +3369,7 @@ import {
   createCmsPageSectionsFromContentModel,
   createCmsPageSectionFromPreset,
   coerceCmsContentModelFieldValue,
+  filterCmsVisibleContentModelFields,
   getCmsContentModelDefaultPageDescription,
   getCmsContentModelDefaultPagePathPrefix,
   getCmsContentModelDefaultPageTitle,
@@ -3208,6 +3413,13 @@ import {
   type CmsBlockPresetOption,
 } from '../src/modules/cms/white-label/block-presets'
 import {
+  createCmsAuthoredContentModelFieldPreset,
+  getCmsContentModelFieldPresetDefinition,
+  listCmsContentModelFieldPresetOptions,
+  type CmsContentModelFieldPresetOption,
+  type CmsResolvedContentModelFieldPresetDefinition,
+} from '../src/modules/cms/white-label/schema-field-presets'
+import {
   applyCmsLocalizedPropsUpdate,
   applyCmsLocalizedTextUpdate,
   resolveCmsLocalizedProps,
@@ -3240,6 +3452,7 @@ import {
 } from '../src/modules/cms/white-label/media-library'
 import {
   createCmsPageFromTemplate,
+  listCmsPageQuickStartOptions,
   listCmsPageTemplateOptions,
   resolveCmsPageTemplateId,
   type CmsPageTemplateId,
@@ -3273,12 +3486,17 @@ import {
   type CmsBlockFieldDefinition,
 } from './cms/landing.block-fields'
 import type {
+  CmsAuthoredContentModelFieldPresetId,
+  CmsAuthoredContentModelFieldPresetSettings,
   CmsAuthoredBlockPresetSettings,
   CmsAuthoredContentModelSettings,
   CmsBlockPresetId,
   CmsContentModelId,
   CmsContentModelFieldDefinition,
+  CmsContentModelFieldSettings,
   CmsContentModelFieldType,
+  CmsContentModelFieldVisibilityOperator,
+  CmsContentModelFieldVisibilitySource,
   CmsReleaseEnvironment,
   CmsReleaseValidationIssue,
   CmsMediaAssetKind,
@@ -3470,6 +3688,11 @@ interface CmsContentModelFieldDraft {
   maxValue: string
   defaultValue: string
   optionsDraft: string
+  visibilityEnabled: boolean
+  visibilitySource: CmsContentModelFieldVisibilitySource
+  visibilityFieldId: string
+  visibilityOperator: CmsContentModelFieldVisibilityOperator
+  visibilityValue: string
 }
 
 interface CmsPageContentFieldGroup {
@@ -3960,6 +4183,7 @@ const authoredContentModelRecommendedSectionSelections = ref<CmsSectionPresetId[
 const authoredContentModelMaxSectionsDraft = ref('')
 const authoredContentModelPresetLimitDrafts = ref<Partial<Record<CmsSectionPresetId, string>>>({})
 const authoredContentModelFieldDrafts = ref<CmsContentModelFieldDraft[]>([])
+const selectedAuthoredContentModelFieldPresetId = ref<CmsAuthoredContentModelFieldPresetId | ''>('')
 const draggedPageSection = ref<CmsDraggedPageSection | null>(null)
 const pageSectionDropTargetKey = ref('')
 const reusableBlockNameDraft = ref('')
@@ -3991,6 +4215,12 @@ const cmsPageTemplateOptions = computed(() => {
     description: option.description,
   }))
 })
+const cmsPageQuickStartOptions = computed(() => {
+  return listCmsPageQuickStartOptions(
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  )
+})
 const cmsContentModelOptions = computed(() => {
   return listCmsContentModelOptions(
     settings.value.content.locale,
@@ -4008,6 +4238,19 @@ const cmsContentModelFieldTypeOptions = computed(() => ([
   { label: tr('Toggle', 'Alternancia'), value: 'toggle' as const },
   { label: tr('Select', 'Selecao'), value: 'select' as const },
 ]))
+const cmsContentModelFieldVisibilitySourceOptions = computed(() => ([
+  { label: tr('Another field', 'Outro campo'), value: 'field' as const },
+  { label: tr('Page status', 'Status da pagina'), value: 'page-status' as const },
+]))
+const cmsContentModelFieldVisibilityOperatorOptions = computed(() => ([
+  { label: tr('Equals', 'Igual a'), value: 'equals' as const },
+  { label: tr('Not equals', 'Diferente de'), value: 'not-equals' as const },
+  { label: tr('Contains', 'Contem'), value: 'contains' as const },
+  { label: tr('Is empty', 'Esta vazio'), value: 'is-empty' as const },
+  { label: tr('Is not empty', 'Nao esta vazio'), value: 'is-not-empty' as const },
+  { label: tr('Is true', 'E verdadeiro'), value: 'is-true' as const },
+  { label: tr('Is false', 'E falso'), value: 'is-false' as const },
+]))
 const cmsAuthoredContentModelLibrary = computed<CmsAuthoredContentModelSettings[]>(() => {
   return settings.value.authoredContentModels
 })
@@ -4017,6 +4260,15 @@ const cmsAuthoredContentModelOptions = computed(() => {
     value: model.id,
     description: getCmsAuthoredContentModelDescriptionValue(model),
   }))
+})
+const cmsAuthoredContentModelFieldPresetLibrary = computed<CmsAuthoredContentModelFieldPresetSettings[]>(() => {
+  return settings.value.authoredContentModelFieldPresets
+})
+const cmsAuthoredContentModelFieldPresetOptions = computed<CmsContentModelFieldPresetOption[]>(() => {
+  return listCmsContentModelFieldPresetOptions(
+    settings.value.content.locale,
+    settings.value.authoredContentModelFieldPresets
+  )
 })
 const cmsContentModelPresetOptions = computed<CmsSectionPresetOption[]>(() => {
   return listAllCmsSectionPresetOptions(settings.value.content.locale)
@@ -7684,6 +7936,28 @@ const selectedAuthoredContentModel = computed<CmsAuthoredContentModelSettings | 
   return settings.value.authoredContentModels.find(model => model.id === selectedAuthoredContentModelId.value) ?? null
 })
 
+const selectedAuthoredContentModelFieldPresetSettings = computed<CmsAuthoredContentModelFieldPresetSettings | null>(() => {
+  if (!selectedAuthoredContentModelFieldPresetId.value) {
+    return null
+  }
+
+  return settings.value.authoredContentModelFieldPresets
+    .find(preset => preset.id === selectedAuthoredContentModelFieldPresetId.value) ?? null
+})
+
+const selectedAuthoredContentModelFieldPreset = computed<CmsResolvedContentModelFieldPresetDefinition | null>(() => {
+  const preset = selectedAuthoredContentModelFieldPresetSettings.value
+  if (!preset) {
+    return null
+  }
+
+  return getCmsContentModelFieldPresetDefinition(
+    settings.value.content.locale,
+    preset.id,
+    settings.value.authoredContentModelFieldPresets
+  )
+})
+
 const cmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>(() => {
   return settings.value.authoredBlockPresets
 })
@@ -8086,6 +8360,11 @@ function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
     maxValue: '',
     defaultValue: '',
     optionsDraft: '',
+    visibilityEnabled: false,
+    visibilitySource: 'field',
+    visibilityFieldId: '',
+    visibilityOperator: 'equals',
+    visibilityValue: '',
   }
 }
 
@@ -8111,7 +8390,131 @@ function createCmsContentModelFieldDraftFromDefinition(
       ? formatCmsRepeatableFieldValue(field.defaultValue)
       : (field.defaultValue == null ? '' : String(field.defaultValue)),
     optionsDraft: field.options.map(option => option.value).join('\n'),
+    visibilityEnabled: Boolean(field.visibility),
+    visibilitySource: field.visibility?.source ?? 'field',
+    visibilityFieldId: field.visibility?.fieldId ?? '',
+    visibilityOperator: field.visibility?.operator ?? 'equals',
+    visibilityValue: field.visibility?.value == null ? '' : String(field.visibility.value),
   }
+}
+
+/**
+ * Builds one editable field draft from a persisted schema-field preset payload.
+ */
+function createCmsContentModelFieldDraftFromSettings(
+  field: CmsContentModelFieldSettings
+): CmsContentModelFieldDraft {
+  return {
+    id: field.id,
+    type: field.type,
+    label: resolveCmsLocalizedText({
+      baseValue: field.label,
+      localized: field.localization?.label,
+      localeInput: getActiveCmsAuthoringLocale(),
+    }),
+    description: resolveCmsLocalizedText({
+      baseValue: field.description,
+      localized: field.localization?.description,
+      localeInput: getActiveCmsAuthoringLocale(),
+    }),
+    placeholder: resolveCmsLocalizedText({
+      baseValue: field.placeholder,
+      localized: field.localization?.placeholder,
+      localeInput: getActiveCmsAuthoringLocale(),
+    }),
+    group: resolveCmsLocalizedText({
+      baseValue: field.group,
+      localized: field.localization?.group,
+      localeInput: getActiveCmsAuthoringLocale(),
+    }),
+    orderValue: field.order == null ? '1' : String(field.order),
+    required: field.required,
+    repeatable: Boolean(field.repeatable),
+    minValue: field.min == null ? '' : String(field.min),
+    maxValue: field.max == null ? '' : String(field.max),
+    defaultValue: Array.isArray(field.defaultValue)
+      ? formatCmsRepeatableFieldValue(field.defaultValue)
+      : (field.defaultValue == null ? '' : String(field.defaultValue)),
+    optionsDraft: (field.options ?? []).map(option => option.value).join('\n'),
+    visibilityEnabled: Boolean(field.visibility),
+    visibilitySource: field.visibility?.source ?? 'field',
+    visibilityFieldId: field.visibility?.fieldId ?? '',
+    visibilityOperator: field.visibility?.operator ?? 'equals',
+    visibilityValue: field.visibility?.value == null ? '' : String(field.visibility.value),
+  }
+}
+
+/**
+ * Converts one editable field draft into the persisted content-model field payload.
+ */
+function createCmsContentModelFieldSettingsFromDraft(
+  field: CmsContentModelFieldDraft
+): CmsContentModelFieldSettings {
+  const order = Number(field.orderValue)
+  const min = field.minValue.trim().length > 0 ? Number(field.minValue) : null
+  const max = field.maxValue.trim().length > 0 ? Number(field.maxValue) : null
+  const optionValues = parseCmsContentModelFieldOptionsDraft(field.optionsDraft)
+
+  return {
+    id: field.id,
+    type: field.type,
+    label: field.label,
+    description: field.description,
+    placeholder: field.placeholder,
+    group: field.group,
+    order: Number.isFinite(order) ? Math.max(1, Math.floor(order)) : 1,
+    required: field.required,
+    repeatable: field.repeatable,
+    min: Number.isFinite(min) ? min : null,
+    max: Number.isFinite(max) ? max : null,
+    defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
+    visibility: field.visibilityEnabled
+      ? {
+          source: field.visibilitySource,
+          ...(field.visibilitySource === 'field'
+            ? { fieldId: field.visibilityFieldId }
+            : {}),
+          operator: field.visibilityOperator,
+          ...(field.visibilityOperator === 'equals'
+            || field.visibilityOperator === 'not-equals'
+            || field.visibilityOperator === 'contains'
+            ? {
+                value: field.visibilitySource === 'page-status'
+                  ? (field.visibilityValue === 'published' ? 'published' : 'draft')
+                  : field.visibilityValue,
+              }
+            : {}),
+        }
+      : undefined,
+    options: optionValues.map(optionValue => ({
+      value: optionValue,
+      label: optionValue,
+    })),
+  }
+}
+
+/**
+ * Creates a collision-safe field id when inserting presets into the current draft.
+ */
+function createUniqueCmsContentModelFieldDraftId(baseId: string): string {
+  const occupiedIds = new Set(
+    authoredContentModelFieldDrafts.value
+      .map(field => String(field.id ?? '').trim())
+      .filter(Boolean)
+  )
+  const normalizedBaseId = String(baseId ?? '').trim() || 'field'
+  if (!occupiedIds.has(normalizedBaseId)) {
+    return normalizedBaseId
+  }
+
+  let suffix = 2
+  let candidate = `${normalizedBaseId}-${suffix}`
+  while (occupiedIds.has(candidate)) {
+    suffix += 1
+    candidate = `${normalizedBaseId}-${suffix}`
+  }
+
+  return candidate
 }
 
 /**
@@ -8179,6 +8582,87 @@ function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): str
 }
 
 /**
+ * Returns the visibility operators allowed for one draft row source.
+ */
+function getCmsContentModelFieldVisibilityOperatorOptions(
+  source: CmsContentModelFieldVisibilitySource
+): Array<{ label: string; value: CmsContentModelFieldVisibilityOperator }> {
+  return source === 'page-status'
+    ? cmsContentModelFieldVisibilityOperatorOptions.value
+      .filter(option => option.value === 'equals' || option.value === 'not-equals')
+    : cmsContentModelFieldVisibilityOperatorOptions.value
+}
+
+/**
+ * Returns whether the selected visibility operator requires an explicit comparison value.
+ */
+function doesCmsContentModelFieldVisibilityOperatorRequireValue(
+  operator: CmsContentModelFieldVisibilityOperator
+): boolean {
+  return operator === 'equals'
+    || operator === 'not-equals'
+    || operator === 'contains'
+}
+
+/**
+ * Returns available field targets for one schema-field draft row, excluding itself.
+ */
+function getCmsContentModelFieldVisibilityTargetOptions(
+  fieldIndex: number
+): Array<{ label: string; value: string }> {
+  return authoredContentModelFieldDrafts.value
+    .map((field, index) => ({
+      field,
+      index,
+    }))
+    .filter(entry => entry.index !== fieldIndex)
+    .map(entry => ({
+      label: entry.field.label || entry.field.id || tr('Untitled field', 'Campo sem titulo'),
+      value: entry.field.id,
+    }))
+    .filter(entry => String(entry.value ?? '').trim().length > 0)
+}
+
+/**
+ * Normalizes one draft row when its visibility source changes.
+ */
+function normalizeCmsContentModelFieldVisibilityDraft(fieldIndex: number): void {
+  const fieldDraft = authoredContentModelFieldDrafts.value[fieldIndex]
+  if (!fieldDraft) {
+    return
+  }
+
+  if (!fieldDraft.visibilityEnabled) {
+    fieldDraft.visibilitySource = 'field'
+    fieldDraft.visibilityFieldId = ''
+    fieldDraft.visibilityOperator = 'equals'
+    fieldDraft.visibilityValue = ''
+    return
+  }
+
+  if (fieldDraft.visibilitySource === 'page-status') {
+    fieldDraft.visibilityFieldId = ''
+    if (fieldDraft.visibilityOperator !== 'equals' && fieldDraft.visibilityOperator !== 'not-equals') {
+      fieldDraft.visibilityOperator = 'equals'
+    }
+    fieldDraft.visibilityValue = fieldDraft.visibilityValue === 'published' ? 'published' : 'draft'
+    return
+  }
+
+  const allowedOperators = new Set(
+    getCmsContentModelFieldVisibilityOperatorOptions('field').map(option => option.value)
+  )
+  if (!allowedOperators.has(fieldDraft.visibilityOperator)) {
+    fieldDraft.visibilityOperator = 'equals'
+  }
+
+  const targetOptions = getCmsContentModelFieldVisibilityTargetOptions(fieldIndex)
+  if (!targetOptions.some(option => option.value === fieldDraft.visibilityFieldId)) {
+    fieldDraft.visibilityFieldId = targetOptions[0]?.value ?? ''
+  }
+}
+
+/**
  * Resolves the visible group label for one content-model field.
  */
 function getCmsContentModelFieldGroupLabel(field: Pick<CmsContentModelFieldDefinition, 'group'>): string {
@@ -8189,11 +8673,16 @@ function getCmsContentModelFieldGroupLabel(field: Pick<CmsContentModelFieldDefin
  * Resolves the field schema attached to one page content model.
  */
 function getCmsPageContentModelFields(page: CmsPageSettings): CmsContentModelFieldDefinition[] {
-  return getCmsContentModelFieldDefinitions(
+  const fields = getCmsContentModelFieldDefinitions(
     settings.value.content.locale,
     page.contentModelId,
     settings.value.authoredContentModels
   )
+
+  return filterCmsVisibleContentModelFields(fields, {
+    pageStatus: page.status,
+    customFields: getCmsPageCustomFieldsValue(page),
+  })
 }
 
 /**
@@ -8356,6 +8845,32 @@ function getCmsAuthoredContentModelDescriptionValue(model: CmsAuthoredContentMod
   return resolveCmsLocalizedText({
     baseValue: model.description,
     localized: model.localization?.description,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored schema-field preset name for the active authoring locale.
+ */
+function getCmsAuthoredContentModelFieldPresetNameValue(
+  preset: CmsAuthoredContentModelFieldPresetSettings
+): string {
+  return resolveCmsLocalizedText({
+    baseValue: preset.name,
+    localized: preset.localization?.name,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one authored schema-field preset description for the active authoring locale.
+ */
+function getCmsAuthoredContentModelFieldPresetDescriptionValue(
+  preset: CmsAuthoredContentModelFieldPresetSettings
+): string {
+  return resolveCmsLocalizedText({
+    baseValue: preset.description,
+    localized: preset.localization?.description,
     localeInput: getActiveCmsAuthoringLocale(),
   })
 }
@@ -9107,6 +9622,65 @@ function removeAuthoredContentModelFieldDraft(fieldIndex: number): void {
 }
 
 /**
+ * Saves one authored schema-field preset from the current content-model draft row.
+ */
+function saveAuthoredContentModelFieldDraftAsPreset(fieldIndex: number): void {
+  const fieldDraft = authoredContentModelFieldDrafts.value[fieldIndex]
+  if (!fieldDraft) {
+    return
+  }
+
+  const locale = getActiveCmsAuthoringLocale()
+  const preset = createCmsAuthoredContentModelFieldPreset({
+    field: createCmsContentModelFieldSettingsFromDraft(fieldDraft),
+    existingPresets: settings.value.authoredContentModelFieldPresets,
+    localeInput: locale,
+    name: fieldDraft.label || fieldDraft.id,
+    description: fieldDraft.description,
+    category: fieldDraft.group || fieldDraft.type,
+  })
+
+  settings.value.authoredContentModelFieldPresets = [
+    preset,
+    ...settings.value.authoredContentModelFieldPresets,
+  ]
+  selectedAuthoredContentModelFieldPresetId.value = preset.id
+  savedAtLabel.value = `${tr('Field preset saved at', 'Preset de campo salvo as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Inserts the selected authored schema-field preset into the current content-model draft.
+ */
+function insertSelectedAuthoredContentModelFieldPreset(): void {
+  const preset = selectedAuthoredContentModelFieldPresetSettings.value
+  if (!preset) {
+    return
+  }
+
+  const nextDraft = createCmsContentModelFieldDraftFromSettings(preset.field)
+  nextDraft.id = createUniqueCmsContentModelFieldDraftId(nextDraft.id)
+  authoredContentModelFieldDrafts.value = [
+    ...authoredContentModelFieldDrafts.value,
+    nextDraft,
+  ]
+  savedAtLabel.value = `${tr('Field preset applied at', 'Preset de campo aplicado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Removes one authored schema-field preset from the reusable library.
+ */
+function removeCmsAuthoredContentModelFieldPreset(
+  presetId: CmsAuthoredContentModelFieldPresetId
+): void {
+  settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
+    .filter(preset => preset.id !== presetId)
+  if (selectedAuthoredContentModelFieldPresetId.value === presetId) {
+    selectedAuthoredContentModelFieldPresetId.value = settings.value.authoredContentModelFieldPresets[0]?.id ?? ''
+  }
+  savedAtLabel.value = `${tr('Field preset removed at', 'Preset de campo removido as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
  * Clears allowed section-preset selections for the authored content-model draft.
  */
 function clearAuthoredContentModelAllowedPresets(): void {
@@ -9246,21 +9820,7 @@ function saveCmsAuthoredContentModelDraft(): void {
       recommendedPresets: authoredContentModelRecommendedSectionSelections.value,
       maxSections: authoredContentModelMaxSectionsDraft.value,
       sectionPresetLimits: authoredContentModelPresetLimitDrafts.value,
-      fields: authoredContentModelFieldDrafts.value.map(field => ({
-        id: field.id,
-        type: field.type,
-        label: field.label,
-        description: field.description,
-        placeholder: field.placeholder,
-        group: field.group,
-        order: field.orderValue,
-        required: field.required,
-        repeatable: field.repeatable,
-        min: field.minValue,
-        max: field.maxValue,
-        defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
-        options: parseCmsContentModelFieldOptionsDraft(field.optionsDraft),
-      })),
+      fields: authoredContentModelFieldDrafts.value.map(createCmsContentModelFieldSettingsFromDraft),
     })
 
     settings.value.authoredContentModels = [nextModel, ...settings.value.authoredContentModels]
@@ -9284,21 +9844,7 @@ function saveCmsAuthoredContentModelDraft(): void {
     recommendedPresets: authoredContentModelRecommendedSectionSelections.value,
     maxSections: authoredContentModelMaxSectionsDraft.value,
     sectionPresetLimits: authoredContentModelPresetLimitDrafts.value,
-    fields: authoredContentModelFieldDrafts.value.map(field => ({
-      id: field.id,
-      type: field.type,
-      label: field.label,
-      description: field.description,
-      placeholder: field.placeholder,
-      group: field.group,
-      order: field.orderValue,
-      required: field.required,
-      repeatable: field.repeatable,
-      min: field.minValue,
-      max: field.maxValue,
-      defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
-      options: parseCmsContentModelFieldOptionsDraft(field.optionsDraft),
-    })),
+    fields: authoredContentModelFieldDrafts.value.map(createCmsContentModelFieldSettingsFromDraft),
   })
 
   settings.value.authoredContentModels = settings.value.authoredContentModels.map(entry => (
@@ -10320,6 +10866,22 @@ watch(
 )
 
 watch(
+  cmsAuthoredContentModelFieldPresetOptions,
+  options => {
+    if (options.length === 0) {
+      selectedAuthoredContentModelFieldPresetId.value = ''
+      return
+    }
+
+    const hasPreset = options.some(option => option.value === selectedAuthoredContentModelFieldPresetId.value)
+    if (!hasPreset) {
+      selectedAuthoredContentModelFieldPresetId.value = options[0]?.value ?? ''
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
   authoredContentModelAllowedSectionSelections,
   value => {
     const allowedPresetIds = new Set(value)
@@ -11305,15 +11867,65 @@ function applyCmsPageContentModelStarterSections(pageIndex: number): void {
 }
 
 /**
- * Handles add cms page.
+ * Creates one page from the selected template and initializes builder selections.
  */
-function addCmsPage(): void {
+function createCmsPageFromSelectedTemplate(
+  templateId: CmsPageTemplateId,
+  options: { openBlocksAfterCreate?: boolean } = {}
+): void {
   const page = createCmsPageFromTemplate({
-    templateId: selectedPageTemplateId.value,
+    templateId,
     existingPages: settings.value.pages,
     localeInput: settings.value.content.locale,
   })
+
+  page.customFields = normalizeCmsPageCustomFieldsForContentModel(
+    page.customFields,
+    page.contentModelId,
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  )
+
   settings.value.pages.push(page)
+  const pageIndex = settings.value.pages.length - 1
+  const defaultPresetId = getDefaultCmsSectionPresetId(
+    page.contentModelId,
+    settings.value.authoredContentModels
+  )
+  setSelectedSectionPresetForPage(pageIndex, defaultPresetId)
+  setSelectedSectionStarterPresetForPage(
+    pageIndex,
+    getDefaultCmsBlockPresetIdForSectionPreset(defaultPresetId)
+  )
+  selectedPageTemplateId.value = templateId
+
+  savedAtLabel.value = `${tr('Page created at', 'Pagina criada as')} ${new Date().toLocaleTimeString()}`
+
+  if (!options.openBlocksAfterCreate) {
+    return
+  }
+
+  const firstSection = page.sections.find(section => section.enabled) ?? page.sections[0]
+  if (!firstSection) {
+    return
+  }
+
+  openPageInBlocksEditor(page.id, firstSection.id)
+  savedAtLabel.value = `${tr('Quick start opened in Blocks at', 'Quick start aberto em Blocos as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Handles add cms page.
+ */
+function addCmsPage(): void {
+  createCmsPageFromSelectedTemplate(selectedPageTemplateId.value)
+}
+
+/**
+ * Runs one guided quick-start workflow from the page templates catalog.
+ */
+function runCmsPageQuickStart(templateId: CmsPageTemplateId, openBlocksAfterCreate = false): void {
+  createCmsPageFromSelectedTemplate(templateId, { openBlocksAfterCreate })
 }
 
 /**
@@ -11901,6 +12513,70 @@ function resetToDefaults(): void {
   max-height: var(--ntk-cms-editor-max-height);
   overflow: auto;
   padding-right: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-pages__quick-starts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__quick-starts-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__quick-starts-header small {
+  display: block;
+  margin-top: calc(var(--ntk-cms-space-xs) / 2);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-pages__quick-start-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-quick-start-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-md);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+}
+
+.cms-page-quick-start-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-quick-start-card__description {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-page-quick-start-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+  font-size: 0.85rem;
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-page-quick-start-card__meta strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-page-quick-start-card__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-pages__preview {
@@ -12860,6 +13536,17 @@ function resetToDefaults(): void {
   align-items: center;
   justify-content: space-between;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-content-model-fields__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-content-model-fields__preset-select {
+  min-width: 260px;
 }
 
 .cms-content-model-fields__description,
@@ -13848,6 +14535,10 @@ function resetToDefaults(): void {
 .cms-shell-page--md-compact .cms-pages__template-select {
   min-width: 0;
   width: 100%;
+}
+
+.cms-shell-page--md-compact .cms-pages__quick-starts-header {
+  flex-direction: column;
 }
 
 .cms-shell-page--md-compact .cms-toolbar-card__separator {

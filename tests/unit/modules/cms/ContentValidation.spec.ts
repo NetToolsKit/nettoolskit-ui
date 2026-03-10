@@ -627,6 +627,92 @@ describe('content-validation', () => {
     expect(result.issues.some(issue => issue.code === 'pages.custom_fields.max' && issue.message.includes('Score'))).toBe(true)
   })
 
+  it('requires conditional fields only when their visibility rule matches', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Conditional validation',
+      description: 'Conditional required field validation',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'layoutMode',
+          type: 'select',
+          label: 'Layout mode',
+          description: 'Controls promo visibility',
+          placeholder: '',
+          required: true,
+          defaultValue: 'default',
+          options: [
+            { value: 'default', label: 'Default' },
+            { value: 'promo', label: 'Promo' },
+          ],
+        },
+        {
+          id: 'promoBadge',
+          type: 'text',
+          label: 'Promo badge',
+          description: 'Required only on promo pages',
+          placeholder: '',
+          required: true,
+          defaultValue: '',
+          visibility: {
+            source: 'field',
+            fieldId: 'layoutmode',
+            operator: 'equals',
+            value: 'promo',
+          },
+        },
+      ],
+    })
+
+    const basePage = {
+      id: 'conditional-page',
+      contentModelId: authoredModel.id,
+      title: 'Conditional page',
+      path: '/conditional-page',
+      status: 'draft' as const,
+      description: 'Conditional validation page',
+      sections: [
+        createCmsPageSectionFromPreset({
+          presetId: 'hero',
+          existingSections: [],
+          localeInput: 'en',
+        }),
+      ],
+    }
+
+    const hiddenResult = validateCmsContentPages({
+      pages: [
+        {
+          ...basePage,
+          customFields: {
+            layoutmode: 'default',
+          },
+        },
+      ],
+      registry: createLandingRegistry(),
+      authoredContentModels: [authoredModel],
+    })
+
+    const visibleResult = validateCmsContentPages({
+      pages: [
+        {
+          ...basePage,
+          customFields: {
+            layoutmode: 'promo',
+          },
+        },
+      ],
+      registry: createLandingRegistry(),
+      authoredContentModels: [authoredModel],
+    })
+
+    expect(hiddenResult.issues.some(issue => issue.code === 'pages.custom_fields.required' && issue.message.includes('Promo badge'))).toBe(false)
+    expect(visibleResult.issues.some(issue => issue.code === 'pages.custom_fields.required' && issue.message.includes('Promo badge'))).toBe(true)
+  })
+
   it('flags missing linked reusable section and block references', () => {
     const pages: CmsPageSettings[] = [
       {

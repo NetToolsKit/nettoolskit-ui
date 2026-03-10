@@ -52,6 +52,7 @@ import {
   normalizeCmsAuthoredBlockPresets,
   resolveCmsBlockPresetId,
 } from './block-presets'
+import { normalizeCmsAuthoredContentModelFieldPresets } from './schema-field-presets'
 import {
   normalizeCmsPageBlockLocalizationSettings,
   normalizeCmsPageLocalizationSettings,
@@ -700,6 +701,10 @@ export function normalizeCmsWhiteLabelSettings(
     parsed.authoredContentModels,
     defaults.authoredContentModels
   )
+  const normalizedAuthoredContentModelFieldPresets = normalizeCmsAuthoredContentModelFieldPresets(
+    parsed.authoredContentModelFieldPresets,
+    defaults.authoredContentModelFieldPresets
+  )
   const defaultMediaAssets = createDefaultCmsMediaAssets(
     normalizedBranding,
     normalizedContent.locale
@@ -717,6 +722,7 @@ export function normalizeCmsWhiteLabelSettings(
     reusableSections: normalizeCmsReusableSections(parsed.reusableSections, defaults.reusableSections),
     reusableBlocks: normalizeCmsReusableBlocks(parsed.reusableBlocks, defaults.reusableBlocks),
     authoredContentModels: normalizedAuthoredContentModels,
+    authoredContentModelFieldPresets: normalizedAuthoredContentModelFieldPresets,
     authoredBlockPresets: normalizeCmsAuthoredBlockPresets(
       parsed.authoredBlockPresets,
       defaults.authoredBlockPresets

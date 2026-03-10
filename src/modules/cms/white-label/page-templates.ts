@@ -2,9 +2,19 @@
  * CMS page template helpers used by the Pages builder.
  * Generates localized page scaffolds with collision-safe ids and paths.
  */
-import { createCmsPageSectionFromPreset, getCmsContentModelSchemaVersion } from './content-models'
+import {
+  createCmsPageSectionFromPreset,
+  getCmsContentModelLabel,
+  getCmsContentModelSchemaVersion,
+} from './content-models'
 import { resolveCmsLocale } from './i18n'
-import type { CmsContentModelId, CmsLocale, CmsPageSettings, CmsSectionPresetId } from './types'
+import type {
+  CmsAuthoredContentModelSettings,
+  CmsContentModelId,
+  CmsLocale,
+  CmsPageSettings,
+  CmsSectionPresetId,
+} from './types'
 
 export type CmsPageTemplateId = 'landing-default' | 'marketing' | 'blank'
 
@@ -12,6 +22,15 @@ export interface CmsPageTemplateOption {
   value: CmsPageTemplateId
   label: string
   description: string
+}
+
+export interface CmsPageQuickStartOption {
+  value: CmsPageTemplateId
+  label: string
+  description: string
+  contentModelLabel: string
+  sectionCount: number
+  sectionLabels: string[]
 }
 
 interface CmsPageTemplateSectionDefinition {
@@ -177,6 +196,24 @@ export function listCmsPageTemplateOptions(localeInput: unknown): CmsPageTemplat
     value: template.id,
     label: template.label[locale],
     description: template.description[locale],
+  }))
+}
+
+/**
+ * Returns guided quick-start options with content-model and section metadata.
+ */
+export function listCmsPageQuickStartOptions(
+  localeInput: unknown,
+  authoredModels: CmsAuthoredContentModelSettings[] = []
+): CmsPageQuickStartOption[] {
+  const locale = resolveCmsLocale(localeInput)
+  return pageTemplates.map(template => ({
+    value: template.id,
+    label: template.label[locale],
+    description: template.description[locale],
+    contentModelLabel: getCmsContentModelLabel(locale, template.contentModelId, authoredModels),
+    sectionCount: template.sectionPresets.length,
+    sectionLabels: template.sectionPresets.map(section => section.label[locale]),
   }))
 }
 

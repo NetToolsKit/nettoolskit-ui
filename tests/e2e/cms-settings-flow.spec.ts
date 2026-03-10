@@ -1102,6 +1102,139 @@ test.describe('CMS settings white-label flow', () => {
     await expect(addBlockButton).toBeDisabled()
   })
 
+  test('saves reusable schema-field presets and reapplies them across authored content models', async ({ page }) => {
+    const fieldId = 'campaignCode'
+    const fieldLabel = 'Campaign code'
+    const fieldDescription = 'Unique campaign identifier'
+    const fieldGroup = 'Campaign'
+    const fieldDefaultValue = 'CMP-001'
+
+    await page.setViewportSize({ width: 1600, height: 1800 })
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).last().locator('input, textarea').first(),
+      fieldId
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).last().locator('input, textarea').first(),
+      fieldLabel
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field description' }) }).last().locator('input, textarea').first(),
+      fieldDescription
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) }).last().locator('input, textarea').first(),
+      fieldGroup
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).last().locator('input, textarea').first(),
+      fieldDefaultValue
+    )
+
+    await page.getByRole('button', { name: /^(Save as preset|Salvar como preset)$/ }).first().click()
+
+    const fieldPresetLibrary = page
+      .locator('.cms-blocks-library', {
+        has: page.getByText(/^(Field preset library|Biblioteca de presets de campo)$/),
+      })
+      .first()
+    await expect(fieldPresetLibrary).toContainText(fieldLabel)
+    await expect(fieldPresetLibrary).toContainText(fieldDescription)
+
+    await page.getByRole('button', { name: /^(New content model|Novo modelo de conteudo)$/ }).first().click()
+    await expect(page.locator('.cms-content-model-fields__item')).toHaveCount(0)
+
+    await page.getByRole('button', { name: /^(Insert preset|Inserir preset)$/ }).first().click()
+
+    const insertedFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await expect(
+      insertedFieldRow
+        .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(fieldId)
+    await expect(
+      insertedFieldRow
+        .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(fieldLabel)
+    await expect(
+      insertedFieldRow
+        .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(fieldGroup)
+  })
+
+  test('shows conditional page schema fields only when their visibility rule matches', async ({ page }) => {
+    const contentModelName = 'Conditional schema QA'
+
+    await page.setViewportSize({ width: 1600, height: 1900 })
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Shows promo fields only when the layout mode is promo')
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const layoutModeRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      layoutModeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      'layoutMode'
+    )
+    await fillTextInputDirect(
+      layoutModeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      'Layout mode'
+    )
+    await layoutModeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'Select', exact: true }).first().click()
+    await fillTextInputDirect(
+      layoutModeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Options (one per line)' }) }).first().locator('textarea').first(),
+      'default\npromo'
+    )
+    await fillTextInputDirect(
+      layoutModeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).first().locator('input, textarea').first(),
+      'default'
+    )
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const promoBadgeRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      promoBadgeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      'promoBadge'
+    )
+    await fillTextInputDirect(
+      promoBadgeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      'Promo badge'
+    )
+    await promoBadgeRow.getByRole('switch', { name: /^(Conditional visibility|Visibilidade condicional)$/ }).click()
+    await promoBadgeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Depends on field' }) }).first().click()
+    await page.getByRole('option', { name: 'Layout mode', exact: true }).first().click()
+    await promoBadgeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Expected value' }) }).first().locator('input, textarea').first().fill('promo')
+
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await selectOptionByFieldLabel(page, 'Content model', contentModelName)
+
+    const customFieldsCard = page.locator('.cms-page-item__custom-fields').first()
+    await expect(customFieldsCard.locator('.q-field__label', { hasText: 'Layout mode' })).toBeVisible()
+    await expect(customFieldsCard.locator('.q-field__label', { hasText: 'Promo badge' })).toHaveCount(0)
+
+    await selectOptionByFieldLabel(page, 'Layout mode', 'promo')
+    await expect(customFieldsCard.locator('.q-field__label', { hasText: 'Promo badge' })).toBeVisible()
+  })
+
   test('seeds localized block presets in the builder and keeps English base content intact', async ({ page }) => {
     await page.goto('/?cms=1')
     await openSettingsModule(page)
@@ -1141,6 +1274,35 @@ test.describe('CMS settings white-label flow', () => {
         .first()
     ).toHaveValue('Show the product in motion')
     await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Video showcase')
+  })
+
+  test('offers guided page quick-start workflows in Pages builder', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    const quickStarts = page.locator('.cms-pages__quick-starts').first()
+    await expect(quickStarts).toBeVisible()
+    await expect(quickStarts.locator('.cms-pages__quick-starts-header strong').first()).toHaveText(
+      /^(Quick-start workflows|Fluxos de quick-start)$/
+    )
+
+    const initialPageCount = await page.locator('.cms-page-item').count()
+    const blankQuickStart = quickStarts.locator('.cms-page-quick-start-card', { hasText: /(Blank page|Pagina em branco)/ }).first()
+    await expect(blankQuickStart).toContainText('Minimal scaffold')
+    await blankQuickStart.getByRole('button', { name: /^(Create page|Criar pagina)$/ }).click()
+    await expect(page.locator('.cms-page-item')).toHaveCount(initialPageCount + 1)
+
+    const marketingQuickStart = quickStarts.locator('.cms-page-quick-start-card', { hasText: /(Marketing funnel|Funil de marketing)/ }).first()
+    await marketingQuickStart.getByRole('button', { name: /^(Create \+ open blocks|Criar \+ abrir blocos)$/ }).click()
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    const targetPageField = page.locator('.q-field', {
+      has: page.locator('.q-field__label', { hasText: /^(Target page|Pagina alvo)$/ }),
+    }).first()
+    await expect(targetPageField).toContainText('Marketing Page (/marketing)')
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-page-item')).toHaveCount(initialPageCount + 2)
   })
 
   test('authors localized block presets and uses them as section starter presets', async ({ page }) => {

@@ -5,6 +5,7 @@
  */
 import type {
   CmsAuthoredBlockPresetSettings,
+  CmsAuthoredContentModelFieldPresetSettings,
   CmsAuthoredContentModelSettings,
   CmsBrandingSettings,
   CmsContentSettings,
@@ -72,6 +73,7 @@ export interface CmsContentRepositorySnapshot {
   reusableSections: CmsReusableSectionSettings[]
   reusableBlocks: CmsReusableBlockSettings[]
   authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredContentModelFieldPresets: CmsAuthoredContentModelFieldPresetSettings[]
   authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
   themePresetId: CmsThemePresetId
   themePresetOverrides: Partial<Record<CmsThemeBasePresetId, Partial<AppShellTheme>>>
@@ -171,6 +173,7 @@ export function createCmsContentRepositorySnapshot(
     reusableSections: cloneValue(settings.reusableSections),
     reusableBlocks: cloneValue(settings.reusableBlocks),
     authoredContentModels: cloneValue(settings.authoredContentModels),
+    authoredContentModelFieldPresets: cloneValue(settings.authoredContentModelFieldPresets),
     authoredBlockPresets: cloneValue(settings.authoredBlockPresets),
     themePresetId: settings.themePresetId,
     themePresetOverrides: cloneValue(settings.themePresetOverrides),
@@ -198,6 +201,7 @@ export function applyCmsContentRepositorySnapshot(
     reusableSections: cloneValue(snapshot.reusableSections),
     reusableBlocks: cloneValue(snapshot.reusableBlocks),
     authoredContentModels: cloneValue(snapshot.authoredContentModels),
+    authoredContentModelFieldPresets: cloneValue(snapshot.authoredContentModelFieldPresets),
     authoredBlockPresets: cloneValue(snapshot.authoredBlockPresets),
     themePresetId: snapshot.themePresetId,
     themePresetOverrides: cloneValue(snapshot.themePresetOverrides),

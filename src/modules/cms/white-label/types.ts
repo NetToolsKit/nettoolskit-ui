@@ -167,6 +167,45 @@ export interface CmsContentModelFieldOptionDefinition {
 }
 
 /**
+ * Supported visibility sources for one schema field.
+ */
+export type CmsContentModelFieldVisibilitySource =
+  | 'field'
+  | 'page-status'
+
+/**
+ * Supported conditional operators for one schema field visibility rule.
+ */
+export type CmsContentModelFieldVisibilityOperator =
+  | 'equals'
+  | 'not-equals'
+  | 'contains'
+  | 'is-empty'
+  | 'is-not-empty'
+  | 'is-true'
+  | 'is-false'
+
+/**
+ * One authored visibility rule persisted inside a content-model field definition.
+ */
+export interface CmsContentModelFieldVisibilitySettings {
+  source: CmsContentModelFieldVisibilitySource
+  fieldId?: string
+  operator: CmsContentModelFieldVisibilityOperator
+  value?: CmsContentModelFieldPrimitiveValue
+}
+
+/**
+ * Resolved visibility rule exposed at runtime for schema-field rendering.
+ */
+export interface CmsContentModelFieldVisibilityDefinition {
+  source: CmsContentModelFieldVisibilitySource
+  fieldId: string | null
+  operator: CmsContentModelFieldVisibilityOperator
+  value: CmsContentModelFieldPrimitiveValue
+}
+
+/**
  * One authored field definition persisted inside a content model.
  */
 export interface CmsContentModelFieldSettings {
@@ -183,6 +222,7 @@ export interface CmsContentModelFieldSettings {
   max?: number | null
   defaultValue?: CmsContentModelFieldValue
   options?: CmsContentModelFieldOptionSettings[]
+  visibility?: CmsContentModelFieldVisibilitySettings | null
   localization?: CmsContentModelFieldLocalizationSettings
 }
 
@@ -203,6 +243,32 @@ export interface CmsContentModelFieldDefinition {
   max: number | null
   defaultValue: CmsContentModelFieldValue
   options: CmsContentModelFieldOptionDefinition[]
+  visibility: CmsContentModelFieldVisibilityDefinition | null
+}
+
+/**
+ * User-authored schema-field preset ids persisted by the CMS engine.
+ */
+export type CmsAuthoredContentModelFieldPresetId = `field-preset:${string}`
+
+/**
+ * Localized authored values for schema-field preset metadata.
+ */
+export interface CmsContentModelFieldPresetLocalizationSettings {
+  name?: CmsLocalizedTextRecord
+  description?: CmsLocalizedTextRecord
+}
+
+/**
+ * User-authored schema-field preset persisted by the CMS engine for reusable content-model authoring.
+ */
+export interface CmsAuthoredContentModelFieldPresetSettings {
+  id: CmsAuthoredContentModelFieldPresetId
+  name: string
+  description: string
+  category: string
+  field: CmsContentModelFieldSettings
+  localization?: CmsContentModelFieldPresetLocalizationSettings
 }
 
 /**
@@ -500,6 +566,7 @@ export interface CmsReleaseSnapshot {
   reusableSections: CmsReusableSectionSettings[]
   reusableBlocks: CmsReusableBlockSettings[]
   authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredContentModelFieldPresets: CmsAuthoredContentModelFieldPresetSettings[]
   authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
   mediaAssets: CmsMediaAssetSettings[]
   themePresetId: CmsThemePresetId
@@ -711,6 +778,7 @@ export interface CmsWhiteLabelSettings {
   reusableSections: CmsReusableSectionSettings[]
   reusableBlocks: CmsReusableBlockSettings[]
   authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredContentModelFieldPresets: CmsAuthoredContentModelFieldPresetSettings[]
   authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
   mediaAssets: CmsMediaAssetSettings[]
   releases: CmsReleaseSettings
@@ -777,6 +845,7 @@ export interface CmsPreviewSnapshot {
   branding: CmsBrandingSettings
   pages: CmsPageSettings[]
   authoredContentModels: CmsAuthoredContentModelSettings[]
+  authoredContentModelFieldPresets: CmsAuthoredContentModelFieldPresetSettings[]
   authoredBlockPresets: CmsAuthoredBlockPresetSettings[]
   reusableSections: CmsReusableSectionSettings[]
   reusableBlocks: CmsReusableBlockSettings[]

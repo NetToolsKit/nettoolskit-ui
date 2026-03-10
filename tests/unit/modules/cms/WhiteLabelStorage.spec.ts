@@ -913,4 +913,32 @@ describe('white-label.storage', () => {
     expect(normalized.releases.items[0]?.sourceVersion).toBe(1)
     expect(normalized.releases.items[0]?.sourceWorkflowStatus).toBe('draft')
   })
+
+  it('normalizes authored schema-field preset payloads and preserves them in settings', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      authoredContentModelFieldPresets: [
+        {
+          id: 'campaign-headline',
+          name: 'Campaign headline',
+          description: 'Reusable field preset',
+          category: 'Campaign',
+          field: {
+            id: 'campaignHeadline',
+            type: 'text',
+            label: 'Campaign headline',
+            description: 'Primary campaign title',
+            placeholder: 'Type the headline',
+            group: 'Campaign',
+            order: 2,
+            required: true,
+          },
+        },
+      ] as never,
+    })
+
+    expect(normalized.authoredContentModelFieldPresets).toHaveLength(1)
+    expect(normalized.authoredContentModelFieldPresets[0]?.id).toBe('field-preset:campaign-headline')
+    expect(normalized.authoredContentModelFieldPresets[0]?.field.id).toBe('campaignheadline')
+    expect(normalized.authoredContentModelFieldPresets[0]?.field.order).toBe(2)
+  })
 })

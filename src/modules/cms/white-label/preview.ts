@@ -103,6 +103,7 @@ function mapPreviewSnapshot(
     branding: snapshot.branding,
     pages: snapshot.pages,
     authoredContentModels: snapshot.authoredContentModels,
+    authoredContentModelFieldPresets: snapshot.authoredContentModelFieldPresets,
     authoredBlockPresets: snapshot.authoredBlockPresets,
     reusableSections: snapshot.reusableSections,
     reusableBlocks: snapshot.reusableBlocks,

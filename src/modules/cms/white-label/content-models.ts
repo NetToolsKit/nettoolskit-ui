@@ -25,6 +25,10 @@ import type {
   CmsContentModelId,
   CmsContentModelFieldDefinition,
   CmsContentModelFieldLocalizationSettings,
+  CmsContentModelFieldVisibilityDefinition,
+  CmsContentModelFieldVisibilityOperator,
+  CmsContentModelFieldVisibilitySettings,
+  CmsContentModelFieldVisibilitySource,
   CmsContentModelFieldOptionSettings,
   CmsContentModelFieldPrimitiveValue,
   CmsContentModelFieldSettings,
@@ -117,6 +121,11 @@ interface CmsBuiltinContentModelDefinition {
   recommendedPresets: CmsSectionPresetId[]
   maxSections: number | null
   sectionPresetLimits: CmsSectionPresetLimitMap
+}
+
+export interface CmsContentModelFieldVisibilityContext {
+  pageStatus: CmsPageSettings['status']
+  customFields: Record<string, unknown>
 }
 
 interface CmsResolvedContentModelDefinition {
@@ -549,6 +558,108 @@ function normalizeCmsContentModelFieldLocalizationSettings(
   }
 }
 
+function resolveCmsContentModelFieldVisibilitySource(
+  value: unknown
+): CmsContentModelFieldVisibilitySource {
+  return value === 'page-status' ? 'page-status' : 'field'
+}
+
+function resolveCmsContentModelFieldVisibilityOperator(
+  value: unknown,
+  source: CmsContentModelFieldVisibilitySource
+): CmsContentModelFieldVisibilityOperator {
+  const normalized = String(value ?? '').trim().toLowerCase()
+
+  if (source === 'page-status') {
+    return normalized === 'not-equals' ? 'not-equals' : 'equals'
+  }
+
+  switch (normalized) {
+    case 'not-equals':
+    case 'contains':
+    case 'is-empty':
+    case 'is-not-empty':
+    case 'is-true':
+    case 'is-false':
+      return normalized
+    case 'equals':
+    default:
+      return 'equals'
+  }
+}
+
+function doesCmsContentModelFieldVisibilityOperatorRequireValue(
+  operator: CmsContentModelFieldVisibilityOperator
+): boolean {
+  return operator === 'equals'
+    || operator === 'not-equals'
+    || operator === 'contains'
+}
+
+function normalizeCmsContentModelFieldVisibilityValue(
+  value: unknown,
+  fallback: CmsContentModelFieldPrimitiveValue = ''
+): CmsContentModelFieldPrimitiveValue {
+  if (typeof value === 'boolean' || typeof value === 'number' || value === null) {
+    return value
+  }
+
+  if (typeof value === 'string') {
+    return value.trim()
+  }
+
+  return fallback
+}
+
+function normalizeCmsContentModelFieldVisibilitySettings(
+  value: unknown,
+  currentFieldId: string,
+  fallback?: CmsContentModelFieldVisibilitySettings | null
+): CmsContentModelFieldVisibilitySettings | undefined {
+  if (!isObjectRecord(value)) {
+    return fallback ? cloneValue(fallback) : undefined
+  }
+
+  const source = resolveCmsContentModelFieldVisibilitySource(value.source ?? fallback?.source)
+  const operator = resolveCmsContentModelFieldVisibilityOperator(
+    value.operator ?? fallback?.operator,
+    source
+  )
+
+  if (source === 'page-status') {
+    const rawStatus = String(value.value ?? fallback?.value ?? 'draft').trim().toLowerCase()
+    const normalizedStatus = rawStatus === 'published' ? 'published' : 'draft'
+    return {
+      source,
+      operator,
+      value: normalizedStatus,
+    }
+  }
+
+  const fieldId = normalizeSegment(
+    String(value.fieldId ?? fallback?.fieldId ?? ''),
+    ''
+  )
+
+  if (!fieldId || fieldId === currentFieldId) {
+    return undefined
+  }
+
+  return {
+    source,
+    fieldId,
+    operator,
+    ...(doesCmsContentModelFieldVisibilityOperatorRequireValue(operator)
+      ? {
+          value: normalizeCmsContentModelFieldVisibilityValue(
+            value.value,
+            fallback?.value ?? ''
+          ),
+        }
+      : {}),
+  }
+}
+
 function normalizeCmsContentModelFieldGroup(
   value: unknown,
   fallback = ''
@@ -801,6 +912,11 @@ function normalizeCmsContentModelFieldSettings(
         nextValue: rawGroup,
       })
       const repeatable = Boolean(entry.repeatable ?? matchedFallbackField?.repeatable)
+      const visibility = normalizeCmsContentModelFieldVisibilitySettings(
+        entry.visibility,
+        id,
+        matchedFallbackField?.visibility
+      )
       const min = resolveCmsContentModelFieldConstraint(
         entry.min,
         { type, repeatable },
@@ -832,6 +948,7 @@ function normalizeCmsContentModelFieldSettings(
         order,
         required: Boolean(entry.required),
         repeatable,
+        visibility,
         min,
         max: min != null && max != null && max < min ? min : max,
         defaultValue: normalizeCmsContentModelFieldValue(
@@ -885,6 +1002,14 @@ function resolveCmsContentModelFieldDefinitions(
       order: resolveCmsContentModelFieldOrder(field.order, index + 1),
       required: field.required,
       repeatable: Boolean(field.repeatable),
+      visibility: field.visibility
+        ? {
+            source: field.visibility.source,
+            fieldId: field.visibility.fieldId ?? null,
+            operator: field.visibility.operator,
+            value: field.visibility.value ?? null,
+          }
+        : null,
       min: field.min ?? null,
       max: field.max ?? null,
       defaultValue: normalizeCmsContentModelFieldValue(field, field.defaultValue),
@@ -1233,6 +1358,14 @@ function buildCmsContentModelSchemaFieldSignature(
     order: field.order ?? null,
     required: field.required,
     repeatable: Boolean(field.repeatable),
+    visibility: field.visibility
+      ? {
+          source: field.visibility.source,
+          fieldId: field.visibility.fieldId ?? null,
+          operator: field.visibility.operator,
+          value: field.visibility.value ?? null,
+        }
+      : null,
     min: field.min ?? null,
     max: field.max ?? null,
     options: (field.options ?? []).map(option => ({
@@ -1855,6 +1988,92 @@ export function coerceCmsContentModelFieldValue(
   value: unknown
 ): CmsContentModelFieldValue {
   return normalizeCmsContentModelFieldValue(field, value, field.defaultValue)
+}
+
+function evaluateCmsContentModelFieldVisibilityRule(
+  rule: CmsContentModelFieldVisibilityDefinition,
+  targetValue: unknown,
+  pageStatus: CmsPageSettings['status']
+): boolean {
+  switch (rule.operator) {
+    case 'is-empty':
+      return targetValue == null
+        || (typeof targetValue === 'string' && targetValue.trim().length === 0)
+        || (Array.isArray(targetValue) && targetValue.length === 0)
+    case 'is-not-empty':
+      return !evaluateCmsContentModelFieldVisibilityRule({ ...rule, operator: 'is-empty' }, targetValue, pageStatus)
+    case 'is-true':
+      return targetValue === true
+    case 'is-false':
+      return targetValue === false
+    case 'contains':
+      if (Array.isArray(targetValue)) {
+        return targetValue.some(entry => String(entry ?? '').trim() === String(rule.value ?? '').trim())
+      }
+      return String(targetValue ?? '').includes(String(rule.value ?? ''))
+    case 'not-equals':
+      return String(targetValue ?? pageStatus ?? '').trim() !== String(rule.value ?? '').trim()
+    case 'equals':
+    default:
+      return String(targetValue ?? pageStatus ?? '').trim() === String(rule.value ?? '').trim()
+  }
+}
+
+export function isCmsContentModelFieldVisible(
+  field: CmsContentModelFieldDefinition,
+  fields: CmsContentModelFieldDefinition[],
+  context: CmsContentModelFieldVisibilityContext,
+  visitedFieldIds: Set<string> = new Set()
+): boolean {
+  if (!field.visibility) {
+    return true
+  }
+
+  if (visitedFieldIds.has(field.id)) {
+    return true
+  }
+
+  if (field.visibility.source === 'page-status') {
+    return evaluateCmsContentModelFieldVisibilityRule(
+      field.visibility,
+      context.pageStatus,
+      context.pageStatus
+    )
+  }
+
+  const targetFieldId = field.visibility.fieldId
+  if (!targetFieldId) {
+    return true
+  }
+
+  const targetField = fields.find(entry => entry.id === targetFieldId)
+  if (!targetField) {
+    return true
+  }
+
+  const nextVisited = new Set(visitedFieldIds)
+  nextVisited.add(field.id)
+  if (!isCmsContentModelFieldVisible(targetField, fields, context, nextVisited)) {
+    return false
+  }
+
+  const targetValue = coerceCmsContentModelFieldValue(
+    targetField,
+    context.customFields[targetField.id] ?? targetField.defaultValue
+  )
+
+  return evaluateCmsContentModelFieldVisibilityRule(
+    field.visibility,
+    targetValue,
+    context.pageStatus
+  )
+}
+
+export function filterCmsVisibleContentModelFields(
+  fields: CmsContentModelFieldDefinition[],
+  context: CmsContentModelFieldVisibilityContext
+): CmsContentModelFieldDefinition[] {
+  return fields.filter(field => isCmsContentModelFieldVisible(field, fields, context))
 }
 
 /**

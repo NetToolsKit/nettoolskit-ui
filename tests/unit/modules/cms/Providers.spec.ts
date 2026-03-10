@@ -48,6 +48,24 @@ describe('white-label.providers', () => {
     source.branding.appName = 'Provider Source'
     source.content.locale = 'pt-BR'
     source.governance.workflow.status = 'approved'
+    source.authoredContentModelFieldPresets = [
+      {
+        id: 'field-preset:campaign-headline',
+        name: 'Campaign headline',
+        description: 'Reusable campaign text field',
+        category: 'campaign',
+        field: {
+          id: 'campaignHeadline',
+          type: 'text',
+          label: 'Campaign headline',
+          description: 'Primary campaign title',
+          placeholder: 'Type the headline',
+          group: 'Campaign',
+          order: 1,
+          required: true,
+        },
+      },
+    ]
     if (source.mediaAssets[0]) {
       source.mediaAssets[0].name = 'Source Asset'
     }
@@ -55,6 +73,7 @@ describe('white-label.providers', () => {
 
     const snapshots = createCmsEngineProviderSnapshots(source)
     expect(snapshots.content.branding.appName).toBe('Provider Source')
+    expect(snapshots.content.authoredContentModelFieldPresets[0]?.name).toBe('Campaign headline')
     expect(snapshots.assets.mediaAssets[0]?.name).toBe('Source Asset')
     expect(snapshots.releases.releases.activeEnvironment).toBe('production')
 
@@ -69,6 +88,7 @@ describe('white-label.providers', () => {
     expect(contentApplied.branding.appName).toBe('Provider Source')
     expect(contentApplied.content.locale).toBe('pt-BR')
     expect(contentApplied.governance.workflow.status).toBe('approved')
+    expect(contentApplied.authoredContentModelFieldPresets[0]?.name).toBe('Campaign headline')
     expect(contentApplied.mediaAssets[0]?.name).toBe('Current Asset')
     expect(contentApplied.releases.activeEnvironment).toBe('dev')
 
@@ -97,12 +117,31 @@ describe('white-label.providers', () => {
     const initial = createDefaultWhiteLabelSettings()
     initial.branding.appName = 'Initial Tenant'
     initial.releases.activeEnvironment = 'staging'
+    initial.authoredContentModelFieldPresets = [
+      {
+        id: 'field-preset:campaign-code',
+        name: 'Campaign code',
+        description: 'Reusable code field',
+        category: 'campaign',
+        field: {
+          id: 'campaignCode',
+          type: 'text',
+          label: 'Campaign code',
+          description: 'Unique campaign code',
+          placeholder: 'CMP-001',
+          group: 'Campaign',
+          order: 1,
+          required: true,
+        },
+      },
+    ]
 
     saveCmsWhiteLabelSettings(initial, { store })
 
     const contentSnapshot = loadCmsContentRepositorySnapshot({ store })
     const initialAssetSnapshot = loadCmsAssetRepositorySnapshot({ store })
     expect(contentSnapshot.branding.appName).toBe('Initial Tenant')
+    expect(contentSnapshot.authoredContentModelFieldPresets[0]?.name).toBe('Campaign code')
     contentSnapshot.branding.appName = 'Content Repo Tenant'
     contentSnapshot.governance.workflow.status = 'in_review'
     saveCmsContentRepositorySnapshot(contentSnapshot, { store })

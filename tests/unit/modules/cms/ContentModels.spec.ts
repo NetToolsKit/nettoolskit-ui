@@ -3,6 +3,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import {
+  filterCmsVisibleContentModelFields,
   coerceCmsContentModelFieldValue,
   createCmsAuthoredContentModel,
   createCmsPageCustomFieldsFromContentModel,
@@ -205,6 +206,78 @@ describe('content-models', () => {
       'Content:bulletpoints:1',
       'Campaign:campaignheadline:2',
     ])
+  })
+
+  it('filters schema fields using conditional visibility rules', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Conditional schema',
+      description: 'Shows fields only when conditions match',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'layoutMode',
+          type: 'select',
+          label: 'Layout mode',
+          description: 'Controls dependent fields',
+          placeholder: '',
+          required: true,
+          defaultValue: 'default',
+          options: [
+            { value: 'default', label: 'Default' },
+            { value: 'promo', label: 'Promo' },
+          ],
+        },
+        {
+          id: 'promoBadge',
+          type: 'text',
+          label: 'Promo badge',
+          description: 'Shown only for promo pages',
+          placeholder: '',
+          required: false,
+          defaultValue: '',
+          visibility: {
+            source: 'field',
+            fieldId: 'layoutmode',
+            operator: 'equals',
+            value: 'promo',
+          },
+        },
+        {
+          id: 'publishNotes',
+          type: 'textarea',
+          label: 'Publish notes',
+          description: 'Shown only after publication',
+          placeholder: '',
+          required: false,
+          defaultValue: '',
+          visibility: {
+            source: 'page-status',
+            operator: 'equals',
+            value: 'published',
+          },
+        },
+      ],
+    })
+
+    const fields = getCmsContentModelFieldDefinitions('en', authoredModel.id, [authoredModel])
+
+    expect(filterCmsVisibleContentModelFields(fields, {
+      pageStatus: 'draft',
+      customFields: { layoutmode: 'default' },
+    }).map(field => field.id)).toEqual(['layoutmode'])
+
+    expect(filterCmsVisibleContentModelFields(fields, {
+      pageStatus: 'draft',
+      customFields: { layoutmode: 'promo' },
+    }).map(field => field.id)).toEqual(['layoutmode', 'promobadge'])
+
+    expect(filterCmsVisibleContentModelFields(fields, {
+      pageStatus: 'published',
+      customFields: { layoutmode: 'default' },
+    }).map(field => field.id)).toEqual(['layoutmode', 'publishnotes'])
   })
 
   it('resolves authored schema version and migration metadata with locale-aware notes', () => {

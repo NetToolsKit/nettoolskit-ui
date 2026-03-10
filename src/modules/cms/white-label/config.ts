@@ -22,6 +22,7 @@ import { createDefaultCmsReusableBlocks } from './reusable-blocks'
 import { createDefaultCmsReusableSections } from './reusable-sections'
 import { createDefaultCmsMediaAssets } from './media-library'
 import { createDefaultCmsAuthoredBlockPresets } from './block-presets'
+import { createDefaultCmsAuthoredContentModelFieldPresets } from './schema-field-presets'
 import {
   createLocalizedContentDefaults,
   createLocalizedShellActions,
@@ -216,6 +217,7 @@ export function createDefaultWhiteLabelSettings(
     reusableSections: createDefaultCmsReusableSections(),
     reusableBlocks: createDefaultCmsReusableBlocks(locale),
     authoredContentModels: createDefaultCmsAuthoredContentModels(),
+    authoredContentModelFieldPresets: createDefaultCmsAuthoredContentModelFieldPresets(),
     authoredBlockPresets: createDefaultCmsAuthoredBlockPresets(),
     mediaAssets: createDefaultCmsMediaAssets(branding, locale),
     releases: createDefaultCmsReleaseSettings(),

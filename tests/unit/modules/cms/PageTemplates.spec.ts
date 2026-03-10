@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { createDefaultWhiteLabelSettings } from '../../../../src/modules/cms/white-label/config'
 import {
   createCmsPageFromTemplate,
+  listCmsPageQuickStartOptions,
   listCmsPageTemplateOptions,
   resolveCmsPageTemplateId,
 } from '../../../../src/modules/cms/white-label/page-templates'
@@ -16,6 +17,16 @@ describe('page-templates', () => {
 
     expect(english.some(option => option.label === 'Landing (default)')).toBe(true)
     expect(portuguese.some(option => option.label === 'Landing (padrao)')).toBe(true)
+  })
+
+  it('builds quick-start options with content model and section metadata', () => {
+    const options = listCmsPageQuickStartOptions('en')
+    const landing = options.find(option => option.value === 'landing-default')
+
+    expect(landing).toBeDefined()
+    expect(landing?.contentModelLabel).toBe('Landing page')
+    expect(landing?.sectionCount).toBeGreaterThan(0)
+    expect(landing?.sectionLabels).toContain('Hero')
   })
 
   it('falls back to default template id when value is unknown', () => {

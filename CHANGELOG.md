@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Extended field localization metadata to support localized group labels and wired ordered/grouped resolution through the content-model engine signatures used by normalization and schema versioning.
   - Updated the CMS `Content` tab to author field group and order metadata, and updated the `Pages` builder to render grouped custom-field sections with preserved field order.
   - Expanded unit and Playwright regression coverage for authored content models to validate grouped field authoring and grouped rendering in `Pages`.
+- **Reusable schema-field presets for authored content models**
+  - Added an authored schema-field preset library so one field contract can be saved once and reapplied across multiple content models without re-entering the same schema metadata.
+  - Wired the `Content` authoring UI to save, apply and remove field presets directly from the schema-field editor while keeping defaults, options and localized metadata consistent.
+  - Added focused unit coverage for schema-field preset normalization and application flows.
+- **Conditional visibility rules for schema-driven page fields**
+  - Added shared visibility rules for content-model fields based on another field value or on page status, keeping the same behavior across normalization, `Pages` authoring and validation.
+  - Updated the `Pages` builder to render only the fields that match the active visibility rules and updated validation so hidden required fields do not block authoring.
+  - Added regression coverage for field-driven and page-status-driven conditional visibility in unit and Playwright suites.
+- **Guided quick-start workflows in the Pages builder**
+  - Added quick-start cards in `Pages` for common template-driven flows (`Landing`, `Marketing funnel`, `Blank page`) so authors can create a page without manually selecting a template first.
+  - Added a one-click `Create + open blocks` action that creates the page, initializes authoring selections and jumps directly into the `Blocks` module on the first editable section.
+  - Added unit coverage for quick-start metadata and Playwright coverage for the guided create/open workflow.
 - **Engine-level visual regression and release-quality gates**
   - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
   - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.

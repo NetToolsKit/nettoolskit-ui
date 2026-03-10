@@ -10,6 +10,7 @@ import {
   resolveCmsBlockPresetId,
 } from './block-presets'
 import {
+  filterCmsVisibleContentModelFields,
   coerceCmsContentModelFieldValue,
   getCmsContentModelFieldDefinitions,
   getCmsContentModelLastSchemaChangeAt,
@@ -174,8 +175,30 @@ function validatePageCustomFields(
 
   const customFields = isRecord(page.customFields) ? page.customFields : {}
   const knownFieldIds = new Set(fieldDefinitions.map(field => field.id))
+  const visibleFieldDefinitions = filterCmsVisibleContentModelFields(fieldDefinitions, {
+    pageStatus: page.status,
+    customFields,
+  })
 
   for (const field of fieldDefinitions) {
+    if (field.visibility?.source !== 'field' || !field.visibility.fieldId) {
+      continue
+    }
+
+    if (knownFieldIds.has(field.visibility.fieldId)) {
+      continue
+    }
+
+    pushIssue(issues, {
+      code: 'pages.custom_fields.visibility.reference_missing',
+      severity: 'warning',
+      message: `Field "${field.label}" references an unknown visibility field "${field.visibility.fieldId}".`,
+      path: `${pathBase}.customFields.${field.id}`,
+      pageId: page.id,
+    })
+  }
+
+  for (const field of visibleFieldDefinitions) {
     const value = customFields[field.id]
     const normalizedValue = coerceCmsContentModelFieldValue(field, value)
 
