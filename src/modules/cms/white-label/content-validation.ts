@@ -26,12 +26,14 @@ import {
   resolveCmsContentModelId,
   resolveCmsSectionPresetId,
 } from './content-models'
+import { hasCmsSchemaReferenceOption } from './reference-library'
 import { resolveCmsReusableBlockReference } from './reusable-blocks'
 import { resolveCmsReusableSectionReference } from './reusable-sections'
 import type {
   CmsAuthoredBlockPresetSettings,
   CmsAuthoredContentModelSettings,
   CmsContentModelFieldDefinition,
+  CmsMediaAssetSettings,
   CmsPageBlockSettings,
   CmsPageSectionSettings,
   CmsPageSettings,
@@ -72,6 +74,7 @@ export interface CmsContentValidationOptions {
   registry?: CmsBlockRegistry
   authoredContentModels?: CmsAuthoredContentModelSettings[]
   authoredBlockPresets?: CmsAuthoredBlockPresetSettings[]
+  mediaAssets?: CmsMediaAssetSettings[]
   reusableBlocks?: CmsReusableBlockSettings[]
   reusableSections?: CmsReusableSectionSettings[]
 }
@@ -120,6 +123,10 @@ function hasCmsContentModelFieldValue(
       return typeof value === 'boolean'
     case 'number':
       return typeof value === 'number' && Number.isFinite(value)
+    case 'url':
+    case 'date':
+    case 'media-asset':
+    case 'reference':
     case 'select':
     case 'textarea':
     case 'text':
@@ -128,9 +135,47 @@ function hasCmsContentModelFieldValue(
   }
 }
 
+function isCmsValidUrlFieldValue(value: string): boolean {
+  const normalizedValue = value.trim()
+  if (!normalizedValue) {
+    return false
+  }
+
+  if (
+    normalizedValue.startsWith('/')
+    || normalizedValue.startsWith('#')
+    || normalizedValue.startsWith('mailto:')
+    || normalizedValue.startsWith('tel:')
+  ) {
+    return true
+  }
+
+  try {
+    const parsed = new URL(normalizedValue)
+    return parsed.protocol.length > 0
+  } catch {
+    return false
+  }
+}
+
+function isCmsValidDateFieldValue(value: string): boolean {
+  const normalizedValue = value.trim()
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
+    return false
+  }
+
+  const parsed = new Date(`${normalizedValue}T00:00:00.000Z`)
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === normalizedValue
+}
+
 function isCmsValidScalarContentModelFieldValue(
   field: CmsContentModelFieldDefinition,
-  value: unknown
+  value: unknown,
+  mediaAssets: CmsMediaAssetSettings[] = [],
+  authoredContentModels: CmsAuthoredContentModelSettings[] = [],
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = [],
+  reusableBlocks: CmsReusableBlockSettings[] = [],
+  reusableSections: CmsReusableSectionSettings[] = []
 ): boolean {
   switch (field.type) {
     case 'toggle':
@@ -139,6 +184,29 @@ function isCmsValidScalarContentModelFieldValue(
       return typeof value === 'number' && Number.isFinite(value)
     case 'select':
       return field.options.some(option => option.value === String(value ?? '').trim())
+    case 'url':
+      return typeof value === 'string' && isCmsValidUrlFieldValue(value)
+    case 'date':
+      return typeof value === 'string' && isCmsValidDateFieldValue(value)
+    case 'media-asset':
+      return typeof value === 'string'
+        && mediaAssets.some(asset => {
+          if (asset.id !== value.trim()) {
+            return false
+          }
+          return field.mediaKinds.length === 0 || field.mediaKinds.includes(asset.kind)
+        })
+    case 'reference':
+      return typeof value === 'string' && hasCmsSchemaReferenceOption(
+        value,
+        field.referenceKinds,
+        {
+          authoredContentModels,
+          authoredBlockPresets,
+          reusableBlocks,
+          reusableSections,
+        }
+      )
     case 'textarea':
     case 'text':
     default:
@@ -150,7 +218,11 @@ function validatePageCustomFields(
   page: CmsPageSettings,
   pathBase: string,
   issues: CmsContentValidationIssue[],
-  authoredContentModels: CmsAuthoredContentModelSettings[] = []
+  authoredContentModels: CmsAuthoredContentModelSettings[] = [],
+  mediaAssets: CmsMediaAssetSettings[] = [],
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = [],
+  reusableBlocks: CmsReusableBlockSettings[] = [],
+  reusableSections: CmsReusableSectionSettings[] = []
 ): void {
   const fieldDefinitions = getCmsContentModelFieldDefinitions(
     'en',
@@ -229,7 +301,7 @@ function validatePageCustomFields(
       if (repeatableValues.some(entry => !isCmsValidScalarContentModelFieldValue({
         ...field,
         repeatable: false,
-      }, entry))) {
+      }, entry, mediaAssets, authoredContentModels, authoredBlockPresets, reusableBlocks, reusableSections))) {
         pushIssue(issues, {
           code: `pages.custom_fields.${field.type}.invalid`,
           severity: 'error',
@@ -348,6 +420,75 @@ function validatePageCustomFields(
         path: `${pathBase}.customFields.${field.id}`,
         pageId: page.id,
       })
+    }
+
+    if (
+      field.type === 'url'
+      && hasCmsContentModelFieldValue(field, value)
+      && !isCmsValidUrlFieldValue(String(normalizedValue ?? ''))
+    ) {
+      pushIssue(issues, {
+        code: 'pages.custom_fields.url.invalid',
+        severity: 'error',
+        message: `Field "${field.label}" must contain a valid URL or path.`,
+        path: `${pathBase}.customFields.${field.id}`,
+        pageId: page.id,
+      })
+    }
+
+    if (
+      field.type === 'date'
+      && hasCmsContentModelFieldValue(field, value)
+      && !isCmsValidDateFieldValue(String(normalizedValue ?? ''))
+    ) {
+      pushIssue(issues, {
+        code: 'pages.custom_fields.date.invalid',
+        severity: 'error',
+        message: `Field "${field.label}" must contain a valid ISO date (YYYY-MM-DD).`,
+        path: `${pathBase}.customFields.${field.id}`,
+        pageId: page.id,
+      })
+    }
+
+    if (field.type === 'media-asset' && hasCmsContentModelFieldValue(field, value)) {
+      const assetId = String(normalizedValue ?? '').trim()
+      const matchingAsset = mediaAssets.find(asset => asset.id === assetId)
+
+      if (!matchingAsset) {
+        pushIssue(issues, {
+          code: 'pages.custom_fields.media_asset.missing',
+          severity: 'error',
+          message: `Field "${field.label}" references an unknown media asset "${assetId}".`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: page.id,
+        })
+      } else if (field.mediaKinds.length > 0 && !field.mediaKinds.includes(matchingAsset.kind)) {
+        pushIssue(issues, {
+          code: 'pages.custom_fields.media_asset.kind_mismatch',
+          severity: 'error',
+          message: `Field "${field.label}" only accepts ${field.mediaKinds.join(', ')} assets.`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: page.id,
+        })
+      }
+    }
+
+    if (field.type === 'reference' && hasCmsContentModelFieldValue(field, value)) {
+      const referenceId = String(normalizedValue ?? '').trim()
+      if (!hasCmsSchemaReferenceOption(referenceId, field.referenceKinds, {
+        authoredContentModels,
+        authoredBlockPresets,
+        reusableBlocks,
+        reusableSections,
+      })) {
+        pushIssue(issues, {
+          code: 'pages.custom_fields.reference.missing',
+          severity: 'error',
+          message: `Field "${field.label}" references an unknown engine entity "${referenceId}".`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: page.id,
+        })
+      }
     }
   }
 
@@ -708,6 +849,9 @@ export function validateCmsContentPages(
   const authoredBlockPresets = Array.isArray(options.authoredBlockPresets)
     ? options.authoredBlockPresets
     : []
+  const mediaAssets = Array.isArray(options.mediaAssets)
+    ? options.mediaAssets
+    : []
   const reusableBlocks = Array.isArray(options.reusableBlocks)
     ? options.reusableBlocks
     : []
@@ -860,7 +1004,16 @@ export function validateCmsContentPages(
       }
     }
 
-    validatePageCustomFields(page, pathBase, issues, authoredContentModels)
+    validatePageCustomFields(
+      page,
+      pathBase,
+      issues,
+      authoredContentModels,
+      mediaAssets,
+      authoredBlockPresets,
+      reusableBlocks,
+      reusableSections
+    )
 
     if (sections.length === 0) {
       pushIssue(issues, {

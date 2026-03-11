@@ -126,7 +126,16 @@ export interface CmsBlockPresetLocalizationSettings {
 /**
  * Field kinds supported by authored content-model schemas.
  */
-export type CmsContentModelFieldType = 'text' | 'textarea' | 'number' | 'toggle' | 'select'
+export type CmsContentModelFieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'toggle'
+  | 'select'
+  | 'url'
+  | 'date'
+  | 'media-asset'
+  | 'reference'
 
 /**
  * Primitive field values supported by content-model schemas.
@@ -165,6 +174,17 @@ export interface CmsContentModelFieldOptionDefinition {
   value: string
   label: string
 }
+
+/**
+ * Internal entity catalogs that one reference-style schema field can point to.
+ * The engine keeps these catalogs backend-agnostic so applications can later
+ * map them to remote repositories without changing authoring contracts.
+ */
+export type CmsSchemaReferenceKind =
+  | 'content-model'
+  | 'block-preset'
+  | 'reusable-block'
+  | 'reusable-section'
 
 /**
  * Supported visibility sources for one schema field.
@@ -222,6 +242,8 @@ export interface CmsContentModelFieldSettings {
   max?: number | null
   defaultValue?: CmsContentModelFieldValue
   options?: CmsContentModelFieldOptionSettings[]
+  mediaKinds?: CmsMediaAssetKind[]
+  referenceKinds?: CmsSchemaReferenceKind[]
   visibility?: CmsContentModelFieldVisibilitySettings | null
   localization?: CmsContentModelFieldLocalizationSettings
 }
@@ -243,6 +265,8 @@ export interface CmsContentModelFieldDefinition {
   max: number | null
   defaultValue: CmsContentModelFieldValue
   options: CmsContentModelFieldOptionDefinition[]
+  mediaKinds: CmsMediaAssetKind[]
+  referenceKinds: CmsSchemaReferenceKind[]
   visibility: CmsContentModelFieldVisibilityDefinition | null
 }
 

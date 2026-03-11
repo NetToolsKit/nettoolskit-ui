@@ -1057,17 +1057,46 @@
                             v-model="field.placeholder"
                             outlined
                             dense
-                            :disable="field.type === 'toggle' || field.type === 'select'"
+                            :disable="field.type === 'toggle' || field.type === 'select' || field.type === 'date' || field.type === 'media-asset' || field.type === 'reference'"
                             :label="tr('Placeholder', 'Placeholder')"
                           />
                           <q-input
+                            v-if="field.type !== 'media-asset' && field.type !== 'reference'"
                             v-model="field.defaultValue"
                             outlined
                             dense
-                            :type="field.repeatable ? 'textarea' : (field.type === 'number' ? 'number' : 'text')"
+                            :type="field.repeatable
+                              ? 'textarea'
+                              : getCmsContentModelFieldHtmlInputType(field.type)"
                             :autogrow="field.repeatable"
                             :disable="field.type === 'toggle' && !field.repeatable"
                             :label="field.repeatable ? tr('Default values (one per line)', 'Valores padrao (um por linha)') : tr('Default value', 'Valor padrao')"
+                          />
+                          <q-select
+                            v-else-if="field.type === 'media-asset'"
+                            :model-value="field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue"
+                            outlined
+                            dense
+                            :multiple="field.repeatable"
+                            emit-value
+                            map-options
+                            use-chips
+                            :options="getCmsContentModelFieldDraftMediaOptions(field)"
+                            :label="field.repeatable ? tr('Default assets', 'Assets padrao') : tr('Default asset', 'Asset padrao')"
+                            @update:model-value="field.defaultValue = Array.isArray($event) ? $event.join('\n') : String($event ?? '')"
+                          />
+                          <q-select
+                            v-else
+                            :model-value="field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue"
+                            outlined
+                            dense
+                            :multiple="field.repeatable"
+                            emit-value
+                            map-options
+                            use-chips
+                            :options="getCmsContentModelFieldDraftReferenceOptions(field)"
+                            :label="field.repeatable ? tr('Default references', 'Referencias padrao') : tr('Default reference', 'Referencia padrao')"
+                            @update:model-value="field.defaultValue = Array.isArray($event) ? $event.join('\n') : String($event ?? '')"
                           />
                           <q-toggle
                             v-model="field.required"
@@ -1084,25 +1113,43 @@
                             outlined
                             dense
                             type="number"
-                            :label="field.repeatable
-                              ? tr('Minimum items', 'Minimo de itens')
-                              : (field.type === 'number'
-                                ? tr('Minimum value', 'Valor minimo')
-                                : tr('Minimum length', 'Comprimento minimo'))"
+                            :disable="!field.repeatable && !doesCmsContentModelFieldSupportScalarConstraints(field)"
+                            :label="getCmsContentModelFieldMinConstraintLabel(field)"
                           />
                           <q-input
                             v-model="field.maxValue"
                             outlined
                             dense
                             type="number"
-                            :label="field.repeatable
-                              ? tr('Maximum items', 'Maximo de itens')
-                              : (field.type === 'number'
-                                ? tr('Maximum value', 'Valor maximo')
-                              : tr('Maximum length', 'Comprimento maximo'))"
+                            :disable="!field.repeatable && !doesCmsContentModelFieldSupportScalarConstraints(field)"
+                            :label="getCmsContentModelFieldMaxConstraintLabel(field)"
                           />
                         </div>
                         <div class="cms-content-model-fields__row">
+                          <q-select
+                            v-if="field.type === 'media-asset'"
+                            v-model="field.mediaKinds"
+                            outlined
+                            dense
+                            multiple
+                            emit-value
+                            map-options
+                            use-chips
+                            :options="cmsMediaKindOptions"
+                            :label="tr('Allowed media kinds', 'Tipos de midia permitidos')"
+                          />
+                          <q-select
+                            v-if="field.type === 'reference'"
+                            v-model="field.referenceKinds"
+                            outlined
+                            dense
+                            multiple
+                            emit-value
+                            map-options
+                            use-chips
+                            :options="cmsReferenceKindOptions"
+                            :label="tr('Allowed reference kinds', 'Tipos de referencia permitidos')"
+                          />
                           <q-toggle
                             v-model="field.visibilityEnabled"
                             :label="tr('Conditional visibility', 'Visibilidade condicional')"
@@ -1715,6 +1762,38 @@
                             :hint="getCmsContentModelFieldHint(field)"
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
+                          <q-select
+                            v-else-if="field.repeatable && field.type === 'media-asset'"
+                            :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
+                            outlined
+                            dense
+                            multiple
+                            use-chips
+                            emit-value
+                            map-options
+                            :options="getCmsPageCustomFieldMediaOptions(field)"
+                            option-label="label"
+                            option-value="value"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-select
+                            v-else-if="field.repeatable && field.type === 'reference'"
+                            :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
+                            outlined
+                            dense
+                            multiple
+                            use-chips
+                            emit-value
+                            map-options
+                            :options="getCmsPageCustomFieldReferenceOptions(field)"
+                            option-label="label"
+                            option-value="value"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
                           <q-input
                             v-else-if="field.repeatable"
                             :model-value="formatCmsRepeatableFieldValue(getCmsPageCustomFieldValue(page, field))"
@@ -1747,6 +1826,26 @@
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
                           <q-input
+                          v-else-if="field.type === 'url'"
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            :type="getCmsContentModelFieldHtmlInputType(field.type)"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-input
+                            v-else-if="field.type === 'date'"
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            type="date"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-input
                             v-else-if="field.type === 'number'"
                             :model-value="getCmsPageCustomFieldValue(page, field) == null ? '' : String(getCmsPageCustomFieldValue(page, field))"
                             outlined
@@ -1760,6 +1859,34 @@
                             v-else-if="field.type === 'toggle'"
                             :model-value="Boolean(getCmsPageCustomFieldValue(page, field))"
                             :label="field.label"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-select
+                            v-else-if="field.type === 'media-asset'"
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="getCmsPageCustomFieldMediaOptions(field)"
+                            option-label="label"
+                            option-value="value"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
+                          <q-select
+                            v-else-if="field.type === 'reference'"
+                            :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
+                            outlined
+                            dense
+                            emit-value
+                            map-options
+                            :options="getCmsPageCustomFieldReferenceOptions(field)"
+                            option-label="label"
+                            option-value="value"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
                           <q-select
@@ -3598,6 +3725,7 @@ import {
   type CmsContentModelFieldPresetOption,
   type CmsResolvedContentModelFieldPresetDefinition,
 } from '../src/modules/cms/white-label/schema-field-presets'
+import { listCmsSchemaReferenceOptions } from '../src/modules/cms/white-label/reference-library'
 import {
   applyCmsLocalizedPropsUpdate,
   applyCmsLocalizedTextUpdate,
@@ -3668,7 +3796,7 @@ import {
   scheduleCmsRelease,
   validateCmsReleasePrePublishGate,
   validateCmsRelease,
-} from '../src/modules/cms/releases'
+} from '../src/modules/cms/releases/index'
 import { createLandingRegistry } from './cms/landing.registry'
 import {
   getLandingBlockFieldDefinitions,
@@ -3687,6 +3815,7 @@ import type {
   CmsContentModelFieldType,
   CmsContentModelFieldVisibilityOperator,
   CmsContentModelFieldVisibilitySource,
+  CmsSchemaReferenceKind,
   CmsReleaseEnvironment,
   CmsReleaseValidationIssue,
   CmsMediaAssetKind,
@@ -3888,6 +4017,8 @@ interface CmsContentModelFieldDraft {
   maxValue: string
   defaultValue: string
   optionsDraft: string
+  mediaKinds: CmsMediaAssetKind[]
+  referenceKinds: CmsSchemaReferenceKind[]
   visibilityEnabled: boolean
   visibilitySource: CmsContentModelFieldVisibilitySource
   visibilityFieldId: string
@@ -4639,6 +4770,23 @@ const cmsContentModelFieldTypeOptions = computed(() => ([
   { label: tr('Number', 'Numero'), value: 'number' as const },
   { label: tr('Toggle', 'Alternancia'), value: 'toggle' as const },
   { label: tr('Select', 'Selecao'), value: 'select' as const },
+  { label: tr('URL', 'URL'), value: 'url' as const },
+  { label: tr('Date', 'Data'), value: 'date' as const },
+  { label: tr('Media asset', 'Asset de midia'), value: 'media-asset' as const },
+  { label: tr('Reference', 'Referencia'), value: 'reference' as const },
+]))
+const cmsMediaKindOptions = computed(() => ([
+  { label: getCmsMediaKindLabel('image'), value: 'image' as const },
+  { label: getCmsMediaKindLabel('video'), value: 'video' as const },
+  { label: getCmsMediaKindLabel('icon'), value: 'icon' as const },
+  { label: getCmsMediaKindLabel('document'), value: 'document' as const },
+  { label: getCmsMediaKindLabel('other'), value: 'other' as const },
+]))
+const cmsReferenceKindOptions = computed(() => ([
+  { label: tr('Content model', 'Modelo de conteudo'), value: 'content-model' as const },
+  { label: tr('Block preset', 'Preset de bloco'), value: 'block-preset' as const },
+  { label: tr('Reusable block', 'Bloco reutilizavel'), value: 'reusable-block' as const },
+  { label: tr('Reusable section', 'Secao reutilizavel'), value: 'reusable-section' as const },
 ]))
 const cmsContentModelFieldVisibilitySourceOptions = computed(() => ([
   { label: tr('Another field', 'Outro campo'), value: 'field' as const },
@@ -8657,6 +8805,7 @@ const cmsPreviewContentValidation = computed(() => validateCmsContentPages({
   registry: landingRegistry,
   authoredContentModels: cmsPreviewAuthoredContentModels.value,
   authoredBlockPresets: cmsPreviewAuthoredBlockPresets.value,
+  mediaAssets: cmsPreviewMediaAssets.value,
   reusableSections: cmsPreviewSnapshot.value?.reusableSections ?? settings.value.reusableSections,
   reusableBlocks: cmsPreviewSnapshot.value?.reusableBlocks ?? settings.value.reusableBlocks,
 }))
@@ -8943,6 +9092,8 @@ function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
     maxValue: '',
     defaultValue: '',
     optionsDraft: '',
+    mediaKinds: [],
+    referenceKinds: [],
     visibilityEnabled: false,
     visibilitySource: 'field',
     visibilityFieldId: '',
@@ -8973,6 +9124,8 @@ function createCmsContentModelFieldDraftFromDefinition(
       ? formatCmsRepeatableFieldValue(field.defaultValue)
       : (field.defaultValue == null ? '' : String(field.defaultValue)),
     optionsDraft: field.options.map(option => option.value).join('\n'),
+    mediaKinds: [...field.mediaKinds],
+    referenceKinds: [...field.referenceKinds],
     visibilityEnabled: Boolean(field.visibility),
     visibilitySource: field.visibility?.source ?? 'field',
     visibilityFieldId: field.visibility?.fieldId ?? '',
@@ -9019,6 +9172,8 @@ function createCmsContentModelFieldDraftFromSettings(
       ? formatCmsRepeatableFieldValue(field.defaultValue)
       : (field.defaultValue == null ? '' : String(field.defaultValue)),
     optionsDraft: (field.options ?? []).map(option => option.value).join('\n'),
+    mediaKinds: [...(field.mediaKinds ?? [])],
+    referenceKinds: [...(field.referenceKinds ?? [])],
     visibilityEnabled: Boolean(field.visibility),
     visibilitySource: field.visibility?.source ?? 'field',
     visibilityFieldId: field.visibility?.fieldId ?? '',
@@ -9051,6 +9206,8 @@ function createCmsContentModelFieldSettingsFromDraft(
     min: Number.isFinite(min) ? min : null,
     max: Number.isFinite(max) ? max : null,
     defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
+    mediaKinds: field.type === 'media-asset' ? [...field.mediaKinds] : undefined,
+    referenceKinds: field.type === 'reference' ? [...field.referenceKinds] : undefined,
     visibility: field.visibilityEnabled
       ? {
           source: field.visibilitySource,
@@ -9147,7 +9304,21 @@ function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): str
     return detailParts.join(' · ')
   }
 
-  if ((field.type === 'text' || field.type === 'textarea') && (field.min != null || field.max != null)) {
+  if (field.type === 'media-asset' && field.mediaKinds.length > 0) {
+    detailParts.push(tr(
+      `Allowed: ${field.mediaKinds.map(getCmsMediaKindLabel).join(', ')}`,
+      `Permitidos: ${field.mediaKinds.map(getCmsMediaKindLabel).join(', ')}`
+    ))
+  }
+
+  if (field.type === 'reference' && field.referenceKinds.length > 0) {
+    detailParts.push(tr(
+      `References: ${field.referenceKinds.map(getCmsReferenceKindLabel).join(', ')}`,
+      `Referencias: ${field.referenceKinds.map(getCmsReferenceKindLabel).join(', ')}`
+    ))
+  }
+
+  if ((field.type === 'text' || field.type === 'textarea' || field.type === 'url') && (field.min != null || field.max != null)) {
     detailParts.push(tr(
       `Length: ${field.min ?? 0}-${field.max ?? '∞'}`,
       `Comprimento: ${field.min ?? 0}-${field.max ?? '∞'}`
@@ -9162,6 +9333,175 @@ function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): str
   }
 
   return detailParts.join(' · ')
+}
+
+/**
+ * Returns whether one draft field supports scalar min/max constraints.
+ */
+function doesCmsContentModelFieldSupportScalarConstraints(field: CmsContentModelFieldDraft): boolean {
+  return field.type === 'text'
+    || field.type === 'textarea'
+    || field.type === 'number'
+    || field.type === 'url'
+}
+
+/**
+ * Resolves the HTML input type used by authored schema-field controls.
+ *
+ * URL fields intentionally use `text` instead of native `url` inputs because
+ * the CMS contract accepts relative paths such as `/demo`, which browsers
+ * reject/sanitize on `type="url"` controls.
+ */
+function getCmsContentModelFieldHtmlInputType(type: CmsContentModelFieldType): 'text' | 'number' | 'date' {
+  if (type === 'number') {
+    return 'number'
+  }
+
+  if (type === 'date') {
+    return 'date'
+  }
+
+  return 'text'
+}
+
+/**
+ * Resolves the minimum constraint label for one content-model draft row.
+ */
+function getCmsContentModelFieldMinConstraintLabel(field: CmsContentModelFieldDraft): string {
+  if (field.repeatable) {
+    return tr('Minimum items', 'Minimo de itens')
+  }
+
+  if (field.type === 'number') {
+    return tr('Minimum value', 'Valor minimo')
+  }
+
+  if (doesCmsContentModelFieldSupportScalarConstraints(field)) {
+    return tr('Minimum length', 'Comprimento minimo')
+  }
+
+  return tr('Minimum constraint (unused)', 'Restricao minima (nao usada)')
+}
+
+/**
+ * Resolves the maximum constraint label for one content-model draft row.
+ */
+function getCmsContentModelFieldMaxConstraintLabel(field: CmsContentModelFieldDraft): string {
+  if (field.repeatable) {
+    return tr('Maximum items', 'Maximo de itens')
+  }
+
+  if (field.type === 'number') {
+    return tr('Maximum value', 'Valor maximo')
+  }
+
+  if (doesCmsContentModelFieldSupportScalarConstraints(field)) {
+    return tr('Maximum length', 'Comprimento maximo')
+  }
+
+  return tr('Maximum constraint (unused)', 'Restricao maxima (nao usada)')
+}
+
+/**
+ * Returns select-ready media options for one authored content-model draft field.
+ */
+function getCmsContentModelFieldDraftMediaOptions(
+  field: CmsContentModelFieldDraft
+): Array<{ label: string; value: string; description: string }> {
+  if (field.type !== 'media-asset') {
+    return []
+  }
+
+  return settings.value.mediaAssets
+    .filter(asset => field.mediaKinds.length === 0 || field.mediaKinds.includes(asset.kind))
+    .map(asset => ({
+      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
+      value: asset.id,
+      description: asset.description,
+    }))
+}
+
+/**
+ * Resolves one human-friendly label for a reference catalog kind.
+ */
+function getCmsReferenceKindLabel(kind: CmsSchemaReferenceKind): string {
+  switch (kind) {
+    case 'content-model':
+      return tr('Content model', 'Modelo de conteudo')
+    case 'block-preset':
+      return tr('Block preset', 'Preset de bloco')
+    case 'reusable-block':
+      return tr('Reusable block', 'Bloco reutilizavel')
+    case 'reusable-section':
+      return tr('Reusable section', 'Secao reutilizavel')
+    default:
+      return kind
+  }
+}
+
+/**
+ * Returns select-ready internal reference options for one authored field draft.
+ */
+function getCmsContentModelFieldDraftReferenceOptions(
+  field: CmsContentModelFieldDraft
+): Array<{ label: string; value: string; description: string }> {
+  if (field.type !== 'reference') {
+    return []
+  }
+
+  return listCmsSchemaReferenceOptions(field.referenceKinds, {
+    localeInput: settings.value.content.locale,
+    authoredContentModels: settings.value.authoredContentModels,
+    authoredBlockPresets: settings.value.authoredBlockPresets,
+    reusableBlocks: settings.value.reusableBlocks,
+    reusableSections: settings.value.reusableSections,
+  }).map(option => ({
+    label: `${option.label} (${getCmsReferenceKindLabel(option.kind)})`,
+    value: option.value,
+    description: option.description,
+  }))
+}
+
+/**
+ * Returns select-ready internal reference options for one page-level field.
+ */
+function getCmsPageCustomFieldReferenceOptions(
+  field: CmsContentModelFieldDefinition
+): Array<{ label: string; value: string; description: string }> {
+  if (field.type !== 'reference') {
+    return []
+  }
+
+  return listCmsSchemaReferenceOptions(field.referenceKinds, {
+    localeInput: settings.value.content.locale,
+    authoredContentModels: settings.value.authoredContentModels,
+    authoredBlockPresets: settings.value.authoredBlockPresets,
+    reusableBlocks: settings.value.reusableBlocks,
+    reusableSections: settings.value.reusableSections,
+  }).map(option => ({
+    label: `${option.label} (${getCmsReferenceKindLabel(option.kind)})`,
+    value: option.value,
+    description: option.description,
+  }))
+}
+
+/**
+ * Returns select-ready media options for one page-level media field.
+ */
+function getCmsPageCustomFieldMediaOptions(
+  field: CmsContentModelFieldDefinition
+): Array<{ label: string; value: string; description: string }> {
+  if (field.type !== 'media-asset') {
+    return []
+  }
+
+  return settings.value.mediaAssets
+    .filter(asset => field.mediaKinds.length === 0 || field.mediaKinds.includes(asset.kind))
+    .map(asset => ({
+      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
+      value: asset.id,
+      description: asset.description,
+    }))
 }
 
 /**

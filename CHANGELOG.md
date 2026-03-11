@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Schema reference fields and entity relationships for content models**
+  - Added `reference` as a first-class schema field type so authored content models can point to internal CMS engine entities without backend coupling.
+  - Added backend-agnostic internal reference catalogs for authored content models, block presets, reusable blocks and reusable sections, including allowed-kind constraints on schema fields.
+  - Updated the `Content` tab and `Pages` builder to author and render reference fields through select-based entity pickers instead of raw string ids.
+  - Extended validation and schema-field preset contracts so reference fields are checked against engine catalogs and keep their allowed reference kinds through reuse flows.
+- **Rich schema field types for content-model page fields**
+  - Added `url`, `date` and `media-asset` as first-class authored schema field types for page-level custom fields in the CMS engine.
+  - Extended content-model normalization, page custom-field defaults and schema-field preset contracts so these richer field types keep media-kind constraints and stable default values through storage and reuse flows.
+  - Updated the CMS `Content` tab and `Pages` builder to author and render these field types directly, including managed media-asset selection constrained by allowed media kinds.
+  - Added focused unit and Playwright coverage for rich field-type authoring, validation and page-level rendering.
 - **Grouped and ordered schema fields for content-model page authoring**
   - Added `group` and explicit `order` to authored content-model schema fields so page-level custom fields can be organized into stable authoring sections instead of a single flat list.
   - Extended field localization metadata to support localized group labels and wired ordered/grouped resolution through the content-model engine signatures used by normalization and schema versioning.
@@ -218,6 +228,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Vercel production build module resolution for CMS releases**
+  - Replaced the implicit `../src/modules/cms/releases` directory import in `landing-page/CmsApp.vue` with the explicit barrel entrypoint to avoid Rollup resolution failures during `vite build` on Vercel.
+  - Revalidated the landing production build locally after the import fix to keep the deployment path aligned with the Vercel build environment.
 - **Blank screen in Blocks module with legacy data**
   - Added safe defaults in landing CMS blocks (`CTA`, `Hero`, `Stats`, `Features`) to prevent runtime errors when required props are missing
   - Hardened `openPageInBlocksEditor` selection access with safer optional chaining for legacy section/block payloads

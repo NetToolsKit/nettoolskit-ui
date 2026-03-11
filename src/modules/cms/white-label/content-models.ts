@@ -35,8 +35,10 @@ import type {
   CmsContentModelFieldType,
   CmsContentModelFieldValue,
   CmsLocale,
+  CmsMediaAssetKind,
   CmsPageSectionSettings,
   CmsPageSettings,
+  CmsSchemaReferenceKind,
   CmsSectionPresetLimitMap,
   CmsSectionPresetId,
 } from './types'
@@ -510,6 +512,10 @@ function resolveCmsContentModelFieldType(
     case 'number':
     case 'toggle':
     case 'select':
+    case 'url':
+    case 'date':
+    case 'media-asset':
+    case 'reference':
       return normalized
     default:
       return fallback
@@ -527,11 +533,66 @@ function buildCmsContentModelFieldFallbackValue(
       return null
     case 'select':
       return options[0]?.value ?? ''
+    case 'url':
+    case 'date':
+    case 'media-asset':
+    case 'reference':
     case 'textarea':
     case 'text':
     default:
       return ''
   }
+}
+
+function normalizeCmsContentModelFieldMediaKinds(
+  value: unknown,
+  fallback: CmsMediaAssetKind[] = []
+): CmsMediaAssetKind[] {
+  if (!Array.isArray(value)) {
+    return cloneValue(fallback)
+  }
+
+  const normalizedKinds = new Set<CmsMediaAssetKind>()
+  for (const entry of value) {
+    switch (String(entry ?? '').trim().toLowerCase()) {
+      case 'image':
+      case 'video':
+      case 'icon':
+      case 'document':
+      case 'other':
+        normalizedKinds.add(String(entry ?? '').trim().toLowerCase() as CmsMediaAssetKind)
+        break
+      default:
+        break
+    }
+  }
+
+  return Array.from(normalizedKinds)
+}
+
+function normalizeCmsContentModelFieldReferenceKinds(
+  value: unknown,
+  fallback: CmsSchemaReferenceKind[] = []
+): CmsSchemaReferenceKind[] {
+  if (!Array.isArray(value)) {
+    return cloneValue(fallback)
+  }
+
+  const normalizedKinds = new Set<CmsSchemaReferenceKind>()
+  for (const entry of value) {
+    switch (String(entry ?? '').trim().toLowerCase()) {
+      case 'content-model':
+      case 'block-preset':
+      case 'reusable-block':
+      case 'reusable-section':
+        normalizedKinds.add(String(entry ?? '').trim().toLowerCase() as CmsSchemaReferenceKind)
+        break
+      default:
+        break
+    }
+  }
+
+  return Array.from(normalizedKinds)
 }
 
 function normalizeCmsContentModelFieldLocalizationSettings(
@@ -694,6 +755,7 @@ function resolveCmsContentModelFieldConstraint(
     || input.type === 'text'
     || input.type === 'textarea'
     || input.type === 'number'
+    || input.type === 'url'
 
   if (!supportsConstraint) {
     return null
@@ -707,7 +769,7 @@ function resolveCmsContentModelFieldConstraint(
     return fallback
   }
 
-  if (input.repeatable || input.type === 'text' || input.type === 'textarea') {
+  if (input.repeatable || input.type === 'text' || input.type === 'textarea' || input.type === 'url') {
     return Math.max(0, Math.floor(parsed))
   }
 
@@ -796,6 +858,14 @@ function normalizeCmsContentModelFieldPrimitiveValue(
         ? String(fallback ?? '')
         : buildCmsContentModelFieldFallbackValue('select', availableOptions)
     }
+    case 'url':
+    case 'date':
+    case 'media-asset':
+    case 'reference':
+      if (value == null) {
+        return fallback
+      }
+      return String(value ?? '').trim()
     case 'textarea':
     case 'text':
     default:
@@ -875,6 +945,18 @@ function normalizeCmsContentModelFieldSettings(
       const id = createUniqueValue(requestedId || `field-${index + 1}`, seenIds)
       seenIds.add(id)
       const matchedFallbackField = fallbackById.get(id) ?? fallbackFieldByIndex
+      const normalizedMediaKinds = type === 'media-asset'
+        ? normalizeCmsContentModelFieldMediaKinds(
+            entry.mediaKinds,
+            matchedFallbackField?.mediaKinds ?? []
+          )
+        : []
+      const normalizedReferenceKinds = type === 'reference'
+        ? normalizeCmsContentModelFieldReferenceKinds(
+            entry.referenceKinds,
+            matchedFallbackField?.referenceKinds ?? []
+          )
+        : []
       const existingLocalization = {
         ...(matchedFallbackField?.localization ?? {}),
         ...(normalizeCmsContentModelFieldLocalizationSettings(entry.localization) ?? {}),
@@ -963,6 +1045,12 @@ function normalizeCmsContentModelFieldSettings(
         options: type === 'select' && normalizedOptions.length > 0
           ? normalizedOptions
           : undefined,
+        mediaKinds: type === 'media-asset' && normalizedMediaKinds.length > 0
+          ? normalizedMediaKinds
+          : undefined,
+        referenceKinds: type === 'reference' && normalizedReferenceKinds.length > 0
+          ? normalizedReferenceKinds
+          : undefined,
         localization: normalizedLocalization,
       }
     })
@@ -1014,6 +1102,8 @@ function resolveCmsContentModelFieldDefinitions(
       max: field.max ?? null,
       defaultValue: normalizeCmsContentModelFieldValue(field, field.defaultValue),
       options: cloneValue(field.options ?? []),
+      mediaKinds: cloneValue(field.mediaKinds ?? []),
+      referenceKinds: cloneValue(field.referenceKinds ?? []),
       __sortIndex: index,
     }))
     .sort((left, right) => {

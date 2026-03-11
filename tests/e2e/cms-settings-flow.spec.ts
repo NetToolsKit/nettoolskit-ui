@@ -1378,6 +1378,151 @@ test.describe('CMS settings white-label flow', () => {
     await expect(addBlockButton).toBeDisabled()
   })
 
+  test('authors rich schema field types and renders them in Pages builder', async ({ page }) => {
+    const contentModelName = 'Rich field types QA'
+    const urlFieldId = 'ctaUrl'
+    const urlFieldLabel = 'CTA URL'
+    const urlDefaultValue = '/demo'
+    const dateFieldId = 'launchDate'
+    const dateFieldLabel = 'Launch date'
+    const dateDefaultValue = '2026-03-10'
+    const mediaFieldId = 'heroAsset'
+    const mediaFieldLabel = 'Hero asset'
+    const defaultMediaOptionLabel = 'Brand logo (Image)'
+    const referenceFieldId = 'relatedModel'
+    const referenceFieldLabel = 'Related model'
+
+    await page.setViewportSize({ width: 1600, height: 1900 })
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Schema with URL, date and media asset fields')
+
+    const clearAllowedPresetsButton = page.getByRole('button', { name: /^(Clear allowed presets|Limpar presets permitidos)$/ }).first()
+    await clearAllowedPresetsButton.evaluate(element => {
+      ;(element as HTMLButtonElement).click()
+    })
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Hero' }).first().click()
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Footer' }).first().click()
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const urlFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      urlFieldId
+    )
+    await fillTextInputDirect(
+      urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      urlFieldLabel
+    )
+    await urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'URL', exact: true }).first().click()
+    await fillTextInputDirect(
+      urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).first().locator('input').first(),
+      urlDefaultValue
+    )
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const dateFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      dateFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      dateFieldId
+    )
+    await fillTextInputDirect(
+      dateFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      dateFieldLabel
+    )
+    await dateFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'Date', exact: true }).first().click()
+    await fillTextInputDirect(
+      dateFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).first().locator('input').first(),
+      dateDefaultValue
+    )
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const mediaFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      mediaFieldId
+    )
+    await fillTextInputDirect(
+      mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      mediaFieldLabel
+    )
+    await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'Media asset', exact: true }).first().click()
+    await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Allowed media kinds' }) }).first().click()
+    await page.getByRole('option', { name: 'Image', exact: true }).first().click()
+    await commitFocusedSelect(page)
+    await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default asset' }) }).first().click()
+    const brandLogoOption = page.getByRole('option', { name: defaultMediaOptionLabel, exact: true }).first()
+    if (await brandLogoOption.count() > 0) {
+      await brandLogoOption.click()
+    } else {
+      await page.locator('.q-menu:visible .q-item', { hasText: defaultMediaOptionLabel }).first().click()
+    }
+    await commitFocusedSelect(page)
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const referenceFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      referenceFieldId
+    )
+    await fillTextInputDirect(
+      referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      referenceFieldLabel
+    )
+    await referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'Reference', exact: true }).first().click()
+    await referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Allowed reference kinds' }) }).first().click()
+    await page.getByRole('option', { name: 'Content model', exact: true }).first().click()
+    await commitFocusedSelect(page)
+
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await selectOptionByFieldLabel(page, 'Content model', contentModelName)
+
+    const customFieldsCard = page.locator('.cms-page-item__custom-fields').first()
+    await expect(
+      customFieldsCard.locator('.q-field', { has: page.locator('.q-field__label', { hasText: urlFieldLabel }) }).first().locator('input').first()
+    ).toHaveValue(urlDefaultValue)
+    await expect(
+      customFieldsCard.locator('.q-field', { has: page.locator('.q-field__label', { hasText: dateFieldLabel }) }).first().locator('input').first()
+    ).toHaveValue(dateDefaultValue)
+
+    const mediaFieldSelect = customFieldsCard
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: mediaFieldLabel }) })
+      .first()
+    await expect(mediaFieldSelect).toContainText('Brand logo')
+    await mediaFieldSelect.click()
+
+    const imageAssetOption = page.getByRole('option', { name: defaultMediaOptionLabel, exact: true }).first()
+    if (await imageAssetOption.count() > 0) {
+      await expect(imageAssetOption).toBeVisible()
+      await expect(page.getByRole('option', { name: /Favicon/i })).toHaveCount(0)
+    } else {
+      await expect(page.locator('.q-menu:visible .q-item', { hasText: defaultMediaOptionLabel }).first()).toBeVisible()
+      await expect(page.locator('.q-menu:visible .q-item', { hasText: 'Favicon' })).toHaveCount(0)
+    }
+    await commitFocusedSelect(page)
+
+    const referenceFieldSelect = customFieldsCard
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: referenceFieldLabel }) })
+      .first()
+    await referenceFieldSelect.click()
+    const currentModelReferenceOption = page.getByRole('option', { name: new RegExp(contentModelName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) }).first()
+    if (await currentModelReferenceOption.count() > 0) {
+      await expect(currentModelReferenceOption).toBeVisible()
+    } else {
+      await expect(page.locator('.q-menu:visible .q-item', { hasText: contentModelName }).first()).toBeVisible()
+    }
+    await commitFocusedSelect(page)
+  })
+
   test('saves reusable schema-field presets and reapplies them across authored content models', async ({ page }) => {
     const fieldId = 'campaignCode'
     const fieldLabel = 'Campaign code'

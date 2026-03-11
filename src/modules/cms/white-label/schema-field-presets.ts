@@ -142,7 +142,7 @@ function normalizeFieldSetting(value: unknown, fallbackName = 'field'): CmsConte
     return null
   }
 
-  const type = ['text', 'textarea', 'number', 'toggle', 'select'].includes(String(value.type ?? '').trim())
+  const type = ['text', 'textarea', 'number', 'toggle', 'select', 'url', 'date', 'media-asset', 'reference'].includes(String(value.type ?? '').trim())
     ? String(value.type ?? '').trim() as CmsContentModelFieldSettings['type']
     : 'text'
   const id = normalizeSegment(String(value.id ?? ''), fallbackName)
@@ -150,6 +150,22 @@ function normalizeFieldSetting(value: unknown, fallbackName = 'field'): CmsConte
   const repeatable = Boolean(value.repeatable)
   const min = value.min == null || value.min === '' ? null : Number(value.min)
   const max = value.max == null || value.max === '' ? null : Number(value.max)
+  const mediaKinds = type === 'media-asset' && Array.isArray(value.mediaKinds)
+    ? value.mediaKinds
+      .map(entry => String(entry ?? '').trim().toLowerCase())
+      .filter((entry, index, entries) => {
+        return ['image', 'video', 'icon', 'document', 'other'].includes(entry)
+          && entries.indexOf(entry) === index
+      }) as CmsContentModelFieldSettings['mediaKinds']
+    : undefined
+  const referenceKinds = type === 'reference' && Array.isArray(value.referenceKinds)
+    ? value.referenceKinds
+      .map(entry => String(entry ?? '').trim().toLowerCase())
+      .filter((entry, index, entries) => {
+        return ['content-model', 'block-preset', 'reusable-block', 'reusable-section'].includes(entry)
+          && entries.indexOf(entry) === index
+      }) as CmsContentModelFieldSettings['referenceKinds']
+    : undefined
 
   return {
     id,
@@ -183,6 +199,8 @@ function normalizeFieldSetting(value: unknown, fallbackName = 'field'): CmsConte
         })
         .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
       : undefined,
+    ...(mediaKinds && mediaKinds.length > 0 ? { mediaKinds } : {}),
+    ...(referenceKinds && referenceKinds.length > 0 ? { referenceKinds } : {}),
     localization: normalizeCmsContentModelFieldLocalizationSettings(value.localization),
   }
 }

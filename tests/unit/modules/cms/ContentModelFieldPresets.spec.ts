@@ -97,4 +97,60 @@ describe('content-model-field-presets', () => {
     expect(updated.localization?.description?.['pt-BR']).toBe('Codigo unico da campanha')
     expect(updated.field.id).toBe('campaignCode')
   })
+
+  it('preserves media-kind constraints for media-asset field presets', () => {
+    const preset = createCmsAuthoredContentModelFieldPreset({
+      field: {
+        id: 'heroAsset',
+        type: 'media-asset',
+        label: 'Hero asset',
+        description: 'Managed illustration',
+        placeholder: '',
+        group: 'Media',
+        order: 1,
+        required: false,
+        mediaKinds: ['image', 'icon'],
+        defaultValue: 'brand-logo',
+      },
+      existingPresets: [],
+      localeInput: 'en',
+      name: 'Hero asset preset',
+      description: 'Reusable media asset field',
+      category: 'Media',
+    })
+
+    const resolved = getCmsContentModelFieldPresetDefinition('en', preset.id, [preset])
+
+    expect(resolved?.field.type).toBe('media-asset')
+    expect(resolved?.field.mediaKinds).toEqual(['image', 'icon'])
+    expect(resolved?.field.defaultValue).toBe('brand-logo')
+  })
+
+  it('preserves reference-kind constraints for reference field presets', () => {
+    const preset = createCmsAuthoredContentModelFieldPreset({
+      field: {
+        id: 'relatedModel',
+        type: 'reference',
+        label: 'Related model',
+        description: 'Reusable entity reference',
+        placeholder: '',
+        group: 'Relationships',
+        order: 1,
+        required: false,
+        referenceKinds: ['content-model', 'reusable-section'],
+        defaultValue: 'landing-page',
+      },
+      existingPresets: [],
+      localeInput: 'en',
+      name: 'Reference preset',
+      description: 'Reusable reference field',
+      category: 'Relationships',
+    })
+
+    const resolved = getCmsContentModelFieldPresetDefinition('en', preset.id, [preset])
+
+    expect(resolved?.field.type).toBe('reference')
+    expect(resolved?.field.referenceKinds).toEqual(['content-model', 'reusable-section'])
+    expect(resolved?.field.defaultValue).toBe('landing-page')
+  })
 })

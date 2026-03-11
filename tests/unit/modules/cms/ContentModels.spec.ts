@@ -208,6 +208,82 @@ describe('content-models', () => {
     ])
   })
 
+  it('supports rich schema field types with media-kind constraints and defaults', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Rich field schema',
+      description: 'Adds url, date and media asset fields',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'cta-url',
+          type: 'url',
+          label: 'CTA URL',
+          description: 'Primary call to action',
+          placeholder: '/demo',
+          required: true,
+          defaultValue: '/demo',
+        },
+        {
+          id: 'launch-date',
+          type: 'date',
+          label: 'Launch date',
+          description: 'Go-live date',
+          placeholder: '',
+          required: false,
+          defaultValue: '2026-03-10',
+        },
+        {
+          id: 'hero-asset',
+          type: 'media-asset',
+          label: 'Hero asset',
+          description: 'Managed media binding',
+          placeholder: '',
+          required: false,
+          mediaKinds: ['image', 'icon'],
+          defaultValue: 'brand-logo',
+        },
+        {
+          id: 'related-model',
+          type: 'reference',
+          label: 'Related model',
+          description: 'Links to another engine entity',
+          placeholder: '',
+          required: false,
+          referenceKinds: ['content-model', 'reusable-section'],
+          defaultValue: 'landing-page',
+        },
+      ],
+    })
+
+    const fields = getCmsContentModelFieldDefinitions('en', authoredModel.id, [authoredModel])
+    const defaults = createCmsPageCustomFieldsFromContentModel(authoredModel.id, 'en', [authoredModel])
+
+    expect(fields.map(field => field.type)).toEqual(['url', 'date', 'media-asset', 'reference'])
+    expect(fields[2]?.mediaKinds).toEqual(['image', 'icon'])
+    expect(fields[3]?.referenceKinds).toEqual(['content-model', 'reusable-section'])
+    expect(defaults).toMatchObject({
+      'cta-url': '/demo',
+      'launch-date': '2026-03-10',
+      'hero-asset': 'brand-logo',
+      'related-model': 'landing-page',
+    })
+
+    expect(normalizeCmsPageCustomFieldsForContentModel(
+      {},
+      authoredModel.id,
+      'en',
+      [authoredModel]
+    )).toMatchObject({
+      'cta-url': '/demo',
+      'launch-date': '2026-03-10',
+      'hero-asset': 'brand-logo',
+      'related-model': 'landing-page',
+    })
+  })
+
   it('filters schema fields using conditional visibility rules', () => {
     const authoredModel = createCmsAuthoredContentModel({
       existingModels: [],

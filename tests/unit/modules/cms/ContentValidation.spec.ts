@@ -627,6 +627,115 @@ describe('content-validation', () => {
     expect(result.issues.some(issue => issue.code === 'pages.custom_fields.max' && issue.message.includes('Score'))).toBe(true)
   })
 
+  it('validates url, date and media-asset page fields against the authored schema', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Rich validation schema',
+      description: 'Schema with richer field types',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'cta-url',
+          type: 'url',
+          label: 'CTA URL',
+          description: 'Primary CTA destination',
+          placeholder: '/demo',
+          required: true,
+          defaultValue: '/demo',
+        },
+        {
+          id: 'launch-date',
+          type: 'date',
+          label: 'Launch date',
+          description: 'Go-live date',
+          placeholder: '',
+          required: true,
+          defaultValue: '2026-03-10',
+        },
+        {
+          id: 'hero-asset',
+          type: 'media-asset',
+          label: 'Hero asset',
+          description: 'Hero illustration',
+          placeholder: '',
+          required: true,
+          mediaKinds: ['image'],
+          defaultValue: 'brand-logo',
+        },
+        {
+          id: 'related-model',
+          type: 'reference',
+          label: 'Related model',
+          description: 'Links to reusable engine entities',
+          placeholder: '',
+          required: true,
+          referenceKinds: ['content-model'],
+          defaultValue: 'landing-page',
+        },
+      ],
+    })
+
+    const pages: CmsPageSettings[] = [
+      {
+        id: 'rich-schema-page',
+        contentModelId: authoredModel.id,
+        title: 'Rich schema page',
+        path: '/rich-schema-page',
+        status: 'draft',
+        description: 'Broken richer fields on purpose',
+        customFields: {
+          'cta-url': 'not a url',
+          'launch-date': '2026-15-40',
+          'hero-asset': 'hero-doc',
+          'related-model': 'unknown-model',
+        },
+        sections: [
+          createCmsPageSectionFromPreset({
+            presetId: 'hero',
+            existingSections: [],
+            localeInput: 'en',
+          }),
+        ],
+      },
+    ]
+
+    const result = validateCmsContentPages({
+      pages,
+      registry: createLandingRegistry(),
+      authoredContentModels: [authoredModel],
+      mediaAssets: [
+        {
+          id: 'brand-logo',
+          name: 'Brand logo',
+          description: 'Image asset',
+          kind: 'image',
+          url: '/logo.png',
+          alt: 'Brand logo',
+          tags: [],
+          usage: [],
+        },
+        {
+          id: 'hero-doc',
+          name: 'Hero document',
+          description: 'Document asset',
+          kind: 'document',
+          url: '/hero.pdf',
+          alt: 'Hero PDF',
+          tags: [],
+          usage: [],
+        },
+      ],
+    })
+
+    expect(result.valid).toBe(false)
+    expect(result.issues.map(issue => issue.code)).toContain('pages.custom_fields.url.invalid')
+    expect(result.issues.map(issue => issue.code)).toContain('pages.custom_fields.date.invalid')
+    expect(result.issues.map(issue => issue.code)).toContain('pages.custom_fields.media_asset.kind_mismatch')
+    expect(result.issues.map(issue => issue.code)).toContain('pages.custom_fields.reference.missing')
+  })
+
   it('requires conditional fields only when their visibility rule matches', () => {
     const authoredModel = createCmsAuthoredContentModel({
       existingModels: [],
