@@ -4299,7 +4299,7 @@ import {
   resetCmsSnapshotHistoryState,
   undoCmsSnapshot,
 } from '../src/modules/cms/white-label/snapshot-history'
-import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '@/modules/cms'
+import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms/index.ts'
 import {
   applyCmsReleaseSnapshot,
   detectCmsReleaseCalendarConflicts,
@@ -4312,7 +4312,7 @@ import {
   scheduleCmsRelease,
   validateCmsReleasePrePublishGate,
   validateCmsRelease,
-} from '@/modules/cms/releases/orchestration'
+} from '../src/modules/cms/releases/orchestration.ts'
 import { createLandingRegistry } from './cms/landing.registry'
 import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
 import {
