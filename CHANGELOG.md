@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Async-friendly repository adapters for CMS integration**
+  - Added promise-native repository adapter contracts and wrappers for the content, asset and release domains so future backend integrations can adopt async persistence without changing the aggregate CMS authoring contract.
+  - Added aggregate async load/save hydration helpers that split or rehydrate white-label settings through the provider bundle while preserving omitted domains.
+  - Added storage-backed demo repository factories, including async wrappers, so the current local persistence flow already mirrors the future async integration boundary.
+  - Added focused unit coverage for sync-to-async provider wrapping, async storage-backed round-trips and provider-domain hydration behavior.
+- **Section-level custom field surfaces in Pages and Blocks**
+  - Added section-scoped custom-field storage and localized field payloads to page section contracts so sections can carry authored metadata independently from page-level schema fields.
+  - Added built-in section schema fields for anchor id and theme variant across section presets, with grouped metadata resolved through the shared content-model engine.
+  - Updated the `Blocks` builder to render grouped section schema fields, preserve them through `Pages` round-trips and keep linked reusable sections read-only.
+  - Extended shared validation and regression coverage so invalid section custom-field values are reported consistently in unit and Playwright suites.
 - **Localized schema metadata authoring for content-model fields**
   - Added explicit EN/base plus PT-BR authoring inputs for schema-field `label`, `description`, `placeholder` and `group` metadata in the CMS `Content` tab.
   - Updated field-draft persistence so localized schema metadata is saved through content-model and schema-field preset flows without overwriting the English base contract.

@@ -33,9 +33,21 @@ import {
   createCmsContentRepositorySnapshot,
   createCmsReleaseRepositorySnapshot,
   resolveCmsPersistenceStore,
+  toAsyncCmsAssetRepositoryProvider,
+  toAsyncCmsContentRepositoryProvider,
+  toAsyncCmsEngineProviders,
+  toAsyncCmsReleaseRepositoryProvider,
+  type CmsAssetRepositoryProvider,
+  type CmsAsyncAssetRepositoryProvider,
+  type CmsAsyncContentRepositoryProvider,
+  type CmsAsyncEngineProviders,
+  type CmsAsyncReleaseRepositoryProvider,
+  type CmsContentRepositoryProvider,
   type CmsAssetRepositorySnapshot,
   type CmsContentRepositorySnapshot,
   type CmsPersistenceOptions,
+  type CmsEngineProviders,
+  type CmsReleaseRepositoryProvider,
   type CmsReleaseRepositorySnapshot,
 } from './providers'
 import {
@@ -919,6 +931,97 @@ export function saveCmsReleaseRepositorySnapshot(
   )
   saveCmsWhiteLabelSettings(nextSettings, options)
   return nextSettings
+}
+
+/**
+ * Creates a content repository provider backed by the current storage demo.
+ */
+export function createCmsStorageContentRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsContentRepositoryProvider {
+  return {
+    loadContentSnapshot: () => loadCmsContentRepositorySnapshot(options),
+    saveContentSnapshot: snapshot => {
+      saveCmsContentRepositorySnapshot(snapshot, options)
+    },
+  }
+}
+
+/**
+ * Creates an asset repository provider backed by the current storage demo.
+ */
+export function createCmsStorageAssetRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAssetRepositoryProvider {
+  return {
+    loadAssetSnapshot: () => loadCmsAssetRepositorySnapshot(options),
+    saveAssetSnapshot: snapshot => {
+      saveCmsAssetRepositorySnapshot(snapshot, options)
+    },
+  }
+}
+
+/**
+ * Creates a release repository provider backed by the current storage demo.
+ */
+export function createCmsStorageReleaseRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsReleaseRepositoryProvider {
+  return {
+    loadReleaseSnapshot: () => loadCmsReleaseRepositorySnapshot(options),
+    saveReleaseSnapshot: snapshot => {
+      saveCmsReleaseRepositorySnapshot(snapshot, options)
+    },
+  }
+}
+
+/**
+ * Creates the storage-backed repository provider bundle used by the demo implementation.
+ */
+export function createCmsStorageEngineProviders(
+  options: CmsPersistenceOptions = {}
+): CmsEngineProviders {
+  return {
+    contentRepository: createCmsStorageContentRepositoryProvider(options),
+    assetRepository: createCmsStorageAssetRepositoryProvider(options),
+    releaseRepository: createCmsStorageReleaseRepositoryProvider(options),
+  }
+}
+
+/**
+ * Creates a promise-native content repository adapter backed by current storage.
+ */
+export function createCmsAsyncStorageContentRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncContentRepositoryProvider {
+  return toAsyncCmsContentRepositoryProvider(createCmsStorageContentRepositoryProvider(options))
+}
+
+/**
+ * Creates a promise-native asset repository adapter backed by current storage.
+ */
+export function createCmsAsyncStorageAssetRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncAssetRepositoryProvider {
+  return toAsyncCmsAssetRepositoryProvider(createCmsStorageAssetRepositoryProvider(options))
+}
+
+/**
+ * Creates a promise-native release repository adapter backed by current storage.
+ */
+export function createCmsAsyncStorageReleaseRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncReleaseRepositoryProvider {
+  return toAsyncCmsReleaseRepositoryProvider(createCmsStorageReleaseRepositoryProvider(options))
+}
+
+/**
+ * Creates the promise-native storage-backed provider bundle used by async integration tests and future backends.
+ */
+export function createCmsAsyncStorageEngineProviders(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncEngineProviders {
+  return toAsyncCmsEngineProviders(createCmsStorageEngineProviders(options))
 }
 
 /**

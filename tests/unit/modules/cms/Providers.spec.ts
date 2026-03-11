@@ -13,9 +13,14 @@ import {
   createCmsContentRepositorySnapshot,
   createCmsEngineProviderSnapshots,
   createCmsReleaseRepositorySnapshot,
+  hydrateCmsWhiteLabelSettingsFromProvidersAsync,
+  loadCmsEngineProviderSnapshotsAsync,
+  saveCmsEngineProviderSnapshotsAsync,
+  toAsyncCmsEngineProviders,
   type CmsPersistenceStore,
 } from '../../../../src/modules/cms/white-label/providers'
 import {
+  createCmsAsyncStorageEngineProviders,
   loadCmsAssetRepositorySnapshot,
   loadCmsContentRepositorySnapshot,
   loadCmsReleaseRepositorySnapshot,
@@ -210,5 +215,83 @@ describe('white-label.providers', () => {
     expect('releases' in contentSnapshot).toBe(false)
     expect(assetSnapshot.mediaAssets[0]?.name).toBe('Focused Asset')
     expect(releaseSnapshot.releases.activeEnvironment).toBe('production')
+  })
+
+  it('wraps sync repository providers into async adapters and round-trips snapshots', async () => {
+    const store = createMemoryStore()
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.appName = 'Async Provider Tenant'
+    settings.content.locale = 'pt-BR'
+    settings.releases.activeEnvironment = 'production'
+    if (settings.mediaAssets[0]) {
+      settings.mediaAssets[0].name = 'Async Asset'
+    }
+
+    saveCmsWhiteLabelSettings(settings, { store })
+
+    const asyncProviders = toAsyncCmsEngineProviders({
+      contentRepository: {
+        loadContentSnapshot: () => loadCmsContentRepositorySnapshot({ store }),
+        saveContentSnapshot: snapshot => {
+          saveCmsContentRepositorySnapshot(snapshot, { store })
+        },
+      },
+      assetRepository: {
+        loadAssetSnapshot: () => loadCmsAssetRepositorySnapshot({ store }),
+        saveAssetSnapshot: snapshot => {
+          saveCmsAssetRepositorySnapshot(snapshot, { store })
+        },
+      },
+      releaseRepository: {
+        loadReleaseSnapshot: () => loadCmsReleaseRepositorySnapshot({ store }),
+        saveReleaseSnapshot: snapshot => {
+          saveCmsReleaseRepositorySnapshot(snapshot, { store })
+        },
+      },
+    })
+
+    const loadedSnapshots = await loadCmsEngineProviderSnapshotsAsync(asyncProviders)
+    expect(loadedSnapshots.content?.branding.appName).toBe('Async Provider Tenant')
+    expect(loadedSnapshots.assets?.mediaAssets[0]?.name).toBe('Async Asset')
+    expect(loadedSnapshots.releases?.releases.activeEnvironment).toBe('production')
+
+    const nextSettings = createDefaultWhiteLabelSettings()
+    nextSettings.branding.appName = 'Before Hydrate'
+    const hydrated = await hydrateCmsWhiteLabelSettingsFromProvidersAsync(nextSettings, asyncProviders)
+    expect(hydrated.branding.appName).toBe('Async Provider Tenant')
+    expect(hydrated.mediaAssets[0]?.name).toBe('Async Asset')
+    expect(hydrated.releases.activeEnvironment).toBe('production')
+
+    settings.branding.appName = 'Async Provider Updated'
+    settings.releases.activeEnvironment = 'staging'
+    await saveCmsEngineProviderSnapshotsAsync(settings, asyncProviders)
+
+    const persisted = loadCmsWhiteLabelSettings({ store })
+    expect(persisted.branding.appName).toBe('Async Provider Updated')
+    expect(persisted.releases.activeEnvironment).toBe('staging')
+  })
+
+  it('creates async storage-backed engine providers without changing the storage contract', async () => {
+    const store = createMemoryStore()
+    const providers = createCmsAsyncStorageEngineProviders({ store })
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.appName = 'Async Storage Tenant'
+    settings.content.locale = 'pt-BR'
+    settings.releases.activeEnvironment = 'production'
+    if (settings.mediaAssets[0]) {
+      settings.mediaAssets[0].name = 'Async Storage Asset'
+    }
+
+    await saveCmsEngineProviderSnapshotsAsync(settings, providers)
+
+    const reloaded = await hydrateCmsWhiteLabelSettingsFromProvidersAsync(
+      createDefaultWhiteLabelSettings(),
+      providers
+    )
+
+    expect(reloaded.branding.appName).toBe('Async Storage Tenant')
+    expect(reloaded.content.locale).toBe('pt-BR')
+    expect(reloaded.mediaAssets[0]?.name).toBe('Async Storage Asset')
+    expect(reloaded.releases.activeEnvironment).toBe('production')
   })
 })

@@ -117,11 +117,27 @@ export interface CmsContentRepositoryProvider {
 }
 
 /**
+ * Promise-native content repository contract used by future backend integrations.
+ */
+export interface CmsAsyncContentRepositoryProvider {
+  loadContentSnapshot(): Promise<CmsContentRepositorySnapshot | null>
+  saveContentSnapshot(snapshot: CmsContentRepositorySnapshot): Promise<void>
+}
+
+/**
  * Contract used by external asset repositories.
  */
 export interface CmsAssetRepositoryProvider {
   loadAssetSnapshot(): CmsProviderResult<CmsAssetRepositorySnapshot | null>
   saveAssetSnapshot(snapshot: CmsAssetRepositorySnapshot): CmsProviderResult<void>
+}
+
+/**
+ * Promise-native asset repository contract used by future backend integrations.
+ */
+export interface CmsAsyncAssetRepositoryProvider {
+  loadAssetSnapshot(): Promise<CmsAssetRepositorySnapshot | null>
+  saveAssetSnapshot(snapshot: CmsAssetRepositorySnapshot): Promise<void>
 }
 
 /**
@@ -133,12 +149,91 @@ export interface CmsReleaseRepositoryProvider {
 }
 
 /**
+ * Promise-native release repository contract used by future backend integrations.
+ */
+export interface CmsAsyncReleaseRepositoryProvider {
+  loadReleaseSnapshot(): Promise<CmsReleaseRepositorySnapshot | null>
+  saveReleaseSnapshot(snapshot: CmsReleaseRepositorySnapshot): Promise<void>
+}
+
+/**
  * Optional provider set consumed by application layers embedding the CMS engine.
  */
 export interface CmsEngineProviders {
   contentRepository?: CmsContentRepositoryProvider | null
   assetRepository?: CmsAssetRepositoryProvider | null
   releaseRepository?: CmsReleaseRepositoryProvider | null
+}
+
+/**
+ * Promise-native provider set used by async repository adapters.
+ */
+export interface CmsAsyncEngineProviders {
+  contentRepository?: CmsAsyncContentRepositoryProvider | null
+  assetRepository?: CmsAsyncAssetRepositoryProvider | null
+  releaseRepository?: CmsAsyncReleaseRepositoryProvider | null
+}
+
+/**
+ * Normalizes a sync-or-async provider result into a promise.
+ */
+export function resolveCmsProviderResult<T>(result: CmsProviderResult<T>): Promise<T> {
+  return Promise.resolve(result)
+}
+
+/**
+ * Wraps a sync-or-async content repository with a promise-native adapter.
+ */
+export function toAsyncCmsContentRepositoryProvider(
+  provider: CmsContentRepositoryProvider
+): CmsAsyncContentRepositoryProvider {
+  return {
+    loadContentSnapshot: () => resolveCmsProviderResult(provider.loadContentSnapshot()),
+    saveContentSnapshot: snapshot => resolveCmsProviderResult(provider.saveContentSnapshot(snapshot)),
+  }
+}
+
+/**
+ * Wraps a sync-or-async asset repository with a promise-native adapter.
+ */
+export function toAsyncCmsAssetRepositoryProvider(
+  provider: CmsAssetRepositoryProvider
+): CmsAsyncAssetRepositoryProvider {
+  return {
+    loadAssetSnapshot: () => resolveCmsProviderResult(provider.loadAssetSnapshot()),
+    saveAssetSnapshot: snapshot => resolveCmsProviderResult(provider.saveAssetSnapshot(snapshot)),
+  }
+}
+
+/**
+ * Wraps a sync-or-async release repository with a promise-native adapter.
+ */
+export function toAsyncCmsReleaseRepositoryProvider(
+  provider: CmsReleaseRepositoryProvider
+): CmsAsyncReleaseRepositoryProvider {
+  return {
+    loadReleaseSnapshot: () => resolveCmsProviderResult(provider.loadReleaseSnapshot()),
+    saveReleaseSnapshot: snapshot => resolveCmsProviderResult(provider.saveReleaseSnapshot(snapshot)),
+  }
+}
+
+/**
+ * Wraps the optional engine provider set into a promise-native adapter bundle.
+ */
+export function toAsyncCmsEngineProviders(
+  providers: CmsEngineProviders
+): CmsAsyncEngineProviders {
+  return {
+    contentRepository: providers.contentRepository
+      ? toAsyncCmsContentRepositoryProvider(providers.contentRepository)
+      : null,
+    assetRepository: providers.assetRepository
+      ? toAsyncCmsAssetRepositoryProvider(providers.assetRepository)
+      : null,
+    releaseRepository: providers.releaseRepository
+      ? toAsyncCmsReleaseRepositoryProvider(providers.releaseRepository)
+      : null,
+  }
 }
 
 /**
@@ -296,4 +391,56 @@ export function applyCmsEngineProviderSnapshots(
   }
 
   return nextSettings
+}
+
+/**
+ * Loads all available repository snapshots through async-friendly providers.
+ * Missing providers or null snapshots are ignored so callers can hydrate domains independently.
+ */
+export async function loadCmsEngineProviderSnapshotsAsync(
+  providers: CmsEngineProviders | CmsAsyncEngineProviders
+): Promise<Partial<CmsEngineProviderSnapshots>> {
+  const asyncProviders = toAsyncCmsEngineProviders(providers as CmsEngineProviders)
+  const [content, assets, releases] = await Promise.all([
+    asyncProviders.contentRepository?.loadContentSnapshot() ?? Promise.resolve(null),
+    asyncProviders.assetRepository?.loadAssetSnapshot() ?? Promise.resolve(null),
+    asyncProviders.releaseRepository?.loadReleaseSnapshot() ?? Promise.resolve(null),
+  ])
+
+  return {
+    ...(content ? { content } : {}),
+    ...(assets ? { assets } : {}),
+    ...(releases ? { releases } : {}),
+  }
+}
+
+/**
+ * Persists all available repository snapshots through async-friendly providers.
+ * The source UI contract remains the aggregate white-label settings object.
+ */
+export async function saveCmsEngineProviderSnapshotsAsync(
+  settings: CmsWhiteLabelSettings,
+  providers: CmsEngineProviders | CmsAsyncEngineProviders
+): Promise<CmsEngineProviderSnapshots> {
+  const snapshots = createCmsEngineProviderSnapshots(settings)
+  const asyncProviders = toAsyncCmsEngineProviders(providers as CmsEngineProviders)
+
+  await Promise.all([
+    asyncProviders.contentRepository?.saveContentSnapshot(snapshots.content) ?? Promise.resolve(),
+    asyncProviders.assetRepository?.saveAssetSnapshot(snapshots.assets) ?? Promise.resolve(),
+    asyncProviders.releaseRepository?.saveReleaseSnapshot(snapshots.releases) ?? Promise.resolve(),
+  ])
+
+  return snapshots
+}
+
+/**
+ * Loads any available repository snapshots and hydrates an aggregate settings object.
+ */
+export async function hydrateCmsWhiteLabelSettingsFromProvidersAsync(
+  settings: CmsWhiteLabelSettings,
+  providers: CmsEngineProviders | CmsAsyncEngineProviders
+): Promise<CmsWhiteLabelSettings> {
+  const snapshots = await loadCmsEngineProviderSnapshotsAsync(providers)
+  return applyCmsEngineProviderSnapshots(settings, snapshots)
 }
