@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Backend integration handbook for the CMS engine**
+  - Added [docs/cms-backend-integration-handbook.md](docs/cms-backend-integration-handbook.md) to document how backend-oriented teams should hydrate, persist, validate and publish the CMS engine while preserving the boundary between engine concerns and application concerns.
+  - Documented the recommended domain split for `content`, `assets` and `releases`, plus the expected boot, save and publish flows for API-backed integrations.
+  - Linked the new handbook from the README documentation section and architecture-layer guidance so backend teams have one direct integration entry point.
 - **Builder performance and CMS bundle hardening**
   - Reworked the landing Vite chunk strategy so the CMS authoring surface now ships as smaller `cms-app`, `cms-engine`, `cms-ui` and `cms-blocks` bundles instead of one large CMS chunk.
   - Reduced the former single CMS bundle from roughly `606 kB` into production-safe chunks (`cms-app` ~`328 kB`, `cms-engine` ~`221 kB`, plus smaller UI/block chunks) while keeping the async CMS entrypoint intact.

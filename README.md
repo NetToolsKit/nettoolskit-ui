@@ -840,6 +840,8 @@ interface ThemeGradients {
 - 📘 **[New Project Setup](./templates/new-project-setup.md)** - Complete setup guide for new projects
 - 🎨 **[Customization Guide](./docs/CUSTOMIZATION.md)** - Theme and branding customization
 - 📝 **[Visual Identity Manual](./docs/nettoolskit-visual-identity-manual.md)** - Brand guidelines
+- 🧩 **[CMS Backend Integration Handbook](./docs/cms-backend-integration-handbook.md)** - How backend-oriented teams should persist, validate and publish CMS engine payloads
+- 🔌 **[CMS Provider Hydration](./docs/cms-provider-hydration.md)** - Async provider examples for content, assets and releases
 
 ### Templates
 
@@ -913,9 +915,10 @@ NetToolsKit UI Vue is intentionally layered so the project stays simple to consu
    - This layer stays frontend-first and backend-agnostic.
 
 4. **Application / Backend Contracts**
-   - Persistence providers, auth, permissions, media storage, audit workflows, and business rules should plug into the CMS engine through contracts.
-   - These concerns should live outside the core engine so the builder remains reusable and simple.
-   - For async provider examples, see [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
+     - Persistence providers, auth, permissions, media storage, audit workflows, and business rules should plug into the CMS engine through contracts.
+     - These concerns should live outside the core engine so the builder remains reusable and simple.
+     - For async provider examples, see [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
+     - For the backend-oriented integration flow, see [docs/cms-backend-integration-handbook.md](docs/cms-backend-integration-handbook.md).
 
 **Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
 
