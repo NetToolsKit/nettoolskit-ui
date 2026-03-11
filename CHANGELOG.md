@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added a versioned domain-payload contract so `content`, `assets` and `releases` can be exported and imported independently without replacing the broader tenant-level JSON package flow.
   - Added CMS `Settings` actions for domain package selection plus `Export package` / `Import package`, backed by provider-domain snapshot extract/apply helpers.
   - Added unit coverage for payload parsing and focused Playwright coverage for importing and exporting each domain while preserving the untouched domains in storage.
+- **Draft recovery and autosave resilience in the CMS engine**
+  - Added tenant-scoped draft recovery snapshots with `latest` and `previous` autosave checkpoints so destructive authoring actions can recover the last distinct draft state without backend support.
+  - Added auto-save status diagnostics plus `Restore auto-save` / `Discard auto-save` controls to the CMS Settings toolbar, keeping long authoring sessions safer for backend-oriented users.
+  - Added focused unit coverage for recovery snapshot rotation and a Playwright regression that restores the last auto-saved tenant branding draft after a reset-to-defaults action.
 - **Engine-level visual regression and release-quality gates**
   - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
   - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.

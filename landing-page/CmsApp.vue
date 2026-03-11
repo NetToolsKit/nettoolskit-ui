@@ -122,6 +122,37 @@
                   />
                 </div>
               </div>
+              <div class="cms-toolbar-card__autosave">
+                <q-chip dense square :style="cmsAutosaveStatusStyle">
+                  {{ cmsAutosaveStatusLabel }}
+                </q-chip>
+                <span v-if="latestDraftRecoverySavedAt" class="cms-toolbar-card__autosave-meta">
+                  {{ cmsUiText.autoSaveLatestLabel }}: {{ latestDraftRecoverySavedAt }}
+                </span>
+                <span v-if="recoveryCandidateSavedAt" class="cms-toolbar-card__autosave-meta">
+                  {{ cmsUiText.autoSaveCandidateLabel }}: {{ recoveryCandidateSavedAt }}
+                </span>
+                <div class="cms-toolbar-card__actions">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="restore"
+                    :label="cmsUiText.autoSaveRestoreLabel"
+                    :disable="!canRestoreDraftRecovery"
+                    @click="restoreCmsDraftRecovery"
+                  />
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="delete_sweep"
+                    :label="cmsUiText.autoSaveDiscardLabel"
+                    :disable="!hasDraftRecoveryEntry"
+                    @click="discardCmsDraftRecovery"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <input
@@ -3437,7 +3468,7 @@
  * Landing page/Cms App module.
  */
 
-import { computed, nextTick, ref, toRaw, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, toRaw, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
 import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
@@ -3476,6 +3507,15 @@ import {
   parseCmsDomainImportPayload,
   type CmsDomainPayloadDomain,
 } from '../src/modules/cms/white-label/domain-payload'
+import {
+  clearCmsDraftRecoveryEntry,
+  getCmsDraftRecoveryEntry,
+  loadCmsDraftRecoveryState,
+  resolveCmsDraftRecoveryCandidate,
+  saveCmsDraftRecoverySnapshot,
+  type CmsDraftRecoveryReason,
+  type CmsDraftRecoveryState,
+} from '../src/modules/cms/white-label/draft-recovery'
 import {
   applyWhiteLabelWorkflowAction,
   canApplyWhiteLabelWorkflowAction,
@@ -3748,6 +3788,16 @@ interface CmsSectionBlockRecord {
 
 interface CmsUiText {
   autoSaveEnabled: string
+  autoSaveSaving: string
+  autoSaveSaved: string
+  autoSaveRecoveryAvailable: string
+  autoSaveError: string
+  autoSaveRestoreLabel: string
+  autoSaveDiscardLabel: string
+  autoSaveDiscardedLabel: string
+  autoSaveRestoredLabel: string
+  autoSaveLatestLabel: string
+  autoSaveCandidateLabel: string
   savedAtPrefix: string
   tenantProfileTitle: string
   tenantProfileFieldLabel: string
@@ -4118,6 +4168,11 @@ function getActiveTenantProfileSnapshot(): CmsTenantProfile {
 const settings = ref<CmsWhiteLabelSettings>(
   cloneWhiteLabelSettings(getActiveTenantProfileSnapshot().settings)
 )
+const cmsDraftRecoveryState = ref<CmsDraftRecoveryState>(loadCmsDraftRecoveryState())
+const cmsAutosaveStatus = ref<'idle' | 'saving' | 'saved' | 'recovery' | 'error'>('idle')
+const cmsAutosaveErrorMessage = ref('')
+const cmsAutosaveTimerId = ref<number | null>(null)
+const cmsAutosaveDelayMs = 600
 const cmsAuthoringHistoryLimit = 40
 const isApplyingCmsAuthoringHistory = ref(false)
 const cmsAuthoringHistory = ref(
@@ -4133,6 +4188,16 @@ const cmsUiText = computed<CmsUiText>(() => {
   if (resolveCmsLocale(settings.value.content.locale) === 'pt-BR') {
     return {
       autoSaveEnabled: 'Auto-save ativado',
+      autoSaveSaving: 'Auto-save salvando',
+      autoSaveSaved: 'Auto-save salvo',
+      autoSaveRecoveryAvailable: 'Recuperacao disponivel',
+      autoSaveError: 'Erro no auto-save',
+      autoSaveRestoreLabel: 'Restaurar auto-save',
+      autoSaveDiscardLabel: 'Descartar auto-save',
+      autoSaveDiscardedLabel: 'Auto-save descartado',
+      autoSaveRestoredLabel: 'Auto-save restaurado',
+      autoSaveLatestLabel: 'Ultimo auto-save',
+      autoSaveCandidateLabel: 'Snapshot para restauracao',
       savedAtPrefix: 'Salvo as',
       tenantProfileTitle: 'Perfil do tenant',
       tenantProfileFieldLabel: 'Perfil do tenant',
@@ -4212,6 +4277,16 @@ const cmsUiText = computed<CmsUiText>(() => {
 
   return {
     autoSaveEnabled: 'Auto-save enabled',
+    autoSaveSaving: 'Auto-save saving',
+    autoSaveSaved: 'Auto-save saved',
+    autoSaveRecoveryAvailable: 'Recovery available',
+    autoSaveError: 'Auto-save error',
+    autoSaveRestoreLabel: 'Restore auto-save',
+    autoSaveDiscardLabel: 'Discard auto-save',
+    autoSaveDiscardedLabel: 'Auto-save discarded',
+    autoSaveRestoredLabel: 'Auto-save restored',
+    autoSaveLatestLabel: 'Latest auto-save',
+    autoSaveCandidateLabel: 'Recovery snapshot',
     savedAtPrefix: 'Saved at',
     tenantProfileTitle: 'Tenant Profile',
     tenantProfileFieldLabel: 'Tenant profile',
@@ -4298,6 +4373,87 @@ const isPtBrLocale = computed(() => resolveCmsLocale(settings.value.content.loca
 function tr(en: string, ptBr: string): string {
   return isPtBrLocale.value ? ptBr : en
 }
+
+const activeDraftRecoveryEntry = computed(() => {
+  return getCmsDraftRecoveryEntry(cmsDraftRecoveryState.value, activeTenantProfileId.value)
+})
+
+const activeDraftRecoveryCandidate = computed(() => {
+  return resolveCmsDraftRecoveryCandidate(
+    activeDraftRecoveryEntry.value,
+    settings.value
+  )
+})
+
+const latestDraftRecoverySavedAt = computed(() => {
+  const latest = activeDraftRecoveryEntry.value?.latest
+  if (!latest?.savedAt) {
+    return ''
+  }
+
+  return new Date(latest.savedAt).toLocaleTimeString()
+})
+
+const recoveryCandidateSavedAt = computed(() => {
+  const candidate = activeDraftRecoveryCandidate.value
+  if (!candidate?.savedAt) {
+    return ''
+  }
+
+  return new Date(candidate.savedAt).toLocaleTimeString()
+})
+
+const canRestoreDraftRecovery = computed(() => Boolean(activeDraftRecoveryCandidate.value))
+const hasDraftRecoveryEntry = computed(() => Boolean(activeDraftRecoveryEntry.value?.latest))
+
+const cmsAutosaveStatusLabel = computed(() => {
+  switch (cmsAutosaveStatus.value) {
+    case 'saving':
+      return cmsUiText.value.autoSaveSaving
+    case 'saved':
+      return latestDraftRecoverySavedAt.value
+        ? `${cmsUiText.value.autoSaveSaved} ${cmsUiText.value.savedAtPrefix.toLowerCase()} ${latestDraftRecoverySavedAt.value}`
+        : cmsUiText.value.autoSaveSaved
+    case 'recovery':
+      return recoveryCandidateSavedAt.value
+        ? `${cmsUiText.value.autoSaveRecoveryAvailable} ${cmsUiText.value.savedAtPrefix.toLowerCase()} ${recoveryCandidateSavedAt.value}`
+        : cmsUiText.value.autoSaveRecoveryAvailable
+    case 'error':
+      return cmsAutosaveErrorMessage.value || cmsUiText.value.autoSaveError
+    default:
+      return cmsUiText.value.autoSaveEnabled
+  }
+})
+
+const cmsAutosaveStatusStyle = computed(() => {
+  switch (cmsAutosaveStatus.value) {
+    case 'saving':
+      return {
+        background: accentSoftBackground.value,
+        color: accentTextColor.value,
+      }
+    case 'saved':
+      return {
+        background: notificationSuccessColor.value,
+        color: notificationSuccessTextColor.value,
+      }
+    case 'recovery':
+      return {
+        background: notificationWarningColor.value,
+        color: notificationWarningTextColor.value,
+      }
+    case 'error':
+      return {
+        background: notificationErrorColor.value,
+        color: notificationErrorTextColor.value,
+      }
+    default:
+      return {
+        background: accentSoftBackground.value,
+        color: accentTextColor.value,
+      }
+  }
+})
 
 function getCmsDomainTransferLabel(domain: CmsDomainPayloadDomain): string {
   switch (domain) {
@@ -11152,6 +11308,91 @@ function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): v
 }
 
 /**
+ * Clears the pending autosave timer when present.
+ */
+function clearCmsAutosaveTimer(): void {
+  if (cmsAutosaveTimerId.value === null || typeof window === 'undefined') {
+    return
+  }
+
+  window.clearTimeout(cmsAutosaveTimerId.value)
+  cmsAutosaveTimerId.value = null
+}
+
+/**
+ * Persists one draft-recovery snapshot immediately.
+ */
+function persistCmsDraftRecoverySnapshot(reason: CmsDraftRecoveryReason): void {
+  const activeProfile = getActiveTenantProfileSnapshot()
+  const result = saveCmsDraftRecoverySnapshot(
+    activeProfile.id,
+    cloneWhiteLabelSettings(settings.value),
+    reason
+  )
+
+  cmsDraftRecoveryState.value = result.state
+  if (!result.ok) {
+    cmsAutosaveStatus.value = 'error'
+    cmsAutosaveErrorMessage.value = result.error ?? cmsUiText.value.autoSaveError
+    return
+  }
+
+  cmsAutosaveErrorMessage.value = ''
+  cmsAutosaveStatus.value = canRestoreDraftRecovery.value ? 'recovery' : 'saved'
+}
+
+/**
+ * Schedules one debounced autosave checkpoint for the active tenant.
+ */
+function scheduleCmsDraftAutosave(): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  clearCmsAutosaveTimer()
+  cmsAutosaveStatus.value = 'saving'
+  cmsAutosaveErrorMessage.value = ''
+  cmsAutosaveTimerId.value = window.setTimeout(() => {
+    cmsAutosaveTimerId.value = null
+    persistCmsDraftRecoverySnapshot('autosave')
+  }, cmsAutosaveDelayMs)
+}
+
+/**
+ * Stores a recovery checkpoint before destructive flows such as reset/import.
+ */
+function checkpointCmsDraftRecovery(): void {
+  clearCmsAutosaveTimer()
+  persistCmsDraftRecoverySnapshot('checkpoint')
+}
+
+/**
+ * Restores the best recovery candidate for the active tenant profile.
+ */
+function restoreCmsDraftRecovery(): void {
+  const candidate = activeDraftRecoveryCandidate.value
+  if (!candidate) {
+    return
+  }
+
+  applyCmsSettingsSnapshot(candidate.settings)
+  cmsAutosaveErrorMessage.value = ''
+  cmsAutosaveStatus.value = 'saved'
+  savedAtLabel.value = `${cmsUiText.value.autoSaveRestoredLabel} ${cmsUiText.value.savedAtPrefix.toLowerCase()} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Discards stored draft-recovery snapshots for the active tenant profile.
+ */
+function discardCmsDraftRecovery(): void {
+  clearCmsAutosaveTimer()
+  cmsDraftRecoveryState.value = clearCmsDraftRecoveryEntry(activeTenantProfileId.value)
+  cmsAutosaveErrorMessage.value = ''
+  cmsAutosaveStatus.value = 'idle'
+  savedAtLabel.value = `${cmsUiText.value.autoSaveDiscardedLabel} ${cmsUiText.value.savedAtPrefix.toLowerCase()} ${new Date().toLocaleTimeString()}`
+}
+
+/**
  * Resets authoring undo/redo stacks around the current tenant snapshot.
  */
 function resetCmsAuthoringHistory(): void {
@@ -11564,6 +11805,31 @@ watch(
 )
 
 watch(
+  settings,
+  () => {
+    scheduleCmsDraftAutosave()
+  },
+  { deep: true }
+)
+
+watch(
+  () => [activeTenantProfileId.value, activeDraftRecoveryEntry.value?.latest?.savedAt, activeDraftRecoveryCandidate.value?.savedAt],
+  () => {
+    if (cmsAutosaveStatus.value === 'saving' || cmsAutosaveStatus.value === 'error') {
+      return
+    }
+
+    if (canRestoreDraftRecovery.value) {
+      cmsAutosaveStatus.value = 'recovery'
+      return
+    }
+
+    cmsAutosaveStatus.value = hasDraftRecoveryEntry.value ? 'saved' : 'idle'
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
   () => settings.value.branding.faviconUrl,
   value => {
     applyCmsFavicon(value)
@@ -11586,6 +11852,10 @@ watch(
   },
   { immediate: true, deep: true }
 )
+
+onBeforeUnmount(() => {
+  clearCmsAutosaveTimer()
+})
 
 /**
  * Handles get theme field value.
@@ -12037,6 +12307,7 @@ async function onTenantImportFileChange(event: Event): Promise<void> {
   }
 
   try {
+    checkpointCmsDraftRecovery()
     const fileContent = await file.text()
     const parsed = JSON.parse(fileContent) as unknown
     const imported = parseCmsTenantImportPayload(parsed, file.name)
@@ -12085,6 +12356,7 @@ async function onDomainImportFileChange(event: Event): Promise<void> {
   }
 
   try {
+    checkpointCmsDraftRecovery()
     const fileContent = await file.text()
     const parsed = JSON.parse(fileContent) as unknown
     const imported = parseCmsDomainImportPayload(parsed, file.name, selectedDomainTransfer.value)
@@ -13011,6 +13283,8 @@ function onToolbarAction(action: AppShellAction): void {
  * Saves now.
  */
 function saveNow(): void {
+  clearCmsAutosaveTimer()
+  persistCmsDraftRecoverySnapshot('autosave')
   applyGovernanceAction('save_draft', {
     summary: cmsUiText.value.settingsSavedManuallySummary,
     metadata: {
@@ -13025,6 +13299,7 @@ function saveNow(): void {
  * Resets to defaults.
  */
 function resetToDefaults(): void {
+  checkpointCmsDraftRecovery()
   const previousGovernance = settings.value.governance
   const nextGovernance = canApplyWhiteLabelWorkflowAction(previousGovernance, 'reset_defaults', governanceActor.role)
     ? applyWhiteLabelWorkflowAction(previousGovernance, 'reset_defaults', governanceActor, {
@@ -14148,6 +14423,19 @@ function resetToDefaults(): void {
 .cms-toolbar-card__domain-select {
   min-width: 220px;
   flex: 1 1 220px;
+}
+
+.cms-toolbar-card__autosave {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.cms-toolbar-card__autosave-meta {
+  font-size: var(--ntk-cms-font-size-item-label);
+  color: var(--ntk-cms-text-secondary);
 }
 
 .cms-toolbar-card__separator {

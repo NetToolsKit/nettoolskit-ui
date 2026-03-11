@@ -6,6 +6,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
 const CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
+const CMS_DRAFT_RECOVERY_STORAGE_KEY = 'ntk.cms.whiteLabel.recovery.v1'
 const DEFAULT_TENANT_NAME = 'Default Tenant'
 const BLUE_TENANT_NAME = 'Blue Tenant'
 const HEADER_ACTIONS_HOVER_LABEL = 'Header actions hover background (hover only)'
@@ -756,6 +757,46 @@ test.describe('CMS settings white-label flow', () => {
       mediaName: importedAssetName,
       activeEnvironment: 'production',
     })
+  })
+
+  test('restores the latest autosave after a destructive reset', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+
+    const activeProfileId = await page.evaluate((profilesKey: string) => {
+      const raw = window.localStorage.getItem(profilesKey)
+      if (!raw) {
+        return null
+      }
+
+      const parsed = JSON.parse(raw)
+      return parsed?.activeProfileId ?? null
+    }, CMS_TENANT_PROFILES_STORAGE_KEY)
+
+    expect(activeProfileId).toBeTruthy()
+
+    const productNameInput = cmsInputByLabel(page, 'Product name')
+    const recoveredName = 'Recovered Draft Tenant'
+    await fillTextInput(productNameInput, recoveredName)
+
+    await expect.poll(async () => page.evaluate(({ recoveryKey, profileId }: { recoveryKey: string; profileId: string }) => {
+      const raw = window.localStorage.getItem(recoveryKey)
+      if (!raw) {
+        return null
+      }
+
+      const parsed = JSON.parse(raw)
+      return parsed?.entries?.[profileId]?.latest?.settings?.branding?.appName ?? null
+    }, {
+      recoveryKey: CMS_DRAFT_RECOVERY_STORAGE_KEY,
+      profileId: String(activeProfileId),
+    })).toBe(recoveredName)
+
+    await page.getByRole('button', { name: /^(Reset tenant settings to defaults|Resetar configuracoes do tenant para o padrao)$/ }).first().click()
+    await expect(productNameInput).not.toHaveValue(recoveredName)
+
+    await page.getByRole('button', { name: /^(Restore auto-save|Restaurar auto-save)$/ }).first().click()
+    await expect(productNameInput).toHaveValue(recoveredName)
   })
 
   test('navigates from pages to blocks and keeps block props editors in sync', async ({ page }) => {
