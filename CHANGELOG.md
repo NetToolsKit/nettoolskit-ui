@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Builder performance and CMS bundle hardening**
+  - Reworked the landing Vite chunk strategy so the CMS authoring surface now ships as smaller `cms-app`, `cms-engine`, `cms-ui` and `cms-blocks` bundles instead of one large CMS chunk.
+  - Reduced the former single CMS bundle from roughly `606 kB` into production-safe chunks (`cms-app` ~`328 kB`, `cms-engine` ~`221 kB`, plus smaller UI/block chunks) while keeping the async CMS entrypoint intact.
+  - Revalidated `type-check`, `lint` and `build:landing` after the split to keep Vercel preview builds stable as the CMS engine grows.
+- **Provider hydration examples for external CMS backends**
+  - Added a generic transport-based hydration adapter that maps `content`, `assets` and `releases` domains into the existing async CMS provider contracts without changing authoring flows.
+  - Added a fetch-based example adapter for teams that already expose one JSON endpoint per CMS domain and want a minimal reference implementation to hydrate the engine.
+  - Exported the new hydration helpers through the white-label engine barrel and documented the integration flow in [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
+  - Added focused unit coverage for transport mapping, fetch endpoint handling and provider bundle generation, then revalidated `type-check`, `lint` and `build:landing`.
 - **Archive flow for reusable CMS entities and authored presets**
   - Added a shared archive-state helper plus persisted `archivedAt` support for reusable sections, reusable blocks, authored block presets and authored schema-field presets.
   - Updated `Pages`, `Blocks` and `Content` libraries to hide archived entries from normal authoring flows by default, with explicit `Show archived` toggles and restore actions.

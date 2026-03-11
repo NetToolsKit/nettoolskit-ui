@@ -11,8 +11,24 @@ function manualChunkByModule(id: string): string | undefined {
   const normalized = id.replace(/\\/g, '/')
 
   if (!normalized.includes('/node_modules/')) {
-    if (normalized.includes('/landing-page/CmsApp.vue') || normalized.includes('/landing-page/cms/')) {
-      return 'cms'
+    if (normalized.includes('/landing-page/CmsApp.vue')) {
+      return 'cms-app'
+    }
+    if (normalized.includes('/landing-page/cms/')) {
+      return 'cms-ui'
+    }
+    if (
+      normalized.includes('/src/modules/cms/releases/')
+      || normalized.includes('/src/modules/cms/index.ts')
+      || normalized.includes('/src/modules/cms/index')
+      || normalized.includes('/src/modules/cms/white-label/')
+      || normalized.includes('/src/modules/cms/core/')
+      || normalized.includes('/src/modules/cms/renderer/')
+    ) {
+      return 'cms-engine'
+    }
+    if (normalized.includes('/src/modules/cms/blocks/')) {
+      return 'cms-blocks'
     }
     return undefined
   }
