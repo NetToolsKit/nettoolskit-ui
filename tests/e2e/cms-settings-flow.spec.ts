@@ -869,6 +869,101 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-block-row')).toHaveCount(blockCountBeforeReusableInsert + 1)
   })
 
+  test('imports and exports schema packages independently from authored page content', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    const initialSettings = await page.evaluate((storageKey: string) => {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) {
+        return null
+      }
+
+      const parsed = JSON.parse(raw)
+      return parsed?.settings ?? null
+    }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
+
+    expect(initialSettings).not.toBeNull()
+    const initialPageTitle = initialSettings?.pages?.[0]?.title ?? null
+
+    await page.getByRole('button', { name: /^(Export schema package|Exportar pacote de schema)$/ }).first().click()
+    let exportFileName: string | null = null
+    await expect.poll(async () => {
+      exportFileName = await page.evaluate(() => (
+        window as Window & {
+          __NTK_CMS_LAST_DOWNLOAD__?: { fileName: string }
+        }
+      ).__NTK_CMS_LAST_DOWNLOAD__?.fileName ?? null)
+
+      return exportFileName
+    }).not.toBeNull()
+    expect(exportFileName).toMatch(/^ntk-cms-schema-/i)
+
+    const schemaPayload = {
+      kind: 'ntk-cms-schema-package',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      profile: {
+        id: 'source-schema',
+        name: 'Source Schema',
+      },
+      snapshot: {
+        authoredContentModels: [
+          {
+            id: 'authored:imported-schema-package',
+            name: 'Imported schema package',
+            description: 'Imported schema',
+            defaultPageTitle: 'Imported schema page',
+            defaultPageDescription: '',
+            defaultPagePathPrefix: '/imported-schema',
+            allowedPresets: ['hero', 'footer'],
+            requiredPresets: [],
+            starterPresets: ['hero', 'footer'],
+            recommendedPresets: ['hero'],
+            maxSections: null,
+            sectionPresetLimits: {},
+            fields: [],
+          },
+        ],
+        authoredContentModelFieldPresets: [],
+        authoredBlockPresets: [],
+      },
+    }
+
+    await page
+      .locator('input[type=\"file\"][aria-label=\"Importar arquivo JSON do schema\"], input[type=\"file\"][aria-label=\"Import schema JSON file\"]')
+      .setInputFiles({
+        name: 'schema-package.json',
+        mimeType: 'application/json',
+        buffer: Buffer.from(JSON.stringify(schemaPayload, null, 2)),
+      })
+
+    await expect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteudo)$/ }) })
+    ).toContainText('Imported schema package')
+
+    await expect.poll(async () => {
+      const parsed = await page.evaluate((storageKey: string) => {
+        const raw = window.localStorage.getItem(storageKey)
+        if (!raw) {
+          return null
+        }
+
+        const stored = JSON.parse(raw)
+        return stored?.settings ?? null
+      }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
+
+      return {
+        firstPageTitle: parsed?.pages?.[0]?.title ?? null,
+        authoredModelName: parsed?.authoredContentModels?.[0]?.name ?? null,
+      }
+    }).toEqual({
+      firstPageTitle: initialPageTitle,
+      authoredModelName: 'Imported schema package',
+    })
+  })
+
   test('supports content models and section presets in pages builder', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Pages$/)

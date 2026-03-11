@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Schema package import/export flows for authored CMS models and presets**
+  - Added a versioned schema-package payload contract dedicated to authored content models, schema-field presets and block presets, keeping schema transfer independent from authored pages, media assets and release state.
+  - Added `Content` tab actions to export and import schema packages directly from the CMS authoring surface, preserving the rest of the tenant snapshot while replacing only schema libraries.
+  - Hardened schema snapshot cloning against Vue reactive proxies so package export works reliably in production builds and browser previews.
+  - Added focused unit coverage for schema-package parsing/application and Playwright coverage proving schema import does not overwrite authored page content.
 - **Media picker previews and clearer selection UX for media-asset fields**
   - Added a reusable CMS media-asset picker with thumbnails, kind badges and selected-asset previews so schema-driven media fields no longer rely on raw `q-select` lists across content-model defaults, page fields, section fields and block bindings.
   - Centralized media-picker option shaping in the white-label engine, keeping compatible assets first while surfacing incompatible assets as disabled options with explicit allowed-kind feedback instead of hiding them.

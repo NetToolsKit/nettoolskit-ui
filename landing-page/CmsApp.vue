@@ -171,6 +171,14 @@
             class="cms-file-input"
             @change="onDomainImportFileChange"
           >
+          <input
+            ref="schemaImportInputRef"
+            type="file"
+            accept="application/json,.json"
+            :aria-label="tr('Import schema JSON file', 'Importar arquivo JSON do schema')"
+            class="cms-file-input"
+            @change="onSchemaImportFileChange"
+          >
           </div>
 
           <!-- ── Editor Card ──────────────────────────────────────── -->
@@ -894,6 +902,20 @@
                       icon="add_box"
                       :label="tr('New content model', 'Novo modelo de conteudo')"
                       @click="createNewAuthoredContentModelDraft"
+                    />
+                    <q-btn
+                      flat
+                      no-caps
+                      icon="file_download"
+                      :label="tr('Export schema package', 'Exportar pacote de schema')"
+                      @click="exportCmsSchemaPackage"
+                    />
+                    <q-btn
+                      flat
+                      no-caps
+                      icon="file_upload"
+                      :label="tr('Import schema package', 'Importar pacote de schema')"
+                      @click="openSchemaImportDialog"
                     />
                     <q-input
                       v-model="authoredContentModelNameDraft"
@@ -3886,6 +3908,12 @@ import {
   type CmsDomainPayloadDomain,
 } from '../src/modules/cms/white-label/domain-payload'
 import {
+  applyCmsSchemaPackageSnapshot,
+  createCmsSchemaExportPayload,
+  createCmsSchemaPackageSnapshot,
+  parseCmsSchemaImportPayload,
+} from '../src/modules/cms/white-label/schema-payload'
+import {
   clearCmsDraftRecoveryEntry,
   getCmsDraftRecoveryEntry,
   loadCmsDraftRecoveryState,
@@ -4040,7 +4068,7 @@ import {
   resetCmsSnapshotHistoryState,
   undoCmsSnapshot,
 } from '../src/modules/cms/white-label/snapshot-history'
-import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms'
+import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '@/modules/cms'
 import {
   applyCmsReleaseSnapshot,
   detectCmsReleaseCalendarConflicts,
@@ -4053,7 +4081,7 @@ import {
   scheduleCmsRelease,
   validateCmsReleasePrePublishGate,
   validateCmsRelease,
-} from '../src/modules/cms/releases/index'
+} from '@/modules/cms/releases'
 import { createLandingRegistry } from './cms/landing.registry'
 import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
 import {
@@ -4564,6 +4592,7 @@ const tenantProfilesState = ref<CmsTenantProfilesState>(loadCmsTenantProfilesSta
 const activeTenantProfileId = ref(tenantProfilesState.value.activeProfileId)
 const tenantImportInputRef = ref<HTMLInputElement | null>(null)
 const domainImportInputRef = ref<HTMLInputElement | null>(null)
+const schemaImportInputRef = ref<HTMLInputElement | null>(null)
 const selectedDomainTransfer = ref<CmsDomainPayloadDomain>('content')
 
 /**
@@ -4913,6 +4942,20 @@ function getCmsDomainTransferExportedLabel(domain: CmsDomainPayloadDomain): stri
   return tr(
     `${getCmsDomainTransferLabel(domain)} package exported`,
     `Pacote de ${getCmsDomainTransferLabel(domain)} exportado`
+  )
+}
+
+function getCmsSchemaPackageImportedLabel(profileName: string, version: string | number): string {
+  return tr(
+    `Schema package imported from ${profileName} (v${version})`,
+    `Pacote de schema importado de ${profileName} (v${version})`
+  )
+}
+
+function getCmsSchemaPackageExportedLabel(): string {
+  return tr(
+    'Schema package exported',
+    'Pacote de schema exportado'
   )
 }
 
@@ -13057,6 +13100,28 @@ function exportSelectedDomainSnapshot(): void {
 }
 
 /**
+ * Exports authored schemas and presets without touching page/media/release domains.
+ */
+function exportCmsSchemaPackage(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  const activeProfile = getActiveTenantProfileSnapshot()
+  const payload = createCmsSchemaExportPayload({
+    snapshot: createCmsSchemaPackageSnapshot(settings.value),
+    profile: {
+      id: activeProfile.id,
+      name: activeProfile.name,
+    },
+  })
+
+  const fileName = `ntk-cms-schema-${toJsonFileName(activeProfile.id)}.json`
+  downloadJsonPayload(fileName, payload)
+  savedAtLabel.value = getCmsSchemaPackageExportedLabel()
+}
+
+/**
  * Handles open tenant import dialog.
  */
 function openTenantImportDialog(): void {
@@ -13080,6 +13145,19 @@ function openDomainImportDialog(): void {
 
   domainImportInputRef.value.value = ''
   domainImportInputRef.value.click()
+}
+
+/**
+ * Handles open schema import dialog.
+ */
+function openSchemaImportDialog(): void {
+  if (!schemaImportInputRef.value) {
+    nextTick(() => schemaImportInputRef.value?.click())
+    return
+  }
+
+  schemaImportInputRef.value.value = ''
+  schemaImportInputRef.value.click()
 }
 
 async function onTenantImportFileChange(event: Event): Promise<void> {
@@ -13165,6 +13243,42 @@ async function onDomainImportFileChange(event: Event): Promise<void> {
       summary: `${getCmsDomainTransferLabel(imported.domain)} ${tr('imported', 'importado')}`,
       metadata: {
         domain: imported.domain,
+        sourceProfileId: imported.profileId,
+        sourceVersion: String(imported.sourceVersion),
+      },
+    })
+  } catch {
+    savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
+  }
+}
+
+async function onSchemaImportFileChange(event: Event): Promise<void> {
+  const target = event.target as HTMLInputElement | null
+  const file = target?.files?.[0]
+  if (!file) {
+    return
+  }
+
+  try {
+    checkpointCmsDraftRecovery()
+    const fileContent = await file.text()
+    const parsed = JSON.parse(fileContent) as unknown
+    const imported = parseCmsSchemaImportPayload(parsed, file.name)
+    if (!imported) {
+      savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
+      return
+    }
+
+    const nextSettings = applyCmsSchemaPackageSnapshot(settings.value, imported.snapshot)
+    applyCmsSettingsSnapshot(nextSettings)
+    savedAtLabel.value = getCmsSchemaPackageImportedLabel(
+      imported.profileName.trim() || imported.profileId,
+      imported.sourceVersion
+    )
+    applyGovernanceAction('import_settings', {
+      summary: tr('Schema package imported', 'Pacote de schema importado'),
+      metadata: {
+        domain: 'schema',
         sourceProfileId: imported.profileId,
         sourceVersion: String(imported.sourceVersion),
       },
