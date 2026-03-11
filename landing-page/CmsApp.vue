@@ -1104,6 +1104,37 @@
                           />
                         </div>
                         <div class="cms-content-model-fields__row">
+                          <q-input
+                            v-model="field.labelPtBr"
+                            outlined
+                            dense
+                            :label="tr('PT-BR label', 'Label PT-BR')"
+                            :hint="tr('Leave blank to inherit the EN/base label.', 'Deixe em branco para herdar o label EN/base.')"
+                          />
+                          <q-input
+                            v-model="field.groupPtBr"
+                            outlined
+                            dense
+                            :label="tr('PT-BR group', 'Grupo PT-BR')"
+                            :hint="tr('Leave blank to inherit the EN/base group.', 'Deixe em branco para herdar o grupo EN/base.')"
+                          />
+                          <q-input
+                            v-model="field.descriptionPtBr"
+                            outlined
+                            dense
+                            :label="tr('PT-BR description', 'Descricao PT-BR')"
+                            :hint="tr('Leave blank to inherit the EN/base description.', 'Deixe em branco para herdar a descricao EN/base.')"
+                          />
+                          <q-input
+                            v-model="field.placeholderPtBr"
+                            outlined
+                            dense
+                            :disable="field.type === 'toggle' || field.type === 'select' || field.type === 'date' || field.type === 'media-asset' || field.type === 'reference'"
+                            :label="tr('PT-BR placeholder', 'Placeholder PT-BR')"
+                            :hint="tr('Leave blank to inherit the EN/base placeholder.', 'Deixe em branco para herdar o placeholder EN/base.')"
+                          />
+                        </div>
+                        <div class="cms-content-model-fields__row">
                           <q-toggle
                             v-model="field.repeatable"
                             :label="tr('Repeatable', 'Multiplo')"
@@ -1448,7 +1479,7 @@
                           square
                         >
                           {{
-                            `${field.label || tr('Untitled field', 'Campo sem titulo')} · ${field.group || tr('General', 'Geral')} · #${field.orderValue || '1'} · ${field.type}${field.repeatable ? '[]' : ''}`
+                            `${getCmsContentModelFieldDraftPreviewLabel(field) || tr('Untitled field', 'Campo sem titulo')} · ${getCmsContentModelFieldDraftPreviewGroup(field) || tr('General', 'Geral')} · #${field.orderValue || '1'} · ${field.type}${field.repeatable ? '[]' : ''}`
                           }}
                         </q-chip>
                       </div>
@@ -3811,6 +3842,7 @@ import type {
   CmsBlockPresetId,
   CmsContentModelId,
   CmsContentModelFieldDefinition,
+  CmsContentModelFieldLocalizationSettings,
   CmsContentModelFieldSettings,
   CmsContentModelFieldType,
   CmsContentModelFieldVisibilityOperator,
@@ -3829,6 +3861,7 @@ import type {
   CmsReleaseSettings,
   CmsReleaseStatus,
   CmsLocale,
+  CmsLocalizedTextRecord,
   CmsReusableBlockSettings,
   CmsReusableReferenceMode,
   CmsReusableSectionSettings,
@@ -4007,9 +4040,13 @@ interface CmsContentModelFieldDraft {
   id: string
   type: CmsContentModelFieldType
   label: string
+  labelPtBr: string
   description: string
+  descriptionPtBr: string
   placeholder: string
+  placeholderPtBr: string
   group: string
+  groupPtBr: string
   orderValue: string
   required: boolean
   repeatable: boolean
@@ -9082,9 +9119,13 @@ function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
     id: '',
     type: 'text',
     label: '',
+    labelPtBr: '',
     description: '',
+    descriptionPtBr: '',
     placeholder: '',
+    placeholderPtBr: '',
     group: '',
+    groupPtBr: '',
     orderValue: '',
     required: false,
     repeatable: false,
@@ -9102,36 +9143,55 @@ function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
   }
 }
 
-/**
- * Builds one editable field draft from a persisted content-model field.
- */
-function createCmsContentModelFieldDraftFromDefinition(
-  field: CmsContentModelFieldDefinition
-): CmsContentModelFieldDraft {
-  return {
-    id: field.id,
-    type: field.type,
-    label: field.label,
-    description: field.description,
-    placeholder: field.placeholder,
-    group: field.group,
-    orderValue: String(field.order),
-    required: field.required,
-    repeatable: field.repeatable,
-    minValue: field.min == null ? '' : String(field.min),
-    maxValue: field.max == null ? '' : String(field.max),
-    defaultValue: field.repeatable
-      ? formatCmsRepeatableFieldValue(field.defaultValue)
-      : (field.defaultValue == null ? '' : String(field.defaultValue)),
-    optionsDraft: field.options.map(option => option.value).join('\n'),
-    mediaKinds: [...field.mediaKinds],
-    referenceKinds: [...field.referenceKinds],
-    visibilityEnabled: Boolean(field.visibility),
-    visibilitySource: field.visibility?.source ?? 'field',
-    visibilityFieldId: field.visibility?.fieldId ?? '',
-    visibilityOperator: field.visibility?.operator ?? 'equals',
-    visibilityValue: field.visibility?.value == null ? '' : String(field.visibility.value),
+function getCmsFieldPtBrLocalizationValue(
+  localized: CmsLocalizedTextRecord | undefined
+): string {
+  return localized?.['pt-BR'] ?? ''
+}
+
+function createCmsContentModelFieldDraftLocalization(
+  value: string
+): CmsLocalizedTextRecord | undefined {
+  const normalized = String(value ?? '').trim()
+  if (normalized.length === 0) {
+    return undefined
   }
+
+  return {
+    'pt-BR': normalized,
+  }
+}
+
+function createCmsContentModelFieldDraftLocalizations(
+  field: CmsContentModelFieldDraft
+): CmsContentModelFieldLocalizationSettings | undefined {
+  const label = createCmsContentModelFieldDraftLocalization(field.labelPtBr)
+  const description = createCmsContentModelFieldDraftLocalization(field.descriptionPtBr)
+  const placeholder = createCmsContentModelFieldDraftLocalization(field.placeholderPtBr)
+  const group = createCmsContentModelFieldDraftLocalization(field.groupPtBr)
+
+  if (!label && !description && !placeholder && !group) {
+    return undefined
+  }
+
+  return {
+    ...(label ? { label } : {}),
+    ...(description ? { description } : {}),
+    ...(placeholder ? { placeholder } : {}),
+    ...(group ? { group } : {}),
+  }
+}
+
+function resolveCmsContentModelFieldDraftText(input: {
+  baseValue: string
+  ptBrValue: string
+  localeInput?: unknown
+}): string {
+  if (resolveCmsLocale(input.localeInput) === 'pt-BR' && input.ptBrValue.trim().length > 0) {
+    return input.ptBrValue
+  }
+
+  return input.baseValue
 }
 
 /**
@@ -9143,26 +9203,14 @@ function createCmsContentModelFieldDraftFromSettings(
   return {
     id: field.id,
     type: field.type,
-    label: resolveCmsLocalizedText({
-      baseValue: field.label,
-      localized: field.localization?.label,
-      localeInput: getActiveCmsAuthoringLocale(),
-    }),
-    description: resolveCmsLocalizedText({
-      baseValue: field.description,
-      localized: field.localization?.description,
-      localeInput: getActiveCmsAuthoringLocale(),
-    }),
-    placeholder: resolveCmsLocalizedText({
-      baseValue: field.placeholder,
-      localized: field.localization?.placeholder,
-      localeInput: getActiveCmsAuthoringLocale(),
-    }),
-    group: resolveCmsLocalizedText({
-      baseValue: field.group,
-      localized: field.localization?.group,
-      localeInput: getActiveCmsAuthoringLocale(),
-    }),
+    label: field.label,
+    labelPtBr: getCmsFieldPtBrLocalizationValue(field.localization?.label),
+    description: field.description,
+    descriptionPtBr: getCmsFieldPtBrLocalizationValue(field.localization?.description),
+    placeholder: field.placeholder,
+    placeholderPtBr: getCmsFieldPtBrLocalizationValue(field.localization?.placeholder),
+    group: field.group,
+    groupPtBr: getCmsFieldPtBrLocalizationValue(field.localization?.group),
     orderValue: field.order == null ? '1' : String(field.order),
     required: field.required,
     repeatable: Boolean(field.repeatable),
@@ -9208,6 +9256,7 @@ function createCmsContentModelFieldSettingsFromDraft(
     defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
     mediaKinds: field.type === 'media-asset' ? [...field.mediaKinds] : undefined,
     referenceKinds: field.type === 'reference' ? [...field.referenceKinds] : undefined,
+    localization: createCmsContentModelFieldDraftLocalizations(field),
     visibility: field.visibilityEnabled
       ? {
           source: field.visibilitySource,
@@ -9265,6 +9314,28 @@ function parseCmsContentModelFieldOptionsDraft(value: string): string[] {
     .split(/\r?\n/)
     .map(entry => entry.trim())
     .filter((entry, index, entries) => entry.length > 0 && entries.indexOf(entry) === index)
+}
+
+/**
+ * Resolves one field preview label according to the active authoring locale.
+ */
+function getCmsContentModelFieldDraftPreviewLabel(field: CmsContentModelFieldDraft): string {
+  return resolveCmsContentModelFieldDraftText({
+    baseValue: field.label,
+    ptBrValue: field.labelPtBr,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one field preview group according to the active authoring locale.
+ */
+function getCmsContentModelFieldDraftPreviewGroup(field: CmsContentModelFieldDraft): string {
+  return resolveCmsContentModelFieldDraftText({
+    baseValue: field.group,
+    ptBrValue: field.groupPtBr,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
 }
 
 /**
@@ -10812,11 +10883,7 @@ function syncSelectedAuthoredContentModelDrafts(): void {
   authoredContentModelPresetLimitDrafts.value = Object.fromEntries(
     Object.entries(model.sectionPresetLimits).map(([presetId, limit]) => [presetId, String(limit)])
   ) as Partial<Record<CmsSectionPresetId, string>>
-  authoredContentModelFieldDrafts.value = getCmsContentModelFieldDefinitions(
-    settings.value.content.locale,
-    model.id,
-    settings.value.authoredContentModels
-  ).map(createCmsContentModelFieldDraftFromDefinition)
+  authoredContentModelFieldDrafts.value = (model.fields ?? []).map(createCmsContentModelFieldDraftFromSettings)
 }
 
 /**

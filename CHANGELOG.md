@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Localized schema metadata authoring for content-model fields**
+  - Added explicit EN/base plus PT-BR authoring inputs for schema-field `label`, `description`, `placeholder` and `group` metadata in the CMS `Content` tab.
+  - Updated field-draft persistence so localized schema metadata is saved through content-model and schema-field preset flows without overwriting the English base contract.
+  - Updated content-model preview chips to resolve field labels and groups according to the active authoring locale while keeping the stored schema metadata explicit.
+  - Added Playwright regression coverage proving that localized field metadata survives reload and renders locale-specific labels/groups in the `Pages` builder.
 - **Schema reference fields and entity relationships for content models**
   - Added `reference` as a first-class schema field type so authored content models can point to internal CMS engine entities without backend coupling.
   - Added backend-agnostic internal reference catalogs for authored content models, block presets, reusable blocks and reusable sections, including allowed-kind constraints on schema fields.

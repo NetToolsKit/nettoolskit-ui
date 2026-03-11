@@ -1523,6 +1523,116 @@ test.describe('CMS settings white-label flow', () => {
     await commitFocusedSelect(page)
   })
 
+  test('authors localized schema field metadata and renders locale-specific labels in Pages builder', async ({ page }) => {
+    const contentModelName = 'Localized schema metadata QA'
+    const baseFieldId = 'campaignHeadline'
+    const baseFieldLabel = 'Campaign headline'
+    const baseFieldGroup = 'Campaign'
+    const baseFieldDescription = 'Primary campaign headline'
+    const baseFieldPlaceholder = 'Type the campaign headline'
+    const baseFieldDefaultValue = 'Launch campaign'
+    const localizedFieldLabel = 'Titulo da campanha'
+    const localizedFieldGroup = 'Campanha'
+    const localizedFieldDescription = 'Titulo principal da pagina'
+    const localizedFieldPlaceholder = 'Digite o titulo da campanha'
+
+    await page.setViewportSize({ width: 1600, height: 1900 })
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Localized schema metadata smoke test')
+
+    const clearAllowedPresetsButton = page.getByRole('button', { name: /^(Clear allowed presets|Limpar presets permitidos)$/ }).first()
+    await clearAllowedPresetsButton.evaluate(element => {
+      ;(element as HTMLButtonElement).click()
+    })
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Hero' }).first().click()
+    await page.locator('.cms-preset-toggle-grid .q-btn', { hasText: 'Footer' }).first().click()
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const fieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      baseFieldId
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      baseFieldLabel
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) }).first().locator('input, textarea').first(),
+      baseFieldGroup
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field description' }) }).first().locator('input, textarea').first(),
+      baseFieldDescription
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Placeholder' }) }).first().locator('input, textarea').first(),
+      baseFieldPlaceholder
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).first().locator('input, textarea').first(),
+      baseFieldDefaultValue
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR label' }) }).first().locator('input, textarea').first(),
+      localizedFieldLabel
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR group' }) }).first().locator('input, textarea').first(),
+      localizedFieldGroup
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR description' }) }).first().locator('input, textarea').first(),
+      localizedFieldDescription
+    )
+    await fillTextInputDirect(
+      fieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR placeholder' }) }).first().locator('input, textarea').first(),
+      localizedFieldPlaceholder
+    )
+
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await page.reload()
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Content model library', contentModelName)
+
+    const reloadedFieldRow = page.locator('.cms-content-model-fields__item').first()
+    await expect(
+      reloadedFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first()
+    ).toHaveValue(baseFieldLabel)
+    await expect(
+      reloadedFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR label' }) }).first().locator('input, textarea').first()
+    ).toHaveValue(localizedFieldLabel)
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await selectOptionByFieldLabel(page, 'Content model', contentModelName)
+
+    const customFieldsCard = page.locator('.cms-page-item__custom-fields').first()
+    await expect(
+      customFieldsCard.locator('.cms-page-item__custom-fields-group-header strong', { hasText: baseFieldGroup }).first()
+    ).toBeVisible()
+    await expect(
+      customFieldsCard.locator('.q-field', { has: page.locator('.q-field__label', { hasText: baseFieldLabel }) }).first()
+    ).toBeVisible()
+
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    const localizedCustomFieldsCard = page.locator('.cms-page-item__custom-fields').first()
+    await expect(
+      localizedCustomFieldsCard.locator('.cms-page-item__custom-fields-group-header strong', { hasText: localizedFieldGroup }).first()
+    ).toBeVisible()
+    await expect(
+      localizedCustomFieldsCard.locator('.q-field', { has: page.locator('.q-field__label', { hasText: localizedFieldLabel }) }).first()
+    ).toBeVisible()
+  })
+
   test('saves reusable schema-field presets and reapplies them across authored content models', async ({ page }) => {
     const fieldId = 'campaignCode'
     const fieldLabel = 'Campaign code'
