@@ -915,6 +915,7 @@ NetToolsKit UI Vue is intentionally layered so the project stays simple to consu
 4. **Application / Backend Contracts**
    - Persistence providers, auth, permissions, media storage, audit workflows, and business rules should plug into the CMS engine through contracts.
    - These concerns should live outside the core engine so the builder remains reusable and simple.
+   - For async provider examples, see [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
 
 **Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
 
