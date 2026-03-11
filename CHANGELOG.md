@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Cross-entity usage explorer and safe delete guards for reusable CMS entities**
+  - Added a shared engine usage index covering authored content models, authored block presets, reusable blocks and reusable sections, replacing scattered ad hoc counters with one consistent impact-analysis source.
+  - Surfaced usage chips and readable reference summaries across `Content`, `Pages` and `Blocks` so authors can see where reusable entities are consumed before making destructive changes.
+  - Blocked delete actions for in-use reusable sections, reusable blocks and authored presets directly in the authoring surface and in the action handlers.
+  - Added focused unit coverage for cross-entity usage counting plus Playwright regression coverage for disabled delete actions on in-use reusable content.
 - **Phase 4 regression and quality hardening for richer schema authoring**
   - Expanded the Playwright visual regression suite with phase-4 coverage for authored schema surfaces, localized rich page fields and section-level field authoring in `Blocks`.
   - Hardened the CMS E2E selector helpers for `CmsMediaAssetPicker` and media replacement flows so the full authoring suite remains stable with the richer media-field UX.

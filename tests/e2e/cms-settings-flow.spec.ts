@@ -1127,6 +1127,63 @@ test.describe('CMS settings white-label flow', () => {
     await expect(linkedBlockRow.locator('.q-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
   })
 
+  test('surfaces usage summaries and blocks deletes for in-use reusable entities', async ({ page }) => {
+    const reusableBlockName = 'Protected Hero Block'
+    const presetName = 'Protected Hero Preset'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+
+    const heroSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero"]') })
+      .first()
+
+    await heroSectionRow.locator('.q-btn', { hasText: 'Save reusable' }).first().click()
+
+    const reusableSectionRow = page
+      .locator('.cms-pages__reusable-library .cms-reusable-block-row', { hasText: 'Main Landing · Hero' })
+      .first()
+
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+    await expect(reusableSectionRow).toContainText('1 uses')
+    await expect(reusableSectionRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(reusableSectionRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+
+    await heroSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero (hero-block-1)')
+
+    await fillTextInput(cmsInputByLabel(page, 'Preset name'), presetName)
+    await page.locator('.cms-form-grid.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save as preset' }).first().click()
+
+    const presetRow = page
+      .locator('.cms-blocks-library .cms-reusable-block-row', { hasText: presetName })
+      .first()
+
+    await expect(presetRow).toBeVisible()
+    await page.locator('.cms-form-grid.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Apply preset' }).first().click()
+    await expect(presetRow).toContainText('1 uses')
+    await expect(presetRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(presetRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+
+    await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableBlockName)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
+
+    const reusableBlockRow = page
+      .locator('.cms-blocks-library .cms-reusable-block-row', { hasText: reusableBlockName })
+      .first()
+
+    await expect(reusableBlockRow).toBeVisible()
+    await reusableBlockRow.locator('.cms-reusable-block-row__actions .q-btn').first().click()
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+
+    await expect(reusableBlockRow).toContainText('1 uses')
+    await expect(reusableBlockRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(reusableBlockRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+  })
+
   test('keeps authored page and block copy isolated by cms locale', async ({ page }) => {
     const localizedPageTitle = 'Landing Principal QA'
     const localizedHeroTitle = 'Construa interfaces QA'

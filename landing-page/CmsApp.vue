@@ -1483,6 +1483,13 @@
                           || tr('Use authored content models to constrain page composition and simplify authoring.', 'Use modelos de conteudo authored para restringir a composicao das paginas e simplificar a autoria.')
                         }}
                       </p>
+                      <small class="cms-preview-content-text">
+                        {{
+                          selectedAuthoredContentModel
+                            ? getCmsAuthoredContentModelUsageSummaryLabel(selectedAuthoredContentModel.id)
+                            : tr('No engine usage detected', 'Nenhum uso no engine detectado')
+                        }}
+                      </small>
                       <div class="cms-preview-content-tabs">
                         <q-chip
                           v-for="presetId in authoredContentModelAllowedSectionSelections"
@@ -2216,9 +2223,15 @@
                     class="cms-reusable-block-row"
                   >
                     <div class="cms-reusable-block-row__meta">
-                      <strong>{{ reusableSection.name }}</strong>
+                      <div class="cms-blocks-library__header">
+                        <strong>{{ reusableSection.name }}</strong>
+                        <q-chip dense square :style="statusChipStyle">
+                          {{ getCmsReusableSectionUsageCount(reusableSection.id) }} {{ tr('uses', 'usos') }}
+                        </q-chip>
+                      </div>
                       <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
                       <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
+                      <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
                       <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
                     </div>
                     <div class="cms-reusable-block-row__actions">
@@ -2228,6 +2241,7 @@
                         dense
                         icon="delete"
                         :style="dangerActionStyle"
+                        :disable="getCmsReusableSectionUsageCount(reusableSection.id) > 0"
                         @click="removeReusableSection(reusableSection.id)"
                       />
                     </div>
@@ -2848,8 +2862,14 @@
                   :class="{ 'cms-reusable-block-row--active': reusableBlock.id === selectedReusableBlockId }"
                 >
                   <div class="cms-reusable-block-row__meta">
-                    <strong>{{ reusableBlock.name }}</strong>
+                    <div class="cms-blocks-library__header">
+                      <strong>{{ reusableBlock.name }}</strong>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ getCmsReusableBlockUsageCount(reusableBlock.id) }} {{ tr('uses', 'usos') }}
+                      </q-chip>
+                    </div>
                     <small>{{ resolveCmsBlockDisplayName(reusableBlock.type) }} · {{ reusableBlock.category }}</small>
+                    <small>{{ getCmsReusableBlockUsageSummaryLabel(reusableBlock.id) }}</small>
                     <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
                   </div>
                   <div class="cms-reusable-block-row__actions">
@@ -2867,6 +2887,7 @@
                       dense
                       icon="delete"
                       :style="dangerActionStyle"
+                      :disable="getCmsReusableBlockUsageCount(reusableBlock.id) > 0"
                       @click="removeReusableBlock(reusableBlock.id)"
                     />
                   </div>
@@ -2902,9 +2923,15 @@
                   :class="{ 'cms-reusable-block-row--active': preset.id === selectedAuthoredBlockPresetId }"
                 >
                   <div class="cms-reusable-block-row__meta">
-                    <strong>{{ getCmsAuthoredBlockPresetNameValue(preset) }}</strong>
+                    <div class="cms-blocks-library__header">
+                      <strong>{{ getCmsAuthoredBlockPresetNameValue(preset) }}</strong>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ getCmsAuthoredBlockPresetUsageCount(preset.id) }} {{ tr('uses', 'usos') }}
+                      </q-chip>
+                    </div>
                     <small>{{ resolveCmsBlockDisplayName(preset.type) }} · {{ preset.category }}</small>
                     <small>{{ getCmsAuthoredPresetStarterSectionsLabel(preset) }}</small>
+                    <small>{{ getCmsAuthoredBlockPresetUsageSummaryLabel(preset.id) }}</small>
                     <small v-if="getCmsAuthoredBlockPresetDescriptionValue(preset)">{{ getCmsAuthoredBlockPresetDescriptionValue(preset) }}</small>
                   </div>
                   <div class="cms-reusable-block-row__actions">
@@ -2922,6 +2949,7 @@
                       dense
                       icon="delete"
                       :style="dangerActionStyle"
+                      :disable="getCmsAuthoredBlockPresetUsageCount(preset.id) > 0"
                       @click="removeCmsAuthoredPreset(preset.id)"
                     />
                   </div>
@@ -4053,6 +4081,7 @@ import {
   type CmsContentRepositorySnapshot,
   type CmsReleaseRepositorySnapshot,
 } from '../src/modules/cms/white-label/providers'
+import { collectCmsEntityUsageIndex } from '../src/modules/cms/white-label/usage-explorer'
 import {
   createCmsPageFromTemplate,
   listCmsPageQuickStartOptions,
@@ -8864,20 +8893,43 @@ const filteredCmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>
   ))
 })
 
+const cmsEntityUsageIndex = computed(() => collectCmsEntityUsageIndex({
+  pages: settings.value.pages,
+  authoredContentModels: settings.value.authoredContentModels,
+  authoredBlockPresets: settings.value.authoredBlockPresets,
+  reusableBlocks: settings.value.reusableBlocks,
+  reusableSections: settings.value.reusableSections,
+}))
+
 const cmsAuthoredContentModelUsageCountById = computed(() => {
   const counts = new Map<string, number>()
-
-  for (const page of settings.value.pages) {
-    counts.set(page.contentModelId, (counts.get(page.contentModelId) ?? 0) + 1)
+  for (const [contentModelId, summary] of cmsEntityUsageIndex.value.contentModels.entries()) {
+    counts.set(contentModelId, summary.totalReferences)
   }
+  return counts
+})
 
-  for (const reusableSection of settings.value.reusableSections) {
-    counts.set(
-      reusableSection.contentModelId,
-      (counts.get(reusableSection.contentModelId) ?? 0) + 1
-    )
+const cmsAuthoredBlockPresetUsageCountById = computed(() => {
+  const counts = new Map<string, number>()
+  for (const [presetId, summary] of cmsEntityUsageIndex.value.authoredBlockPresets.entries()) {
+    counts.set(presetId, summary.totalReferences)
   }
+  return counts
+})
 
+const cmsReusableBlockUsageCountById = computed(() => {
+  const counts = new Map<string, number>()
+  for (const [reusableBlockId, summary] of cmsEntityUsageIndex.value.reusableBlocks.entries()) {
+    counts.set(reusableBlockId, summary.totalReferences)
+  }
+  return counts
+})
+
+const cmsReusableSectionUsageCountById = computed(() => {
+  const counts = new Map<string, number>()
+  for (const [reusableSectionId, summary] of cmsEntityUsageIndex.value.reusableSections.entries()) {
+    counts.set(reusableSectionId, summary.totalReferences)
+  }
   return counts
 })
 
@@ -9376,6 +9428,87 @@ function getCmsMediaDiagnosticsForAsset(assetId: string): CmsMediaDiagnostic[] {
  */
 function getCmsAuthoredContentModelUsageCount(contentModelId: string): number {
   return cmsAuthoredContentModelUsageCountById.value.get(contentModelId) ?? 0
+}
+
+/**
+ * Builds a concise label for one generic entity-usage summary.
+ */
+function getCmsEntityUsageSummaryLabel(entityId: string, entityMap: Map<string, {
+  pageReferences: number
+  reusableSectionReferences: number
+  reusableBlockReferences: number
+  authoredPresetReferences: number
+  totalReferences: number
+}>): string {
+  const summary = entityMap.get(entityId)
+  if (!summary || summary.totalReferences === 0) {
+    return tr('No engine usage detected', 'Nenhum uso no engine detectado')
+  }
+
+  const parts: string[] = []
+  if (summary.pageReferences > 0) {
+    parts.push(tr(`${summary.pageReferences} page refs`, `${summary.pageReferences} refs em paginas`))
+  }
+  if (summary.reusableSectionReferences > 0) {
+    parts.push(tr(`${summary.reusableSectionReferences} reusable section refs`, `${summary.reusableSectionReferences} refs em secoes reutilizaveis`))
+  }
+  if (summary.reusableBlockReferences > 0) {
+    parts.push(tr(`${summary.reusableBlockReferences} reusable block refs`, `${summary.reusableBlockReferences} refs em blocos reutilizaveis`))
+  }
+  if (summary.authoredPresetReferences > 0) {
+    parts.push(tr(`${summary.authoredPresetReferences} preset refs`, `${summary.authoredPresetReferences} refs em presets`))
+  }
+
+  return parts.join(' · ')
+}
+
+/**
+ * Returns a readable usage label for one authored content model.
+ */
+function getCmsAuthoredContentModelUsageSummaryLabel(contentModelId: string): string {
+  return getCmsEntityUsageSummaryLabel(contentModelId, cmsEntityUsageIndex.value.contentModels)
+}
+
+/**
+ * Returns the number of references using one authored block preset.
+ */
+function getCmsAuthoredBlockPresetUsageCount(presetId: string): number {
+  return cmsAuthoredBlockPresetUsageCountById.value.get(presetId) ?? 0
+}
+
+/**
+ * Returns a readable usage label for one authored block preset.
+ */
+function getCmsAuthoredBlockPresetUsageSummaryLabel(presetId: string): string {
+  return getCmsEntityUsageSummaryLabel(presetId, cmsEntityUsageIndex.value.authoredBlockPresets)
+}
+
+/**
+ * Returns the number of references using one reusable block.
+ */
+function getCmsReusableBlockUsageCount(reusableBlockId: string): number {
+  return cmsReusableBlockUsageCountById.value.get(reusableBlockId) ?? 0
+}
+
+/**
+ * Returns a readable usage label for one reusable block.
+ */
+function getCmsReusableBlockUsageSummaryLabel(reusableBlockId: string): string {
+  return getCmsEntityUsageSummaryLabel(reusableBlockId, cmsEntityUsageIndex.value.reusableBlocks)
+}
+
+/**
+ * Returns the number of references using one reusable section.
+ */
+function getCmsReusableSectionUsageCount(reusableSectionId: string): number {
+  return cmsReusableSectionUsageCountById.value.get(reusableSectionId) ?? 0
+}
+
+/**
+ * Returns a readable usage label for one reusable section.
+ */
+function getCmsReusableSectionUsageSummaryLabel(reusableSectionId: string): string {
+  return getCmsEntityUsageSummaryLabel(reusableSectionId, cmsEntityUsageIndex.value.reusableSections)
 }
 
 const selectedReusableBlock = computed<CmsReusableBlockSettings | null>(() => {
@@ -11089,6 +11222,14 @@ function detachCmsBuilderBlockByRecord(blockRecord: CmsSectionBlockRecord): void
  * Removes a reusable block template from the local CMS library.
  */
 function removeReusableBlock(reusableBlockId: string): void {
+  if (getCmsReusableBlockUsageCount(reusableBlockId) > 0) {
+    savedAtLabel.value = tr(
+      'This reusable block is still referenced by pages, reusable sections or authored presets.',
+      'Este bloco reutilizavel ainda esta sendo usado por paginas, secoes reutilizaveis ou presets authored.'
+    )
+    return
+  }
+
   settings.value.reusableBlocks = settings.value.reusableBlocks.filter(reusableBlock => reusableBlock.id !== reusableBlockId)
   if (selectedReusableBlockId.value === reusableBlockId) {
     selectedReusableBlockId.value = settings.value.reusableBlocks[0]?.id ?? ''
@@ -11571,6 +11712,14 @@ function applySelectedCmsPresetToBlock(): void {
  * Removes one authored preset from the local CMS engine library.
  */
 function removeCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  if (getCmsAuthoredBlockPresetUsageCount(presetId) > 0) {
+    savedAtLabel.value = tr(
+      'This authored preset is still referenced by pages, reusable content or derived presets.',
+      'Este preset authored ainda esta sendo usado por paginas, conteudo reutilizavel ou presets derivados.'
+    )
+    return
+  }
+
   settings.value.authoredBlockPresets = settings.value.authoredBlockPresets.filter(entry => entry.id !== presetId)
   if (selectedAuthoredBlockPresetId.value === presetId) {
     selectedAuthoredBlockPresetId.value = settings.value.authoredBlockPresets[0]?.id ?? 'custom'
@@ -13923,6 +14072,14 @@ function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
  * Removes a reusable section template from the local CMS library.
  */
 function removeReusableSection(reusableSectionId: string): void {
+  if (getCmsReusableSectionUsageCount(reusableSectionId) > 0) {
+    savedAtLabel.value = tr(
+      'This reusable section is still referenced by authored pages.',
+      'Esta secao reutilizavel ainda esta sendo usada por paginas authored.'
+    )
+    return
+  }
+
   settings.value.reusableSections = settings.value.reusableSections.filter(reusableSection => reusableSection.id !== reusableSectionId)
 }
 
