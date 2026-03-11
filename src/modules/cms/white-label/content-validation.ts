@@ -20,6 +20,7 @@ import {
   getCmsContentModelSchemaVersion,
   getCmsRequiredSectionPresetIds,
   getCmsSectionPresetBlockLimits,
+  getCmsSectionPresetFieldDefinitions,
   isCmsBlockPresetAllowedForSectionPreset,
   isCmsBlockTypeAllowedForSectionPreset,
   isCmsSectionPresetAllowedForContentModel,
@@ -230,25 +231,71 @@ function validatePageCustomFields(
     authoredContentModels
   )
 
+  validateStructuredCustomFields({
+    targetLabel: `page "${page.id || page.title || 'unknown'}"`,
+    codePrefix: 'pages.custom_fields',
+    pathBase,
+    pageId: page.id,
+    pageStatus: page.status,
+    fieldDefinitions,
+    customFieldsInput: page.customFields,
+    issues,
+    authoredContentModels,
+    mediaAssets,
+    authoredBlockPresets,
+    reusableBlocks,
+    reusableSections,
+  })
+}
+
+function validateStructuredCustomFields(options: {
+  targetLabel: string
+  codePrefix: string
+  pathBase: string
+  pageId?: string
+  sectionId?: string
+  pageStatus: CmsPageSettings['status']
+  fieldDefinitions: CmsContentModelFieldDefinition[]
+  customFieldsInput: unknown
+  issues: CmsContentValidationIssue[]
+  authoredContentModels?: CmsAuthoredContentModelSettings[]
+  mediaAssets?: CmsMediaAssetSettings[]
+  authoredBlockPresets?: CmsAuthoredBlockPresetSettings[]
+  reusableBlocks?: CmsReusableBlockSettings[]
+  reusableSections?: CmsReusableSectionSettings[]
+}): void {
+  const fieldDefinitions = Array.isArray(options.fieldDefinitions) ? options.fieldDefinitions : []
+  const authoredContentModels = Array.isArray(options.authoredContentModels)
+    ? options.authoredContentModels
+    : []
+  const mediaAssets = Array.isArray(options.mediaAssets) ? options.mediaAssets : []
+  const authoredBlockPresets = Array.isArray(options.authoredBlockPresets)
+    ? options.authoredBlockPresets
+    : []
+  const reusableBlocks = Array.isArray(options.reusableBlocks) ? options.reusableBlocks : []
+  const reusableSections = Array.isArray(options.reusableSections) ? options.reusableSections : []
+  const pathBase = options.pathBase
+
   if (fieldDefinitions.length === 0) {
     return
   }
 
-  if (page.customFields != null && !isRecord(page.customFields)) {
-    pushIssue(issues, {
-      code: 'pages.custom_fields.invalid',
+  if (options.customFieldsInput != null && !isRecord(options.customFieldsInput)) {
+    pushIssue(options.issues, {
+      code: `${options.codePrefix}.invalid`,
       severity: 'error',
-      message: `Page "${page.id || page.title || 'unknown'}" must provide custom fields as an object.`,
+      message: `${capitalizeCmsValidationTargetLabel(options.targetLabel)} must provide custom fields as an object.`,
       path: `${pathBase}.customFields`,
-      pageId: page.id,
+      pageId: options.pageId,
+      sectionId: options.sectionId,
     })
     return
   }
 
-  const customFields = isRecord(page.customFields) ? page.customFields : {}
+  const customFields = isRecord(options.customFieldsInput) ? options.customFieldsInput : {}
   const knownFieldIds = new Set(fieldDefinitions.map(field => field.id))
   const visibleFieldDefinitions = filterCmsVisibleContentModelFields(fieldDefinitions, {
-    pageStatus: page.status,
+    pageStatus: options.pageStatus,
     customFields,
   })
 
@@ -261,12 +308,13 @@ function validatePageCustomFields(
       continue
     }
 
-    pushIssue(issues, {
-      code: 'pages.custom_fields.visibility.reference_missing',
+    pushIssue(options.issues, {
+      code: `${options.codePrefix}.visibility.reference_missing`,
       severity: 'warning',
       message: `Field "${field.label}" references an unknown visibility field "${field.visibility.fieldId}".`,
       path: `${pathBase}.customFields.${field.id}`,
-      pageId: page.id,
+      pageId: options.pageId,
+      sectionId: options.sectionId,
     })
   }
 
@@ -275,24 +323,26 @@ function validatePageCustomFields(
     const normalizedValue = coerceCmsContentModelFieldValue(field, value)
 
     if (field.required && !hasCmsContentModelFieldValue(field, value)) {
-      pushIssue(issues, {
-        code: 'pages.custom_fields.required',
+      pushIssue(options.issues, {
+        code: `${options.codePrefix}.required`,
         severity: 'error',
-        message: `Field "${field.label}" is required in page "${page.id || page.title || 'unknown'}".`,
+        message: `Field "${field.label}" is required in ${options.targetLabel}.`,
         path: `${pathBase}.customFields.${field.id}`,
-        pageId: page.id,
+        pageId: options.pageId,
+        sectionId: options.sectionId,
       })
       continue
     }
 
     if (field.repeatable) {
       if (value != null && !Array.isArray(value)) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.repeatable.invalid',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.repeatable.invalid`,
           severity: 'error',
           message: `Field "${field.label}" must contain an array of values.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
         continue
       }
@@ -302,32 +352,35 @@ function validatePageCustomFields(
         ...field,
         repeatable: false,
       }, entry, mediaAssets, authoredContentModels, authoredBlockPresets, reusableBlocks, reusableSections))) {
-        pushIssue(issues, {
-          code: `pages.custom_fields.${field.type}.invalid`,
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.${field.type}.invalid`,
           severity: 'error',
           message: `Field "${field.label}" contains one or more invalid values.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
 
       if (field.min != null && repeatableValues.length < field.min) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.min',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.min`,
           severity: 'error',
           message: `Field "${field.label}" requires at least ${field.min} value(s).`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
 
       if (field.max != null && repeatableValues.length > field.max) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.max',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.max`,
           severity: 'error',
           message: `Field "${field.label}" allows at most ${field.max} value(s).`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
 
@@ -335,23 +388,25 @@ function validatePageCustomFields(
     }
 
     if (field.type === 'number' && value != null && String(value).trim() !== '' && typeof normalizedValue !== 'number') {
-      pushIssue(issues, {
-        code: 'pages.custom_fields.number.invalid',
+      pushIssue(options.issues, {
+        code: `${options.codePrefix}.number.invalid`,
         severity: 'error',
         message: `Field "${field.label}" must contain a valid number.`,
         path: `${pathBase}.customFields.${field.id}`,
-        pageId: page.id,
+        pageId: options.pageId,
+        sectionId: options.sectionId,
       })
       continue
     }
 
     if (field.type === 'toggle' && value != null && typeof value !== 'boolean') {
-      pushIssue(issues, {
-        code: 'pages.custom_fields.toggle.invalid',
+      pushIssue(options.issues, {
+        code: `${options.codePrefix}.toggle.invalid`,
         severity: 'error',
         message: `Field "${field.label}" must contain a boolean value.`,
         path: `${pathBase}.customFields.${field.id}`,
-        pageId: page.id,
+        pageId: options.pageId,
+        sectionId: options.sectionId,
       })
       continue
     }
@@ -362,22 +417,24 @@ function validatePageCustomFields(
     ) {
       const textLength = String(value ?? '').length
       if (field.min != null && textLength < field.min) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.min',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.min`,
           severity: 'error',
           message: `Field "${field.label}" requires at least ${field.min} characters.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
 
       if (field.max != null && textLength > field.max) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.max',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.max`,
           severity: 'error',
           message: `Field "${field.label}" allows at most ${field.max} characters.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
     }
@@ -388,22 +445,24 @@ function validatePageCustomFields(
       && Number.isFinite(normalizedValue)
     ) {
       if (field.min != null && normalizedValue < field.min) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.min',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.min`,
           severity: 'error',
           message: `Field "${field.label}" must be greater than or equal to ${field.min}.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
 
       if (field.max != null && normalizedValue > field.max) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.max',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.max`,
           severity: 'error',
           message: `Field "${field.label}" must be less than or equal to ${field.max}.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
     }
@@ -413,12 +472,13 @@ function validatePageCustomFields(
       && hasCmsContentModelFieldValue(field, value)
       && !field.options.some(option => option.value === String(value ?? '').trim())
     ) {
-      pushIssue(issues, {
-        code: 'pages.custom_fields.select.invalid',
+      pushIssue(options.issues, {
+        code: `${options.codePrefix}.select.invalid`,
         severity: 'error',
         message: `Field "${field.label}" must use one of the allowed options.`,
         path: `${pathBase}.customFields.${field.id}`,
-        pageId: page.id,
+        pageId: options.pageId,
+        sectionId: options.sectionId,
       })
     }
 
@@ -427,12 +487,13 @@ function validatePageCustomFields(
       && hasCmsContentModelFieldValue(field, value)
       && !isCmsValidUrlFieldValue(String(normalizedValue ?? ''))
     ) {
-      pushIssue(issues, {
-        code: 'pages.custom_fields.url.invalid',
+      pushIssue(options.issues, {
+        code: `${options.codePrefix}.url.invalid`,
         severity: 'error',
         message: `Field "${field.label}" must contain a valid URL or path.`,
         path: `${pathBase}.customFields.${field.id}`,
-        pageId: page.id,
+        pageId: options.pageId,
+        sectionId: options.sectionId,
       })
     }
 
@@ -441,12 +502,13 @@ function validatePageCustomFields(
       && hasCmsContentModelFieldValue(field, value)
       && !isCmsValidDateFieldValue(String(normalizedValue ?? ''))
     ) {
-      pushIssue(issues, {
-        code: 'pages.custom_fields.date.invalid',
+      pushIssue(options.issues, {
+        code: `${options.codePrefix}.date.invalid`,
         severity: 'error',
         message: `Field "${field.label}" must contain a valid ISO date (YYYY-MM-DD).`,
         path: `${pathBase}.customFields.${field.id}`,
-        pageId: page.id,
+        pageId: options.pageId,
+        sectionId: options.sectionId,
       })
     }
 
@@ -455,20 +517,22 @@ function validatePageCustomFields(
       const matchingAsset = mediaAssets.find(asset => asset.id === assetId)
 
       if (!matchingAsset) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.media_asset.missing',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.media_asset.missing`,
           severity: 'error',
           message: `Field "${field.label}" references an unknown media asset "${assetId}".`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       } else if (field.mediaKinds.length > 0 && !field.mediaKinds.includes(matchingAsset.kind)) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.media_asset.kind_mismatch',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.media_asset.kind_mismatch`,
           severity: 'error',
           message: `Field "${field.label}" only accepts ${field.mediaKinds.join(', ')} assets.`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
     }
@@ -481,12 +545,13 @@ function validatePageCustomFields(
         reusableBlocks,
         reusableSections,
       })) {
-        pushIssue(issues, {
-          code: 'pages.custom_fields.reference.missing',
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.reference.missing`,
           severity: 'error',
           message: `Field "${field.label}" references an unknown engine entity "${referenceId}".`,
           path: `${pathBase}.customFields.${field.id}`,
-          pageId: page.id,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
         })
       }
     }
@@ -497,14 +562,54 @@ function validatePageCustomFields(
       continue
     }
 
-    pushIssue(issues, {
-      code: 'pages.custom_fields.unknown',
+    pushIssue(options.issues, {
+      code: `${options.codePrefix}.unknown`,
       severity: 'warning',
-      message: `Page "${page.id || page.title || 'unknown'}" stores an unknown custom field "${fieldId}".`,
+      message: `${capitalizeCmsValidationTargetLabel(options.targetLabel)} stores an unknown custom field "${fieldId}".`,
       path: `${pathBase}.customFields.${fieldId}`,
-      pageId: page.id,
+      pageId: options.pageId,
+      sectionId: options.sectionId,
     })
   }
+}
+
+function validateSectionCustomFields(
+  section: CmsPageSectionSettings,
+  page: CmsPageSettings,
+  pathBase: string,
+  issues: CmsContentValidationIssue[],
+  authoredContentModels: CmsAuthoredContentModelSettings[] = [],
+  mediaAssets: CmsMediaAssetSettings[] = [],
+  authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = [],
+  reusableBlocks: CmsReusableBlockSettings[] = [],
+  reusableSections: CmsReusableSectionSettings[] = []
+): void {
+  const fieldDefinitions = getCmsSectionPresetFieldDefinitions('en', section.presetId)
+
+  validateStructuredCustomFields({
+    targetLabel: `section "${section.id || section.label || 'unknown'}"`,
+    codePrefix: 'pages.sections.custom_fields',
+    pathBase,
+    pageId: page.id,
+    sectionId: section.id,
+    pageStatus: page.status,
+    fieldDefinitions,
+    customFieldsInput: section.customFields,
+    issues,
+    authoredContentModels,
+    mediaAssets,
+    authoredBlockPresets,
+    reusableBlocks,
+    reusableSections,
+  })
+}
+
+function capitalizeCmsValidationTargetLabel(value: string): string {
+  if (!value) {
+    return value
+  }
+
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`
 }
 
 function validateBlock(
@@ -683,6 +788,7 @@ function validateSection(
   issues: CmsContentValidationIssue[],
   registry?: CmsBlockRegistry,
   authoredContentModels: CmsAuthoredContentModelSettings[] = [],
+  mediaAssets: CmsMediaAssetSettings[] = [],
   authoredBlockPresets: CmsAuthoredBlockPresetSettings[] = [],
   reusableSections: CmsReusableSectionSettings[] = [],
   reusableBlocks: CmsReusableBlockSettings[] = []
@@ -766,6 +872,18 @@ function validateSection(
       sectionId,
     })
   }
+
+  validateSectionCustomFields(
+    resolvedSection,
+    page,
+    pathBase,
+    issues,
+    authoredContentModels,
+    mediaAssets,
+    authoredBlockPresets,
+    reusableBlocks,
+    reusableSections
+  )
 
   const enabledBlocks = blocks.filter(block => block.enabled)
   const sectionBlockLimits = getCmsSectionPresetBlockLimits(normalizedPresetId)
@@ -1071,6 +1189,7 @@ export function validateCmsContentPages(
         issues,
         options.registry,
         authoredContentModels,
+        mediaAssets,
         authoredBlockPresets,
         reusableSections,
         reusableBlocks

@@ -2433,6 +2433,222 @@
               <p v-if="activeBlocksSectionContractSummary" class="cms-config-caption cms-blocks-toolbar__hint">
                 {{ activeBlocksSectionContractSummary }}
               </p>
+              <div
+                v-if="activeBlocksSection && getCmsSectionFieldDefinitions(activeBlocksSection).length > 0"
+                class="cms-page-item__custom-fields cms-blocks-section-fields"
+              >
+                <div class="cms-page-item__custom-fields-header">
+                  <strong>{{ tr('Section schema fields', 'Campos de schema da secao') }}</strong>
+                  <small>
+                    {{
+                      activeBlocksSectionIsLinked
+                        ? tr(
+                          'This linked section resolves reusable-field values in read-only mode.',
+                          'Esta secao vinculada resolve os valores reutilizaveis em modo somente leitura.'
+                        )
+                        : tr(
+                          'Section-level values driven by the active section preset.',
+                          'Valores em nivel de secao guiados pelo preset da secao ativa.'
+                        )
+                    }}
+                  </small>
+                </div>
+                <div class="cms-page-item__custom-fields-groups">
+                  <div
+                    v-for="group in getCmsSectionFieldGroups(activeBlocksSection)"
+                    :key="`section-field-group-${activeBlocksSection.id}-${group.id}`"
+                    class="cms-page-item__custom-fields-group"
+                  >
+                    <div class="cms-page-item__custom-fields-group-header">
+                      <strong>{{ group.label }}</strong>
+                      <small>
+                        {{
+                          group.fields.length === 1
+                            ? tr('1 field', '1 campo')
+                            : tr(`${group.fields.length} fields`, `${group.fields.length} campos`)
+                        }}
+                      </small>
+                    </div>
+                    <div class="cms-page-item__custom-fields-grid">
+                      <template
+                        v-for="field in group.fields"
+                        :key="`section-field-${activeBlocksSection.id}-${field.id}`"
+                      >
+                        <q-select
+                          v-if="field.repeatable && field.type === 'select'"
+                          :model-value="Array.isArray(getCmsSectionCustomFieldValue(activeBlocksSection, field)) ? getCmsSectionCustomFieldValue(activeBlocksSection, field) : []"
+                          outlined
+                          dense
+                          multiple
+                          use-chips
+                          emit-value
+                          map-options
+                          :options="field.options"
+                          option-label="label"
+                          option-value="value"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-select
+                          v-else-if="field.repeatable && field.type === 'media-asset'"
+                          :model-value="Array.isArray(getCmsSectionCustomFieldValue(activeBlocksSection, field)) ? getCmsSectionCustomFieldValue(activeBlocksSection, field) : []"
+                          outlined
+                          dense
+                          multiple
+                          use-chips
+                          emit-value
+                          map-options
+                          :options="getCmsPageCustomFieldMediaOptions(field)"
+                          option-label="label"
+                          option-value="value"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-select
+                          v-else-if="field.repeatable && field.type === 'reference'"
+                          :model-value="Array.isArray(getCmsSectionCustomFieldValue(activeBlocksSection, field)) ? getCmsSectionCustomFieldValue(activeBlocksSection, field) : []"
+                          outlined
+                          dense
+                          multiple
+                          use-chips
+                          emit-value
+                          map-options
+                          :options="getCmsPageCustomFieldReferenceOptions(field)"
+                          option-label="label"
+                          option-value="value"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-input
+                          v-else-if="field.repeatable"
+                          :model-value="formatCmsRepeatableFieldValue(getCmsSectionCustomFieldValue(activeBlocksSection, field))"
+                          outlined
+                          dense
+                          type="textarea"
+                          autogrow
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-input
+                          v-else-if="field.type === 'text'"
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-input
+                          v-else-if="field.type === 'textarea'"
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          type="textarea"
+                          autogrow
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-input
+                          v-else-if="field.type === 'url'"
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          :type="getCmsContentModelFieldHtmlInputType(field.type)"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-input
+                          v-else-if="field.type === 'date'"
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          type="date"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-input
+                          v-else-if="field.type === 'number'"
+                          :model-value="getCmsSectionCustomFieldValue(activeBlocksSection, field) == null ? '' : String(getCmsSectionCustomFieldValue(activeBlocksSection, field))"
+                          outlined
+                          dense
+                          type="number"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-toggle
+                          v-else-if="field.type === 'toggle'"
+                          :model-value="Boolean(getCmsSectionCustomFieldValue(activeBlocksSection, field))"
+                          :label="field.label"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-select
+                          v-else-if="field.type === 'media-asset'"
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          emit-value
+                          map-options
+                          :options="getCmsPageCustomFieldMediaOptions(field)"
+                          option-label="label"
+                          option-value="value"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-select
+                          v-else-if="field.type === 'reference'"
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          emit-value
+                          map-options
+                          :options="getCmsPageCustomFieldReferenceOptions(field)"
+                          option-label="label"
+                          option-value="value"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                        <q-select
+                          v-else
+                          :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
+                          outlined
+                          dense
+                          emit-value
+                          map-options
+                          :options="field.options"
+                          option-label="label"
+                          option-value="value"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="cms-blocks-toolbar__bulk">
                 <q-btn
                   flat
@@ -3721,6 +3937,7 @@ import {
   getCmsSectionPresetAllowedBlockTypes,
   getCmsSectionPresetBlockLimits,
   getCmsSectionPresetDefinition,
+  getCmsSectionPresetFieldDefinitions,
   getDefaultCmsSectionPresetId,
   isCmsBlockPresetAllowedForSectionPreset,
   isCmsBlockTypeAllowedForSectionPreset,
@@ -3730,6 +3947,7 @@ import {
   listCmsSectionPresetOptions,
   listCmsSectionStarterPresetOptions,
   normalizeCmsPageCustomFieldsForContentModel,
+  normalizeCmsSectionCustomFieldsForPreset,
   updateCmsAuthoredContentModel,
   resolveCmsContentModelId,
   resolveDefaultCmsBlockTypeForSection,
@@ -8290,6 +8508,11 @@ function fromCmsPageSchema(schema: CmsPageSchema, originalPage: CmsPageSettings)
           ? section.sectionSettings.reusableMode as CmsReusableReferenceMode
           : section.previousSection?.reusableMode,
         reusableSourceId: String(section.sectionSettings?.reusableSourceId ?? section.previousSection?.reusableSourceId ?? '').trim() || undefined,
+        customFields: normalizeCmsSectionCustomFieldsForPreset(
+          section.previousSection?.customFields,
+          section.presetId,
+          settings.value.content.locale
+        ),
         localization: section.previousSection?.localization,
         blocks: section.normalizedBlocks ?? [
           createDefaultSectionBlock(
@@ -9705,6 +9928,31 @@ function getCmsPageContentModelFieldGroups(page: CmsPageSettings): CmsPageConten
 }
 
 /**
+ * Groups resolved section custom fields by their visible group label while preserving field order.
+ */
+function getCmsSectionFieldGroups(section: CmsPageSectionSettings): CmsPageContentFieldGroup[] {
+  const groups = new Map<string, CmsPageContentFieldGroup>()
+
+  for (const field of getCmsSectionFieldDefinitions(section)) {
+    const label = getCmsContentModelFieldGroupLabel(field)
+    const id = label.trim().toLowerCase() || 'general'
+    const existingGroup = groups.get(id)
+    if (existingGroup) {
+      existingGroup.fields.push(field)
+      continue
+    }
+
+    groups.set(id, {
+      id,
+      label,
+      fields: [field],
+    })
+  }
+
+  return [...groups.values()]
+}
+
+/**
  * Resolves one page custom-fields payload for the active locale.
  */
 function getCmsPageCustomFieldsValue(page: CmsPageSettings): Record<string, unknown> {
@@ -9752,6 +10000,83 @@ function updateCmsPageCustomFieldValue(
   page.customFields = nextValue.baseProps
   page.localization = {
     ...(page.localization ?? {}),
+    fields: nextValue.localized,
+  }
+}
+
+/**
+ * Resolves the field schema attached to one section preset.
+ */
+function getCmsSectionFieldDefinitions(section: CmsPageSectionSettings): CmsContentModelFieldDefinition[] {
+  const resolvedSection = resolveCmsPageSectionForAuthoring(section)
+  const fields = getCmsSectionPresetFieldDefinitions(
+    settings.value.content.locale,
+    resolvedSection.presetId
+  )
+
+  return filterCmsVisibleContentModelFields(fields, {
+    pageStatus: activeBlocksPage.value?.status ?? 'draft',
+    customFields: getCmsSectionCustomFieldsValue(section),
+  })
+}
+
+/**
+ * Resolves one section custom-fields payload for the active locale.
+ * Linked sections read from their reusable source while detached sections read local state.
+ */
+function getCmsSectionCustomFieldsValue(section: CmsPageSectionSettings): Record<string, unknown> {
+  const resolvedSection = resolveCmsPageSectionForAuthoring(section)
+
+  return resolveCmsLocalizedProps({
+    baseProps: isObjectRecord(resolvedSection.customFields) ? resolvedSection.customFields : {},
+    localized: resolvedSection.localization?.fields,
+    localeInput: getActiveCmsAuthoringLocale(),
+  })
+}
+
+/**
+ * Resolves one visible section custom-field value for the active locale.
+ */
+function getCmsSectionCustomFieldValue(
+  section: CmsPageSectionSettings,
+  field: CmsContentModelFieldDefinition
+): unknown {
+  const visibleFields = getCmsSectionCustomFieldsValue(section)
+  return visibleFields[field.id] ?? field.defaultValue
+}
+
+/**
+ * Applies one localized section custom-field edit while preserving english base values.
+ */
+function updateCmsSectionCustomFieldValue(
+  section: CmsPageSectionSettings,
+  field: CmsContentModelFieldDefinition,
+  value: unknown
+): void {
+  const sourcePage = settings.value.pages[activeBlocksPageIndex.value]
+  const sourceSection = sourcePage?.sections.find(entry => entry.id === section.id) ?? section
+  const normalizedInput = field.repeatable && typeof value === 'string'
+    ? parseCmsRepeatableFieldValue(value)
+    : value
+  const visibleFields = getCmsSectionCustomFieldsValue(section)
+  const nextVisibleFields = {
+    ...visibleFields,
+    [field.id]: coerceCmsContentModelFieldValue(field, normalizedInput),
+  }
+  const nextValue = applyCmsLocalizedPropsUpdate({
+    baseProps: isObjectRecord(sourceSection.customFields) ? sourceSection.customFields : {},
+    localized: sourceSection.localization?.fields,
+    localeInput: getActiveCmsAuthoringLocale(),
+    nextValue: nextVisibleFields,
+  })
+
+  sourceSection.customFields = normalizeCmsSectionCustomFieldsForPreset(
+    nextValue.baseProps,
+    sourceSection.presetId,
+    settings.value.content.locale
+  )
+  sourceSection.localization = {
+    ...(sourceSection.localization ?? {}),
     fields: nextValue.localized,
   }
 }

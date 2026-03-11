@@ -138,7 +138,15 @@ export function normalizeCmsPageSectionLocalizationSettings(value: unknown): Cms
   }
 
   const label = normalizeCmsLocalizedTextRecord(value.label)
-  return label ? { label } : undefined
+  const fields = normalizeCmsLocalizedPropsRecord(value.fields)
+  if (!label && !fields) {
+    return undefined
+  }
+
+  return {
+    ...(label ? { label } : {}),
+    ...(fields ? { fields } : {}),
+  }
 }
 
 /**

@@ -212,6 +212,46 @@ describe('content-validation', () => {
     expect(result.issues.some(issue => issue.message.includes('"footer"'))).toBe(true)
   })
 
+  it('flags invalid section-level custom field values for one preset contract', () => {
+    const pages: CmsPageSettings[] = [
+      {
+        id: 'section-fields-page',
+        contentModelId: 'landing-page',
+        title: 'Section fields page',
+        path: '/section-fields',
+        status: 'draft',
+        description: 'Section custom fields validation',
+        sections: [
+          {
+            id: 'hero',
+            presetId: 'hero',
+            label: 'Hero',
+            enabled: true,
+            customFields: {
+              themevariant: 'loud',
+            },
+            blocks: [
+              {
+                id: 'hero-block-1',
+                type: 'landing.hero',
+                enabled: true,
+                props: {},
+              },
+            ],
+          },
+        ],
+      },
+    ]
+
+    const result = validateCmsContentPages({
+      pages,
+      registry: createLandingRegistry(),
+    })
+
+    expect(result.valid).toBe(false)
+    expect(result.issues.map(issue => issue.code)).toContain('pages.sections.custom_fields.select.invalid')
+  })
+
   it('flags missing, stale and ahead content-model schema versions on pages', () => {
     const authoredModelV1 = createCmsAuthoredContentModel({
       existingModels: [],

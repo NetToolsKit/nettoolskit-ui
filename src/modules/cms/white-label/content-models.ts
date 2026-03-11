@@ -84,6 +84,7 @@ export interface CmsResolvedSectionPresetDefinition {
   allowedBlockTypes: string[]
   minBlocks: number
   maxBlocks: number | null
+  fields: CmsContentModelFieldDefinition[]
   slots: CmsSectionPresetSlotDefinition[]
 }
 
@@ -104,6 +105,7 @@ interface CmsSectionPresetDefinition {
   allowedBlockTypes: string[]
   minBlocks: number
   maxBlocks: number | null
+  fields: CmsContentModelFieldSettings[]
 }
 
 interface CmsBuiltinContentModelDefinition {
@@ -153,6 +155,49 @@ const DEFAULT_CONTENT_MODEL_ID: CmsBuiltinContentModelId = 'landing-page'
 const DEFAULT_SECTION_PRESET_ID: CmsSectionPresetId = 'hero'
 const AUTHORED_CONTENT_MODEL_ID_PREFIX = 'authored-model:'
 
+function createCommonSectionPresetFields(): CmsContentModelFieldSettings[] {
+  return [
+    {
+      id: 'anchorid',
+      type: 'text',
+      label: 'Anchor ID',
+      description: 'Optional anchor used for in-page navigation and deep links.',
+      placeholder: 'hero',
+      group: 'Section settings',
+      order: 1,
+      required: false,
+      defaultValue: '',
+      localization: {
+        label: { 'pt-BR': 'ID da ancora' },
+        description: { 'pt-BR': 'Ancora opcional usada para navegacao interna e links profundos.' },
+        placeholder: { 'pt-BR': 'hero' },
+        group: { 'pt-BR': 'Configuracoes da secao' },
+      },
+    },
+    {
+      id: 'themevariant',
+      type: 'select',
+      label: 'Theme variant',
+      description: 'Visual tone applied to the section container.',
+      placeholder: '',
+      group: 'Section settings',
+      order: 2,
+      required: false,
+      defaultValue: 'default',
+      options: [
+        { value: 'default', label: 'Default' },
+        { value: 'muted', label: 'Muted' },
+        { value: 'contrast', label: 'Contrast' },
+      ],
+      localization: {
+        label: { 'pt-BR': 'Variante do tema' },
+        description: { 'pt-BR': 'Tom visual aplicado ao container da secao.' },
+        group: { 'pt-BR': 'Configuracoes da secao' },
+      },
+    },
+  ]
+}
+
 const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPresetDefinition>> = {
   header: {
     id: 'header',
@@ -166,6 +211,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.header'],
     minBlocks: 1,
     maxBlocks: 1,
+    fields: createCommonSectionPresetFields(),
   },
   hero: {
     id: 'hero',
@@ -179,6 +225,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.hero', 'landing.stats', 'landing.cta'],
     minBlocks: 1,
     maxBlocks: 3,
+    fields: createCommonSectionPresetFields(),
   },
   stats: {
     id: 'stats',
@@ -192,6 +239,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.stats'],
     minBlocks: 1,
     maxBlocks: 2,
+    fields: createCommonSectionPresetFields(),
   },
   metrics: {
     id: 'metrics',
@@ -205,6 +253,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.stats'],
     minBlocks: 1,
     maxBlocks: 2,
+    fields: createCommonSectionPresetFields(),
   },
   features: {
     id: 'features',
@@ -218,6 +267,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.features', 'landing.stats', 'landing.cta'],
     minBlocks: 1,
     maxBlocks: 4,
+    fields: createCommonSectionPresetFields(),
   },
   benefits: {
     id: 'benefits',
@@ -231,6 +281,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.features', 'landing.cta'],
     minBlocks: 1,
     maxBlocks: 3,
+    fields: createCommonSectionPresetFields(),
   },
   installation: {
     id: 'installation',
@@ -244,6 +295,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.cta', 'landing.features'],
     minBlocks: 1,
     maxBlocks: 2,
+    fields: createCommonSectionPresetFields(),
   },
   cta: {
     id: 'cta',
@@ -257,6 +309,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.cta', 'landing.stats'],
     minBlocks: 1,
     maxBlocks: 2,
+    fields: createCommonSectionPresetFields(),
   },
   footer: {
     id: 'footer',
@@ -270,6 +323,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     allowedBlockTypes: ['landing.footer'],
     minBlocks: 1,
     maxBlocks: 1,
+    fields: createCommonSectionPresetFields(),
   },
   custom: {
     id: 'custom',
@@ -290,6 +344,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
     ],
     minBlocks: 1,
     maxBlocks: null,
+    fields: createCommonSectionPresetFields(),
   },
 }
 
@@ -484,6 +539,7 @@ function resolveCmsSectionPresetDefinition(
     allowedBlockTypes: [...preset.allowedBlockTypes],
     minBlocks: preset.minBlocks,
     maxBlocks: preset.maxBlocks,
+    fields: resolveCmsContentModelFieldDefinitions(preset.fields, locale),
     slots: [
       {
         id: 'main',
@@ -1988,6 +2044,44 @@ export function getCmsSectionPresetBlockLimits(
 }
 
 /**
+ * Returns resolved section-level field definitions for one section preset.
+ */
+export function getCmsSectionPresetFieldDefinitions(
+  localeInput: unknown,
+  presetInput: unknown
+): CmsContentModelFieldDefinition[] {
+  return cloneValue(
+    resolveCmsSectionPresetDefinition(localeInput, presetInput).fields
+  )
+}
+
+/**
+ * Builds section-level custom field defaults from one section preset contract.
+ */
+export function createCmsSectionCustomFieldsFromPreset(
+  presetInput: unknown,
+  localeInput: unknown
+): Record<string, unknown> {
+  return buildCmsContentModelCustomFieldDefaults(
+    getCmsSectionPresetFieldDefinitions(localeInput, presetInput)
+  )
+}
+
+/**
+ * Normalizes section-level custom field values against one section preset schema.
+ */
+export function normalizeCmsSectionCustomFieldsForPreset(
+  value: unknown,
+  presetInput: unknown,
+  localeInput: unknown
+): Record<string, unknown> {
+  return normalizeCmsPageCustomFieldValues(
+    value,
+    getCmsSectionPresetFieldDefinitions(localeInput, presetInput)
+  )
+}
+
+/**
  * Checks whether one block type can be authored inside a section preset.
  */
 export function isCmsBlockTypeAllowedForSectionPreset(
@@ -2523,6 +2617,7 @@ export function createCmsPageSectionFromPreset(input: {
     presetId,
     label: preset.defaultLabel.en,
     enabled: preset.defaultEnabled,
+    customFields: createCmsSectionCustomFieldsFromPreset(presetId, input.localeInput ?? 'en'),
     localization: {
       label: createLocalizedTextRecord(preset.defaultLabel),
     },

@@ -1633,6 +1633,72 @@ test.describe('CMS settings white-label flow', () => {
     ).toBeVisible()
   })
 
+  test('authors section-level custom fields in Blocks builder and preserves them after Pages edits', async ({ page }) => {
+    const anchorIdValue = 'hero-anchor-qa'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+    await expect(page.locator('.cms-blocks-section-fields')).toBeVisible()
+
+    const anchorIdInput = page
+      .locator('.cms-blocks-section-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Anchor ID' }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(anchorIdInput, anchorIdValue)
+    await selectOptionByFieldLabel(page, 'Theme variant', 'Contrast')
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const pageTitleInput = page
+      .locator('.cms-page-item')
+      .first()
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    const pageTitleValue = await pageTitleInput.inputValue()
+    await fillTextInput(pageTitleInput, `${pageTitleValue} QA`)
+
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
+
+    await expect(
+      page
+        .locator('.cms-blocks-section-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Anchor ID' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(anchorIdValue)
+    await expect(
+      page.locator('.cms-blocks-section-fields .q-field', { has: page.locator('.q-field__label', { hasText: 'Theme variant' }) }).first()
+    ).toContainText('Contrast')
+
+    await expect.poll(async () => page.evaluate((storageKey: string) => {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) {
+        return null
+      }
+
+      const parsed = JSON.parse(raw)
+      const settings = parsed?.settings ?? parsed
+      const heroSection = settings?.pages?.[0]?.sections?.find((section: { id?: string }) => section.id === 'hero')
+
+      return heroSection
+        ? {
+          anchorid: heroSection.customFields?.anchorid ?? null,
+          themevariant: heroSection.customFields?.themevariant ?? null,
+        }
+        : null
+    }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)).toEqual({
+      anchorid: anchorIdValue,
+      themevariant: 'contrast',
+    })
+  })
+
   test('saves reusable schema-field presets and reapplies them across authored content models', async ({ page }) => {
     const fieldId = 'campaignCode'
     const fieldLabel = 'Campaign code'

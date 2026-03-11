@@ -44,6 +44,7 @@ import {
   detectCmsSectionPresetId,
   normalizeCmsAuthoredContentModels,
   normalizeCmsPageCustomFieldsForContentModel,
+  normalizeCmsSectionCustomFieldsForPreset,
   resolveDefaultCmsBlockTypeForSection,
 } from './content-models'
 import {
@@ -616,6 +617,11 @@ function normalizePagesSettings(
               presetId: sectionPresetId,
               label: String(section.label ?? '').trim() || `Section ${sectionIndex + 1}`,
               enabled: Boolean(section.enabled),
+              customFields: normalizeCmsSectionCustomFieldsForPreset(
+                section.customFields,
+                sectionPresetId,
+                'en'
+              ),
               reusableMode: section.reusableMode === 'linked' || section.reusableMode === 'detached'
                 ? section.reusableMode
                 : undefined,

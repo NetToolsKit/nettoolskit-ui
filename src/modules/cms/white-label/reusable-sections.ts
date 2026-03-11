@@ -11,6 +11,7 @@ import {
 } from './block-presets'
 import {
   detectCmsSectionPresetId,
+  normalizeCmsSectionCustomFieldsForPreset,
   resolveCmsContentModelId,
   resolveDefaultCmsBlockTypeForSection,
 } from './content-models'
@@ -197,6 +198,11 @@ export function normalizeCmsReusableSections(
         presetId,
         label,
         enabled,
+        customFields: normalizeCmsSectionCustomFieldsForPreset(
+          reusableSection.customFields,
+          presetId,
+          'en'
+        ),
         localization: normalizeCmsPageSectionLocalizationSettings(reusableSection.localization),
         blocks: normalizeReusableSectionBlocks(reusableSection.blocks, sectionId, presetId, enabled),
       } satisfies CmsReusableSectionSettings
@@ -241,6 +247,11 @@ export function createCmsReusableSectionFromSection(input: {
     }),
     label: String(input.section.label ?? '').trim() || input.section.id,
     enabled: Boolean(input.section.enabled),
+    customFields: normalizeCmsSectionCustomFieldsForPreset(
+      input.section.customFields,
+      input.section.presetId,
+      'en'
+    ),
     localization: normalizeCmsPageSectionLocalizationSettings(input.section.localization),
     blocks: cloneValue(input.section.blocks ?? []),
   }
@@ -302,6 +313,11 @@ export function resolveCmsReusableSectionReference(input: {
     ...section,
     presetId: reusableSection.presetId,
     label: reusableSection.label,
+    customFields: normalizeCmsSectionCustomFieldsForPreset(
+      reusableSection.customFields,
+      reusableSection.presetId,
+      'en'
+    ),
     localization: normalizeCmsPageSectionLocalizationSettings(reusableSection.localization),
     blocks: resolvedBlocks.length > 0
       ? resolvedBlocks
@@ -379,6 +395,11 @@ export function cloneCmsReusableSectionIntoPageSection(input: {
     presetId: input.reusableSection.presetId,
     label: input.reusableSection.label || input.reusableSection.name,
     enabled: input.reusableSection.enabled,
+    customFields: normalizeCmsSectionCustomFieldsForPreset(
+      input.reusableSection.customFields,
+      input.reusableSection.presetId,
+      'en'
+    ),
     reusableMode,
     reusableSourceId: input.reusableSection.id,
     localization: normalizeCmsPageSectionLocalizationSettings(input.reusableSection.localization),

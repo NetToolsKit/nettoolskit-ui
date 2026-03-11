@@ -23,6 +23,7 @@ import {
   getCmsSectionPresetAllowedBlockTypes,
   getCmsSectionPresetBlockLimits,
   getCmsSectionPresetDefinition,
+  getCmsSectionPresetFieldDefinitions,
   getDefaultCmsSectionPresetId,
   getCmsRequiredSectionPresetIds,
   getCmsStarterSectionPresetIds,
@@ -71,11 +72,25 @@ describe('content-models', () => {
     expect(firstSection.blocks[0]?.props).toMatchObject({
       title: 'Build page experiences faster',
     })
+    expect(firstSection.customFields).toEqual({
+      anchorid: '',
+      themevariant: 'default',
+    })
     expect(firstSection.blocks[0]?.localization?.props?.['pt-BR']).toMatchObject({
       title: 'Monte paginas mais rapido',
     })
     expect(secondSection.id).toBe('hero-2')
     expect(secondSection.blocks[0]?.id).toBe('hero-2-block-1')
+  })
+
+  it('resolves section-preset schema fields with localized group metadata', () => {
+    const fields = getCmsSectionPresetFieldDefinitions('pt-BR', 'hero')
+
+    expect(fields.map(field => `${field.group}:${field.id}`)).toEqual([
+      'Configuracoes da secao:anchorid',
+      'Configuracoes da secao:themevariant',
+    ])
+    expect(fields[1]?.options.map(option => option.value)).toEqual(['default', 'muted', 'contrast'])
   })
 
   it('detects presets and content models from persisted payloads', () => {

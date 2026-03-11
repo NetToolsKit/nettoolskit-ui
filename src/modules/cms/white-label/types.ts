@@ -39,6 +39,7 @@ export interface CmsPageLocalizationSettings {
  */
 export interface CmsPageSectionLocalizationSettings {
   label?: CmsLocalizedTextRecord
+  fields?: CmsLocalizedPropsRecord
 }
 
 /**
@@ -440,6 +441,7 @@ export interface CmsPageSectionSettings {
   presetId: CmsSectionPresetId
   label: string
   enabled: boolean
+  customFields?: Record<string, unknown>
   reusableMode?: CmsReusableReferenceMode
   reusableSourceId?: string
   localization?: CmsPageSectionLocalizationSettings
@@ -486,6 +488,7 @@ export interface CmsReusableSectionSettings {
   presetId: CmsSectionPresetId
   label: string
   enabled: boolean
+  customFields?: Record<string, unknown>
   localization?: CmsPageSectionLocalizationSettings
   blocks: CmsPageBlockSettings[]
 }
