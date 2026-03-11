@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Media picker previews and clearer selection UX for media-asset fields**
+  - Added a reusable CMS media-asset picker with thumbnails, kind badges and selected-asset previews so schema-driven media fields no longer rely on raw `q-select` lists across content-model defaults, page fields, section fields and block bindings.
+  - Centralized media-picker option shaping in the white-label engine, keeping compatible assets first while surfacing incompatible assets as disabled options with explicit allowed-kind feedback instead of hiding them.
+  - Added focused unit coverage for picker option ordering and selection resolution, and updated Playwright schema-field coverage to verify preview cards plus incompatible media feedback in `Pages`.
 - **Async-friendly repository adapters for CMS integration**
   - Added promise-native repository adapter contracts and wrappers for the content, asset and release domains so future backend integrations can adopt async persistence without changing the aggregate CMS authoring contract.
   - Added aggregate async load/save hydration helpers that split or rehydrate white-label settings through the provider bundle while preserving omitted domains.

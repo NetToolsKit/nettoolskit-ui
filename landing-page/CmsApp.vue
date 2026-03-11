@@ -1072,17 +1072,18 @@
                             :disable="field.type === 'toggle' && !field.repeatable"
                             :label="field.repeatable ? tr('Default values (one per line)', 'Valores padrao (um por linha)') : tr('Default value', 'Valor padrao')"
                           />
-                          <q-select
+                          <CmsMediaAssetPicker
                             v-else-if="field.type === 'media-asset'"
                             :model-value="field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue"
-                            outlined
-                            dense
                             :multiple="field.repeatable"
-                            emit-value
-                            map-options
-                            use-chips
                             :options="getCmsContentModelFieldDraftMediaOptions(field)"
                             :label="field.repeatable ? tr('Default assets', 'Assets padrao') : tr('Default asset', 'Asset padrao')"
+                            :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
+                            :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
+                            :selected-preview-label="field.repeatable ? cmsMediaPickerUiText.selectedAssetsLabel : cmsMediaPickerUiText.selectedAssetLabel"
+                            :no-selection-label="cmsMediaPickerUiText.noSelectionLabel"
+                            :no-option-label="cmsMediaPickerUiText.noOptionLabel"
+                            :incompatible-label="cmsMediaPickerUiText.incompatibleLabel"
                             @update:model-value="field.defaultValue = Array.isArray($event) ? $event.join('\n') : String($event ?? '')"
                           />
                           <q-select
@@ -1779,7 +1780,7 @@
                         >
                           <q-select
                             v-if="field.repeatable && field.type === 'select'"
-                            :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
+                            :model-value="normalizeCmsMediaPickerModelValue(getCmsPageCustomFieldValue(page, field), true)"
                             outlined
                             dense
                             multiple
@@ -1793,20 +1794,19 @@
                             :hint="getCmsContentModelFieldHint(field)"
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
-                          <q-select
+                          <CmsMediaAssetPicker
                             v-else-if="field.repeatable && field.type === 'media-asset'"
-                            :model-value="Array.isArray(getCmsPageCustomFieldValue(page, field)) ? getCmsPageCustomFieldValue(page, field) : []"
-                            outlined
-                            dense
+                            :model-value="normalizeCmsMediaPickerModelValue(getCmsPageCustomFieldValue(page, field), true)"
                             multiple
-                            use-chips
-                            emit-value
-                            map-options
                             :options="getCmsPageCustomFieldMediaOptions(field)"
-                            option-label="label"
-                            option-value="value"
                             :label="field.label"
                             :hint="getCmsContentModelFieldHint(field)"
+                            :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
+                            :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
+                            :selected-preview-label="cmsMediaPickerUiText.selectedAssetsLabel"
+                            :no-selection-label="cmsMediaPickerUiText.noSelectionLabel"
+                            :no-option-label="cmsMediaPickerUiText.noOptionLabel"
+                            :incompatible-label="cmsMediaPickerUiText.incompatibleLabel"
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
                           <q-select
@@ -1892,18 +1892,19 @@
                             :label="field.label"
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
-                          <q-select
+                          <CmsMediaAssetPicker
                             v-else-if="field.type === 'media-asset'"
                             :model-value="String(getCmsPageCustomFieldValue(page, field) ?? '')"
-                            outlined
-                            dense
-                            emit-value
-                            map-options
                             :options="getCmsPageCustomFieldMediaOptions(field)"
-                            option-label="label"
-                            option-value="value"
                             :label="field.label"
                             :hint="getCmsContentModelFieldHint(field)"
+                            clearable
+                            :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
+                            :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
+                            :selected-preview-label="cmsMediaPickerUiText.selectedAssetLabel"
+                            :no-selection-label="cmsMediaPickerUiText.noSelectionLabel"
+                            :no-option-label="cmsMediaPickerUiText.noOptionLabel"
+                            :incompatible-label="cmsMediaPickerUiText.incompatibleLabel"
                             @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
                           />
                           <q-select
@@ -2476,7 +2477,7 @@
                       >
                         <q-select
                           v-if="field.repeatable && field.type === 'select'"
-                          :model-value="Array.isArray(getCmsSectionCustomFieldValue(activeBlocksSection, field)) ? getCmsSectionCustomFieldValue(activeBlocksSection, field) : []"
+                          :model-value="normalizeCmsMediaPickerModelValue(getCmsSectionCustomFieldValue(activeBlocksSection, field), true)"
                           outlined
                           dense
                           multiple
@@ -2491,21 +2492,20 @@
                           :disable="activeBlocksSectionIsLinked"
                           @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
                         />
-                        <q-select
+                        <CmsMediaAssetPicker
                           v-else-if="field.repeatable && field.type === 'media-asset'"
-                          :model-value="Array.isArray(getCmsSectionCustomFieldValue(activeBlocksSection, field)) ? getCmsSectionCustomFieldValue(activeBlocksSection, field) : []"
-                          outlined
-                          dense
+                          :model-value="normalizeCmsMediaPickerModelValue(getCmsSectionCustomFieldValue(activeBlocksSection, field), true)"
                           multiple
-                          use-chips
-                          emit-value
-                          map-options
                           :options="getCmsPageCustomFieldMediaOptions(field)"
-                          option-label="label"
-                          option-value="value"
                           :label="field.label"
                           :hint="getCmsContentModelFieldHint(field)"
                           :disable="activeBlocksSectionIsLinked"
+                          :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
+                          :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
+                          :selected-preview-label="cmsMediaPickerUiText.selectedAssetsLabel"
+                          :no-selection-label="cmsMediaPickerUiText.noSelectionLabel"
+                          :no-option-label="cmsMediaPickerUiText.noOptionLabel"
+                          :incompatible-label="cmsMediaPickerUiText.incompatibleLabel"
                           @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
                         />
                         <q-select
@@ -2599,19 +2599,20 @@
                           :disable="activeBlocksSectionIsLinked"
                           @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
                         />
-                        <q-select
+                        <CmsMediaAssetPicker
                           v-else-if="field.type === 'media-asset'"
                           :model-value="String(getCmsSectionCustomFieldValue(activeBlocksSection, field) ?? '')"
-                          outlined
-                          dense
-                          emit-value
-                          map-options
                           :options="getCmsPageCustomFieldMediaOptions(field)"
-                          option-label="label"
-                          option-value="value"
                           :label="field.label"
                           :hint="getCmsContentModelFieldHint(field)"
                           :disable="activeBlocksSectionIsLinked"
+                          clearable
+                          :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
+                          :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
+                          :selected-preview-label="cmsMediaPickerUiText.selectedAssetLabel"
+                          :no-selection-label="cmsMediaPickerUiText.noSelectionLabel"
+                          :no-option-label="cmsMediaPickerUiText.noOptionLabel"
+                          :incompatible-label="cmsMediaPickerUiText.incompatibleLabel"
                           @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
                         />
                         <q-select
@@ -3238,17 +3239,20 @@
                       :disable="activeBlocksSelectionReadOnly"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
-                    <q-select
+                    <CmsMediaAssetPicker
                       v-else-if="field.type === 'media-asset'"
                       :model-value="String(getActiveBlocksFieldModelValue(field) ?? '') || null"
-                      outlined
-                      dense
                       clearable
-                      emit-value
-                      map-options
                       :label="field.label"
                       :disable="activeBlocksSelectionReadOnly"
                       :options="getActiveBlocksMediaFieldOptions(field)"
+                      :hint="field.help"
+                      :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
+                      :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
+                      :selected-preview-label="cmsMediaPickerUiText.selectedAssetLabel"
+                      :no-selection-label="cmsMediaPickerUiText.noSelectionLabel"
+                      :no-option-label="cmsMediaPickerUiText.noOptionLabel"
+                      :incompatible-label="cmsMediaPickerUiText.incompatibleLabel"
                       @update:model-value="updateActiveBlocksFieldValue(field, $event)"
                     />
                     <q-select
@@ -4007,6 +4011,10 @@ import {
   type CmsMediaDiagnostic,
 } from '../src/modules/cms/white-label/media-library'
 import {
+  createCmsMediaPickerOptions,
+  type CmsMediaPickerOption,
+} from '../src/modules/cms/white-label/media-picker'
+import {
   applyCmsAssetRepositorySnapshot,
   applyCmsContentRepositorySnapshot,
   applyCmsReleaseRepositorySnapshot,
@@ -4047,6 +4055,7 @@ import {
   validateCmsRelease,
 } from '../src/modules/cms/releases/index'
 import { createLandingRegistry } from './cms/landing.registry'
+import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
 import {
   getLandingBlockFieldDefinitions,
   getLandingBlockMediaBindingDefinitions,
@@ -4514,6 +4523,42 @@ function getCmsMediaKindLabel(kind: CmsMediaAssetKind): string {
       return tr('Other', 'Outro')
   }
 }
+
+/**
+ * Resolves allowed media-kind captions for picker summaries.
+ */
+function getCmsMediaAllowedKindLabels(
+  allowedKinds: CmsMediaAssetKind[] | undefined
+): string[] {
+  return Array.isArray(allowedKinds)
+    ? allowedKinds.map(kind => getCmsMediaKindLabel(kind))
+    : []
+}
+
+/**
+ * Builds one consistent CMS media picker option set with compatibility feedback.
+ */
+function getCmsMediaPickerOptions(
+  allowedKinds: CmsMediaAssetKind[] | undefined
+): CmsMediaPickerOption[] {
+  return createCmsMediaPickerOptions(
+    settings.value.mediaAssets,
+    allowedKinds,
+    getCmsMediaKindLabel,
+    {
+      incompatibleLabel: tr('Not allowed for this field', 'Nao permitido para este campo'),
+    }
+  )
+}
+
+const cmsMediaPickerUiText = computed(() => ({
+  anyKindLabel: tr('Any media kind', 'Qualquer tipo de midia'),
+  selectedAssetLabel: tr('Selected asset', 'Asset selecionado'),
+  selectedAssetsLabel: tr('Selected assets', 'Assets selecionados'),
+  noSelectionLabel: tr('No asset selected yet.', 'Nenhum asset selecionado ainda.'),
+  noOptionLabel: tr('No media assets available.', 'Nenhum asset de midia disponivel.'),
+  incompatibleLabel: tr('Not allowed for this field', 'Nao permitido para este campo'),
+}))
 
 const tenantProfilesState = ref<CmsTenantProfilesState>(loadCmsTenantProfilesState())
 const activeTenantProfileId = ref(tenantProfilesState.value.activeProfileId)
@@ -9583,6 +9628,25 @@ function parseCmsRepeatableFieldValue(value: string): string[] {
 }
 
 /**
+ * Normalizes unknown schema values into picker-friendly media asset ids.
+ */
+function normalizeCmsMediaPickerModelValue(
+  value: unknown,
+  multiple: boolean
+): string | string[] | null {
+  if (multiple) {
+    return Array.isArray(value)
+      ? value
+        .map(entry => String(entry ?? '').trim())
+        .filter(entry => entry.length > 0)
+      : []
+  }
+
+  const normalized = String(value ?? '').trim()
+  return normalized.length > 0 ? normalized : null
+}
+
+/**
  * Builds a compact field hint with optional validation constraints.
  */
 function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): string {
@@ -9701,18 +9765,12 @@ function getCmsContentModelFieldMaxConstraintLabel(field: CmsContentModelFieldDr
  */
 function getCmsContentModelFieldDraftMediaOptions(
   field: CmsContentModelFieldDraft
-): Array<{ label: string; value: string; description: string }> {
+): CmsMediaPickerOption[] {
   if (field.type !== 'media-asset') {
     return []
   }
 
-  return settings.value.mediaAssets
-    .filter(asset => field.mediaKinds.length === 0 || field.mediaKinds.includes(asset.kind))
-    .map(asset => ({
-      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
-      value: asset.id,
-      description: asset.description,
-    }))
+  return getCmsMediaPickerOptions(field.mediaKinds)
 }
 
 /**
@@ -9784,18 +9842,12 @@ function getCmsPageCustomFieldReferenceOptions(
  */
 function getCmsPageCustomFieldMediaOptions(
   field: CmsContentModelFieldDefinition
-): Array<{ label: string; value: string; description: string }> {
+): CmsMediaPickerOption[] {
   if (field.type !== 'media-asset') {
     return []
   }
 
-  return settings.value.mediaAssets
-    .filter(asset => field.mediaKinds.length === 0 || field.mediaKinds.includes(asset.kind))
-    .map(asset => ({
-      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
-      value: asset.id,
-      description: asset.description,
-    }))
+  return getCmsMediaPickerOptions(field.mediaKinds)
 }
 
 /**
@@ -10466,19 +10518,18 @@ function getActiveBlocksMediaFieldOptions(field: CmsBlockFieldDefinition): Array
   label: string
   value: string
   description: string
+  kind: CmsMediaAssetKind
+  kindLabel: string
+  url: string
+  alt: string
+  disable: boolean
+  incompatible: boolean
 }> {
   if (field.type !== 'media-asset') {
     return []
   }
 
-  const allowedKinds = field.mediaKinds ?? []
-  return settings.value.mediaAssets
-    .filter(asset => allowedKinds.length === 0 || allowedKinds.includes(asset.kind))
-    .map(asset => ({
-      label: `${asset.name} (${getCmsMediaKindLabel(asset.kind)})`,
-      value: asset.id,
-      description: asset.description,
-    }))
+  return getCmsMediaPickerOptions(field.mediaKinds)
 }
 
 /**

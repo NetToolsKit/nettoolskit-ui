@@ -1388,7 +1388,7 @@ test.describe('CMS settings white-label flow', () => {
     const dateDefaultValue = '2026-03-10'
     const mediaFieldId = 'heroAsset'
     const mediaFieldLabel = 'Hero asset'
-    const defaultMediaOptionLabel = 'Brand logo (Image)'
+    const defaultMediaOptionLabel = 'Brand logo'
     const referenceFieldId = 'relatedModel'
     const referenceFieldLabel = 'Related model'
 
@@ -1456,14 +1456,13 @@ test.describe('CMS settings white-label flow', () => {
     await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Allowed media kinds' }) }).first().click()
     await page.getByRole('option', { name: 'Image', exact: true }).first().click()
     await commitFocusedSelect(page)
-    await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default asset' }) }).first().click()
-    const brandLogoOption = page.getByRole('option', { name: defaultMediaOptionLabel, exact: true }).first()
-    if (await brandLogoOption.count() > 0) {
-      await brandLogoOption.click()
-    } else {
-      await page.locator('.q-menu:visible .q-item', { hasText: defaultMediaOptionLabel }).first().click()
-    }
+    const defaultAssetPicker = mediaFieldRow.locator('.cms-media-asset-picker').first()
+    await defaultAssetPicker.locator('.q-field').first().click()
+    const brandLogoOption = page.locator('.q-menu:visible .q-item', { hasText: defaultMediaOptionLabel }).first()
+    await expect(brandLogoOption).toBeVisible()
+    await brandLogoOption.click()
     await commitFocusedSelect(page)
+    await expect(defaultAssetPicker.locator('.cms-media-asset-picker__selection').first()).toContainText(defaultMediaOptionLabel)
 
     await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
     const referenceFieldRow = page.locator('.cms-content-model-fields__item').last()
@@ -1495,19 +1494,15 @@ test.describe('CMS settings white-label flow', () => {
     ).toHaveValue(dateDefaultValue)
 
     const mediaFieldSelect = customFieldsCard
-      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: mediaFieldLabel }) })
+      .locator('.cms-media-asset-picker', { has: page.locator('.q-field__label', { hasText: mediaFieldLabel }) })
       .first()
     await expect(mediaFieldSelect).toContainText('Brand logo')
-    await mediaFieldSelect.click()
-
-    const imageAssetOption = page.getByRole('option', { name: defaultMediaOptionLabel, exact: true }).first()
-    if (await imageAssetOption.count() > 0) {
-      await expect(imageAssetOption).toBeVisible()
-      await expect(page.getByRole('option', { name: /Favicon/i })).toHaveCount(0)
-    } else {
-      await expect(page.locator('.q-menu:visible .q-item', { hasText: defaultMediaOptionLabel }).first()).toBeVisible()
-      await expect(page.locator('.q-menu:visible .q-item', { hasText: 'Favicon' })).toHaveCount(0)
-    }
+    await expect(mediaFieldSelect.locator('.cms-media-asset-picker__selection').first()).toContainText('Brand logo')
+    await mediaFieldSelect.locator('.q-field').first().click()
+    await expect(page.locator('.q-menu:visible .q-item', { hasText: defaultMediaOptionLabel }).first()).toBeVisible()
+    const incompatibleAssetOption = page.locator('.q-menu:visible .q-item', { hasText: 'Favicon' }).first()
+    await expect(incompatibleAssetOption).toBeVisible()
+    await expect(incompatibleAssetOption).toContainText(/Not allowed for this field|Nao permitido para este campo/)
     await commitFocusedSelect(page)
 
     const referenceFieldSelect = customFieldsCard
