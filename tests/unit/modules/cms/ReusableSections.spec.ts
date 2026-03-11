@@ -116,6 +116,24 @@ describe('reusable-sections', () => {
     expect(normalized[0]?.presetId).toBe('custom')
     expect(normalized[0]?.blocks[0]?.type).toBe('landing.hero')
     expect(normalized[0]?.blocks[0]?.presetId).toBe('custom')
+    expect(normalized[0]?.archivedAt).toBeNull()
+  })
+
+  it('preserves archived state while normalizing reusable sections', () => {
+    const normalized = normalizeCmsReusableSections([{
+      id: 'hero-archive',
+      name: 'Archived Hero',
+      description: '',
+      category: 'hero',
+      contentModelId: 'landing-page',
+      presetId: 'hero',
+      label: 'Hero',
+      enabled: true,
+      archivedAt: '2026-03-11T12:00:00.000Z',
+      blocks: [],
+    }], [])
+
+    expect(normalized[0]?.archivedAt).toBe('2026-03-11T12:00:00.000Z')
   })
 
   it('normalizes reactive Vue section payloads without clone errors', () => {

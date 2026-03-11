@@ -205,6 +205,7 @@ export function normalizeCmsReusableSections(
         ),
         localization: normalizeCmsPageSectionLocalizationSettings(reusableSection.localization),
         blocks: normalizeReusableSectionBlocks(reusableSection.blocks, sectionId, presetId, enabled),
+        archivedAt: String(reusableSection.archivedAt ?? '').trim() || null,
       } satisfies CmsReusableSectionSettings
     })
     .filter((reusableSection): reusableSection is CmsReusableSectionSettings => reusableSection !== null)

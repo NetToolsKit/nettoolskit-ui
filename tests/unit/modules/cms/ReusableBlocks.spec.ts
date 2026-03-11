@@ -81,6 +81,21 @@ describe('reusable-blocks', () => {
     expect(normalized[0]?.type).toBe('landing.hero')
     expect(normalized[0]?.presetId).toBe('landing-hero-product-launch')
     expect(normalized[0]?.props).toEqual({})
+    expect(normalized[0]?.archivedAt).toBeNull()
+  })
+
+  it('preserves archived state while normalizing reusable blocks', () => {
+    const normalized = normalizeCmsReusableBlocks([{
+      id: 'hero-archive',
+      name: 'Archived Hero',
+      description: '',
+      category: 'hero',
+      type: 'landing.hero',
+      props: {},
+      archivedAt: '2026-03-11T12:00:00.000Z',
+    }], [])
+
+    expect(normalized[0]?.archivedAt).toBe('2026-03-11T12:00:00.000Z')
   })
 
   it('normalizes reactive Vue objects without throwing clone errors', () => {

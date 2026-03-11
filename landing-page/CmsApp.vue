@@ -1290,10 +1290,17 @@
                       <div class="cms-blocks-library">
                         <div class="cms-blocks-library__header">
                           <strong>{{ tr('Field preset library', 'Biblioteca de presets de campo') }}</strong>
-                          <q-chip dense square :style="statusChipStyle">{{ settings.authoredContentModelFieldPresets.length }}</q-chip>
+                          <div class="cms-blocks-library__header-actions">
+                            <q-toggle
+                              v-model="showArchivedFieldPresets"
+                              dense
+                              :label="tr('Show archived', 'Mostrar arquivados')"
+                            />
+                            <q-chip dense square :style="statusChipStyle">{{ cmsAuthoredContentModelFieldPresetLibrary.length }}/{{ settings.authoredContentModelFieldPresets.length }}</q-chip>
+                          </div>
                         </div>
 
-                        <div v-if="settings.authoredContentModelFieldPresets.length === 0" class="cms-block-item__empty">
+                        <div v-if="cmsAuthoredContentModelFieldPresetLibrary.length === 0" class="cms-block-item__empty">
                           <strong>{{ tr('No field presets saved yet.', 'Nenhum preset de campo salvo ainda.') }}</strong>
                           <small>
                             {{
@@ -1319,6 +1326,7 @@
                                 `${preset.field.id} · ${preset.field.repeatable ? tr('Repeatable', 'Multiplo') : tr('Single value', 'Valor unico')}`
                               }}
                             </small>
+                            <small v-if="isCmsArchivedEntity(preset)">{{ tr('Archived', 'Arquivado') }}</small>
                             <small v-if="getCmsAuthoredContentModelFieldPresetDescriptionValue(preset)">
                               {{ getCmsAuthoredContentModelFieldPresetDescriptionValue(preset) }}
                             </small>
@@ -1330,15 +1338,17 @@
                               no-caps
                               icon="ads_click"
                               :label="tr('Use', 'Usar')"
+                              :disable="isCmsArchivedEntity(preset)"
                               @click="selectedAuthoredContentModelFieldPresetId = preset.id"
                             />
                             <q-btn
                               flat
-                              round
                               dense
-                              icon="delete"
-                              :style="dangerActionStyle"
-                              @click="removeCmsAuthoredContentModelFieldPreset(preset.id)"
+                              no-caps
+                              :icon="isCmsArchivedEntity(preset) ? 'unarchive' : 'archive'"
+                              :label="isCmsArchivedEntity(preset) ? tr('Restore', 'Restaurar') : tr('Archive', 'Arquivar')"
+                              :style="isCmsArchivedEntity(preset) ? undefined : warningActionStyle"
+                              @click="isCmsArchivedEntity(preset) ? unarchiveCmsAuthoredContentModelFieldPreset(preset.id) : archiveCmsAuthoredContentModelFieldPreset(preset.id)"
                             />
                           </div>
                         </div>
@@ -2298,9 +2308,16 @@
               <div class="cms-pages__reusable-library">
                 <div class="cms-shell-card__header">
                   <strong>{{ tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">
-                    {{ hasCmsBuilderSearch ? `${filteredCmsReusableSectionLibrary.length}/${settings.reusableSections.length}` : settings.reusableSections.length }}
-                  </q-chip>
+                  <div class="cms-blocks-library__header-actions">
+                    <q-toggle
+                      v-model="showArchivedReusableSections"
+                      dense
+                      :label="tr('Show archived', 'Mostrar arquivados')"
+                    />
+                    <q-chip dense square :style="statusChipStyle">
+                      {{ filteredCmsReusableSectionLibrary.length }}/{{ settings.reusableSections.length }}
+                    </q-chip>
+                  </div>
                 </div>
                 <q-separator />
                 <div class="cms-pages__reusable-list">
@@ -2325,6 +2342,7 @@
                       </div>
                       <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
                       <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
+                      <small v-if="isCmsArchivedEntity(reusableSection)">{{ tr('Archived', 'Arquivada') }}</small>
                       <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
                       <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
                     </div>
@@ -2339,12 +2357,12 @@
                       />
                       <q-btn
                         flat
-                        round
                         dense
-                        icon="delete"
-                        :style="dangerActionStyle"
-                        :disable="getCmsReusableSectionUsageCount(reusableSection.id) > 0"
-                        @click="removeReusableSection(reusableSection.id)"
+                        no-caps
+                        :icon="isCmsArchivedEntity(reusableSection) ? 'unarchive' : 'archive'"
+                        :label="isCmsArchivedEntity(reusableSection) ? tr('Restore', 'Restaurar') : tr('Archive', 'Arquivar')"
+                        :style="isCmsArchivedEntity(reusableSection) ? undefined : warningActionStyle"
+                        @click="isCmsArchivedEntity(reusableSection) ? unarchiveReusableSection(reusableSection.id) : archiveReusableSection(reusableSection.id)"
                       />
                     </div>
                   </article>
@@ -2938,9 +2956,16 @@
               <div class="cms-blocks-library">
                 <div class="cms-blocks-library__header">
                   <strong>{{ tr('Reusable block library', 'Biblioteca de blocos reutilizaveis') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">
-                    {{ hasCmsBuilderSearch ? `${filteredCmsReusableBlockLibrary.length}/${settings.reusableBlocks.length}` : settings.reusableBlocks.length }}
-                  </q-chip>
+                  <div class="cms-blocks-library__header-actions">
+                    <q-toggle
+                      v-model="showArchivedReusableBlocks"
+                      dense
+                      :label="tr('Show archived', 'Mostrar arquivados')"
+                    />
+                    <q-chip dense square :style="statusChipStyle">
+                      {{ filteredCmsReusableBlockLibrary.length }}/{{ settings.reusableBlocks.length }}
+                    </q-chip>
+                  </div>
                 </div>
 
                 <div v-if="filteredCmsReusableBlockLibrary.length === 0" class="cms-block-item__empty">
@@ -2969,18 +2994,20 @@
                       <q-chip dense square :style="statusChipStyle">
                         {{ getCmsReusableBlockUsageCount(reusableBlock.id) }} {{ tr('uses', 'usos') }}
                       </q-chip>
+                      </div>
+                      <small>{{ resolveCmsBlockDisplayName(reusableBlock.type) }} · {{ reusableBlock.category }}</small>
+                      <small v-if="isCmsArchivedEntity(reusableBlock)">{{ tr('Archived', 'Arquivado') }}</small>
+                      <small>{{ getCmsReusableBlockUsageSummaryLabel(reusableBlock.id) }}</small>
+                      <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
                     </div>
-                    <small>{{ resolveCmsBlockDisplayName(reusableBlock.type) }} · {{ reusableBlock.category }}</small>
-                    <small>{{ getCmsReusableBlockUsageSummaryLabel(reusableBlock.id) }}</small>
-                    <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
-                  </div>
-                  <div class="cms-reusable-block-row__actions">
+                    <div class="cms-reusable-block-row__actions">
                     <q-btn
                       flat
                       dense
                       no-caps
                       icon="ads_click"
                       :label="tr('Use', 'Usar')"
+                      :disable="isCmsArchivedEntity(reusableBlock)"
                       @click="selectedReusableBlockId = reusableBlock.id"
                     />
                     <q-btn
@@ -2991,25 +3018,32 @@
                       :aria-label="tr('Inspect reusable block usage', 'Inspecionar uso do bloco reutilizavel')"
                       @click="openCmsUsageDrawer('reusable-block', reusableBlock.id, reusableBlock.name, reusableBlock.description ?? '')"
                     />
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      icon="delete"
-                      :style="dangerActionStyle"
-                      :disable="getCmsReusableBlockUsageCount(reusableBlock.id) > 0"
-                      @click="removeReusableBlock(reusableBlock.id)"
-                    />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        :icon="isCmsArchivedEntity(reusableBlock) ? 'unarchive' : 'archive'"
+                        :label="isCmsArchivedEntity(reusableBlock) ? tr('Restore', 'Restaurar') : tr('Archive', 'Arquivar')"
+                        :style="isCmsArchivedEntity(reusableBlock) ? undefined : warningActionStyle"
+                        @click="isCmsArchivedEntity(reusableBlock) ? unarchiveReusableBlock(reusableBlock.id) : archiveReusableBlock(reusableBlock.id)"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
               <div class="cms-blocks-library">
                 <div class="cms-blocks-library__header">
                   <strong>{{ tr('Authored preset library', 'Biblioteca de presets authored') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">
-                    {{ hasCmsBuilderSearch ? `${filteredCmsAuthoredBlockPresetLibrary.length}/${settings.authoredBlockPresets.length}` : settings.authoredBlockPresets.length }}
-                  </q-chip>
+                  <div class="cms-blocks-library__header-actions">
+                    <q-toggle
+                      v-model="showArchivedAuthoredBlockPresets"
+                      dense
+                      :label="tr('Show archived', 'Mostrar arquivados')"
+                    />
+                    <q-chip dense square :style="statusChipStyle">
+                      {{ filteredCmsAuthoredBlockPresetLibrary.length }}/{{ settings.authoredBlockPresets.length }}
+                    </q-chip>
+                  </div>
                 </div>
 
                 <div v-if="filteredCmsAuthoredBlockPresetLibrary.length === 0" class="cms-block-item__empty">
@@ -3041,6 +3075,7 @@
                     </div>
                     <small>{{ resolveCmsBlockDisplayName(preset.type) }} · {{ preset.category }}</small>
                     <small>{{ getCmsAuthoredPresetStarterSectionsLabel(preset) }}</small>
+                    <small v-if="isCmsArchivedEntity(preset)">{{ tr('Archived', 'Arquivado') }}</small>
                     <small>{{ getCmsAuthoredBlockPresetUsageSummaryLabel(preset.id) }}</small>
                     <small v-if="getCmsAuthoredBlockPresetDescriptionValue(preset)">{{ getCmsAuthoredBlockPresetDescriptionValue(preset) }}</small>
                   </div>
@@ -3051,6 +3086,7 @@
                       no-caps
                       icon="ads_click"
                       :label="tr('Use', 'Usar')"
+                      :disable="isCmsArchivedEntity(preset)"
                       @click="selectCmsAuthoredPreset(preset.id)"
                     />
                     <q-btn
@@ -3068,12 +3104,12 @@
                     />
                     <q-btn
                       flat
-                      round
                       dense
-                      icon="delete"
-                      :style="dangerActionStyle"
-                      :disable="getCmsAuthoredBlockPresetUsageCount(preset.id) > 0"
-                      @click="removeCmsAuthoredPreset(preset.id)"
+                      no-caps
+                      :icon="isCmsArchivedEntity(preset) ? 'unarchive' : 'archive'"
+                      :label="isCmsArchivedEntity(preset) ? tr('Restore', 'Restaurar') : tr('Archive', 'Arquivar')"
+                      :style="isCmsArchivedEntity(preset) ? undefined : warningActionStyle"
+                      @click="isCmsArchivedEntity(preset) ? unarchiveCmsAuthoredPreset(preset.id) : archiveCmsAuthoredPreset(preset.id)"
                     />
                   </div>
                 </div>
@@ -4280,6 +4316,11 @@ import {
   type CmsEntityUsageTargetKind,
 } from '../src/modules/cms/white-label/usage-explorer'
 import {
+  archiveCmsEntity,
+  isCmsArchivedEntity,
+  unarchiveCmsEntity,
+} from '../src/modules/cms/white-label/archive-state'
+import {
   createCmsPageFromTemplate,
   listCmsPageQuickStartOptions,
   listCmsPageTemplateOptions,
@@ -4299,7 +4340,7 @@ import {
   resetCmsSnapshotHistoryState,
   undoCmsSnapshot,
 } from '../src/modules/cms/white-label/snapshot-history'
-import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms/index.ts'
+import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms'
 import {
   applyCmsReleaseSnapshot,
   detectCmsReleaseCalendarConflicts,
@@ -4312,7 +4353,7 @@ import {
   scheduleCmsRelease,
   validateCmsReleasePrePublishGate,
   validateCmsRelease,
-} from '../src/modules/cms/releases/orchestration.ts'
+} from '../src/modules/cms/releases/orchestration'
 import { createLandingRegistry } from './cms/landing.registry'
 import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
 import {
@@ -5254,15 +5295,19 @@ const authoredContentModelMaxSectionsDraft = ref('')
 const authoredContentModelPresetLimitDrafts = ref<Partial<Record<CmsSectionPresetId, string>>>({})
 const authoredContentModelFieldDrafts = ref<CmsContentModelFieldDraft[]>([])
 const selectedAuthoredContentModelFieldPresetId = ref<CmsAuthoredContentModelFieldPresetId | ''>('')
+const showArchivedFieldPresets = ref(false)
 const draggedPageSection = ref<CmsDraggedPageSection | null>(null)
 const pageSectionDropTargetKey = ref('')
 const reusableBlockNameDraft = ref('')
 const reusableBlockDescriptionDraft = ref('')
 const selectedReusableBlockId = ref('')
+const showArchivedReusableBlocks = ref(false)
 const authoredBlockPresetNameDraft = ref('')
 const authoredBlockPresetDescriptionDraft = ref('')
 const selectedAuthoredBlockPresetId = ref<CmsBlockPresetId>('custom')
+const showArchivedAuthoredBlockPresets = ref(false)
 const authoredPresetStarterSectionSelections = ref<CmsSectionPresetId[]>([])
+const showArchivedReusableSections = ref(false)
 const selectedMediaAssetId = ref('')
 interface CmsUsageDrawerTarget {
   kind: CmsEntityUsageTargetKind
@@ -5414,6 +5459,7 @@ const cmsAuthoredContentModelOptions = computed(() => {
 })
 const cmsAuthoredContentModelFieldPresetLibrary = computed<CmsAuthoredContentModelFieldPresetSettings[]>(() => {
   return settings.value.authoredContentModelFieldPresets
+    .filter(preset => showArchivedFieldPresets.value || !isCmsArchivedEntity(preset))
 })
 
 /**
@@ -5436,7 +5482,7 @@ function matchesCmsBuilderSearch(searchValue: string, ...tokens: unknown[]): boo
 const cmsAuthoredContentModelFieldPresetOptions = computed<CmsContentModelFieldPresetOption[]>(() => {
   return listCmsContentModelFieldPresetOptions(
     settings.value.content.locale,
-    settings.value.authoredContentModelFieldPresets
+    settings.value.authoredContentModelFieldPresets.filter(preset => !isCmsArchivedEntity(preset))
   )
 })
 const cmsContentModelPresetOptions = computed<CmsSectionPresetOption[]>(() => {
@@ -7978,6 +8024,10 @@ const primaryActionStyle = computed(() => ({
   color: notificationBadgeTextColor.value,
 }))
 
+const warningActionStyle = computed(() => ({
+  color: notificationWarningColor.value,
+}))
+
 const dangerActionStyle = computed(() => ({
   color: notificationErrorColor.value,
 }))
@@ -9095,7 +9145,9 @@ const activeBlocksSectionContractSummary = computed(() => {
 })
 
 const cmsReusableBlockOptions = computed(() => {
-  return settings.value.reusableBlocks.map(reusableBlock => ({
+  return settings.value.reusableBlocks
+    .filter(reusableBlock => !isCmsArchivedEntity(reusableBlock))
+    .map(reusableBlock => ({
     label: `${reusableBlock.name} (${reusableBlock.category})`,
     value: reusableBlock.id,
     description: reusableBlock.description,
@@ -9104,6 +9156,7 @@ const cmsReusableBlockOptions = computed(() => {
 
 const cmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>(() => {
   return settings.value.reusableSections
+    .filter(section => showArchivedReusableSections.value || !isCmsArchivedEntity(section))
 })
 
 const filteredCmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>(() => {
@@ -9201,14 +9254,20 @@ const selectedAuthoredContentModelFieldPreset = computed<CmsResolvedContentModel
 
 const cmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>(() => {
   return settings.value.authoredBlockPresets
+    .filter(preset => showArchivedAuthoredBlockPresets.value || !isCmsArchivedEntity(preset))
+})
+
+const cmsReusableBlockLibrary = computed<CmsReusableBlockSettings[]>(() => {
+  return settings.value.reusableBlocks
+    .filter(block => showArchivedReusableBlocks.value || !isCmsArchivedEntity(block))
 })
 
 const filteredCmsReusableBlockLibrary = computed<CmsReusableBlockSettings[]>(() => {
   if (!hasCmsBuilderSearch.value) {
-    return settings.value.reusableBlocks
+    return cmsReusableBlockLibrary.value
   }
 
-  return settings.value.reusableBlocks.filter(block => matchesCmsBuilderSearch(
+  return cmsReusableBlockLibrary.value.filter(block => matchesCmsBuilderSearch(
     normalizedCmsBuilderSearch.value,
     block.id,
     block.name,
@@ -9235,7 +9294,9 @@ const filteredCmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSet
 })
 
 const cmsAuthoredBlockPresetOptions = computed(() => {
-  return settings.value.authoredBlockPresets.map(preset => ({
+  return settings.value.authoredBlockPresets
+    .filter(preset => !isCmsArchivedEntity(preset))
+    .map(preset => ({
     label: `${getCmsAuthoredBlockPresetNameValue(preset)} (${resolveCmsBlockDisplayName(preset.type)})`,
     value: preset.id,
     description: getCmsAuthoredBlockPresetDescriptionValue(preset),
@@ -11513,21 +11574,28 @@ function detachCmsBuilderBlockByRecord(blockRecord: CmsSectionBlockRecord): void
 }
 
 /**
- * Removes a reusable block template from the local CMS library.
+ * Archives one reusable block template while preserving existing references.
  */
-function removeReusableBlock(reusableBlockId: string): void {
-  if (getCmsReusableBlockUsageCount(reusableBlockId) > 0) {
-    savedAtLabel.value = tr(
-      'This reusable block is still referenced by pages, reusable sections or authored presets.',
-      'Este bloco reutilizavel ainda esta sendo usado por paginas, secoes reutilizaveis ou presets authored.'
-    )
-    return
-  }
+function archiveReusableBlock(reusableBlockId: string): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.map(reusableBlock => (
+    reusableBlock.id === reusableBlockId
+      ? archiveCmsEntity(reusableBlock)
+      : reusableBlock
+  ))
+  savedAtLabel.value = `${tr('Reusable block archived at', 'Bloco reutilizavel arquivado as')} ${new Date().toLocaleTimeString()}`
+}
 
-  settings.value.reusableBlocks = settings.value.reusableBlocks.filter(reusableBlock => reusableBlock.id !== reusableBlockId)
-  if (selectedReusableBlockId.value === reusableBlockId) {
-    selectedReusableBlockId.value = settings.value.reusableBlocks[0]?.id ?? ''
-  }
+/**
+ * Restores one archived reusable block template to the visible authoring library.
+ */
+function unarchiveReusableBlock(reusableBlockId: string): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.map(reusableBlock => (
+    reusableBlock.id === reusableBlockId
+      ? unarchiveCmsEntity(reusableBlock)
+      : reusableBlock
+  ))
+  selectedReusableBlockId.value = reusableBlockId
+  savedAtLabel.value = `${tr('Reusable block restored at', 'Bloco reutilizavel restaurado as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11614,17 +11682,26 @@ function insertSelectedAuthoredContentModelFieldPreset(): void {
 }
 
 /**
- * Removes one authored schema-field preset from the reusable library.
+ * Archives one authored schema-field preset while preserving existing authored schemas.
  */
-function removeCmsAuthoredContentModelFieldPreset(
+function archiveCmsAuthoredContentModelFieldPreset(
   presetId: CmsAuthoredContentModelFieldPresetId
 ): void {
   settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
-    .filter(preset => preset.id !== presetId)
-  if (selectedAuthoredContentModelFieldPresetId.value === presetId) {
-    selectedAuthoredContentModelFieldPresetId.value = settings.value.authoredContentModelFieldPresets[0]?.id ?? ''
-  }
-  savedAtLabel.value = `${tr('Field preset removed at', 'Preset de campo removido as')} ${new Date().toLocaleTimeString()}`
+    .map(preset => (preset.id === presetId ? archiveCmsEntity(preset) : preset))
+  savedAtLabel.value = `${tr('Field preset archived at', 'Preset de campo arquivado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Restores one archived authored schema-field preset to the active preset library.
+ */
+function unarchiveCmsAuthoredContentModelFieldPreset(
+  presetId: CmsAuthoredContentModelFieldPresetId
+): void {
+  settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
+    .map(preset => (preset.id === presetId ? unarchiveCmsEntity(preset) : preset))
+  selectedAuthoredContentModelFieldPresetId.value = presetId
+  savedAtLabel.value = `${tr('Field preset restored at', 'Preset de campo restaurado as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -12003,21 +12080,22 @@ function applySelectedCmsPresetToBlock(): void {
 }
 
 /**
- * Removes one authored preset from the local CMS engine library.
+ * Archives one authored preset while preserving all current block references.
  */
-function removeCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
-  if (getCmsAuthoredBlockPresetUsageCount(presetId) > 0) {
-    savedAtLabel.value = tr(
-      'This authored preset is still referenced by pages, reusable content or derived presets.',
-      'Este preset authored ainda esta sendo usado por paginas, conteudo reutilizavel ou presets derivados.'
-    )
-    return
-  }
+function archiveCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets
+    .map(entry => (entry.id === presetId ? archiveCmsEntity(entry) : entry))
+  savedAtLabel.value = `${tr('Authored preset archived at', 'Preset authored arquivado as')} ${new Date().toLocaleTimeString()}`
+}
 
-  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets.filter(entry => entry.id !== presetId)
-  if (selectedAuthoredBlockPresetId.value === presetId) {
-    selectedAuthoredBlockPresetId.value = settings.value.authoredBlockPresets[0]?.id ?? 'custom'
-  }
+/**
+ * Restores one archived authored preset back into authoring flows.
+ */
+function unarchiveCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets
+    .map(entry => (entry.id === presetId ? unarchiveCmsEntity(entry) : entry))
+  selectedAuthoredBlockPresetId.value = presetId
+  savedAtLabel.value = `${tr('Authored preset restored at', 'Preset authored restaurado as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -13823,6 +13901,7 @@ function getCmsReusableSectionOptions(page: CmsPageSettings): Array<{
   description: string
 }> {
   return cmsReusableSectionLibrary.value
+    .filter(reusableSection => !isCmsArchivedEntity(reusableSection))
     .filter(reusableSection => isCmsSectionPresetAllowedForContentModel(
       page.contentModelId,
       reusableSection.presetId,
@@ -14416,18 +14495,27 @@ function removeCmsPageSection(pageIndex: number, sectionIndex: number): void {
 }
 
 /**
- * Removes a reusable section template from the local CMS library.
+ * Archives one reusable section template while keeping linked references resolvable.
  */
-function removeReusableSection(reusableSectionId: string): void {
-  if (getCmsReusableSectionUsageCount(reusableSectionId) > 0) {
-    savedAtLabel.value = tr(
-      'This reusable section is still referenced by authored pages.',
-      'Esta secao reutilizavel ainda esta sendo usada por paginas authored.'
-    )
-    return
-  }
+function archiveReusableSection(reusableSectionId: string): void {
+  settings.value.reusableSections = settings.value.reusableSections.map(reusableSection => (
+    reusableSection.id === reusableSectionId
+      ? archiveCmsEntity(reusableSection)
+      : reusableSection
+  ))
+  savedAtLabel.value = `${tr('Reusable section archived at', 'Secao reutilizavel arquivada as')} ${new Date().toLocaleTimeString()}`
+}
 
-  settings.value.reusableSections = settings.value.reusableSections.filter(reusableSection => reusableSection.id !== reusableSectionId)
+/**
+ * Restores one archived reusable section template to the visible section library.
+ */
+function unarchiveReusableSection(reusableSectionId: string): void {
+  settings.value.reusableSections = settings.value.reusableSections.map(reusableSection => (
+    reusableSection.id === reusableSectionId
+      ? unarchiveCmsEntity(reusableSection)
+      : reusableSection
+  ))
+  savedAtLabel.value = `${tr('Reusable section restored at', 'Secao reutilizavel restaurada as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -15050,6 +15138,13 @@ function resetToDefaults(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-blocks-library__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: var(--ntk-cms-space-sm);
 }
 

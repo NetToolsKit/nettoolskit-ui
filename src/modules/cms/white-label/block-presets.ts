@@ -948,6 +948,7 @@ export function normalizeCmsAuthoredBlockPresets(
           ? cloneValue(rawPreset.props)
           : {},
         localization: normalizeCmsBlockPresetLocalizationSettings(rawPreset.localization),
+        archivedAt: String(rawPreset.archivedAt ?? '').trim() || null,
       } satisfies CmsAuthoredBlockPresetSettings
     })
     .filter((preset): preset is CmsAuthoredBlockPresetSettings => preset !== null)

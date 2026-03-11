@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Archive flow for reusable CMS entities and authored presets**
+  - Added a shared archive-state helper plus persisted `archivedAt` support for reusable sections, reusable blocks, authored block presets and authored schema-field presets.
+  - Updated `Pages`, `Blocks` and `Content` libraries to hide archived entries from normal authoring flows by default, with explicit `Show archived` toggles and restore actions.
+  - Preserved existing linked/detached references while disabling reuse actions for archived entities until they are restored, which makes long-lived tenants safer than hard delete.
+  - Added focused unit coverage for archive normalization and helper behavior, plus Playwright regression coverage for archiving and restoring reusable entities and authored presets.
+  - Fixed the landing production build pathing used by Vercel and validated the build locally after removing TypeScript-extension imports from `CmsApp.vue`.
 - **Engine impact drawer for reusable CMS entities**
   - Added a shared impact-analysis drawer backed by the engine usage index so authors can inspect full references for authored content models, reusable sections, reusable blocks and authored presets before detaching or deleting them.
   - Added `Inspect usage` actions across `Content`, `Pages` and `Blocks`, complementing the existing safe delete guards with readable per-reference diagnostics in the authoring surface.

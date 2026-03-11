@@ -35,6 +35,29 @@ describe('content-model-field-presets', () => {
     expect(presets[0]?.id).toBe('field-preset:campaign-headline')
     expect(presets[0]?.field.id).toBe('campaign-headline')
     expect(presets[0]?.field.order).toBe(2)
+    expect(presets[0]?.archivedAt).toBeNull()
+  })
+
+  it('preserves archive metadata while normalizing authored field presets', () => {
+    const presets = normalizeCmsAuthoredContentModelFieldPresets([{
+      id: 'field-preset:campaign-headline',
+      name: 'Campaign headline',
+      description: '',
+      category: 'Campaign',
+      archivedAt: '2026-03-11T12:00:00.000Z',
+      field: {
+        id: 'campaign-headline',
+        type: 'text',
+        label: 'Campaign headline',
+        description: '',
+        placeholder: '',
+        group: 'Campaign',
+        order: 1,
+        required: false,
+      },
+    }])
+
+    expect(presets[0]?.archivedAt).toBe('2026-03-11T12:00:00.000Z')
   })
 
   it('creates authored field presets from live schema fields and resolves locale-aware options', () => {

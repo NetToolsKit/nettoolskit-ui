@@ -9,6 +9,7 @@ import {
   getDefaultCmsBlockPresetIdForSectionPreset,
   isCmsBlockPresetAllowedForType,
   listCmsBlockPresetOptions,
+  normalizeCmsAuthoredBlockPresets,
   resolveCmsBlockPresetId,
   updateCmsAuthoredBlockPreset,
 } from '../../../../src/modules/cms/white-label/block-presets'
@@ -185,5 +186,20 @@ describe('block-presets', () => {
       title: 'Hero authored em portugues',
       subtitle: 'Legenda authored em portugues',
     })
+  })
+
+  it('preserves archived state while normalizing authored presets', () => {
+    const normalized = normalizeCmsAuthoredBlockPresets([{
+      id: 'authored:hero-qa',
+      name: 'Hero QA',
+      description: '',
+      category: 'hero',
+      type: 'landing.hero',
+      starterSectionPresets: ['hero'],
+      props: {},
+      archivedAt: '2026-03-11T12:00:00.000Z',
+    }])
+
+    expect(normalized[0]?.archivedAt).toBe('2026-03-11T12:00:00.000Z')
   })
 })

@@ -134,6 +134,7 @@ export function normalizeCmsReusableBlocks(
           ? cloneValue(reusableBlock.props)
           : {},
         localization: normalizeCmsPageBlockLocalizationSettings(reusableBlock.localization),
+        archivedAt: String(reusableBlock.archivedAt ?? '').trim() || null,
       } satisfies CmsReusableBlockSettings
     })
     .filter((reusableBlock): reusableBlock is CmsReusableBlockSettings => reusableBlock !== null)

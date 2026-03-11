@@ -268,6 +268,7 @@ export function normalizeCmsAuthoredContentModelFieldPresets(
         category: String(rawPreset.category ?? '').trim() || field.group || field.type,
         field,
         localization: normalizeCmsContentModelFieldPresetLocalizationSettings(rawPreset.localization),
+        archivedAt: String(rawPreset.archivedAt ?? '').trim() || null,
       }
     })
     .filter((preset): preset is CmsAuthoredContentModelFieldPresetSettings => preset !== null)

@@ -294,6 +294,7 @@ export interface CmsAuthoredContentModelFieldPresetSettings {
   category: string
   field: CmsContentModelFieldSettings
   localization?: CmsContentModelFieldPresetLocalizationSettings
+  archivedAt?: string | null
 }
 
 /**
@@ -310,6 +311,7 @@ export interface CmsAuthoredBlockPresetSettings {
   starterSectionPresets: CmsSectionPresetId[]
   props: Record<string, unknown>
   localization?: CmsBlockPresetLocalizationSettings
+  archivedAt?: string | null
 }
 
 /**
@@ -474,6 +476,7 @@ export interface CmsReusableBlockSettings {
   presetId?: CmsBlockPresetId
   props: Record<string, unknown>
   localization?: CmsPageBlockLocalizationSettings
+  archivedAt?: string | null
 }
 
 /**
@@ -491,6 +494,7 @@ export interface CmsReusableSectionSettings {
   customFields?: Record<string, unknown>
   localization?: CmsPageSectionLocalizationSettings
   blocks: CmsPageBlockSettings[]
+  archivedAt?: string | null
 }
 
 /**
