@@ -55,6 +55,8 @@ Generated\ Files/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+!src/modules/cms/releases/
+!src/modules/cms/releases/**
 x64/
 x86/
 [Ww][Ii][Nn]32/
