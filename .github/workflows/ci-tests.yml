@@ -106,6 +106,9 @@ jobs:
       - name: Build library (CJS + ESM + declarations)
         run: npm run build
 
+      - name: Build landing preview
+        run: npm run build:landing
+
       - name: Verify dist output exists
         run: |
           test -f .build/dist/index.cjs || (echo "Missing CJS output" && exit 1)

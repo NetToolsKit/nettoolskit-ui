@@ -124,6 +124,86 @@ async function fillTextInputDirect(input: ReturnType<typeof cmsInputByLabel>, va
 }
 
 /**
+ * Authors one deterministic phase-4 content model used by the richer schema
+ * visual regression scenarios.
+ */
+async function authorPhase4VisualContentModel(page: Page, contentModelName: string): Promise<void> {
+  await openSettingsModule(page)
+  await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+  await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
+  await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Phase 4 schema authoring regression')
+  await fillTextInputDirect(cmsInputByLabel(page, 'Migration notes'), 'Phase 4 baseline')
+
+  await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+  const urlFieldRow = page.locator('.cms-content-model-fields__item').last()
+  await fillTextInputDirect(
+    urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+    'ctaUrl'
+  )
+  await fillTextInputDirect(
+    urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+    'CTA URL'
+  )
+  await fillTextInputDirect(
+    urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR label' }) }).first().locator('input, textarea').first(),
+    'URL do CTA'
+  )
+  await fillTextInputDirect(
+    urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) }).first().locator('input, textarea').first(),
+    'Campaign'
+  )
+  await fillTextInputDirect(
+    urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR group' }) }).first().locator('input, textarea').first(),
+    'Campanha'
+  )
+  await urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+  await page.getByRole('option', { name: 'URL', exact: true }).first().click()
+  await fillTextInputDirect(
+    urlFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).first().locator('input, textarea').first(),
+    '/demo'
+  )
+
+  await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+  const mediaFieldRow = page.locator('.cms-content-model-fields__item').last()
+  await fillTextInputDirect(
+    mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+    'heroAsset'
+  )
+  await fillTextInputDirect(
+    mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+    'Hero asset'
+  )
+  await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+  await page.getByRole('option', { name: 'Media asset', exact: true }).first().click()
+  await mediaFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Allowed media kinds' }) }).first().click()
+  await page.getByRole('option', { name: 'Image', exact: true }).first().click()
+  await page.keyboard.press('Escape')
+  const defaultAssetPicker = mediaFieldRow.locator('.cms-media-asset-picker').first()
+  await defaultAssetPicker.locator('.q-field').first().click()
+  await page.locator('.q-menu:visible .q-item', { hasText: 'Brand logo' }).first().click()
+  await page.keyboard.press('Escape')
+
+  await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+  const referenceFieldRow = page.locator('.cms-content-model-fields__item').last()
+  await fillTextInputDirect(
+    referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+    'relatedModel'
+  )
+  await fillTextInputDirect(
+    referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+    'Related model'
+  )
+  await referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+  await page.getByRole('option', { name: 'Reference', exact: true }).first().click()
+  await referenceFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Allowed reference kinds' }) }).first().click()
+  await page.getByRole('option', { name: 'Content model', exact: true }).first().click()
+  await page.keyboard.press('Escape')
+
+  await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+}
+
+/**
  * Waits until one autosave snapshot contains the expected app name.
  */
 async function expectDraftRecoverySnapshot(page: Page, expectedAppName: string): Promise<void> {
@@ -174,6 +254,7 @@ async function publishRelease(page: Page): Promise<void> {
  */
 async function stabilizeVisualState(page: Page): Promise<void> {
   await page.keyboard.press('Escape').catch(() => undefined)
+  await page.mouse.move(0, 0)
   await page.evaluate(() => {
     window.scrollTo(0, 0)
     document.querySelectorAll('.cms-toolbar-card__saved-at, .cms-settings__saved-at').forEach(element => {
@@ -235,7 +316,7 @@ test.describe('CMS engine visual regression', () => {
   test('captures pages preview in published tablet pt-BR mode', async ({ page }) => {
     await page.goto(CMS_URL)
     await publishRelease(page)
-    await openDrawerModule(page, /^Pages$/)
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
     await selectOptionByFieldLabel(page, 'Preview source', 'Published')
     await selectOptionByFieldLabel(page, 'Preview locale', 'Portuguese (Brazil)')
@@ -310,7 +391,7 @@ test.describe('CMS engine visual regression', () => {
   test('captures phase 3 pages quick-start and command surface', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1200 })
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^Pages$/)
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
 
     await selectOptionByFieldLabel(page, 'Quick command', 'Create and open blocks')
@@ -337,6 +418,59 @@ test.describe('CMS engine visual regression', () => {
     await expect(page.locator('.cms-toolbar-card').first()).toHaveScreenshot(
       'cms-engine-phase3-settings-autosave-recovery-toolbar.png',
       { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 4 schema authoring surface', async ({ page }) => {
+    const contentModelName = 'Phase 4 visual schema'
+
+    await page.setViewportSize({ width: 1600, height: 2200 })
+    await page.goto(CMS_URL)
+    await authorPhase4VisualContentModel(page, contentModelName)
+
+    await stabilizeVisualState(page)
+    await expect(
+      page.locator('.cms-config-section', {
+        has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteudo)$/ }),
+      }).first()
+    ).toHaveScreenshot('cms-engine-phase4-content-schema-authoring.png', { caret: 'hide' })
+  })
+
+  test('captures phase 4 page custom fields with localized rich schema metadata', async ({ page }) => {
+    const contentModelName = 'Phase 4 localized page fields'
+
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await authorPhase4VisualContentModel(page, contentModelName)
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await selectOptionByFieldLabel(page, 'Content model', contentModelName)
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-page-item__custom-fields').first()).toHaveScreenshot(
+      'cms-engine-phase4-pages-rich-fields-ptbr.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 4 blocks section field surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1200 })
+    await page.goto(CMS_URL)
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await selectOptionByFieldLabel(page, 'Target section', 'Hero (1)')
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-blocks-section-fields').first()).toHaveScreenshot(
+      'cms-engine-phase4-blocks-section-fields.png',
+      {
+        caret: 'hide',
+        maxDiffPixels: 3000,
+      }
     )
   })
 })

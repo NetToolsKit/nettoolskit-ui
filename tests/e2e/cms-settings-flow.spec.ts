@@ -60,6 +60,14 @@ function hexToRgbRegex(hexColor: string): RegExp {
   return new RegExp(`rgb\\(${red},\\s*${green},\\s*${blue}\\)`, 'i')
 }
 
+/**
+ * Normalizes media picker option labels where tests append the asset kind in
+ * parentheses but the rendered picker splits kind into a separate badge.
+ */
+function normalizeMediaPickerOptionLabel(optionLabel: string): string {
+  return optionLabel.replace(/\s+\([^)]+\)\s*$/, '').trim()
+}
+
 async function fillTextInput(input: Locator, value: string): Promise<void> {
   try {
     await input.click({ clickCount: 3, timeout: 5000 })
@@ -114,10 +122,26 @@ async function listTextboxValues(page: Page, name: string): Promise<string[]> {
  * Selects the first option in a Quasar select field identified by label.
  */
 async function selectFirstOptionByFieldLabel(page: Page, label: string): Promise<void> {
-  const selectField = page
-    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+  const mediaPickerField = page
+    .locator('.cms-media-asset-picker', { has: page.locator('.q-field__label', { hasText: label }) })
     .first()
-  await selectField.click()
+  if (await mediaPickerField.count() > 0) {
+    const mediaPickerControl = mediaPickerField.locator('.cms-media-asset-picker__select .q-field__control').first()
+    await mediaPickerControl.scrollIntoViewIfNeeded()
+    await mediaPickerControl.click()
+    await page.locator('.q-menu:visible').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined)
+  } else {
+    const selectField = page
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+      .first()
+    await selectField.click()
+  }
+
+  const mediaPickerOption = page.locator('.q-menu:visible .cms-media-asset-picker__option').first()
+  if (await mediaPickerOption.count() > 0) {
+    await mediaPickerOption.click()
+    return
+  }
 
   const optionByRole = page.getByRole('option').first()
   if (await optionByRole.count() > 0) {
@@ -132,12 +156,35 @@ async function selectFirstOptionByFieldLabel(page: Page, label: string): Promise
  * Selects a specific option in a Quasar select field identified by label.
  */
 async function selectOptionByFieldLabel(page: Page, label: string, optionLabel: string): Promise<void> {
-  const selectField = page
-    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+  const mediaPickerField = page
+    .locator('.cms-media-asset-picker', { has: page.locator('.q-field__label', { hasText: label }) })
     .first()
-  await selectField.click()
+  if (await mediaPickerField.count() > 0) {
+    const mediaPickerControl = mediaPickerField.locator('.cms-media-asset-picker__select .q-field__control').first()
+    await mediaPickerControl.scrollIntoViewIfNeeded()
+    await mediaPickerControl.click()
+    await page.locator('.q-menu:visible').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined)
 
-  const optionByRole = page.getByRole('option', { name: optionLabel, exact: true }).first()
+    const normalizedLabel = normalizeMediaPickerOptionLabel(optionLabel)
+    const mediaPickerRoleOption = page.locator('.q-menu:visible [role=\"option\"]', { hasText: normalizedLabel }).first()
+    if (await mediaPickerRoleOption.count() > 0) {
+      await mediaPickerRoleOption.click()
+      return
+    }
+
+    const mediaPickerOption = page.locator('.q-menu:visible .cms-media-asset-picker__option', { hasText: normalizedLabel }).first()
+    if (await mediaPickerOption.count() > 0) {
+      await mediaPickerOption.click()
+      return
+    }
+  } else {
+    const selectField = page
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+      .first()
+    await selectField.click()
+  }
+
+  const optionByRole = page.locator('.q-menu:visible [role="option"]', { hasText: optionLabel }).first()
   if (await optionByRole.count() > 0) {
     await optionByRole.click()
     return
@@ -150,12 +197,35 @@ async function selectOptionByFieldLabel(page: Page, label: string, optionLabel: 
  * Selects a specific option in a Quasar select field identified by a multilingual label pattern.
  */
 async function selectOptionByFieldLabelPattern(page: Page, label: RegExp, optionLabel: string): Promise<void> {
-  const selectField = page
-    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+  const mediaPickerField = page
+    .locator('.cms-media-asset-picker', { has: page.locator('.q-field__label', { hasText: label }) })
     .first()
-  await selectField.click()
+  if (await mediaPickerField.count() > 0) {
+    const mediaPickerControl = mediaPickerField.locator('.cms-media-asset-picker__select .q-field__control').first()
+    await mediaPickerControl.scrollIntoViewIfNeeded()
+    await mediaPickerControl.click()
+    await page.locator('.q-menu:visible').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined)
 
-  const optionByRole = page.getByRole('option', { name: optionLabel, exact: true }).first()
+    const normalizedLabel = normalizeMediaPickerOptionLabel(optionLabel)
+    const mediaPickerRoleOption = page.locator('.q-menu:visible [role=\"option\"]', { hasText: normalizedLabel }).first()
+    if (await mediaPickerRoleOption.count() > 0) {
+      await mediaPickerRoleOption.click()
+      return
+    }
+
+    const mediaPickerOption = page.locator('.q-menu:visible .cms-media-asset-picker__option', { hasText: normalizedLabel }).first()
+    if (await mediaPickerOption.count() > 0) {
+      await mediaPickerOption.click()
+      return
+    }
+  } else {
+    const selectField = page
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+      .first()
+    await selectField.click()
+  }
+
+  const optionByRole = page.locator('.q-menu:visible [role="option"]', { hasText: optionLabel }).first()
   if (await optionByRole.count() > 0) {
     await optionByRole.click()
     return
@@ -2384,8 +2454,16 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Replacement Managed Hero' }).first()).toBeVisible()
 
     await selectOptionByFieldLabel(page, 'Media library asset', 'Original Managed Hero (Image)')
-    await selectOptionByFieldLabel(page, 'Replace target asset', 'Replacement Managed Hero (Image)')
+    const replaceTargetField = page
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Replace target asset' }) })
+      .first()
+    await replaceTargetField.scrollIntoViewIfNeeded()
+    await replaceTargetField.click()
+    await expect(page.locator('.q-menu:visible')).toHaveCount(1)
+    await page.locator('.q-menu:visible [role="option"]', { hasText: 'Replacement Managed Hero' }).first().click()
+    await expect(replaceTargetField).toContainText('Replacement Managed Hero')
     await commitFocusedSelect(page)
+    await expect(page.locator('.cms-media__actions .q-btn', { hasText: 'Replace references' }).first()).toBeEnabled()
     await page.locator('.cms-media__actions .q-btn', { hasText: 'Replace references' }).first().click()
 
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Original Managed Hero' })).toHaveCount(0)
