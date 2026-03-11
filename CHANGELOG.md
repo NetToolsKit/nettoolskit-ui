@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Engine impact drawer for reusable CMS entities**
+  - Added a shared impact-analysis drawer backed by the engine usage index so authors can inspect full references for authored content models, reusable sections, reusable blocks and authored presets before detaching or deleting them.
+  - Added `Inspect usage` actions across `Content`, `Pages` and `Blocks`, complementing the existing safe delete guards with readable per-reference diagnostics in the authoring surface.
+  - Added focused unit coverage for usage-summary resolution by target kind and Playwright regression coverage validating the drawer flow from in-use reusable sections and reusable blocks.
+- **Starter-kit bundles for common landing use cases**
+  - Added a dedicated starter-kit catalog that composes existing page templates, reusable sections, reusable blocks, authored block presets and authored schema-field presets into one guided install flow.
+  - Added `Pages` builder cards and quick commands for starter-kit installation, including a direct `Install + open blocks` path for backend-oriented teams that want to seed a full landing setup in one step.
+  - Added focused unit coverage for starter-kit option/bundle generation plus Playwright regression coverage proving that starter-kit installation seeds reusable libraries and opens the target page in `Blocks`.
 - **Cross-entity usage explorer and safe delete guards for reusable CMS entities**
   - Added a shared engine usage index covering authored content models, authored block presets, reusable blocks and reusable sections, replacing scattered ad hoc counters with one consistent impact-analysis source.
   - Surfaced usage chips and readable reference summaries across `Content`, `Pages` and `Blocks` so authors can see where reusable entities are consumed before making destructive changes.

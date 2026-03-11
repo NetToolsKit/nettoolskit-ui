@@ -43,6 +43,12 @@ export interface CmsEntityUsageIndex {
   reusableSections: Map<string, CmsEntityUsageSummary>
 }
 
+export type CmsEntityUsageTargetKind =
+  | 'content-model'
+  | 'authored-block-preset'
+  | 'reusable-block'
+  | 'reusable-section'
+
 export interface CmsEntityUsageExplorerInput {
   pages: CmsPageSettings[]
   authoredContentModels?: CmsAuthoredContentModelSettings[]
@@ -233,4 +239,26 @@ export function collectCmsEntityUsageIndex(input: CmsEntityUsageExplorerInput): 
   }
 
   return usageIndex
+}
+
+/**
+ * Resolves one usage summary from the shared engine index by target kind and id.
+ */
+export function getCmsEntityUsageSummary(
+  usageIndex: CmsEntityUsageIndex,
+  targetKind: CmsEntityUsageTargetKind,
+  entityId: string
+): CmsEntityUsageSummary | null {
+  switch (targetKind) {
+    case 'content-model':
+      return usageIndex.contentModels.get(entityId) ?? null
+    case 'authored-block-preset':
+      return usageIndex.authoredBlockPresets.get(entityId) ?? null
+    case 'reusable-block':
+      return usageIndex.reusableBlocks.get(entityId) ?? null
+    case 'reusable-section':
+      return usageIndex.reusableSections.get(entityId) ?? null
+    default:
+      return null
+  }
 }

@@ -1149,6 +1149,12 @@ test.describe('CMS settings white-label flow', () => {
     await expect(reusableSectionRow).toContainText('1 uses')
     await expect(reusableSectionRow).toContainText(/1 page refs|1 refs em paginas/i)
     await expect(reusableSectionRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+    await reusableSectionRow.getByRole('button', { name: /^(Inspect reusable section usage|Inspecionar uso da secao reutilizavel)$/ }).click()
+    await expect(page.locator('.cms-usage-drawer')).toBeVisible()
+    await expect(page.locator('.cms-usage-drawer')).toContainText('Main Landing · Hero')
+    await expect(page.locator('.cms-usage-drawer__reference')).toContainText(/Main Landing -> Hero|page:landing-main/i)
+    await page.keyboard.press('Escape')
+    await expect.poll(async () => page.locator('.q-dialog:visible').count()).toBe(0)
 
     await heroSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
@@ -1182,6 +1188,10 @@ test.describe('CMS settings white-label flow', () => {
     await expect(reusableBlockRow).toContainText('1 uses')
     await expect(reusableBlockRow).toContainText(/1 page refs|1 refs em paginas/i)
     await expect(reusableBlockRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+    await reusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
+    await expect(page.locator('.cms-usage-drawer')).toBeVisible()
+    await expect(page.locator('.cms-usage-drawer')).toContainText(reusableBlockName)
+    await expect(page.locator('.cms-usage-drawer__reference')).toContainText(/page:landing-main|Main Landing/i)
   })
 
   test('keeps authored page and block copy isolated by cms locale', async ({ page }) => {
@@ -2094,7 +2104,9 @@ test.describe('CMS settings white-label flow', () => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
-    const quickStarts = page.locator('.cms-pages__quick-starts').first()
+    const quickStarts = page.locator('.cms-pages__quick-starts', {
+      has: page.locator('.cms-pages__quick-starts-header strong', { hasText: /^(Quick-start workflows|Fluxos de quick-start)$/ }),
+    }).first()
     await expect(quickStarts).toBeVisible()
     await expect(quickStarts.locator('.cms-pages__quick-starts-header strong').first()).toHaveText(
       /^(Quick-start workflows|Fluxos de quick-start)$/
@@ -2117,6 +2129,67 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-page-item')).toHaveCount(initialPageCount + 2)
+  })
+
+  test('installs starter-kit bundles and opens Blocks with seeded reusable libraries', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    const initialSettings = await page.evaluate((storageKey: string) => {
+      const raw = window.localStorage.getItem(storageKey)
+      if (!raw) {
+        return null
+      }
+
+      const parsed = JSON.parse(raw)
+      return parsed?.settings ?? null
+    }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
+
+    const starterKits = page.locator('.cms-pages__starter-kits').first()
+    await expect(starterKits).toBeVisible()
+    await expect(starterKits.locator('.cms-pages__quick-starts-header strong').first()).toHaveText(
+      /^(Starter-kit bundles|Bundles de starter kit)$/
+    )
+
+    const productLaunchKit = starterKits.locator('.cms-page-quick-start-card', {
+      hasText: /(Starter kit · Product launch|Starter kit · Lancamento de produto)/,
+    }).first()
+
+    await expect(productLaunchKit).toContainText(/Landing \((default|padrao)\)/)
+    await expect(productLaunchKit).toContainText(/Landing page/)
+    await productLaunchKit.getByRole('button', { name: /^(Install \+ open blocks|Instalar \+ abrir blocos)$/ }).click()
+
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    const targetPageField = page.locator('.q-field', {
+      has: page.locator('.q-field__label', { hasText: /^(Target page|Pagina alvo)$/ }),
+    }).first()
+    await expect(targetPageField).toContainText(/Landing Page/)
+
+    await expect.poll(async () => {
+      const parsed = await page.evaluate((storageKey: string) => {
+        const raw = window.localStorage.getItem(storageKey)
+        if (!raw) {
+          return null
+        }
+
+        const stored = JSON.parse(raw)
+        return stored?.settings ?? null
+      }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
+
+      return {
+        pages: parsed?.pages?.length ?? 0,
+        reusableSections: parsed?.reusableSections?.length ?? 0,
+        reusableBlocks: parsed?.reusableBlocks?.length ?? 0,
+        blockPresets: parsed?.authoredBlockPresets?.length ?? 0,
+        fieldPresets: parsed?.authoredContentModelFieldPresets?.length ?? 0,
+      }
+    }).toEqual({
+      pages: (initialSettings?.pages?.length ?? 0) + 1,
+      reusableSections: (initialSettings?.reusableSections?.length ?? 0) + 3,
+      reusableBlocks: (initialSettings?.reusableBlocks?.length ?? 0) + 3,
+      blockPresets: (initialSettings?.authoredBlockPresets?.length ?? 0) + 3,
+      fieldPresets: (initialSettings?.authoredContentModelFieldPresets?.length ?? 0) + 3,
+    })
   })
 
   test('uses shared builder search and quick commands across Pages and Blocks', async ({ page }) => {

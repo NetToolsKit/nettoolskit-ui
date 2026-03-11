@@ -1454,6 +1454,19 @@
                     <q-btn
                       flat
                       no-caps
+                      icon="travel_explore"
+                      :label="tr('Inspect usage', 'Inspecionar uso')"
+                      :disable="!selectedAuthoredContentModel"
+                      @click="selectedAuthoredContentModel && openCmsUsageDrawer(
+                        'content-model',
+                        selectedAuthoredContentModel.id,
+                        authoredContentModelNameDraft || selectedAuthoredContentModel.name,
+                        authoredContentModelDescriptionDraft || selectedAuthoredContentModel.description
+                      )"
+                    />
+                    <q-btn
+                      flat
+                      no-caps
                       icon="delete"
                       :label="tr('Delete content model', 'Excluir modelo de conteudo')"
                       :style="dangerActionStyle"
@@ -1660,6 +1673,87 @@
               <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
                 {{ selectedCmsBuilderCommandOption.description }}
               </p>
+              <div class="cms-pages__quick-starts cms-pages__starter-kits">
+                <div class="cms-pages__quick-starts-header">
+                  <div>
+                    <strong>{{ tr('Starter-kit bundles', 'Bundles de starter kit') }}</strong>
+                    <small>
+                      {{
+                        tr(
+                          'Seed a landing page together with reusable sections, blocks and schema presets for one common use case.',
+                          'Semeie uma landing junto com secoes reutilizaveis, blocos e presets de schema para um caso de uso comum.'
+                        )
+                      }}
+                    </small>
+                  </div>
+                  <q-chip dense square :style="statusChipStyle">
+                    {{ hasCmsBuilderSearch ? `${filteredCmsStarterKitOptions.length}/${cmsStarterKitOptions.length}` : cmsStarterKitOptions.length }}
+                  </q-chip>
+                </div>
+                <div class="cms-pages__quick-start-grid">
+                  <article
+                    v-for="starterKit in filteredCmsStarterKitOptions"
+                    :key="`starter-kit-${starterKit.value}`"
+                    class="cms-page-quick-start-card cms-page-quick-start-card--starter-kit"
+                  >
+                    <div class="cms-page-quick-start-card__header">
+                      <strong>{{ starterKit.label }}</strong>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ starterKit.sectionCount }}
+                      </q-chip>
+                    </div>
+                    <small class="cms-page-quick-start-card__description">{{ starterKit.description }}</small>
+                    <div class="cms-page-quick-start-card__meta">
+                      <span>
+                        {{ tr('Template', 'Template') }}:
+                        <strong>{{ starterKit.templateLabel }}</strong>
+                      </span>
+                      <span>
+                        {{ tr('Content model', 'Modelo de conteudo') }}:
+                        <strong>{{ starterKit.contentModelLabel }}</strong>
+                      </span>
+                      <span>
+                        {{ tr('Reusable sections', 'Secoes reutilizaveis') }}:
+                        <strong>{{ starterKit.reusableSectionCount }}</strong>
+                      </span>
+                      <span>
+                        {{ tr('Reusable blocks', 'Blocos reutilizaveis') }}:
+                        <strong>{{ starterKit.reusableBlockCount }}</strong>
+                      </span>
+                      <span>
+                        {{ tr('Block presets', 'Presets de bloco') }}:
+                        <strong>{{ starterKit.blockPresetCount }}</strong>
+                      </span>
+                      <span>
+                        {{ tr('Field presets', 'Presets de campo') }}:
+                        <strong>{{ starterKit.fieldPresetCount }}</strong>
+                      </span>
+                    </div>
+                    <div class="cms-page-quick-start-card__actions">
+                      <q-btn
+                        no-caps
+                        unelevated
+                        icon="inventory_2"
+                        :label="tr('Install kit', 'Instalar kit')"
+                        :style="primaryActionStyle"
+                        @click="runCmsStarterKit(starterKit.value)"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        icon="widgets"
+                        :label="tr('Install + open blocks', 'Instalar + abrir blocos')"
+                        @click="runCmsStarterKit(starterKit.value, true)"
+                      />
+                    </div>
+                  </article>
+                </div>
+                <div v-if="hasCmsBuilderSearch && filteredCmsStarterKitOptions.length === 0" class="cms-block-item__empty">
+                  <strong>{{ tr('No starter kit matched the current search.', 'Nenhum starter kit corresponde a busca atual.') }}</strong>
+                </div>
+              </div>
+
               <div class="cms-pages__quick-starts">
                 <div class="cms-pages__quick-starts-header">
                   <div>
@@ -2235,6 +2329,14 @@
                       <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
                     </div>
                     <div class="cms-reusable-block-row__actions">
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="travel_explore"
+                        :aria-label="tr('Inspect reusable section usage', 'Inspecionar uso da secao reutilizavel')"
+                        @click="openCmsUsageDrawer('reusable-section', reusableSection.id, reusableSection.name, reusableSection.description ?? '')"
+                      />
                       <q-btn
                         flat
                         round
@@ -2885,6 +2987,14 @@
                       flat
                       round
                       dense
+                      icon="travel_explore"
+                      :aria-label="tr('Inspect reusable block usage', 'Inspecionar uso do bloco reutilizavel')"
+                      @click="openCmsUsageDrawer('reusable-block', reusableBlock.id, reusableBlock.name, reusableBlock.description ?? '')"
+                    />
+                    <q-btn
+                      flat
+                      round
+                      dense
                       icon="delete"
                       :style="dangerActionStyle"
                       :disable="getCmsReusableBlockUsageCount(reusableBlock.id) > 0"
@@ -2942,6 +3052,19 @@
                       icon="ads_click"
                       :label="tr('Use', 'Usar')"
                       @click="selectCmsAuthoredPreset(preset.id)"
+                    />
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      icon="travel_explore"
+                      :aria-label="tr('Inspect authored preset usage', 'Inspecionar uso do preset authored')"
+                      @click="openCmsUsageDrawer(
+                        'authored-block-preset',
+                        preset.id,
+                        getCmsAuthoredBlockPresetNameValue(preset),
+                        getCmsAuthoredBlockPresetDescriptionValue(preset)
+                      )"
                     />
                     <q-btn
                       flat
@@ -3889,6 +4012,75 @@
       </div>
     </template>
   </NtkAppShell>
+  <q-dialog
+    v-model="isCmsUsageDrawerOpen"
+    position="right"
+  >
+    <q-card class="cms-usage-drawer">
+      <div class="cms-usage-drawer__header">
+        <div>
+          <strong>{{ tr('Impact analysis', 'Analise de impacto') }}</strong>
+          <small>{{ cmsUsageDrawerTarget?.title || tr('Usage details', 'Detalhes de uso') }}</small>
+        </div>
+        <q-btn flat round dense icon="close" class="cms-usage-drawer__close" @click="isCmsUsageDrawerOpen = false" />
+      </div>
+      <q-separator />
+      <div class="cms-usage-drawer__body">
+        <p v-if="cmsUsageDrawerTarget?.subtitle" class="cms-preview-content-text">
+          {{ cmsUsageDrawerTarget.subtitle }}
+        </p>
+        <div class="cms-usage-drawer__summary">
+          <q-chip dense square :style="statusChipStyle">
+            {{ cmsUsageDrawerSummary?.totalReferences ?? 0 }} {{ tr('refs', 'refs') }}
+          </q-chip>
+          <small>
+            {{
+              cmsUsageDrawerTarget
+                ? getCmsEntityUsageSummaryLabel(
+                  cmsUsageDrawerTarget.entityId,
+                  cmsUsageDrawerTarget.kind === 'content-model'
+                    ? cmsEntityUsageIndex.contentModels
+                    : cmsUsageDrawerTarget.kind === 'authored-block-preset'
+                      ? cmsEntityUsageIndex.authoredBlockPresets
+                      : cmsUsageDrawerTarget.kind === 'reusable-block'
+                        ? cmsEntityUsageIndex.reusableBlocks
+                        : cmsEntityUsageIndex.reusableSections
+                )
+                : tr('No engine usage detected', 'Nenhum uso no engine detectado')
+            }}
+          </small>
+        </div>
+        <div v-if="cmsUsageDrawerReferences.length === 0" class="cms-block-item__empty">
+          <strong>{{ tr('No usage references found.', 'Nenhuma referencia de uso encontrada.') }}</strong>
+          <small>{{ tr('This entity can be changed or deleted safely.', 'Esta entidade pode ser alterada ou removida com seguranca.') }}</small>
+        </div>
+        <div v-else class="cms-usage-drawer__references">
+          <article
+            v-for="(reference, referenceIndex) in cmsUsageDrawerReferences"
+            :key="`usage-reference-${reference.source}-${reference.pageId || 'none'}-${reference.sectionId || 'none'}-${reference.blockId || 'none'}-${referenceIndex}`"
+            class="cms-usage-drawer__reference"
+          >
+            <div class="cms-usage-drawer__reference-header">
+              <strong>{{ reference.label }}</strong>
+              <q-chip dense square :style="statusChipStyle">
+                {{ getCmsUsageReferenceSourceLabel(reference) }}
+              </q-chip>
+            </div>
+            <small>{{ reference.description }}</small>
+            <small v-if="reference.pageId || reference.sectionId || reference.blockId">
+              {{
+                [
+                  reference.pageId ? `page:${reference.pageId}` : null,
+                  reference.sectionId ? `section:${reference.sectionId}` : null,
+                  reference.blockId ? `block:${reference.blockId}` : null,
+                ].filter(Boolean).join(' · ')
+              }}
+            </small>
+          </article>
+        </div>
+      </div>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -4081,7 +4273,12 @@ import {
   type CmsContentRepositorySnapshot,
   type CmsReleaseRepositorySnapshot,
 } from '../src/modules/cms/white-label/providers'
-import { collectCmsEntityUsageIndex } from '../src/modules/cms/white-label/usage-explorer'
+import {
+  collectCmsEntityUsageIndex,
+  getCmsEntityUsageSummary,
+  type CmsEntityUsageReference,
+  type CmsEntityUsageTargetKind,
+} from '../src/modules/cms/white-label/usage-explorer'
 import {
   createCmsPageFromTemplate,
   listCmsPageQuickStartOptions,
@@ -4089,6 +4286,11 @@ import {
   resolveCmsPageTemplateId,
   type CmsPageTemplateId,
 } from '../src/modules/cms/white-label/page-templates'
+import {
+  createCmsStarterKitBundle,
+  listCmsStarterKitOptions,
+  type CmsStarterKitId,
+} from '../src/modules/cms/white-label/starter-kits'
 import { resolveCmsPreviewSnapshot } from '../src/modules/cms/white-label/preview'
 import {
   createCmsSnapshotHistoryState,
@@ -4110,7 +4312,7 @@ import {
   scheduleCmsRelease,
   validateCmsReleasePrePublishGate,
   validateCmsRelease,
-} from '@/modules/cms/releases'
+} from '@/modules/cms/releases/orchestration'
 import { createLandingRegistry } from './cms/landing.registry'
 import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
 import {
@@ -5062,6 +5264,14 @@ const authoredBlockPresetDescriptionDraft = ref('')
 const selectedAuthoredBlockPresetId = ref<CmsBlockPresetId>('custom')
 const authoredPresetStarterSectionSelections = ref<CmsSectionPresetId[]>([])
 const selectedMediaAssetId = ref('')
+interface CmsUsageDrawerTarget {
+  kind: CmsEntityUsageTargetKind
+  entityId: string
+  title: string
+  subtitle: string
+}
+const isCmsUsageDrawerOpen = ref(false)
+const cmsUsageDrawerTarget = ref<CmsUsageDrawerTarget | null>(null)
 const draggedBlock = ref<CmsDraggedBlock | null>(null)
 const blockDropTargetKey = ref('')
 const mediaAssetDraft = ref<CmsMediaAssetDraft>({
@@ -5089,8 +5299,27 @@ const cmsPageQuickStartOptions = computed(() => {
     settings.value.authoredContentModels
   )
 })
+const cmsStarterKitOptions = computed(() => {
+  return listCmsStarterKitOptions(
+    settings.value.content.locale,
+    settings.value.authoredContentModels
+  )
+})
 const normalizedCmsBuilderSearch = computed(() => normalizeCmsBuilderSearchValue(searchQuery.value))
 const hasCmsBuilderSearch = computed(() => normalizedCmsBuilderSearch.value.length > 0)
+const filteredCmsStarterKitOptions = computed(() => {
+  if (!hasCmsBuilderSearch.value) {
+    return cmsStarterKitOptions.value
+  }
+
+  return cmsStarterKitOptions.value.filter(option => matchesCmsBuilderSearch(
+    normalizedCmsBuilderSearch.value,
+    option.label,
+    option.description,
+    option.templateLabel,
+    option.contentModelLabel,
+  ))
+})
 const filteredCmsPageQuickStartOptions = computed(() => {
   if (!hasCmsBuilderSearch.value) {
     return cmsPageQuickStartOptions.value
@@ -8901,6 +9130,17 @@ const cmsEntityUsageIndex = computed(() => collectCmsEntityUsageIndex({
   reusableSections: settings.value.reusableSections,
 }))
 
+const cmsUsageDrawerSummary = computed(() => {
+  const target = cmsUsageDrawerTarget.value
+  if (!target) {
+    return null
+  }
+
+  return getCmsEntityUsageSummary(cmsEntityUsageIndex.value, target.kind, target.entityId)
+})
+
+const cmsUsageDrawerReferences = computed(() => cmsUsageDrawerSummary.value?.references ?? [])
+
 const cmsAuthoredContentModelUsageCountById = computed(() => {
   const counts = new Map<string, number>()
   for (const [contentModelId, summary] of cmsEntityUsageIndex.value.contentModels.entries()) {
@@ -9030,6 +9270,21 @@ const cmsBuilderCommandOptions = computed<CmsBuilderCommandOption[]>(() => {
         value: `pages:quick-start:${quickStart.value}`,
         description: quickStart.description,
       })
+    }
+
+    for (const starterKit of filteredCmsStarterKitOptions.value.slice(0, 4)) {
+      options.push(
+        {
+          label: `${tr('Starter kit', 'Starter kit')}: ${starterKit.label}`,
+          value: `pages:starter-kit:${starterKit.value}`,
+          description: starterKit.description,
+        },
+        {
+          label: `${tr('Starter kit + open blocks', 'Starter kit + abrir blocos')}: ${starterKit.label}`,
+          value: `pages:starter-kit-open:${starterKit.value}`,
+          description: starterKit.description,
+        },
+      )
     }
 
     for (const { page } of filteredCmsPageRows.value.slice(0, 4)) {
@@ -9509,6 +9764,37 @@ function getCmsReusableSectionUsageCount(reusableSectionId: string): number {
  */
 function getCmsReusableSectionUsageSummaryLabel(reusableSectionId: string): string {
   return getCmsEntityUsageSummaryLabel(reusableSectionId, cmsEntityUsageIndex.value.reusableSections)
+}
+
+/**
+ * Opens the shared usage drawer for one reusable/content-model entity.
+ */
+function openCmsUsageDrawer(kind: CmsEntityUsageTargetKind, entityId: string, title: string, subtitle = ''): void {
+  cmsUsageDrawerTarget.value = {
+    kind,
+    entityId,
+    title: title.trim(),
+    subtitle: subtitle.trim(),
+  }
+  isCmsUsageDrawerOpen.value = true
+}
+
+/**
+ * Returns a readable localized label for one usage reference source.
+ */
+function getCmsUsageReferenceSourceLabel(reference: CmsEntityUsageReference): string {
+  switch (reference.source) {
+    case 'page':
+      return tr('Page', 'Pagina')
+    case 'reusable-section':
+      return tr('Reusable section', 'Secao reutilizavel')
+    case 'reusable-block':
+      return tr('Reusable block', 'Bloco reutilizavel')
+    case 'authored-block-preset':
+      return tr('Authored preset', 'Preset authored')
+    default:
+      return tr('Unknown source', 'Origem desconhecida')
+  }
 }
 
 const selectedReusableBlock = computed<CmsReusableBlockSettings | null>(() => {
@@ -10996,6 +11282,14 @@ function executeSelectedBuilderCommand(): void {
     }
     if (action === 'quick-start') {
       runCmsPageQuickStart(resolveCmsPageTemplateId(payload))
+      return
+    }
+    if (action === 'starter-kit') {
+      runCmsStarterKit(payload as CmsStarterKitId)
+      return
+    }
+    if (action === 'starter-kit-open') {
+      runCmsStarterKit(payload as CmsStarterKitId, true)
       return
     }
 
@@ -13921,6 +14215,59 @@ function runCmsPageQuickStart(templateId: CmsPageTemplateId, openBlocksAfterCrea
 }
 
 /**
+ * Installs one higher-level starter kit by composing page templates and reusable libraries.
+ */
+function runCmsStarterKit(starterKitId: CmsStarterKitId, openBlocksAfterCreate = false): void {
+  const bundle = createCmsStarterKitBundle({
+    kitId: starterKitId,
+    settings: {
+      pages: settings.value.pages,
+      reusableSections: settings.value.reusableSections,
+      reusableBlocks: settings.value.reusableBlocks,
+      authoredBlockPresets: settings.value.authoredBlockPresets,
+      authoredContentModelFieldPresets: settings.value.authoredContentModelFieldPresets,
+      authoredContentModels: settings.value.authoredContentModels,
+    },
+    localeInput: settings.value.content.locale,
+  })
+
+  settings.value.pages.push(bundle.page)
+  settings.value.reusableSections = [...bundle.reusableSections, ...settings.value.reusableSections]
+  settings.value.reusableBlocks = [...bundle.reusableBlocks, ...settings.value.reusableBlocks]
+  settings.value.authoredBlockPresets = [...bundle.authoredBlockPresets, ...settings.value.authoredBlockPresets]
+  settings.value.authoredContentModelFieldPresets = [
+    ...bundle.authoredContentModelFieldPresets,
+    ...settings.value.authoredContentModelFieldPresets,
+  ]
+
+  const pageIndex = settings.value.pages.length - 1
+  const defaultPresetId = getDefaultCmsSectionPresetId(
+    bundle.page.contentModelId,
+    settings.value.authoredContentModels
+  )
+  setSelectedSectionPresetForPage(pageIndex, defaultPresetId)
+  setSelectedSectionStarterPresetForPage(
+    pageIndex,
+    getDefaultCmsBlockPresetIdForSectionPreset(defaultPresetId)
+  )
+  selectedPageTemplateId.value = bundle.templateId
+
+  savedAtLabel.value = `${tr('Starter kit installed at', 'Starter kit instalado as')} ${new Date().toLocaleTimeString()}`
+
+  if (!openBlocksAfterCreate) {
+    return
+  }
+
+  const firstSection = bundle.page.sections.find(section => section.enabled) ?? bundle.page.sections[0]
+  if (!firstSection) {
+    return
+  }
+
+  openPageInBlocksEditor(bundle.page.id, firstSection.id)
+  savedAtLabel.value = `${tr('Starter kit opened in Blocks at', 'Starter kit aberto em Blocos as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
  * Handles remove cms page.
  */
 function removeCmsPage(pageIndex: number): void {
@@ -14589,6 +14936,66 @@ function resetToDefaults(): void {
   display: inline-flex;
   flex-wrap: wrap;
   gap: var(--ntk-cms-space-xs);
+}
+
+.cms-usage-drawer {
+  width: min(30rem, 92vw);
+  max-width: 92vw;
+  max-height: 100vh;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cms-usage-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-md);
+}
+
+.cms-usage-drawer__header small {
+  display: block;
+  margin-top: calc(var(--ntk-cms-space-xs) / 2);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-usage-drawer__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+  padding: var(--ntk-cms-space-md);
+  overflow: auto;
+}
+
+.cms-usage-drawer__summary {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+}
+
+.cms-usage-drawer__references {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-usage-drawer__reference {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+  padding: var(--ntk-cms-space-md);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+}
+
+.cms-usage-drawer__reference-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
 }
 
 .cms-pages__preview {

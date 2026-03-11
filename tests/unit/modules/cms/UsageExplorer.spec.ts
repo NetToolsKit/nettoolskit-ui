@@ -3,7 +3,10 @@
  */
 import { describe, expect, it } from 'vitest'
 import { createDefaultWhiteLabelSettings } from '../../../../src/modules/cms/white-label/config'
-import { collectCmsEntityUsageIndex } from '../../../../src/modules/cms/white-label/usage-explorer'
+import {
+  collectCmsEntityUsageIndex,
+  getCmsEntityUsageSummary,
+} from '../../../../src/modules/cms/white-label/usage-explorer'
 
 describe('white-label.usage-explorer', () => {
   it('tracks authored content-model usage across pages and reusable sections', () => {
@@ -178,5 +181,56 @@ describe('white-label.usage-explorer', () => {
       pageReferences: 1,
       totalReferences: 1,
     })
+  })
+
+  it('resolves summaries by target kind through the shared usage helper', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    settings.reusableBlocks = [
+      {
+        id: 'reusable-hero',
+        name: 'Reusable hero',
+        description: 'Reusable hero block',
+        category: 'hero',
+        type: 'landing.hero',
+        props: {},
+      },
+    ]
+    settings.pages = [
+      {
+        ...settings.pages[0]!,
+        id: 'landing-page-1',
+        title: 'Landing page 1',
+        path: '/landing-1',
+        sections: [
+          {
+            id: 'hero-1',
+            presetId: 'hero',
+            label: 'Hero',
+            enabled: true,
+            blocks: [
+              {
+                id: 'page-linked-block',
+                type: 'landing.hero',
+                enabled: true,
+                reusableMode: 'linked',
+                reusableSourceId: 'reusable-hero',
+                props: {},
+              },
+            ],
+          },
+        ],
+      },
+    ]
+
+    const usageIndex = collectCmsEntityUsageIndex(settings)
+    const summary = getCmsEntityUsageSummary(usageIndex, 'reusable-block', 'reusable-hero')
+
+    expect(summary).not.toBeNull()
+    expect(summary).toMatchObject({
+      entityId: 'reusable-hero',
+      pageReferences: 1,
+      totalReferences: 1,
+    })
+    expect(getCmsEntityUsageSummary(usageIndex, 'reusable-section', 'missing-id')).toBeNull()
   })
 })
