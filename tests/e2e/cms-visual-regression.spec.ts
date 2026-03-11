@@ -8,6 +8,8 @@
 import { expect, test, type Page } from '@playwright/test'
 
 const CMS_URL = '/?cms=1'
+const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
+const CMS_DRAFT_RECOVERY_STORAGE_KEY = 'ntk.cms.whiteLabel.recovery.v1'
 const VISUAL_BASELINE_PLATFORM = process.platform === 'win32'
 
 /**
@@ -92,6 +94,66 @@ async function selectThemePreset(page: Page, presetName: string): Promise<void> 
 }
 
 /**
+ * Resolves one CMS input by its visible field label.
+ */
+function cmsInputByLabel(page: Page, label: string) {
+  return page
+    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+    .first()
+    .locator('input, textarea')
+    .first()
+}
+
+/**
+ * Forces one Quasar text control value when actionability is unstable.
+ */
+async function fillTextInputDirect(input: ReturnType<typeof cmsInputByLabel>, value: string): Promise<void> {
+  await input.scrollIntoViewIfNeeded()
+  await input.evaluate((element, nextValue) => {
+    const target = element as HTMLInputElement | HTMLTextAreaElement
+    const prototype = target instanceof HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, 'value')
+
+    descriptor?.set?.call(target, String(nextValue))
+    target.dispatchEvent(new Event('input', { bubbles: true }))
+    target.dispatchEvent(new Event('change', { bubbles: true }))
+    target.blur()
+  }, value)
+}
+
+/**
+ * Waits until one autosave snapshot contains the expected app name.
+ */
+async function expectDraftRecoverySnapshot(page: Page, expectedAppName: string): Promise<void> {
+  const activeProfileId = await page.evaluate((profilesKey: string) => {
+    const raw = window.localStorage.getItem(profilesKey)
+    if (!raw) {
+      return null
+    }
+
+    const parsed = JSON.parse(raw)
+    return parsed?.activeProfileId ?? null
+  }, CMS_TENANT_PROFILES_STORAGE_KEY)
+
+  expect(activeProfileId).toBeTruthy()
+
+  await expect.poll(async () => page.evaluate(({ recoveryKey, profileId }) => {
+    const raw = window.localStorage.getItem(recoveryKey)
+    if (!raw) {
+      return null
+    }
+
+    const parsed = JSON.parse(raw)
+    return parsed?.entries?.[profileId]?.latest?.settings?.branding?.appName ?? null
+  }, {
+    recoveryKey: CMS_DRAFT_RECOVERY_STORAGE_KEY,
+    profileId: String(activeProfileId),
+  })).toBe(expectedAppName)
+}
+
+/**
  * Publishes one deterministic release so published preview mode has a stable
  * snapshot source.
  */
@@ -116,6 +178,14 @@ async function stabilizeVisualState(page: Page): Promise<void> {
     window.scrollTo(0, 0)
     document.querySelectorAll('.cms-toolbar-card__saved-at, .cms-settings__saved-at').forEach(element => {
       element.textContent = 'Saved at 00:00:00'
+    })
+    document.querySelectorAll('.cms-toolbar-card__autosave .q-chip').forEach(element => {
+      element.textContent = 'Auto-save state'
+    })
+    document.querySelectorAll('.cms-toolbar-card__autosave-meta').forEach((element, index) => {
+      element.textContent = index === 0
+        ? 'Latest auto-save: 00:00:00'
+        : 'Recovery candidate: 00:00:00'
     })
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
@@ -191,6 +261,81 @@ test.describe('CMS engine visual regression', () => {
     await stabilizeVisualState(page)
     await expect(page.locator('.cms-blocks__preview').first()).toHaveScreenshot(
       'cms-engine-blocks-preview-published-mobile-ptbr.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 3 content-model authoring surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 2200 })
+    await page.goto(CMS_URL)
+    await openSettingsModule(page)
+    await openSettingsTab(page, /content/i)
+
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), 'Campaign schema visual')
+    await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Phase 3 schema authoring regression')
+    await fillTextInputDirect(cmsInputByLabel(page, 'Migration notes'), 'Phase 3 baseline')
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).last().locator('input, textarea').first(),
+      'campaignHeadline'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).last().locator('input, textarea').first(),
+      'Campaign headline'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field group' }) }).last().locator('input, textarea').first(),
+      'Campaign'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field order' }) }).last().locator('input, textarea').first(),
+      '1'
+    )
+    await fillTextInputDirect(
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).last().locator('input, textarea').first(),
+      'Launch campaign headline'
+    )
+    await page.getByRole('button', { name: /^(Save as preset|Salvar como preset)$/ }).first().click()
+    await expect(page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: 'Campaign headline' }).first()).toBeVisible()
+
+    await stabilizeVisualState(page)
+    await expect(
+      page.locator('.cms-config-section', {
+        has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteudo)$/ }),
+      }).first()
+    ).toHaveScreenshot('cms-engine-phase3-content-model-authoring.png', { caret: 'hide' })
+  })
+
+  test('captures phase 3 pages quick-start and command surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1200 })
+    await page.goto(CMS_URL)
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
+
+    await selectOptionByFieldLabel(page, 'Quick command', 'Create and open blocks')
+    await page.getByRole('textbox', { name: 'Search modules' }).fill('landing')
+
+    await stabilizeVisualState(page)
+    await expect(page).toHaveScreenshot('cms-engine-phase3-pages-quickstart-command-surface.png', { caret: 'hide' })
+  })
+
+  test('captures phase 3 autosave recovery toolbar state', async ({ page }) => {
+    const recoveredName = 'Recovered Visual Tenant'
+
+    await page.setViewportSize({ width: 1600, height: 1200 })
+    await page.goto(CMS_URL)
+    await openSettingsModule(page)
+
+    await fillTextInputDirect(cmsInputByLabel(page, 'Product name'), recoveredName)
+    await expectDraftRecoverySnapshot(page, recoveredName)
+
+    await page.getByRole('button', { name: /^(Reset tenant settings to defaults|Resetar configuracoes do tenant para o padrao)$/ }).first().click()
+    await expect(page.getByRole('button', { name: /^(Restore auto-save|Restaurar auto-save)$/ }).first()).toBeEnabled()
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-toolbar-card').first()).toHaveScreenshot(
+      'cms-engine-phase3-settings-autosave-recovery-toolbar.png',
       { caret: 'hide' }
     )
   })

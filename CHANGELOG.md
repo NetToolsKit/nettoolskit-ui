@@ -38,6 +38,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added tenant-scoped draft recovery snapshots with `latest` and `previous` autosave checkpoints so destructive authoring actions can recover the last distinct draft state without backend support.
   - Added auto-save status diagnostics plus `Restore auto-save` / `Discard auto-save` controls to the CMS Settings toolbar, keeping long authoring sessions safer for backend-oriented users.
   - Added focused unit coverage for recovery snapshot rotation and a Playwright regression that restores the last auto-saved tenant branding draft after a reset-to-defaults action.
+- **Phase 3 regression and quality hardening for CMS authoring**
+  - Expanded the Playwright visual regression suite with phase-3 authoring surfaces covering content-model schema authoring, Pages quick-start plus command flows, and the draft-recovery toolbar state.
+  - Regenerated deterministic Windows visual baselines for the updated Settings shell after the autosave toolbar changes, keeping the existing visual gate aligned with the current authoring UI.
+  - Hardened functional E2E coverage by stabilizing drag-and-drop target positions in the page/block reorder flow and by uploading Playwright artifacts when the Linux E2E job fails in CI.
 - **Engine-level visual regression and release-quality gates**
   - Added a dedicated Playwright visual regression suite for the CMS engine covering light, dark and monochrome settings shells plus published preview states in `Pages` and `Blocks`.
   - Added deterministic Windows snapshot baselines so the visual contract is protected without cross-platform rendering noise from the Linux functional E2E job.

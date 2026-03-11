@@ -1790,7 +1790,9 @@ test.describe('CMS settings white-label flow', () => {
       .locator('.cms-page-section-row', { has: page.locator('input[value="header"]') })
       .first()
 
-    await footerSectionRow.dragTo(headerSectionRow)
+    await footerSectionRow.dragTo(headerSectionRow, {
+      targetPosition: { x: 24, y: 8 },
+    })
     await expect(page.locator('.cms-page-section-row').first().locator('input').first()).toHaveValue('footer')
 
     await page
@@ -1811,7 +1813,9 @@ test.describe('CMS settings white-label flow', () => {
       .first()
     const draggedBlockId = await heroSection.locator('.cms-block-row__meta small').first().innerText()
 
-    await heroBlockRow.dragTo(featuresSection)
+    await heroBlockRow.dragTo(featuresSection, {
+      targetPosition: { x: 24, y: 8 },
+    })
 
     await expect(featuresSection.locator('.cms-block-row', { hasText: 'landing.hero' })).toHaveCount(1)
     await expect(featuresSection.locator('.cms-block-row__meta small', { hasText: draggedBlockId })).toHaveCount(1)
