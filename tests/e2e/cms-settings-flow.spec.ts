@@ -2730,9 +2730,14 @@ test.describe('CMS settings white-label flow', () => {
 
   test('supports draft vs published preview with viewport and locale controls', async ({ page }) => {
     await page.goto('/?cms=1')
-    await openDrawerModule(page, /^Blocks$/)
+    await openDrawerModule(page, /^Pages$/)
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
 
-    const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    const heroSection = page
+      .locator('.cms-block-item', { has: page.locator('.cms-block-item__meta strong', { hasText: 'Hero' }) })
+      .first()
+    const heroRow = heroSection.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await expect(heroRow).toBeVisible()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
 
     const blocksPreview = page.locator('.cms-blocks__preview').first()
@@ -2747,8 +2752,10 @@ test.describe('CMS settings white-label flow', () => {
     await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 
-    await openDrawerModule(page, /^Blocks$/)
-    await page.locator('.cms-block-row', { hasText: 'landing.hero' }).first().locator('.q-btn', { hasText: 'Select' }).first().click()
+    await openDrawerModule(page, /^Pages$/)
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await expect(heroRow).toBeVisible()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
     await fillTextInput(cmsInputByLabel(page, 'Title'), 'Draft preview title')
     await expect(previewCard).toContainText('Draft preview title')
 
@@ -2763,5 +2770,43 @@ test.describe('CMS settings white-label flow', () => {
     await selectOptionByFieldLabel(page, 'Preview viewport', 'Mobile')
     await expect(blocksPreview.locator('.cms-preview-toolbar')).toHaveAttribute('data-cms-preview-viewport', 'mobile')
     await expect(blocksPreview.locator('.cms-runtime-preview__frame').first()).toHaveAttribute('data-preview-viewport', 'mobile')
+  })
+
+  test('surfaces draft vs published review summaries in Pages and Blocks preview', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^Pages$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    const pageTitleInput = firstPage
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(pageTitleInput, 'Landing diff review')
+
+    const pagesPreview = page.locator('.cms-pages__preview').first()
+    await expect(pagesPreview.locator('.cms-review-summary').first()).toContainText('Draft vs published review')
+    await expect(pagesPreview.locator('.cms-review-summary').first()).toContainText('Changes detected')
+    await expect(pagesPreview.locator('.cms-review-summary').first()).toContainText('Landing diff review')
+
+    await firstPage.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    const heroSection = page
+      .locator('.cms-block-item', { has: page.locator('.cms-block-item__meta strong', { hasText: 'Hero' }) })
+      .first()
+    const heroRow = heroSection.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await expect(heroRow).toBeVisible()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+
+    const blocksPreview = page.locator('.cms-blocks__preview').first()
+    await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Draft vs published review')
+    await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Landing diff review')
+    await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Changed')
   })
 })

@@ -2424,6 +2424,65 @@
               </q-banner>
 
               <template v-else>
+                <div v-if="cmsPreviewDraftPublishedDiff" class="cms-review-summary">
+                  <div class="cms-review-summary__header">
+                    <strong>{{ tr('Draft vs published review', 'Revisao rascunho vs publicado') }}</strong>
+                    <div class="cms-page-preview__chips">
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ cmsPreviewDraftPublishedDiff.releaseName }} · {{ cmsPreviewDraftPublishedDiff.releaseEnvironment }}
+                      </q-chip>
+                      <q-chip
+                        dense
+                        square
+                        :style="cmsPreviewDraftPublishedDiff.hasChanges ? getCmsPreviewDiffStatusStyle('changed') : getCmsPreviewDiffStatusStyle('unchanged')"
+                      >
+                        {{
+                          cmsPreviewDraftPublishedDiff.hasChanges
+                            ? tr('Changes detected', 'Mudancas detectadas')
+                            : tr('No changes against published', 'Sem mudancas contra o publicado')
+                        }}
+                      </q-chip>
+                    </div>
+                  </div>
+                  <div class="cms-blocks-summary-grid">
+                    <div class="cms-blocks-summary-card">
+                      <span>{{ tr('Pages changed', 'Paginas alteradas') }}</span>
+                      <strong>{{ getCmsPreviewDiffChangeCount(cmsPreviewDraftPublishedDiff.pageSummary) }}</strong>
+                    </div>
+                    <div class="cms-blocks-summary-card">
+                      <span>{{ tr('Sections changed', 'Secoes alteradas') }}</span>
+                      <strong>{{ getCmsPreviewDiffChangeCount(cmsPreviewDraftPublishedDiff.sectionSummary) }}</strong>
+                    </div>
+                    <div class="cms-blocks-summary-card">
+                      <span>{{ tr('Blocks changed', 'Blocos alterados') }}</span>
+                      <strong>{{ getCmsPreviewDiffChangeCount(cmsPreviewDraftPublishedDiff.blockSummary) }}</strong>
+                    </div>
+                  </div>
+                  <div v-if="cmsPreviewChangedPageDiffs.length > 0" class="cms-review-summary__list">
+                    <article
+                      v-for="pageDiff in cmsPreviewChangedPageDiffs.slice(0, 6)"
+                      :key="`page-review-${pageDiff.pageId}`"
+                      class="cms-review-summary__item"
+                    >
+                      <q-chip dense square :style="getCmsPreviewDiffStatusStyle(pageDiff.status)">
+                        {{ getCmsPreviewDiffStatusLabel(pageDiff.status) }}
+                      </q-chip>
+                      <div class="cms-review-summary__body">
+                        <strong>{{ getCmsPreviewDiffPageLabel(pageDiff) }}</strong>
+                        <small v-if="getCmsPreviewDiffPagePath(pageDiff)">{{ getCmsPreviewDiffPagePath(pageDiff) }}</small>
+                        <small>
+                          {{
+                            tr(
+                              `${pageDiff.sectionSummary.added} sections added · ${pageDiff.sectionSummary.removed} removed · ${pageDiff.sectionSummary.changed} changed · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} block changes`,
+                              `${pageDiff.sectionSummary.added} secoes adicionadas · ${pageDiff.sectionSummary.removed} removidas · ${pageDiff.sectionSummary.changed} alteradas · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} mudancas em blocos`
+                            )
+                          }}
+                        </small>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
                 <article
                   v-for="(page, pageIndex) in cmsPreviewPagesForRender"
                   :key="`preview-${cmsPreviewSource}-${page.id}`"
@@ -2442,6 +2501,14 @@
                       </q-chip>
                       <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
                         {{ page.status }}
+                      </q-chip>
+                      <q-chip
+                        v-if="cmsPreviewPageDiffMap.get(page.id)"
+                        dense
+                        square
+                        :style="getCmsPreviewDiffStatusStyle(cmsPreviewPageDiffMap.get(page.id)?.status ?? 'unchanged')"
+                      >
+                        {{ getCmsPreviewDiffStatusLabel(cmsPreviewPageDiffMap.get(page.id)?.status ?? 'unchanged') }}
                       </q-chip>
                     </div>
                   </div>
@@ -3352,6 +3419,83 @@
                 <div class="cms-blocks-summary-card">
                   <span>{{ tr('Enabled blocks', 'Blocos ativados') }}</span>
                   <strong>{{ cmsPreviewEnabledBlocksCount }}</strong>
+                </div>
+              </div>
+
+              <div v-if="cmsPreviewDraftPublishedDiff" class="cms-review-summary">
+                <div class="cms-review-summary__header">
+                  <strong>{{ tr('Draft vs published review', 'Revisao rascunho vs publicado') }}</strong>
+                  <div class="cms-page-preview__chips">
+                    <q-chip
+                      dense
+                      square
+                      :style="cmsPreviewDraftPublishedDiff.hasChanges ? getCmsPreviewDiffStatusStyle('changed') : getCmsPreviewDiffStatusStyle('unchanged')"
+                    >
+                      {{
+                        cmsPreviewDraftPublishedDiff.hasChanges
+                          ? tr('Changes detected', 'Mudancas detectadas')
+                          : tr('No changes against published', 'Sem mudancas contra o publicado')
+                      }}
+                    </q-chip>
+                  </div>
+                </div>
+                <div class="cms-blocks-summary-grid">
+                  <div class="cms-blocks-summary-card">
+                    <span>{{ tr('Page changes', 'Mudancas na pagina') }}</span>
+                    <strong>{{ activeBlocksPageDiff ? getCmsPreviewDiffChangeCount(activeBlocksPageDiff.sectionSummary) + getCmsPreviewDiffChangeCount(activeBlocksPageDiff.blockSummary) + (activeBlocksPageDiff.status === 'changed' || activeBlocksPageDiff.status === 'added' || activeBlocksPageDiff.status === 'removed' ? 1 : 0) : 0 }}</strong>
+                  </div>
+                  <div class="cms-blocks-summary-card">
+                    <span>{{ tr('Section changes', 'Mudancas na secao') }}</span>
+                    <strong>{{ activeBlocksSectionDiff ? getCmsPreviewDiffChangeCount(activeBlocksSectionDiff.blockSummary) + (activeBlocksSectionDiff.status === 'changed' || activeBlocksSectionDiff.status === 'added' || activeBlocksSectionDiff.status === 'removed' ? 1 : 0) : 0 }}</strong>
+                  </div>
+                  <div class="cms-blocks-summary-card">
+                    <span>{{ tr('Selected block', 'Bloco selecionado') }}</span>
+                    <strong>{{ activeBlocksBlockDiff ? getCmsPreviewDiffStatusLabel(activeBlocksBlockDiff.status) : tr('No block', 'Sem bloco') }}</strong>
+                  </div>
+                </div>
+                <div class="cms-review-summary__list">
+                  <article v-if="activeBlocksPageDiff" class="cms-review-summary__item">
+                    <q-chip dense square :style="getCmsPreviewDiffStatusStyle(activeBlocksPageDiff.status)">
+                      {{ getCmsPreviewDiffStatusLabel(activeBlocksPageDiff.status) }}
+                    </q-chip>
+                    <div class="cms-review-summary__body">
+                      <strong>{{ getCmsPreviewDiffPageLabel(activeBlocksPageDiff) }}</strong>
+                      <small v-if="getCmsPreviewDiffPagePath(activeBlocksPageDiff)">{{ getCmsPreviewDiffPagePath(activeBlocksPageDiff) }}</small>
+                      <small>
+                        {{
+                          tr(
+                            `${activeBlocksPageDiff.sectionSummary.added} sections added · ${activeBlocksPageDiff.sectionSummary.removed} removed · ${activeBlocksPageDiff.sectionSummary.changed} changed`,
+                            `${activeBlocksPageDiff.sectionSummary.added} secoes adicionadas · ${activeBlocksPageDiff.sectionSummary.removed} removidas · ${activeBlocksPageDiff.sectionSummary.changed} alteradas`
+                          )
+                        }}
+                      </small>
+                    </div>
+                  </article>
+                  <article v-if="activeBlocksSectionDiff" class="cms-review-summary__item">
+                    <q-chip dense square :style="getCmsPreviewDiffStatusStyle(activeBlocksSectionDiff.status)">
+                      {{ getCmsPreviewDiffStatusLabel(activeBlocksSectionDiff.status) }}
+                    </q-chip>
+                    <div class="cms-review-summary__body">
+                      <strong>{{ activeBlocksSectionDiff.draftLabel || activeBlocksSectionDiff.publishedLabel || activeBlocksSectionDiff.sectionId }}</strong>
+                      <small>
+                        {{
+                          tr(
+                            `${activeBlocksSectionDiff.blockSummary.added} blocks added · ${activeBlocksSectionDiff.blockSummary.removed} removed · ${activeBlocksSectionDiff.blockSummary.changed} changed`,
+                            `${activeBlocksSectionDiff.blockSummary.added} blocos adicionados · ${activeBlocksSectionDiff.blockSummary.removed} removidos · ${activeBlocksSectionDiff.blockSummary.changed} alterados`
+                          )
+                        }}
+                      </small>
+                    </div>
+                  </article>
+                  <article v-if="activeBlocksBlockDiff" class="cms-review-summary__item">
+                    <q-chip dense square :style="getCmsPreviewDiffStatusStyle(activeBlocksBlockDiff.status)">
+                      {{ getCmsPreviewDiffStatusLabel(activeBlocksBlockDiff.status) }}
+                    </q-chip>
+                    <div class="cms-review-summary__body">
+                      <strong>{{ activeBlocksBlockDiff.draftType || activeBlocksBlockDiff.publishedType || activeBlocksBlockDiff.blockId }}</strong>
+                      <small>{{ activeBlocksBlockDiff.blockId }}</small>
+                    </div>
+                  </article>
                 </div>
               </div>
 
@@ -4333,6 +4477,13 @@ import {
   type CmsStarterKitId,
 } from '../src/modules/cms/white-label/starter-kits'
 import { resolveCmsPreviewSnapshot } from '../src/modules/cms/white-label/preview'
+import {
+  resolveCmsPreviewDraftPublishedDiff,
+  type CmsPreviewBlockDiffSummary,
+  type CmsPreviewDiffStatus,
+  type CmsPreviewPageDiffSummary,
+  type CmsPreviewSectionDiffSummary,
+} from '../src/modules/cms/white-label/preview-diff'
 import {
   createCmsSnapshotHistoryState,
   recordCmsSnapshot,
@@ -8077,6 +8228,82 @@ function getCmsDiagnosticStyle(
   }
 }
 
+/**
+ * Resolves inline chip styles for draft/published review statuses.
+ */
+function getCmsPreviewDiffStatusStyle(status: CmsPreviewDiffStatus): Record<string, string> {
+  if (status === 'added') {
+    return {
+      background: notificationSuccessColor.value,
+      color: notificationSuccessTextColor.value,
+    }
+  }
+
+  if (status === 'removed') {
+    return {
+      background: notificationErrorColor.value,
+      color: notificationErrorTextColor.value,
+    }
+  }
+
+  if (status === 'changed') {
+    return {
+      background: notificationWarningColor.value,
+      color: notificationWarningTextColor.value,
+    }
+  }
+
+  return {
+    background: accentSoftBackground.value,
+    color: accentTextColor.value,
+    border: `${resolvedBorderWidth.value} solid ${notificationInfoColor.value}`,
+  }
+}
+
+/**
+ * Returns a localized label for one draft/published review status.
+ */
+function getCmsPreviewDiffStatusLabel(status: CmsPreviewDiffStatus): string {
+  if (status === 'added') {
+    return tr('Added', 'Adicionada')
+  }
+
+  if (status === 'removed') {
+    return tr('Removed', 'Removida')
+  }
+
+  if (status === 'changed') {
+    return tr('Changed', 'Alterada')
+  }
+
+  return tr('Unchanged', 'Sem mudanca')
+}
+
+/**
+ * Returns the number of effective changes inside one diff summary.
+ */
+function getCmsPreviewDiffChangeCount(summary: {
+  added: number
+  removed: number
+  changed: number
+}): number {
+  return summary.added + summary.removed + summary.changed
+}
+
+/**
+ * Returns the best available page title for one diff entry.
+ */
+function getCmsPreviewDiffPageLabel(page: CmsPreviewPageDiffSummary): string {
+  return page.draftTitle || page.publishedTitle || page.pageId
+}
+
+/**
+ * Returns the best available page path for one diff entry.
+ */
+function getCmsPreviewDiffPagePath(page: CmsPreviewPageDiffSummary): string {
+  return page.draftPath || page.publishedPath || ''
+}
+
 const notificationCounterPreviewStyle = computed(() => ({
   background: notificationBadgeColor.value,
   color: notificationBadgeTextColor.value,
@@ -9427,6 +9654,35 @@ const cmsPreviewSnapshot = computed(() => resolveCmsPreviewSnapshot(settings.val
   selectedReleaseId: selectedReleaseId.value || null,
   activeEnvironment: activeReleaseEnvironment.value,
 }))
+
+const cmsPreviewDraftPublishedDiff = computed(() => resolveCmsPreviewDraftPublishedDiff(settings.value, {
+  selectedReleaseId: selectedReleaseId.value || null,
+  activeEnvironment: activeReleaseEnvironment.value,
+}))
+
+const cmsPreviewChangedPageDiffs = computed(() => {
+  return (cmsPreviewDraftPublishedDiff.value?.pages ?? []).filter(page => page.status !== 'unchanged')
+})
+
+const cmsPreviewPageDiffMap = computed(() => {
+  const map = new Map<string, CmsPreviewPageDiffSummary>()
+  for (const page of cmsPreviewDraftPublishedDiff.value?.pages ?? []) {
+    map.set(page.pageId, page)
+  }
+  return map
+})
+
+const activeBlocksPageDiff = computed(() => {
+  return cmsPreviewPageDiffMap.value.get(activeBlocksPageId.value) ?? null
+})
+
+const activeBlocksSectionDiff = computed<CmsPreviewSectionDiffSummary | null>(() => {
+  return activeBlocksPageDiff.value?.sections.find(section => section.sectionId === activeBlocksSectionId.value) ?? null
+})
+
+const activeBlocksBlockDiff = computed<CmsPreviewBlockDiffSummary | null>(() => {
+  return activeBlocksSectionDiff.value?.blocks.find(block => block.blockId === activeBlocksBlockId.value) ?? null
+})
 
 const cmsPreviewPages = computed<CmsPageSettings[]>(() => {
   return cmsPreviewSnapshot.value?.pages ?? []
@@ -15315,6 +15571,47 @@ function resetToDefaults(): void {
 
 .cms-blocks-summary-card strong {
   color: var(--ntk-cms-text-primary);
+}
+
+.cms-review-summary {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-review-summary__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-review-summary__list {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-review-summary__item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-review-summary__body {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-review-summary__body small {
+  color: var(--ntk-cms-text-secondary);
 }
 
 .cms-diagnostics-list {

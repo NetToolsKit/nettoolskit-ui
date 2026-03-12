@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Draft vs published diff review for Pages and Blocks preview**
+  - Added an engine-level draft/published diff helper that compares page, section and block snapshots against the best available published release without coupling review flows to backend storage.
+  - Surfaced a review summary in both `Pages` and `Blocks`, including change counters, changed-page lists and per-entity status chips so authors can inspect impact before publishing.
+  - Added unit coverage for diff aggregation plus focused Playwright coverage validating the new review surfaces against a published release snapshot.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused unit tests and focused CMS E2E coverage after fixing the preview status styling regression.
 - **Phase 5 regression and quality hardening for starter kits, impact analysis and archive flows**
   - Expanded unit coverage for starter-kit seeding, archived-entity semantics and usage explorer summaries so reusable CMS state remains safe to reason about even when entities are archived but still referenced.
   - Added a focused Playwright regression that installs a starter kit, opens the usage drawer for a seeded reusable block and validates archive/restore behavior in the same authored flow.
