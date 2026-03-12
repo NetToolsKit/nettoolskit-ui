@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Unified release review hub in Releases**
+  - Added an engine-level release review hub helper that aggregates draft-vs-published diff signals, locale coverage gaps and release candidate checklist status into one deterministic summary object.
+  - Surfaced the new review hub in the `Releases` module as a compact authoring summary with three review cards for `Changes`, `Locale coverage` and `Checklist`, reusing the same underlying review sources already used elsewhere in the CMS.
+  - Added focused unit coverage for release review-hub aggregation semantics plus Playwright coverage proving the new surface renders after creating a new release candidate from a changed draft.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused CMS unit coverage and focused Chromium E2E coverage for the unified review surface.
 - **Phase 6 regression and quality hardening for review workflows**
   - Expanded the Playwright visual regression suite with phase-6 coverage for the Releases review surface plus the new Pages and Blocks draft-vs-published review summaries.
   - Stabilized the shared CMS E2E suite by aligning usage-protection expectations with the current archive-first UX and scoping the quick-start search assertions to the dedicated quick-start workflow surface.

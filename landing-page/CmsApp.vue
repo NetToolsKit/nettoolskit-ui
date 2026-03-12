@@ -4179,6 +4179,63 @@
                 </template>
               </q-banner>
 
+              <div
+                v-if="selectedReleaseReviewHub"
+                class="cms-release-review-hub"
+                data-cms-release-review-hub
+              >
+                <div class="cms-release-review-hub__header">
+                  <div class="cms-release-review-hub__copy">
+                    <strong>{{ tr('Unified release review', 'Revisao unificada da release') }}</strong>
+                    <small>{{ tr('Review changes, locale readiness and publish checklist in one place.', 'Revise mudancas, cobertura de locale e checklist de publicacao em um unico lugar.') }}</small>
+                  </div>
+                  <div class="cms-release-review-hub__summary">
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.status)">
+                      {{ getReleaseChecklistStatusLabel(selectedReleaseReviewHub.status) }}
+                    </q-chip>
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.diff.status)">
+                      {{ selectedReleaseReviewHub.diff.changedPages + selectedReleaseReviewHub.diff.changedSections + selectedReleaseReviewHub.diff.changedBlocks }}
+                      {{ tr('change signals', 'sinais de mudanca') }}
+                    </q-chip>
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.locales.status)">
+                      {{ selectedReleaseReviewHub.locales.missingEntries }}
+                      {{ tr('locale gaps', 'lacunas de locale') }}
+                    </q-chip>
+                  </div>
+                </div>
+
+                <div class="cms-release-review-hub__cards">
+                  <article
+                    v-for="card in selectedReleaseReviewHub.cards"
+                    :key="card.id"
+                    class="cms-release-review-hub__card"
+                    :data-cms-review-card="card.id"
+                    :data-cms-review-status="card.status"
+                  >
+                    <div class="cms-release-review-hub__card-header">
+                      <div class="cms-release-review-hub__card-copy">
+                        <strong>{{ getReleaseReviewHubCardLabel(card.id) }}</strong>
+                        <small>{{ getReleaseReviewHubCardDescription(card) }}</small>
+                      </div>
+                      <q-chip dense square :style="getReleaseChecklistStatusStyle(card.status)">
+                        {{ getReleaseChecklistStatusLabel(card.status) }}
+                      </q-chip>
+                    </div>
+
+                    <div class="cms-release-review-hub__metrics">
+                      <span
+                        v-for="metric in card.metrics"
+                        :key="`${card.id}-${metric.id}`"
+                        class="cms-release-review-hub__metric"
+                      >
+                        <strong>{{ metric.value }}</strong>
+                        <small>{{ getReleaseReviewHubMetricLabel(card.id, metric.id) }}</small>
+                      </span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
               <div v-if="selectedReleaseCandidateChecklist" class="cms-release-checklist">
                 <div class="cms-release-checklist__header">
                   <div class="cms-release-checklist__copy">
@@ -4666,6 +4723,10 @@ import {
   type CmsLocaleCoverageStatus,
   type CmsLocaleCoverageSummary,
 } from '../src/modules/cms/white-label/locale-coverage'
+import {
+  createCmsReleaseReviewHubSummary,
+  type CmsReleaseReviewHubCard,
+} from '../src/modules/cms/white-label/review-hub'
 import { createCmsDraftComparisonExportPayload } from '../src/modules/cms/white-label/review-package'
 import {
   createCmsSnapshotHistoryState,
@@ -8945,6 +9006,112 @@ function getReleaseChecklistStatusLabel(status: CmsReleaseCandidateChecklistStat
 }
 
 /**
+ * Resolves localized labels for review-hub cards in Releases.
+ */
+function getReleaseReviewHubCardLabel(cardId: CmsReleaseReviewHubCard['id']): string {
+  switch (cardId) {
+    case 'changes':
+      return tr('Changes', 'Mudancas')
+    case 'locales':
+      return tr('Locale coverage', 'Cobertura de locales')
+    case 'checklist':
+    default:
+      return tr('Checklist', 'Checklist')
+  }
+}
+
+/**
+ * Resolves concise helper copy for one Releases review-hub card.
+ */
+function getReleaseReviewHubCardDescription(card: CmsReleaseReviewHubCard): string {
+  if (!selectedReleaseReviewHub.value) {
+    return ''
+  }
+
+  if (card.id === 'changes') {
+    if (!selectedReleaseReviewHub.value.diff.hasPublishedBaseline) {
+      return tr(
+        'No published baseline exists yet for this environment.',
+        'Ainda nao existe baseline publicada para este ambiente.'
+      )
+    }
+
+    if (!selectedReleaseReviewHub.value.diff.hasChanges) {
+      return tr(
+        'Draft matches the selected published baseline.',
+        'O draft esta igual a baseline publicada selecionada.'
+      )
+    }
+
+    return selectedReleaseReviewHub.value.diff.topChangedPageTitles.join(' · ')
+  }
+
+  if (card.id === 'locales') {
+    if (selectedReleaseReviewHub.value.locales.missingEntries === 0) {
+      return tr(
+        'All reviewed locales have explicit authored coverage.',
+        'Todos os locales revisados possuem cobertura autorada explicita.'
+      )
+    }
+
+    return selectedReleaseReviewHub.value.locales.topMissingEntries
+      .map(entry => `${getCmsLocaleCoverageLocaleLabel(entry.locale)} · ${entry.label} · ${entry.fieldLabel}`)
+      .join(' · ')
+  }
+
+  if (selectedReleaseReviewHub.value.checklist.topIssueMessages.length === 0) {
+    return tr(
+      'No blocking checklist issues remain for this candidate.',
+      'Nao restam problemas bloqueantes no checklist deste candidato.'
+    )
+  }
+
+  return selectedReleaseReviewHub.value.checklist.topIssueMessages.join(' · ')
+}
+
+/**
+ * Resolves metric labels for Releases review-hub cards.
+ */
+function getReleaseReviewHubMetricLabel(
+  cardId: CmsReleaseReviewHubCard['id'],
+  metricId: string
+): string {
+  if (cardId === 'changes') {
+    if (metricId === 'pages') {
+      return tr('Pages', 'Paginas')
+    }
+
+    if (metricId === 'sections') {
+      return tr('Sections', 'Secoes')
+    }
+
+    return tr('Blocks', 'Blocos')
+  }
+
+  if (cardId === 'locales') {
+    if (metricId === 'locales') {
+      return tr('Locales', 'Locales')
+    }
+
+    if (metricId === 'complete') {
+      return tr('Complete', 'Completos')
+    }
+
+    return tr('Missing', 'Faltando')
+  }
+
+  if (metricId === 'ready') {
+    return tr('Ready', 'Prontos')
+  }
+
+  if (metricId === 'warning') {
+    return tr('Review', 'Revisar')
+  }
+
+  return tr('Blocking', 'Bloqueando')
+}
+
+/**
  * Formats ISO dates into datetime-local input values.
  */
 function toDateTimeLocalValue(value: string | null): string {
@@ -10081,6 +10248,18 @@ const cmsPreviewLocaleCoverageMatrix = computed<CmsLocaleCoverageSummary[]>(() =
 
 const cmsPreviewActiveLocaleCoverage = computed<CmsLocaleCoverageSummary | null>(() => {
   return cmsPreviewLocaleCoverageMatrix.value.find(entry => entry.locale === cmsPreviewLocale.value) ?? null
+})
+
+const selectedReleaseReviewHub = computed(() => {
+  if (!selectedRelease.value) {
+    return null
+  }
+
+  return createCmsReleaseReviewHubSummary({
+    diff: cmsPreviewDraftPublishedDiff.value,
+    localeCoverage: cmsPreviewLocaleCoverageMatrix.value,
+    checklist: selectedReleaseCandidateChecklist.value,
+  })
 })
 
 const cmsPreviewChangedPageDiffs = computed(() => {
@@ -16326,6 +16505,94 @@ function resetToDefaults(): void {
   color: var(--ntk-cms-text-secondary);
 }
 
+.cms-release-review-hub {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-review-hub__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-review-hub__copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-review-hub__copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-review-hub__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
+.cms-release-review-hub__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-review-hub__card {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-review-hub__card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-review-hub__card-copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-review-hub__card-copy small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-release-review-hub__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-release-review-hub__metric {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: calc(var(--ntk-cms-space-xs) * 0.9);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 3);
+  background: var(--ntk-cms-bg-card);
+}
+
+.cms-release-review-hub__metric strong {
+  font-size: var(--ntk-cms-font-size-subtitle);
+}
+
+.cms-release-review-hub__metric small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
 .cms-release-checklist__summary {
   display: inline-flex;
   align-items: center;
@@ -16418,6 +16685,23 @@ function resetToDefaults(): void {
 .cms-release-item__empty {
   margin: 0;
   color: var(--ntk-cms-text-secondary);
+}
+
+@media (max-width: 1100px) {
+  .cms-release-review-hub__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .cms-release-review-hub__header {
+    flex-direction: column;
+  }
+
+  .cms-release-review-hub__cards,
+  .cms-release-review-hub__metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .cms-release-calendar-item {

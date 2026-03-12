@@ -2757,6 +2757,44 @@ test.describe('CMS settings white-label flow', () => {
     await expect(checklist).toContainText('Release candidate checklist')
   })
 
+  test('surfaces a unified release review hub in Releases', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^Pages$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    const pageTitleInput = firstPage
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(pageTitleInput, 'Landing release hub')
+
+    await openDrawerModule(page, /^Releases$/)
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    const reviewHub = page.locator('[data-cms-release-review-hub]').first()
+    await expect(reviewHub).toBeVisible()
+    await expect(reviewHub).toContainText('Unified release review')
+
+    const changesCard = reviewHub.locator('[data-cms-review-card="changes"]').first()
+    const localesCard = reviewHub.locator('[data-cms-review-card="locales"]').first()
+    const checklistCard = reviewHub.locator('[data-cms-review-card="checklist"]').first()
+
+    await expect(changesCard).toHaveAttribute('data-cms-review-status', 'warning')
+    await expect(changesCard).toContainText('Landing release hub')
+    await expect(localesCard).toHaveAttribute('data-cms-review-status', 'warning')
+    await expect(checklistCard).toHaveAttribute('data-cms-review-status', 'warning')
+    await expect(checklistCard).toContainText('Checklist')
+  })
+
   test('supports draft vs published preview with viewport and locale controls', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Pages$/)
