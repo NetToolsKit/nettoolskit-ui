@@ -1148,7 +1148,8 @@ test.describe('CMS settings white-label flow', () => {
     await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
     await expect(reusableSectionRow).toContainText('1 uses')
     await expect(reusableSectionRow).toContainText(/1 page refs|1 refs em paginas/i)
-    await expect(reusableSectionRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+    await expect(reusableSectionRow.getByRole('button', { name: /^(Delete|Excluir)$/ })).toHaveCount(0)
+    await expect(reusableSectionRow.getByRole('button', { name: /^(Archive|Arquivar)$/ })).toBeEnabled()
     await reusableSectionRow.getByRole('button', { name: /^(Inspect reusable section usage|Inspecionar uso da secao reutilizavel)$/ }).click()
     await expect(page.locator('.cms-usage-drawer')).toBeVisible()
     await expect(page.locator('.cms-usage-drawer')).toContainText('Main Landing · Hero')
@@ -1172,7 +1173,8 @@ test.describe('CMS settings white-label flow', () => {
     await page.locator('.cms-form-grid.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Apply preset' }).first().click()
     await expect(presetRow).toContainText('1 uses')
     await expect(presetRow).toContainText(/1 page refs|1 refs em paginas/i)
-    await expect(presetRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+    await expect(presetRow.getByRole('button', { name: /^(Delete|Excluir)$/ })).toHaveCount(0)
+    await expect(presetRow.getByRole('button', { name: /^(Archive|Arquivar)$/ })).toBeEnabled()
 
     await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableBlockName)
     await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
@@ -1187,7 +1189,8 @@ test.describe('CMS settings white-label flow', () => {
 
     await expect(reusableBlockRow).toContainText('1 uses')
     await expect(reusableBlockRow).toContainText(/1 page refs|1 refs em paginas/i)
-    await expect(reusableBlockRow.locator('.cms-reusable-block-row__actions .q-btn').last()).toBeDisabled()
+    await expect(reusableBlockRow.getByRole('button', { name: /^(Delete|Excluir)$/ })).toHaveCount(0)
+    await expect(reusableBlockRow.getByRole('button', { name: /^(Archive|Arquivar)$/ })).toBeEnabled()
     await reusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
     await expect(page.locator('.cms-usage-drawer')).toBeVisible()
     await expect(page.locator('.cms-usage-drawer')).toContainText(reusableBlockName)
@@ -2296,8 +2299,12 @@ test.describe('CMS settings white-label flow', () => {
     await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Marketing funnel')
     await fillTextInput(page.getByPlaceholder('Search module').first(), 'funnel')
 
-    await expect(page.locator('.cms-page-quick-start-card')).toHaveCount(1)
-    await expect(page.locator('.cms-page-quick-start-card').first()).toContainText('Marketing funnel')
+    const quickStartSection = page
+      .locator('.cms-pages__quick-starts', { has: page.getByText(/^(Quick-start workflows|Fluxos de quick-start)$/) })
+      .first()
+
+    await expect(quickStartSection.locator('.cms-page-quick-start-card')).toHaveCount(1)
+    await expect(quickStartSection.locator('.cms-page-quick-start-card').first()).toContainText('Marketing funnel')
     await expect(page.locator('.cms-page-item')).toHaveCount(0)
 
     await selectOptionByFieldLabelPattern(page, /^(Quick command|Comando rapido)$/, 'Create and open blocks')

@@ -541,4 +541,72 @@ test.describe('CMS engine visual regression', () => {
       { caret: 'hide' }
     )
   })
+
+  test('captures phase 6 releases review surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await publishRelease(page)
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    await fillTextInputDirect(
+      firstPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first(),
+      'Phase 6 release review'
+    )
+
+    await openDrawerModule(page, /^Releases$/)
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    await stabilizeVisualState(page)
+    await expect(releasesEditor).toHaveScreenshot(
+      'cms-engine-phase6-releases-review-surface.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 6 pages review summary surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await publishRelease(page)
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    await fillTextInputDirect(
+      firstPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first(),
+      'Phase 6 pages review'
+    )
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-pages__preview').first()).toHaveScreenshot(
+      'cms-engine-phase6-pages-review-summary.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 6 blocks review summary surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await publishRelease(page)
+
+    await openDrawerModule(page, /^Blocks$/)
+    const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
+    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await fillTextInputDirect(cmsInputByLabel(page, 'Title'), 'Phase 6 blocks review')
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-blocks__preview').first()).toHaveScreenshot(
+      'cms-engine-phase6-blocks-review-summary.png',
+      { caret: 'hide' }
+    )
+  })
 })

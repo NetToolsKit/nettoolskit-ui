@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 6 regression and quality hardening for review workflows**
+  - Expanded the Playwright visual regression suite with phase-6 coverage for the Releases review surface plus the new Pages and Blocks draft-vs-published review summaries.
+  - Stabilized the shared CMS E2E suite by aligning usage-protection expectations with the current archive-first UX and scoping the quick-start search assertions to the dedicated quick-start workflow surface.
+  - Regenerated the affected Windows visual baselines for the published preview surfaces and the quick-start command surface after the accumulated builder changes from phases 3 through 6.
+  - Revalidated `npm audit --omit=dev`, `type-check`, `lint`, `build:landing`, the full Chromium E2E suite (`57 passed`) and the full visual regression suite (`17 passed`) to close Phase 6 with no remaining active roadmap items.
 - **Draft comparison export package for release review**
   - Added a versioned review-package payload that combines draft-vs-published diff results, locale coverage and the release candidate checklist into one exportable JSON artifact.
   - Added a new `Releases` action to export the current review package directly from the CMS authoring surface without coupling the flow to any backend.
