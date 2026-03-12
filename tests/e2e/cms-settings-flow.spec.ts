@@ -2831,4 +2831,33 @@ test.describe('CMS settings white-label flow', () => {
     await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Landing diff review')
     await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Changed')
   })
+
+  test('surfaces locale coverage matrix in Pages and Blocks preview', async ({ page }) => {
+    await page.goto('/?cms=1')
+
+    await openDrawerModule(page, /^Pages$/)
+    const pagesPreview = page.locator('.cms-pages__preview').first()
+    const pagesLocaleCoverage = pagesPreview.locator('.cms-review-summary--locale').first()
+
+    await expect(pagesLocaleCoverage).toBeVisible()
+    await expect(pagesLocaleCoverage).toContainText('Locale coverage matrix')
+    await expect(pagesLocaleCoverage).toContainText('EN')
+    await expect(pagesLocaleCoverage).toContainText('PT-BR')
+    await expect(pagesLocaleCoverage).toContainText('Pages')
+    await expect(pagesLocaleCoverage).toContainText('Fields')
+    await expect(pagesLocaleCoverage).toContainText('Reusable content')
+
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+
+    const blocksPreview = page.locator('.cms-blocks__preview').first()
+    const blocksLocaleCoverage = blocksPreview.locator('.cms-review-summary--locale').first()
+
+    await expect(blocksLocaleCoverage).toBeVisible()
+    await expect(blocksLocaleCoverage).toContainText('Locale coverage matrix')
+    await expect(blocksLocaleCoverage).toContainText('EN')
+    await expect(blocksLocaleCoverage).toContainText('PT-BR')
+    await expect(blocksLocaleCoverage).toContainText('Pages')
+    await expect(blocksLocaleCoverage).toContainText('Fields')
+    await expect(blocksLocaleCoverage).toContainText('Reusable content')
+  })
 })

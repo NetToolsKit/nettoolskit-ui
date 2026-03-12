@@ -2483,6 +2483,66 @@
                   </div>
                 </div>
 
+                <div v-if="cmsPreviewLocaleCoverageMatrix.length > 0" class="cms-review-summary cms-review-summary--locale">
+                  <div class="cms-review-summary__header">
+                    <strong>{{ tr('Locale coverage matrix', 'Matriz de cobertura por locale') }}</strong>
+                    <div class="cms-page-preview__chips">
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ tr('Active preview', 'Preview ativo') }} · {{ getCmsLocaleCoverageLocaleLabel(cmsPreviewLocale) }}
+                      </q-chip>
+                      <q-chip
+                        v-if="cmsPreviewActiveLocaleCoverage"
+                        dense
+                        square
+                        :style="getCmsLocaleCoverageStatusStyle(cmsPreviewActiveLocaleCoverage.status)"
+                      >
+                        {{ getCmsLocaleCoverageSummaryLabel(cmsPreviewActiveLocaleCoverage) }}
+                      </q-chip>
+                    </div>
+                  </div>
+                  <div class="cms-locale-coverage-grid">
+                    <article
+                      v-for="summary in cmsPreviewLocaleCoverageMatrix"
+                      :key="`pages-locale-coverage-${summary.locale}`"
+                      class="cms-locale-coverage-card"
+                    >
+                      <div class="cms-locale-coverage-card__header">
+                        <q-chip dense square :style="statusChipStyle">{{ getCmsLocaleCoverageLocaleLabel(summary.locale) }}</q-chip>
+                        <q-chip dense square :style="getCmsLocaleCoverageStatusStyle(summary.status)">
+                          {{ getCmsLocaleCoverageStatusLabel(summary.status) }}
+                        </q-chip>
+                      </div>
+                      <small>{{ getCmsLocaleCoverageSummaryLabel(summary) }}</small>
+                      <div class="cms-blocks-summary-grid">
+                        <div
+                          v-for="category in cmsLocaleCoverageCategories"
+                          :key="`pages-locale-category-${summary.locale}-${category}`"
+                          class="cms-blocks-summary-card"
+                        >
+                          <span>{{ getCmsLocaleCoverageCategoryLabel(category) }}</span>
+                          <strong>{{ summary.categories[category].covered }} / {{ summary.categories[category].total }}</strong>
+                          <small>{{ summary.categories[category].percentage }}%</small>
+                        </div>
+                      </div>
+                      <div v-if="summary.missingEntries.length > 0" class="cms-review-summary__list">
+                        <article
+                          v-for="entry in summary.missingEntries.slice(0, 4)"
+                          :key="entry.id"
+                          class="cms-review-summary__item"
+                        >
+                          <q-chip dense square :style="getCmsLocaleCoverageStatusStyle('empty')">
+                            {{ getCmsLocaleCoverageCategoryLabel(entry.category) }}
+                          </q-chip>
+                          <div class="cms-review-summary__body">
+                            <strong>{{ entry.label }}</strong>
+                            <small>{{ entry.fieldLabel }}</small>
+                          </div>
+                        </article>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
                 <article
                   v-for="(page, pageIndex) in cmsPreviewPagesForRender"
                   :key="`preview-${cmsPreviewSource}-${page.id}`"
@@ -3494,6 +3554,66 @@
                     <div class="cms-review-summary__body">
                       <strong>{{ activeBlocksBlockDiff.draftType || activeBlocksBlockDiff.publishedType || activeBlocksBlockDiff.blockId }}</strong>
                       <small>{{ activeBlocksBlockDiff.blockId }}</small>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div v-if="cmsPreviewLocaleCoverageMatrix.length > 0" class="cms-review-summary cms-review-summary--locale">
+                <div class="cms-review-summary__header">
+                  <strong>{{ tr('Locale coverage matrix', 'Matriz de cobertura por locale') }}</strong>
+                  <div class="cms-page-preview__chips">
+                    <q-chip dense square :style="statusChipStyle">
+                      {{ tr('Active preview', 'Preview ativo') }} · {{ getCmsLocaleCoverageLocaleLabel(cmsPreviewLocale) }}
+                    </q-chip>
+                    <q-chip
+                      v-if="cmsPreviewActiveLocaleCoverage"
+                      dense
+                      square
+                      :style="getCmsLocaleCoverageStatusStyle(cmsPreviewActiveLocaleCoverage.status)"
+                    >
+                      {{ getCmsLocaleCoverageSummaryLabel(cmsPreviewActiveLocaleCoverage) }}
+                    </q-chip>
+                  </div>
+                </div>
+                <div class="cms-locale-coverage-grid">
+                  <article
+                    v-for="summary in cmsPreviewLocaleCoverageMatrix"
+                    :key="`blocks-locale-coverage-${summary.locale}`"
+                    class="cms-locale-coverage-card"
+                  >
+                    <div class="cms-locale-coverage-card__header">
+                      <q-chip dense square :style="statusChipStyle">{{ getCmsLocaleCoverageLocaleLabel(summary.locale) }}</q-chip>
+                      <q-chip dense square :style="getCmsLocaleCoverageStatusStyle(summary.status)">
+                        {{ getCmsLocaleCoverageStatusLabel(summary.status) }}
+                      </q-chip>
+                    </div>
+                    <small>{{ getCmsLocaleCoverageSummaryLabel(summary) }}</small>
+                    <div class="cms-blocks-summary-grid">
+                      <div
+                        v-for="category in cmsLocaleCoverageCategories"
+                        :key="`blocks-locale-category-${summary.locale}-${category}`"
+                        class="cms-blocks-summary-card"
+                      >
+                        <span>{{ getCmsLocaleCoverageCategoryLabel(category) }}</span>
+                        <strong>{{ summary.categories[category].covered }} / {{ summary.categories[category].total }}</strong>
+                        <small>{{ summary.categories[category].percentage }}%</small>
+                      </div>
+                    </div>
+                    <div v-if="summary.missingEntries.length > 0" class="cms-review-summary__list">
+                      <article
+                        v-for="entry in summary.missingEntries.slice(0, 4)"
+                        :key="entry.id"
+                        class="cms-review-summary__item"
+                      >
+                        <q-chip dense square :style="getCmsLocaleCoverageStatusStyle('empty')">
+                          {{ getCmsLocaleCoverageCategoryLabel(entry.category) }}
+                        </q-chip>
+                        <div class="cms-review-summary__body">
+                          <strong>{{ entry.label }}</strong>
+                          <small>{{ entry.fieldLabel }}</small>
+                        </div>
+                      </article>
                     </div>
                   </article>
                 </div>
@@ -4530,6 +4650,13 @@ import {
   type CmsPreviewPageDiffSummary,
   type CmsPreviewSectionDiffSummary,
 } from '../src/modules/cms/white-label/preview-diff'
+import {
+  resolveCmsLocaleCoverageMatrix,
+  type CmsLocaleCoverageCategory,
+  type CmsLocaleCoverageCategorySummary,
+  type CmsLocaleCoverageStatus,
+  type CmsLocaleCoverageSummary,
+} from '../src/modules/cms/white-label/locale-coverage'
 import {
   createCmsSnapshotHistoryState,
   recordCmsSnapshot,
@@ -5718,6 +5845,7 @@ const cmsPreviewViewportOptions = computed(() => ([
   { label: tr('Tablet', 'Tablet'), value: 'tablet' },
   { label: tr('Mobile', 'Mobile'), value: 'mobile' },
 ]))
+const cmsLocaleCoverageCategories: CmsLocaleCoverageCategory[] = ['pages', 'fields', 'reusable-content']
 const cmsMediaAssetKindOptions = computed(() => ([
   { label: tr('Image', 'Imagem'), value: 'image' },
   { label: tr('Video', 'Video'), value: 'video' },
@@ -8354,6 +8482,78 @@ function getCmsPreviewDiffPagePath(page: CmsPreviewPageDiffSummary): string {
   return page.draftPath || page.publishedPath || ''
 }
 
+function getCmsLocaleCoverageStatusStyle(status: CmsLocaleCoverageStatus): Record<string, string> {
+  if (status === 'complete') {
+    return {
+      background: notificationSuccessColor.value,
+      color: notificationSuccessTextColor.value,
+    }
+  }
+
+  if (status === 'partial') {
+    return {
+      background: notificationWarningColor.value,
+      color: notificationWarningTextColor.value,
+    }
+  }
+
+  if (status === 'empty') {
+    return {
+      background: notificationErrorColor.value,
+      color: notificationErrorTextColor.value,
+    }
+  }
+
+  return {
+    background: accentSoftBackground.value,
+    color: accentTextColor.value,
+    border: `${resolvedBorderWidth.value} solid ${notificationInfoColor.value}`,
+  }
+}
+
+function getCmsLocaleCoverageStatusLabel(status: CmsLocaleCoverageStatus): string {
+  if (status === 'complete') {
+    return tr('Complete', 'Completo')
+  }
+
+  if (status === 'partial') {
+    return tr('Partial', 'Parcial')
+  }
+
+  if (status === 'empty') {
+    return tr('Missing', 'Faltando')
+  }
+
+  return tr('N/A', 'N/A')
+}
+
+function getCmsLocaleCoverageCategoryLabel(category: CmsLocaleCoverageCategory): string {
+  if (category === 'pages') {
+    return tr('Pages', 'Paginas')
+  }
+
+  if (category === 'fields') {
+    return tr('Fields', 'Campos')
+  }
+
+  return tr('Reusable content', 'Conteudo reutilizavel')
+}
+
+function getCmsLocaleCoverageLocaleLabel(locale: CmsLocale): string {
+  return locale === 'pt-BR' ? 'PT-BR' : 'EN'
+}
+
+function getCmsLocaleCoverageSummaryLabel(summary: CmsLocaleCoverageSummary | null): string {
+  if (!summary) {
+    return tr('No locale coverage available.', 'Nenhuma cobertura de locale disponivel.')
+  }
+
+  return tr(
+    `${summary.covered} of ${summary.total} items covered`,
+    `${summary.covered} de ${summary.total} itens cobertos`
+  )
+}
+
 const notificationCounterPreviewStyle = computed(() => ({
   background: notificationBadgeColor.value,
   color: notificationBadgeTextColor.value,
@@ -9857,6 +10057,14 @@ const cmsPreviewDraftPublishedDiff = computed(() => resolveCmsPreviewDraftPublis
   selectedReleaseId: selectedReleaseId.value || null,
   activeEnvironment: activeReleaseEnvironment.value,
 }))
+
+const cmsPreviewLocaleCoverageMatrix = computed<CmsLocaleCoverageSummary[]>(() => {
+  return resolveCmsLocaleCoverageMatrix(cmsPreviewSnapshot.value)
+})
+
+const cmsPreviewActiveLocaleCoverage = computed<CmsLocaleCoverageSummary | null>(() => {
+  return cmsPreviewLocaleCoverageMatrix.value.find(entry => entry.locale === cmsPreviewLocale.value) ?? null
+})
 
 const cmsPreviewChangedPageDiffs = computed(() => {
   return (cmsPreviewDraftPublishedDiff.value?.pages ?? []).filter(page => page.status !== 'unchanged')
@@ -15809,6 +16017,37 @@ function resetToDefaults(): void {
 }
 
 .cms-review-summary__body small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-review-summary--locale {
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-locale-coverage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-locale-coverage-card {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-locale-coverage-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-locale-coverage-card > small {
   color: var(--ntk-cms-text-secondary);
 }
 

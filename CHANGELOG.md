@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Locale coverage matrix for preview review**
+  - Added an engine-level locale coverage matrix that summarizes authored completeness for `Pages`, `Fields` and `Reusable content` across `en` and `pt-BR` preview snapshots.
+  - Surfaced the locale coverage review in both `Pages` and `Blocks` preview panels with per-locale status chips, completion ratios and top missing entries.
+  - Added focused unit coverage for locale coverage aggregation and Playwright coverage proving the matrix renders consistently in both preview surfaces.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused unit tests and focused CMS E2E coverage for the new review surface.
 - **Release candidate checklist for CMS publish review**
   - Added an engine-level release candidate checklist builder that turns release gate diagnostics into author-facing review items for candidate state, validation, workflow, permissions, content integrity and production brand assets.
   - Surfaced the checklist in the `Releases` module with grouped status chips, issue lists and readiness counters so authors can review publish blockers without parsing raw diagnostics first.
