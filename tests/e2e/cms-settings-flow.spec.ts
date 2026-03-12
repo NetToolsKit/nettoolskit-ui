@@ -2246,6 +2246,49 @@ test.describe('CMS settings white-label flow', () => {
     })
   })
 
+  test('surfaces starter-kit impact analysis and archive restore flows for seeded reusable blocks', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    const starterKits = page.locator('.cms-pages__starter-kits').first()
+    const productLaunchKit = starterKits.locator('.cms-page-quick-start-card', {
+      hasText: /(Starter kit · Product launch|Starter kit · Lancamento de produto)/,
+    }).first()
+
+    await productLaunchKit.getByRole('button', { name: /^(Install \+ open blocks|Instalar \+ abrir blocos)$/ }).click()
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+
+    const reusableBlockLibrary = page
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
+      .first()
+    const starterReusableBlockRow = reusableBlockLibrary
+      .locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lancamento)/ })
+      .first()
+
+    await expect(starterReusableBlockRow).toBeVisible()
+    await expect(starterReusableBlockRow).toContainText(/uses|usos/i)
+
+    await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
+    const usageDrawer = page.locator('.cms-usage-drawer')
+    const usageDialog = page.locator('.q-dialog', { has: page.locator('.cms-usage-drawer') })
+    await expect(usageDrawer).toBeVisible()
+    await expect(usageDrawer).toContainText(/(Launch hero block|Bloco hero de lancamento)/)
+    await expect(usageDrawer).toContainText(/(No usage references found|Nenhuma referencia de uso encontrada)/)
+    await usageDrawer.locator('.cms-usage-drawer__close').click()
+    await expect(usageDialog).toBeHidden()
+
+    await starterReusableBlockRow.getByRole('button', { name: /^(Archive|Arquivar)$/ }).click()
+    await expect(reusableBlockLibrary.locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lancamento)/ })).toHaveCount(0)
+
+    await reusableBlockLibrary.getByLabel(/^(Show archived|Mostrar arquivados)$/).click()
+    await expect(starterReusableBlockRow).toBeVisible()
+    await expect(starterReusableBlockRow.locator('small').filter({ hasText: /^(Archived|Arquivado)$/ })).toBeVisible()
+    await expect(starterReusableBlockRow.getByRole('button', { name: /^(Use|Usar)$/ })).toBeDisabled()
+
+    await starterReusableBlockRow.getByRole('button', { name: /^(Restore|Restaurar)$/ }).click()
+    await expect(starterReusableBlockRow.getByRole('button', { name: /^(Use|Usar)$/ })).toBeEnabled()
+  })
+
   test('uses shared builder search and quick commands across Pages and Blocks', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^(Pages|Paginas)$/)

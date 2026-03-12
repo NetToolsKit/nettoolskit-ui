@@ -283,6 +283,22 @@ async function expectVisualSnapshot(page: Page, snapshotName: string): Promise<v
   await expect(page).toHaveScreenshot(snapshotName, { caret: 'hide' })
 }
 
+/**
+ * Installs the product-launch starter kit and opens Blocks.
+ */
+async function installProductLaunchStarterKit(page: Page): Promise<void> {
+  await openDrawerModule(page, /^(Pages|Paginas)$/)
+  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
+
+  const starterKits = page.locator('.cms-pages__starter-kits').first()
+  const productLaunchKit = starterKits.locator('.cms-page-quick-start-card', {
+    hasText: /(Starter kit · Product launch|Starter kit · Lancamento de produto)/,
+  }).first()
+
+  await productLaunchKit.getByRole('button', { name: /^(Install \+ open blocks|Instalar \+ abrir blocos)$/ }).click()
+  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+}
+
 test.describe('CMS engine visual regression', () => {
   test.skip(!VISUAL_BASELINE_PLATFORM, 'Visual baselines are maintained on Windows for deterministic rendering.')
 
@@ -471,6 +487,58 @@ test.describe('CMS engine visual regression', () => {
         caret: 'hide',
         maxDiffPixels: 3000,
       }
+    )
+  })
+
+  test('captures phase 5 starter-kit bundles surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-pages__starter-kits').first()).toHaveScreenshot(
+      'cms-engine-phase5-pages-starter-kits.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 5 reusable block impact drawer', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await installProductLaunchStarterKit(page)
+
+    const reusableBlockLibrary = page
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
+      .first()
+    const starterReusableBlockRow = reusableBlockLibrary
+      .locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lancamento)/ })
+      .first()
+
+    await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
+    await stabilizeVisualState(page)
+    await expect(page.locator('.cms-usage-drawer').first()).toHaveScreenshot(
+      'cms-engine-phase5-reusable-block-impact-drawer.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 5 archived authored preset library state', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await installProductLaunchStarterKit(page)
+
+    const presetLibrary = page
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Authored preset library|Biblioteca de presets authored)$/) })
+      .first()
+    const starterPresetRow = presetLibrary
+      .locator('.cms-reusable-block-row', { hasText: /(Preset · Product launch hero|Preset · Hero de lancamento de produto)/ })
+      .first()
+
+    await starterPresetRow.getByRole('button', { name: /^(Archive|Arquivar)$/ }).click()
+    await presetLibrary.getByLabel(/^(Show archived|Mostrar arquivados)$/).click()
+    await stabilizeVisualState(page)
+    await expect(presetLibrary).toHaveScreenshot(
+      'cms-engine-phase5-authored-preset-archive-library.png',
+      { caret: 'hide' }
     )
   })
 })

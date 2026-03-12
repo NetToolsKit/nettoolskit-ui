@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 5 regression and quality hardening for starter kits, impact analysis and archive flows**
+  - Expanded unit coverage for starter-kit seeding, archived-entity semantics and usage explorer summaries so reusable CMS state remains safe to reason about even when entities are archived but still referenced.
+  - Added a focused Playwright regression that installs a starter kit, opens the usage drawer for a seeded reusable block and validates archive/restore behavior in the same authored flow.
+  - Expanded the CMS visual regression suite with phase-5 surfaces for starter-kit bundles, reusable-block impact drawer state and archived authored-preset libraries, adding new Windows baselines for those authoring views.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused functional E2E and the full CMS visual regression suite to close Phase 5 with no active roadmap items remaining.
 - **Backend integration handbook for the CMS engine**
   - Added [docs/cms-backend-integration-handbook.md](docs/cms-backend-integration-handbook.md) to document how backend-oriented teams should hydrate, persist, validate and publish the CMS engine while preserving the boundary between engine concerns and application concerns.
   - Documented the recommended domain split for `content`, `assets` and `releases`, plus the expected boot, save and publish flows for API-backed integrations.

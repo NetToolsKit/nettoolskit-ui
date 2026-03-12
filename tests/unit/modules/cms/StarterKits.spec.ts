@@ -64,4 +64,21 @@ describe('starter-kits', () => {
     expect(bundle.authoredContentModelFieldPresets[0]?.name).toBe('Launch date')
     expect(bundle.authoredContentModelFieldPresets[0]?.localization?.name?.['pt-BR']).toBe('Data de lancamento')
   })
+
+  it('seeds starter-kit entities as active records ready for immediate authoring reuse', () => {
+    const bundle = createCmsStarterKitBundle({
+      kitId: 'starter-growth-funnel',
+      settings: createDefaultWhiteLabelSettings(),
+      localeInput: 'en',
+    })
+
+    expect(bundle.reusableSections.every(section => !section.archivedAt)).toBe(true)
+    expect(bundle.reusableBlocks.every(block => !block.archivedAt)).toBe(true)
+    expect(bundle.authoredBlockPresets.every(preset => !preset.archivedAt)).toBe(true)
+    expect(bundle.authoredContentModelFieldPresets.every(preset => !preset.archivedAt)).toBe(true)
+    expect(new Set(bundle.reusableSections.map(section => section.id)).size).toBe(bundle.reusableSections.length)
+    expect(new Set(bundle.reusableBlocks.map(block => block.id)).size).toBe(bundle.reusableBlocks.length)
+    expect(new Set(bundle.authoredBlockPresets.map(preset => preset.id)).size).toBe(bundle.authoredBlockPresets.length)
+    expect(new Set(bundle.authoredContentModelFieldPresets.map(preset => preset.id)).size).toBe(bundle.authoredContentModelFieldPresets.length)
+  })
 })

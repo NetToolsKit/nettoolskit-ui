@@ -233,4 +233,56 @@ describe('white-label.usage-explorer', () => {
     })
     expect(getCmsEntityUsageSummary(usageIndex, 'reusable-section', 'missing-id')).toBeNull()
   })
+
+  it('keeps archived reusable entities visible in impact analysis while references still exist', () => {
+    const settings = createDefaultWhiteLabelSettings()
+    settings.reusableBlocks = [
+      {
+        id: 'reusable-hero',
+        name: 'Reusable hero',
+        description: 'Reusable hero block',
+        category: 'hero',
+        type: 'landing.hero',
+        archivedAt: '2026-03-11T13:00:00.000Z',
+        props: {},
+      },
+    ]
+    settings.pages = [
+      {
+        ...settings.pages[0]!,
+        id: 'landing-page-1',
+        title: 'Landing page 1',
+        path: '/landing-1',
+        sections: [
+          {
+            id: 'hero-1',
+            presetId: 'hero',
+            label: 'Hero',
+            enabled: true,
+            blocks: [
+              {
+                id: 'page-linked-block',
+                type: 'landing.hero',
+                enabled: true,
+                reusableMode: 'linked',
+                reusableSourceId: 'reusable-hero',
+                props: {},
+              },
+            ],
+          },
+        ],
+      },
+    ]
+
+    const usageIndex = collectCmsEntityUsageIndex(settings)
+    const summary = usageIndex.reusableBlocks.get('reusable-hero')
+
+    expect(summary).not.toBeNull()
+    expect(summary).toMatchObject({
+      entityId: 'reusable-hero',
+      pageReferences: 1,
+      totalReferences: 1,
+    })
+    expect(summary?.references[0]?.source).toBe('page')
+  })
 })
