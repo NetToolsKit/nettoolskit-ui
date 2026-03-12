@@ -842,6 +842,7 @@ interface ThemeGradients {
 - 📝 **[Visual Identity Manual](./docs/nettoolskit-visual-identity-manual.md)** - Brand guidelines
 - 🧩 **[CMS Backend Integration Handbook](./docs/cms-backend-integration-handbook.md)** - How backend-oriented teams should persist, validate and publish CMS engine payloads
 - 🔌 **[CMS Provider Hydration](./docs/cms-provider-hydration.md)** - Async provider examples for content, assets and releases
+- 📦 **[CMS Review Package](./docs/cms-review-package.md)** - Export draft-vs-published review artifacts for release analysis and approvals
 
 ### Templates
 
@@ -919,6 +920,7 @@ NetToolsKit UI Vue is intentionally layered so the project stays simple to consu
      - These concerns should live outside the core engine so the builder remains reusable and simple.
      - For async provider examples, see [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
      - For the backend-oriented integration flow, see [docs/cms-backend-integration-handbook.md](docs/cms-backend-integration-handbook.md).
+     - For offline release review exports, see [docs/cms-review-package.md](docs/cms-review-package.md).
 
 **Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
 

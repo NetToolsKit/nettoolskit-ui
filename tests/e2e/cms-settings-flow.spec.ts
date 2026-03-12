@@ -2832,6 +2832,64 @@ test.describe('CMS settings white-label flow', () => {
     await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Changed')
   })
 
+  test('exports a draft comparison review package from Releases', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+
+    await openDrawerModule(page, /^Pages$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    const pageTitleInput = firstPage
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(pageTitleInput, 'Review package diff')
+
+    await openDrawerModule(page, /^Releases$/)
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    const exportReviewButton = page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisao)$/ }).first()
+    await expect(exportReviewButton).toBeVisible()
+    await exportReviewButton.click()
+
+    const download = await page.evaluate(() => {
+      const result = (window as Window & {
+        __NTK_CMS_LAST_DOWNLOAD__?: { fileName: string, payload: string }
+      }).__NTK_CMS_LAST_DOWNLOAD__
+
+      return result
+        ? {
+            fileName: result.fileName,
+            payload: JSON.parse(result.payload) as {
+              kind: string
+              review: {
+                summary: {
+                  hasChanges: boolean
+                  changedPages: number
+                }
+                localeCoverage: Array<{ locale: string }>
+              }
+            },
+          }
+        : null
+    })
+
+    expect(download).not.toBeNull()
+    expect(download?.fileName).toMatch(/^ntk-cms-review-/i)
+    expect(download?.payload.kind).toBe('ntk-cms-draft-comparison-package')
+    expect(download?.payload.review.summary.hasChanges).toBe(true)
+    expect(download?.payload.review.summary.changedPages).toBeGreaterThanOrEqual(1)
+    expect(download?.payload.review.localeCoverage.map(entry => entry.locale)).toEqual(
+      expect.arrayContaining(['en', 'pt-BR'])
+    )
+  })
+
   test('surfaces locale coverage matrix in Pages and Blocks preview', async ({ page }) => {
     await page.goto('/?cms=1')
 

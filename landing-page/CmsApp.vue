@@ -4159,6 +4159,15 @@
                   :disable="!selectedReleaseId || !releaseRollbackTargetId"
                   @click="rollbackSelectedReleaseEntry"
                 />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  icon="download"
+                  :label="tr('Export review package', 'Exportar pacote de revisao')"
+                  :disable="!cmsPreviewDraftPublishedDiff"
+                  @click="exportCmsDraftComparisonPackage"
+                />
               </div>
 
               <q-banner rounded class="cms-banner" :style="bannerStyle">
@@ -4657,6 +4666,7 @@ import {
   type CmsLocaleCoverageStatus,
   type CmsLocaleCoverageSummary,
 } from '../src/modules/cms/white-label/locale-coverage'
+import { createCmsDraftComparisonExportPayload } from '../src/modules/cms/white-label/review-package'
 import {
   createCmsSnapshotHistoryState,
   recordCmsSnapshot,
@@ -5556,6 +5566,13 @@ function getCmsSchemaPackageExportedLabel(): string {
   return tr(
     'Schema package exported',
     'Pacote de schema exportado'
+  )
+}
+
+function getCmsDraftComparisonPackageExportedLabel(): string {
+  return tr(
+    'Review package exported',
+    'Pacote de revisao exportado'
   )
 }
 
@@ -14302,6 +14319,34 @@ function exportCmsSchemaPackage(): void {
   const fileName = `ntk-cms-schema-${toJsonFileName(activeProfile.id)}.json`
   downloadJsonPayload(fileName, payload)
   savedAtLabel.value = getCmsSchemaPackageExportedLabel()
+}
+
+/**
+ * Exports the current draft-vs-published review package for offline review.
+ */
+function exportCmsDraftComparisonPackage(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
+
+  if (!cmsPreviewDraftPublishedDiff.value) {
+    return
+  }
+
+  const activeProfile = getActiveTenantProfileSnapshot()
+  const payload = createCmsDraftComparisonExportPayload({
+    profile: {
+      id: activeProfile.id,
+      name: activeProfile.name,
+    },
+    diff: cmsPreviewDraftPublishedDiff.value,
+    localeCoverage: cmsPreviewLocaleCoverageMatrix.value,
+    checklist: selectedReleaseCandidateChecklist.value ?? null,
+  })
+
+  const fileName = `ntk-cms-review-${toJsonFileName(activeProfile.id)}.json`
+  downloadJsonPayload(fileName, payload)
+  savedAtLabel.value = getCmsDraftComparisonPackageExportedLabel()
 }
 
 /**

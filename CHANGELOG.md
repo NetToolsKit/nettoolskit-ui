@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Draft comparison export package for release review**
+  - Added a versioned review-package payload that combines draft-vs-published diff results, locale coverage and the release candidate checklist into one exportable JSON artifact.
+  - Added a new `Releases` action to export the current review package directly from the CMS authoring surface without coupling the flow to any backend.
+  - Added focused unit coverage for review-package summary/export helpers plus Playwright coverage proving the review package can be exported after authoring changes against a published release.
+  - Documented the review-package contract in [docs/cms-review-package.md](docs/cms-review-package.md) and linked it from the README architecture/guides section.
 - **Locale coverage matrix for preview review**
   - Added an engine-level locale coverage matrix that summarizes authored completeness for `Pages`, `Fields` and `Reusable content` across `en` and `pt-BR` preview snapshots.
   - Surfaced the locale coverage review in both `Pages` and `Blocks` preview panels with per-locale status chips, completion ratios and top missing entries.
