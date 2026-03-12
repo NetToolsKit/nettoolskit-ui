@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Release candidate checklist for CMS publish review**
+  - Added an engine-level release candidate checklist builder that turns release gate diagnostics into author-facing review items for candidate state, validation, workflow, permissions, content integrity and production brand assets.
+  - Surfaced the checklist in the `Releases` module with grouped status chips, issue lists and readiness counters so authors can review publish blockers without parsing raw diagnostics first.
+  - Added focused unit coverage for fresh-draft and production-branding scenarios plus Playwright coverage proving the checklist updates after validation from the authoring UI.
+  - Revalidated `type-check`, `lint`, targeted unit tests, focused CMS E2E and `build:landing` after aligning validation status semantics with the checklist review flow.
 - **Draft vs published diff review for Pages and Blocks preview**
   - Added an engine-level draft/published diff helper that compares page, section and block snapshots against the best available published release without coupling review flows to backend storage.
   - Surfaced a review summary in both `Pages` and `Blocks`, including change counters, changed-page lists and per-entity status chips so authors can inspect impact before publishing.

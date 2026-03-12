@@ -15,6 +15,7 @@ import type {
   CmsReleaseStatus,
   CmsReleaseValidationIssue,
   CmsReleaseValidationReport,
+  CmsReleaseValidationSeverity,
   CmsWhiteLabelActorRole,
   CmsWhiteLabelSettings,
   CmsWhiteLabelWorkflowStatus,
@@ -175,6 +176,56 @@ export interface CmsReleaseGateResult {
 }
 
 /**
+ * Stable identifiers for publish-review checklist rows.
+ */
+export type CmsReleaseCandidateChecklistItemId =
+  | 'candidate_state'
+  | 'validation'
+  | 'workflow'
+  | 'permissions'
+  | 'content_integrity'
+  | 'brand_assets'
+
+/**
+ * Semantic states used by the release review checklist.
+ */
+export type CmsReleaseCandidateChecklistStatus = 'ready' | 'warning' | 'blocking'
+
+/**
+ * One checklist row derived from release validation and publish gate data.
+ */
+export interface CmsReleaseCandidateChecklistItem {
+  id: CmsReleaseCandidateChecklistItemId
+  status: CmsReleaseCandidateChecklistStatus
+  issueCount: number
+  issues: CmsReleaseValidationIssue[]
+  releaseStatus?: CmsReleaseStatus
+  workflowStatus?: CmsWhiteLabelWorkflowStatus
+  environment?: CmsReleaseEnvironment
+  validationValid?: boolean
+  validationGeneratedAt?: string
+  scheduledAt?: string | null
+  productionOnly?: boolean
+}
+
+/**
+ * Aggregated checklist result used by authoring UIs before publish.
+ */
+export interface CmsReleaseCandidateChecklist {
+  allowed: boolean
+  generatedAt: string
+  releaseId: string
+  releaseName: string
+  environment: CmsReleaseEnvironment
+  items: CmsReleaseCandidateChecklistItem[]
+  summary: {
+    readyCount: number
+    warningCount: number
+    blockingCount: number
+  }
+}
+
+/**
  * Converts arbitrary values into valid ISO timestamps.
  */
 function toIsoTimestamp(value?: string): string {
@@ -286,6 +337,199 @@ function buildValidationReport(at: string, issues: CmsReleaseValidationIssue[]):
     errorCount,
     warningCount,
     issues,
+  }
+}
+
+/**
+ * Resolves checklist status from grouped release issues.
+ */
+function resolveChecklistStatusFromIssues(
+  issues: readonly CmsReleaseValidationIssue[]
+): CmsReleaseCandidateChecklistStatus {
+  if (issues.some(issue => issue.severity === 'error')) {
+    return 'blocking'
+  }
+  if (issues.length > 0) {
+    return 'warning'
+  }
+  return 'ready'
+}
+
+/**
+ * Creates a synthetic checklist issue for publish review rows.
+ */
+function createSyntheticChecklistIssue(
+  code: string,
+  severity: CmsReleaseValidationSeverity,
+  message: string,
+  path?: string
+): CmsReleaseValidationIssue {
+  return {
+    code,
+    severity,
+    message,
+    path,
+  }
+}
+
+/**
+ * Builds a publish-review checklist from the current release gate diagnostics.
+ */
+export function buildCmsReleaseCandidateChecklist(
+  settings: CmsReleaseSettings,
+  releaseId: string,
+  options: CmsReleaseGateOptions
+): CmsReleaseCandidateChecklist | null {
+  const normalizedId = String(releaseId ?? '').trim()
+  const target = getCmsReleaseById(settings, normalizedId)
+  if (!target) {
+    return null
+  }
+
+  const gate = validateCmsReleasePrePublishGate(settings, normalizedId, options)
+  const gateIssues = gate.issues
+  const permissionIssues = gateIssues.filter(issue => issue.code === 'permissions.publish.denied')
+  const workflowIssues = gateIssues.filter(issue => issue.code === 'workflow.status.not_ready')
+  const brandAssetIssues = gateIssues.filter(issue => issue.code.startsWith('assets.'))
+  const contentIssues = gateIssues.filter(issue => {
+    if (permissionIssues.includes(issue) || workflowIssues.includes(issue) || brandAssetIssues.includes(issue)) {
+      return false
+    }
+    return true
+  })
+
+  const candidateStateIssues: CmsReleaseValidationIssue[] = []
+  let candidateStateStatus: CmsReleaseCandidateChecklistStatus = 'ready'
+  if (target.status === 'rolled_back' || target.status === 'canceled') {
+    candidateStateIssues.push(
+      createSyntheticChecklistIssue(
+        'release.status.not_publishable',
+        'error',
+        `Release status "${target.status}" cannot be published without creating a new draft.`,
+        `releases.items.${target.id}.status`
+      )
+    )
+    candidateStateStatus = 'blocking'
+  } else if (target.status === 'published') {
+    candidateStateIssues.push(
+      createSyntheticChecklistIssue(
+        'release.status.already_published',
+        'warning',
+        'Release is already published. Review data is informational until a new draft is created.',
+        `releases.items.${target.id}.status`
+      )
+    )
+    candidateStateStatus = 'warning'
+  } else if (
+    target.status === 'scheduled'
+    && target.scheduledAt
+    && new Date(target.scheduledAt).getTime() > new Date(gate.generatedAt).getTime()
+  ) {
+    candidateStateIssues.push(
+      createSyntheticChecklistIssue(
+        'release.status.scheduled_future',
+        'warning',
+        'Release is scheduled for a future date and cannot be published early.',
+        `releases.items.${target.id}.scheduledAt`
+      )
+    )
+    candidateStateStatus = 'warning'
+  }
+
+  const validationIssues: CmsReleaseValidationIssue[] = target.validation.valid
+    ? []
+    : [...target.validation.issues]
+  let validationStatus: CmsReleaseCandidateChecklistStatus = 'ready'
+  if (!target.validation.valid) {
+    if (validationIssues.length === 0) {
+      validationIssues.push(
+        createSyntheticChecklistIssue(
+          'release.validation.required',
+          'error',
+          'Run validation on this draft before publishing.',
+          `releases.items.${target.id}.validation`
+        )
+      )
+    }
+    validationStatus = 'blocking'
+  }
+
+  const items: CmsReleaseCandidateChecklistItem[] = [
+    {
+      id: 'candidate_state',
+      status: candidateStateStatus,
+      issueCount: candidateStateIssues.length,
+      issues: candidateStateIssues,
+      releaseStatus: target.status,
+      environment: target.environment,
+      scheduledAt: target.scheduledAt,
+    },
+    {
+      id: 'validation',
+      status: validationStatus,
+      issueCount: validationIssues.length,
+      issues: validationIssues,
+      validationValid: target.validation.valid,
+      validationGeneratedAt: target.validation.generatedAt,
+    },
+    {
+      id: 'workflow',
+      status: resolveChecklistStatusFromIssues(workflowIssues),
+      issueCount: workflowIssues.length,
+      issues: workflowIssues,
+      workflowStatus: target.sourceWorkflowStatus,
+    },
+    {
+      id: 'permissions',
+      status: resolveChecklistStatusFromIssues(permissionIssues),
+      issueCount: permissionIssues.length,
+      issues: permissionIssues,
+      environment: target.environment,
+    },
+    {
+      id: 'content_integrity',
+      status: resolveChecklistStatusFromIssues(contentIssues),
+      issueCount: contentIssues.length,
+      issues: contentIssues,
+    },
+    {
+      id: 'brand_assets',
+      status: target.environment === 'production'
+        ? resolveChecklistStatusFromIssues(brandAssetIssues)
+        : 'ready',
+      issueCount: brandAssetIssues.length,
+      issues: brandAssetIssues,
+      environment: target.environment,
+      productionOnly: true,
+    },
+  ]
+
+  const summary = items.reduce(
+    (accumulator, item) => {
+      if (item.status === 'ready') {
+        accumulator.readyCount += 1
+      } else if (item.status === 'warning') {
+        accumulator.warningCount += 1
+      } else {
+        accumulator.blockingCount += 1
+      }
+      return accumulator
+    },
+    {
+      readyCount: 0,
+      warningCount: 0,
+      blockingCount: 0,
+    }
+  )
+
+  return {
+    allowed: gate.allowed,
+    generatedAt: gate.generatedAt,
+    releaseId: target.id,
+    releaseName: target.name,
+    environment: target.environment,
+    items,
+    summary,
   }
 }
 

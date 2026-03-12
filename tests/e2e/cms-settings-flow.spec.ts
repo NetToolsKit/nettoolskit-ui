@@ -2728,6 +2728,28 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'rolled_back' }).first()).toBeVisible()
   })
 
+  test('surfaces a release candidate checklist and updates it after validation', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Releases')
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+
+    const checklist = page.locator('.cms-release-checklist').first()
+    const validationItem = checklist.locator('[data-cms-checklist-item="validation"]').first()
+    const workflowItem = checklist.locator('[data-cms-checklist-item="workflow"]').first()
+
+    await expect(checklist).toBeVisible()
+    await expect(validationItem).toHaveAttribute('data-cms-checklist-status', 'blocking')
+    await expect(workflowItem).toHaveAttribute('data-cms-checklist-status', 'warning')
+
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    await expect(validationItem).toHaveAttribute('data-cms-checklist-status', 'ready')
+    await expect(checklist).toContainText('Release candidate checklist')
+  })
+
   test('supports draft vs published preview with viewport and locale controls', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Pages$/)

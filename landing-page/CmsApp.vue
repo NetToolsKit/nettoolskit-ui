@@ -4050,6 +4050,52 @@
                 </template>
               </q-banner>
 
+              <div v-if="selectedReleaseCandidateChecklist" class="cms-release-checklist">
+                <div class="cms-release-checklist__header">
+                  <div class="cms-release-checklist__copy">
+                    <strong>{{ tr('Release candidate checklist', 'Checklist do candidato a release') }}</strong>
+                    <small>{{ tr('Review publish readiness before scheduling or publishing this snapshot.', 'Revise a prontidao para publicar antes de agendar ou publicar este snapshot.') }}</small>
+                  </div>
+                  <div class="cms-release-checklist__summary">
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle('ready')">
+                      {{ selectedReleaseCandidateChecklist.summary.readyCount }} {{ tr('ready', 'prontos') }}
+                    </q-chip>
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle('warning')">
+                      {{ selectedReleaseCandidateChecklist.summary.warningCount }} {{ tr('review', 'revisar') }}
+                    </q-chip>
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle('blocking')">
+                      {{ selectedReleaseCandidateChecklist.summary.blockingCount }} {{ tr('blocking', 'bloqueando') }}
+                    </q-chip>
+                  </div>
+                </div>
+
+                <div class="cms-release-checklist__items">
+                  <article
+                    v-for="item in selectedReleaseCandidateChecklist.items"
+                    :key="item.id"
+                    class="cms-release-checklist__item"
+                    :data-cms-checklist-item="item.id"
+                    :data-cms-checklist-status="item.status"
+                  >
+                    <div class="cms-release-checklist__item-header">
+                      <div class="cms-release-checklist__item-copy">
+                        <strong>{{ getReleaseChecklistItemLabel(item.id) }}</strong>
+                        <small>{{ getReleaseChecklistItemDescription(item) }}</small>
+                      </div>
+                      <q-chip dense square :style="getReleaseChecklistStatusStyle(item.status)">
+                        {{ getReleaseChecklistStatusLabel(item.status) }}
+                      </q-chip>
+                    </div>
+
+                    <ul v-if="item.issues.length > 0" class="cms-release-checklist__issues">
+                      <li v-for="issue in item.issues" :key="`${item.id}-${issue.code}-${issue.path}`">
+                        <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
+                      </li>
+                    </ul>
+                  </article>
+                </div>
+              </div>
+
               <ul v-if="selectedReleaseGateIssues.length > 0" class="cms-release-diagnostics">
                 <li v-for="issue in selectedReleaseGateIssues" :key="`${issue.code}-${issue.path}`">
                   <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
@@ -4494,6 +4540,7 @@ import {
 import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../src/modules/cms'
 import {
   applyCmsReleaseSnapshot,
+  buildCmsReleaseCandidateChecklist,
   detectCmsReleaseCalendarConflicts,
   createCmsReleaseDraft,
   createCmsReleaseSnapshot,
@@ -4504,6 +4551,9 @@ import {
   scheduleCmsRelease,
   validateCmsReleasePrePublishGate,
   validateCmsRelease,
+  type CmsReleaseCandidateChecklistItem,
+  type CmsReleaseCandidateChecklistItemId,
+  type CmsReleaseCandidateChecklistStatus,
 } from '../src/modules/cms/releases/orchestration'
 import { createLandingRegistry } from './cms/landing.registry'
 import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
@@ -8528,6 +8578,154 @@ const selectedReleaseGateIssues = computed<CmsReleaseValidationIssue[]>(() => {
   })
   return gate.issues
 })
+
+const selectedReleaseCandidateChecklist = computed(() => {
+  const release = selectedRelease.value
+  if (!release) {
+    return null
+  }
+
+  return buildCmsReleaseCandidateChecklist(settings.value.releases, release.id, {
+    actorId: governanceActor.id,
+    actorRole: governanceActor.role,
+  })
+})
+
+/**
+ * Resolves localized labels for release review checklist rows.
+ */
+function getReleaseChecklistItemLabel(itemId: CmsReleaseCandidateChecklistItemId): string {
+  switch (itemId) {
+    case 'candidate_state':
+      return tr('Candidate state', 'Estado do candidato')
+    case 'validation':
+      return tr('Validation report', 'Relatorio de validacao')
+    case 'workflow':
+      return tr('Workflow readiness', 'Prontidao do workflow')
+    case 'permissions':
+      return tr('Publish permissions', 'Permissoes de publicacao')
+    case 'content_integrity':
+      return tr('Content integrity', 'Integridade do conteudo')
+    case 'brand_assets':
+      return tr('Brand assets', 'Assets da marca')
+    default:
+      return itemId
+  }
+}
+
+/**
+ * Builds localized helper copy for one release checklist row.
+ */
+function getReleaseChecklistItemDescription(item: CmsReleaseCandidateChecklistItem): string {
+  switch (item.id) {
+    case 'candidate_state':
+      if (item.releaseStatus === 'published') {
+        return tr(
+          'This release is already published. Review remains available for comparison only.',
+          'Este release ja esta publicado. A revisao permanece apenas para comparacao.'
+        )
+      }
+      if (item.releaseStatus === 'scheduled') {
+        return tr(
+          'Scheduled releases stay reviewable but cannot publish before the configured schedule.',
+          'Releases agendados continuam revisaveis, mas nao podem publicar antes do horario configurado.'
+        )
+      }
+      if (item.releaseStatus === 'rolled_back' || item.releaseStatus === 'canceled') {
+        return tr(
+          'Create a new draft before attempting another publish.',
+          'Crie um novo rascunho antes de tentar outra publicacao.'
+        )
+      }
+      return tr(
+        'The selected release can continue through validation, scheduling and publish checks.',
+        'O release selecionado pode seguir pelas etapas de validacao, agendamento e publicacao.'
+      )
+    case 'validation':
+      if (item.status === 'blocking' && item.issueCount === 1 && item.issues[0]?.code === 'release.validation.required') {
+        return tr(
+          'Run Validate to generate a current report before publishing.',
+          'Execute Validar para gerar um relatorio atual antes de publicar.'
+        )
+      }
+      if (item.status === 'warning') {
+        return tr(
+          'The latest validation passed with warnings that should be reviewed.',
+          'A ultima validacao passou com avisos que devem ser revisados.'
+        )
+      }
+      return tr(
+        'Snapshot validation tracks schema, content and media consistency for this release.',
+        'A validacao do snapshot acompanha consistencia de schema, conteudo e midia deste release.'
+      )
+    case 'workflow':
+      return tr(
+        'Workflow status should be approved, scheduled or published before production publish.',
+        'O status do workflow deve estar aprovado, agendado ou publicado antes da publicacao em producao.'
+      )
+    case 'permissions':
+      return tr(
+        'Environment policies and runtime roles are checked against the acting author before publish.',
+        'Politicas do ambiente e papeis de runtime sao verificados contra o autor em acao antes da publicacao.'
+      )
+    case 'content_integrity':
+      return tr(
+        'Aggregates page, section, block, schema and reference diagnostics from the release snapshot.',
+        'Agrupa diagnosticos de paginas, secoes, blocos, schema e referencias do snapshot do release.'
+      )
+    case 'brand_assets':
+      return item.environment === 'production'
+        ? tr(
+          'Production releases require brand logo and favicon bindings to be present.',
+          'Releases de producao exigem logo e favicon da marca configurados.'
+        )
+        : tr(
+          'Brand assets are enforced only for production releases.',
+          'Assets da marca sao obrigatorios apenas para releases de producao.'
+        )
+    default:
+      return ''
+  }
+}
+
+/**
+ * Resolves visual treatment for release checklist status chips.
+ */
+function getReleaseChecklistStatusStyle(status: CmsReleaseCandidateChecklistStatus): Record<string, string> {
+  switch (status) {
+    case 'ready':
+      return {
+        background: notificationSuccessColor.value,
+        color: notificationSuccessTextColor.value,
+      }
+    case 'warning':
+      return {
+        background: notificationWarningColor.value,
+        color: notificationWarningTextColor.value,
+      }
+    case 'blocking':
+    default:
+      return {
+        background: notificationErrorColor.value,
+        color: notificationErrorTextColor.value,
+      }
+  }
+}
+
+/**
+ * Resolves localized labels for checklist semantic states.
+ */
+function getReleaseChecklistStatusLabel(status: CmsReleaseCandidateChecklistStatus): string {
+  switch (status) {
+    case 'ready':
+      return tr('Ready', 'Pronto')
+    case 'warning':
+      return tr('Review', 'Revisar')
+    case 'blocking':
+    default:
+      return tr('Blocking', 'Bloqueando')
+  }
+}
 
 /**
  * Formats ISO dates into datetime-local input values.
@@ -15810,6 +16008,78 @@ function resetToDefaults(): void {
 }
 
 .cms-release-diagnostics {
+  margin: 0;
+  padding-left: var(--ntk-cms-space-lg);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 1.5);
+  font-size: var(--ntk-cms-font-size-item-caption);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-checklist {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-checklist__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+  flex-wrap: wrap;
+}
+
+.cms-release-checklist__copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-checklist__copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-checklist__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
+.cms-release-checklist__items {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-checklist__item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-checklist__item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-checklist__item-copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-checklist__item-copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-checklist__issues {
   margin: 0;
   padding-left: var(--ntk-cms-space-lg);
   display: grid;
