@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Publish gate drill-down actions in Releases**
+  - Added an engine-level release checklist drill-down helper that maps publish-review issues to concrete authoring destinations such as `Branding`, `Content`, `Pages`, `Blocks` and `Releases`.
+  - Surfaced checklist action buttons in `Releases` so authors can jump directly from publish findings to the affected builder surface instead of manually navigating through the CMS.
+  - Added a dedicated `Run Validate` shortcut on the checklist validation row when the current release still requires its first validation pass.
+  - Added focused unit coverage for drill-down mapping and Playwright coverage proving authors can validate a release and jump straight to `Pages` from a content-integrity finding.
+- **Release review acknowledgements in Releases**
+  - Added persisted release-review acknowledgement entries with lightweight decisions (`noted`, `approved`, `changes requested`) so review notes can live with the selected release without requiring backend workflow execution.
+  - Surfaced a `Review acknowledgements` panel in `Releases` with decision selection, optional note capture, summary chips and a chronological list filtered by release and environment.
+  - Added focused unit coverage for acknowledgement creation, bounded history and scoped summaries, plus Playwright coverage proving acknowledgements can be recorded from the Releases authoring UI.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused release/unit coverage and focused CMS E2E coverage for the acknowledgement flow.
 - **Review package history surface in Releases**
   - Added persisted review-package export metadata to the release settings domain so authors can recall recent offline review exports without storing the full payload in CMS state.
   - Surfaced a new `Review package history` panel in `Releases` with recent exports for the active environment, including file name, release context, change counts, locale gaps and checklist status.

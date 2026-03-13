@@ -903,12 +903,13 @@ describe('white-label.storage', () => {
       } as never,
     })
 
-    expect(normalized.releases.schemaVersion).toBe(3)
+    expect(normalized.releases.schemaVersion).toBe(4)
     expect(normalized.releases.maxEntries).toBeGreaterThan(0)
     expect(normalized.releases.activeEnvironment).toBe('dev')
     expect(normalized.releases.enforceEnvironmentPolicies).toBe(false)
     expect(normalized.releases.environmentPolicies.length).toBe(3)
     expect(normalized.releases.reviewPackages).toEqual([])
+    expect(normalized.releases.reviewAcknowledgements).toEqual([])
     expect(normalized.releases.items[0]?.id).toBe('rel-legacy-1')
     expect(normalized.releases.items[0]?.status).toBe('draft')
     expect(normalized.releases.items[0]?.sourceVersion).toBe(1)

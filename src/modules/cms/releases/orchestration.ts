@@ -25,7 +25,7 @@ import { validateCmsContentPages } from '../white-label/content-validation'
 /**
  * Persisted schema version for release settings payloads.
  */
-export const CMS_RELEASE_SETTINGS_SCHEMA_VERSION = 3
+export const CMS_RELEASE_SETTINGS_SCHEMA_VERSION = 4
 
 /**
  * Default cap for release entries retained per tenant.
@@ -111,6 +111,15 @@ function normalizeReviewPackageLocaleStatus(
     || value === 'not-applicable'
       ? value
       : 'partial'
+}
+
+function normalizeReviewAcknowledgementDecision(
+  value: unknown
+): 'noted' | 'approved' | 'changes_requested' {
+  return value === 'approved'
+    || value === 'changes_requested'
+      ? value
+      : 'noted'
 }
 
 type ReleaseSnapshotSource = Pick<
@@ -897,6 +906,7 @@ export function createDefaultCmsReleaseSettings(): CmsReleaseSettings {
     environmentPolicies: createDefaultCmsReleaseEnvironmentPolicies(),
     promotions: [],
     reviewPackages: [],
+    reviewAcknowledgements: [],
     items: [],
   }
 }
@@ -1206,6 +1216,26 @@ export function normalizeCmsReleaseSettings(
       }))
     .slice(0, 20)
 
+  const rawReviewAcknowledgements = Array.isArray(parsed.reviewAcknowledgements)
+    ? (parsed.reviewAcknowledgements as unknown[])
+    : []
+
+  const reviewAcknowledgements = rawReviewAcknowledgements
+    .filter((entry): entry is Record<string, unknown> => Boolean(entry && typeof entry === 'object'))
+    .map((entry, index) => ({
+      id: String(entry.id ?? '').trim() || `review-ack-${index + 1}`,
+      releaseId: String(entry.releaseId ?? '').trim() || 'unknown',
+      releaseName: String(entry.releaseName ?? '').trim() || `Release ${index + 1}`,
+      environment: normalizeEnvironment(String(entry.environment ?? ''), activeEnvironment),
+      decision: normalizeReviewAcknowledgementDecision(entry.decision),
+      note: String(entry.note ?? '').trim() || null,
+      acknowledgedAt: toIsoTimestamp(String(entry.acknowledgedAt ?? '')),
+      actorId: String(entry.actorId ?? 'system').trim() || 'system',
+      actorRole: normalizeActorRole(entry.actorRole, 'system'),
+      actorName: String(entry.actorName ?? '').trim() || null,
+    }))
+    .slice(0, 50)
+
   return {
     schemaVersion: CMS_RELEASE_SETTINGS_SCHEMA_VERSION,
     maxEntries: safeMaxEntries,
@@ -1215,6 +1245,7 @@ export function normalizeCmsReleaseSettings(
     environmentPolicies,
     promotions,
     reviewPackages,
+    reviewAcknowledgements,
     items,
   }
 }

@@ -4301,6 +4301,88 @@
                 </div>
               </div>
 
+              <div
+                v-if="selectedRelease"
+                class="cms-release-acknowledgements"
+                data-cms-release-acks
+              >
+                <div class="cms-release-acknowledgements__header">
+                  <div class="cms-release-acknowledgements__copy">
+                    <strong>{{ tr('Review acknowledgements', 'Reconhecimentos de revisao') }}</strong>
+                    <small>{{ tr('Capture lightweight sign-off notes for the current release candidate without requiring backend workflow execution.', 'Capture notas leves de aprovacao para o candidato atual sem exigir execucao de workflow no backend.') }}</small>
+                  </div>
+                  <div class="cms-release-acknowledgements__summary">
+                    <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('approved')">
+                      {{ selectedReleaseAcknowledgementSummary.approvedCount }} {{ tr('approved', 'aprovados') }}
+                    </q-chip>
+                    <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('noted')">
+                      {{ selectedReleaseAcknowledgementSummary.notedCount }} {{ tr('noted', 'registrados') }}
+                    </q-chip>
+                    <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('changes_requested')">
+                      {{ selectedReleaseAcknowledgementSummary.changesRequestedCount }} {{ tr('changes requested', 'mudancas solicitadas') }}
+                    </q-chip>
+                  </div>
+                </div>
+
+                <div class="cms-release-acknowledgements__form">
+                  <q-select
+                    v-model="releaseAcknowledgementDecision"
+                    outlined
+                    dense
+                    emit-value
+                    map-options
+                    :options="releaseAcknowledgementDecisionOptions"
+                    :label="tr('Decision', 'Decisao')"
+                    :aria-label="tr('Review acknowledgement decision', 'Decisao do reconhecimento de revisao')"
+                  />
+                  <q-input
+                    v-model="releaseAcknowledgementNote"
+                    outlined
+                    dense
+                    autogrow
+                    type="textarea"
+                    :label="tr('Acknowledgement note', 'Nota do reconhecimento')"
+                    :aria-label="tr('Review acknowledgement note', 'Nota do reconhecimento de revisao')"
+                    :placeholder="tr('Optional context for the review decision.', 'Contexto opcional para a decisao de revisao.')"
+                  />
+                  <q-btn
+                    no-caps
+                    unelevated
+                    icon="fact_check"
+                    :label="tr('Add acknowledgement', 'Adicionar reconhecimento')"
+                    :style="primaryActionStyle"
+                    @click="addSelectedReleaseAcknowledgement"
+                  />
+                </div>
+
+                <div v-if="selectedReleaseAcknowledgements.length > 0" class="cms-release-acknowledgements__items">
+                  <article
+                    v-for="entry in selectedReleaseAcknowledgements"
+                    :key="entry.id"
+                    class="cms-release-acknowledgements__item"
+                    :data-cms-release-ack-item="entry.id"
+                    :data-cms-release-ack-decision="entry.decision"
+                  >
+                    <div class="cms-release-acknowledgements__item-header">
+                      <div class="cms-release-acknowledgements__item-copy">
+                        <strong>{{ getReleaseAcknowledgementDecisionLabel(entry.decision) }}</strong>
+                        <small>{{ getReleaseAcknowledgementDescription(entry) }}</small>
+                      </div>
+                      <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle(entry.decision)">
+                        {{ getReleaseAcknowledgementDecisionLabel(entry.decision) }}
+                      </q-chip>
+                    </div>
+                    <p v-if="entry.note" class="cms-release-acknowledgements__note">
+                      {{ entry.note }}
+                    </p>
+                  </article>
+                </div>
+
+                <q-banner v-else rounded class="cms-banner" :style="bannerStyle">
+                  {{ tr('No acknowledgements recorded yet for this release and environment.', 'Nenhum reconhecimento foi registrado ainda para este release e ambiente.') }}
+                </q-banner>
+              </div>
+
               <div v-if="selectedReleaseCandidateChecklist" class="cms-release-checklist">
                 <div class="cms-release-checklist__header">
                   <div class="cms-release-checklist__copy">
@@ -4343,6 +4425,33 @@
                         <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
                       </li>
                     </ul>
+
+                    <div
+                      v-if="getReleaseChecklistDrilldownActions(item).length > 0 || hasReleaseChecklistValidationShortcut(item)"
+                      class="cms-release-checklist__actions"
+                    >
+                      <q-btn
+                        v-if="hasReleaseChecklistValidationShortcut(item)"
+                        flat
+                        dense
+                        no-caps
+                        icon="fact_check"
+                        :label="tr('Run Validate', 'Executar validar')"
+                        @click="runReleaseChecklistValidationShortcut(item)"
+                      />
+                      <q-btn
+                        v-for="action in getReleaseChecklistDrilldownActions(item)"
+                        :key="action.id"
+                        flat
+                        dense
+                        no-caps
+                        icon="open_in_new"
+                        :label="getReleaseChecklistDrilldownLabel(action)"
+                        :aria-label="getReleaseChecklistDrilldownLabel(action)"
+                        :data-cms-checklist-action="action.target"
+                        @click="runReleaseChecklistDrilldown(action)"
+                      />
+                    </div>
                   </article>
                 </div>
               </div>
@@ -4789,6 +4898,10 @@ import {
   type CmsLocaleCoverageSummary,
 } from '../src/modules/cms/white-label/locale-coverage'
 import {
+  resolveCmsReleaseChecklistDrilldownActions,
+  type CmsReleaseChecklistDrilldownAction,
+} from '../src/modules/cms/white-label/release-drilldown'
+import {
   createCmsReleaseReviewHubSummary,
   type CmsReleaseReviewHubCard,
 } from '../src/modules/cms/white-label/review-hub'
@@ -4797,6 +4910,13 @@ import {
   appendCmsReviewPackageHistory,
   createCmsReviewPackageHistoryEntry,
 } from '../src/modules/cms/white-label/review-package-history'
+import {
+  appendCmsReleaseReviewAcknowledgement,
+  createCmsReleaseReviewAcknowledgementEntry,
+  listCmsReleaseReviewAcknowledgements,
+  summarizeCmsReleaseReviewAcknowledgements,
+  type CmsReleaseReviewAcknowledgementSummary,
+} from '../src/modules/cms/white-label/review-acknowledgements'
 import {
   createCmsSnapshotHistoryState,
   recordCmsSnapshot,
@@ -4844,6 +4964,8 @@ import type {
   CmsContentModelFieldVisibilitySource,
   CmsSchemaReferenceKind,
   CmsReleaseEnvironment,
+  CmsReleaseReviewAcknowledgementDecision,
+  CmsReleaseReviewAcknowledgementEntry,
   CmsReleaseValidationIssue,
   CmsMediaAssetKind,
   CmsMediaAssetFocalPointSettings,
@@ -8849,6 +8971,8 @@ const governanceActor: CmsWhiteLabelActor = {
 const releaseScheduleAt = ref('')
 const releaseRollbackTargetId = ref('')
 const releasePromotionTargetEnvironment = ref<CmsReleaseEnvironment | ''>('')
+const releaseAcknowledgementDecision = ref<CmsReleaseReviewAcknowledgementDecision>('noted')
+const releaseAcknowledgementNote = ref('')
 const releaseDisplayLimit = 20
 
 const activeReleaseEnvironment = computed<CmsReleaseEnvironment>({
@@ -8894,6 +9018,37 @@ const releaseEntriesAll = computed(() => settings.value.releases.items)
 const selectedRelease = computed(() => {
   return releaseEntries.value.find(item => item.id === selectedReleaseId.value) ?? null
 })
+const selectedReleaseAcknowledgements = computed<CmsReleaseReviewAcknowledgementEntry[]>(() => {
+  const release = selectedRelease.value
+  if (!release) {
+    return []
+  }
+
+  return listCmsReleaseReviewAcknowledgements(
+    settings.value.releases.reviewAcknowledgements,
+    {
+      releaseId: release.id,
+      environment: activeReleaseEnvironment.value,
+    }
+  )
+})
+const selectedReleaseAcknowledgementSummary = computed<CmsReleaseReviewAcknowledgementSummary>(() => {
+  const release = selectedRelease.value
+  if (!release) {
+    return {
+      total: 0,
+      approvedCount: 0,
+      notedCount: 0,
+      changesRequestedCount: 0,
+      latestAcknowledgedAt: null,
+    }
+  }
+
+  return summarizeCmsReleaseReviewAcknowledgements(settings.value.releases.reviewAcknowledgements, {
+    releaseId: release.id,
+    environment: activeReleaseEnvironment.value,
+  })
+})
 const releaseCountLabel = computed(() => cmsUiText.value.releaseCountLabel(releaseEntries.value.length))
 const releaseOptions = computed(() => releaseEntries.value.map(item => ({
   label: `${item.name} (${item.status})`,
@@ -8913,6 +9068,11 @@ const scheduledReleaseCalendarEntries = computed(() => releaseEntries.value
   .sort((left, right) => new Date(left.scheduledAt ?? '').getTime() - new Date(right.scheduledAt ?? '').getTime()))
 const releaseCalendarConflicts = computed(() => detectCmsReleaseCalendarConflicts(settings.value.releases)
   .filter(conflict => conflict.environment === activeReleaseEnvironment.value))
+const releaseAcknowledgementDecisionOptions = computed(() => ([
+  { label: tr('Noted', 'Registrado'), value: 'noted' },
+  { label: tr('Approved', 'Aprovado'), value: 'approved' },
+  { label: tr('Changes requested', 'Mudancas solicitadas'), value: 'changes_requested' },
+]))
 
 const selectedReleaseGateIssues = computed<CmsReleaseValidationIssue[]>(() => {
   const release = selectedRelease.value
@@ -9076,6 +9236,79 @@ function getReleaseChecklistStatusLabel(status: CmsReleaseCandidateChecklistStat
 }
 
 /**
+ * Resolves drill-down navigation actions for one checklist row.
+ */
+function getReleaseChecklistDrilldownActions(
+  item: Pick<CmsReleaseCandidateChecklistItem, 'id' | 'issues'>
+): CmsReleaseChecklistDrilldownAction[] {
+  return resolveCmsReleaseChecklistDrilldownActions(item)
+}
+
+/**
+ * Indicates whether a checklist row should expose the validate shortcut.
+ */
+function hasReleaseChecklistValidationShortcut(item: Pick<CmsReleaseCandidateChecklistItem, 'id' | 'issues'>): boolean {
+  return item.id === 'validation'
+    && item.issues.some(issue => issue.code === 'release.validation.required')
+}
+
+/**
+ * Builds localized button labels for release checklist drill-down actions.
+ */
+function getReleaseChecklistDrilldownLabel(action: CmsReleaseChecklistDrilldownAction): string {
+  if (action.target === 'branding') {
+    return tr('Open Branding', 'Abrir branding')
+  }
+
+  if (action.target === 'content') {
+    return tr('Open Content', 'Abrir conteudo')
+  }
+
+  if (action.target === 'releases') {
+    return tr('Open Releases', 'Abrir releases')
+  }
+
+  const page = action.pageId
+    ? settings.value.pages.find(entry => entry.id === action.pageId)
+    : null
+  const section = action.sectionId && page
+    ? page.sections.find(entry => entry.id === action.sectionId)
+    : null
+
+  if (action.target === 'blocks') {
+    if (page && section) {
+      return tr(
+        `Open Blocks: ${page.title} -> ${section.label}`,
+        `Abrir blocos: ${page.title} -> ${section.label}`
+      )
+    }
+
+    if (page) {
+      return tr(`Open Blocks: ${page.title}`, `Abrir blocos: ${page.title}`)
+    }
+
+    return tr('Open Blocks', 'Abrir blocos')
+  }
+
+  if (page) {
+    return tr(`Open Pages: ${page.title}`, `Abrir paginas: ${page.title}`)
+  }
+
+  return tr('Open Pages', 'Abrir paginas')
+}
+
+/**
+ * Executes the validate shortcut from the release checklist.
+ */
+function runReleaseChecklistValidationShortcut(item: Pick<CmsReleaseCandidateChecklistItem, 'id' | 'issues'>): void {
+  if (!hasReleaseChecklistValidationShortcut(item)) {
+    return
+  }
+
+  validateSelectedReleaseEntry()
+}
+
+/**
  * Resolves localized labels for review-hub cards in Releases.
  */
 function getReleaseReviewHubCardLabel(cardId: CmsReleaseReviewHubCard['id']): string {
@@ -9206,6 +9439,61 @@ function getReviewPackageHistoryDescription(entry: CmsReviewPackageHistoryEntry)
     : tr('no published baseline yet', 'ainda sem baseline publicada')
 
   return `${entry.releaseName} · ${exportTime} · ${baselineText}`
+}
+
+/**
+ * Resolves localized decision labels for one review acknowledgement row.
+ */
+function getReleaseAcknowledgementDecisionLabel(
+  decision: CmsReleaseReviewAcknowledgementDecision
+): string {
+  switch (decision) {
+    case 'approved':
+      return tr('Approved', 'Aprovado')
+    case 'changes_requested':
+      return tr('Changes requested', 'Mudancas solicitadas')
+    case 'noted':
+    default:
+      return tr('Noted', 'Registrado')
+  }
+}
+
+/**
+ * Resolves semantic styles for review acknowledgement decisions.
+ */
+function getReleaseAcknowledgementDecisionStyle(
+  decision: CmsReleaseReviewAcknowledgementDecision
+): Record<string, string> {
+  if (decision === 'approved') {
+    return {
+      background: notificationSuccessColor.value,
+      color: notificationSuccessTextColor.value,
+    }
+  }
+
+  if (decision === 'changes_requested') {
+    return {
+      background: notificationErrorColor.value,
+      color: notificationErrorTextColor.value,
+    }
+  }
+
+  return {
+    background: notificationInfoColor.value,
+    color: notificationInfoTextColor.value,
+  }
+}
+
+/**
+ * Builds concise actor/timestamp helper copy for one acknowledgement row.
+ */
+function getReleaseAcknowledgementDescription(
+  entry: CmsReleaseReviewAcknowledgementEntry
+): string {
+  const actorLabel = entry.actorName || entry.actorId
+  const acknowledgedAt = formatReleaseTimestamp(entry.acknowledgedAt)
+
+  return `${actorLabel} · ${entry.actorRole} · ${acknowledgedAt}`
 }
 
 /**
@@ -12267,6 +12555,23 @@ function openPagesModule(): void {
 }
 
 /**
+ * Switches to Settings and focuses a specific authoring tab.
+ */
+function openSettingsTabById(
+  tabId: 'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'
+): void {
+  activeMenuId.value = settingsModuleId.value
+  activeSettingsTab.value = tabId
+}
+
+/**
+ * Switches the shell back to the Releases module.
+ */
+function openReleasesModule(): void {
+  activeMenuId.value = releasesModuleId.value
+}
+
+/**
  * Opens the blocks module focused on a specific page/section.
  */
 function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
@@ -12283,6 +12588,33 @@ function openPageInBlocksEditor(pageId: string, sectionId?: string): void {
   activeBlocksPageId.value = page.id
   setActiveBlocksSelection(resolvedSection?.id ?? '', resolvedBlockId)
   activeMenuId.value = blocksModuleId.value
+}
+
+/**
+ * Runs one checklist drill-down action from the Releases module.
+ */
+function runReleaseChecklistDrilldown(action: CmsReleaseChecklistDrilldownAction): void {
+  switch (action.target) {
+    case 'branding':
+      openSettingsTabById('branding')
+      return
+    case 'content':
+      openSettingsTabById('content')
+      return
+    case 'pages':
+      openPagesModule()
+      return
+    case 'blocks':
+      if (action.pageId) {
+        openPageInBlocksEditor(action.pageId, action.sectionId ?? undefined)
+        return
+      }
+      openPagesModule()
+      return
+    case 'releases':
+    default:
+      openReleasesModule()
+  }
 }
 
 /**
@@ -14650,6 +14982,36 @@ function exportCmsDraftComparisonPackage(): void {
 }
 
 /**
+ * Records one lightweight review acknowledgement for the selected release.
+ */
+function addSelectedReleaseAcknowledgement(): void {
+  const release = selectedRelease.value
+  if (!release) {
+    savedAtLabel.value = cmsUiText.value.selectReleaseFirstLabel
+    return
+  }
+
+  const entry = createCmsReleaseReviewAcknowledgementEntry({
+    releaseId: release.id,
+    releaseName: release.name,
+    environment: activeReleaseEnvironment.value,
+    decision: releaseAcknowledgementDecision.value,
+    note: releaseAcknowledgementNote.value,
+    actorId: governanceActor.id,
+    actorRole: governanceActor.role,
+    actorName: governanceActor.name,
+  })
+
+  settings.value.releases.reviewAcknowledgements = appendCmsReleaseReviewAcknowledgement(
+    settings.value.releases.reviewAcknowledgements,
+    entry
+  )
+  releaseAcknowledgementDecision.value = 'noted'
+  releaseAcknowledgementNote.value = ''
+  savedAtLabel.value = tr('Review acknowledgement recorded', 'Reconhecimento de revisao registrado')
+}
+
+/**
  * Handles open tenant import dialog.
  */
 function openTenantImportDialog(): void {
@@ -16801,6 +17163,80 @@ function resetToDefaults(): void {
   font-size: var(--ntk-cms-font-size-item-caption);
 }
 
+.cms-release-acknowledgements {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-acknowledgements__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-acknowledgements__copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-acknowledgements__copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-acknowledgements__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
+.cms-release-acknowledgements__form {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr) auto;
+  gap: var(--ntk-cms-space-sm);
+  align-items: flex-start;
+}
+
+.cms-release-acknowledgements__items {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-acknowledgements__item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) * 1.1);
+}
+
+.cms-release-acknowledgements__item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-acknowledgements__item-copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-acknowledgements__item-copy small,
+.cms-release-acknowledgements__note {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-acknowledgements__note {
+  margin: 0;
+}
+
 .cms-release-checklist__summary {
   display: inline-flex;
   align-items: center;
@@ -16845,6 +17281,12 @@ function resetToDefaults(): void {
   gap: calc(var(--ntk-cms-space-xs) / 1.5);
   font-size: var(--ntk-cms-font-size-item-caption);
   color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-checklist__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
 }
 
 .cms-release-item {
@@ -16903,11 +17345,14 @@ function resetToDefaults(): void {
 
 @media (max-width: 768px) {
   .cms-release-review-hub__header,
+  .cms-release-acknowledgements__header,
   .cms-release-history__header,
-  .cms-release-history__item-header {
+  .cms-release-history__item-header,
+  .cms-release-acknowledgements__item-header {
     flex-direction: column;
   }
 
+  .cms-release-acknowledgements__form,
   .cms-release-history__metrics,
   .cms-release-review-hub__cards,
   .cms-release-review-hub__metrics {

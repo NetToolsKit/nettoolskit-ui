@@ -2757,6 +2757,39 @@ test.describe('CMS settings white-label flow', () => {
     await expect(checklist).toContainText('Release candidate checklist')
   })
 
+  test('navigates from release checklist findings to authoring surfaces and shortcuts validation', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+
+    const checklist = page.locator('.cms-release-checklist').first()
+    const validationItem = checklist.locator('[data-cms-checklist-item="validation"]').first()
+
+    await expect(validationItem).toHaveAttribute('data-cms-checklist-status', 'blocking')
+    await validationItem.getByRole('button', { name: /^(Run Validate|Executar validar)$/ }).click()
+    await expect(validationItem).toHaveAttribute('data-cms-checklist-status', 'ready')
+
+    await openDrawerModule(page, /^Pages$/)
+    const pageTitleInput = page
+      .locator('.cms-page-item')
+      .first()
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(pageTitleInput, '')
+
+    await openDrawerModule(page, /^Releases$/)
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+
+    const contentIntegrityItem = checklist.locator('[data-cms-checklist-item="content_integrity"]').first()
+    await expect(contentIntegrityItem).toHaveAttribute('data-cms-checklist-status', 'blocking')
+    await contentIntegrityItem.getByRole('button', { name: /^(Open Pages|Abrir paginas)/ }).first().click()
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+  })
+
   test('surfaces a unified release review hub in Releases', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Releases$/)
@@ -2941,6 +2974,31 @@ test.describe('CMS settings white-label flow', () => {
     await expect(reviewHistoryItem).toContainText('Release v')
     await expect(reviewHistoryItem).toContainText('Pages')
     await expect(reviewHistoryItem).toContainText('Locale gaps')
+  })
+
+  test('records release review acknowledgements in Releases', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    await selectOptionByFieldLabel(page, 'Decision', 'Approved')
+    await fillTextInput(
+      cmsInputByLabel(page, 'Acknowledgement note'),
+      'Reviewed for release readiness'
+    )
+    await page.getByRole('button', { name: /^(Add acknowledgement|Adicionar reconhecimento)$/ }).first().click()
+
+    const acknowledgements = page.locator('[data-cms-release-acks]').first()
+    await expect(acknowledgements).toBeVisible()
+    await expect(acknowledgements).toContainText('1 approved')
+
+    const firstEntry = acknowledgements.locator('[data-cms-release-ack-item]').first()
+    await expect(firstEntry).toContainText('Approved')
+    await expect(firstEntry).toContainText('Reviewed for release readiness')
+    await expect(firstEntry).toContainText('CMS Admin')
   })
 
   test('surfaces locale coverage matrix in Pages and Blocks preview', async ({ page }) => {

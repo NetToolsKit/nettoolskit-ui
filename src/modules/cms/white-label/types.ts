@@ -690,6 +690,27 @@ export interface CmsReviewPackageHistoryEntry {
 }
 
 /**
+ * Supported lightweight review acknowledgement decisions.
+ */
+export type CmsReleaseReviewAcknowledgementDecision = 'noted' | 'approved' | 'changes_requested'
+
+/**
+ * Persisted sign-off row captured from the Releases review surface.
+ */
+export interface CmsReleaseReviewAcknowledgementEntry {
+  id: string
+  releaseId: string
+  releaseName: string
+  environment: CmsReleaseEnvironment
+  decision: CmsReleaseReviewAcknowledgementDecision
+  note: string | null
+  acknowledgedAt: string
+  actorId: string
+  actorRole: CmsWhiteLabelActorRole
+  actorName: string | null
+}
+
+/**
  * Release calendar diagnostic row for scheduled conflicts and stale drafts.
  */
 export interface CmsReleaseCalendarConflict {
@@ -718,6 +739,7 @@ export interface CmsReleaseSettings {
   environmentPolicies: CmsReleaseEnvironmentPolicy[]
   promotions: CmsReleasePromotionEntry[]
   reviewPackages: CmsReviewPackageHistoryEntry[]
+  reviewAcknowledgements: CmsReleaseReviewAcknowledgementEntry[]
   items: CmsReleaseEntry[]
 }
 

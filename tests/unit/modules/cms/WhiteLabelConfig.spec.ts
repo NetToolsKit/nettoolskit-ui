@@ -158,10 +158,11 @@ describe('white-label.config', () => {
     expect(settings.governance.workflow.publishedVersion).toBeNull()
     expect(settings.governance.revisions.length).toBeGreaterThanOrEqual(1)
     expect(settings.releases.items).toHaveLength(0)
-    expect(settings.releases.schemaVersion).toBe(2)
+    expect(settings.releases.schemaVersion).toBe(4)
     expect(settings.releases.activeEnvironment).toBe('dev')
     expect(settings.releases.enforceEnvironmentPolicies).toBe(false)
     expect(settings.releases.environmentPolicies.length).toBe(3)
+    expect(settings.releases.reviewAcknowledgements).toEqual([])
   })
 
   it('supports localized seeds with English default and optional pt-BR', () => {

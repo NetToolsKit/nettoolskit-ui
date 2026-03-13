@@ -22,13 +22,14 @@ describe('cms.releases.orchestration', () => {
   it('creates default release settings scaffold', () => {
     const releases = createDefaultCmsReleaseSettings()
 
-    expect(releases.schemaVersion).toBe(2)
+    expect(releases.schemaVersion).toBe(4)
     expect(releases.maxEntries).toBeGreaterThan(0)
     expect(releases.activeReleaseId).toBeNull()
     expect(releases.activeEnvironment).toBe('dev')
     expect(releases.enforceEnvironmentPolicies).toBe(false)
     expect(releases.environmentPolicies).toHaveLength(3)
     expect(releases.promotions).toHaveLength(0)
+    expect(releases.reviewAcknowledgements).toEqual([])
     expect(releases.items).toHaveLength(0)
   })
 
@@ -214,12 +215,13 @@ describe('cms.releases.orchestration', () => {
       workflowStatus: settings.governance.workflow.status,
     })
 
-    expect(normalized.schemaVersion).toBe(2)
+    expect(normalized.schemaVersion).toBe(4)
     expect(normalized.items).toHaveLength(0)
     expect(normalized.activeReleaseId).toBeNull()
     expect(normalized.activeEnvironment).toBe('dev')
     expect(normalized.enforceEnvironmentPolicies).toBe(false)
     expect(normalized.environmentPolicies).toHaveLength(3)
     expect(normalized.promotions).toHaveLength(0)
+    expect(normalized.reviewAcknowledgements).toEqual([])
   })
 })
