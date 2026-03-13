@@ -2134,6 +2134,54 @@ test.describe('CMS settings white-label flow', () => {
     ).toHaveValue(replacementFieldLabel)
   })
 
+  test('applies deprecated reusable block replacements across linked authoring references', async ({ page }) => {
+    const legacyReusableBlockName = 'Legacy Swap Block'
+    const replacementReusableBlockName = 'Replacement Swap Block'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+
+    const heroSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero"]') })
+      .first()
+
+    await heroSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+
+    await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), legacyReusableBlockName)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
+    await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), replacementReusableBlockName)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
+
+    const reusableBlockLibrary = page
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
+      .first()
+    const legacyReusableBlockRow = reusableBlockLibrary
+      .locator('.cms-reusable-block-row', { hasText: legacyReusableBlockName })
+      .first()
+    const replacementReusableBlockRow = reusableBlockLibrary
+      .locator('.cms-reusable-block-row', { hasText: replacementReusableBlockName })
+      .first()
+
+    await expect(legacyReusableBlockRow).toBeVisible()
+    await expect(replacementReusableBlockRow).toBeVisible()
+
+    await legacyReusableBlockRow.locator('.cms-reusable-block-row__actions .q-btn').first().click()
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+
+    await expect(legacyReusableBlockRow).toContainText('1 uses')
+    await legacyReusableBlockRow.getByRole('button', { name: /^(Deprecate|Descontinuar)$/ }).click()
+    await selectOptionByFieldLabelPattern(page, /^(Replacement block|Bloco substituto)$/, replacementReusableBlockName)
+
+    await expect(legacyReusableBlockRow).toContainText(/Will update 1 page refs|Vai atualizar 1 refs em paginas/i)
+    await legacyReusableBlockRow.getByRole('button', { name: /^(Apply replacement|Aplicar substituto)$/ }).click()
+
+    await expect(legacyReusableBlockRow).toContainText(/No engine usage detected|Nenhum uso no engine detectado/i)
+    await expect(replacementReusableBlockRow).toContainText('1 uses')
+    await expect(replacementReusableBlockRow).toContainText(/1 page refs|1 refs em paginas/i)
+  })
+
   test('shows conditional page schema fields only when their visibility rule matches', async ({ page }) => {
     const contentModelName = 'Conditional schema QA'
 

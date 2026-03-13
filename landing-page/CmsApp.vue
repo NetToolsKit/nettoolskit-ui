@@ -2413,6 +2413,11 @@
                         }}
                       </small>
                       <small v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.deprecationNote">{{ reusableSection.deprecationNote }}</small>
+                      <small
+                        v-if="isCmsDeprecatedEntity(reusableSection) && getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id)"
+                      >
+                        {{ getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id) }}
+                      </small>
                       <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
                       <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
                       <q-select
@@ -2437,6 +2442,16 @@
                       />
                     </div>
                     <div class="cms-reusable-block-row__actions">
+                      <q-btn
+                        v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.replacementEntityId"
+                        flat
+                        dense
+                        no-caps
+                        icon="published_with_changes"
+                        :label="tr('Apply replacement', 'Aplicar substituto')"
+                        :disable="!getCmsReplacementAssistantSummary('reusable-section', reusableSection.id)?.canApply"
+                        @click="applyCmsDeprecatedReplacement('reusable-section', reusableSection.id)"
+                      />
                       <q-btn
                         flat
                         round
@@ -3239,6 +3254,11 @@
                         }}
                       </small>
                       <small v-if="isCmsDeprecatedEntity(reusableBlock) && reusableBlock.deprecationNote">{{ reusableBlock.deprecationNote }}</small>
+                      <small
+                        v-if="isCmsDeprecatedEntity(reusableBlock) && getCmsReplacementAssistantSummaryLabel('reusable-block', reusableBlock.id)"
+                      >
+                        {{ getCmsReplacementAssistantSummaryLabel('reusable-block', reusableBlock.id) }}
+                      </small>
                       <small>{{ getCmsReusableBlockUsageSummaryLabel(reusableBlock.id) }}</small>
                       <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
                       <q-select
@@ -3280,6 +3300,16 @@
                       icon="swap_horiz"
                       :label="tr('Use replacement', 'Usar substituto')"
                       @click="selectedReusableBlockId = String(reusableBlock.replacementEntityId ?? '')"
+                    />
+                    <q-btn
+                      v-if="isCmsDeprecatedEntity(reusableBlock) && reusableBlock.replacementEntityId"
+                      flat
+                      dense
+                      no-caps
+                      icon="published_with_changes"
+                      :label="tr('Apply replacement', 'Aplicar substituto')"
+                      :disable="!getCmsReplacementAssistantSummary('reusable-block', reusableBlock.id)?.canApply"
+                      @click="applyCmsDeprecatedReplacement('reusable-block', reusableBlock.id)"
                     />
                     <q-btn
                       flat
@@ -3372,6 +3402,11 @@
                       }}
                     </small>
                     <small v-if="isCmsDeprecatedEntity(preset) && preset.deprecationNote">{{ preset.deprecationNote }}</small>
+                    <small
+                      v-if="isCmsDeprecatedEntity(preset) && getCmsReplacementAssistantSummaryLabel('authored-block-preset', preset.id)"
+                    >
+                      {{ getCmsReplacementAssistantSummaryLabel('authored-block-preset', preset.id) }}
+                    </small>
                     <small>{{ getCmsAuthoredBlockPresetUsageSummaryLabel(preset.id) }}</small>
                     <small v-if="getCmsAuthoredBlockPresetDescriptionValue(preset)">{{ getCmsAuthoredBlockPresetDescriptionValue(preset) }}</small>
                     <q-select
@@ -3413,6 +3448,16 @@
                       icon="swap_horiz"
                       :label="tr('Use replacement', 'Usar substituto')"
                       @click="selectCmsReplacementAuthoredPreset(preset.replacementEntityId)"
+                    />
+                    <q-btn
+                      v-if="isCmsDeprecatedEntity(preset) && preset.replacementEntityId"
+                      flat
+                      dense
+                      no-caps
+                      icon="published_with_changes"
+                      :label="tr('Apply replacement', 'Aplicar substituto')"
+                      :disable="!getCmsReplacementAssistantSummary('authored-block-preset', preset.id)?.canApply"
+                      @click="applyCmsDeprecatedReplacement('authored-block-preset', preset.id)"
                     />
                     <q-btn
                       flat
@@ -5216,6 +5261,12 @@ import {
   updateCmsDeprecatedEntityNote,
   updateCmsDeprecatedEntityReplacement,
 } from '../src/modules/cms/white-label/deprecation-state'
+import {
+  applyCmsDeprecatedEntityReplacement,
+  previewCmsDeprecatedEntityReplacement,
+  type CmsReplacementAssistantSummary,
+  type CmsReplacementAssistantTargetKind,
+} from '../src/modules/cms/white-label/replacement-assistant'
 import {
   createCmsPageFromTemplate,
   listCmsPageQuickStartOptions,
@@ -10913,6 +10964,57 @@ const cmsUsageDrawerSummary = computed(() => {
 
 const cmsUsageDrawerReferences = computed(() => cmsUsageDrawerSummary.value?.references ?? [])
 
+const cmsReusableSectionReplacementAssistantById = computed(() => {
+  const summaries = new Map<string, CmsReplacementAssistantSummary>()
+  for (const reusableSection of settings.value.reusableSections) {
+    summaries.set(reusableSection.id, previewCmsDeprecatedEntityReplacement({
+      targetKind: 'reusable-section',
+      entityId: reusableSection.id,
+      replacementEntityId: reusableSection.replacementEntityId,
+      pages: settings.value.pages,
+      authoredContentModels: settings.value.authoredContentModels,
+      authoredBlockPresets: settings.value.authoredBlockPresets,
+      reusableBlocks: settings.value.reusableBlocks,
+      reusableSections: settings.value.reusableSections,
+    }))
+  }
+  return summaries
+})
+
+const cmsReusableBlockReplacementAssistantById = computed(() => {
+  const summaries = new Map<string, CmsReplacementAssistantSummary>()
+  for (const reusableBlock of settings.value.reusableBlocks) {
+    summaries.set(reusableBlock.id, previewCmsDeprecatedEntityReplacement({
+      targetKind: 'reusable-block',
+      entityId: reusableBlock.id,
+      replacementEntityId: reusableBlock.replacementEntityId,
+      pages: settings.value.pages,
+      authoredContentModels: settings.value.authoredContentModels,
+      authoredBlockPresets: settings.value.authoredBlockPresets,
+      reusableBlocks: settings.value.reusableBlocks,
+      reusableSections: settings.value.reusableSections,
+    }))
+  }
+  return summaries
+})
+
+const cmsAuthoredBlockPresetReplacementAssistantById = computed(() => {
+  const summaries = new Map<string, CmsReplacementAssistantSummary>()
+  for (const preset of settings.value.authoredBlockPresets) {
+    summaries.set(preset.id, previewCmsDeprecatedEntityReplacement({
+      targetKind: 'authored-block-preset',
+      entityId: preset.id,
+      replacementEntityId: preset.replacementEntityId,
+      pages: settings.value.pages,
+      authoredContentModels: settings.value.authoredContentModels,
+      authoredBlockPresets: settings.value.authoredBlockPresets,
+      reusableBlocks: settings.value.reusableBlocks,
+      reusableSections: settings.value.reusableSections,
+    }))
+  }
+  return summaries
+})
+
 const cmsAuthoredContentModelUsageCountById = computed(() => {
   const counts = new Map<string, number>()
   for (const [contentModelId, summary] of cmsEntityUsageIndex.value.contentModels.entries()) {
@@ -11668,6 +11770,108 @@ function getCmsReplacementLabel<T extends { id: string }>(
 
   const entry = entries.find(candidate => candidate.id === replacementId)
   return entry ? getLabel(entry) : ''
+}
+
+/**
+ * Resolves the replacement-assistant impact preview for one deprecated entity.
+ */
+function getCmsReplacementAssistantSummary(
+  targetKind: CmsReplacementAssistantTargetKind,
+  entityId: string
+): CmsReplacementAssistantSummary | null {
+  switch (targetKind) {
+    case 'reusable-section':
+      return cmsReusableSectionReplacementAssistantById.value.get(entityId) ?? null
+    case 'reusable-block':
+      return cmsReusableBlockReplacementAssistantById.value.get(entityId) ?? null
+    case 'authored-block-preset':
+      return cmsAuthoredBlockPresetReplacementAssistantById.value.get(entityId) ?? null
+    default:
+      return null
+  }
+}
+
+/**
+ * Formats one concise replacement-impact label for authoring surfaces.
+ */
+function getCmsReplacementAssistantSummaryLabel(
+  targetKind: CmsReplacementAssistantTargetKind,
+  entityId: string
+): string {
+  const summary = getCmsReplacementAssistantSummary(targetKind, entityId)
+  if (!summary?.replacementEntityId) {
+    return ''
+  }
+
+  if (!summary.canApply || summary.totalReferences === 0) {
+    return tr('No active references will be updated', 'Nenhuma referencia ativa sera atualizada')
+  }
+
+  const parts: string[] = []
+  if (summary.pageReferences > 0) {
+    parts.push(tr(`${summary.pageReferences} page refs`, `${summary.pageReferences} refs em paginas`))
+  }
+  if (summary.reusableSectionReferences > 0) {
+    parts.push(tr(`${summary.reusableSectionReferences} reusable section refs`, `${summary.reusableSectionReferences} refs em secoes reutilizaveis`))
+  }
+  if (summary.reusableBlockReferences > 0) {
+    parts.push(tr(`${summary.reusableBlockReferences} reusable block refs`, `${summary.reusableBlockReferences} refs em blocos reutilizaveis`))
+  }
+  if (summary.authoredPresetReferences > 0) {
+    parts.push(tr(`${summary.authoredPresetReferences} preset refs`, `${summary.authoredPresetReferences} refs em presets`))
+  }
+
+  return `${tr('Will update', 'Vai atualizar')} ${parts.join(' · ')}`
+}
+
+/**
+ * Applies one deprecated-entity replacement across current CMS draft references.
+ */
+function applyCmsDeprecatedReplacement(
+  targetKind: CmsReplacementAssistantTargetKind,
+  entityId: string
+): void {
+  const preview = getCmsReplacementAssistantSummary(targetKind, entityId)
+  if (!preview?.replacementEntityId) {
+    savedAtLabel.value = tr(
+      'Select a replacement entity before applying the rewrite.',
+      'Selecione uma entidade substituta antes de aplicar a reescrita.'
+    )
+    return
+  }
+
+  if (!preview.canApply || preview.totalReferences === 0) {
+    savedAtLabel.value = tr(
+      'No active references require replacement.',
+      'Nenhuma referencia ativa precisa de substituicao.'
+    )
+    return
+  }
+
+  const result = applyCmsDeprecatedEntityReplacement({
+    targetKind,
+    entityId,
+    replacementEntityId: preview.replacementEntityId,
+    pages: settings.value.pages,
+    authoredContentModels: settings.value.authoredContentModels,
+    authoredBlockPresets: settings.value.authoredBlockPresets,
+    reusableBlocks: settings.value.reusableBlocks,
+    reusableSections: settings.value.reusableSections,
+  })
+
+  settings.value.pages = result.pages
+  settings.value.reusableSections = result.reusableSections
+  settings.value.reusableBlocks = result.reusableBlocks
+  settings.value.authoredBlockPresets = result.authoredBlockPresets
+
+  if (targetKind === 'reusable-block' && selectedReusableBlockId.value === entityId) {
+    selectedReusableBlockId.value = preview.replacementEntityId
+  }
+  if (targetKind === 'authored-block-preset' && selectedAuthoredBlockPresetId.value === entityId) {
+    selectedAuthoredBlockPresetId.value = preview.replacementEntityId as CmsBlockPresetId
+  }
+
+  savedAtLabel.value = `${tr('Replacement applied at', 'Substituicao aplicada as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**

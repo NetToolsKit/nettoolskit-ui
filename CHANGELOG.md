@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Replacement assistant for deprecated reusable CMS entities**
+  - Added an engine-level replacement assistant that previews and applies configured replacements across linked page sections, linked page blocks, reusable-section blocks, reusable blocks and authored block preset derivations.
+  - Surfaced `Apply replacement` actions with impact summaries in the `Pages` reusable section library plus the `Blocks` reusable block and authored preset libraries, reusing the existing deprecation metadata instead of introducing a separate workflow.
+  - Added focused unit coverage for replacement-assistant reference rewrites and Playwright coverage proving deprecated reusable block replacements migrate existing linked references to the configured replacement entity.
+  - Revalidated `type-check`, `lint`, `build:landing`, `npm audit --omit=dev`, focused unit coverage and focused CMS E2E coverage for the new replacement flow.
 - **Deprecation lifecycle and replacement guidance for reusable CMS entities**
   - Added provider-agnostic deprecation metadata plus lifecycle helpers so reusable sections, reusable blocks, authored block presets and schema-field presets can be phased out without deleting existing references.
   - Surfaced deprecation status, replacement selection, advisory notes and `Use replacement` actions across the authored preset and reusable library surfaces in `Content`, `Pages` and `Blocks`.
