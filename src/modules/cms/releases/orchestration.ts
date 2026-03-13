@@ -25,7 +25,7 @@ import { validateCmsContentPages } from '../white-label/content-validation'
 /**
  * Persisted schema version for release settings payloads.
  */
-export const CMS_RELEASE_SETTINGS_SCHEMA_VERSION = 2
+export const CMS_RELEASE_SETTINGS_SCHEMA_VERSION = 3
 
 /**
  * Default cap for release entries retained per tenant.
@@ -101,6 +101,17 @@ const DEFAULT_RELEASE_ENVIRONMENT_POLICIES: ReadonlyArray<CmsReleaseEnvironmentP
     promoteTo: [],
   },
 ]
+
+function normalizeReviewPackageLocaleStatus(
+  value: unknown
+): 'complete' | 'partial' | 'missing' | 'empty' | 'not-applicable' {
+  return value === 'complete'
+    || value === 'missing'
+    || value === 'empty'
+    || value === 'not-applicable'
+      ? value
+      : 'partial'
+}
 
 type ReleaseSnapshotSource = Pick<
   CmsWhiteLabelSettings,
@@ -885,6 +896,7 @@ export function createDefaultCmsReleaseSettings(): CmsReleaseSettings {
     enforceEnvironmentPolicies: false,
     environmentPolicies: createDefaultCmsReleaseEnvironmentPolicies(),
     promotions: [],
+    reviewPackages: [],
     items: [],
   }
 }
@@ -1120,7 +1132,7 @@ export function normalizeCmsReleaseSettings(
         updatedAt,
         updatedBy: String(entry.updatedBy ?? 'system').trim() || 'system',
         scheduledAt: isValidTimestamp(entry.scheduledAt) ? toIsoTimestamp(entry.scheduledAt ?? undefined) : null,
-        publishedAt: isValidTimestamp(entry.publishedAt) ? toIsoTimestamp(entry.publishedAt ?? undefined) : null,
+        publishedAt: isValidTimestamp(entry.publishedAt) ? toIsoTimestamp(String(entry.publishedAt ?? '')) : null,
         rolledBackAt: isValidTimestamp(entry.rolledBackAt) ? toIsoTimestamp(entry.rolledBackAt ?? undefined) : null,
         rollbackTargetReleaseId: String(entry.rollbackTargetReleaseId ?? '').trim() || null,
         validation: normalizedValidation,
@@ -1156,6 +1168,44 @@ export function normalizeCmsReleaseSettings(
     )
     : []
 
+  const rawReviewPackages = Array.isArray(parsed.reviewPackages)
+    ? (parsed.reviewPackages as unknown[])
+    : []
+
+  const reviewPackages = rawReviewPackages
+    .filter((entry): entry is Record<string, unknown> => Boolean(entry && typeof entry === 'object'))
+    .map((entry, index) => ({
+        id: String(entry.id ?? '').trim() || `review-package-${index + 1}`,
+        exportedAt: toIsoTimestamp(String(entry.exportedAt ?? '')),
+        fileName: String(entry.fileName ?? '').trim() || `ntk-cms-review-${index + 1}.json`,
+        releaseId: String(entry.releaseId ?? '').trim() || 'unknown',
+        releaseName: String(entry.releaseName ?? '').trim() || `Release ${index + 1}`,
+        environment: normalizeEnvironment(String(entry.environment ?? ''), activeEnvironment),
+        publishedAt:
+          isValidTimestamp(typeof entry.publishedAt === 'string' ? entry.publishedAt : null)
+            ? toIsoTimestamp(String(entry.publishedAt ?? ''))
+            : null,
+        hasChanges: entry.hasChanges !== false,
+        changedPages: Math.max(0, Number.parseInt(String(entry.changedPages ?? '0'), 10) || 0),
+        changedSections: Math.max(0, Number.parseInt(String(entry.changedSections ?? '0'), 10) || 0),
+        changedBlocks: Math.max(0, Number.parseInt(String(entry.changedBlocks ?? '0'), 10) || 0),
+        localeCoverage: Array.isArray(entry.localeCoverage)
+          ? (entry.localeCoverage as unknown[])
+            .filter((localeEntry): localeEntry is Record<string, unknown> => Boolean(localeEntry && typeof localeEntry === 'object'))
+            .map(localeEntry => ({
+              locale: String(localeEntry.locale ?? '').trim() || 'en',
+              status: normalizeReviewPackageLocaleStatus(String(localeEntry.status ?? '')),
+              percentage: Math.max(0, Math.min(100, Number.parseInt(String(localeEntry.percentage ?? '0'), 10) || 0)),
+              missing: Math.max(0, Number.parseInt(String(localeEntry.missing ?? '0'), 10) || 0),
+            }))
+          : [],
+        checklistAllowed: entry.checklistAllowed !== false,
+        checklistReadyCount: Math.max(0, Number.parseInt(String(entry.checklistReadyCount ?? '0'), 10) || 0),
+        checklistWarningCount: Math.max(0, Number.parseInt(String(entry.checklistWarningCount ?? '0'), 10) || 0),
+        checklistBlockingCount: Math.max(0, Number.parseInt(String(entry.checklistBlockingCount ?? '0'), 10) || 0),
+      }))
+    .slice(0, 20)
+
   return {
     schemaVersion: CMS_RELEASE_SETTINGS_SCHEMA_VERSION,
     maxEntries: safeMaxEntries,
@@ -1164,6 +1214,7 @@ export function normalizeCmsReleaseSettings(
     enforceEnvironmentPolicies,
     environmentPolicies,
     promotions,
+    reviewPackages,
     items,
   }
 }

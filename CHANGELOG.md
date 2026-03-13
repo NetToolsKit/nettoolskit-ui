@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Review package history surface in Releases**
+  - Added persisted review-package export metadata to the release settings domain so authors can recall recent offline review exports without storing the full payload in CMS state.
+  - Surfaced a new `Review package history` panel in `Releases` with recent exports for the active environment, including file name, release context, change counts, locale gaps and checklist status.
+  - Added focused unit coverage for review-package history metadata creation/capping plus Playwright coverage proving exported review packages appear immediately in the new Releases history surface.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused unit tests and focused CMS E2E coverage for the review export flow.
 - **Unified release review hub in Releases**
   - Added an engine-level release review hub helper that aggregates draft-vs-published diff signals, locale coverage gaps and release candidate checklist status into one deterministic summary object.
   - Surfaced the new review hub in the `Releases` module as a compact authoring summary with three review cards for `Changes`, `Locale coverage` and `Checklist`, reusing the same underlying review sources already used elsewhere in the CMS.

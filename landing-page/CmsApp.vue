@@ -4236,6 +4236,71 @@
                 </div>
               </div>
 
+              <div
+                v-if="releaseReviewPackageHistoryEntries.length > 0"
+                class="cms-release-history"
+                data-cms-release-history
+              >
+                <div class="cms-release-history__header">
+                  <div class="cms-release-history__copy">
+                    <strong>{{ tr('Review package history', 'Historico de pacotes de revisao') }}</strong>
+                    <small>{{ tr('Recent review exports for this environment, with quick recall metadata.', 'Exportacoes recentes de revisao deste ambiente, com metadados para consulta rapida.') }}</small>
+                  </div>
+                  <q-chip dense square :style="bannerStyle">
+                    {{ releaseReviewPackageHistoryEntries.length }}
+                    {{ tr('recent exports', 'exports recentes') }}
+                  </q-chip>
+                </div>
+
+                <div class="cms-release-history__items">
+                  <article
+                    v-for="entry in releaseReviewPackageHistoryEntries"
+                    :key="entry.id"
+                    class="cms-release-history__item"
+                    :data-cms-review-history-item="entry.id"
+                  >
+                    <div class="cms-release-history__item-header">
+                      <div class="cms-release-history__item-copy">
+                        <strong>{{ entry.fileName }}</strong>
+                        <small>{{ getReviewPackageHistoryDescription(entry) }}</small>
+                      </div>
+                      <div class="cms-release-history__item-summary">
+                        <q-chip dense square :style="getReleaseChecklistStatusStyle(getReviewPackageHistoryStatus(entry))">
+                          {{ getReleaseChecklistStatusLabel(getReviewPackageHistoryStatus(entry)) }}
+                        </q-chip>
+                        <q-chip
+                          v-if="selectedRelease && entry.releaseId === selectedRelease.id"
+                          dense
+                          square
+                          :style="primaryActionStyle"
+                        >
+                          {{ tr('Current release', 'Release atual') }}
+                        </q-chip>
+                      </div>
+                    </div>
+
+                    <div class="cms-release-history__metrics">
+                      <span class="cms-release-history__metric">
+                        <strong>{{ entry.changedPages }}</strong>
+                        <small>{{ tr('Pages', 'Paginas') }}</small>
+                      </span>
+                      <span class="cms-release-history__metric">
+                        <strong>{{ entry.changedSections }}</strong>
+                        <small>{{ tr('Sections', 'Secoes') }}</small>
+                      </span>
+                      <span class="cms-release-history__metric">
+                        <strong>{{ entry.changedBlocks }}</strong>
+                        <small>{{ tr('Blocks', 'Blocos') }}</small>
+                      </span>
+                      <span class="cms-release-history__metric">
+                        <strong>{{ entry.localeCoverage.reduce((sum, locale) => sum + locale.missing, 0) }}</strong>
+                        <small>{{ tr('Locale gaps', 'Lacunas de locale') }}</small>
+                      </span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
               <div v-if="selectedReleaseCandidateChecklist" class="cms-release-checklist">
                 <div class="cms-release-checklist__header">
                   <div class="cms-release-checklist__copy">
@@ -4729,6 +4794,10 @@ import {
 } from '../src/modules/cms/white-label/review-hub'
 import { createCmsDraftComparisonExportPayload } from '../src/modules/cms/white-label/review-package'
 import {
+  appendCmsReviewPackageHistory,
+  createCmsReviewPackageHistoryEntry,
+} from '../src/modules/cms/white-label/review-package-history'
+import {
   createCmsSnapshotHistoryState,
   recordCmsSnapshot,
   redoCmsSnapshot,
@@ -4784,6 +4853,7 @@ import type {
   CmsPageSettings,
   CmsPreviewSource,
   CmsPreviewViewport,
+  CmsReviewPackageHistoryEntry,
   CmsReleaseSettings,
   CmsReleaseStatus,
   CmsLocale,
@@ -9112,6 +9182,33 @@ function getReleaseReviewHubMetricLabel(
 }
 
 /**
+ * Resolves semantic status for one exported review package metadata row.
+ */
+function getReviewPackageHistoryStatus(entry: CmsReviewPackageHistoryEntry): CmsReleaseCandidateChecklistStatus {
+  if (entry.checklistBlockingCount > 0) {
+    return 'blocking'
+  }
+
+  if (entry.checklistWarningCount > 0) {
+    return 'warning'
+  }
+
+  return 'ready'
+}
+
+/**
+ * Builds concise release/package context text for one exported review package row.
+ */
+function getReviewPackageHistoryDescription(entry: CmsReviewPackageHistoryEntry): string {
+  const exportTime = new Date(entry.exportedAt).toLocaleString()
+  const baselineText = entry.publishedAt
+    ? tr('published baseline available', 'baseline publicada disponivel')
+    : tr('no published baseline yet', 'ainda sem baseline publicada')
+
+  return `${entry.releaseName} · ${exportTime} · ${baselineText}`
+}
+
+/**
  * Formats ISO dates into datetime-local input values.
  */
 function toDateTimeLocalValue(value: string | null): string {
@@ -10260,6 +10357,23 @@ const selectedReleaseReviewHub = computed(() => {
     localeCoverage: cmsPreviewLocaleCoverageMatrix.value,
     checklist: selectedReleaseCandidateChecklist.value,
   })
+})
+
+const releaseReviewPackageHistoryEntries = computed<CmsReviewPackageHistoryEntry[]>(() => {
+  const currentEnvironment = activeReleaseEnvironment.value
+  const selectedId = selectedRelease.value?.id ?? ''
+  return [...(settings.value.releases.reviewPackages ?? [])]
+    .filter(entry => entry.environment === currentEnvironment)
+    .sort((left, right) => {
+      const leftSelectedScore = left.releaseId === selectedId ? 1 : 0
+      const rightSelectedScore = right.releaseId === selectedId ? 1 : 0
+      if (leftSelectedScore !== rightSelectedScore) {
+        return rightSelectedScore - leftSelectedScore
+      }
+
+      return new Date(right.exportedAt).getTime() - new Date(left.exportedAt).getTime()
+    })
+    .slice(0, 8)
 })
 
 const cmsPreviewChangedPageDiffs = computed(() => {
@@ -14525,6 +14639,13 @@ function exportCmsDraftComparisonPackage(): void {
 
   const fileName = `ntk-cms-review-${toJsonFileName(activeProfile.id)}.json`
   downloadJsonPayload(fileName, payload)
+  settings.value.releases.reviewPackages = appendCmsReviewPackageHistory(
+    settings.value.releases.reviewPackages,
+    createCmsReviewPackageHistoryEntry({
+      fileName,
+      payload,
+    })
+  )
   savedAtLabel.value = getCmsDraftComparisonPackageExportedLabel()
 }
 
@@ -16593,6 +16714,93 @@ function resetToDefaults(): void {
   font-size: var(--ntk-cms-font-size-item-caption);
 }
 
+.cms-release-history {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-history__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-release-history__copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-history__copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-release-history__items {
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-history__item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-history__item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-release-history__item-copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-release-history__item-copy small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-release-history__item-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
+.cms-release-history__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-release-history__metric {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: calc(var(--ntk-cms-space-xs) * 0.9);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 3);
+  background: var(--ntk-cms-bg-card);
+}
+
+.cms-release-history__metric strong {
+  font-size: var(--ntk-cms-font-size-subtitle);
+}
+
+.cms-release-history__metric small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
 .cms-release-checklist__summary {
   display: inline-flex;
   align-items: center;
@@ -16694,10 +16902,13 @@ function resetToDefaults(): void {
 }
 
 @media (max-width: 768px) {
-  .cms-release-review-hub__header {
+  .cms-release-review-hub__header,
+  .cms-release-history__header,
+  .cms-release-history__item-header {
     flex-direction: column;
   }
 
+  .cms-release-history__metrics,
   .cms-release-review-hub__cards,
   .cms-release-review-hub__metrics {
     grid-template-columns: minmax(0, 1fr);

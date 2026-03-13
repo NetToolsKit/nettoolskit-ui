@@ -658,6 +658,38 @@ export interface CmsReleasePromotionEntry {
 }
 
 /**
+ * Lightweight locale summary persisted for exported review package history.
+ */
+export interface CmsReviewPackageHistoryLocaleEntry {
+  locale: string
+  status: 'complete' | 'partial' | 'missing' | 'empty' | 'not-applicable'
+  percentage: number
+  missing: number
+}
+
+/**
+ * Metadata stored after exporting one review package from Releases.
+ */
+export interface CmsReviewPackageHistoryEntry {
+  id: string
+  exportedAt: string
+  fileName: string
+  releaseId: string
+  releaseName: string
+  environment: CmsReleaseEnvironment
+  publishedAt: string | null
+  hasChanges: boolean
+  changedPages: number
+  changedSections: number
+  changedBlocks: number
+  localeCoverage: CmsReviewPackageHistoryLocaleEntry[]
+  checklistAllowed: boolean
+  checklistReadyCount: number
+  checklistWarningCount: number
+  checklistBlockingCount: number
+}
+
+/**
  * Release calendar diagnostic row for scheduled conflicts and stale drafts.
  */
 export interface CmsReleaseCalendarConflict {
@@ -685,6 +717,7 @@ export interface CmsReleaseSettings {
   enforceEnvironmentPolicies: boolean
   environmentPolicies: CmsReleaseEnvironmentPolicy[]
   promotions: CmsReleasePromotionEntry[]
+  reviewPackages: CmsReviewPackageHistoryEntry[]
   items: CmsReleaseEntry[]
 }
 

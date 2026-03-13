@@ -2933,6 +2933,14 @@ test.describe('CMS settings white-label flow', () => {
     expect(download?.payload.review.localeCoverage.map(entry => entry.locale)).toEqual(
       expect.arrayContaining(['en', 'pt-BR'])
     )
+
+    const reviewHistory = page.locator('[data-cms-release-history]').first()
+    await expect(reviewHistory).toBeVisible()
+    const reviewHistoryItem = reviewHistory.locator('[data-cms-review-history-item]').first()
+    await expect(reviewHistoryItem).toContainText('ntk-cms-review-')
+    await expect(reviewHistoryItem).toContainText('Release v')
+    await expect(reviewHistoryItem).toContainText('Pages')
+    await expect(reviewHistoryItem).toContainText('Locale gaps')
   })
 
   test('surfaces locale coverage matrix in Pages and Blocks preview', async ({ page }) => {
