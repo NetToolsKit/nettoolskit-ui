@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 7 regression and quality hardening for release review workflows**
+  - Expanded the Playwright visual regression suite with phase-7 coverage for the `Releases` acknowledgement surface, review package history and checklist drill-down actions.
+  - Revalidated the release-review authoring flows with Chromium E2E coverage spanning review hub, checklist navigation, review package export/history and acknowledgement capture.
+  - Regenerated the affected Windows visual baselines after closing the phase-7 release review surface work.
+  - Revalidated `npm audit --omit=dev`, `lint`, `type-check`, `build:landing`, the full Chromium E2E suite and the CMS visual regression suite to close Phase 7.
 - **Publish gate drill-down actions in Releases**
   - Added an engine-level release checklist drill-down helper that maps publish-review issues to concrete authoring destinations such as `Branding`, `Content`, `Pages`, `Blocks` and `Releases`.
   - Surfaced checklist action buttons in `Releases` so authors can jump directly from publish findings to the affected builder surface instead of manually navigating through the CMS.

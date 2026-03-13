@@ -609,4 +609,69 @@ test.describe('CMS engine visual regression', () => {
       { caret: 'hide' }
     )
   })
+
+  test('captures phase 7 review acknowledgements surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    await selectOptionByFieldLabel(page, 'Decision', 'Approved')
+    await fillTextInputDirect(cmsInputByLabel(page, 'Acknowledgement note'), 'Reviewed for release readiness')
+    await page.getByRole('button', { name: /^(Add acknowledgement|Adicionar reconhecimento)$/ }).first().click()
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('[data-cms-release-acks]').first()).toHaveScreenshot(
+      'cms-engine-phase7-release-acknowledgements-surface.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 7 review package history surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1400 })
+    await page.goto(CMS_URL)
+    await publishRelease(page)
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    await fillTextInputDirect(
+      firstPage
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .first()
+        .locator('input, textarea')
+        .first(),
+      'Phase 7 review package'
+    )
+
+    await openDrawerModule(page, /^Releases$/)
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisao)$/ }).first().click()
+
+    await stabilizeVisualState(page)
+    await expect(page.locator('[data-cms-release-history]').first()).toHaveScreenshot(
+      'cms-engine-phase7-review-package-history-surface.png',
+      { caret: 'hide' }
+    )
+  })
+
+  test('captures phase 7 release checklist drill-down surface', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1500 })
+    await page.goto(CMS_URL)
+    await openDrawerModule(page, /^Releases$/)
+
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    await stabilizeVisualState(page)
+    await expect(releasesEditor).toHaveScreenshot(
+      'cms-engine-phase7-release-checklist-drilldown-surface.png',
+      { caret: 'hide' }
+    )
+  })
 })
