@@ -1327,9 +1327,45 @@
                               }}
                             </small>
                             <small v-if="isCmsArchivedEntity(preset)">{{ tr('Archived', 'Arquivado') }}</small>
+                            <small v-if="isCmsDeprecatedEntity(preset)">
+                              {{
+                                getCmsReplacementLabel(
+                                  preset.replacementEntityId,
+                                  settings.authoredContentModelFieldPresets,
+                                  getCmsAuthoredContentModelFieldPresetNameValue
+                                )
+                                  ? `${tr('Deprecated -> replacement', 'Descontinuado -> substituto')}: ${getCmsReplacementLabel(
+                                    preset.replacementEntityId,
+                                    settings.authoredContentModelFieldPresets,
+                                    getCmsAuthoredContentModelFieldPresetNameValue
+                                  )}`
+                                  : tr('Deprecated for new schema authoring', 'Descontinuado para novas autorias de schema')
+                              }}
+                            </small>
+                            <small v-if="isCmsDeprecatedEntity(preset) && preset.deprecationNote">{{ preset.deprecationNote }}</small>
                             <small v-if="getCmsAuthoredContentModelFieldPresetDescriptionValue(preset)">
                               {{ getCmsAuthoredContentModelFieldPresetDescriptionValue(preset) }}
                             </small>
+                            <q-select
+                              v-if="isCmsDeprecatedEntity(preset)"
+                              :model-value="preset.replacementEntityId ?? null"
+                              outlined
+                              dense
+                              clearable
+                              emit-value
+                              map-options
+                              :options="getCmsFieldPresetReplacementOptions(preset)"
+                              :label="tr('Replacement preset', 'Preset substituto')"
+                              @update:model-value="updateCmsAuthoredContentModelFieldPresetReplacement(preset.id, $event)"
+                            />
+                            <q-input
+                              v-if="isCmsDeprecatedEntity(preset)"
+                              :model-value="preset.deprecationNote ?? ''"
+                              outlined
+                              dense
+                              :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                              @update:model-value="updateCmsAuthoredContentModelFieldPresetDeprecationNote(preset.id, $event)"
+                            />
                           </div>
                           <div class="cms-reusable-block-row__actions">
                             <q-btn
@@ -1338,8 +1374,26 @@
                               no-caps
                               icon="ads_click"
                               :label="tr('Use', 'Usar')"
-                              :disable="isCmsArchivedEntity(preset)"
+                              :disable="isCmsArchivedEntity(preset) || isCmsDeprecatedEntity(preset)"
                               @click="selectedAuthoredContentModelFieldPresetId = preset.id"
+                            />
+                            <q-btn
+                              v-if="isCmsDeprecatedEntity(preset) && preset.replacementEntityId"
+                              flat
+                              dense
+                              no-caps
+                              icon="swap_horiz"
+                              :label="tr('Use replacement', 'Usar substituto')"
+                              @click="selectCmsReplacementFieldPreset(preset.replacementEntityId)"
+                            />
+                            <q-btn
+                              flat
+                              dense
+                              no-caps
+                              :icon="isCmsDeprecatedEntity(preset) ? 'restore_from_trash' : 'history_toggle_off'"
+                              :label="isCmsDeprecatedEntity(preset) ? tr('Reinstate', 'Reativar') : tr('Deprecate', 'Descontinuar')"
+                              :style="isCmsDeprecatedEntity(preset) ? undefined : warningActionStyle"
+                              @click="isCmsDeprecatedEntity(preset) ? undeprecateCmsAuthoredContentModelFieldPreset(preset.id) : deprecateCmsAuthoredContentModelFieldPreset(preset.id)"
                             />
                             <q-btn
                               flat
@@ -2343,8 +2397,44 @@
                       <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
                       <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
                       <small v-if="isCmsArchivedEntity(reusableSection)">{{ tr('Archived', 'Arquivada') }}</small>
+                      <small v-if="isCmsDeprecatedEntity(reusableSection)">
+                        {{
+                          getCmsReplacementLabel(
+                            reusableSection.replacementEntityId,
+                            settings.reusableSections,
+                            section => section.name
+                          )
+                            ? `${tr('Deprecated -> replacement', 'Descontinuado -> substituto')}: ${getCmsReplacementLabel(
+                              reusableSection.replacementEntityId,
+                              settings.reusableSections,
+                              section => section.name
+                            )}`
+                            : tr('Deprecated for new page composition', 'Descontinuado para nova composicao de paginas')
+                        }}
+                      </small>
+                      <small v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.deprecationNote">{{ reusableSection.deprecationNote }}</small>
                       <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
                       <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
+                      <q-select
+                        v-if="isCmsDeprecatedEntity(reusableSection)"
+                        :model-value="reusableSection.replacementEntityId ?? null"
+                        outlined
+                        dense
+                        clearable
+                        emit-value
+                        map-options
+                        :options="getCmsReusableSectionReplacementOptions(reusableSection)"
+                        :label="tr('Replacement section', 'Secao substituta')"
+                        @update:model-value="updateReusableSectionReplacement(reusableSection.id, $event)"
+                      />
+                      <q-input
+                        v-if="isCmsDeprecatedEntity(reusableSection)"
+                        :model-value="reusableSection.deprecationNote ?? ''"
+                        outlined
+                        dense
+                        :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                        @update:model-value="updateReusableSectionDeprecationNote(reusableSection.id, $event)"
+                      />
                     </div>
                     <div class="cms-reusable-block-row__actions">
                       <q-btn
@@ -2354,6 +2444,15 @@
                         icon="travel_explore"
                         :aria-label="tr('Inspect reusable section usage', 'Inspecionar uso da secao reutilizavel')"
                         @click="openCmsUsageDrawer('reusable-section', reusableSection.id, reusableSection.name, reusableSection.description ?? '')"
+                      />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        :icon="isCmsDeprecatedEntity(reusableSection) ? 'restore_from_trash' : 'history_toggle_off'"
+                        :label="isCmsDeprecatedEntity(reusableSection) ? tr('Reinstate', 'Reativar') : tr('Deprecate', 'Descontinuar')"
+                        :style="isCmsDeprecatedEntity(reusableSection) ? undefined : warningActionStyle"
+                        @click="isCmsDeprecatedEntity(reusableSection) ? undeprecateReusableSection(reusableSection.id) : deprecateReusableSection(reusableSection.id)"
                       />
                       <q-btn
                         flat
@@ -3124,8 +3223,44 @@
                       </div>
                       <small>{{ resolveCmsBlockDisplayName(reusableBlock.type) }} · {{ reusableBlock.category }}</small>
                       <small v-if="isCmsArchivedEntity(reusableBlock)">{{ tr('Archived', 'Arquivado') }}</small>
+                      <small v-if="isCmsDeprecatedEntity(reusableBlock)">
+                        {{
+                          getCmsReplacementLabel(
+                            reusableBlock.replacementEntityId,
+                            settings.reusableBlocks,
+                            block => block.name
+                          )
+                            ? `${tr('Deprecated -> replacement', 'Descontinuado -> substituto')}: ${getCmsReplacementLabel(
+                              reusableBlock.replacementEntityId,
+                              settings.reusableBlocks,
+                              block => block.name
+                            )}`
+                            : tr('Deprecated for new block insertion', 'Descontinuado para nova insercao de blocos')
+                        }}
+                      </small>
+                      <small v-if="isCmsDeprecatedEntity(reusableBlock) && reusableBlock.deprecationNote">{{ reusableBlock.deprecationNote }}</small>
                       <small>{{ getCmsReusableBlockUsageSummaryLabel(reusableBlock.id) }}</small>
                       <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
+                      <q-select
+                        v-if="isCmsDeprecatedEntity(reusableBlock)"
+                        :model-value="reusableBlock.replacementEntityId ?? null"
+                        outlined
+                        dense
+                        clearable
+                        emit-value
+                        map-options
+                        :options="getCmsReusableBlockReplacementOptions(reusableBlock)"
+                        :label="tr('Replacement block', 'Bloco substituto')"
+                        @update:model-value="updateReusableBlockReplacement(reusableBlock.id, $event)"
+                      />
+                      <q-input
+                        v-if="isCmsDeprecatedEntity(reusableBlock)"
+                        :model-value="reusableBlock.deprecationNote ?? ''"
+                        outlined
+                        dense
+                        :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                        @update:model-value="updateReusableBlockDeprecationNote(reusableBlock.id, $event)"
+                      />
                     </div>
                     <div class="cms-reusable-block-row__actions">
                     <q-btn
@@ -3134,8 +3269,17 @@
                       no-caps
                       icon="ads_click"
                       :label="tr('Use', 'Usar')"
-                      :disable="isCmsArchivedEntity(reusableBlock)"
+                      :disable="isCmsArchivedEntity(reusableBlock) || isCmsDeprecatedEntity(reusableBlock)"
                       @click="selectedReusableBlockId = reusableBlock.id"
+                    />
+                    <q-btn
+                      v-if="isCmsDeprecatedEntity(reusableBlock) && reusableBlock.replacementEntityId"
+                      flat
+                      dense
+                      no-caps
+                      icon="swap_horiz"
+                      :label="tr('Use replacement', 'Usar substituto')"
+                      @click="selectedReusableBlockId = String(reusableBlock.replacementEntityId ?? '')"
                     />
                     <q-btn
                       flat
@@ -3145,6 +3289,15 @@
                       :aria-label="tr('Inspect reusable block usage', 'Inspecionar uso do bloco reutilizavel')"
                       @click="openCmsUsageDrawer('reusable-block', reusableBlock.id, reusableBlock.name, reusableBlock.description ?? '')"
                     />
+                      <q-btn
+                        flat
+                        dense
+                        no-caps
+                        :icon="isCmsDeprecatedEntity(reusableBlock) ? 'restore_from_trash' : 'history_toggle_off'"
+                        :label="isCmsDeprecatedEntity(reusableBlock) ? tr('Reinstate', 'Reativar') : tr('Deprecate', 'Descontinuar')"
+                        :style="isCmsDeprecatedEntity(reusableBlock) ? undefined : warningActionStyle"
+                        @click="isCmsDeprecatedEntity(reusableBlock) ? undeprecateReusableBlock(reusableBlock.id) : deprecateReusableBlock(reusableBlock.id)"
+                      />
                       <q-btn
                         flat
                         dense
@@ -3203,8 +3356,44 @@
                     <small>{{ resolveCmsBlockDisplayName(preset.type) }} · {{ preset.category }}</small>
                     <small>{{ getCmsAuthoredPresetStarterSectionsLabel(preset) }}</small>
                     <small v-if="isCmsArchivedEntity(preset)">{{ tr('Archived', 'Arquivado') }}</small>
+                    <small v-if="isCmsDeprecatedEntity(preset)">
+                      {{
+                        getCmsReplacementLabel(
+                          preset.replacementEntityId,
+                          settings.authoredBlockPresets,
+                          authoredPreset => getCmsAuthoredBlockPresetNameValue(authoredPreset)
+                        )
+                          ? `${tr('Deprecated -> replacement', 'Descontinuado -> substituto')}: ${getCmsReplacementLabel(
+                            preset.replacementEntityId,
+                            settings.authoredBlockPresets,
+                            authoredPreset => getCmsAuthoredBlockPresetNameValue(authoredPreset)
+                          )}`
+                          : tr('Deprecated for new preset application', 'Descontinuado para nova aplicacao de preset')
+                      }}
+                    </small>
+                    <small v-if="isCmsDeprecatedEntity(preset) && preset.deprecationNote">{{ preset.deprecationNote }}</small>
                     <small>{{ getCmsAuthoredBlockPresetUsageSummaryLabel(preset.id) }}</small>
                     <small v-if="getCmsAuthoredBlockPresetDescriptionValue(preset)">{{ getCmsAuthoredBlockPresetDescriptionValue(preset) }}</small>
+                    <q-select
+                      v-if="isCmsDeprecatedEntity(preset)"
+                      :model-value="preset.replacementEntityId ?? null"
+                      outlined
+                      dense
+                      clearable
+                      emit-value
+                      map-options
+                      :options="getCmsAuthoredBlockPresetReplacementOptions(preset)"
+                      :label="tr('Replacement preset', 'Preset substituto')"
+                      @update:model-value="updateCmsAuthoredPresetReplacement(preset.id, $event)"
+                    />
+                    <q-input
+                      v-if="isCmsDeprecatedEntity(preset)"
+                      :model-value="preset.deprecationNote ?? ''"
+                      outlined
+                      dense
+                      :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                      @update:model-value="updateCmsAuthoredPresetDeprecationNote(preset.id, $event)"
+                    />
                   </div>
                   <div class="cms-reusable-block-row__actions">
                     <q-btn
@@ -3213,8 +3402,17 @@
                       no-caps
                       icon="ads_click"
                       :label="tr('Use', 'Usar')"
-                      :disable="isCmsArchivedEntity(preset)"
+                      :disable="isCmsArchivedEntity(preset) || isCmsDeprecatedEntity(preset)"
                       @click="selectCmsAuthoredPreset(preset.id)"
+                    />
+                    <q-btn
+                      v-if="isCmsDeprecatedEntity(preset) && preset.replacementEntityId"
+                      flat
+                      dense
+                      no-caps
+                      icon="swap_horiz"
+                      :label="tr('Use replacement', 'Usar substituto')"
+                      @click="selectCmsReplacementAuthoredPreset(preset.replacementEntityId)"
                     />
                     <q-btn
                       flat
@@ -3228,6 +3426,15 @@
                         getCmsAuthoredBlockPresetNameValue(preset),
                         getCmsAuthoredBlockPresetDescriptionValue(preset)
                       )"
+                    />
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      :icon="isCmsDeprecatedEntity(preset) ? 'restore_from_trash' : 'history_toggle_off'"
+                      :label="isCmsDeprecatedEntity(preset) ? tr('Reinstate', 'Reativar') : tr('Deprecate', 'Descontinuar')"
+                      :style="isCmsDeprecatedEntity(preset) ? undefined : warningActionStyle"
+                      @click="isCmsDeprecatedEntity(preset) ? undeprecateCmsAuthoredPreset(preset.id) : deprecateCmsAuthoredPreset(preset.id)"
                     />
                     <q-btn
                       flat
@@ -5003,6 +5210,13 @@ import {
   unarchiveCmsEntity,
 } from '../src/modules/cms/white-label/archive-state'
 import {
+  deprecateCmsEntity,
+  isCmsDeprecatedEntity,
+  undeprecateCmsEntity,
+  updateCmsDeprecatedEntityNote,
+  updateCmsDeprecatedEntityReplacement,
+} from '../src/modules/cms/white-label/deprecation-state'
+import {
   createCmsPageFromTemplate,
   listCmsPageQuickStartOptions,
   listCmsPageTemplateOptions,
@@ -6216,7 +6430,7 @@ function matchesCmsBuilderSearch(searchValue: string, ...tokens: unknown[]): boo
 const cmsAuthoredContentModelFieldPresetOptions = computed<CmsContentModelFieldPresetOption[]>(() => {
   return listCmsContentModelFieldPresetOptions(
     settings.value.content.locale,
-    settings.value.authoredContentModelFieldPresets.filter(preset => !isCmsArchivedEntity(preset))
+    settings.value.authoredContentModelFieldPresets.filter(preset => !isCmsArchivedEntity(preset) && !isCmsDeprecatedEntity(preset))
   )
 })
 const cmsContentModelPresetOptions = computed<CmsSectionPresetOption[]>(() => {
@@ -10651,7 +10865,7 @@ const activeBlocksSectionContractSummary = computed(() => {
 
 const cmsReusableBlockOptions = computed(() => {
   return settings.value.reusableBlocks
-    .filter(reusableBlock => !isCmsArchivedEntity(reusableBlock))
+    .filter(reusableBlock => !isCmsArchivedEntity(reusableBlock) && !isCmsDeprecatedEntity(reusableBlock))
     .map(reusableBlock => ({
     label: `${reusableBlock.name} (${reusableBlock.category})`,
     value: reusableBlock.id,
@@ -10800,7 +11014,7 @@ const filteredCmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSet
 
 const cmsAuthoredBlockPresetOptions = computed(() => {
   return settings.value.authoredBlockPresets
-    .filter(preset => !isCmsArchivedEntity(preset))
+    .filter(preset => !isCmsArchivedEntity(preset) && !isCmsDeprecatedEntity(preset))
     .map(preset => ({
     label: `${getCmsAuthoredBlockPresetNameValue(preset)} (${resolveCmsBlockDisplayName(preset.type)})`,
     value: preset.id,
@@ -11438,6 +11652,88 @@ const selectedReusableBlock = computed<CmsReusableBlockSettings | null>(() => {
 const selectedAuthoredBlockPreset = computed<CmsAuthoredBlockPresetSettings | null>(() => {
   return settings.value.authoredBlockPresets.find(preset => preset.id === selectedAuthoredBlockPresetId.value) ?? null
 })
+
+/**
+ * Resolves one replacement label from the current entity collection.
+ */
+function getCmsReplacementLabel<T extends { id: string }>(
+  replacementEntityId: string | null | undefined,
+  entries: T[],
+  getLabel: (entry: T) => string
+): string {
+  const replacementId = String(replacementEntityId ?? '').trim()
+  if (!replacementId) {
+    return ''
+  }
+
+  const entry = entries.find(candidate => candidate.id === replacementId)
+  return entry ? getLabel(entry) : ''
+}
+
+/**
+ * Returns authored schema-field preset replacements compatible with one preset.
+ */
+function getCmsFieldPresetReplacementOptions(
+  preset: CmsAuthoredContentModelFieldPresetSettings
+): Array<{ label: string; value: string }> {
+  return settings.value.authoredContentModelFieldPresets
+    .filter(candidate => candidate.id !== preset.id)
+    .filter(candidate => !isCmsArchivedEntity(candidate))
+    .filter(candidate => candidate.field.type === preset.field.type)
+    .map(candidate => ({
+      label: getCmsAuthoredContentModelFieldPresetNameValue(candidate),
+      value: candidate.id,
+    }))
+}
+
+/**
+ * Returns reusable-section replacements compatible with one section template.
+ */
+function getCmsReusableSectionReplacementOptions(
+  reusableSection: CmsReusableSectionSettings
+): Array<{ label: string; value: string }> {
+  return settings.value.reusableSections
+    .filter(candidate => candidate.id !== reusableSection.id)
+    .filter(candidate => !isCmsArchivedEntity(candidate))
+    .filter(candidate => candidate.contentModelId === reusableSection.contentModelId)
+    .filter(candidate => candidate.presetId === reusableSection.presetId)
+    .map(candidate => ({
+      label: candidate.name,
+      value: candidate.id,
+    }))
+}
+
+/**
+ * Returns reusable-block replacements compatible with one reusable block.
+ */
+function getCmsReusableBlockReplacementOptions(
+  reusableBlock: CmsReusableBlockSettings
+): Array<{ label: string; value: string }> {
+  return settings.value.reusableBlocks
+    .filter(candidate => candidate.id !== reusableBlock.id)
+    .filter(candidate => !isCmsArchivedEntity(candidate))
+    .filter(candidate => candidate.type === reusableBlock.type)
+    .map(candidate => ({
+      label: candidate.name,
+      value: candidate.id,
+    }))
+}
+
+/**
+ * Returns authored-preset replacements compatible with one authored block preset.
+ */
+function getCmsAuthoredBlockPresetReplacementOptions(
+  preset: CmsAuthoredBlockPresetSettings
+): Array<{ label: string; value: string }> {
+  return settings.value.authoredBlockPresets
+    .filter(candidate => candidate.id !== preset.id)
+    .filter(candidate => !isCmsArchivedEntity(candidate))
+    .filter(candidate => candidate.type === preset.type)
+    .map(candidate => ({
+      label: getCmsAuthoredBlockPresetNameValue(candidate),
+      value: candidate.id,
+    }))
+}
 
 /**
  * Checks whether a value is a plain object record.
@@ -13216,6 +13512,53 @@ function unarchiveReusableBlock(reusableBlockId: string): void {
 }
 
 /**
+ * Marks one reusable block as deprecated for new authoring flows.
+ */
+function deprecateReusableBlock(reusableBlockId: string): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.map(reusableBlock => (
+    reusableBlock.id === reusableBlockId
+      ? deprecateCmsEntity(reusableBlock)
+      : reusableBlock
+  ))
+  savedAtLabel.value = `${tr('Reusable block deprecated at', 'Bloco reutilizavel descontinuado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Clears deprecation metadata from one reusable block.
+ */
+function undeprecateReusableBlock(reusableBlockId: string): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.map(reusableBlock => (
+    reusableBlock.id === reusableBlockId
+      ? undeprecateCmsEntity(reusableBlock)
+      : reusableBlock
+  ))
+  selectedReusableBlockId.value = reusableBlockId
+  savedAtLabel.value = `${tr('Reusable block reinstated at', 'Bloco reutilizavel reativado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Updates one reusable block replacement target.
+ */
+function updateReusableBlockReplacement(reusableBlockId: string, replacementEntityId: unknown): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.map(reusableBlock => (
+    reusableBlock.id === reusableBlockId
+      ? updateCmsDeprecatedEntityReplacement(reusableBlock, String(replacementEntityId ?? ''))
+      : reusableBlock
+  ))
+}
+
+/**
+ * Updates one reusable block deprecation note.
+ */
+function updateReusableBlockDeprecationNote(reusableBlockId: string, deprecationNote: unknown): void {
+  settings.value.reusableBlocks = settings.value.reusableBlocks.map(reusableBlock => (
+    reusableBlock.id === reusableBlockId
+      ? updateCmsDeprecatedEntityNote(reusableBlock, String(deprecationNote ?? ''))
+      : reusableBlock
+  ))
+}
+
+/**
  * Clears authored content-model selection and starts a new draft.
  */
 function createNewAuthoredContentModelDraft(): void {
@@ -13319,6 +13662,69 @@ function unarchiveCmsAuthoredContentModelFieldPreset(
     .map(preset => (preset.id === presetId ? unarchiveCmsEntity(preset) : preset))
   selectedAuthoredContentModelFieldPresetId.value = presetId
   savedAtLabel.value = `${tr('Field preset restored at', 'Preset de campo restaurado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Marks one authored schema-field preset as deprecated for new schema authoring flows.
+ */
+function deprecateCmsAuthoredContentModelFieldPreset(
+  presetId: CmsAuthoredContentModelFieldPresetId
+): void {
+  settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
+    .map(preset => (preset.id === presetId ? deprecateCmsEntity(preset) : preset))
+  savedAtLabel.value = `${tr('Field preset deprecated at', 'Preset de campo descontinuado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Clears deprecation metadata from one authored schema-field preset.
+ */
+function undeprecateCmsAuthoredContentModelFieldPreset(
+  presetId: CmsAuthoredContentModelFieldPresetId
+): void {
+  settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
+    .map(preset => (preset.id === presetId ? undeprecateCmsEntity(preset) : preset))
+  selectedAuthoredContentModelFieldPresetId.value = presetId
+  savedAtLabel.value = `${tr('Field preset reinstated at', 'Preset de campo reativado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Updates one authored schema-field preset replacement target.
+ */
+function updateCmsAuthoredContentModelFieldPresetReplacement(
+  presetId: CmsAuthoredContentModelFieldPresetId,
+  replacementEntityId: unknown
+): void {
+  settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
+    .map(preset => (
+      preset.id === presetId
+        ? updateCmsDeprecatedEntityReplacement(preset, String(replacementEntityId ?? ''))
+        : preset
+    ))
+}
+
+/**
+ * Updates one authored schema-field preset deprecation note.
+ */
+function updateCmsAuthoredContentModelFieldPresetDeprecationNote(
+  presetId: CmsAuthoredContentModelFieldPresetId,
+  deprecationNote: unknown
+): void {
+  settings.value.authoredContentModelFieldPresets = settings.value.authoredContentModelFieldPresets
+    .map(preset => (
+      preset.id === presetId
+        ? updateCmsDeprecatedEntityNote(preset, String(deprecationNote ?? ''))
+        : preset
+    ))
+}
+
+/**
+ * Selects one replacement schema-field preset when the replacement id matches the authored preset contract.
+ */
+function selectCmsReplacementFieldPreset(replacementEntityId: string | null | undefined): void {
+  const resolvedReplacementId = String(replacementEntityId ?? '').trim()
+  selectedAuthoredContentModelFieldPresetId.value = resolvedReplacementId.startsWith('field-preset:')
+    ? resolvedReplacementId as CmsAuthoredContentModelFieldPresetId
+    : ''
 }
 
 /**
@@ -13713,6 +14119,61 @@ function unarchiveCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
     .map(entry => (entry.id === presetId ? unarchiveCmsEntity(entry) : entry))
   selectedAuthoredBlockPresetId.value = presetId
   savedAtLabel.value = `${tr('Authored preset restored at', 'Preset authored restaurado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Marks one authored preset as deprecated for new block authoring flows.
+ */
+function deprecateCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets
+    .map(entry => (entry.id === presetId ? deprecateCmsEntity(entry) : entry))
+  savedAtLabel.value = `${tr('Authored preset deprecated at', 'Preset authored descontinuado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Clears deprecation metadata from one authored preset.
+ */
+function undeprecateCmsAuthoredPreset(presetId: CmsBlockPresetId): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets
+    .map(entry => (entry.id === presetId ? undeprecateCmsEntity(entry) : entry))
+  selectedAuthoredBlockPresetId.value = presetId
+  savedAtLabel.value = `${tr('Authored preset reinstated at', 'Preset authored reativado as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Updates one authored preset replacement target.
+ */
+function updateCmsAuthoredPresetReplacement(presetId: CmsBlockPresetId, replacementEntityId: unknown): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets
+    .map(entry => (
+      entry.id === presetId
+        ? updateCmsDeprecatedEntityReplacement(entry, String(replacementEntityId ?? ''))
+        : entry
+    ))
+}
+
+/**
+ * Updates one authored preset deprecation note.
+ */
+function updateCmsAuthoredPresetDeprecationNote(presetId: CmsBlockPresetId, deprecationNote: unknown): void {
+  settings.value.authoredBlockPresets = settings.value.authoredBlockPresets
+    .map(entry => (
+      entry.id === presetId
+        ? updateCmsDeprecatedEntityNote(entry, String(deprecationNote ?? ''))
+        : entry
+    ))
+}
+
+/**
+ * Selects one replacement authored block preset when the replacement id matches the block-preset contract.
+ */
+function selectCmsReplacementAuthoredPreset(replacementEntityId: string | null | undefined): void {
+  const resolvedReplacementId = String(replacementEntityId ?? '').trim()
+  if (!resolvedReplacementId) {
+    return
+  }
+
+  selectCmsAuthoredPreset(resolvedReplacementId as CmsBlockPresetId)
 }
 
 /**
@@ -15583,7 +16044,7 @@ function getCmsReusableSectionOptions(page: CmsPageSettings): Array<{
   description: string
 }> {
   return cmsReusableSectionLibrary.value
-    .filter(reusableSection => !isCmsArchivedEntity(reusableSection))
+    .filter(reusableSection => !isCmsArchivedEntity(reusableSection) && !isCmsDeprecatedEntity(reusableSection))
     .filter(reusableSection => isCmsSectionPresetAllowedForContentModel(
       page.contentModelId,
       reusableSection.presetId,
@@ -16198,6 +16659,52 @@ function unarchiveReusableSection(reusableSectionId: string): void {
       : reusableSection
   ))
   savedAtLabel.value = `${tr('Reusable section restored at', 'Secao reutilizavel restaurada as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Marks one reusable section as deprecated for new page authoring flows.
+ */
+function deprecateReusableSection(reusableSectionId: string): void {
+  settings.value.reusableSections = settings.value.reusableSections.map(reusableSection => (
+    reusableSection.id === reusableSectionId
+      ? deprecateCmsEntity(reusableSection)
+      : reusableSection
+  ))
+  savedAtLabel.value = `${tr('Reusable section deprecated at', 'Secao reutilizavel descontinuada as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Clears deprecation metadata from one reusable section.
+ */
+function undeprecateReusableSection(reusableSectionId: string): void {
+  settings.value.reusableSections = settings.value.reusableSections.map(reusableSection => (
+    reusableSection.id === reusableSectionId
+      ? undeprecateCmsEntity(reusableSection)
+      : reusableSection
+  ))
+  savedAtLabel.value = `${tr('Reusable section reinstated at', 'Secao reutilizavel reativada as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Updates one reusable section replacement target.
+ */
+function updateReusableSectionReplacement(reusableSectionId: string, replacementEntityId: unknown): void {
+  settings.value.reusableSections = settings.value.reusableSections.map(reusableSection => (
+    reusableSection.id === reusableSectionId
+      ? updateCmsDeprecatedEntityReplacement(reusableSection, String(replacementEntityId ?? ''))
+      : reusableSection
+  ))
+}
+
+/**
+ * Updates one reusable section deprecation note.
+ */
+function updateReusableSectionDeprecationNote(reusableSectionId: string, deprecationNote: unknown): void {
+  settings.value.reusableSections = settings.value.reusableSections.map(reusableSection => (
+    reusableSection.id === reusableSectionId
+      ? updateCmsDeprecatedEntityNote(reusableSection, String(deprecationNote ?? ''))
+      : reusableSection
+  ))
 }
 
 /**

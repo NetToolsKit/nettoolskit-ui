@@ -2056,6 +2056,84 @@ test.describe('CMS settings white-label flow', () => {
     ).toHaveValue(fieldGroup)
   })
 
+  test('deprecates field presets with replacement guidance and reuses the replacement preset', async ({ page }) => {
+    const legacyFieldId = 'legacyCampaignCode'
+    const legacyFieldLabel = 'Legacy campaign code'
+    const replacementFieldId = 'campaignCodeV2'
+    const replacementFieldLabel = 'Campaign code v2'
+
+    await page.setViewportSize({ width: 1600, height: 1800 })
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+    await openSettingsTab(page, /^(Content|Conteudo)$/)
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const authoredFieldRow = page.locator('.cms-content-model-fields__item').last()
+
+    await fillTextInputDirect(
+      authoredFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      legacyFieldId
+    )
+    await fillTextInputDirect(
+      authoredFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      legacyFieldLabel
+    )
+    await page.getByRole('button', { name: /^(Save as preset|Salvar como preset)$/ }).first().click()
+
+    await fillTextInputDirect(
+      authoredFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      replacementFieldId
+    )
+    await fillTextInputDirect(
+      authoredFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      replacementFieldLabel
+    )
+    await page.getByRole('button', { name: /^(Save as preset|Salvar como preset)$/ }).first().click()
+
+    const fieldPresetLibrary = page
+      .locator('.cms-blocks-library', {
+        has: page.getByText(/^(Field preset library|Biblioteca de presets de campo)$/),
+      })
+      .first()
+    const legacyPresetRow = fieldPresetLibrary.locator('.cms-reusable-block-row', { hasText: legacyFieldLabel }).first()
+
+    await expect(legacyPresetRow).toBeVisible()
+    await legacyPresetRow.getByRole('button', { name: /^(Deprecate|Descontinuar)$/ }).click()
+    await selectOptionByFieldLabelPattern(page, /^(Replacement preset|Preset substituto)$/, replacementFieldLabel)
+    await fillTextInput(
+      legacyPresetRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Deprecation note|Nota de descontinuacao)$/ }) }).first().locator('input, textarea').first(),
+      'Use the v2 field preset.'
+    )
+
+    await expect(legacyPresetRow).toContainText('Deprecated')
+    await expect(legacyPresetRow).toContainText(replacementFieldLabel)
+    await expect(legacyPresetRow).toContainText('Use the v2 field preset.')
+    await expect(legacyPresetRow.getByRole('button', { name: /^(Use|Usar)$/ })).toBeDisabled()
+    await expect(legacyPresetRow.getByRole('button', { name: /^(Use replacement|Usar substituto)$/ })).toBeVisible()
+
+    await page.getByRole('button', { name: /^(New content model|Novo modelo de conteudo)$/ }).first().click()
+    await expect(page.locator('.cms-content-model-fields__item')).toHaveCount(0)
+
+    await legacyPresetRow.getByRole('button', { name: /^(Use replacement|Usar substituto)$/ }).click()
+    await page.getByRole('button', { name: /^(Insert preset|Inserir preset)$/ }).first().click()
+
+    const insertedFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await expect(
+      insertedFieldRow
+        .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(replacementFieldId)
+    await expect(
+      insertedFieldRow
+        .locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) })
+        .first()
+        .locator('input, textarea')
+        .first()
+    ).toHaveValue(replacementFieldLabel)
+  })
+
   test('shows conditional page schema fields only when their visibility rule matches', async ({ page }) => {
     const contentModelName = 'Conditional schema QA'
 

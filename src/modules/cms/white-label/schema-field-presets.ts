@@ -269,6 +269,9 @@ export function normalizeCmsAuthoredContentModelFieldPresets(
         field,
         localization: normalizeCmsContentModelFieldPresetLocalizationSettings(rawPreset.localization),
         archivedAt: String(rawPreset.archivedAt ?? '').trim() || null,
+        deprecatedAt: String(rawPreset.deprecatedAt ?? '').trim() || null,
+        deprecationNote: String(rawPreset.deprecationNote ?? '').trim() || null,
+        replacementEntityId: String(rawPreset.replacementEntityId ?? '').trim() || null,
       }
     })
     .filter((preset): preset is CmsAuthoredContentModelFieldPresetSettings => preset !== null)

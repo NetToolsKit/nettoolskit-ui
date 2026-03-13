@@ -285,9 +285,19 @@ export interface CmsContentModelFieldPresetLocalizationSettings {
 }
 
 /**
+ * Shared lifecycle metadata for deprecating reusable CMS entities while keeping
+ * existing references intact.
+ */
+export interface CmsDeprecationMetadataSettings {
+  deprecatedAt?: string | null
+  deprecationNote?: string | null
+  replacementEntityId?: string | null
+}
+
+/**
  * User-authored schema-field preset persisted by the CMS engine for reusable content-model authoring.
  */
-export interface CmsAuthoredContentModelFieldPresetSettings {
+export interface CmsAuthoredContentModelFieldPresetSettings extends CmsDeprecationMetadataSettings {
   id: CmsAuthoredContentModelFieldPresetId
   name: string
   description: string
@@ -300,7 +310,7 @@ export interface CmsAuthoredContentModelFieldPresetSettings {
 /**
  * User-authored block preset persisted by the CMS engine for block and section composition.
  */
-export interface CmsAuthoredBlockPresetSettings {
+export interface CmsAuthoredBlockPresetSettings extends CmsDeprecationMetadataSettings {
   id: CmsAuthoredBlockPresetId
   name: string
   description: string
@@ -467,7 +477,7 @@ export interface CmsPageBlockSettings {
 /**
  * Reusable block template persisted by the CMS engine for fast re-authoring.
  */
-export interface CmsReusableBlockSettings {
+export interface CmsReusableBlockSettings extends CmsDeprecationMetadataSettings {
   id: string
   name: string
   description: string
@@ -482,7 +492,7 @@ export interface CmsReusableBlockSettings {
 /**
  * Reusable section template persisted by the CMS engine for page-level authoring.
  */
-export interface CmsReusableSectionSettings {
+export interface CmsReusableSectionSettings extends CmsDeprecationMetadataSettings {
   id: string
   name: string
   description: string

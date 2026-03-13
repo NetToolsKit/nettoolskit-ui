@@ -949,6 +949,9 @@ export function normalizeCmsAuthoredBlockPresets(
           : {},
         localization: normalizeCmsBlockPresetLocalizationSettings(rawPreset.localization),
         archivedAt: String(rawPreset.archivedAt ?? '').trim() || null,
+        deprecatedAt: String(rawPreset.deprecatedAt ?? '').trim() || null,
+        deprecationNote: String(rawPreset.deprecationNote ?? '').trim() || null,
+        replacementEntityId: String(rawPreset.replacementEntityId ?? '').trim() || null,
       } satisfies CmsAuthoredBlockPresetSettings
     })
     .filter((preset): preset is CmsAuthoredBlockPresetSettings => preset !== null)

@@ -943,4 +943,51 @@ describe('white-label.storage', () => {
     expect(normalized.authoredContentModelFieldPresets[0]?.field.id).toBe('campaignheadline')
     expect(normalized.authoredContentModelFieldPresets[0]?.field.order).toBe(2)
   })
+
+  it('preserves deprecation metadata while normalizing reusable entities and authored presets', () => {
+    const normalized = normalizeCmsWhiteLabelSettings({
+      reusableBlocks: [
+        {
+          id: 'hero-reusable',
+          name: 'Hero reusable',
+          description: 'Saved from builder',
+          type: 'landing.hero',
+          category: 'layout',
+          deprecatedAt: '2026-03-13T18:20:00.000Z',
+          deprecationNote: 'Use the newer hero block.',
+          replacementEntityId: 'hero-reusable-v2',
+          props: {
+            title: 'Reusable hero',
+          },
+        },
+      ],
+      authoredBlockPresets: [
+        {
+          id: 'preset:hero',
+          type: 'landing.hero',
+          name: 'Hero preset',
+          description: 'Legacy preset',
+          category: 'Hero',
+          starterSections: ['hero'],
+          deprecatedAt: '2026-03-13T18:25:00.000Z',
+          deprecationNote: 'Use the v2 preset.',
+          replacementEntityId: 'preset:hero-v2',
+          props: {
+            title: 'Legacy preset title',
+          },
+        },
+      ] as never,
+    } as unknown as Parameters<typeof normalizeCmsWhiteLabelSettings>[0])
+
+    expect(normalized.reusableBlocks[0]).toMatchObject({
+      deprecatedAt: '2026-03-13T18:20:00.000Z',
+      deprecationNote: 'Use the newer hero block.',
+      replacementEntityId: 'hero-reusable-v2',
+    })
+    expect(normalized.authoredBlockPresets[0]).toMatchObject({
+      deprecatedAt: '2026-03-13T18:25:00.000Z',
+      deprecationNote: 'Use the v2 preset.',
+      replacementEntityId: 'preset:hero-v2',
+    })
+  })
 })

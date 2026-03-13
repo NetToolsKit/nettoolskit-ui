@@ -135,6 +135,9 @@ export function normalizeCmsReusableBlocks(
           : {},
         localization: normalizeCmsPageBlockLocalizationSettings(reusableBlock.localization),
         archivedAt: String(reusableBlock.archivedAt ?? '').trim() || null,
+        deprecatedAt: String(reusableBlock.deprecatedAt ?? '').trim() || null,
+        deprecationNote: String(reusableBlock.deprecationNote ?? '').trim() || null,
+        replacementEntityId: String(reusableBlock.replacementEntityId ?? '').trim() || null,
       } satisfies CmsReusableBlockSettings
     })
     .filter((reusableBlock): reusableBlock is CmsReusableBlockSettings => reusableBlock !== null)

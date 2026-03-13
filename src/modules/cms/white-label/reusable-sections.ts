@@ -206,6 +206,9 @@ export function normalizeCmsReusableSections(
         localization: normalizeCmsPageSectionLocalizationSettings(reusableSection.localization),
         blocks: normalizeReusableSectionBlocks(reusableSection.blocks, sectionId, presetId, enabled),
         archivedAt: String(reusableSection.archivedAt ?? '').trim() || null,
+        deprecatedAt: String(reusableSection.deprecatedAt ?? '').trim() || null,
+        deprecationNote: String(reusableSection.deprecationNote ?? '').trim() || null,
+        replacementEntityId: String(reusableSection.replacementEntityId ?? '').trim() || null,
       } satisfies CmsReusableSectionSettings
     })
     .filter((reusableSection): reusableSection is CmsReusableSectionSettings => reusableSection !== null)

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Deprecation lifecycle and replacement guidance for reusable CMS entities**
+  - Added provider-agnostic deprecation metadata plus lifecycle helpers so reusable sections, reusable blocks, authored block presets and schema-field presets can be phased out without deleting existing references.
+  - Surfaced deprecation status, replacement selection, advisory notes and `Use replacement` actions across the authored preset and reusable library surfaces in `Content`, `Pages` and `Blocks`.
+  - Filtered deprecated entities out of new authoring pickers by default while keeping archived and already-linked records intact for existing content.
+  - Added focused unit coverage for deprecation-state helpers, storage normalization of deprecation metadata and Playwright coverage proving deprecated field presets guide authors toward approved replacements.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused unit coverage and the new CMS replacement-guidance E2E flow.
 - **Governance workflow and audit hub in Releases**
   - Added an engine-level governance hub helper that aggregates workflow state, revision cadence, audit activity and role-policy readiness without duplicating workflow rules in the Vue layer.
   - Surfaced a new `Governance workflow and audit` panel in `Releases` with summary cards plus recent revisions, audit entries and role-policy lists for the active tenant state.
