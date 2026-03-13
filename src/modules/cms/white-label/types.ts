@@ -137,6 +137,8 @@ export type CmsContentModelFieldType =
   | 'date'
   | 'media-asset'
   | 'reference'
+  | 'object'
+  | 'group'
 
 /**
  * Primitive field values supported by content-model schemas.
@@ -144,11 +146,18 @@ export type CmsContentModelFieldType =
 export type CmsContentModelFieldPrimitiveValue = string | number | boolean | null
 
 /**
+ * Structured object payload supported by nested content-model field schemas.
+ */
+export type CmsContentModelFieldObjectValue = Record<string, unknown>
+
+/**
  * Supported field payload values, including repeatable arrays.
  */
 export type CmsContentModelFieldValue =
   | CmsContentModelFieldPrimitiveValue
   | CmsContentModelFieldPrimitiveValue[]
+  | CmsContentModelFieldObjectValue
+  | CmsContentModelFieldObjectValue[]
 
 /**
  * Localized authored values for one schema-field metadata payload.
@@ -245,6 +254,7 @@ export interface CmsContentModelFieldSettings {
   options?: CmsContentModelFieldOptionSettings[]
   mediaKinds?: CmsMediaAssetKind[]
   referenceKinds?: CmsSchemaReferenceKind[]
+  fields?: CmsContentModelFieldSettings[]
   visibility?: CmsContentModelFieldVisibilitySettings | null
   localization?: CmsContentModelFieldLocalizationSettings
 }
@@ -268,6 +278,7 @@ export interface CmsContentModelFieldDefinition {
   options: CmsContentModelFieldOptionDefinition[]
   mediaKinds: CmsMediaAssetKind[]
   referenceKinds: CmsSchemaReferenceKind[]
+  fields: CmsContentModelFieldDefinition[]
   visibility: CmsContentModelFieldVisibilityDefinition | null
 }
 

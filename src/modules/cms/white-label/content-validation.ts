@@ -112,6 +112,30 @@ function hasCmsContentModelFieldValue(
   field: CmsContentModelFieldDefinition,
   value: unknown
 ): boolean {
+  if (field.type === 'object') {
+    if (!isRecord(value)) {
+      return false
+    }
+
+    return field.fields.some(entry => hasCmsContentModelFieldValue(
+      entry,
+      value[entry.id]
+    ))
+  }
+
+  if (field.type === 'group') {
+    return Array.isArray(value) && value.some(entry => {
+      if (!isRecord(entry)) {
+        return false
+      }
+
+      return field.fields.some(childField => hasCmsContentModelFieldValue(
+        childField,
+        entry[childField.id]
+      ))
+    })
+  }
+
   if (field.repeatable) {
     return Array.isArray(value) && value.some(entry => hasCmsContentModelFieldValue({
       ...field,
@@ -331,6 +355,91 @@ function validateStructuredCustomFields(options: {
         pageId: options.pageId,
         sectionId: options.sectionId,
       })
+      continue
+    }
+
+    if (field.type === 'object') {
+      if (value != null && !isRecord(value)) {
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.object.invalid`,
+          severity: 'error',
+          message: `Field "${field.label}" must contain an object value.`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
+        })
+        continue
+      }
+
+      validateStructuredCustomFields({
+        ...options,
+        targetLabel: `field "${field.label}"`,
+        pathBase: `${pathBase}.customFields.${field.id}`,
+        fieldDefinitions: field.fields,
+        customFieldsInput: normalizedValue,
+      })
+      continue
+    }
+
+    if (field.type === 'group') {
+      if (value != null && !Array.isArray(value)) {
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.group.invalid`,
+          severity: 'error',
+          message: `Field "${field.label}" must contain a list of objects.`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
+        })
+        continue
+      }
+
+      const groupValues = Array.isArray(normalizedValue) ? normalizedValue : []
+
+      if (field.min != null && groupValues.length < field.min) {
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.min`,
+          severity: 'error',
+          message: `Field "${field.label}" requires at least ${field.min} item(s).`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
+        })
+      }
+
+      if (field.max != null && groupValues.length > field.max) {
+        pushIssue(options.issues, {
+          code: `${options.codePrefix}.max`,
+          severity: 'error',
+          message: `Field "${field.label}" allows at most ${field.max} item(s).`,
+          path: `${pathBase}.customFields.${field.id}`,
+          pageId: options.pageId,
+          sectionId: options.sectionId,
+        })
+      }
+
+      groupValues.forEach((entry, entryIndex) => {
+        if (!isRecord(entry)) {
+          pushIssue(options.issues, {
+            code: `${options.codePrefix}.group.item.invalid`,
+            severity: 'error',
+            message: `Field "${field.label}" contains an invalid group item.`,
+            path: `${pathBase}.customFields.${field.id}[${entryIndex}]`,
+            pageId: options.pageId,
+            sectionId: options.sectionId,
+          })
+          return
+        }
+
+        validateStructuredCustomFields({
+          ...options,
+          targetLabel: `field "${field.label}" item ${entryIndex + 1}`,
+          pathBase: `${pathBase}.customFields.${field.id}[${entryIndex}]`,
+          fieldDefinitions: field.fields,
+          customFieldsInput: entry,
+        })
+      })
+
       continue
     }
 

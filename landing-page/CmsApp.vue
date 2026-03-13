@@ -1079,11 +1079,23 @@
                             v-model="field.placeholder"
                             outlined
                             dense
-                            :disable="field.type === 'toggle' || field.type === 'select' || field.type === 'date' || field.type === 'media-asset' || field.type === 'reference'"
+                            :disable="field.type === 'toggle' || field.type === 'select' || field.type === 'date' || field.type === 'media-asset' || field.type === 'reference' || field.type === 'object' || field.type === 'group'"
                             :label="tr('Placeholder', 'Placeholder')"
                           />
                           <q-input
-                            v-if="field.type !== 'media-asset' && field.type !== 'reference'"
+                            v-if="field.type === 'object' || field.type === 'group'"
+                            v-model="field.defaultValue"
+                            outlined
+                            dense
+                            type="textarea"
+                            autogrow
+                            :label="tr('Default JSON value', 'Valor JSON padrao')"
+                            :hint="field.type === 'group'
+                              ? tr('Use a JSON array of objects for repeatable groups.', 'Use um array JSON de objetos para grupos repetiveis.')
+                              : tr('Use a JSON object for nested values.', 'Use um objeto JSON para valores aninhados.')"
+                          />
+                          <q-input
+                            v-else-if="field.type !== 'media-asset' && field.type !== 'reference'"
                             v-model="field.defaultValue"
                             outlined
                             dense
@@ -1152,7 +1164,7 @@
                             v-model="field.placeholderPtBr"
                             outlined
                             dense
-                            :disable="field.type === 'toggle' || field.type === 'select' || field.type === 'date' || field.type === 'media-asset' || field.type === 'reference'"
+                            :disable="field.type === 'toggle' || field.type === 'select' || field.type === 'date' || field.type === 'media-asset' || field.type === 'reference' || field.type === 'object' || field.type === 'group'"
                             :label="tr('PT-BR placeholder', 'Placeholder PT-BR')"
                             :hint="tr('Leave blank to inherit the EN/base placeholder.', 'Deixe em branco para herdar o placeholder EN/base.')"
                           />
@@ -1160,6 +1172,7 @@
                         <div class="cms-content-model-fields__row">
                           <q-toggle
                             v-model="field.repeatable"
+                            :disable="field.type === 'object' || field.type === 'group'"
                             :label="tr('Repeatable', 'Multiplo')"
                           />
                           <q-input
@@ -1167,7 +1180,7 @@
                             outlined
                             dense
                             type="number"
-                            :disable="!field.repeatable && !doesCmsContentModelFieldSupportScalarConstraints(field)"
+                            :disable="field.type !== 'group' && !field.repeatable && !doesCmsContentModelFieldSupportScalarConstraints(field)"
                             :label="getCmsContentModelFieldMinConstraintLabel(field)"
                           />
                           <q-input
@@ -1175,8 +1188,23 @@
                             outlined
                             dense
                             type="number"
-                            :disable="!field.repeatable && !doesCmsContentModelFieldSupportScalarConstraints(field)"
+                            :disable="field.type !== 'group' && !field.repeatable && !doesCmsContentModelFieldSupportScalarConstraints(field)"
                             :label="getCmsContentModelFieldMaxConstraintLabel(field)"
+                          />
+                        </div>
+                        <div
+                          v-if="field.type === 'object' || field.type === 'group'"
+                          class="cms-content-model-fields__row"
+                        >
+                          <q-input
+                            v-model="field.nestedFieldsJson"
+                            outlined
+                            dense
+                            type="textarea"
+                            autogrow
+                            class="cms-content-model-fields__json-input"
+                            :label="tr('Nested fields JSON', 'JSON dos campos aninhados')"
+                            :hint="tr('Provide an array of field setting objects using the same CMS schema contract.', 'Informe um array de objetos de campo usando o mesmo contrato de schema do CMS.')"
                           />
                         </div>
                         <div class="cms-content-model-fields__row">
@@ -1965,8 +1993,20 @@
                           v-for="field in group.fields"
                           :key="`page-field-${page.id}-${field.id}`"
                         >
+                          <q-input
+                            v-if="field.type === 'object' || field.type === 'group'"
+                            :model-value="formatCmsJsonFieldValue(getCmsPageCustomFieldValue(page, field), field.type === 'group' ? [] : {})"
+                            outlined
+                            dense
+                            type="textarea"
+                            autogrow
+                            class="cms-page-item__custom-fields-json"
+                            :label="field.label"
+                            :hint="getCmsContentModelFieldHint(field)"
+                            @update:model-value="updateCmsPageCustomFieldValue(page, field, $event)"
+                          />
                           <q-select
-                            v-if="field.repeatable && field.type === 'select'"
+                            v-else-if="field.repeatable && field.type === 'select'"
                             :model-value="normalizeCmsMediaPickerModelValue(getCmsPageCustomFieldValue(page, field), true)"
                             outlined
                             dense
@@ -2872,8 +2912,21 @@
                         v-for="field in group.fields"
                         :key="`section-field-${activeBlocksSection.id}-${field.id}`"
                       >
+                        <q-input
+                          v-if="field.type === 'object' || field.type === 'group'"
+                          :model-value="formatCmsJsonFieldValue(getCmsSectionCustomFieldValue(activeBlocksSection, field), field.type === 'group' ? [] : {})"
+                          outlined
+                          dense
+                          type="textarea"
+                          autogrow
+                          class="cms-page-item__custom-fields-json"
+                          :label="field.label"
+                          :hint="getCmsContentModelFieldHint(field)"
+                          :disable="activeBlocksSectionIsLinked"
+                          @update:model-value="updateCmsSectionCustomFieldValue(activeBlocksSection, field, $event)"
+                        />
                         <q-select
-                          v-if="field.repeatable && field.type === 'select'"
+                          v-else-if="field.repeatable && field.type === 'select'"
                           :model-value="normalizeCmsMediaPickerModelValue(getCmsSectionCustomFieldValue(activeBlocksSection, field), true)"
                           outlined
                           dense
@@ -5150,6 +5203,7 @@ import {
   getCmsContentModelDefaultPageTitle,
   getCmsContentModelDescription,
   getCmsContentModelFieldDefinitions,
+  normalizeCmsContentModelFieldSettingsList,
   getCmsContentModelLastSchemaChangeAt,
   getCmsContentModelLabel,
   getCmsContentModelMaxSections,
@@ -5572,6 +5626,7 @@ interface CmsContentModelFieldDraft {
   minValue: string
   maxValue: string
   defaultValue: string
+  nestedFieldsJson: string
   optionsDraft: string
   mediaKinds: CmsMediaAssetKind[]
   referenceKinds: CmsSchemaReferenceKind[]
@@ -6419,6 +6474,8 @@ const cmsContentModelFieldTypeOptions = computed(() => ([
   { label: tr('Date', 'Data'), value: 'date' as const },
   { label: tr('Media asset', 'Asset de midia'), value: 'media-asset' as const },
   { label: tr('Reference', 'Referencia'), value: 'reference' as const },
+  { label: tr('Object', 'Objeto'), value: 'object' as const },
+  { label: tr('Repeatable group', 'Grupo repetivel'), value: 'group' as const },
 ]))
 const cmsMediaKindOptions = computed(() => ([
   { label: getCmsMediaKindLabel('image'), value: 'image' as const },
@@ -11996,6 +12053,7 @@ function createEmptyCmsContentModelFieldDraft(): CmsContentModelFieldDraft {
     minValue: '',
     maxValue: '',
     defaultValue: '',
+    nestedFieldsJson: '',
     optionsDraft: '',
     mediaKinds: [],
     referenceKinds: [],
@@ -12080,9 +12138,12 @@ function createCmsContentModelFieldDraftFromSettings(
     repeatable: Boolean(field.repeatable),
     minValue: field.min == null ? '' : String(field.min),
     maxValue: field.max == null ? '' : String(field.max),
-    defaultValue: Array.isArray(field.defaultValue)
-      ? formatCmsRepeatableFieldValue(field.defaultValue)
-      : (field.defaultValue == null ? '' : String(field.defaultValue)),
+    defaultValue: field.type === 'object' || field.type === 'group'
+      ? formatCmsJsonFieldValue(field.defaultValue, field.type === 'group' ? [] : {})
+      : (Array.isArray(field.defaultValue)
+          ? formatCmsRepeatableFieldValue(field.defaultValue)
+          : (field.defaultValue == null ? '' : String(field.defaultValue))),
+    nestedFieldsJson: formatCmsJsonFieldValue(field.fields ?? [], []),
     optionsDraft: (field.options ?? []).map(option => option.value).join('\n'),
     mediaKinds: [...(field.mediaKinds ?? [])],
     referenceKinds: [...(field.referenceKinds ?? [])],
@@ -12105,6 +12166,17 @@ function createCmsContentModelFieldSettingsFromDraft(
   const max = field.maxValue.trim().length > 0 ? Number(field.maxValue) : null
   const optionValues = parseCmsContentModelFieldOptionsDraft(field.optionsDraft)
 
+  const nestedFields = field.type === 'object' || field.type === 'group'
+    ? normalizeCmsContentModelFieldSettingsList(
+        parseCmsJsonFieldValue(
+          field.nestedFieldsJson,
+          [],
+          `${field.label || field.id || 'field'} nested fields`
+        ),
+        getActiveCmsAuthoringLocale()
+      )
+    : []
+
   return {
     id: field.id,
     type: field.type,
@@ -12114,12 +12186,19 @@ function createCmsContentModelFieldSettingsFromDraft(
     group: field.group,
     order: Number.isFinite(order) ? Math.max(1, Math.floor(order)) : 1,
     required: field.required,
-    repeatable: field.repeatable,
+    repeatable: field.type === 'object' || field.type === 'group' ? false : field.repeatable,
     min: Number.isFinite(min) ? min : null,
     max: Number.isFinite(max) ? max : null,
-    defaultValue: field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue,
+    defaultValue: field.type === 'object' || field.type === 'group'
+      ? parseCmsJsonFieldValue(
+          field.defaultValue,
+          field.type === 'group' ? [] : {},
+          `${field.label || field.id || 'field'} default value`
+        )
+      : (field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue),
     mediaKinds: field.type === 'media-asset' ? [...field.mediaKinds] : undefined,
     referenceKinds: field.type === 'reference' ? [...field.referenceKinds] : undefined,
+    fields: nestedFields.length > 0 ? nestedFields : undefined,
     localization: createCmsContentModelFieldDraftLocalizations(field),
     visibility: field.visibilityEnabled
       ? {
@@ -12214,6 +12293,14 @@ function formatCmsRepeatableFieldValue(value: unknown): string {
 }
 
 /**
+ * Formats object/group schema values as stable JSON strings for CMS authoring.
+ */
+function formatCmsJsonFieldValue(value: unknown, fallback: unknown): string {
+  const normalizedValue = value == null ? fallback : value
+  return JSON.stringify(normalizedValue, null, 2)
+}
+
+/**
  * Parses repeatable field values from one-entry-per-line strings.
  */
 function parseCmsRepeatableFieldValue(value: string): string[] {
@@ -12221,6 +12308,26 @@ function parseCmsRepeatableFieldValue(value: string): string[] {
     .split(/\r?\n/)
     .map(entry => entry.trim())
     .filter(entry => entry.length > 0)
+}
+
+/**
+ * Parses one JSON-backed schema field draft and throws when the payload is invalid.
+ */
+function parseCmsJsonFieldValue<T>(
+  value: string,
+  fallback: T,
+  fieldLabel: string
+): T {
+  const normalizedValue = String(value ?? '').trim()
+  if (!normalizedValue) {
+    return cloneSerializableValue(fallback)
+  }
+
+  try {
+    return JSON.parse(normalizedValue) as T
+  } catch {
+    throw new Error(cmsUiText.value.invalidJsonForFieldLabel(fieldLabel))
+  }
 }
 
 /**
@@ -12247,6 +12354,32 @@ function normalizeCmsMediaPickerModelValue(
  */
 function getCmsContentModelFieldHint(field: CmsContentModelFieldDefinition): string {
   const detailParts = [field.description || field.placeholder].filter(Boolean)
+
+  if (field.type === 'group') {
+    if (field.min != null || field.max != null) {
+      detailParts.push(tr(
+        `Items: ${field.min ?? 0}-${field.max ?? '∞'}`,
+        `Itens: ${field.min ?? 0}-${field.max ?? '∞'}`
+      ))
+    }
+
+    if (field.fields.length > 0) {
+      detailParts.push(tr(
+        `${field.fields.length} nested fields`,
+        `${field.fields.length} campos aninhados`
+      ))
+    }
+
+    return detailParts.join(' · ')
+  }
+
+  if (field.type === 'object' && field.fields.length > 0) {
+    detailParts.push(tr(
+      `${field.fields.length} nested fields`,
+      `${field.fields.length} campos aninhados`
+    ))
+    return detailParts.join(' · ')
+  }
 
   if (field.repeatable) {
     if (field.min != null || field.max != null) {
@@ -12322,6 +12455,10 @@ function getCmsContentModelFieldHtmlInputType(type: CmsContentModelFieldType): '
  * Resolves the minimum constraint label for one content-model draft row.
  */
 function getCmsContentModelFieldMinConstraintLabel(field: CmsContentModelFieldDraft): string {
+  if (field.type === 'group') {
+    return tr('Minimum items', 'Minimo de itens')
+  }
+
   if (field.repeatable) {
     return tr('Minimum items', 'Minimo de itens')
   }
@@ -12341,6 +12478,10 @@ function getCmsContentModelFieldMinConstraintLabel(field: CmsContentModelFieldDr
  * Resolves the maximum constraint label for one content-model draft row.
  */
 function getCmsContentModelFieldMaxConstraintLabel(field: CmsContentModelFieldDraft): string {
+  if (field.type === 'group') {
+    return tr('Maximum items', 'Maximo de itens')
+  }
+
   if (field.repeatable) {
     return tr('Maximum items', 'Maximo de itens')
   }
@@ -12630,9 +12771,24 @@ function updateCmsPageCustomFieldValue(
   field: CmsContentModelFieldDefinition,
   value: unknown
 ): void {
-  const normalizedInput = field.repeatable && typeof value === 'string'
+  let normalizedInput = field.repeatable && typeof value === 'string'
     ? parseCmsRepeatableFieldValue(value)
     : value
+
+  if ((field.type === 'object' || field.type === 'group') && typeof value === 'string') {
+    try {
+      normalizedInput = parseCmsJsonFieldValue(
+        value,
+        field.type === 'group' ? [] : {},
+        field.label
+      )
+    } catch (error) {
+      savedAtLabel.value = error instanceof Error
+        ? error.message
+        : cmsUiText.value.invalidJsonForFieldLabel(field.label)
+      return
+    }
+  }
   const visibleFields = getCmsPageCustomFieldsValue(page)
   const nextVisibleFields = {
     ...visibleFields,
@@ -12703,9 +12859,24 @@ function updateCmsSectionCustomFieldValue(
 ): void {
   const sourcePage = settings.value.pages[activeBlocksPageIndex.value]
   const sourceSection = sourcePage?.sections.find(entry => entry.id === section.id) ?? section
-  const normalizedInput = field.repeatable && typeof value === 'string'
+  let normalizedInput = field.repeatable && typeof value === 'string'
     ? parseCmsRepeatableFieldValue(value)
     : value
+
+  if ((field.type === 'object' || field.type === 'group') && typeof value === 'string') {
+    try {
+      normalizedInput = parseCmsJsonFieldValue(
+        value,
+        field.type === 'group' ? [] : {},
+        field.label
+      )
+    } catch (error) {
+      savedAtLabel.value = error instanceof Error
+        ? error.message
+        : cmsUiText.value.invalidJsonForFieldLabel(field.label)
+      return
+    }
+  }
   const visibleFields = getCmsSectionCustomFieldsValue(section)
   const nextVisibleFields = {
     ...visibleFields,
@@ -13810,8 +13981,19 @@ function saveAuthoredContentModelFieldDraftAsPreset(fieldIndex: number): void {
   }
 
   const locale = getActiveCmsAuthoringLocale()
+  let presetField: CmsContentModelFieldSettings
+
+  try {
+    presetField = createCmsContentModelFieldSettingsFromDraft(fieldDraft)
+  } catch (error) {
+    savedAtLabel.value = error instanceof Error
+      ? error.message
+      : cmsUiText.value.invalidJsonForFieldLabel(fieldDraft.label || fieldDraft.id || 'field')
+    return
+  }
+
   const preset = createCmsAuthoredContentModelFieldPreset({
-    field: createCmsContentModelFieldSettingsFromDraft(fieldDraft),
+    field: presetField,
     existingPresets: settings.value.authoredContentModelFieldPresets,
     localeInput: locale,
     name: fieldDraft.label || fieldDraft.id,
@@ -14050,6 +14232,16 @@ function syncSelectedAuthoredContentModelDrafts(): void {
 function saveCmsAuthoredContentModelDraft(): void {
   const locale = getActiveCmsAuthoringLocale()
   const selectedModel = selectedAuthoredContentModel.value
+  let fieldSettings: CmsContentModelFieldSettings[]
+
+  try {
+    fieldSettings = authoredContentModelFieldDrafts.value.map(createCmsContentModelFieldSettingsFromDraft)
+  } catch (error) {
+    savedAtLabel.value = error instanceof Error
+      ? error.message
+      : cmsUiText.value.invalidJsonForFieldLabel('field')
+    return
+  }
 
   if (!selectedModel) {
     const nextModel = createCmsAuthoredContentModel({
@@ -14067,7 +14259,7 @@ function saveCmsAuthoredContentModelDraft(): void {
       recommendedPresets: authoredContentModelRecommendedSectionSelections.value,
       maxSections: authoredContentModelMaxSectionsDraft.value,
       sectionPresetLimits: authoredContentModelPresetLimitDrafts.value,
-      fields: authoredContentModelFieldDrafts.value.map(createCmsContentModelFieldSettingsFromDraft),
+      fields: fieldSettings,
     })
 
     settings.value.authoredContentModels = [nextModel, ...settings.value.authoredContentModels]
@@ -14091,7 +14283,7 @@ function saveCmsAuthoredContentModelDraft(): void {
     recommendedPresets: authoredContentModelRecommendedSectionSelections.value,
     maxSections: authoredContentModelMaxSectionsDraft.value,
     sectionPresetLimits: authoredContentModelPresetLimitDrafts.value,
-    fields: authoredContentModelFieldDrafts.value.map(createCmsContentModelFieldSettingsFromDraft),
+    fields: fieldSettings,
   })
 
   settings.value.authoredContentModels = settings.value.authoredContentModels.map(entry => (

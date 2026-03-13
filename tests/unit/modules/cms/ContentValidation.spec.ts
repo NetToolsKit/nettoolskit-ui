@@ -252,6 +252,80 @@ describe('content-validation', () => {
     expect(result.issues.map(issue => issue.code)).toContain('pages.sections.custom_fields.select.invalid')
   })
 
+  it('flags invalid nested object and repeatable-group page custom fields', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Structured validation schema',
+      description: 'Nested page-field validation',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'seo',
+          type: 'object',
+          label: 'SEO',
+          fields: [
+            {
+              id: 'title',
+              type: 'text',
+              label: 'SEO title',
+              required: true,
+            },
+          ],
+        },
+        {
+          id: 'faqItems',
+          type: 'group',
+          label: 'FAQ items',
+          min: 1,
+          fields: [
+            {
+              id: 'question',
+              type: 'text',
+              label: 'Question',
+              required: true,
+            },
+          ],
+        },
+      ],
+    })
+
+    const pages: CmsPageSettings[] = [
+      {
+        id: 'structured-page',
+        contentModelId: authoredModel.id,
+        title: 'Structured Page',
+        path: '/structured-page',
+        status: 'draft',
+        description: 'Structured custom fields validation',
+        customFields: {
+          seo: {
+            title: '',
+          },
+          faqitems: [],
+        },
+        sections: [
+          createCmsPageSectionFromPreset({
+            presetId: 'hero',
+            existingSections: [],
+            localeInput: 'en',
+          }),
+        ],
+      },
+    ]
+
+    const result = validateCmsContentPages({
+      pages,
+      registry: createLandingRegistry(),
+      authoredContentModels: [authoredModel],
+    })
+
+    expect(result.valid).toBe(false)
+    expect(result.issues.map(issue => issue.code)).toContain('pages.custom_fields.required')
+    expect(result.issues.map(issue => issue.code)).toContain('pages.custom_fields.min')
+  })
+
   it('flags missing, stale and ahead content-model schema versions on pages', () => {
     const authoredModelV1 = createCmsAuthoredContentModel({
       existingModels: [],

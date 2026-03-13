@@ -299,6 +299,118 @@ describe('content-models', () => {
     })
   })
 
+  it('supports object and repeatable-group schema fields with recursive defaults', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Structured field schema',
+      description: 'Supports nested object and repeatable group fields',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'seo',
+          type: 'object',
+          label: 'SEO',
+          description: 'Nested SEO configuration',
+          fields: [
+            {
+              id: 'title',
+              type: 'text',
+              label: 'SEO title',
+              required: true,
+              defaultValue: 'Launch title',
+            },
+            {
+              id: 'canonicalUrl',
+              type: 'url',
+              label: 'Canonical URL',
+              defaultValue: '/launch',
+            },
+          ],
+        },
+        {
+          id: 'faqItems',
+          type: 'group',
+          label: 'FAQ items',
+          min: 1,
+          max: 3,
+          defaultValue: [
+            {
+              question: 'What is NetToolsKit?',
+              answer: 'A CMS engine.',
+            },
+          ],
+          fields: [
+            {
+              id: 'question',
+              type: 'text',
+              label: 'Question',
+              required: true,
+              defaultValue: '',
+            },
+            {
+              id: 'answer',
+              type: 'textarea',
+              label: 'Answer',
+              defaultValue: '',
+            },
+          ],
+        },
+      ],
+    })
+
+    const fields = getCmsContentModelFieldDefinitions('en', authoredModel.id, [authoredModel])
+    const defaults = createCmsPageCustomFieldsFromContentModel(authoredModel.id, 'en', [authoredModel])
+    const normalized = normalizeCmsPageCustomFieldsForContentModel({
+      seo: {
+        title: 'Updated title',
+      },
+      faqitems: [
+        {
+          question: 'How fast is setup?',
+        },
+      ],
+    }, authoredModel.id, 'en', [authoredModel])
+
+    expect(fields.map(field => field.type)).toEqual(['object', 'group'])
+    expect(fields[0]?.fields.map(field => field.id)).toEqual(['title', 'canonicalurl'])
+    expect(fields[1]?.fields.map(field => field.id)).toEqual(['question', 'answer'])
+    expect(defaults).toEqual({
+      seo: {
+        title: 'Launch title',
+        canonicalurl: '/launch',
+      },
+      faqitems: [
+        {
+          question: 'What is NetToolsKit?',
+          answer: 'A CMS engine.',
+        },
+      ],
+    })
+    expect(normalized).toEqual({
+      seo: {
+        title: 'Updated title',
+        canonicalurl: '/launch',
+      },
+      faqitems: [
+        {
+          question: 'How fast is setup?',
+          answer: '',
+        },
+      ],
+    })
+    expect(coerceCmsContentModelFieldValue(fields[1]!, {
+      question: 'Can I extend it?',
+      answer: 'Yes.',
+    })).toEqual([
+      {
+        question: 'Can I extend it?',
+        answer: 'Yes.',
+      },
+    ])
+  })
+
   it('filters schema fields using conditional visibility rules', () => {
     const authoredModel = createCmsAuthoredContentModel({
       existingModels: [],

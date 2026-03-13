@@ -25,6 +25,7 @@ import type {
   CmsContentModelId,
   CmsContentModelFieldDefinition,
   CmsContentModelFieldLocalizationSettings,
+  CmsContentModelFieldObjectValue,
   CmsContentModelFieldVisibilityDefinition,
   CmsContentModelFieldVisibilityOperator,
   CmsContentModelFieldVisibilitySettings,
@@ -149,6 +150,20 @@ interface CmsResolvedContentModelDefinition {
   recommendedPresets: CmsSectionPresetId[]
   maxSections: number | null
   sectionPresetLimits: CmsSectionPresetLimitMap
+}
+
+type CmsNormalizedContentModelFieldShape = {
+  id: string
+  type: CmsContentModelFieldType
+  required?: boolean
+  repeatable?: boolean
+  min?: number | null
+  max?: number | null
+  defaultValue?: CmsContentModelFieldValue
+  options?: CmsContentModelFieldOptionSettings[]
+  mediaKinds?: CmsMediaAssetKind[]
+  referenceKinds?: CmsSchemaReferenceKind[]
+  fields?: CmsNormalizedContentModelFieldShape[]
 }
 
 const DEFAULT_CONTENT_MODEL_ID: CmsBuiltinContentModelId = 'landing-page'
@@ -572,6 +587,8 @@ function resolveCmsContentModelFieldType(
     case 'date':
     case 'media-asset':
     case 'reference':
+    case 'object':
+    case 'group':
       return normalized
     default:
       return fallback
@@ -580,8 +597,9 @@ function resolveCmsContentModelFieldType(
 
 function buildCmsContentModelFieldFallbackValue(
   type: CmsContentModelFieldType,
-  options: CmsContentModelFieldOptionSettings[] = []
-): CmsContentModelFieldPrimitiveValue {
+  options: CmsContentModelFieldOptionSettings[] = [],
+  fields: CmsNormalizedContentModelFieldShape[] = []
+): CmsContentModelFieldValue {
   switch (type) {
     case 'toggle':
       return false
@@ -589,6 +607,10 @@ function buildCmsContentModelFieldFallbackValue(
       return null
     case 'select':
       return options[0]?.value ?? ''
+    case 'object':
+      return buildCmsStructuredContentModelFieldObjectValue(fields)
+    case 'group':
+      return []
     case 'url':
     case 'date':
     case 'media-asset':
@@ -808,6 +830,7 @@ function resolveCmsContentModelFieldConstraint(
   fallback: number | null = null
 ): number | null {
   const supportsConstraint = input.repeatable
+    || input.type === 'group'
     || input.type === 'text'
     || input.type === 'textarea'
     || input.type === 'number'
@@ -825,7 +848,7 @@ function resolveCmsContentModelFieldConstraint(
     return fallback
   }
 
-  if (input.repeatable || input.type === 'text' || input.type === 'textarea' || input.type === 'url') {
+  if (input.repeatable || input.type === 'group' || input.type === 'text' || input.type === 'textarea' || input.type === 'url') {
     return Math.max(0, Math.floor(parsed))
   }
 
@@ -872,14 +895,14 @@ function normalizeCmsContentModelFieldOptions(
 }
 
 function normalizeCmsContentModelFieldPrimitiveValue(
-  field: Pick<CmsContentModelFieldSettings, 'type' | 'options'>,
+  field: Pick<CmsNormalizedContentModelFieldShape, 'type' | 'options'>,
   value: unknown,
   fallbackValue?: CmsContentModelFieldPrimitiveValue
 ): CmsContentModelFieldPrimitiveValue {
   const fallback = fallbackValue ?? buildCmsContentModelFieldFallbackValue(
     field.type,
     field.options ?? []
-  )
+  ) as CmsContentModelFieldPrimitiveValue
 
   switch (field.type) {
     case 'toggle':
@@ -912,7 +935,7 @@ function normalizeCmsContentModelFieldPrimitiveValue(
       }
       return availableOptions.some(option => option.value === String(fallback ?? ''))
         ? String(fallback ?? '')
-        : buildCmsContentModelFieldFallbackValue('select', availableOptions)
+        : buildCmsContentModelFieldFallbackValue('select', availableOptions) as CmsContentModelFieldPrimitiveValue
     }
     case 'url':
     case 'date':
@@ -925,15 +948,94 @@ function normalizeCmsContentModelFieldPrimitiveValue(
     case 'textarea':
     case 'text':
     default:
+      if (value == null) {
+        return fallback
+      }
       return String(value ?? '')
   }
 }
 
+function buildCmsStructuredContentModelFieldObjectValue(
+  fields: CmsNormalizedContentModelFieldShape[]
+): CmsContentModelFieldObjectValue {
+  return Object.fromEntries(
+    fields.map(field => [
+      field.id,
+      normalizeCmsContentModelFieldValue(field, field.defaultValue),
+    ])
+  )
+}
+
+function normalizeCmsStructuredContentModelFieldObjectValue(
+  fields: CmsNormalizedContentModelFieldShape[],
+  value: unknown,
+  fallbackValue?: CmsContentModelFieldValue
+): CmsContentModelFieldObjectValue {
+  const rawRecord = isObjectRecord(value) ? value : {}
+  const fallbackRecord = isObjectRecord(fallbackValue)
+    ? cloneValue(fallbackValue)
+    : buildCmsStructuredContentModelFieldObjectValue(fields)
+  const normalized: CmsContentModelFieldObjectValue = {}
+
+  for (const childField of fields) {
+    normalized[childField.id] = normalizeCmsContentModelFieldValue(
+      childField,
+      rawRecord[childField.id],
+      fallbackRecord[childField.id] as CmsContentModelFieldValue | undefined
+    )
+  }
+
+  return normalized
+}
+
+function hasCmsStructuredContentModelFieldObjectValue(
+  fields: CmsNormalizedContentModelFieldShape[],
+  value: CmsContentModelFieldObjectValue
+): boolean {
+  return fields.some(field => hasCmsNormalizedContentModelFieldValue(
+    field,
+    value[field.id]
+  ))
+}
+
 function normalizeCmsContentModelFieldValue(
-  field: Pick<CmsContentModelFieldSettings, 'type' | 'options' | 'repeatable'>,
+  field: Pick<CmsNormalizedContentModelFieldShape, 'id' | 'type' | 'options' | 'repeatable' | 'fields' | 'defaultValue'>,
   value: unknown,
   fallbackValue?: CmsContentModelFieldValue
 ): CmsContentModelFieldValue {
+  if (field.type === 'object') {
+    return normalizeCmsStructuredContentModelFieldObjectValue(
+      field.fields ?? [],
+      value,
+      fallbackValue
+    )
+  }
+
+  if (field.type === 'group') {
+    const normalizedValues = (Array.isArray(value)
+      ? value
+      : (isObjectRecord(value) ? [value] : []))
+      .filter(isObjectRecord)
+      .map(entry => normalizeCmsStructuredContentModelFieldObjectValue(
+        field.fields ?? [],
+        entry
+      ))
+      .filter(entry => hasCmsStructuredContentModelFieldObjectValue(
+        field.fields ?? [],
+        entry
+      ))
+
+    if (normalizedValues.length > 0) {
+      return normalizedValues
+    }
+
+    return Array.isArray(fallbackValue)
+      ? fallbackValue
+        .filter(isObjectRecord)
+        .map(entry => normalizeCmsStructuredContentModelFieldObjectValue(field.fields ?? [], entry))
+      : []
+  }
+
   if (field.repeatable) {
     const fallbackArray = Array.isArray(fallbackValue)
       ? fallbackValue
@@ -946,7 +1048,7 @@ function normalizeCmsContentModelFieldValue(
       .map(entry => normalizeCmsContentModelFieldPrimitiveValue(
         field,
         entry,
-        buildCmsContentModelFieldFallbackValue(field.type, field.options ?? [])
+        buildCmsContentModelFieldFallbackValue(field.type, field.options ?? []) as CmsContentModelFieldPrimitiveValue
       ))
       .filter(entry => {
         if (entry == null) {
@@ -965,9 +1067,61 @@ function normalizeCmsContentModelFieldValue(
     field,
     value,
     Array.isArray(fallbackValue)
-      ? buildCmsContentModelFieldFallbackValue(field.type, field.options ?? [])
-      : fallbackValue
+      ? buildCmsContentModelFieldFallbackValue(field.type, field.options ?? []) as CmsContentModelFieldPrimitiveValue
+      : (fallbackValue as CmsContentModelFieldPrimitiveValue | undefined)
   )
+}
+
+function hasCmsNormalizedContentModelFieldValue(
+  field: CmsNormalizedContentModelFieldShape,
+  value: unknown
+): boolean {
+  if (field.type === 'object') {
+    if (!isObjectRecord(value)) {
+      return false
+    }
+
+    return (field.fields ?? []).some(entry => hasCmsNormalizedContentModelFieldValue(
+      entry,
+      value[entry.id]
+    ))
+  }
+
+  if (field.type === 'group') {
+    return Array.isArray(value) && value.some(entry => {
+      if (!isObjectRecord(entry)) {
+        return false
+      }
+
+      return (field.fields ?? []).some(childField => hasCmsNormalizedContentModelFieldValue(
+        childField,
+        entry[childField.id]
+      ))
+    })
+  }
+
+  if (field.repeatable) {
+    return Array.isArray(value) && value.some(entry => hasCmsNormalizedContentModelFieldValue({
+      ...field,
+      repeatable: false,
+    }, entry))
+  }
+
+  switch (field.type) {
+    case 'toggle':
+      return typeof value === 'boolean'
+    case 'number':
+      return typeof value === 'number' && Number.isFinite(value)
+    case 'url':
+    case 'date':
+    case 'media-asset':
+    case 'reference':
+    case 'select':
+    case 'textarea':
+    case 'text':
+    default:
+      return String(value ?? '').trim().length > 0
+  }
 }
 
 function normalizeCmsContentModelFieldSettings(
@@ -990,9 +1144,6 @@ function normalizeCmsContentModelFieldSettings(
 
       const fallbackFieldByIndex = fallback[index]
       const type = resolveCmsContentModelFieldType(entry.type)
-      const normalizedOptions = type === 'select'
-        ? normalizeCmsContentModelFieldOptions(entry.options, fallbackFieldByIndex?.options ?? [])
-        : []
       const fallbackLabel = `Field ${index + 1}`
       const requestedId = normalizeSegment(
         String(entry.id ?? fallbackFieldByIndex?.id ?? ''),
@@ -1001,6 +1152,16 @@ function normalizeCmsContentModelFieldSettings(
       const id = createUniqueValue(requestedId || `field-${index + 1}`, seenIds)
       seenIds.add(id)
       const matchedFallbackField = fallbackById.get(id) ?? fallbackFieldByIndex
+      const normalizedNestedFields = type === 'object' || type === 'group'
+        ? normalizeCmsContentModelFieldSettings(
+            entry.fields,
+            matchedFallbackField?.fields ?? [],
+            locale
+          )
+        : []
+      const normalizedOptions = type === 'select'
+        ? normalizeCmsContentModelFieldOptions(entry.options, fallbackFieldByIndex?.options ?? [])
+        : []
       const normalizedMediaKinds = type === 'media-asset'
         ? normalizeCmsContentModelFieldMediaKinds(
             entry.mediaKinds,
@@ -1049,7 +1210,9 @@ function normalizeCmsContentModelFieldSettings(
         localeInput: locale,
         nextValue: rawGroup,
       })
-      const repeatable = Boolean(entry.repeatable ?? matchedFallbackField?.repeatable)
+      const repeatable = type === 'object' || type === 'group'
+        ? false
+        : Boolean(entry.repeatable ?? matchedFallbackField?.repeatable)
       const visibility = normalizeCmsContentModelFieldVisibilitySettings(
         entry.visibility,
         id,
@@ -1090,13 +1253,21 @@ function normalizeCmsContentModelFieldSettings(
         min,
         max: min != null && max != null && max < min ? min : max,
         defaultValue: normalizeCmsContentModelFieldValue(
-          { type, options: normalizedOptions, repeatable },
+          { id, type, options: normalizedOptions, repeatable, fields: normalizedNestedFields },
           entry.defaultValue,
-          repeatable
+          type === 'group'
             ? (Array.isArray(matchedFallbackField?.defaultValue)
               ? matchedFallbackField?.defaultValue
               : [])
-            : buildCmsContentModelFieldFallbackValue(type, normalizedOptions)
+            : type === 'object'
+              ? (isObjectRecord(matchedFallbackField?.defaultValue)
+                ? matchedFallbackField?.defaultValue
+                : buildCmsStructuredContentModelFieldObjectValue(normalizedNestedFields))
+              : repeatable
+                ? (Array.isArray(matchedFallbackField?.defaultValue)
+                  ? matchedFallbackField?.defaultValue
+                  : [])
+                : buildCmsContentModelFieldFallbackValue(type, normalizedOptions, normalizedNestedFields)
         ),
         options: type === 'select' && normalizedOptions.length > 0
           ? normalizedOptions
@@ -1106,6 +1277,9 @@ function normalizeCmsContentModelFieldSettings(
           : undefined,
         referenceKinds: type === 'reference' && normalizedReferenceKinds.length > 0
           ? normalizedReferenceKinds
+          : undefined,
+        fields: normalizedNestedFields.length > 0
+          ? normalizedNestedFields
           : undefined,
         localization: normalizedLocalization,
       }
@@ -1160,6 +1334,7 @@ function resolveCmsContentModelFieldDefinitions(
       options: cloneValue(field.options ?? []),
       mediaKinds: cloneValue(field.mediaKinds ?? []),
       referenceKinds: cloneValue(field.referenceKinds ?? []),
+      fields: resolveCmsContentModelFieldDefinitions(field.fields, localeInput),
       __sortIndex: index,
     }))
     .sort((left, right) => {
@@ -2137,6 +2312,17 @@ export function getCmsContentModelFieldDefinitions(
 }
 
 /**
+ * Normalizes authored schema-field settings outside one full content-model payload.
+ */
+export function normalizeCmsContentModelFieldSettingsList(
+  value: unknown,
+  localeInput: unknown = 'en',
+  fallback: CmsContentModelFieldSettings[] = []
+): CmsContentModelFieldSettings[] {
+  return normalizeCmsContentModelFieldSettings(value, fallback, localeInput)
+}
+
+/**
  * Builds a page-level custom field payload from the content-model defaults.
  */
 export function createCmsPageCustomFieldsFromContentModel(
@@ -2168,7 +2354,7 @@ export function normalizeCmsPageCustomFieldsForContentModel(
  * Normalizes one field value against its schema definition.
  */
 export function coerceCmsContentModelFieldValue(
-  field: Pick<CmsContentModelFieldDefinition, 'type' | 'options' | 'defaultValue' | 'repeatable'>,
+  field: Pick<CmsContentModelFieldDefinition, 'id' | 'type' | 'options' | 'defaultValue' | 'repeatable' | 'fields'>,
   value: unknown
 ): CmsContentModelFieldValue {
   return normalizeCmsContentModelFieldValue(field, value, field.defaultValue)

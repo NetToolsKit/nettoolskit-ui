@@ -99,8 +99,25 @@ function normalizeCmsContentModelFieldLocalizationSettings(
   }
 }
 
-function normalizeFieldDefaultValue(value: unknown, repeatable: boolean): CmsContentModelFieldValue {
-  if (repeatable) {
+function normalizeFieldDefaultValue(
+  value: unknown,
+  input: {
+    type: CmsContentModelFieldSettings['type']
+    repeatable: boolean
+    fields?: CmsContentModelFieldSettings[]
+  }
+): CmsContentModelFieldValue {
+  if (input.type === 'object') {
+    return isObjectRecord(value) ? cloneValue(value) : {}
+  }
+
+  if (input.type === 'group') {
+    return Array.isArray(value)
+      ? value.filter(isObjectRecord).map(entry => cloneValue(entry))
+      : []
+  }
+
+  if (input.repeatable) {
     if (!Array.isArray(value)) {
       return []
     }
@@ -142,14 +159,19 @@ function normalizeFieldSetting(value: unknown, fallbackName = 'field'): CmsConte
     return null
   }
 
-  const type = ['text', 'textarea', 'number', 'toggle', 'select', 'url', 'date', 'media-asset', 'reference'].includes(String(value.type ?? '').trim())
+  const type = ['text', 'textarea', 'number', 'toggle', 'select', 'url', 'date', 'media-asset', 'reference', 'object', 'group'].includes(String(value.type ?? '').trim())
     ? String(value.type ?? '').trim() as CmsContentModelFieldSettings['type']
     : 'text'
   const id = normalizeSegment(String(value.id ?? ''), fallbackName)
   const required = Boolean(value.required)
-  const repeatable = Boolean(value.repeatable)
+  const repeatable = type === 'object' || type === 'group' ? false : Boolean(value.repeatable)
   const min = value.min == null || value.min === '' ? null : Number(value.min)
   const max = value.max == null || value.max === '' ? null : Number(value.max)
+  const fields = (type === 'object' || type === 'group') && Array.isArray(value.fields)
+    ? value.fields
+      .map((entry, index) => normalizeFieldSetting(entry, `${fallbackName}-${index + 1}`))
+      .filter((entry): entry is CmsContentModelFieldSettings => entry !== null)
+    : undefined
   const mediaKinds = type === 'media-asset' && Array.isArray(value.mediaKinds)
     ? value.mediaKinds
       .map(entry => String(entry ?? '').trim().toLowerCase())
@@ -180,7 +202,11 @@ function normalizeFieldSetting(value: unknown, fallbackName = 'field'): CmsConte
     min: Number.isFinite(min) ? min : null,
     max: Number.isFinite(max) ? max : null,
     defaultValue: cloneValue(
-      normalizeFieldDefaultValue((value as { defaultValue?: unknown }).defaultValue, repeatable)
+      normalizeFieldDefaultValue((value as { defaultValue?: unknown }).defaultValue, {
+        type,
+        repeatable,
+        fields,
+      })
     ),
     options: Array.isArray(value.options)
       ? value.options
@@ -201,6 +227,7 @@ function normalizeFieldSetting(value: unknown, fallbackName = 'field'): CmsConte
       : undefined,
     ...(mediaKinds && mediaKinds.length > 0 ? { mediaKinds } : {}),
     ...(referenceKinds && referenceKinds.length > 0 ? { referenceKinds } : {}),
+    ...(fields && fields.length > 0 ? { fields } : {}),
     localization: normalizeCmsContentModelFieldLocalizationSettings(value.localization),
   }
 }

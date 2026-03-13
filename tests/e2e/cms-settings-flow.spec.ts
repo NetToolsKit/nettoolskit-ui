@@ -1680,6 +1680,50 @@ test.describe('CMS settings white-label flow', () => {
     const defaultMediaOptionLabel = 'Brand logo'
     const referenceFieldId = 'relatedModel'
     const referenceFieldLabel = 'Related model'
+    const objectFieldId = 'seoConfig'
+    const objectFieldLabel = 'SEO config'
+    const objectNestedFieldsJson = JSON.stringify([
+      {
+        id: 'title',
+        type: 'text',
+        label: 'SEO title',
+        required: true,
+        defaultValue: 'Launch title',
+      },
+      {
+        id: 'canonicalUrl',
+        type: 'url',
+        label: 'Canonical URL',
+        defaultValue: '/launch',
+      },
+    ], null, 2)
+    const objectDefaultJson = JSON.stringify({
+      title: 'Launch title',
+      canonicalurl: '/launch',
+    }, null, 2)
+    const groupFieldId = 'faqItems'
+    const groupFieldLabel = 'FAQ items'
+    const groupNestedFieldsJson = JSON.stringify([
+      {
+        id: 'question',
+        type: 'text',
+        label: 'Question',
+        required: true,
+        defaultValue: '',
+      },
+      {
+        id: 'answer',
+        type: 'textarea',
+        label: 'Answer',
+        defaultValue: '',
+      },
+    ], null, 2)
+    const groupDefaultJson = JSON.stringify([
+      {
+        question: 'What is NetToolsKit?',
+        answer: 'A CMS engine.',
+      },
+    ], null, 2)
 
     await page.setViewportSize({ width: 1600, height: 1900 })
     await page.goto('/?cms=1')
@@ -1769,6 +1813,48 @@ test.describe('CMS settings white-label flow', () => {
     await page.getByRole('option', { name: 'Content model', exact: true }).first().click()
     await commitFocusedSelect(page)
 
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const objectFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      objectFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      objectFieldId
+    )
+    await fillTextInputDirect(
+      objectFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      objectFieldLabel
+    )
+    await objectFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'Object', exact: true }).first().click()
+    await fillTextInputDirect(
+      objectFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Nested fields JSON' }) }).first().locator('textarea').first(),
+      objectNestedFieldsJson
+    )
+    await fillTextInputDirect(
+      objectFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default JSON value' }) }).first().locator('textarea').first(),
+      objectDefaultJson
+    )
+
+    await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
+    const groupFieldRow = page.locator('.cms-content-model-fields__item').last()
+    await fillTextInputDirect(
+      groupFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field ID' }) }).first().locator('input, textarea').first(),
+      groupFieldId
+    )
+    await fillTextInputDirect(
+      groupFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field label' }) }).first().locator('input, textarea').first(),
+      groupFieldLabel
+    )
+    await groupFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Field type' }) }).first().click()
+    await page.getByRole('option', { name: 'Repeatable group', exact: true }).first().click()
+    await fillTextInputDirect(
+      groupFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Nested fields JSON' }) }).first().locator('textarea').first(),
+      groupNestedFieldsJson
+    )
+    await fillTextInputDirect(
+      groupFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default JSON value' }) }).first().locator('textarea').first(),
+      groupDefaultJson
+    )
+
     await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
 
     await openDrawerModule(page, /^(Pages|Paginas)$/)
@@ -1805,6 +1891,20 @@ test.describe('CMS settings white-label flow', () => {
       await expect(page.locator('.q-menu:visible .q-item', { hasText: contentModelName }).first()).toBeVisible()
     }
     await commitFocusedSelect(page)
+
+    const objectFieldTextarea = customFieldsCard
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: objectFieldLabel }) })
+      .first()
+      .locator('textarea')
+      .first()
+    await expect(objectFieldTextarea).toHaveValue(objectDefaultJson)
+
+    const groupFieldTextarea = customFieldsCard
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: groupFieldLabel }) })
+      .first()
+      .locator('textarea')
+      .first()
+    await expect(groupFieldTextarea).toHaveValue(groupDefaultJson)
   })
 
   test('authors localized schema field metadata and renders locale-specific labels in Pages builder', async ({ page }) => {
