@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Governance workflow and audit hub in Releases**
+  - Added an engine-level governance hub helper that aggregates workflow state, revision cadence, audit activity and role-policy readiness without duplicating workflow rules in the Vue layer.
+  - Surfaced a new `Governance workflow and audit` panel in `Releases` with summary cards plus recent revisions, audit entries and role-policy lists for the active tenant state.
+  - Added focused unit coverage for governance hub aggregation and Playwright coverage proving the Releases surface reflects workflow and audit activity after a manual settings save.
+  - Revalidated `type-check`, `lint`, `build:landing` and focused CMS E2E coverage for the new governance authoring surface.
 - **Phase 7 regression and quality hardening for release review workflows**
   - Expanded the Playwright visual regression suite with phase-7 coverage for the `Releases` acknowledgement surface, review package history and checklist drill-down actions.
   - Revalidated the release-review authoring flows with Chromium E2E coverage spanning review hub, checklist navigation, review package export/history and acknowledgement capture.

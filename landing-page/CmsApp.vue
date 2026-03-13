@@ -4302,6 +4302,138 @@
               </div>
 
               <div
+                class="cms-governance-hub"
+                data-cms-governance-hub
+              >
+                <div class="cms-governance-hub__header">
+                  <div class="cms-governance-hub__copy">
+                    <strong>{{ tr('Governance workflow and audit', 'Workflow de governanca e auditoria') }}</strong>
+                    <small>{{ tr('Track workflow state, revision cadence, audit activity and role-policy readiness for this tenant.', 'Acompanhe estado do workflow, cadencia de revisoes, auditoria e prontidao das politicas de papel deste tenant.') }}</small>
+                  </div>
+                  <div class="cms-governance-hub__summary">
+                    <q-chip dense square :style="getReleaseChecklistStatusStyle(cmsGovernanceHubSummary.status)">
+                      {{ getReleaseChecklistStatusLabel(cmsGovernanceHubSummary.status) }}
+                    </q-chip>
+                    <q-chip dense square :style="bannerStyle">
+                      v{{ cmsGovernanceHubSummary.workflow.version }}
+                      {{ tr('draft version', 'versao draft') }}
+                    </q-chip>
+                    <q-chip dense square :style="bannerStyle">
+                      {{ cmsGovernanceHubSummary.audit.count }}
+                      {{ tr('audit entries', 'entradas de auditoria') }}
+                    </q-chip>
+                  </div>
+                </div>
+
+                <div class="cms-governance-hub__cards">
+                  <article
+                    v-for="card in cmsGovernanceHubSummary.cards"
+                    :key="card.id"
+                    class="cms-governance-hub__card"
+                    :data-cms-governance-card="card.id"
+                    :data-cms-governance-status="card.status"
+                  >
+                    <div class="cms-governance-hub__card-header">
+                      <div class="cms-governance-hub__card-copy">
+                        <strong>{{ getGovernanceHubCardLabel(card.id) }}</strong>
+                        <small>{{ getGovernanceHubCardDescription(card) }}</small>
+                      </div>
+                      <q-chip dense square :style="getReleaseChecklistStatusStyle(card.status)">
+                        {{ getReleaseChecklistStatusLabel(card.status) }}
+                      </q-chip>
+                    </div>
+
+                    <div class="cms-governance-hub__metrics">
+                      <span
+                        v-for="metric in card.metrics"
+                        :key="`${card.id}-${metric.id}`"
+                        class="cms-governance-hub__metric"
+                      >
+                        <strong>{{ metric.value }}</strong>
+                        <small>{{ getGovernanceHubMetricLabel(card.id, metric.id) }}</small>
+                      </span>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="cms-governance-hub__lists">
+                  <section class="cms-governance-hub__list">
+                    <div class="cms-governance-hub__list-header">
+                      <strong>{{ tr('Recent revisions', 'Revisoes recentes') }}</strong>
+                      <q-chip dense square :style="bannerStyle">
+                        {{ cmsGovernanceHubSummary.revisions.count }}
+                        {{ tr('total', 'total') }}
+                      </q-chip>
+                    </div>
+                    <div class="cms-governance-hub__items">
+                      <article
+                        v-for="revision in cmsGovernanceHubSummary.revisions.recent"
+                        :key="`${revision.version}-${revision.at}`"
+                        class="cms-governance-hub__item"
+                        data-cms-governance-revision
+                      >
+                        <div class="cms-governance-hub__item-header">
+                          <strong>v{{ revision.version }} · {{ getGovernanceWorkflowStatusLabel(revision.status) }}</strong>
+                          <small>{{ formatReleaseTimestamp(revision.at) }}</small>
+                        </div>
+                        <small>{{ getGovernanceActionLabel(revision.action) }} · {{ revision.by }} · {{ getGovernanceRoleLabel(revision.byRole) }}</small>
+                        <small>{{ revision.summary }}</small>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section class="cms-governance-hub__list">
+                    <div class="cms-governance-hub__list-header">
+                      <strong>{{ tr('Recent audit entries', 'Entradas recentes de auditoria') }}</strong>
+                      <q-chip dense square :style="bannerStyle">
+                        {{ cmsGovernanceHubSummary.audit.topActions.length }}
+                        {{ tr('top actions', 'acoes principais') }}
+                      </q-chip>
+                    </div>
+                    <div class="cms-governance-hub__items">
+                      <article
+                        v-for="entry in cmsGovernanceHubSummary.audit.recent"
+                        :key="entry.id"
+                        class="cms-governance-hub__item"
+                        data-cms-governance-audit
+                      >
+                        <div class="cms-governance-hub__item-header">
+                          <strong>{{ getGovernanceActionLabel(entry.action) }}</strong>
+                          <small>{{ formatReleaseTimestamp(entry.at) }}</small>
+                        </div>
+                        <small>{{ entry.actorId }} · {{ getGovernanceRoleLabel(entry.actorRole) }} · v{{ entry.fromVersion }} → v{{ entry.toVersion }}</small>
+                        <small>{{ entry.summary }}</small>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section class="cms-governance-hub__list">
+                    <div class="cms-governance-hub__list-header">
+                      <strong>{{ tr('Role policies', 'Politicas de papel') }}</strong>
+                      <q-chip dense square :style="bannerStyle">
+                        {{ cmsGovernanceHubSummary.roles.count }}
+                        {{ tr('roles', 'papeis') }}
+                      </q-chip>
+                    </div>
+                    <div class="cms-governance-hub__items">
+                      <article
+                        v-for="policy in cmsGovernanceHubSummary.roles.policies"
+                        :key="policy.role"
+                        class="cms-governance-hub__item"
+                        data-cms-governance-role
+                      >
+                        <div class="cms-governance-hub__item-header">
+                          <strong>{{ policy.label }}</strong>
+                          <small>{{ policy.groupsCount }} {{ tr('groups', 'grupos') }}</small>
+                        </div>
+                        <small>{{ policy.allowCount }} {{ tr('allow', 'allow') }} · {{ policy.denyCount }} {{ tr('deny', 'deny') }}</small>
+                      </article>
+                    </div>
+                  </section>
+                </div>
+              </div>
+
+              <div
                 v-if="selectedRelease"
                 class="cms-release-acknowledgements"
                 data-cms-release-acks
@@ -4905,6 +5037,10 @@ import {
   createCmsReleaseReviewHubSummary,
   type CmsReleaseReviewHubCard,
 } from '../src/modules/cms/white-label/review-hub'
+import {
+  createCmsGovernanceHubSummary,
+  type CmsGovernanceHubCard,
+} from '../src/modules/cms/white-label/governance-hub'
 import { createCmsDraftComparisonExportPayload } from '../src/modules/cms/white-label/review-package'
 import {
   appendCmsReviewPackageHistory,
@@ -9415,6 +9551,181 @@ function getReleaseReviewHubMetricLabel(
 }
 
 /**
+ * Resolves localized labels for governance-hub cards in Releases.
+ */
+function getGovernanceHubCardLabel(cardId: CmsGovernanceHubCard['id']): string {
+  switch (cardId) {
+    case 'workflow':
+      return tr('Workflow', 'Workflow')
+    case 'revisions':
+      return tr('Revisions', 'Revisoes')
+    case 'audit':
+      return tr('Audit trail', 'Trilha de auditoria')
+    case 'roles':
+    default:
+      return tr('Role policies', 'Politicas de papel')
+  }
+}
+
+/**
+ * Resolves localized labels for governance workflow states.
+ */
+function getGovernanceWorkflowStatusLabel(status: CmsWhiteLabelSettings['governance']['workflow']['status']): string {
+  switch (status) {
+    case 'draft':
+      return tr('Draft', 'Rascunho')
+    case 'in_review':
+      return tr('In review', 'Em revisao')
+    case 'approved':
+      return tr('Approved', 'Aprovado')
+    case 'scheduled':
+      return tr('Scheduled', 'Agendado')
+    case 'published':
+      return tr('Published', 'Publicado')
+    default:
+      return status
+  }
+}
+
+/**
+ * Resolves localized labels for governance workflow actions.
+ */
+function getGovernanceActionLabel(action: CmsWhiteLabelWorkflowAction): string {
+  switch (action) {
+    case 'save_draft':
+      return tr('Save draft', 'Salvar rascunho')
+    case 'submit_review':
+      return tr('Submit review', 'Enviar para revisao')
+    case 'approve':
+      return tr('Approve', 'Aprovar')
+    case 'request_changes':
+      return tr('Request changes', 'Solicitar mudancas')
+    case 'schedule_publish':
+      return tr('Schedule publish', 'Agendar publicacao')
+    case 'publish':
+      return tr('Publish', 'Publicar')
+    case 'rollback':
+      return tr('Rollback', 'Rollback')
+    case 'reset_defaults':
+      return tr('Reset defaults', 'Restaurar padroes')
+    case 'import_settings':
+    default:
+      return tr('Import settings', 'Importar configuracoes')
+  }
+}
+
+/**
+ * Resolves localized labels for governance actor roles.
+ */
+function getGovernanceRoleLabel(role: CmsWhiteLabelSettings['governance']['workflow']['lastActionRole']): string {
+  switch (role) {
+    case 'owner':
+      return tr('Owner', 'Owner')
+    case 'admin':
+      return tr('Admin', 'Admin')
+    case 'editor':
+      return tr('Editor', 'Editor')
+    case 'reviewer':
+      return tr('Reviewer', 'Revisor')
+    case 'publisher':
+      return tr('Publisher', 'Publicador')
+    case 'viewer':
+      return tr('Viewer', 'Leitor')
+    case 'system':
+    default:
+      return tr('System', 'Sistema')
+  }
+}
+
+/**
+ * Builds concise helper copy for one Releases governance-hub card.
+ */
+function getGovernanceHubCardDescription(card: CmsGovernanceHubCard): string {
+  if (card.id === 'workflow') {
+    const workflow = cmsGovernanceHubSummary.value.workflow
+    return `${getGovernanceWorkflowStatusLabel(workflow.workflowStatus)} · v${workflow.version} · ${workflow.lastActionBy} · ${getGovernanceRoleLabel(workflow.lastActionRole)}`
+  }
+
+  if (card.id === 'revisions') {
+    const latestRevision = cmsGovernanceHubSummary.value.revisions.recent[0]
+    if (!latestRevision) {
+      return tr(
+        'No revisions recorded beyond the seed snapshot.',
+        'Nenhuma revisao registrada alem do snapshot inicial.'
+      )
+    }
+
+    return `${getGovernanceActionLabel(latestRevision.action)} · v${latestRevision.version} · ${latestRevision.by}`
+  }
+
+  if (card.id === 'audit') {
+    const latestAudit = cmsGovernanceHubSummary.value.audit.recent[0]
+    if (!latestAudit) {
+      return tr(
+        'No audit entries recorded yet for this tenant.',
+        'Ainda nao existem entradas de auditoria registradas para este tenant.'
+      )
+    }
+
+    return `${getGovernanceActionLabel(latestAudit.action)} · ${latestAudit.actorId} · ${getGovernanceRoleLabel(latestAudit.actorRole)}`
+  }
+
+  const policies = cmsGovernanceHubSummary.value.roles
+  return `${policies.publishCapableCount} ${tr('publish-capable', 'com publicacao')} · ${policies.reviewCapableCount} ${tr('review-capable', 'com revisao')}`
+}
+
+/**
+ * Resolves metric labels for Releases governance-hub cards.
+ */
+function getGovernanceHubMetricLabel(cardId: CmsGovernanceHubCard['id'], metricId: string): string {
+  if (cardId === 'workflow') {
+    if (metricId === 'version') {
+      return tr('Version', 'Versao')
+    }
+
+    if (metricId === 'publishedVersion') {
+      return tr('Published', 'Publicada')
+    }
+
+    return tr('Live', 'Ao vivo')
+  }
+
+  if (cardId === 'revisions') {
+    if (metricId === 'count') {
+      return tr('Total', 'Total')
+    }
+
+    if (metricId === 'published') {
+      return tr('Published', 'Publicadas')
+    }
+
+    return tr('Recent', 'Recentes')
+  }
+
+  if (cardId === 'audit') {
+    if (metricId === 'count') {
+      return tr('Entries', 'Entradas')
+    }
+
+    if (metricId === 'actions') {
+      return tr('Actions', 'Acoes')
+    }
+
+    return tr('Recent', 'Recentes')
+  }
+
+  if (metricId === 'count') {
+    return tr('Policies', 'Politicas')
+  }
+
+  if (metricId === 'publish') {
+    return tr('Publish', 'Publicar')
+  }
+
+  return tr('Review', 'Revisao')
+}
+
+/**
  * Resolves semantic status for one exported review package metadata row.
  */
 function getReviewPackageHistoryStatus(entry: CmsReviewPackageHistoryEntry): CmsReleaseCandidateChecklistStatus {
@@ -10646,6 +10957,8 @@ const selectedReleaseReviewHub = computed(() => {
     checklist: selectedReleaseCandidateChecklist.value,
   })
 })
+
+const cmsGovernanceHubSummary = computed(() => createCmsGovernanceHubSummary(settings.value.governance))
 
 const releaseReviewPackageHistoryEntries = computed<CmsReviewPackageHistoryEntry[]>(() => {
   const currentEnvironment = activeReleaseEnvironment.value
@@ -17076,6 +17389,127 @@ function resetToDefaults(): void {
   font-size: var(--ntk-cms-font-size-item-caption);
 }
 
+.cms-governance-hub {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-md);
+  display: grid;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-governance-hub__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-md);
+}
+
+.cms-governance-hub__copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-governance-hub__copy small {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-governance-hub__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
+.cms-governance-hub__cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-governance-hub__card {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-governance-hub__card-header,
+.cms-governance-hub__item-header,
+.cms-governance-hub__list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-governance-hub__card-copy {
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
+.cms-governance-hub__card-copy small,
+.cms-governance-hub__item small,
+.cms-governance-hub__list-header small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-governance-hub__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-governance-hub__metric {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-sm);
+  padding: calc(var(--ntk-cms-space-xs) * 0.9);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 3);
+  background: var(--ntk-cms-bg-card);
+}
+
+.cms-governance-hub__metric strong {
+  font-size: var(--ntk-cms-font-size-subtitle);
+}
+
+.cms-governance-hub__metric small {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-caption);
+}
+
+.cms-governance-hub__lists {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-governance-hub__list {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-shell-bg);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-governance-hub__items {
+  display: grid;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-governance-hub__item {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-sm);
+  background: var(--ntk-cms-bg-card);
+  padding: calc(var(--ntk-cms-space-xs) * 0.9);
+  display: grid;
+  gap: calc(var(--ntk-cms-space-xs) / 2);
+}
+
 .cms-release-history {
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
@@ -17338,13 +17772,19 @@ function resetToDefaults(): void {
 }
 
 @media (max-width: 1100px) {
-  .cms-release-review-hub__cards {
+  .cms-release-review-hub__cards,
+  .cms-governance-hub__cards,
+  .cms-governance-hub__lists {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .cms-release-review-hub__header,
+  .cms-governance-hub__header,
+  .cms-governance-hub__card-header,
+  .cms-governance-hub__item-header,
+  .cms-governance-hub__list-header,
   .cms-release-acknowledgements__header,
   .cms-release-history__header,
   .cms-release-history__item-header,
@@ -17355,7 +17795,10 @@ function resetToDefaults(): void {
   .cms-release-acknowledgements__form,
   .cms-release-history__metrics,
   .cms-release-review-hub__cards,
-  .cms-release-review-hub__metrics {
+  .cms-release-review-hub__metrics,
+  .cms-governance-hub__cards,
+  .cms-governance-hub__metrics,
+  .cms-governance-hub__lists {
     grid-template-columns: minmax(0, 1fr);
   }
 }

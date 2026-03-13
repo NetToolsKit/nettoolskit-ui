@@ -2828,6 +2828,31 @@ test.describe('CMS settings white-label flow', () => {
     await expect(checklistCard).toContainText('Checklist')
   })
 
+  test('surfaces governance workflow and audit signals in Releases', async ({ page }) => {
+    await page.goto('/?cms=1')
+
+    const saveButton = page.getByRole('button', { name: /^(Save tenant settings|Salvar configuracoes do tenant)$/ }).first()
+    await saveButton.click()
+
+    await openDrawerModule(page, /^Releases$/)
+
+    const governanceHub = page.locator('[data-cms-governance-hub]').first()
+    await expect(governanceHub).toBeVisible()
+    await expect(governanceHub).toContainText('Governance')
+
+    const workflowCard = governanceHub.locator('[data-cms-governance-card="workflow"]').first()
+    const auditCard = governanceHub.locator('[data-cms-governance-card="audit"]').first()
+    const rolesCard = governanceHub.locator('[data-cms-governance-card="roles"]').first()
+
+    await expect(workflowCard).toHaveAttribute('data-cms-governance-status', 'warning')
+    await expect(auditCard).toHaveAttribute('data-cms-governance-status', 'ready')
+    await expect(rolesCard).toContainText('Role policies')
+
+    await expect(governanceHub.locator('[data-cms-governance-revision]').first()).toBeVisible()
+    await expect(governanceHub.locator('[data-cms-governance-audit]').first()).toContainText(/Save draft|Salvar rascunho/)
+    await expect(governanceHub.locator('[data-cms-governance-role]').first()).toBeVisible()
+  })
+
   test('supports draft vs published preview with viewport and locale controls', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Pages$/)
