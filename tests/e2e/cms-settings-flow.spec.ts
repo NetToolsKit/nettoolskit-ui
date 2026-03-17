@@ -17,10 +17,11 @@ const CTA_SUBTITLE_LINE_HEIGHT_LABEL = 'CTA subtitle line height'
 const FOOTER_LINK_TITLE_LETTER_SPACING_LABEL = 'Footer link title letter spacing'
 const IMAGE_ASSET_LABEL = 'Image asset'
 
-const darkThemePalette = {
-  drawerBackground: '#1e293b',
-  drawerTextColor: '#cbd5e1',
-  pageTextColor: '#f1f5f9',
+const cmsAuthoringPalette = {
+  drawerBackground: '#ffffff',
+  drawerTextColor: '#5f6c7b',
+  groupCaptionColor: '#6b7a8c',
+  pageTextColor: '#16202b',
 }
 
 interface NotificationPalette {
@@ -270,7 +271,8 @@ function colorTokenInputByLabel(page: Page, label: string): Locator {
  */
 function settingsActionButton(page: Page, label: string): Locator {
   return page
-    .locator('.cms-toolbar-card__actions .q-btn, .cms-settings__actions .q-btn', { hasText: label })
+    .locator('.cms-designer-card--settings')
+    .getByRole('button', { name: new RegExp(label, 'i') })
     .first()
 }
 
@@ -335,9 +337,11 @@ async function selectThemePreset(page: Page, presetName: string): Promise<void> 
   await page.locator('.q-menu .q-item', { hasText: presetName }).first().click()
 }
 
-async function expectDesignerShellStatus(page: Page, selector: string): Promise<void> {
+async function expectDesignerShellStatus(page: Page, selector: string, options?: { requireRail?: boolean }): Promise<void> {
   await expect(page.locator(`${selector} .cms-designer-card__stage`).first()).toBeVisible()
-  await expect(page.locator(`${selector} .cms-designer-card__rail`).first()).toBeVisible()
+  if (options?.requireRail !== false) {
+    await expect(page.locator(`${selector} .cms-designer-card__rail`).first()).toBeVisible()
+  }
   await expect(page.locator(`${selector} .cms-designer-card__statusbar`).first()).toBeVisible()
   await expect(page.locator(`${selector} .cms-designer-card__status-text`).first()).toBeVisible()
 }
@@ -419,7 +423,6 @@ test.describe('CMS settings white-label flow', () => {
     await expect(settingsShell.locator('.cms-designer-card__toolbar-row--actions').first()).toBeVisible()
     await expect(settingsShell.locator('.cms-designer-card__toolbar-row--info').first()).toBeVisible()
     await expect(settingsShell.locator('.cms-designer-card__info-strip').first()).toContainText(/Default Tenant/i)
-    await expect(settingsShell.locator('.cms-designer-card__toolbar-group--preview').first()).toContainText(/View/i)
     await expect(settingsShell.locator('.cms-designer-card__toolbar-group--preview').first()).toContainText(/Preview/i)
     await expect(settingsShell.locator('.cms-designer-card__ruler').first()).toBeVisible()
 
@@ -436,7 +439,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
-    await expectDesignerShellStatus(page, '.cms-pages__editor')
+    await expectDesignerShellStatus(page, '.cms-designer-card--pages')
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-row--actions').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-row--info').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-header').first()).toBeVisible()
@@ -444,13 +447,16 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-pages__sidebar .cms-designer-card__metrics').first()).toContainText(
       /(Template|Pages in tenant|Paginas no tenant)/i
     )
+    await expect(page.locator('.cms-pages__sidebar .cms-pages__sidebar-section').first()).toContainText(
+      /(Workspace actions|Acoes do workspace)/i
+    )
     await expect(page.locator('.cms-pages__rail .cms-designer-card__rail-card').first()).toContainText(
-      /(Workspace status|Status do workspace)/i
+      /(Page launch rail|Rail de lancamento da pagina)/i
     )
 
     await openDrawerModule(page, /^(Blocks|Blocos)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
-    await expectDesignerShellStatus(page, '.cms-blocks__editor')
+    await expectDesignerShellStatus(page, '.cms-designer-card--blocks')
     await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-row--actions').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-row--info').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-header').first()).toBeVisible()
@@ -458,7 +464,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-blocks__sidebar .cms-designer-card__metrics').first()).toContainText(
       /(Page|Pagina)/i
     )
-    await expect(page.locator('.cms-blocks__rail .cms-designer-card__rail-card').first()).toContainText(
+    await expect(page.locator('.cms-blocks__rail .cms-designer-card__rail-card').last()).toContainText(
       /(Selection rail|Rail da selecao)/i
     )
   })
@@ -475,36 +481,52 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-settings__sidebar .cms-designer-card__nav-button')).toHaveCount(7)
     await expect(page.locator('input[aria-label="Import tenant JSON file"]')).toBeAttached()
 
-    const saveButton = settingsActionButton(page, 'Save')
-    const resetButton = settingsActionButton(page, 'Reset')
-    await saveButton.focus()
+    const openButton = settingsActionButton(page, 'open')
+    const createTenantButton = page.locator('[aria-label="Create tenant profile"]').first()
+    await openButton.focus()
     await page.keyboard.press('Tab')
-    await expect(resetButton).toBeFocused()
+    await expect(createTenantButton).toBeFocused()
 
     await openSettingsTab(page, /colors/i)
     await expect(page.locator('input[type="color"][aria-label$="picker"]').first()).toBeVisible()
   })
 
-  test('applies dark preset with readable sidebar and form contrast', async ({ page }) => {
+  test('keeps the authoring shell readable after applying the dark preset', async ({ page }) => {
     await page.goto('/?cms=1')
     await openSettingsModule(page)
     await openSettingsTab(page, /colors/i)
     await selectThemePreset(page, DARK_PRESET_NAME)
 
     const drawer = page.locator('.ntk-app-shell__drawer').first()
-    await expect(drawer).toHaveCSS('background-color', hexToRgbRegex(darkThemePalette.drawerBackground))
-    await expect(drawer).toHaveCSS('color', hexToRgbRegex(darkThemePalette.drawerTextColor))
+    await expect(drawer).toHaveCSS('background-color', hexToRgbRegex(cmsAuthoringPalette.drawerBackground))
+    await expect(drawer).toHaveCSS('color', hexToRgbRegex(cmsAuthoringPalette.drawerTextColor))
 
     const inactiveCaption = page
       .locator('.ntk-app-shell__item:not(.ntk-app-shell__item--active) .q-item__label--caption')
       .first()
-    await expect(inactiveCaption).toHaveCSS('color', hexToRgbRegex(darkThemePalette.drawerTextColor))
+    await expect(inactiveCaption).toHaveCSS('color', hexToRgbRegex(cmsAuthoringPalette.groupCaptionColor))
 
     const titleApp = page.locator('.ntk-app-shell__header .ntk-app-shell__title-app').first()
-    await expect(titleApp).toHaveCSS('color', hexToRgbRegex(darkThemePalette.pageTextColor))
+    await expect(titleApp).toHaveCSS('color', hexToRgbRegex(cmsAuthoringPalette.pageTextColor))
 
     const firstFieldInput = page.locator('.cms-shell-page .q-field__native, .cms-shell-page .q-field__input').first()
-    await expect(firstFieldInput).toHaveCSS('color', hexToRgbRegex(darkThemePalette.pageTextColor))
+    await expect(firstFieldInput).toHaveCSS('color', hexToRgbRegex(cmsAuthoringPalette.pageTextColor))
+  })
+
+  test('opens Pages preview in a new tab from the designer toolbar', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+
+    const popupPromise = page.waitForEvent('popup')
+    await page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-group--preview .q-btn').first().click()
+    const popup = await popupPromise
+    await popup.waitForLoadState('domcontentloaded')
+
+    await expect(popup).toHaveURL(/cms=1/)
+    await expect(popup).toHaveURL(/cmsModule=pages/)
+    await expect(popup).toHaveURL(/cmsPreview=1/)
+    await expect(popup.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await expect(popup.locator('.cms-pages__preview').first()).toBeVisible()
   })
 
   test('persists advanced landing layout tokens and applies them on landing runtime', async ({ page }) => {
@@ -2465,7 +2487,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
-    const quickStarts = page.locator('.cms-pages__quick-starts', {
+    const quickStarts = page.locator('.cms-pages__rail .cms-pages__sidebar-section', {
       has: page.locator('.cms-pages__quick-starts-header strong', { hasText: /^(Quick-start workflows|Fluxos de quick-start)$/ }),
     }).first()
     await expect(quickStarts).toBeVisible()
@@ -2506,7 +2528,7 @@ test.describe('CMS settings white-label flow', () => {
       return parsed?.settings ?? null
     }, CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY)
 
-    const starterKits = page.locator('.cms-pages__starter-kits').first()
+    const starterKits = page.locator('.cms-pages__rail .cms-pages__starter-kits').first()
     await expect(starterKits).toBeVisible()
     await expect(starterKits.locator('.cms-pages__quick-starts-header strong').first()).toHaveText(
       /^(Starter-kit bundles|Bundles de starter kit)$/
@@ -2604,7 +2626,7 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(page.getByPlaceholder('Search module').first(), 'funnel')
 
     const quickStartSection = page
-      .locator('.cms-pages__quick-starts', { has: page.getByText(/^(Quick-start workflows|Fluxos de quick-start)$/) })
+      .locator('.cms-pages__rail .cms-pages__sidebar-section', { has: page.getByText(/^(Quick-start workflows|Fluxos de quick-start)$/) })
       .first()
 
     await expect(quickStartSection.locator('.cms-page-quick-start-card')).toHaveCount(1)

@@ -19,7 +19,7 @@
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
-                  <q-btn dense flat square icon="folder_open" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog">
+                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open settings workspace', 'Abrir workspace de configuracoes')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')">
                     <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
                   </q-btn>
                   <q-btn dense flat square icon="note_add" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt">
@@ -35,34 +35,8 @@
                     <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
                   </q-btn>
                 </div>
-                <div class="cms-designer-card__toolbar-divider" />
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--status">
-                  <span class="cms-designer-card__toolbar-zoom">100%</span>
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    icon="grid_4x4"
-                    class="cms-designer-card__toolbar-mode"
-                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
-                    @click="toggleCmsDesignerStageGrid"
-                  />
-                </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
-                  <q-btn-dropdown flat dense no-caps icon="view_quilt" :label="tr('View', 'View')">
-                    <q-list dense>
-                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')">
-                        <q-item-section>{{ tr('Workbench', 'Workbench') }}</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="openCmsDesignerPreview('settings')">
-                        <q-item-section>{{ tr('Preview examples', 'Exemplos de preview') }}</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="toggleCmsDesignerStageGrid">
-                        <q-item-section>{{ showCmsDesignerStageGrid ? tr('Hide grid', 'Ocultar grade') : tr('Show grid', 'Exibir grade') }}</q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
                   <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('settings')" />
                 </div>
               </div>
@@ -93,6 +67,16 @@
                 </div>
                 <div class="cms-designer-card__ruler-meta">
                   <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
+                  <span class="cms-designer-card__ruler-zoom">100%</span>
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="grid_4x4"
+                    class="cms-designer-card__ruler-mode"
+                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                    @click="toggleCmsDesignerStageGrid"
+                  />
                 </div>
               </div>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--settings">
@@ -163,26 +147,7 @@
             </div>
             <div class="cms-toolbar-card__body">
               <div class="cms-toolbar-card__actions">
-                <q-btn no-caps unelevated icon="save" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" :style="primaryActionStyle" @click="saveNow" />
                 <q-btn flat no-caps icon="restart_alt" :label="cmsUiText.resetLabel" :aria-label="cmsUiText.resetAriaLabel" :style="dangerActionStyle" @click="resetToDefaults" />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="undo"
-                  :label="tr('Undo', 'Desfazer')"
-                  :disable="!canUndoCmsAuthoringHistory"
-                  @click="undoCmsAuthoringChange"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="redo"
-                  :label="tr('Redo', 'Refazer')"
-                  :disable="!canRedoCmsAuthoringHistory"
-                  @click="redoCmsAuthoringChange"
-                />
               </div>
               <q-separator vertical inset class="cms-toolbar-card__separator" />
               <div class="cms-toolbar-card__actions">
@@ -254,6 +219,14 @@
                   />
                 </div>
               </div>
+              <p class="cms-config-caption cms-toolbar-card__hint">
+                {{
+                  tr(
+                    'Primary actions stay in the top editor bar so the workspace keeps one clear command row.',
+                    'As acoes primarias ficam na barra superior para o workspace manter uma linha clara de comando.'
+                  )
+                }}
+              </p>
             </div>
           </div>
           <input
@@ -1823,7 +1796,7 @@
                 <aside class="cms-designer-card__rail cms-settings__rail">
                   <div class="cms-designer-card__rail-card">
                     <strong>{{ tr('Designer rail', 'Rail do designer') }}</strong>
-                    <small>{{ tr('Quick actions and workspace status stay pinned while you edit.', 'Acoes rapidas e status do workspace ficam fixos durante a edicao.') }}</small>
+                    <small>{{ tr('Context and recovery stay pinned while you edit without duplicating the top action bar.', 'Contexto e recovery ficam fixos durante a edicao sem duplicar a barra superior.') }}</small>
                     <div class="cms-designer-card__metrics">
                       <span>{{ tr('Active surface', 'Superficie ativa') }}: <strong>{{ activeSettingsWorkbenchTab?.label }}</strong></span>
                       <span>{{ tr('Locale', 'Locale') }}: <strong>{{ settings.content.locale }}</strong></span>
@@ -1831,17 +1804,14 @@
                     </div>
                   </div>
                   <div class="cms-designer-card__rail-actions">
-                    <q-btn round flat icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
-                      <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
+                    <q-btn round flat icon="restore" :disable="!canRestoreDraftRecovery" :aria-label="cmsUiText.autoSaveRestoreLabel" @click="restoreCmsDraftRecovery">
+                      <q-tooltip>{{ cmsUiText.autoSaveRestoreLabel }}</q-tooltip>
                     </q-btn>
-                    <q-btn round flat icon="download" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile">
-                      <q-tooltip>{{ cmsUiText.exportLabel }}</q-tooltip>
+                    <q-btn round flat icon="delete_sweep" :disable="!hasDraftRecoveryEntry" :aria-label="cmsUiText.autoSaveDiscardLabel" @click="discardCmsDraftRecovery">
+                      <q-tooltip>{{ cmsUiText.autoSaveDiscardLabel }}</q-tooltip>
                     </q-btn>
-                    <q-btn round flat icon="upload_file" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog">
-                      <q-tooltip>{{ cmsUiText.importLabel }}</q-tooltip>
-                    </q-btn>
-                    <q-btn round flat icon="restart_alt" :aria-label="cmsUiText.resetAriaLabel" @click="resetToDefaults">
-                      <q-tooltip>{{ cmsUiText.resetLabel }}</q-tooltip>
+                    <q-btn round flat icon="tune" :aria-label="cmsUiText.showAdvancedOverridesLabel" @click="showAdvancedThemeFields = !showAdvancedThemeFields">
+                      <q-tooltip>{{ cmsUiText.showAdvancedOverridesLabel }}</q-tooltip>
                     </q-btn>
                   </div>
                 </aside>
@@ -1861,7 +1831,7 @@
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
-                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open Pages preview', 'Abrir preview de paginas')" @click="scrollCmsDesignerSurface('.cms-pages__preview')">
+                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open pages workspace', 'Abrir workspace de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')">
                     <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
                   </q-btn>
                   <q-btn dense flat square icon="note_add" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage">
@@ -1877,76 +1847,18 @@
                     <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
                   </q-btn>
                 </div>
-                <div class="cms-designer-card__toolbar-divider" />
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--status">
-                  <span class="cms-designer-card__toolbar-zoom">100%</span>
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    icon="grid_4x4"
-                    class="cms-designer-card__toolbar-mode"
-                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
-                    @click="toggleCmsDesignerStageGrid"
-                  />
-                </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
-                  <q-btn-dropdown flat dense no-caps icon="view_quilt" :label="tr('View', 'View')">
-                    <q-list dense>
-                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')">
-                        <q-item-section>{{ tr('Workbench', 'Workbench') }}</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-pages__preview')">
-                        <q-item-section>{{ tr('Pages preview', 'Preview de paginas') }}</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="toggleCmsDesignerStageGrid">
-                        <q-item-section>{{ showCmsDesignerStageGrid ? tr('Hide grid', 'Ocultar grade') : tr('Show grid', 'Exibir grade') }}</q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="scrollCmsDesignerSurface('.cms-pages__preview')" />
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('pages')" />
                 </div>
               </div>
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
                 <div class="cms-designer-card__info-strip">
-                  <span class="cms-designer-card__info-item"><strong>{{ selectedPageTemplateId }}</strong></span>
-                  <span class="cms-designer-card__info-item">{{ settings.pages.length }} {{ tr('pages in tenant', 'paginas no tenant') }}</span>
-                  <span class="cms-designer-card__info-item">{{ selectedCmsBuilderCommandOption?.label || tr('No quick command selected', 'Nenhum comando rapido selecionado') }}</span>
-                </div>
-                <div class="cms-pages__header-actions cms-designer-card__toolbar-group cms-designer-card__toolbar-group--fields">
-                  <q-select
-                    v-model="selectedPageTemplateId"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    :options="cmsPageTemplateOptions"
-                    :label="tr('Page template', 'Template de pagina')"
-                    class="cms-pages__template-select"
-                  />
-                  <q-select
-                    v-if="cmsBuilderCommandOptions.length > 0"
-                    v-model="selectedBuilderCommandId"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    :options="cmsBuilderCommandOptions"
-                    option-label="label"
-                    option-value="value"
-                    :label="tr('Quick command', 'Comando rapido')"
-                    class="cms-builder-command-select"
-                  />
-                  <q-btn
-                    v-if="cmsBuilderCommandOptions.length > 0"
-                    flat
-                    dense
-                    no-caps
-                    icon="play_arrow"
-                    :label="tr('Run', 'Executar')"
-                    @click="executeSelectedBuilderCommand"
-                  />
+                  <span class="cms-designer-card__info-item">
+                    <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
+                  </span>
+                  <span class="cms-designer-card__info-item">{{ cmsAutosaveStatusLabel }}</span>
+                  <span class="cms-designer-card__info-item">{{ activeItem.label }}</span>
                 </div>
               </div>
             </div>
@@ -1963,25 +1875,73 @@
                 </div>
                 <div class="cms-designer-card__ruler-meta">
                   <q-chip dense square :style="statusChipStyle">{{ selectedPageTemplateId }}</q-chip>
+                  <span class="cms-designer-card__ruler-zoom">100%</span>
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="grid_4x4"
+                    class="cms-designer-card__ruler-mode"
+                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                    @click="toggleCmsDesignerStageGrid"
+                  />
                 </div>
               </div>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--pages">
                 <aside class="cms-designer-card__sidebar cms-pages__sidebar">
                   <div class="cms-designer-card__sidebar-header">
-                    <strong>{{ tr('Page designer', 'Designer de paginas') }}</strong>
-                    <small>{{ tr('Template, shortcuts and library controls stay framed beside the workspace.', 'Template, atalhos e controles da biblioteca ficam emoldurados ao lado do workspace.') }}</small>
+                    <strong>{{ tr('Page setup', 'Setup da pagina') }}</strong>
+                    <small>{{ tr('Template, quick actions and starter flows stay together on the left while the center stays focused on editing.', 'Template, acoes rapidas e fluxos iniciais ficam juntos na esquerda enquanto o centro fica focado na edicao.') }}</small>
                   </div>
                   <div class="cms-designer-card__metrics">
                     <span>{{ tr('Template', 'Template') }}: <strong>{{ cmsPageTemplateOptions.find(option => option.value === selectedPageTemplateId)?.label || selectedPageTemplateId }}</strong></span>
                     <span>{{ tr('Pages in tenant', 'Paginas no tenant') }}: <strong>{{ settings.pages.length }}</strong></span>
                     <span>{{ tr('Reusable sections', 'Secoes reutilizaveis') }}: <strong>{{ settings.reusableSections.length }}</strong></span>
-                    <span>{{ tr('Quick command', 'Comando rapido') }}: <strong>{{ selectedCmsBuilderCommandOption?.label || tr('None selected', 'Nenhum selecionado') }}</strong></span>
+                    <span>{{ tr('Preview', 'Preview') }}: <strong>{{ tr('New browser tab', 'Nova aba do navegador') }}</strong></span>
+                  </div>
+                  <div class="cms-pages__sidebar-section">
+                    <strong>{{ tr('Workspace actions', 'Acoes do workspace') }}</strong>
+                    <div class="cms-form-grid cms-pages__stage-toolbar">
+                      <q-select
+                        v-model="selectedPageTemplateId"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsPageTemplateOptions"
+                        :label="tr('Page template', 'Template de pagina')"
+                        class="cms-pages__template-select"
+                      />
+                      <q-select
+                        v-if="cmsBuilderCommandOptions.length > 0"
+                        v-model="selectedBuilderCommandId"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsBuilderCommandOptions"
+                        option-label="label"
+                        option-value="value"
+                        :label="tr('Quick command', 'Comando rapido')"
+                        class="cms-builder-command-select"
+                      />
+                      <div v-if="cmsBuilderCommandOptions.length > 0" class="cms-form-grid__inline-actions cms-pages__sidebar-action-bar">
+                        <q-btn
+                          flat
+                          dense
+                          no-caps
+                          icon="play_arrow"
+                          :label="tr('Run', 'Executar')"
+                          @click="executeSelectedBuilderCommand"
+                        />
+                      </div>
+                    </div>
+                    <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
+                      {{ selectedCmsBuilderCommandOption.description }}
+                    </p>
                   </div>
                 </aside>
                 <div class="cms-designer-card__stage cms-pages__stage" :class="{ 'cms-designer-card__stage--plain': !showCmsDesignerStageGrid }">
-              <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
-                {{ selectedCmsBuilderCommandOption.description }}
-              </p>
               <div
                 v-if="cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount > 0 || cmsSchemaMigrationBatchReport.summary.versionMissingCount > 0 || cmsSchemaMigrationBatchReport.summary.aheadCount > 0 || cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0"
                 class="cms-page-migration-summary"
@@ -2014,152 +1974,6 @@
                   </div>
                 </div>
               </div>
-              <div class="cms-pages__quick-starts cms-pages__starter-kits">
-                <div class="cms-pages__quick-starts-header">
-                  <div>
-                    <strong>{{ tr('Starter-kit bundles', 'Bundles de starter kit') }}</strong>
-                    <small>
-                      {{
-                        tr(
-                          'Seed a landing page together with reusable sections, blocks and schema presets for one common use case.',
-                          'Semeie uma landing junto com secoes reutilizaveis, blocos e presets de schema para um caso de uso comum.'
-                        )
-                      }}
-                    </small>
-                  </div>
-                  <q-chip dense square :style="statusChipStyle">
-                    {{ hasCmsBuilderSearch ? `${filteredCmsStarterKitOptions.length}/${cmsStarterKitOptions.length}` : cmsStarterKitOptions.length }}
-                  </q-chip>
-                </div>
-                <div class="cms-pages__quick-start-grid">
-                  <article
-                    v-for="starterKit in filteredCmsStarterKitOptions"
-                    :key="`starter-kit-${starterKit.value}`"
-                    class="cms-page-quick-start-card cms-page-quick-start-card--starter-kit"
-                  >
-                    <div class="cms-page-quick-start-card__header">
-                      <strong>{{ starterKit.label }}</strong>
-                      <q-chip dense square :style="statusChipStyle">
-                        {{ starterKit.sectionCount }}
-                      </q-chip>
-                    </div>
-                    <small class="cms-page-quick-start-card__description">{{ starterKit.description }}</small>
-                    <div class="cms-page-quick-start-card__meta">
-                      <span>
-                        {{ tr('Template', 'Template') }}:
-                        <strong>{{ starterKit.templateLabel }}</strong>
-                      </span>
-                      <span>
-                        {{ tr('Content model', 'Modelo de conteudo') }}:
-                        <strong>{{ starterKit.contentModelLabel }}</strong>
-                      </span>
-                      <span>
-                        {{ tr('Reusable sections', 'Secoes reutilizaveis') }}:
-                        <strong>{{ starterKit.reusableSectionCount }}</strong>
-                      </span>
-                      <span>
-                        {{ tr('Reusable blocks', 'Blocos reutilizaveis') }}:
-                        <strong>{{ starterKit.reusableBlockCount }}</strong>
-                      </span>
-                      <span>
-                        {{ tr('Block presets', 'Presets de bloco') }}:
-                        <strong>{{ starterKit.blockPresetCount }}</strong>
-                      </span>
-                      <span>
-                        {{ tr('Field presets', 'Presets de campo') }}:
-                        <strong>{{ starterKit.fieldPresetCount }}</strong>
-                      </span>
-                    </div>
-                    <div class="cms-page-quick-start-card__actions">
-                      <q-btn
-                        no-caps
-                        unelevated
-                        icon="inventory_2"
-                        :label="tr('Install kit', 'Instalar kit')"
-                        :style="primaryActionStyle"
-                        @click="runCmsStarterKit(starterKit.value)"
-                      />
-                      <q-btn
-                        flat
-                        dense
-                        no-caps
-                        icon="widgets"
-                        :label="tr('Install + open blocks', 'Instalar + abrir blocos')"
-                        @click="runCmsStarterKit(starterKit.value, true)"
-                      />
-                    </div>
-                  </article>
-                </div>
-                <div v-if="hasCmsBuilderSearch && filteredCmsStarterKitOptions.length === 0" class="cms-block-item__empty">
-                  <strong>{{ tr('No starter kit matched the current search.', 'Nenhum starter kit corresponde a busca atual.') }}</strong>
-                </div>
-              </div>
-
-              <div class="cms-pages__quick-starts">
-                <div class="cms-pages__quick-starts-header">
-                  <div>
-                    <strong>{{ tr('Quick-start workflows', 'Fluxos de quick-start') }}</strong>
-                    <small>
-                      {{
-                        tr(
-                          'Create a ready-to-edit page in one click, then optionally jump straight into Blocks.',
-                          'Crie uma pagina pronta para edicao em um clique e, se quiser, abra Blocos em seguida.'
-                        )
-                      }}
-                    </small>
-                  </div>
-                  <q-chip dense square :style="statusChipStyle">
-                    {{ hasCmsBuilderSearch ? `${filteredCmsPageQuickStartOptions.length}/${cmsPageQuickStartOptions.length}` : cmsPageQuickStartOptions.length }}
-                  </q-chip>
-                </div>
-                <div class="cms-pages__quick-start-grid">
-                  <article
-                    v-for="quickStart in filteredCmsPageQuickStartOptions"
-                    :key="`quick-start-${quickStart.value}`"
-                    class="cms-page-quick-start-card"
-                  >
-                    <div class="cms-page-quick-start-card__header">
-                      <strong>{{ quickStart.label }}</strong>
-                      <q-chip dense square :style="statusChipStyle">
-                        {{ quickStart.sectionCount }}
-                      </q-chip>
-                    </div>
-                    <small class="cms-page-quick-start-card__description">{{ quickStart.description }}</small>
-                    <div class="cms-page-quick-start-card__meta">
-                      <span>
-                        {{ tr('Content model', 'Modelo de conteudo') }}:
-                        <strong>{{ quickStart.contentModelLabel }}</strong>
-                      </span>
-                      <span>
-                        {{ tr('Sections', 'Secoes') }}:
-                        <strong>{{ quickStart.sectionLabels.join(', ') }}</strong>
-                      </span>
-                    </div>
-                    <div class="cms-page-quick-start-card__actions">
-                      <q-btn
-                        no-caps
-                        unelevated
-                        icon="note_add"
-                        :label="tr('Create page', 'Criar pagina')"
-                        :style="primaryActionStyle"
-                        @click="runCmsPageQuickStart(quickStart.value)"
-                      />
-                      <q-btn
-                        flat
-                        dense
-                        no-caps
-                        icon="widgets"
-                        :label="tr('Create + open blocks', 'Criar + abrir blocos')"
-                        @click="runCmsPageQuickStart(quickStart.value, true)"
-                      />
-                    </div>
-                  </article>
-                </div>
-                <div v-if="hasCmsBuilderSearch && filteredCmsPageQuickStartOptions.length === 0" class="cms-block-item__empty">
-                  <strong>{{ tr('No quick-start matched the current search.', 'Nenhum quick-start corresponde a busca atual.') }}</strong>
-                </div>
-              </div>
-
               <div
                 v-for="{ page, pageIndex } in filteredCmsPageRows"
                 :key="page.id"
@@ -2829,29 +2643,190 @@
                 </div>
                 <aside class="cms-designer-card__rail cms-pages__rail">
                   <div class="cms-designer-card__rail-card">
-                    <strong>{{ tr('Workspace status', 'Status do workspace') }}</strong>
-                    <small>{{ tr('Use the rail to keep the editor aligned with the current page operations.', 'Use o rail para manter o editor alinhado com as operacoes atuais das paginas.') }}</small>
+                    <strong>{{ tr('Page launch rail', 'Rail de lancamento da pagina') }}</strong>
+                    <small>{{ tr('Preview context, starter kits and quick-start flows stay on the right so the editor center remains dedicated to authoring.', 'Contexto de preview, starter kits e quick-starts ficam na direita para o centro permanecer dedicado a edicao.') }}</small>
                     <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Visible pages', 'Paginas visiveis') }}: <strong>{{ filteredCmsPageRows.length }}</strong></span>
-                      <span>{{ tr('Quick starts', 'Quick starts') }}: <strong>{{ filteredCmsPageQuickStartOptions.length }}</strong></span>
-                      <span>{{ tr('Starter kits', 'Starter kits') }}: <strong>{{ filteredCmsStarterKitOptions.length }}</strong></span>
+                      <span>{{ tr('Preview source', 'Origem do preview') }}: <strong>{{ cmsPreviewSource }}</strong></span>
+                      <span>{{ tr('Preview locale', 'Locale do preview') }}: <strong>{{ cmsPreviewLocale }}</strong></span>
+                      <span>{{ tr('Preview viewport', 'Viewport do preview') }}: <strong>{{ cmsPreviewViewport }}</strong></span>
                     </div>
                   </div>
-                  <div class="cms-designer-card__rail-card" v-if="cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount > 0 || cmsSchemaMigrationBatchReport.summary.versionMissingCount > 0 || cmsSchemaMigrationBatchReport.summary.aheadCount > 0 || cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0">
-                    <strong>{{ tr('Migration rail', 'Rail de migracao') }}</strong>
-                    <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Pending', 'Pendentes') }}: <strong>{{ cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount + cmsSchemaMigrationBatchReport.summary.versionMissingCount }}</strong></span>
-                      <span>{{ tr('Invalid', 'Invalidos') }}: <strong>{{ cmsSchemaMigrationBatchReport.summary.invalidModelCount }}</strong></span>
-                      <span>{{ tr('Ahead', 'A frente') }}: <strong>{{ cmsSchemaMigrationBatchReport.summary.aheadCount }}</strong></span>
+                  <div class="cms-pages__sidebar-section">
+                    <strong>{{ tr('Preview launch', 'Lancamento do preview') }}</strong>
+                    <div class="cms-preview-toolbar" :data-cms-preview-source="cmsPreviewSource" :data-cms-preview-viewport="cmsPreviewViewport">
+                      <q-select
+                        v-model="cmsPreviewSource"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsPreviewSourceOptions"
+                        :label="tr('Preview source', 'Origem do preview')"
+                      />
+                      <q-select
+                        v-model="cmsPreviewLocale"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsLocaleOptions"
+                        :label="tr('Preview locale', 'Locale do preview')"
+                      />
+                      <q-select
+                        v-model="cmsPreviewViewport"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsPreviewViewportOptions"
+                        :label="tr('Preview viewport', 'Viewport do preview')"
+                      />
+                    </div>
+                    <small class="cms-config-caption">{{ tr('Use Preview in the top bar to open the runtime in a separate tab.', 'Use Preview na barra superior para abrir o runtime em uma nova aba.') }}</small>
+                  </div>
+                  <div class="cms-pages__sidebar-section cms-pages__starter-kits">
+                    <div class="cms-pages__quick-starts-header">
+                      <div>
+                        <strong>{{ tr('Starter-kit bundles', 'Bundles de starter kit') }}</strong>
+                        <small>
+                          {{
+                            tr(
+                              'Seed a landing page together with reusable sections, blocks and schema presets for one common use case.',
+                              'Semeie uma landing junto com secoes reutilizaveis, blocos e presets de schema para um caso de uso comum.'
+                            )
+                          }}
+                        </small>
+                      </div>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ hasCmsBuilderSearch ? `${filteredCmsStarterKitOptions.length}/${cmsStarterKitOptions.length}` : cmsStarterKitOptions.length }}
+                      </q-chip>
+                    </div>
+                    <div class="cms-pages__quick-start-grid">
+                      <article
+                        v-for="starterKit in filteredCmsStarterKitOptions"
+                        :key="`starter-kit-${starterKit.value}`"
+                        class="cms-page-quick-start-card cms-page-quick-start-card--starter-kit"
+                      >
+                        <div class="cms-page-quick-start-card__header">
+                          <strong>{{ starterKit.label }}</strong>
+                          <q-chip dense square :style="statusChipStyle">
+                            {{ starterKit.sectionCount }}
+                          </q-chip>
+                        </div>
+                        <small class="cms-page-quick-start-card__description">{{ starterKit.description }}</small>
+                        <div class="cms-page-quick-start-card__meta">
+                          <span>
+                            {{ tr('Template', 'Template') }}:
+                            <strong>{{ starterKit.templateLabel }}</strong>
+                          </span>
+                          <span>
+                            {{ tr('Content model', 'Modelo de conteudo') }}:
+                            <strong>{{ starterKit.contentModelLabel }}</strong>
+                          </span>
+                          <span>
+                            {{ tr('Reusable sections', 'Secoes reutilizaveis') }}:
+                            <strong>{{ starterKit.reusableSectionCount }}</strong>
+                          </span>
+                          <span>
+                            {{ tr('Reusable blocks', 'Blocos reutilizaveis') }}:
+                            <strong>{{ starterKit.reusableBlockCount }}</strong>
+                          </span>
+                          <span>
+                            {{ tr('Block presets', 'Presets de bloco') }}:
+                            <strong>{{ starterKit.blockPresetCount }}</strong>
+                          </span>
+                          <span>
+                            {{ tr('Field presets', 'Presets de campo') }}:
+                            <strong>{{ starterKit.fieldPresetCount }}</strong>
+                          </span>
+                        </div>
+                        <div class="cms-page-quick-start-card__actions">
+                          <q-btn
+                            no-caps
+                            unelevated
+                            icon="inventory_2"
+                            :label="tr('Install kit', 'Instalar kit')"
+                            :style="primaryActionStyle"
+                            @click="runCmsStarterKit(starterKit.value)"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="widgets"
+                            :label="tr('Install + open blocks', 'Instalar + abrir blocos')"
+                            @click="runCmsStarterKit(starterKit.value, true)"
+                          />
+                        </div>
+                      </article>
+                    </div>
+                    <div v-if="hasCmsBuilderSearch && filteredCmsStarterKitOptions.length === 0" class="cms-block-item__empty cms-pages__sidebar-empty">
+                      <strong>{{ tr('No starter kit matched the current search.', 'Nenhum starter kit corresponde a busca atual.') }}</strong>
                     </div>
                   </div>
-                  <div class="cms-designer-card__rail-actions">
-                    <q-btn round flat icon="add" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage">
-                      <q-tooltip>{{ cmsUiText.addPageLabel }}</q-tooltip>
-                    </q-btn>
-                    <q-btn round flat icon="play_arrow" :disable="!selectedBuilderCommandId" :aria-label="tr('Run selected quick command', 'Executar o comando rapido selecionado')" @click="executeSelectedBuilderCommand">
-                      <q-tooltip>{{ tr('Run', 'Executar') }}</q-tooltip>
-                    </q-btn>
+                  <div class="cms-pages__sidebar-section">
+                    <div class="cms-pages__quick-starts-header">
+                      <div>
+                        <strong>{{ tr('Quick-start workflows', 'Fluxos de quick-start') }}</strong>
+                        <small>
+                          {{
+                            tr(
+                              'Create a ready-to-edit page in one click, then optionally jump straight into Blocks.',
+                              'Crie uma pagina pronta para edicao em um clique e, se quiser, abra Blocos em seguida.'
+                            )
+                          }}
+                        </small>
+                      </div>
+                      <q-chip dense square :style="statusChipStyle">
+                        {{ hasCmsBuilderSearch ? `${filteredCmsPageQuickStartOptions.length}/${cmsPageQuickStartOptions.length}` : cmsPageQuickStartOptions.length }}
+                      </q-chip>
+                    </div>
+                    <div class="cms-pages__quick-start-grid">
+                      <article
+                        v-for="quickStart in filteredCmsPageQuickStartOptions"
+                        :key="`quick-start-${quickStart.value}`"
+                        class="cms-page-quick-start-card"
+                      >
+                        <div class="cms-page-quick-start-card__header">
+                          <strong>{{ quickStart.label }}</strong>
+                          <q-chip dense square :style="statusChipStyle">
+                            {{ quickStart.sectionCount }}
+                          </q-chip>
+                        </div>
+                        <small class="cms-page-quick-start-card__description">{{ quickStart.description }}</small>
+                        <div class="cms-page-quick-start-card__meta">
+                          <span>
+                            {{ tr('Content model', 'Modelo de conteudo') }}:
+                            <strong>{{ quickStart.contentModelLabel }}</strong>
+                          </span>
+                          <span>
+                            {{ tr('Sections', 'Secoes') }}:
+                            <strong>{{ quickStart.sectionLabels.join(', ') }}</strong>
+                          </span>
+                        </div>
+                        <div class="cms-page-quick-start-card__actions">
+                          <q-btn
+                            no-caps
+                            unelevated
+                            icon="note_add"
+                            :label="tr('Create page', 'Criar pagina')"
+                            :style="primaryActionStyle"
+                            @click="runCmsPageQuickStart(quickStart.value)"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="widgets"
+                            :label="tr('Create + open blocks', 'Criar + abrir blocos')"
+                            @click="runCmsPageQuickStart(quickStart.value, true)"
+                          />
+                        </div>
+                      </article>
+                    </div>
+                    <div v-if="hasCmsBuilderSearch && filteredCmsPageQuickStartOptions.length === 0" class="cms-block-item__empty cms-pages__sidebar-empty">
+                      <strong>{{ tr('No quick-start matched the current search.', 'Nenhum quick-start corresponde a busca atual.') }}</strong>
+                    </div>
                   </div>
                 </aside>
               </div>
@@ -2864,7 +2839,7 @@
             </div>
           </q-card>
 
-          <q-card flat bordered class="cms-shell-card">
+          <q-card v-if="cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Pages preview', 'Preview de paginas') }}</strong>
             </div>
@@ -3114,12 +3089,12 @@
           </q-card>
         </div>
 
-        <div v-else-if="isBlocksModule" class="cms-shell-page__grid">
+        <div v-else-if="isBlocksModule" class="cms-shell-page__grid cms-blocks-shell">
           <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--blocks">
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
-                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open Blocks preview', 'Abrir preview de blocos')" @click="scrollCmsDesignerSurface('.cms-blocks__preview')">
+                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open blocks workspace', 'Abrir workspace de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')">
                     <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
                   </q-btn>
                   <q-btn dense flat square icon="note_add" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette">
@@ -3135,66 +3110,18 @@
                     <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
                   </q-btn>
                 </div>
-                <div class="cms-designer-card__toolbar-divider" />
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--status">
-                  <span class="cms-designer-card__toolbar-zoom">100%</span>
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    icon="grid_4x4"
-                    class="cms-designer-card__toolbar-mode"
-                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
-                    @click="toggleCmsDesignerStageGrid"
-                  />
-                </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
-                  <q-btn-dropdown flat dense no-caps icon="view_quilt" :label="tr('View', 'View')">
-                    <q-list dense>
-                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')">
-                        <q-item-section>{{ tr('Workbench', 'Workbench') }}</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-blocks__preview')">
-                        <q-item-section>{{ tr('Blocks preview', 'Preview de blocos') }}</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="toggleCmsDesignerStageGrid">
-                        <q-item-section>{{ showCmsDesignerStageGrid ? tr('Hide grid', 'Ocultar grade') : tr('Show grid', 'Exibir grade') }}</q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="scrollCmsDesignerSurface('.cms-blocks__preview')" />
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('blocks')" />
                 </div>
               </div>
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
                 <div class="cms-designer-card__info-strip">
-                  <span class="cms-designer-card__info-item"><strong>{{ activeBlocksPage?.title || tr('No page', 'Sem pagina') }}</strong></span>
-                  <span class="cms-designer-card__info-item">{{ activeBlocksSection?.label || tr('No section selected', 'Nenhuma secao selecionada') }}</span>
-                  <span class="cms-designer-card__info-item">{{ cmsSectionBlocks.length }} {{ tr('blocks in focus', 'blocos em foco') }}</span>
-                </div>
-                <div class="cms-blocks__header-actions cms-designer-card__toolbar-group cms-designer-card__toolbar-group--fields">
-                  <q-select
-                    v-if="cmsBuilderCommandOptions.length > 0"
-                    v-model="selectedBuilderCommandId"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    :options="cmsBuilderCommandOptions"
-                    option-label="label"
-                    option-value="value"
-                    :label="tr('Quick command', 'Comando rapido')"
-                    class="cms-builder-command-select"
-                  />
-                  <q-btn
-                    v-if="cmsBuilderCommandOptions.length > 0"
-                    flat
-                    dense
-                    no-caps
-                    icon="play_arrow"
-                    :label="tr('Run', 'Executar')"
-                    @click="executeSelectedBuilderCommand"
-                  />
+                  <span class="cms-designer-card__info-item">
+                    <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
+                  </span>
+                  <span class="cms-designer-card__info-item">{{ cmsAutosaveStatusLabel }}</span>
+                  <span class="cms-designer-card__info-item">{{ activeItem.label }}</span>
                 </div>
               </div>
             </div>
@@ -3211,6 +3138,16 @@
                 </div>
                 <div class="cms-designer-card__ruler-meta">
                   <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} {{ tr('blocks', 'blocos') }}</q-chip>
+                  <span class="cms-designer-card__ruler-zoom">100%</span>
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="grid_4x4"
+                    class="cms-designer-card__ruler-mode"
+                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                    @click="toggleCmsDesignerStageGrid"
+                  />
                 </div>
               </div>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--blocks">
@@ -3227,6 +3164,30 @@
                   </div>
                 </aside>
                 <div class="cms-designer-card__stage cms-blocks__stage" :class="{ 'cms-designer-card__stage--plain': !showCmsDesignerStageGrid }">
+              <div v-if="cmsBuilderCommandOptions.length > 0" class="cms-form-grid cms-blocks__stage-command-bar">
+                <q-select
+                  v-model="selectedBuilderCommandId"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  :options="cmsBuilderCommandOptions"
+                  option-label="label"
+                  option-value="value"
+                  :label="tr('Quick command', 'Comando rapido')"
+                  class="cms-builder-command-select"
+                />
+                <div class="cms-form-grid__inline-actions">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="play_arrow"
+                    :label="tr('Run', 'Executar')"
+                    @click="executeSelectedBuilderCommand"
+                  />
+                </div>
+              </div>
               <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
                 {{ selectedCmsBuilderCommandOption.description }}
               </p>
@@ -4140,8 +4101,41 @@
                 </div>
                 <aside class="cms-designer-card__rail cms-blocks__rail">
                   <div class="cms-designer-card__rail-card">
+                    <strong>{{ tr('Preview launch', 'Lancamento do preview') }}</strong>
+                    <small>{{ tr('Tune the preview context here and open the runtime in a new browser tab from the top bar.', 'Ajuste o contexto do preview aqui e abra o runtime em uma nova aba pela barra superior.') }}</small>
+                    <div class="cms-preview-toolbar" :data-cms-preview-source="cmsPreviewSource" :data-cms-preview-viewport="cmsPreviewViewport">
+                      <q-select
+                        v-model="cmsPreviewSource"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsPreviewSourceOptions"
+                        :label="tr('Preview source', 'Origem do preview')"
+                      />
+                      <q-select
+                        v-model="cmsPreviewLocale"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsLocaleOptions"
+                        :label="tr('Preview locale', 'Locale do preview')"
+                      />
+                      <q-select
+                        v-model="cmsPreviewViewport"
+                        outlined
+                        dense
+                        emit-value
+                        map-options
+                        :options="cmsPreviewViewportOptions"
+                        :label="tr('Preview viewport', 'Viewport do preview')"
+                      />
+                    </div>
+                  </div>
+                  <div class="cms-designer-card__rail-card">
                     <strong>{{ tr('Selection rail', 'Rail da selecao') }}</strong>
-                    <small>{{ tr('Quick actions stay attached to the current section contract.', 'Acoes rapidas ficam anexadas ao contrato da secao atual.') }}</small>
+                    <small>{{ tr('Bulk operations stay attached to the current section contract without repeating top-bar actions.', 'Operacoes em lote ficam anexadas ao contrato da secao atual sem repetir as acoes da barra superior.') }}</small>
                     <div class="cms-designer-card__metrics">
                       <span>{{ tr('Blocks in focus section', 'Blocos na secao em foco') }}: <strong>{{ cmsSectionBlocks.length }}</strong></span>
                       <span>{{ tr('Limit reached', 'Limite atingido') }}: <strong>{{ activeBlocksSectionLimitReached ? tr('Yes', 'Sim') : tr('No', 'Nao') }}</strong></span>
@@ -4149,9 +4143,6 @@
                     </div>
                   </div>
                   <div class="cms-designer-card__rail-actions">
-                    <q-btn round flat icon="add" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette">
-                      <q-tooltip>{{ tr('Add block', 'Adicionar bloco') }}</q-tooltip>
-                    </q-btn>
                     <q-btn round flat icon="done_all" :disable="!canToggleActiveSectionBlocks" :aria-label="tr('Enable all blocks', 'Ativar todos os blocos')" @click="setCmsBuilderSectionBlocksEnabled(true)">
                       <q-tooltip>{{ tr('Enable all blocks', 'Ativar todos os blocos') }}</q-tooltip>
                     </q-btn>
@@ -4173,7 +4164,7 @@
             </div>
           </q-card>
 
-          <q-card flat bordered class="cms-shell-card">
+          <q-card v-if="cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Blocks preview', 'Preview de blocos') }}</strong>
             </div>
@@ -5564,7 +5555,7 @@
  * Landing page/Cms App module.
  */
 
-import { computed, nextTick, onBeforeUnmount, ref, toRaw, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRaw, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
 import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
@@ -7076,6 +7067,7 @@ const cmsLocaleOptions = CMS_LOCALE_OPTIONS
 const cmsPreviewSource = ref<CmsPreviewSource>('draft')
 const cmsPreviewViewport = ref<CmsPreviewViewport>('desktop')
 const cmsPreviewLocale = ref<CmsLocale>(resolveCmsLocale(settings.value.content.locale))
+const cmsDesignerPreviewMode = ref(false)
 const cmsPreviewSourceOptions = computed(() => ([
   { label: tr('Draft', 'Rascunho'), value: 'draft' },
   { label: tr('Published', 'Publicado'), value: 'published' },
@@ -9369,8 +9361,55 @@ const activeThemePresetDescription = computed(() => {
   return activeThemePreset.value?.description ?? 'Custom values from manual token editing.'
 })
 
+const cmsAuthoringShellThemeOverrides = computed(() => ({
+  shellBackground: '#eef3f9',
+  pageBackground: '#f5f8fc',
+  pageTextColor: '#16202b',
+  drawerBackground: '#ffffff',
+  drawerFooterBackground: '#f8fbff',
+  drawerTextColor: '#5f6c7b',
+  dividerColor: '#d7e1ec',
+  itemActiveColor: '#2563eb',
+  itemTextColor: '#4b5a6a',
+  itemIconColor: '#5f6c7b',
+  itemHoverBackground: '#eaf2ff',
+  itemHoverColor: '#16202b',
+  itemIconHoverColor: '#2563eb',
+  itemActiveBackground: '#e1ecff',
+  focusColor: '#2563eb',
+  brandTitleColor: '#16202b',
+  brandSubtitleColor: '#6b7a8c',
+  groupCaptionColor: '#6b7a8c',
+  groupCaptionMiniBackground: '#edf3fb',
+  headerBackground: '#ffffff',
+  headerTextColor: '#16202b',
+  toolbarButtonColor: '#4b5a6a',
+  titleAppColor: '#16202b',
+  titleTextColor: '#5f6c7b',
+  titleSeparatorColor: '#d7e1ec',
+  searchBackground: '#ffffff',
+  searchTextColor: '#16202b',
+  searchIconColor: '#6b7a8c',
+  searchBorder: '#d7e1ec',
+  searchBorderHover: '#b8c8dc',
+  headerShadow: '0 10px 30px rgba(15, 23, 42, 0.08)',
+  headerBlur: 'blur(0px)',
+  drawerShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
+  drawerFooterShadow: 'inset 0 1px 0 rgba(215, 225, 236, 0.8)',
+  actionBackground: '#ffffff',
+  actionHoverBackground: '#eef4ff',
+}))
+
+const cmsResolvedAuthoringTheme = computed(() => ({
+  ...settings.value.theme,
+  ...cmsAuthoringShellThemeOverrides.value,
+}))
+
 const shellSnapshot = computed(() => {
-  return mapWhiteLabelToShellSnapshot(settings.value, {
+  return mapWhiteLabelToShellSnapshot({
+    ...settings.value,
+    theme: cmsResolvedAuthoringTheme.value,
+  }, {
     activeItem: activeMenuId.value,
     searchValue: isPagesModule.value || isBlocksModule.value
       ? ''
@@ -9468,99 +9507,103 @@ const resolvedBorderWidth = computed(() => {
   return settings.value.theme.borderWidth || defaultTheme.borderWidth || '1px'
 })
 
-const cmsStyleVars = computed<Record<string, string>>(() => ({
-  '--ntk-cms-font-family': settings.value.theme.fontFamily || defaultTheme.fontFamily || '',
-  '--ntk-cms-font-display': settings.value.theme.fontFamilyDisplay || settings.value.theme.fontFamily || defaultTheme.fontFamilyDisplay || defaultTheme.fontFamily || '',
-  '--ntk-cms-font-style-base': settings.value.theme.fontStyleBase || defaultTheme.fontStyleBase || 'normal',
-  '--ntk-cms-font-weight-regular': settings.value.theme.fontWeightRegular || defaultTheme.fontWeightRegular || '400',
-  '--ntk-cms-font-weight-medium': settings.value.theme.fontWeightMedium || defaultTheme.fontWeightMedium || settings.value.theme.fontWeightRegular || defaultTheme.fontWeightRegular || '500',
-  '--ntk-cms-font-weight-semibold': settings.value.theme.fontWeightSemibold || defaultTheme.fontWeightSemibold || settings.value.theme.fontWeightMedium || defaultTheme.fontWeightMedium || '600',
-  '--ntk-cms-font-weight-bold': settings.value.theme.fontWeightBold || defaultTheme.fontWeightBold || settings.value.theme.fontWeightSemibold || defaultTheme.fontWeightSemibold || '700',
-  '--ntk-cms-font-size-base': settings.value.theme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
-  '--ntk-cms-font-size-title': settings.value.theme.fontSizeTitle || defaultTheme.fontSizeTitle || settings.value.theme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
-  '--ntk-cms-font-size-title-app': settings.value.theme.fontSizeTitleApp || defaultTheme.fontSizeTitleApp || settings.value.theme.fontSizeTitle || defaultTheme.fontSizeTitle || '1.05rem',
-  '--ntk-cms-font-size-brand-title': settings.value.theme.fontSizeBrandTitle || defaultTheme.fontSizeBrandTitle || settings.value.theme.fontSizeBase || defaultTheme.fontSizeBase || '0.9rem',
-  '--ntk-cms-font-size-brand-subtitle': settings.value.theme.fontSizeBrandSubtitle || defaultTheme.fontSizeBrandSubtitle || '0.72rem',
-  '--ntk-cms-font-size-item-label': settings.value.theme.fontSizeItemLabel || defaultTheme.fontSizeItemLabel || '13px',
-  '--ntk-cms-font-size-item-caption': settings.value.theme.fontSizeItemCaption || defaultTheme.fontSizeItemCaption || '11px',
-  '--ntk-cms-font-size-group-caption': settings.value.theme.fontSizeGroupCaption || defaultTheme.fontSizeGroupCaption || '0.68rem',
-  '--ntk-cms-font-size-group-caption-mini': settings.value.theme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
-  '--ntk-cms-letter-spacing-group-caption': settings.value.theme.letterSpacingGroupCaption || defaultTheme.letterSpacingGroupCaption || '0.08em',
-  '--ntk-cms-letter-spacing-group-caption-mini': settings.value.theme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
-  '--ntk-cms-line-height-item-label': settings.value.theme.lineHeightItemLabel || defaultTheme.lineHeightItemLabel || '1.25',
-  '--ntk-cms-line-height-item-caption': settings.value.theme.lineHeightItemCaption || defaultTheme.lineHeightItemCaption || '1.2',
-  '--ntk-cms-item-caption-offset': settings.value.theme.itemCaptionOffset || defaultTheme.itemCaptionOffset || 'calc(var(--ntk-cms-space-xs) * 0.6)',
-  '--ntk-cms-radius-sm': settings.value.theme.radiusSm || defaultTheme.radiusSm || '6px',
-  '--ntk-cms-radius-md': settings.value.theme.radiusMd || defaultTheme.radiusMd || '8px',
-  '--ntk-cms-radius-lg': settings.value.theme.radiusLg || defaultTheme.radiusLg || '10px',
-  '--ntk-cms-radius-item': settings.value.theme.radiusItem || defaultTheme.radiusItem || '0 28px 28px 0',
-  '--ntk-cms-group-caption-mini-radius': settings.value.theme.groupCaptionMiniRadius || defaultTheme.groupCaptionMiniRadius || '999px',
-  '--ntk-cms-space-xs': settings.value.theme.spacingXs || defaultTheme.spacingXs || '0.25rem',
-  '--ntk-cms-space-sm': settings.value.theme.spacingSm || defaultTheme.spacingSm || '0.5rem',
-  '--ntk-cms-space-md': settings.value.theme.spacingMd || defaultTheme.spacingMd || '0.75rem',
-  '--ntk-cms-space-lg': settings.value.theme.spacingLg || defaultTheme.spacingLg || '1rem',
-  '--ntk-cms-border-width': settings.value.theme.borderWidth || defaultTheme.borderWidth || '1px',
-  '--ntk-cms-text-primary': settings.value.theme.pageTextColor || defaultTheme.pageTextColor || '',
-  '--ntk-cms-text-secondary': settings.value.theme.drawerTextColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-border-color': settings.value.theme.dividerColor || defaultTheme.dividerColor || '',
-  '--ntk-cms-bg-card': settings.value.theme.drawerBackground || defaultTheme.drawerBackground || '',
-  '--ntk-cms-tab-active': settings.value.theme.itemActiveColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-accent': settings.value.theme.itemActiveColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-accent-soft': settings.value.theme.itemHoverBackground || defaultTheme.itemHoverBackground || '',
-  '--ntk-cms-accent-text': settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-active-bg': settings.value.theme.itemActiveBackground || defaultTheme.itemActiveBackground || '',
-  '--ntk-cms-header-bg': settings.value.theme.headerBackground || defaultTheme.headerBackground || '',
-  '--ntk-cms-header-text': settings.value.theme.headerTextColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-header-shadow': settings.value.theme.headerShadow || defaultTheme.headerShadow || '',
-  '--ntk-cms-header-blur': settings.value.theme.headerBlur || defaultTheme.headerBlur || 'blur(calc(var(--ntk-cms-space-sm) * 2))',
-  '--ntk-cms-drawer-shadow': settings.value.theme.drawerShadow || defaultTheme.drawerShadow || '',
-  '--ntk-cms-drawer-footer-bg': settings.value.theme.drawerFooterBackground || settings.value.theme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
-  '--ntk-cms-drawer-footer-shadow': settings.value.theme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
-  '--ntk-cms-search-bg': settings.value.theme.searchBackground || defaultTheme.searchBackground || '',
-  '--ntk-cms-search-text': settings.value.theme.searchTextColor || defaultTheme.searchTextColor || '',
-  '--ntk-cms-search-icon': settings.value.theme.searchIconColor || settings.value.theme.headerTextColor || defaultTheme.searchIconColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-search-border': settings.value.theme.searchBorder || defaultTheme.searchBorder || '',
-  '--ntk-cms-search-border-hover': settings.value.theme.searchBorderHover || defaultTheme.searchBorderHover || '',
-  '--ntk-cms-transition': settings.value.theme.transitionFast || defaultTheme.transitionFast || '',
-  '--ntk-cms-focus-color': settings.value.theme.focusColor || settings.value.theme.itemActiveColor || defaultTheme.focusColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-action-bg': settings.value.theme.actionBackground || defaultTheme.actionBackground || 'transparent',
-  '--ntk-cms-action-hover': settings.value.theme.actionHoverBackground || defaultTheme.actionHoverBackground || '',
-  '--ntk-cms-shell-bg': settings.value.theme.shellBackground || defaultTheme.shellBackground || '',
-  '--ntk-cms-title-app': settings.value.theme.titleAppColor || settings.value.theme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-title-text': settings.value.theme.titleTextColor || settings.value.theme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-title-separator': settings.value.theme.titleSeparatorColor || settings.value.theme.dividerColor || defaultTheme.titleSeparatorColor || defaultTheme.dividerColor || '',
-  '--ntk-cms-title-separator-size': settings.value.theme.titleSeparatorSize || defaultTheme.titleSeparatorSize || 'calc(var(--ntk-cms-font-size-title-app) + var(--ntk-cms-space-xs))',
-  '--ntk-cms-toolbar-icon': settings.value.theme.toolbarButtonColor || settings.value.theme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-brand-title': settings.value.theme.brandTitleColor || settings.value.theme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-brand-subtitle': settings.value.theme.brandSubtitleColor || settings.value.theme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-group-caption': settings.value.theme.groupCaptionColor || settings.value.theme.drawerTextColor || defaultTheme.groupCaptionColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-group-caption-mini-bg': settings.value.theme.groupCaptionMiniBackground || settings.value.theme.itemHoverBackground || defaultTheme.groupCaptionMiniBackground || defaultTheme.itemHoverBackground || '',
-  '--ntk-cms-item-text': settings.value.theme.itemTextColor || settings.value.theme.drawerTextColor || defaultTheme.itemTextColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-item-icon': settings.value.theme.itemIconColor || settings.value.theme.drawerTextColor || defaultTheme.itemIconColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-item-hover-color': settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-item-icon-hover': settings.value.theme.itemIconHoverColor || settings.value.theme.itemHoverColor || settings.value.theme.itemActiveColor || defaultTheme.itemIconHoverColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-preview-search-width': settings.value.theme.searchWidth || defaultTheme.searchWidth || '220px',
-  '--ntk-cms-preview-search-height': settings.value.theme.searchControlHeight || defaultTheme.searchControlHeight || '36px',
-  '--ntk-cms-preview-user-avatar-size': settings.value.theme.userAvatarSize || defaultTheme.userAvatarSize || 'calc(var(--ntk-cms-preview-search-height) - (var(--ntk-cms-space-xs) * 2))',
-  '--ntk-cms-preview-action-hover-translate-y': settings.value.theme.actionHoverTranslateY || defaultTheme.actionHoverTranslateY || 'calc(var(--ntk-cms-space-xs) * -0.5)',
-  '--ntk-cms-preview-action-min-width': settings.value.theme.menuSlotWidth || defaultTheme.menuSlotWidth || '30px',
-  '--ntk-cms-preview-action-min-height': settings.value.theme.searchControlHeight || defaultTheme.searchControlHeight || '28px',
-  '--ntk-cms-preview-brand-logo-size': settings.value.theme.brandLogoSize || defaultTheme.brandLogoSize || '40px',
+const cmsStyleVars = computed<Record<string, string>>(() => {
+  const authoringTheme = cmsResolvedAuthoringTheme.value
+
+  return {
+  '--ntk-cms-font-family': authoringTheme.fontFamily || defaultTheme.fontFamily || '',
+  '--ntk-cms-font-display': authoringTheme.fontFamilyDisplay || authoringTheme.fontFamily || defaultTheme.fontFamilyDisplay || defaultTheme.fontFamily || '',
+  '--ntk-cms-font-style-base': authoringTheme.fontStyleBase || defaultTheme.fontStyleBase || 'normal',
+  '--ntk-cms-font-weight-regular': authoringTheme.fontWeightRegular || defaultTheme.fontWeightRegular || '400',
+  '--ntk-cms-font-weight-medium': authoringTheme.fontWeightMedium || defaultTheme.fontWeightMedium || authoringTheme.fontWeightRegular || defaultTheme.fontWeightRegular || '500',
+  '--ntk-cms-font-weight-semibold': authoringTheme.fontWeightSemibold || defaultTheme.fontWeightSemibold || authoringTheme.fontWeightMedium || defaultTheme.fontWeightMedium || '600',
+  '--ntk-cms-font-weight-bold': authoringTheme.fontWeightBold || defaultTheme.fontWeightBold || authoringTheme.fontWeightSemibold || defaultTheme.fontWeightSemibold || '700',
+  '--ntk-cms-font-size-base': authoringTheme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
+  '--ntk-cms-font-size-title': authoringTheme.fontSizeTitle || defaultTheme.fontSizeTitle || authoringTheme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
+  '--ntk-cms-font-size-title-app': authoringTheme.fontSizeTitleApp || defaultTheme.fontSizeTitleApp || authoringTheme.fontSizeTitle || defaultTheme.fontSizeTitle || '1.05rem',
+  '--ntk-cms-font-size-brand-title': authoringTheme.fontSizeBrandTitle || defaultTheme.fontSizeBrandTitle || authoringTheme.fontSizeBase || defaultTheme.fontSizeBase || '0.9rem',
+  '--ntk-cms-font-size-brand-subtitle': authoringTheme.fontSizeBrandSubtitle || defaultTheme.fontSizeBrandSubtitle || '0.72rem',
+  '--ntk-cms-font-size-item-label': authoringTheme.fontSizeItemLabel || defaultTheme.fontSizeItemLabel || '13px',
+  '--ntk-cms-font-size-item-caption': authoringTheme.fontSizeItemCaption || defaultTheme.fontSizeItemCaption || '11px',
+  '--ntk-cms-font-size-group-caption': authoringTheme.fontSizeGroupCaption || defaultTheme.fontSizeGroupCaption || '0.68rem',
+  '--ntk-cms-font-size-group-caption-mini': authoringTheme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
+  '--ntk-cms-letter-spacing-group-caption': authoringTheme.letterSpacingGroupCaption || defaultTheme.letterSpacingGroupCaption || '0.08em',
+  '--ntk-cms-letter-spacing-group-caption-mini': authoringTheme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
+  '--ntk-cms-line-height-item-label': authoringTheme.lineHeightItemLabel || defaultTheme.lineHeightItemLabel || '1.25',
+  '--ntk-cms-line-height-item-caption': authoringTheme.lineHeightItemCaption || defaultTheme.lineHeightItemCaption || '1.2',
+  '--ntk-cms-item-caption-offset': authoringTheme.itemCaptionOffset || defaultTheme.itemCaptionOffset || 'calc(var(--ntk-cms-space-xs) * 0.6)',
+  '--ntk-cms-radius-sm': authoringTheme.radiusSm || defaultTheme.radiusSm || '6px',
+  '--ntk-cms-radius-md': authoringTheme.radiusMd || defaultTheme.radiusMd || '8px',
+  '--ntk-cms-radius-lg': authoringTheme.radiusLg || defaultTheme.radiusLg || '10px',
+  '--ntk-cms-radius-item': authoringTheme.radiusItem || defaultTheme.radiusItem || '0 28px 28px 0',
+  '--ntk-cms-group-caption-mini-radius': authoringTheme.groupCaptionMiniRadius || defaultTheme.groupCaptionMiniRadius || '999px',
+  '--ntk-cms-space-xs': authoringTheme.spacingXs || defaultTheme.spacingXs || '0.25rem',
+  '--ntk-cms-space-sm': authoringTheme.spacingSm || defaultTheme.spacingSm || '0.5rem',
+  '--ntk-cms-space-md': authoringTheme.spacingMd || defaultTheme.spacingMd || '0.75rem',
+  '--ntk-cms-space-lg': authoringTheme.spacingLg || defaultTheme.spacingLg || '1rem',
+  '--ntk-cms-border-width': authoringTheme.borderWidth || defaultTheme.borderWidth || '1px',
+  '--ntk-cms-text-primary': authoringTheme.pageTextColor || defaultTheme.pageTextColor || '',
+  '--ntk-cms-text-secondary': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-border-color': authoringTheme.dividerColor || defaultTheme.dividerColor || '',
+  '--ntk-cms-bg-card': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '',
+  '--ntk-cms-tab-active': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-accent': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-accent-soft': authoringTheme.itemHoverBackground || defaultTheme.itemHoverBackground || '',
+  '--ntk-cms-accent-text': authoringTheme.itemHoverColor || authoringTheme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-active-bg': authoringTheme.itemActiveBackground || defaultTheme.itemActiveBackground || '',
+  '--ntk-cms-header-bg': authoringTheme.headerBackground || defaultTheme.headerBackground || '',
+  '--ntk-cms-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '',
+  '--ntk-cms-header-blur': authoringTheme.headerBlur || defaultTheme.headerBlur || 'blur(calc(var(--ntk-cms-space-sm) * 2))',
+  '--ntk-cms-drawer-shadow': authoringTheme.drawerShadow || defaultTheme.drawerShadow || '',
+  '--ntk-cms-drawer-footer-bg': authoringTheme.drawerFooterBackground || authoringTheme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
+  '--ntk-cms-drawer-footer-shadow': authoringTheme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
+  '--ntk-cms-search-bg': authoringTheme.searchBackground || defaultTheme.searchBackground || '',
+  '--ntk-cms-search-text': authoringTheme.searchTextColor || defaultTheme.searchTextColor || '',
+  '--ntk-cms-search-icon': authoringTheme.searchIconColor || authoringTheme.headerTextColor || defaultTheme.searchIconColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-search-border': authoringTheme.searchBorder || defaultTheme.searchBorder || '',
+  '--ntk-cms-search-border-hover': authoringTheme.searchBorderHover || defaultTheme.searchBorderHover || '',
+  '--ntk-cms-transition': authoringTheme.transitionFast || defaultTheme.transitionFast || '',
+  '--ntk-cms-focus-color': authoringTheme.focusColor || authoringTheme.itemActiveColor || defaultTheme.focusColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-action-bg': authoringTheme.actionBackground || defaultTheme.actionBackground || 'transparent',
+  '--ntk-cms-action-hover': authoringTheme.actionHoverBackground || defaultTheme.actionHoverBackground || '',
+  '--ntk-cms-shell-bg': authoringTheme.shellBackground || defaultTheme.shellBackground || '',
+  '--ntk-cms-title-app': authoringTheme.titleAppColor || authoringTheme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-title-text': authoringTheme.titleTextColor || authoringTheme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-title-separator': authoringTheme.titleSeparatorColor || authoringTheme.dividerColor || defaultTheme.titleSeparatorColor || defaultTheme.dividerColor || '',
+  '--ntk-cms-title-separator-size': authoringTheme.titleSeparatorSize || defaultTheme.titleSeparatorSize || 'calc(var(--ntk-cms-font-size-title-app) + var(--ntk-cms-space-xs))',
+  '--ntk-cms-toolbar-icon': authoringTheme.toolbarButtonColor || authoringTheme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
+  '--ntk-cms-brand-title': authoringTheme.brandTitleColor || authoringTheme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-brand-subtitle': authoringTheme.brandSubtitleColor || authoringTheme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-group-caption': authoringTheme.groupCaptionColor || authoringTheme.drawerTextColor || defaultTheme.groupCaptionColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-group-caption-mini-bg': authoringTheme.groupCaptionMiniBackground || authoringTheme.itemHoverBackground || defaultTheme.groupCaptionMiniBackground || defaultTheme.itemHoverBackground || '',
+  '--ntk-cms-item-text': authoringTheme.itemTextColor || authoringTheme.drawerTextColor || defaultTheme.itemTextColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-item-icon': authoringTheme.itemIconColor || authoringTheme.drawerTextColor || defaultTheme.itemIconColor || defaultTheme.drawerTextColor || '',
+  '--ntk-cms-item-hover-color': authoringTheme.itemHoverColor || authoringTheme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-item-icon-hover': authoringTheme.itemIconHoverColor || authoringTheme.itemHoverColor || authoringTheme.itemActiveColor || defaultTheme.itemIconHoverColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
+  '--ntk-cms-preview-search-width': authoringTheme.searchWidth || defaultTheme.searchWidth || '220px',
+  '--ntk-cms-preview-search-height': authoringTheme.searchControlHeight || defaultTheme.searchControlHeight || '36px',
+  '--ntk-cms-preview-user-avatar-size': authoringTheme.userAvatarSize || defaultTheme.userAvatarSize || 'calc(var(--ntk-cms-preview-search-height) - (var(--ntk-cms-space-xs) * 2))',
+  '--ntk-cms-preview-action-hover-translate-y': authoringTheme.actionHoverTranslateY || defaultTheme.actionHoverTranslateY || 'calc(var(--ntk-cms-space-xs) * -0.5)',
+  '--ntk-cms-preview-action-min-width': authoringTheme.menuSlotWidth || defaultTheme.menuSlotWidth || '30px',
+  '--ntk-cms-preview-action-min-height': authoringTheme.searchControlHeight || defaultTheme.searchControlHeight || '28px',
+  '--ntk-cms-preview-brand-logo-size': authoringTheme.brandLogoSize || defaultTheme.brandLogoSize || '40px',
   '--ntk-cms-layout-breakpoint-lg': `${cmsLayoutBreakpointLgPx.value}px`,
   '--ntk-cms-layout-breakpoint-md': `${cmsLayoutBreakpointMdPx.value}px`,
   '--ntk-cms-layout-side-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 5))',
   '--ntk-cms-layout-config-example-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 3.5))',
-  '--ntk-cms-editor-max-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 13)))',
-  '--ntk-cms-preview-icon-size-lg': settings.value.theme.itemIconSize || defaultTheme.itemIconSize || '22px',
+  '--ntk-cms-editor-min-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 8)))',
+  '--ntk-cms-editor-max-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 8)))',
+  '--ntk-cms-preview-icon-size-lg': authoringTheme.itemIconSize || defaultTheme.itemIconSize || '22px',
   '--ntk-cms-preview-icon-size-md': 'calc(var(--ntk-cms-preview-icon-size-lg) - var(--ntk-cms-space-xs))',
   '--ntk-cms-preview-icon-size-sm': 'calc(var(--ntk-cms-preview-icon-size-md) - var(--ntk-cms-space-xs))',
   '--ntk-cms-preview-icon-size-xs': 'calc(var(--ntk-cms-preview-icon-size-sm) - (var(--ntk-cms-space-xs) / 2))',
   '--ntk-cms-preview-avatar-icon-size': 'var(--ntk-cms-preview-action-min-height)',
-  '--ntk-cms-preview-mini-caption-min-width': settings.value.theme.groupCaptionMiniMinWidth || defaultTheme.groupCaptionMiniMinWidth || '34px',
-  '--ntk-cms-preview-mini-caption-height': settings.value.theme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '18px',
-  '--ntk-cms-preview-badge-min-size': settings.value.theme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '16px',
-  '--ntk-cms-preview-badge-font-size': settings.value.theme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
-  '--ntk-cms-preview-badge-letter-spacing': settings.value.theme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
+  '--ntk-cms-preview-mini-caption-min-width': authoringTheme.groupCaptionMiniMinWidth || defaultTheme.groupCaptionMiniMinWidth || '34px',
+  '--ntk-cms-preview-mini-caption-height': authoringTheme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '18px',
+  '--ntk-cms-preview-badge-min-size': authoringTheme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '16px',
+  '--ntk-cms-preview-badge-font-size': authoringTheme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
+  '--ntk-cms-preview-badge-letter-spacing': authoringTheme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
   '--ntk-cms-notification-success': notificationSuccessColor.value,
   '--ntk-cms-notification-warning': notificationWarningColor.value,
   '--ntk-cms-notification-error': notificationErrorColor.value,
@@ -9568,7 +9611,8 @@ const cmsStyleVars = computed<Record<string, string>>(() => ({
   '--ntk-cms-notification-badge-bg': notificationBadgeColor.value,
   '--ntk-cms-notification-badge-text': notificationBadgeTextColor.value,
   '--ntk-cms-notification-icon': notificationIconColor.value,
-}))
+  }
+})
 
 const bannerStyle = computed(() => ({
   background: accentSoftBackground.value,
@@ -14116,21 +14160,62 @@ function scrollCmsDesignerSurface(selector: string): void {
   target?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
 }
 
+type CmsDesignerPreviewModule = 'settings' | 'pages' | 'blocks'
+
 /**
- * Opens the most relevant preview surface for the current designer module.
+ * Resolves the preview anchor selector used by one CMS designer module.
  */
-function openCmsDesignerPreview(module: 'settings' | 'pages' | 'blocks'): void {
-  if (module === 'settings') {
-    scrollCmsDesignerSurface('.cms-settings .cms-preview-card, .cms-settings .cms-config-section__example')
+function getCmsDesignerPreviewSelector(module: CmsDesignerPreviewModule): string {
+  switch (module) {
+    case 'settings':
+      return '.cms-settings .cms-preview-card, .cms-settings .cms-config-section__example'
+    case 'pages':
+      return '.cms-pages__preview'
+    default:
+      return '.cms-blocks__preview'
+  }
+}
+
+/**
+ * Builds the explicit preview-launch URL so Preview always opens in a new tab.
+ */
+function buildCmsDesignerPreviewUrl(module: CmsDesignerPreviewModule): string {
+  if (typeof window === 'undefined') {
+    return ''
+  }
+
+  const url = new URL(window.location.href)
+  url.searchParams.set('cms', '1')
+  url.searchParams.set('cmsModule', module)
+  url.searchParams.set('cmsPreview', '1')
+
+  if (module === 'pages' || module === 'blocks') {
+    url.searchParams.set('cmsPreviewSource', cmsPreviewSource.value)
+    url.searchParams.set('cmsPreviewLocale', cmsPreviewLocale.value)
+    url.searchParams.set('cmsPreviewViewport', cmsPreviewViewport.value)
+  } else {
+    url.searchParams.delete('cmsPreviewSource')
+    url.searchParams.delete('cmsPreviewLocale')
+    url.searchParams.delete('cmsPreviewViewport')
+  }
+
+  return url.toString()
+}
+
+/**
+ * Opens the most relevant preview surface for the current designer module in a dedicated tab.
+ */
+function openCmsDesignerPreview(module: CmsDesignerPreviewModule): void {
+  if (typeof window === 'undefined') {
     return
   }
 
-  if (module === 'pages') {
-    scrollCmsDesignerSurface('.cms-pages__preview')
+  const previewUrl = buildCmsDesignerPreviewUrl(module)
+  if (!previewUrl) {
     return
   }
 
-  scrollCmsDesignerSurface('.cms-blocks__preview')
+  window.open(previewUrl, '_blank', 'noopener,noreferrer')
 }
 
 /**
@@ -16259,6 +16344,56 @@ watch(
   { immediate: true, deep: true }
 )
 
+onMounted(async () => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const searchParams = new URLSearchParams(window.location.search)
+  const requestedModule = searchParams.get('cmsModule')
+  const requestedPreview = searchParams.get('cmsPreview') === '1'
+  const requestedPreviewSource = searchParams.get('cmsPreviewSource')
+  const requestedPreviewLocale = searchParams.get('cmsPreviewLocale')
+  const requestedPreviewViewport = searchParams.get('cmsPreviewViewport')
+
+  cmsDesignerPreviewMode.value = requestedPreview
+
+  switch (requestedModule) {
+    case 'pages':
+      activeMenuId.value = pagesModuleId.value
+      break
+    case 'blocks':
+      activeMenuId.value = blocksModuleId.value
+      break
+    case 'settings':
+      activeMenuId.value = settingsModuleId.value
+      break
+    default:
+      break
+  }
+
+  if (requestedPreviewSource === 'draft' || requestedPreviewSource === 'published') {
+    cmsPreviewSource.value = requestedPreviewSource
+  }
+  if (requestedPreviewLocale === 'en' || requestedPreviewLocale === 'pt-BR') {
+    cmsPreviewLocale.value = requestedPreviewLocale
+  }
+  if (requestedPreviewViewport === 'desktop' || requestedPreviewViewport === 'tablet' || requestedPreviewViewport === 'mobile') {
+    cmsPreviewViewport.value = requestedPreviewViewport
+  }
+
+  if (!requestedPreview) {
+    return
+  }
+
+  await nextTick()
+  scrollCmsDesignerSurface(getCmsDesignerPreviewSelector(
+    requestedModule === 'pages' || requestedModule === 'blocks' || requestedModule === 'settings'
+      ? requestedModule
+      : 'settings'
+  ))
+})
+
 onBeforeUnmount(() => {
   clearCmsAutosaveTimer()
 })
@@ -18162,6 +18297,8 @@ function resetToDefaults(): void {
   font-style: var(--ntk-cms-font-style-base);
   color: var(--ntk-cms-text-primary);
   min-width: 0;
+  min-height: 100%;
+  width: 100%;
 }
 
 .cms-shell-page :deep(.q-field__native),
@@ -18221,6 +18358,9 @@ function resetToDefaults(): void {
   flex-direction: column;
   gap: var(--ntk-cms-space-lg);
   min-width: 0;
+  min-height: calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 3)));
+  flex: 1 1 auto;
+  width: 100%;
 }
 
 .cms-icon {
@@ -18266,9 +18406,18 @@ function resetToDefaults(): void {
 
 .cms-pages {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(var(--ntk-cms-layout-side-min-width), 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--ntk-cms-space-lg);
-  align-items: start;
+  align-items: stretch;
+  min-width: 0;
+  width: 100%;
+}
+
+.cms-blocks-shell {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  width: 100%;
 }
 
 .cms-pages__header-actions {
@@ -18285,7 +18434,7 @@ function resetToDefaults(): void {
 }
 
 .cms-pages__toolbar-hint {
-  margin-top: calc(var(--ntk-cms-space-xs) * -1);
+  margin: 0;
 }
 
 .cms-pages__template-select {
@@ -18298,12 +18447,52 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
   overflow: hidden;
   padding-right: 0;
+  flex: 1 1 auto;
 }
 
 .cms-pages__quick-starts {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__sidebar {
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-pages__sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding-top: var(--ntk-cms-space-sm);
+  border-top: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
+}
+
+.cms-pages__sidebar .cms-pages__quick-start-grid,
+.cms-pages__sidebar .cms-form-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cms-pages__sidebar .cms-form-grid {
+  margin-bottom: 0;
+}
+
+.cms-pages__sidebar-action-bar {
+  margin-top: 0;
+}
+
+.cms-pages__sidebar-empty {
+  padding: 0;
+}
+
+.cms-pages__stage-toolbar,
+.cms-blocks__stage-command-bar {
+  margin: 0;
+  padding: var(--ntk-cms-space-sm);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cms-pages__quick-starts-header {
@@ -18436,6 +18625,7 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
   overflow: hidden;
   padding-right: 0;
+  flex: 1 1 auto;
 }
 
 .cms-blocks__header-actions {
@@ -19776,13 +19966,25 @@ function resetToDefaults(): void {
   border-radius: var(--ntk-cms-radius-lg);
   border-color: var(--ntk-cms-border-color);
   background: var(--ntk-cms-bg-card);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .cms-designer-card {
+  --ntk-cms-bg-card: #ffffff;
+  --ntk-cms-shell-bg: #f4f7fb;
+  --ntk-cms-border-color: #d7e1ec;
+  --ntk-cms-text-primary: #16202b;
+  --ntk-cms-text-secondary: #5f6c7b;
+  --ntk-cms-tab-active: #2563eb;
+  --ntk-cms-accent: #2563eb;
   overflow: hidden;
+  color: var(--ntk-cms-text-primary);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--ntk-cms-bg-card) 92%, #eef3f8) 0%, var(--ntk-cms-bg-card) 100%);
+    linear-gradient(180deg, #f8fbff 0%, #f1f5fa 100%);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  min-height: var(--ntk-cms-editor-min-height);
 }
 
 .cms-shell-card__header {
@@ -19817,6 +20019,7 @@ function resetToDefaults(): void {
   min-height: 2rem;
   padding-top: calc(var(--ntk-cms-space-xs) * 0.5);
   border-top: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 68%, white);
+  justify-content: space-between;
 }
 
 .cms-designer-card__toolbar-group {
@@ -19838,26 +20041,6 @@ function resetToDefaults(): void {
 
 .cms-designer-card__toolbar-spacer {
   flex: 1 1 auto;
-}
-
-.cms-designer-card__toolbar-zoom {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 3.25rem;
-  padding: calc(var(--ntk-cms-space-xs) * 1.1) calc(var(--ntk-cms-space-xs) * 1.5);
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
-  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
-  background: rgba(255, 255, 255, 0.96);
-  color: var(--ntk-cms-text-primary);
-  font-size: var(--ntk-cms-font-size-item-label);
-  font-weight: 700;
-}
-
-.cms-designer-card__toolbar-mode {
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
-  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
-  background: rgba(255, 255, 255, 0.96);
 }
 
 .cms-designer-card__toolbar-group--preview {
@@ -19892,8 +20075,8 @@ function resetToDefaults(): void {
   flex-direction: column;
   gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
   padding: calc(var(--ntk-cms-space-sm) + 0.125rem);
-  background:
-    linear-gradient(180deg, #eef2f7 0%, #e8edf5 100%);
+  background: linear-gradient(180deg, #eef3f9 0%, #e7edf5 100%);
+  flex: 1 1 auto;
 }
 
 .cms-designer-card__header-chips {
@@ -19916,8 +20099,8 @@ function resetToDefaults(): void {
 .cms-designer-card__toolbar-group :deep(.q-btn-dropdown__arrow-container) {
   border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
   border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--ntk-cms-text-secondary);
+  background: #ffffff;
+  color: var(--ntk-cms-text-primary);
 }
 
 .cms-designer-card__toolbar-group :deep(.q-btn) {
@@ -19941,11 +20124,16 @@ function resetToDefaults(): void {
   display: grid;
   grid-template-columns: minmax(220px, 0.24fr) minmax(0, 1fr) minmax(220px, 0.24fr);
   gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
-  min-height: var(--ntk-cms-editor-max-height);
-  max-height: var(--ntk-cms-editor-max-height);
+  min-height: var(--ntk-cms-editor-min-height);
+  max-height: none;
+  align-items: stretch;
+  flex: 1 1 auto;
 }
 
-.cms-designer-card__workbench--pages,
+.cms-designer-card__workbench--pages {
+  grid-template-columns: minmax(260px, 0.24fr) minmax(0, 1fr) minmax(280px, 0.28fr);
+}
+
 .cms-designer-card__workbench--blocks {
   grid-template-columns: minmax(220px, 0.22fr) minmax(0, 1fr) minmax(220px, 0.2fr);
 }
@@ -19957,8 +20145,10 @@ function resetToDefaults(): void {
   min-height: 0;
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
-  background: color-mix(in srgb, var(--ntk-cms-bg-card) 94%, #f1f5f9);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  background: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cms-designer-card__sidebar,
@@ -19968,6 +20158,17 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-md);
   padding: calc(var(--ntk-cms-space-sm) + 0.125rem);
   overflow: auto;
+  background: #f8fafc;
+}
+
+.cms-pages__rail .cms-preview-toolbar,
+.cms-blocks__rail .cms-preview-toolbar {
+  grid-template-columns: 1fr;
+}
+
+.cms-pages__preview,
+.cms-blocks__preview {
+  margin-top: 0;
 }
 
 .cms-designer-card__stage {
@@ -19977,14 +20178,14 @@ function resetToDefaults(): void {
   padding: var(--ntk-cms-space-md);
   overflow: auto;
   background:
-    linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
-  background-size: 22px 22px, 22px 22px, auto;
+    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  background-size: 24px 24px, 24px 24px, auto;
 }
 
 .cms-designer-card__stage--plain {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 }
 
 .cms-designer-card__ruler-shell {
@@ -19996,7 +20197,7 @@ function resetToDefaults(): void {
 
 .cms-designer-card__ruler-shell--pages,
 .cms-designer-card__ruler-shell--blocks {
-  grid-template-columns: minmax(220px, 0.22fr) minmax(0, 1fr) minmax(220px, 0.2fr);
+  grid-template-columns: minmax(220px, 0.24fr) minmax(0, 1fr) minmax(220px, 0.24fr);
 }
 
 .cms-designer-card__ruler-gutter,
@@ -20012,6 +20213,29 @@ function resetToDefaults(): void {
 
 .cms-designer-card__ruler-meta {
   justify-content: flex-start;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  flex-wrap: wrap;
+}
+
+.cms-designer-card__ruler-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.1rem;
+  min-height: 2rem;
+  padding: 0 calc(var(--ntk-cms-space-xs) * 1.25);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
+  background: #ffffff;
+  color: var(--ntk-cms-text-primary);
+  font-size: var(--ntk-cms-font-size-item-label);
+  font-weight: 700;
+}
+
+.cms-designer-card__ruler-mode {
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
+  background: #ffffff;
 }
 
 .cms-designer-card__ruler {
@@ -20025,7 +20249,7 @@ function resetToDefaults(): void {
   border-radius: var(--ntk-cms-radius-lg);
   background:
     repeating-linear-gradient(to right, rgba(148, 163, 184, 0.14) 0, rgba(148, 163, 184, 0.14) 1px, transparent 1px, transparent calc(100% / 17)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 247, 252, 0.94) 100%);
+    linear-gradient(180deg, #ffffff 0%, #f3f6fb 100%);
   overflow: hidden;
 }
 
