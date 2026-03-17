@@ -1672,6 +1672,23 @@ function resolveCmsContentModelDefinition(
 function buildCmsContentModelSchemaFieldSignature(
   field: CmsContentModelFieldSettings
 ): Record<string, unknown> {
+  const normalizeSchemaSignatureValue = (value: unknown): unknown => {
+    if (Array.isArray(value)) {
+      return value.map(entry => normalizeSchemaSignatureValue(entry))
+    }
+
+    if (isObjectRecord(value)) {
+      return Object.fromEntries(
+        Object.entries(value)
+          .filter(([, entryValue]) => entryValue !== undefined)
+          .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
+          .map(([key, entryValue]) => [key, normalizeSchemaSignatureValue(entryValue)])
+      )
+    }
+
+    return value ?? null
+  }
+
   return {
     id: field.id,
     type: field.type,
@@ -1689,10 +1706,14 @@ function buildCmsContentModelSchemaFieldSignature(
       : null,
     min: field.min ?? null,
     max: field.max ?? null,
+    defaultValue: normalizeSchemaSignatureValue(field.defaultValue),
     options: (field.options ?? []).map(option => ({
       value: option.value,
       label: option.label,
     })),
+    mediaKinds: [...(field.mediaKinds ?? [])].sort(),
+    referenceKinds: [...(field.referenceKinds ?? [])].sort(),
+    fields: (field.fields ?? []).map(buildCmsContentModelSchemaFieldSignature),
   }
 }
 

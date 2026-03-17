@@ -15,8 +15,109 @@
         </div>
 
         <div v-if="isSettingsModule" class="cms-settings">
-          <!-- ── Admin Card ───────────────────────────────────────── -->
-          <div class="cms-settings__admin">
+          <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--settings">
+            <div class="cms-shell-card__header cms-designer-card__toolbar-header">
+              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
+                  <q-btn dense flat square icon="folder_open" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog">
+                    <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="note_add" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt">
+                    <q-tooltip>{{ tr('New', 'Novo') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
+                    <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="undo" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange">
+                    <q-tooltip>{{ tr('Undo', 'Desfazer') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="redo" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange">
+                    <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
+                  </q-btn>
+                </div>
+                <div class="cms-designer-card__toolbar-divider" />
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--status">
+                  <span class="cms-designer-card__toolbar-zoom">100%</span>
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="grid_4x4"
+                    class="cms-designer-card__toolbar-mode"
+                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                    @click="toggleCmsDesignerStageGrid"
+                  />
+                </div>
+                <div class="cms-designer-card__toolbar-spacer" />
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
+                  <q-btn-dropdown flat dense no-caps icon="view_quilt" :label="tr('View', 'View')">
+                    <q-list dense>
+                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')">
+                        <q-item-section>{{ tr('Workbench', 'Workbench') }}</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="openCmsDesignerPreview('settings')">
+                        <q-item-section>{{ tr('Preview examples', 'Exemplos de preview') }}</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="toggleCmsDesignerStageGrid">
+                        <q-item-section>{{ showCmsDesignerStageGrid ? tr('Hide grid', 'Ocultar grade') : tr('Show grid', 'Exibir grade') }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('settings')" />
+                </div>
+              </div>
+              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
+                <div class="cms-designer-card__info-strip">
+                  <span class="cms-designer-card__info-item">
+                    <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
+                  </span>
+                  <span class="cms-designer-card__info-item">
+                    {{ cmsAutosaveStatusLabel }}
+                  </span>
+                  <span class="cms-designer-card__info-item">
+                    {{ activeSettingsWorkbenchTab?.label }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-designer-card__body">
+              <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--settings">
+                <div class="cms-designer-card__ruler-gutter">
+                  <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus workbench', 'Focar workbench')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
+                </div>
+                <div class="cms-designer-card__ruler">
+                  <span v-for="mark in cmsDesignerRulerMarks" :key="`settings-ruler-${mark}`" class="cms-designer-card__ruler-mark">
+                    {{ mark }}
+                  </span>
+                </div>
+                <div class="cms-designer-card__ruler-meta">
+                  <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
+                </div>
+              </div>
+              <div class="cms-designer-card__workbench cms-designer-card__workbench--settings">
+                <aside class="cms-designer-card__sidebar cms-settings__sidebar">
+                  <div class="cms-designer-card__sidebar-header">
+                    <strong>{{ tr('Workbench', 'Workbench') }}</strong>
+                    <small>{{ tr('White-label surfaces and CMS authoring contracts in one editing shell.', 'Superficies white-label e contratos de autoria CMS em um unico shell de edicao.') }}</small>
+                  </div>
+                  <div class="cms-designer-card__nav-list">
+                    <button
+                      v-for="tab in cmsSettingsWorkbenchTabs"
+                      :key="`settings-nav-${tab.id}`"
+                      type="button"
+                      class="cms-designer-card__nav-button"
+                      :class="{ 'cms-designer-card__nav-button--active': activeSettingsTab === tab.id }"
+                      @click="activeSettingsTab = tab.id"
+                    >
+                      <q-icon :name="tab.icon" class="cms-icon cms-icon--sm" />
+                      <span>{{ tab.label }}</span>
+                    </button>
+                  </div>
+                </aside>
+                <div class="cms-designer-card__stage cms-settings__stage" :class="{ 'cms-designer-card__stage--plain': !showCmsDesignerStageGrid }">
+                  <!-- ── Admin Card ───────────────────────────────────────── -->
+                  <div class="cms-settings__admin">
           <!-- ── Tenant Card ──────────────────────────────────────── -->
           <div class="cms-toolbar-card">
             <div class="cms-toolbar-card__header">
@@ -1717,54 +1818,202 @@
               </div>
             </q-tab-panel>
           </q-tab-panels>
-          </div>
+                  </div>
+                </div>
+                <aside class="cms-designer-card__rail cms-settings__rail">
+                  <div class="cms-designer-card__rail-card">
+                    <strong>{{ tr('Designer rail', 'Rail do designer') }}</strong>
+                    <small>{{ tr('Quick actions and workspace status stay pinned while you edit.', 'Acoes rapidas e status do workspace ficam fixos durante a edicao.') }}</small>
+                    <div class="cms-designer-card__metrics">
+                      <span>{{ tr('Active surface', 'Superficie ativa') }}: <strong>{{ activeSettingsWorkbenchTab?.label }}</strong></span>
+                      <span>{{ tr('Locale', 'Locale') }}: <strong>{{ settings.content.locale }}</strong></span>
+                      <span>{{ tr('Advanced fields', 'Campos avancados') }}: <strong>{{ showAdvancedThemeFields ? tr('Visible', 'Visiveis') : tr('Hidden', 'Ocultos') }}</strong></span>
+                    </div>
+                  </div>
+                  <div class="cms-designer-card__rail-actions">
+                    <q-btn round flat icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
+                      <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="download" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile">
+                      <q-tooltip>{{ cmsUiText.exportLabel }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="upload_file" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog">
+                      <q-tooltip>{{ cmsUiText.importLabel }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="restart_alt" :aria-label="cmsUiText.resetAriaLabel" @click="resetToDefaults">
+                      <q-tooltip>{{ cmsUiText.resetLabel }}</q-tooltip>
+                    </q-btn>
+                  </div>
+                </aside>
+              </div>
+              <div class="cms-designer-card__statusbar cms-settings__statusbar">
+                <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</q-chip>
+                <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
+                <q-chip dense square :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</q-chip>
+                <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
+              </div>
+            </div>
+          </q-card>
         </div>
 
         <div v-else-if="isPagesModule" class="cms-pages">
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ cmsUiText.pagesBuilderTitle }}</strong>
-              <div class="cms-pages__header-actions">
-                <q-select
-                  v-model="selectedPageTemplateId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsPageTemplateOptions"
-                  :label="tr('Page template', 'Template de pagina')"
-                  class="cms-pages__template-select"
-                />
-                <q-btn flat dense no-caps icon="add" :label="cmsUiText.addPageLabel" @click="addCmsPage" />
-                <q-select
-                  v-if="cmsBuilderCommandOptions.length > 0"
-                  v-model="selectedBuilderCommandId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsBuilderCommandOptions"
-                  option-label="label"
-                  option-value="value"
-                  :label="tr('Quick command', 'Comando rapido')"
-                  class="cms-builder-command-select"
-                />
-                <q-btn
-                  v-if="cmsBuilderCommandOptions.length > 0"
-                  flat
-                  dense
-                  no-caps
-                  icon="play_arrow"
-                  :label="tr('Run', 'Executar')"
-                  @click="executeSelectedBuilderCommand"
-                />
+          <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--pages">
+            <div class="cms-shell-card__header cms-designer-card__toolbar-header">
+              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
+                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open Pages preview', 'Abrir preview de paginas')" @click="scrollCmsDesignerSurface('.cms-pages__preview')">
+                    <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="note_add" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage">
+                    <q-tooltip>{{ tr('New', 'Novo') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
+                    <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="undo" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange">
+                    <q-tooltip>{{ tr('Undo', 'Desfazer') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="redo" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange">
+                    <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
+                  </q-btn>
+                </div>
+                <div class="cms-designer-card__toolbar-divider" />
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--status">
+                  <span class="cms-designer-card__toolbar-zoom">100%</span>
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="grid_4x4"
+                    class="cms-designer-card__toolbar-mode"
+                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                    @click="toggleCmsDesignerStageGrid"
+                  />
+                </div>
+                <div class="cms-designer-card__toolbar-spacer" />
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
+                  <q-btn-dropdown flat dense no-caps icon="view_quilt" :label="tr('View', 'View')">
+                    <q-list dense>
+                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')">
+                        <q-item-section>{{ tr('Workbench', 'Workbench') }}</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-pages__preview')">
+                        <q-item-section>{{ tr('Pages preview', 'Preview de paginas') }}</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="toggleCmsDesignerStageGrid">
+                        <q-item-section>{{ showCmsDesignerStageGrid ? tr('Hide grid', 'Ocultar grade') : tr('Show grid', 'Exibir grade') }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="scrollCmsDesignerSurface('.cms-pages__preview')" />
+                </div>
+              </div>
+              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
+                <div class="cms-designer-card__info-strip">
+                  <span class="cms-designer-card__info-item"><strong>{{ selectedPageTemplateId }}</strong></span>
+                  <span class="cms-designer-card__info-item">{{ settings.pages.length }} {{ tr('pages in tenant', 'paginas no tenant') }}</span>
+                  <span class="cms-designer-card__info-item">{{ selectedCmsBuilderCommandOption?.label || tr('No quick command selected', 'Nenhum comando rapido selecionado') }}</span>
+                </div>
+                <div class="cms-pages__header-actions cms-designer-card__toolbar-group cms-designer-card__toolbar-group--fields">
+                  <q-select
+                    v-model="selectedPageTemplateId"
+                    outlined
+                    dense
+                    emit-value
+                    map-options
+                    :options="cmsPageTemplateOptions"
+                    :label="tr('Page template', 'Template de pagina')"
+                    class="cms-pages__template-select"
+                  />
+                  <q-select
+                    v-if="cmsBuilderCommandOptions.length > 0"
+                    v-model="selectedBuilderCommandId"
+                    outlined
+                    dense
+                    emit-value
+                    map-options
+                    :options="cmsBuilderCommandOptions"
+                    option-label="label"
+                    option-value="value"
+                    :label="tr('Quick command', 'Comando rapido')"
+                    class="cms-builder-command-select"
+                  />
+                  <q-btn
+                    v-if="cmsBuilderCommandOptions.length > 0"
+                    flat
+                    dense
+                    no-caps
+                    icon="play_arrow"
+                    :label="tr('Run', 'Executar')"
+                    @click="executeSelectedBuilderCommand"
+                  />
+                </div>
               </div>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__editor">
+              <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--pages">
+                <div class="cms-designer-card__ruler-gutter">
+                  <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus page workbench', 'Focar workbench de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')" />
+                </div>
+                <div class="cms-designer-card__ruler">
+                  <span v-for="mark in cmsDesignerRulerMarks" :key="`pages-ruler-${mark}`" class="cms-designer-card__ruler-mark">
+                    {{ mark }}
+                  </span>
+                </div>
+                <div class="cms-designer-card__ruler-meta">
+                  <q-chip dense square :style="statusChipStyle">{{ selectedPageTemplateId }}</q-chip>
+                </div>
+              </div>
+              <div class="cms-designer-card__workbench cms-designer-card__workbench--pages">
+                <aside class="cms-designer-card__sidebar cms-pages__sidebar">
+                  <div class="cms-designer-card__sidebar-header">
+                    <strong>{{ tr('Page designer', 'Designer de paginas') }}</strong>
+                    <small>{{ tr('Template, shortcuts and library controls stay framed beside the workspace.', 'Template, atalhos e controles da biblioteca ficam emoldurados ao lado do workspace.') }}</small>
+                  </div>
+                  <div class="cms-designer-card__metrics">
+                    <span>{{ tr('Template', 'Template') }}: <strong>{{ cmsPageTemplateOptions.find(option => option.value === selectedPageTemplateId)?.label || selectedPageTemplateId }}</strong></span>
+                    <span>{{ tr('Pages in tenant', 'Paginas no tenant') }}: <strong>{{ settings.pages.length }}</strong></span>
+                    <span>{{ tr('Reusable sections', 'Secoes reutilizaveis') }}: <strong>{{ settings.reusableSections.length }}</strong></span>
+                    <span>{{ tr('Quick command', 'Comando rapido') }}: <strong>{{ selectedCmsBuilderCommandOption?.label || tr('None selected', 'Nenhum selecionado') }}</strong></span>
+                  </div>
+                </aside>
+                <div class="cms-designer-card__stage cms-pages__stage" :class="{ 'cms-designer-card__stage--plain': !showCmsDesignerStageGrid }">
               <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
                 {{ selectedCmsBuilderCommandOption.description }}
               </p>
+              <div
+                v-if="cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount > 0 || cmsSchemaMigrationBatchReport.summary.versionMissingCount > 0 || cmsSchemaMigrationBatchReport.summary.aheadCount > 0 || cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0"
+                class="cms-page-migration-summary"
+              >
+                <div class="cms-review-summary__header">
+                  <strong>{{ tr('Schema migration review', 'Revisao de migracao de schema') }}</strong>
+                  <div class="cms-page-migration-summary__chips">
+                    <q-chip dense square :style="warningActionStyle">
+                      {{ tr('Pending', 'Pendentes') }}: {{ cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount + cmsSchemaMigrationBatchReport.summary.versionMissingCount }}
+                    </q-chip>
+                    <q-chip
+                      v-if="cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0"
+                      dense
+                      square
+                      :style="dangerActionStyle"
+                    >
+                      {{ tr('Invalid', 'Invalidos') }}: {{ cmsSchemaMigrationBatchReport.summary.invalidModelCount }}
+                    </q-chip>
+                    <q-chip
+                      v-if="cmsSchemaMigrationBatchReport.summary.aheadCount > 0"
+                      dense
+                      square
+                      :style="dangerActionStyle"
+                    >
+                      {{ tr('Ahead', 'A frente') }}: {{ cmsSchemaMigrationBatchReport.summary.aheadCount }}
+                    </q-chip>
+                    <q-chip dense square :style="statusChipStyle">
+                      {{ getCmsSchemaMigrationBatchSummaryLabel() }}
+                    </q-chip>
+                  </div>
+                </div>
+              </div>
               <div class="cms-pages__quick-starts cms-pages__starter-kits">
                 <div class="cms-pages__quick-starts-header">
                   <div>
@@ -2225,6 +2474,7 @@
                         no-caps
                         icon="sync"
                         :label="tr('Sync schema version', 'Sincronizar versao do schema')"
+                        :disable="!getCmsPageSchemaMigrationReport(page.id)?.canApply"
                         @click="syncCmsPageContentModelVersion(pageIndex)"
                       />
                       <q-select
@@ -2256,6 +2506,60 @@
                         :disable="getCmsReusableSectionOptions(page).length === 0"
                         @click="insertSelectedLinkedReusableSection(pageIndex)"
                       />
+                    </div>
+                  </div>
+                  <div
+                    v-if="getCmsPageSchemaMigrationReport(page.id) && (getCmsPageSchemaMigrationReport(page.id)?.hasChanges || getCmsPageSchemaMigrationReport(page.id)?.status === 'ahead' || getCmsPageSchemaMigrationReport(page.id)?.status === 'invalid-model')"
+                    class="cms-page-item__schema-migration"
+                  >
+                    <div class="cms-review-summary__header">
+                      <strong>{{ tr('Schema upgrade report', 'Relatorio de upgrade do schema') }}</strong>
+                      <div class="cms-page-item__schema-migration-chips">
+                        <q-chip
+                          dense
+                          square
+                          :style="getCmsSchemaMigrationStatusStyle(getCmsPageSchemaMigrationReport(page.id)?.status ?? 'current')"
+                        >
+                          {{ getCmsSchemaMigrationStatusLabel(getCmsPageSchemaMigrationReport(page.id)?.status ?? 'current') }}
+                        </q-chip>
+                        <q-chip dense square :style="statusChipStyle">
+                          {{
+                            `v${getCmsPageSchemaMigrationReport(page.id)?.appliedVersion ?? '?'} -> v${getCmsPageSchemaMigrationReport(page.id)?.targetVersion ?? '?'}`
+                          }}
+                        </q-chip>
+                      </div>
+                    </div>
+                    <small v-if="getCmsPageSchemaMigrationReport(page.id)?.migrationNotes">
+                      {{ getCmsPageSchemaMigrationReport(page.id)?.migrationNotes }}
+                    </small>
+                    <small v-if="getCmsPageSchemaMigrationReport(page.id)?.lastSchemaChangeAt">
+                      {{
+                        `${tr('Schema updated at', 'Schema atualizado em')} ${getCmsPageSchemaMigrationReport(page.id)?.lastSchemaChangeAt}`
+                      }}
+                    </small>
+                    <small>{{ getCmsSchemaMigrationSummaryLabel(getCmsPageSchemaMigrationReport(page.id)) }}</small>
+                    <div
+                      v-if="(getCmsPageSchemaMigrationReport(page.id)?.changes.length ?? 0) > 0"
+                      class="cms-review-summary__list"
+                    >
+                      <article
+                        v-for="change in getCmsPageSchemaMigrationReport(page.id)?.changes.slice(0, 4)"
+                        :key="change?.id"
+                        class="cms-review-summary__item"
+                      >
+                        <q-chip
+                          dense
+                          square
+                          :style="getCmsSchemaMigrationChangeStyle(change?.kind ?? 'update')"
+                        >
+                          {{ getCmsSchemaMigrationChangeKindLabel(change?.kind ?? 'update') }}
+                        </q-chip>
+                        <div class="cms-review-summary__body">
+                          <strong>{{ change?.label }}</strong>
+                          <small>{{ change?.path }}</small>
+                          <small>{{ getCmsSchemaMigrationChangeValueLabel(change) }}</small>
+                        </div>
+                      </article>
                     </div>
                   </div>
                   <div
@@ -2522,6 +2826,41 @@
                   </article>
                 </div>
               </div>
+                </div>
+                <aside class="cms-designer-card__rail cms-pages__rail">
+                  <div class="cms-designer-card__rail-card">
+                    <strong>{{ tr('Workspace status', 'Status do workspace') }}</strong>
+                    <small>{{ tr('Use the rail to keep the editor aligned with the current page operations.', 'Use o rail para manter o editor alinhado com as operacoes atuais das paginas.') }}</small>
+                    <div class="cms-designer-card__metrics">
+                      <span>{{ tr('Visible pages', 'Paginas visiveis') }}: <strong>{{ filteredCmsPageRows.length }}</strong></span>
+                      <span>{{ tr('Quick starts', 'Quick starts') }}: <strong>{{ filteredCmsPageQuickStartOptions.length }}</strong></span>
+                      <span>{{ tr('Starter kits', 'Starter kits') }}: <strong>{{ filteredCmsStarterKitOptions.length }}</strong></span>
+                    </div>
+                  </div>
+                  <div class="cms-designer-card__rail-card" v-if="cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount > 0 || cmsSchemaMigrationBatchReport.summary.versionMissingCount > 0 || cmsSchemaMigrationBatchReport.summary.aheadCount > 0 || cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0">
+                    <strong>{{ tr('Migration rail', 'Rail de migracao') }}</strong>
+                    <div class="cms-designer-card__metrics">
+                      <span>{{ tr('Pending', 'Pendentes') }}: <strong>{{ cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount + cmsSchemaMigrationBatchReport.summary.versionMissingCount }}</strong></span>
+                      <span>{{ tr('Invalid', 'Invalidos') }}: <strong>{{ cmsSchemaMigrationBatchReport.summary.invalidModelCount }}</strong></span>
+                      <span>{{ tr('Ahead', 'A frente') }}: <strong>{{ cmsSchemaMigrationBatchReport.summary.aheadCount }}</strong></span>
+                    </div>
+                  </div>
+                  <div class="cms-designer-card__rail-actions">
+                    <q-btn round flat icon="add" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage">
+                      <q-tooltip>{{ cmsUiText.addPageLabel }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="play_arrow" :disable="!selectedBuilderCommandId" :aria-label="tr('Run selected quick command', 'Executar o comando rapido selecionado')" @click="executeSelectedBuilderCommand">
+                      <q-tooltip>{{ tr('Run', 'Executar') }}</q-tooltip>
+                    </q-btn>
+                  </div>
+                </aside>
+              </div>
+              <div class="cms-designer-card__statusbar cms-pages__statusbar">
+                <q-chip dense square :style="statusChipStyle">{{ tr('Pages', 'Paginas') }}: {{ settings.pages.length }}</q-chip>
+                <q-chip dense square :style="statusChipStyle">{{ tr('Visible', 'Visiveis') }}: {{ filteredCmsPageRows.length }}</q-chip>
+                <q-chip dense square :style="statusChipStyle">{{ tr('Reusable', 'Reutilizaveis') }}: {{ filteredCmsReusableSectionLibrary.length }}</q-chip>
+                <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
+              </div>
             </div>
           </q-card>
 
@@ -2776,37 +3115,118 @@
         </div>
 
         <div v-else-if="isBlocksModule" class="cms-shell-page__grid">
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ cmsUiText.blocksManagerTitle }}</strong>
-              <div class="cms-blocks__header-actions">
-                <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} blocks</q-chip>
-                <q-select
-                  v-if="cmsBuilderCommandOptions.length > 0"
-                  v-model="selectedBuilderCommandId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsBuilderCommandOptions"
-                  option-label="label"
-                  option-value="value"
-                  :label="tr('Quick command', 'Comando rapido')"
-                  class="cms-builder-command-select"
-                />
-                <q-btn
-                  v-if="cmsBuilderCommandOptions.length > 0"
-                  flat
-                  dense
-                  no-caps
-                  icon="play_arrow"
-                  :label="tr('Run', 'Executar')"
-                  @click="executeSelectedBuilderCommand"
-                />
+          <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--blocks">
+            <div class="cms-shell-card__header cms-designer-card__toolbar-header">
+              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
+                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open Blocks preview', 'Abrir preview de blocos')" @click="scrollCmsDesignerSurface('.cms-blocks__preview')">
+                    <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="note_add" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette">
+                    <q-tooltip>{{ tr('New', 'Novo') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
+                    <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="undo" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange">
+                    <q-tooltip>{{ tr('Undo', 'Desfazer') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn dense flat square icon="redo" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange">
+                    <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
+                  </q-btn>
+                </div>
+                <div class="cms-designer-card__toolbar-divider" />
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--status">
+                  <span class="cms-designer-card__toolbar-zoom">100%</span>
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    icon="grid_4x4"
+                    class="cms-designer-card__toolbar-mode"
+                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                    @click="toggleCmsDesignerStageGrid"
+                  />
+                </div>
+                <div class="cms-designer-card__toolbar-spacer" />
+                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
+                  <q-btn-dropdown flat dense no-caps icon="view_quilt" :label="tr('View', 'View')">
+                    <q-list dense>
+                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')">
+                        <q-item-section>{{ tr('Workbench', 'Workbench') }}</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="scrollCmsDesignerSurface('.cms-blocks__preview')">
+                        <q-item-section>{{ tr('Blocks preview', 'Preview de blocos') }}</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="toggleCmsDesignerStageGrid">
+                        <q-item-section>{{ showCmsDesignerStageGrid ? tr('Hide grid', 'Ocultar grade') : tr('Show grid', 'Exibir grade') }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="scrollCmsDesignerSurface('.cms-blocks__preview')" />
+                </div>
+              </div>
+              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
+                <div class="cms-designer-card__info-strip">
+                  <span class="cms-designer-card__info-item"><strong>{{ activeBlocksPage?.title || tr('No page', 'Sem pagina') }}</strong></span>
+                  <span class="cms-designer-card__info-item">{{ activeBlocksSection?.label || tr('No section selected', 'Nenhuma secao selecionada') }}</span>
+                  <span class="cms-designer-card__info-item">{{ cmsSectionBlocks.length }} {{ tr('blocks in focus', 'blocos em foco') }}</span>
+                </div>
+                <div class="cms-blocks__header-actions cms-designer-card__toolbar-group cms-designer-card__toolbar-group--fields">
+                  <q-select
+                    v-if="cmsBuilderCommandOptions.length > 0"
+                    v-model="selectedBuilderCommandId"
+                    outlined
+                    dense
+                    emit-value
+                    map-options
+                    :options="cmsBuilderCommandOptions"
+                    option-label="label"
+                    option-value="value"
+                    :label="tr('Quick command', 'Comando rapido')"
+                    class="cms-builder-command-select"
+                  />
+                  <q-btn
+                    v-if="cmsBuilderCommandOptions.length > 0"
+                    flat
+                    dense
+                    no-caps
+                    icon="play_arrow"
+                    :label="tr('Run', 'Executar')"
+                    @click="executeSelectedBuilderCommand"
+                  />
+                </div>
               </div>
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-blocks__editor">
+              <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--blocks">
+                <div class="cms-designer-card__ruler-gutter">
+                  <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus block workbench', 'Focar workbench de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')" />
+                </div>
+                <div class="cms-designer-card__ruler">
+                  <span v-for="mark in cmsDesignerRulerMarks" :key="`blocks-ruler-${mark}`" class="cms-designer-card__ruler-mark">
+                    {{ mark }}
+                  </span>
+                </div>
+                <div class="cms-designer-card__ruler-meta">
+                  <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} {{ tr('blocks', 'blocos') }}</q-chip>
+                </div>
+              </div>
+              <div class="cms-designer-card__workbench cms-designer-card__workbench--blocks">
+                <aside class="cms-designer-card__sidebar cms-blocks__sidebar">
+                  <div class="cms-designer-card__sidebar-header">
+                    <strong>{{ tr('Block designer', 'Designer de blocos') }}</strong>
+                    <small>{{ tr('Keep focus on page, section and block context while authoring reusable pieces.', 'Mantenha foco em pagina, secao e bloco enquanto voce cria pecas reutilizaveis.') }}</small>
+                  </div>
+                  <div class="cms-designer-card__metrics">
+                    <span>{{ tr('Page', 'Pagina') }}: <strong>{{ activeBlocksPage?.title || tr('None selected', 'Nenhuma selecionada') }}</strong></span>
+                    <span>{{ tr('Section', 'Secao') }}: <strong>{{ activeBlocksSection?.label || tr('None selected', 'Nenhuma selecionada') }}</strong></span>
+                    <span>{{ tr('Block', 'Bloco') }}: <strong>{{ activeBlocksSelectedBlockRecord?.id || tr('None selected', 'Nenhum selecionado') }}</strong></span>
+                    <span>{{ tr('Visible sections', 'Secoes visiveis') }}: <strong>{{ filteredActiveBlocksSections.length }}</strong></span>
+                  </div>
+                </aside>
+                <div class="cms-designer-card__stage cms-blocks__stage" :class="{ 'cms-designer-card__stage--plain': !showCmsDesignerStageGrid }">
               <p v-if="selectedCmsBuilderCommandOption" class="cms-config-caption cms-pages__toolbar-hint">
                 {{ selectedCmsBuilderCommandOption.description }}
               </p>
@@ -3716,6 +4136,39 @@
                     </div>
                   </div>
                 </div>
+              </div>
+                </div>
+                <aside class="cms-designer-card__rail cms-blocks__rail">
+                  <div class="cms-designer-card__rail-card">
+                    <strong>{{ tr('Selection rail', 'Rail da selecao') }}</strong>
+                    <small>{{ tr('Quick actions stay attached to the current section contract.', 'Acoes rapidas ficam anexadas ao contrato da secao atual.') }}</small>
+                    <div class="cms-designer-card__metrics">
+                      <span>{{ tr('Blocks in focus section', 'Blocos na secao em foco') }}: <strong>{{ cmsSectionBlocks.length }}</strong></span>
+                      <span>{{ tr('Limit reached', 'Limite atingido') }}: <strong>{{ activeBlocksSectionLimitReached ? tr('Yes', 'Sim') : tr('No', 'Nao') }}</strong></span>
+                      <span>{{ tr('Linked section', 'Secao vinculada') }}: <strong>{{ activeBlocksSectionIsLinked ? tr('Yes', 'Sim') : tr('No', 'Nao') }}</strong></span>
+                    </div>
+                  </div>
+                  <div class="cms-designer-card__rail-actions">
+                    <q-btn round flat icon="add" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette">
+                      <q-tooltip>{{ tr('Add block', 'Adicionar bloco') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="done_all" :disable="!canToggleActiveSectionBlocks" :aria-label="tr('Enable all blocks', 'Ativar todos os blocos')" @click="setCmsBuilderSectionBlocksEnabled(true)">
+                      <q-tooltip>{{ tr('Enable all blocks', 'Ativar todos os blocos') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="remove_done" :disable="!canToggleActiveSectionBlocks" :aria-label="tr('Disable all blocks', 'Desativar todos os blocos')" @click="setCmsBuilderSectionBlocksEnabled(false)">
+                      <q-tooltip>{{ tr('Disable all blocks', 'Desativar todos os blocos') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn round flat icon="auto_fix_off" :disable="!canRemoveDisabledBlocksFromActiveSection" :aria-label="tr('Remove disabled blocks', 'Remover blocos desativados')" @click="removeDisabledBlocksFromActiveSection">
+                      <q-tooltip>{{ tr('Remove disabled blocks', 'Remover blocos desativados') }}</q-tooltip>
+                    </q-btn>
+                  </div>
+                </aside>
+              </div>
+              <div class="cms-designer-card__statusbar cms-blocks__statusbar">
+                <q-chip dense square :style="statusChipStyle">{{ tr('Sections', 'Secoes') }}: {{ filteredActiveBlocksSections.length }}</q-chip>
+                <q-chip dense square :style="statusChipStyle">{{ tr('Blocks', 'Blocos') }}: {{ cmsSectionBlocks.length }}</q-chip>
+                <q-chip dense square :style="statusChipStyle">{{ tr('Reusable', 'Reutilizaveis') }}: {{ filteredCmsReusableBlockLibrary.length }}</q-chip>
+                <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
               </div>
             </div>
           </q-card>
@@ -5342,6 +5795,14 @@ import {
   type CmsPreviewSectionDiffSummary,
 } from '../src/modules/cms/white-label/preview-diff'
 import {
+  applyCmsPageSchemaMigration,
+  createCmsPageSchemaMigrationReport,
+  createCmsSchemaMigrationBatchReport,
+  type CmsPageSchemaMigrationChange,
+  type CmsPageSchemaMigrationReport,
+  type CmsSchemaMigrationStatus,
+} from '../src/modules/cms/white-label/schema-migration'
+import {
   resolveCmsLocaleCoverageMatrix,
   type CmsLocaleCoverageCategory,
   type CmsLocaleCoverageCategorySummary,
@@ -6324,8 +6785,59 @@ const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
 const selectedBuilderCommandId = ref('')
 const activeSettingsTab = ref<'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
+type CmsSettingsWorkbenchTabId = typeof activeSettingsTab.value
+const showCmsDesignerStageGrid = ref(true)
 const showAdvancedThemeFields = ref(false)
 const savedAtLabel = ref(cmsUiText.value.autoSaveEnabled)
+const cmsDesignerRulerMarks = Array.from({ length: 17 }, (_, index) => index * 100)
+const cmsSettingsWorkbenchTabs = computed<Array<{ id: CmsSettingsWorkbenchTabId, icon: string, label: string, description: string }>>(() => ([
+  {
+    id: 'branding',
+    icon: 'branding_watermark',
+    label: settings.value.content.tabBrandingLabel,
+    description: tr('Brand and tenant identity', 'Identidade da marca e do tenant'),
+  },
+  {
+    id: 'typography',
+    icon: 'text_fields',
+    label: settings.value.content.tabTypographyLabel,
+    description: tr('Fonts, sizing and rhythm', 'Fontes, tamanhos e ritmo visual'),
+  },
+  {
+    id: 'layout',
+    icon: 'dashboard_customize',
+    label: settings.value.content.tabLayoutLabel,
+    description: tr('Workspace structure and spacing', 'Estrutura do workspace e espacamentos'),
+  },
+  {
+    id: 'colors',
+    icon: 'palette',
+    label: settings.value.content.tabColorsLabel,
+    description: tr('Theme palette and surfaces', 'Paleta do tema e superficies'),
+  },
+  {
+    id: 'menu',
+    icon: 'menu',
+    label: settings.value.content.tabMenuLabel,
+    description: tr('Sidebar navigation behavior', 'Comportamento da navegacao lateral'),
+  },
+  {
+    id: 'topbar',
+    icon: 'web_asset',
+    label: settings.value.content.tabTopbarLabel,
+    description: tr('Top toolbar actions and labels', 'Acoes e labels da barra superior'),
+  },
+  {
+    id: 'content',
+    icon: 'edit_note',
+    label: settings.value.content.tabContentLabel,
+    description: tr('CMS authoring contracts and defaults', 'Contratos e defaults da autoria CMS'),
+  },
+]))
+const activeSettingsWorkbenchTab = computed(() => {
+  return cmsSettingsWorkbenchTabs.value.find(tab => tab.id === activeSettingsTab.value)
+    ?? cmsSettingsWorkbenchTabs.value[0]
+})
 const pageStatusOptions = computed(() => ([
   { label: cmsUiText.value.pageStatusDraftLabel, value: 'draft' },
   { label: cmsUiText.value.pageStatusPublishedLabel, value: 'published' },
@@ -11227,6 +11739,7 @@ const cmsBuilderCommandOptions = computed<CmsBuilderCommandOption[]>(() => {
     }
 
     for (const { page } of filteredCmsPageRows.value.slice(0, 4)) {
+      const schemaMigrationReport = cmsPageSchemaMigrationReportMap.value.get(page.id)
       options.push(
         {
           label: `${tr('Open in Blocks', 'Abrir em Blocos')}: ${getCmsPageTitleValue(page)}`,
@@ -11246,7 +11759,9 @@ const cmsBuilderCommandOptions = computed<CmsBuilderCommandOption[]>(() => {
         {
           label: `${tr('Sync schema version', 'Sincronizar versao do schema')}: ${getCmsPageTitleValue(page)}`,
           value: `pages:sync:${page.id}`,
-          description: `v${page.contentModelVersion ?? '?'}`,
+          description: schemaMigrationReport
+            ? getCmsSchemaMigrationSummaryLabel(schemaMigrationReport)
+            : `v${page.contentModelVersion ?? '?'}`,
         },
       )
     }
@@ -11352,6 +11867,20 @@ const releaseReviewPackageHistoryEntries = computed<CmsReviewPackageHistoryEntry
 
 const cmsPreviewChangedPageDiffs = computed(() => {
   return (cmsPreviewDraftPublishedDiff.value?.pages ?? []).filter(page => page.status !== 'unchanged')
+})
+
+const cmsSchemaMigrationBatchReport = computed(() => createCmsSchemaMigrationBatchReport({
+  pages: settings.value.pages,
+  localeInput: settings.value.content.locale,
+  authoredContentModels: settings.value.authoredContentModels,
+}))
+
+const cmsPageSchemaMigrationReportMap = computed(() => {
+  const map = new Map<string, CmsPageSchemaMigrationReport>()
+  for (const report of cmsSchemaMigrationBatchReport.value.pages) {
+    map.set(report.pageId, report)
+  }
+  return map
 })
 
 const cmsPreviewPageDiffMap = computed(() => {
@@ -12298,6 +12827,26 @@ function formatCmsRepeatableFieldValue(value: unknown): string {
 function formatCmsJsonFieldValue(value: unknown, fallback: unknown): string {
   const normalizedValue = value == null ? fallback : value
   return JSON.stringify(normalizedValue, null, 2)
+}
+
+/**
+ * Formats one schema migration payload value for compact report rows.
+ */
+function formatCmsSchemaMigrationValue(value: unknown): string {
+  if (value == null) {
+    return tr('empty', 'vazio')
+  }
+
+  if (typeof value === 'string') {
+    const normalized = value.trim()
+    return normalized.length > 0 ? normalized : tr('empty', 'vazio')
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value)
+  }
+
+  return formatCmsJsonFieldValue(value, value)
 }
 
 /**
@@ -13546,6 +14095,42 @@ function openSettingsTabById(
 ): void {
   activeMenuId.value = settingsModuleId.value
   activeSettingsTab.value = tabId
+}
+
+/**
+ * Toggles the designer canvas grid overlay for the current workbench shell.
+ */
+function toggleCmsDesignerStageGrid(): void {
+  showCmsDesignerStageGrid.value = !showCmsDesignerStageGrid.value
+}
+
+/**
+ * Scrolls one designer surface into view inside the current CMS page.
+ */
+function scrollCmsDesignerSurface(selector: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const target = document.querySelector<HTMLElement>(selector)
+  target?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
+}
+
+/**
+ * Opens the most relevant preview surface for the current designer module.
+ */
+function openCmsDesignerPreview(module: 'settings' | 'pages' | 'blocks'): void {
+  if (module === 'settings') {
+    scrollCmsDesignerSurface('.cms-settings .cms-preview-card, .cms-settings .cms-config-section__example')
+    return
+  }
+
+  if (module === 'pages') {
+    scrollCmsDesignerSurface('.cms-pages__preview')
+    return
+  }
+
+  scrollCmsDesignerSurface('.cms-blocks__preview')
 }
 
 /**
@@ -16671,6 +17256,156 @@ function getCmsPageCurrentSchemaVersion(
 }
 
 /**
+ * Resolves one page-level schema migration report by page id.
+ */
+function getCmsPageSchemaMigrationReport(pageId: string): CmsPageSchemaMigrationReport | null {
+  return cmsPageSchemaMigrationReportMap.value.get(pageId) ?? null
+}
+
+/**
+ * Formats one compact change summary for schema migration preview surfaces.
+ */
+function getCmsSchemaMigrationSummaryLabel(report: CmsPageSchemaMigrationReport | null | undefined): string {
+  if (!report) {
+    return tr('No schema migration data.', 'Nenhum dado de migracao de schema.')
+  }
+
+  const parts: string[] = []
+  if (report.summary.addCount > 0) {
+    parts.push(tr(`${report.summary.addCount} add`, `${report.summary.addCount} adicao(oes)`))
+  }
+  if (report.summary.updateCount > 0) {
+    parts.push(tr(`${report.summary.updateCount} update`, `${report.summary.updateCount} atualizacao(oes)`))
+  }
+  if (report.summary.removeCount > 0) {
+    parts.push(tr(`${report.summary.removeCount} remove`, `${report.summary.removeCount} remocao(oes)`))
+  }
+
+  if (parts.length === 0) {
+    if (report.status === 'invalid-model') {
+      return tr(
+        'This page references an invalid content model and requires manual review.',
+        'Esta pagina referencia um modelo de conteudo invalido e exige revisao manual.'
+      )
+    }
+
+    if (report.status === 'ahead') {
+      return tr(
+        'This page is ahead of the current content-model schema and requires manual review.',
+        'Esta pagina esta a frente do schema atual do modelo e exige revisao manual.'
+      )
+    }
+
+    if (report.status === 'version-missing') {
+      return tr(
+        'The applied schema version is missing and can be aligned safely.',
+        'A versao aplicada do schema esta ausente e pode ser alinhada com seguranca.'
+      )
+    }
+
+    return tr('Schema already matches the current content-model contract.', 'O schema ja corresponde ao contrato atual do modelo.')
+  }
+
+  return parts.join(' · ')
+}
+
+/**
+ * Formats the aggregated migration summary for the Pages toolbar.
+ */
+function getCmsSchemaMigrationBatchSummaryLabel(): string {
+  const summary = cmsSchemaMigrationBatchReport.value.summary
+  return tr(
+    `${summary.changedPageCount} page(s) with reviewable schema changes`,
+    `${summary.changedPageCount} pagina(s) com mudancas de schema revisaveis`
+  )
+}
+
+/**
+ * Resolves a status label for one schema migration report.
+ */
+function getCmsSchemaMigrationStatusLabel(status: CmsSchemaMigrationStatus): string {
+  switch (status) {
+    case 'upgrade-required':
+      return tr('Upgrade required', 'Upgrade necessario')
+    case 'version-missing':
+      return tr('Version missing', 'Versao ausente')
+    case 'invalid-model':
+      return tr('Invalid model', 'Modelo invalido')
+    case 'ahead':
+      return tr('Ahead of model', 'A frente do modelo')
+    case 'current':
+    default:
+      return tr('Current', 'Atual')
+  }
+}
+
+/**
+ * Resolves chip styling for one schema migration status.
+ */
+function getCmsSchemaMigrationStatusStyle(status: CmsSchemaMigrationStatus): Record<string, string> {
+  switch (status) {
+    case 'upgrade-required':
+    case 'version-missing':
+      return warningActionStyle.value
+    case 'invalid-model':
+    case 'ahead':
+      return dangerActionStyle.value
+    case 'current':
+    default:
+      return statusChipStyle.value
+  }
+}
+
+/**
+ * Resolves a translated label for one migration change kind.
+ */
+function getCmsSchemaMigrationChangeKindLabel(kind: CmsPageSchemaMigrationChange['kind']): string {
+  switch (kind) {
+    case 'add':
+      return tr('Add', 'Adicionar')
+    case 'remove':
+      return tr('Remove', 'Remover')
+    case 'update':
+    default:
+      return tr('Update', 'Atualizar')
+  }
+}
+
+/**
+ * Resolves chip styling for one migration change kind.
+ */
+function getCmsSchemaMigrationChangeStyle(kind: CmsPageSchemaMigrationChange['kind']): Record<string, string> {
+  switch (kind) {
+    case 'add':
+      return primaryActionStyle.value
+    case 'remove':
+      return dangerActionStyle.value
+    case 'update':
+    default:
+      return warningActionStyle.value
+  }
+}
+
+/**
+ * Formats before/after values for one migration report row.
+ */
+function getCmsSchemaMigrationChangeValueLabel(change: CmsPageSchemaMigrationChange | null | undefined): string {
+  if (!change) {
+    return ''
+  }
+
+  if (change.kind === 'remove') {
+    return `${tr('Previous', 'Anterior')}: ${formatCmsSchemaMigrationValue(change.previousValue)}`
+  }
+
+  if (change.kind === 'add') {
+    return `${tr('Next', 'Proximo')}: ${formatCmsSchemaMigrationValue(change.nextValue)}`
+  }
+
+  return `${formatCmsSchemaMigrationValue(change.previousValue)} -> ${formatCmsSchemaMigrationValue(change.nextValue)}`
+}
+
+/**
  * Updates one page to the current schema version while normalizing page-level custom fields.
  */
 function syncCmsPageContentModelVersion(pageIndex: number): void {
@@ -16679,14 +17414,33 @@ function syncCmsPageContentModelVersion(pageIndex: number): void {
     return
   }
 
-  page.customFields = normalizeCmsPageCustomFieldsForContentModel(
-    page.customFields,
-    page.contentModelId,
-    settings.value.content.locale,
-    settings.value.authoredContentModels
-  )
-  page.contentModelVersion = getCmsPageCurrentSchemaVersion(page)
-  savedAtLabel.value = `${tr('Schema version synced at', 'Versao do schema sincronizada as')} ${new Date().toLocaleTimeString()}`
+  const report = createCmsPageSchemaMigrationReport({
+    page,
+    localeInput: settings.value.content.locale,
+    authoredContentModels: settings.value.authoredContentModels,
+  })
+
+  if (!report.canApply) {
+    savedAtLabel.value = report.status === 'ahead'
+      ? tr(
+          'Schema upgrade blocked because the page is ahead of the current content model.',
+          'Upgrade de schema bloqueado porque a pagina esta a frente do modelo atual.'
+        )
+      : report.status === 'invalid-model'
+        ? tr(
+            'Schema upgrade blocked because the page references an invalid content model.',
+            'Upgrade de schema bloqueado porque a pagina referencia um modelo de conteudo invalido.'
+          )
+        : tr('Schema already matches the current content model.', 'O schema ja corresponde ao modelo atual.')
+    return
+  }
+
+  settings.value.pages.splice(pageIndex, 1, applyCmsPageSchemaMigration({
+    page,
+    localeInput: settings.value.content.locale,
+    authoredContentModels: settings.value.authoredContentModels,
+  }))
+  savedAtLabel.value = `${tr('Schema upgrade applied at', 'Upgrade do schema aplicado as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -17542,9 +18296,8 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
-  max-height: var(--ntk-cms-editor-max-height);
-  overflow: auto;
-  padding-right: calc(var(--ntk-cms-space-xs) / 2);
+  overflow: hidden;
+  padding-right: 0;
 }
 
 .cms-pages__quick-starts {
@@ -17681,9 +18434,8 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
-  max-height: var(--ntk-cms-editor-max-height);
-  overflow: auto;
-  padding-right: calc(var(--ntk-cms-space-xs) / 2);
+  overflow: hidden;
+  padding-right: 0;
 }
 
 .cms-blocks__header-actions {
@@ -18821,6 +19573,24 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
 }
 
+.cms-page-migration-summary,
+.cms-page-item__schema-migration {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: var(--ntk-cms-bg-card);
+  padding: var(--ntk-cms-space-sm);
+  display: grid;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-page-migration-summary__chips,
+.cms-page-item__schema-migration-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+}
+
 .cms-page-item__sections-header {
   display: flex;
   align-items: center;
@@ -19008,6 +19778,13 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-bg-card);
 }
 
+.cms-designer-card {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ntk-cms-bg-card) 92%, #eef3f8) 0%, var(--ntk-cms-bg-card) 100%);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
 .cms-shell-card__header {
   display: flex;
   align-items: center;
@@ -19016,8 +19793,340 @@ function resetToDefaults(): void {
   padding: var(--ntk-cms-space-lg);
 }
 
+.cms-designer-card__toolbar-header {
+  min-height: 3.3rem;
+  padding: calc(var(--ntk-cms-space-xs) * 1.5) var(--ntk-cms-space-md);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 249, 253, 0.94) 100%);
+  border-bottom: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 75%, white);
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+}
+
+.cms-designer-card__toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.cms-designer-card__toolbar-row--info {
+  min-height: 2rem;
+  padding-top: calc(var(--ntk-cms-space-xs) * 0.5);
+  border-top: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 68%, white);
+}
+
+.cms-designer-card__toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  min-width: 0;
+}
+
+.cms-designer-card__toolbar-group--fields {
+  flex-wrap: wrap;
+}
+
+.cms-designer-card__toolbar-divider {
+  width: 1px;
+  align-self: stretch;
+  background: color-mix(in srgb, var(--ntk-cms-border-color) 85%, white);
+}
+
+.cms-designer-card__toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.cms-designer-card__toolbar-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.25rem;
+  padding: calc(var(--ntk-cms-space-xs) * 1.1) calc(var(--ntk-cms-space-xs) * 1.5);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
+  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ntk-cms-text-primary);
+  font-size: var(--ntk-cms-font-size-item-label);
+  font-weight: 700;
+}
+
+.cms-designer-card__toolbar-mode {
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
+  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.cms-designer-card__toolbar-group--preview {
+  margin-inline-start: auto;
+}
+
+.cms-designer-card__info-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-md);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.cms-designer-card__info-item {
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-label);
+  line-height: 1.25;
+}
+
+.cms-designer-card__info-item strong {
+  color: var(--ntk-cms-text-primary);
+  font-weight: 700;
+}
+
 .cms-shell-card__body {
   padding: var(--ntk-cms-space-lg);
+}
+
+.cms-designer-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  padding: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  background:
+    linear-gradient(180deg, #eef2f7 0%, #e8edf5 100%);
+}
+
+.cms-designer-card__header-chips {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-designer-card__toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  margin-inline-start: auto;
+}
+
+.cms-designer-card__toolbar-group :deep(.q-btn),
+.cms-designer-card__toolbar-group :deep(.q-field__control),
+.cms-designer-card__toolbar-group :deep(.q-btn-dropdown__arrow-container) {
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
+  border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-designer-card__toolbar-group :deep(.q-btn) {
+  min-height: 2rem;
+}
+
+.cms-designer-card__toolbar-group :deep(.q-btn-dropdown) {
+  background: transparent;
+}
+
+.cms-designer-card__toolbar-group :deep(.q-field) {
+  min-width: 11rem;
+}
+
+.cms-designer-card__toolbar-group :deep(.q-field__control) {
+  min-height: 2rem;
+  padding-inline: calc(var(--ntk-cms-space-xs) * 1.25);
+}
+
+.cms-designer-card__workbench {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.24fr) minmax(0, 1fr) minmax(220px, 0.24fr);
+  gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  min-height: var(--ntk-cms-editor-max-height);
+  max-height: var(--ntk-cms-editor-max-height);
+}
+
+.cms-designer-card__workbench--pages,
+.cms-designer-card__workbench--blocks {
+  grid-template-columns: minmax(220px, 0.22fr) minmax(0, 1fr) minmax(220px, 0.2fr);
+}
+
+.cms-designer-card__sidebar,
+.cms-designer-card__stage,
+.cms-designer-card__rail {
+  min-width: 0;
+  min-height: 0;
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: color-mix(in srgb, var(--ntk-cms-bg-card) 94%, #f1f5f9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.cms-designer-card__sidebar,
+.cms-designer-card__rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+  padding: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  overflow: auto;
+}
+
+.cms-designer-card__stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-md);
+  padding: var(--ntk-cms-space-md);
+  overflow: auto;
+  background:
+    linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+  background-size: 22px 22px, 22px 22px, auto;
+}
+
+.cms-designer-card__stage--plain {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+}
+
+.cms-designer-card__ruler-shell {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.24fr) minmax(0, 1fr) minmax(220px, 0.24fr);
+  gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  align-items: center;
+}
+
+.cms-designer-card__ruler-shell--pages,
+.cms-designer-card__ruler-shell--blocks {
+  grid-template-columns: minmax(220px, 0.22fr) minmax(0, 1fr) minmax(220px, 0.2fr);
+}
+
+.cms-designer-card__ruler-gutter,
+.cms-designer-card__ruler-meta {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.cms-designer-card__ruler-gutter {
+  justify-content: flex-end;
+}
+
+.cms-designer-card__ruler-meta {
+  justify-content: flex-start;
+}
+
+.cms-designer-card__ruler {
+  min-height: 2rem;
+  display: grid;
+  grid-template-columns: repeat(17, minmax(0, 1fr));
+  align-items: end;
+  gap: 0;
+  padding: calc(var(--ntk-cms-space-xs) * 0.75) var(--ntk-cms-space-sm) calc(var(--ntk-cms-space-xs) * 0.6);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border-radius: var(--ntk-cms-radius-lg);
+  background:
+    repeating-linear-gradient(to right, rgba(148, 163, 184, 0.14) 0, rgba(148, 163, 184, 0.14) 1px, transparent 1px, transparent calc(100% / 17)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 247, 252, 0.94) 100%);
+  overflow: hidden;
+}
+
+.cms-designer-card__ruler-mark {
+  position: relative;
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  min-width: 0;
+  padding-inline-start: calc(var(--ntk-cms-space-xs) * 0.75);
+  color: var(--ntk-cms-text-secondary);
+  font-size: 0.62rem;
+  letter-spacing: 0.03em;
+}
+
+.cms-designer-card__ruler-mark::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 1px;
+  height: 0.85rem;
+  background: color-mix(in srgb, var(--ntk-cms-border-color) 80%, #cbd5e1);
+}
+
+.cms-designer-card__sidebar-header,
+.cms-designer-card__rail-card {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+}
+
+.cms-designer-card__sidebar-header small,
+.cms-designer-card__rail-card small,
+.cms-designer-card__status-text {
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-designer-card__nav-list,
+.cms-designer-card__metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-designer-card__metrics span {
+  font-size: var(--ntk-cms-font-size-item-label);
+  color: var(--ntk-cms-text-secondary);
+}
+
+.cms-designer-card__metrics strong {
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-designer-card__nav-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+  border: var(--ntk-cms-border-width) solid transparent;
+  border-radius: var(--ntk-cms-radius-md);
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--ntk-cms-text-secondary);
+  padding: calc(var(--ntk-cms-space-xs) * 1.5) var(--ntk-cms-space-sm);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--ntk-cms-transition-duration) var(--ntk-cms-transition-ease),
+    background var(--ntk-cms-transition-duration) var(--ntk-cms-transition-ease),
+    color var(--ntk-cms-transition-duration) var(--ntk-cms-transition-ease);
+}
+
+.cms-designer-card__nav-button:hover,
+.cms-designer-card__nav-button--active {
+  border-color: color-mix(in srgb, var(--ntk-cms-accent) 40%, var(--ntk-cms-border-color));
+  background: color-mix(in srgb, var(--ntk-cms-accent) 9%, var(--ntk-cms-bg-card));
+  color: var(--ntk-cms-text-primary);
+}
+
+.cms-designer-card__rail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-xs);
+}
+
+.cms-designer-card__rail-actions :deep(.q-btn) {
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-md);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.cms-designer-card__statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-xs);
+  flex-wrap: wrap;
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border-radius: var(--ntk-cms-radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(239, 244, 250, 0.94) 100%);
 }
 
 .cms-settings {
@@ -19145,6 +20254,7 @@ function resetToDefaults(): void {
 }
 
 .cms-settings__tabs {
+  display: none;
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   padding: 0 calc(var(--ntk-cms-space-xs) + (var(--ntk-cms-space-xs) / 4));
@@ -20234,6 +21344,35 @@ function resetToDefaults(): void {
 
 .cms-shell-page--md-compact .cms-pages__quick-starts-header {
   flex-direction: column;
+}
+
+.cms-shell-page--md-compact .cms-designer-card__workbench,
+.cms-shell-page--md-compact .cms-designer-card__workbench--pages,
+.cms-shell-page--md-compact .cms-designer-card__workbench--blocks {
+  grid-template-columns: 1fr;
+  min-height: auto;
+  max-height: none;
+}
+
+.cms-shell-page--md-compact .cms-designer-card__ruler-shell,
+.cms-shell-page--md-compact .cms-designer-card__ruler-shell--pages,
+.cms-shell-page--md-compact .cms-designer-card__ruler-shell--blocks {
+  grid-template-columns: 1fr;
+}
+
+.cms-shell-page--md-compact .cms-designer-card__toolbar-divider,
+.cms-shell-page--md-compact .cms-designer-card__ruler-gutter,
+.cms-shell-page--md-compact .cms-designer-card__ruler-meta {
+  display: none;
+}
+
+.cms-shell-page--md-compact .cms-designer-card__rail-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.cms-shell-page--md-compact .cms-settings__tabs {
+  display: block;
 }
 
 .cms-shell-page--md-compact .cms-toolbar-card__separator {

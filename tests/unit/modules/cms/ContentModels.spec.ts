@@ -514,6 +514,121 @@ describe('content-models', () => {
     expect(getCmsContentModelLastSchemaChangeAt(localizedModel.id, [localizedModel])).toMatch(/^\d{4}-\d{2}-\d{2}T/)
   })
 
+  it('bumps schema version when nested fields or contract-bearing defaults change', () => {
+    const authoredModel = createCmsAuthoredContentModel({
+      existingModels: [],
+      localeInput: 'en',
+      name: 'Schema version bump',
+      description: 'Tracks nested contract changes',
+      allowedPresets: ['hero', 'footer'],
+      requiredPresets: ['hero'],
+      fields: [
+        {
+          id: 'seoConfig',
+          type: 'object',
+          label: 'SEO config',
+          fields: [
+            {
+              id: 'title',
+              type: 'text',
+              label: 'SEO title',
+              defaultValue: 'Launch title',
+            },
+          ],
+        },
+        {
+          id: 'heroAsset',
+          type: 'media-asset',
+          label: 'Hero asset',
+          mediaKinds: ['image'],
+          defaultValue: 'brand-logo',
+        },
+        {
+          id: 'relatedModel',
+          type: 'reference',
+          label: 'Related model',
+          referenceKinds: ['content-model'],
+          defaultValue: 'landing-page',
+        },
+      ],
+    })
+
+    const nestedFieldUpdate = updateCmsAuthoredContentModel({
+      model: authoredModel,
+      localeInput: 'en',
+      name: authoredModel.name,
+      description: authoredModel.description,
+      allowedPresets: authoredModel.allowedPresets,
+      requiredPresets: authoredModel.requiredPresets,
+      starterPresets: authoredModel.starterPresets,
+      recommendedPresets: authoredModel.recommendedPresets,
+      maxSections: authoredModel.maxSections,
+      sectionPresetLimits: authoredModel.sectionPresetLimits,
+      fields: [
+        {
+          ...authoredModel.fields[0]!,
+          fields: [
+            ...(authoredModel.fields[0]?.fields ?? []),
+            {
+              id: 'canonicalUrl',
+              type: 'url',
+              label: 'Canonical URL',
+              defaultValue: '/launch',
+            },
+          ],
+        },
+        ...authoredModel.fields.slice(1),
+      ],
+    })
+    const defaultValueUpdate = updateCmsAuthoredContentModel({
+      model: authoredModel,
+      localeInput: 'en',
+      name: authoredModel.name,
+      description: authoredModel.description,
+      allowedPresets: authoredModel.allowedPresets,
+      requiredPresets: authoredModel.requiredPresets,
+      starterPresets: authoredModel.starterPresets,
+      recommendedPresets: authoredModel.recommendedPresets,
+      maxSections: authoredModel.maxSections,
+      sectionPresetLimits: authoredModel.sectionPresetLimits,
+      fields: [
+        authoredModel.fields[0]!,
+        {
+          ...authoredModel.fields[1]!,
+          defaultValue: 'hero-alt',
+        },
+        authoredModel.fields[2]!,
+      ],
+    })
+    const referenceKindUpdate = updateCmsAuthoredContentModel({
+      model: authoredModel,
+      localeInput: 'en',
+      name: authoredModel.name,
+      description: authoredModel.description,
+      allowedPresets: authoredModel.allowedPresets,
+      requiredPresets: authoredModel.requiredPresets,
+      starterPresets: authoredModel.starterPresets,
+      recommendedPresets: authoredModel.recommendedPresets,
+      maxSections: authoredModel.maxSections,
+      sectionPresetLimits: authoredModel.sectionPresetLimits,
+      fields: [
+        authoredModel.fields[0]!,
+        {
+          ...authoredModel.fields[1]!,
+          mediaKinds: ['icon', 'image'],
+        },
+        {
+          ...authoredModel.fields[2]!,
+          referenceKinds: ['content-model', 'reusable-block'],
+        },
+      ],
+    })
+
+    expect(getCmsContentModelSchemaVersion(nestedFieldUpdate.id, [nestedFieldUpdate])).toBe(2)
+    expect(getCmsContentModelSchemaVersion(defaultValueUpdate.id, [defaultValueUpdate])).toBe(2)
+    expect(getCmsContentModelSchemaVersion(referenceKindUpdate.id, [referenceKindUpdate])).toBe(2)
+  })
+
   it('filters starter preset options by section compatibility and authored preset links', () => {
     const compatiblePreset = createCmsAuthoredBlockPresetFromBlock({
       block: {

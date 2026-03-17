@@ -290,6 +290,12 @@ async function openSettingsModule(page: Page): Promise<void> {
 }
 
 async function openSettingsTab(page: Page, tabName: RegExp): Promise<void> {
+  const sidebarButton = page.getByRole('button', { name: tabName }).first()
+  if (await sidebarButton.count() > 0) {
+    await sidebarButton.click()
+    return
+  }
+
   const roleTab = page.getByRole('tab', { name: tabName }).first()
   if (await roleTab.count() > 0) {
     await roleTab.click()
@@ -327,6 +333,13 @@ async function selectThemePreset(page: Page, presetName: string): Promise<void> 
   }
 
   await page.locator('.q-menu .q-item', { hasText: presetName }).first().click()
+}
+
+async function expectDesignerShellStatus(page: Page, selector: string): Promise<void> {
+  await expect(page.locator(`${selector} .cms-designer-card__stage`).first()).toBeVisible()
+  await expect(page.locator(`${selector} .cms-designer-card__rail`).first()).toBeVisible()
+  await expect(page.locator(`${selector} .cms-designer-card__statusbar`).first()).toBeVisible()
+  await expect(page.locator(`${selector} .cms-designer-card__status-text`).first()).toBeVisible()
 }
 
 async function enableAdvancedThemeOverrides(page: Page): Promise<void> {
@@ -395,16 +408,71 @@ test.describe('CMS settings white-label flow', () => {
     })
   })
 
+  test('renders the designer shell chrome across Settings, Pages and Blocks', async ({ page }) => {
+    await page.goto('/?cms=1')
+    await openSettingsModule(page)
+
+    const settingsShell = page.locator('.cms-designer-card--settings').first()
+    await expect(settingsShell).toBeVisible()
+    await expectDesignerShellStatus(page, '.cms-designer-card--settings')
+    await expect(settingsShell.locator('.cms-designer-card__toolbar-header').first()).toBeVisible()
+    await expect(settingsShell.locator('.cms-designer-card__toolbar-row--actions').first()).toBeVisible()
+    await expect(settingsShell.locator('.cms-designer-card__toolbar-row--info').first()).toBeVisible()
+    await expect(settingsShell.locator('.cms-designer-card__info-strip').first()).toContainText(/Default Tenant/i)
+    await expect(settingsShell.locator('.cms-designer-card__toolbar-group--preview').first()).toContainText(/View/i)
+    await expect(settingsShell.locator('.cms-designer-card__toolbar-group--preview').first()).toContainText(/Preview/i)
+    await expect(settingsShell.locator('.cms-designer-card__ruler').first()).toBeVisible()
+
+    const contentWorkbenchButton = page
+      .locator('.cms-settings__sidebar')
+      .getByRole('button', { name: /content/i })
+      .first()
+    await expect(contentWorkbenchButton).toBeVisible()
+    await contentWorkbenchButton.click()
+    await expect(contentWorkbenchButton).toHaveClass(/cms-designer-card__nav-button--active/)
+    await expect(page.locator('.cms-settings__rail .cms-designer-card__rail-card').first()).toContainText(
+      /(Designer rail|Rail do designer)/i
+    )
+
+    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await expectDesignerShellStatus(page, '.cms-pages__editor')
+    await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-row--actions').first()).toBeVisible()
+    await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-row--info').first()).toBeVisible()
+    await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-header').first()).toBeVisible()
+    await expect(page.locator('.cms-designer-card--pages .cms-designer-card__ruler').first()).toBeVisible()
+    await expect(page.locator('.cms-pages__sidebar .cms-designer-card__metrics').first()).toContainText(
+      /(Template|Pages in tenant|Paginas no tenant)/i
+    )
+    await expect(page.locator('.cms-pages__rail .cms-designer-card__rail-card').first()).toContainText(
+      /(Workspace status|Status do workspace)/i
+    )
+
+    await openDrawerModule(page, /^(Blocks|Blocos)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
+    await expectDesignerShellStatus(page, '.cms-blocks__editor')
+    await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-row--actions').first()).toBeVisible()
+    await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-row--info').first()).toBeVisible()
+    await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-header').first()).toBeVisible()
+    await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__ruler').first()).toBeVisible()
+    await expect(page.locator('.cms-blocks__sidebar .cms-designer-card__metrics').first()).toContainText(
+      /(Page|Pagina)/i
+    )
+    await expect(page.locator('.cms-blocks__rail .cms-designer-card__rail-card').first()).toContainText(
+      /(Selection rail|Rail da selecao)/i
+    )
+  })
+
   test('exposes accessible controls for settings toolbar and tabs', async ({ page }) => {
     await page.goto('/?cms=1')
     await openSettingsModule(page)
 
     await expect(page.locator('.cms-toolbar-card__saved-at[role="status"][aria-live="polite"], .cms-settings__saved-at[role="status"][aria-live="polite"]')).toBeVisible()
     await expect(page.locator('[aria-label="Tenant profile selector"]')).toBeVisible()
-    await expect(page.locator('[aria-label="Create tenant profile"]')).toBeVisible()
-    await expect(page.locator('[aria-label="Export active tenant as JSON"]')).toBeVisible()
-    await expect(page.locator('[aria-label="Import tenant settings from JSON"]')).toBeVisible()
-    await expect(page.locator('.cms-settings__tabs[aria-label="CMS settings sections"]')).toBeVisible()
+    await expect(page.locator('[aria-label="Create tenant profile"]').first()).toBeVisible()
+    await expect(page.locator('[aria-label="Export active tenant as JSON"]').first()).toBeVisible()
+    await expect(page.locator('[aria-label="Import tenant settings from JSON"]').first()).toBeVisible()
+    await expect(page.locator('.cms-settings__sidebar .cms-designer-card__nav-button')).toHaveCount(7)
     await expect(page.locator('input[aria-label="Import tenant JSON file"]')).toBeAttached()
 
     const saveButton = settingsActionButton(page, 'Save')
@@ -1632,14 +1700,24 @@ test.describe('CMS settings white-label flow', () => {
     await expect(contentModelPreviewCard).toContainText(updatedMigrationNotes)
 
     await openDrawerModule(page, /^(Pages|Paginas)$/)
+    const schemaMigrationSummary = page.locator('.cms-page-migration-summary').first()
+    await expect(schemaMigrationSummary).toContainText(/Schema migration review|Revisao de migracao de schema/)
+    await expect(schemaMigrationSummary).toContainText(/Pending: 1|Pendentes: 1/)
     const schemaChip = page.locator('.cms-page-preview__chips .q-chip', { hasText: 'schema v1 / v2' }).first()
     await expect(schemaChip).toBeVisible()
     const diagnosticsList = page.locator('.cms-page-preview .cms-diagnostics-list').first()
     await expect(diagnosticsList).toContainText('pages.content_model.version.stale')
     await expect(diagnosticsList).toContainText(updatedMigrationNotes)
+    const schemaUpgradeReport = firstPage.locator('.cms-page-item__schema-migration').first()
+    await expect(schemaUpgradeReport).toContainText(/Schema upgrade report|Relatorio de upgrade do schema/)
+    await expect(schemaUpgradeReport).toContainText(updatedMigrationNotes)
+    await expect(schemaUpgradeReport).toContainText('Campaign eyebrow')
+    await expect(schemaUpgradeReport).toContainText('customFields.campaigneyebrow')
+    await expect(schemaUpgradeReport).toContainText('Next: New')
     await page.getByRole('button', { name: /^(Sync schema version|Sincronizar versao do schema)$/ }).first().click()
     await expect(page.locator('.cms-page-preview__chips .q-chip', { hasText: 'schema v2 / v2' }).first()).toBeVisible()
     await expect(page.locator('.cms-page-preview .cms-diagnostics-item', { hasText: 'pages.content_model.version.stale' })).toHaveCount(0)
+    await expect(firstPage.locator('.cms-page-item__schema-migration')).toHaveCount(0)
 
     await firstPage.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)

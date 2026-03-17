@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Schema migration runner and upgrade report for authored content models**
+  - Added a new engine-level schema migration helper that builds dry-run upgrade reports for pages against the latest authored content-model schema, including field-level adds, updates and removals across page fields and localized overrides.
+  - Replaced the previous blind schema sync flow in `Pages` with a reviewable upgrade surface showing migration status, version delta, migration notes and the top field changes before applying the upgrade, now blocking invalid content-model ids instead of silently migrating them against the fallback model.
+  - Expanded authored content-model schema-version hashing so nested field contracts, default values, media-kind constraints and reference-kind constraints all trigger deterministic schema bumps before migration review.
+  - Added focused unit coverage for invalid, upgrade-required, localized upgrade and ahead-of-model scenarios plus Playwright coverage proving the report renders before sync and disappears after the upgrade is applied.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused unit tests and focused CMS E2E coverage for the migration runner flow.
 - **Replacement assistant for deprecated reusable CMS entities**
   - Added an engine-level replacement assistant that previews and applies configured replacements across linked page sections, linked page blocks, reusable-section blocks, reusable blocks and authored block preset derivations.
   - Surfaced `Apply replacement` actions with impact summaries in the `Pages` reusable section library plus the `Blocks` reusable block and authored preset libraries, reusing the existing deprecation metadata instead of introducing a separate workflow.
