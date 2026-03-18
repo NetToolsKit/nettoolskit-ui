@@ -66,6 +66,32 @@ function createUniqueValue(base: string, occupiedValues: Set<string>): string {
   return candidate
 }
 
+function normalizeOptionalString(value: unknown): string | null {
+  const normalized = String(value ?? '').trim()
+  return normalized || null
+}
+
+function buildReusableBlockVariantName(
+  source: CmsReusableBlockSettings,
+  existingBlocks: CmsReusableBlockSettings[]
+): string {
+  const baseName = `${source.name} Variant`
+  const occupiedNames = new Set(
+    existingBlocks.map(reusableBlock => String(reusableBlock.name ?? '').trim()).filter(Boolean)
+  )
+  if (!occupiedNames.has(baseName)) {
+    return baseName
+  }
+
+  let suffix = 2
+  let candidate = `${baseName} ${suffix}`
+  while (occupiedNames.has(candidate)) {
+    suffix += 1
+    candidate = `${baseName} ${suffix}`
+  }
+  return candidate
+}
+
 /**
  * Creates the default reusable block library seeded for the landing builder.
  */
@@ -138,6 +164,8 @@ export function normalizeCmsReusableBlocks(
         deprecatedAt: String(reusableBlock.deprecatedAt ?? '').trim() || null,
         deprecationNote: String(reusableBlock.deprecationNote ?? '').trim() || null,
         replacementEntityId: String(reusableBlock.replacementEntityId ?? '').trim() || null,
+        branchSourceId: normalizeOptionalString(reusableBlock.branchSourceId),
+        branchRootId: normalizeOptionalString(reusableBlock.branchRootId),
       } satisfies CmsReusableBlockSettings
     })
     .filter((reusableBlock): reusableBlock is CmsReusableBlockSettings => reusableBlock !== null)
@@ -155,13 +183,17 @@ export function createCmsReusableBlockFromBlock(input: {
   name?: unknown
   description?: unknown
   category?: unknown
+  sourceReusableBlock?: CmsReusableBlockSettings | null
 }): CmsReusableBlockSettings {
   const occupiedIds = new Set(
     input.existingBlocks.map(reusableBlock => String(reusableBlock.id ?? '').trim()).filter(Boolean)
   )
   const normalizedName = String(input.name ?? '').trim()
   const displayName = String(input.displayName ?? input.block.type ?? 'Reusable block').trim() || 'Reusable block'
-  const baseName = normalizedName || displayName
+  const sourceReusableBlock = input.sourceReusableBlock ?? null
+  const baseName = normalizedName || (sourceReusableBlock
+    ? buildReusableBlockVariantName(sourceReusableBlock, input.existingBlocks)
+    : displayName)
   const id = createUniqueValue(
     normalizeSegment(baseName, normalizeSegment(input.block.type, 'reusable-block')),
     occupiedIds
@@ -176,7 +208,41 @@ export function createCmsReusableBlockFromBlock(input: {
     presetId: input.block.presetId,
     props: cloneValue(input.block.props ?? {}),
     localization: normalizeCmsPageBlockLocalizationSettings(input.block.localization),
+    branchSourceId: sourceReusableBlock?.id ?? null,
+    branchRootId: sourceReusableBlock
+      ? (sourceReusableBlock.branchRootId || sourceReusableBlock.id)
+      : null,
   }
+}
+
+/**
+ * Creates one reusable block variant from an existing reusable source while
+ * keeping lineage metadata for later enterprise review and replacement flows.
+ */
+export function createCmsReusableBlockVariantFromReusable(input: {
+  reusableBlock: CmsReusableBlockSettings
+  existingBlocks: CmsReusableBlockSettings[]
+  name?: unknown
+  description?: unknown
+}): CmsReusableBlockSettings {
+  const source = cloneValue(input.reusableBlock)
+
+  return createCmsReusableBlockFromBlock({
+    block: {
+      id: `${source.id}-variant`,
+      type: source.type,
+      presetId: source.presetId,
+      enabled: true,
+      props: cloneValue(source.props),
+      localization: normalizeCmsPageBlockLocalizationSettings(source.localization),
+    },
+    existingBlocks: input.existingBlocks,
+    displayName: source.name,
+    name: String(input.name ?? '').trim() || buildReusableBlockVariantName(source, input.existingBlocks),
+    description: String(input.description ?? '').trim() || source.description,
+    category: source.category,
+    sourceReusableBlock: source,
+  })
 }
 
 /**

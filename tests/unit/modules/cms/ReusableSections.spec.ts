@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import {
   cloneCmsReusableSectionIntoPageSection,
   createCmsReusableSectionFromSection,
+  createCmsReusableSectionVariantFromReusable,
   createDefaultCmsReusableSections,
   detachCmsPageSectionFromReusable,
   normalizeCmsReusableSections,
@@ -136,6 +137,25 @@ describe('reusable-sections', () => {
     expect(normalized[0]?.archivedAt).toBe('2026-03-11T12:00:00.000Z')
   })
 
+  it('preserves variant lineage metadata while normalizing reusable sections', () => {
+    const normalized = normalizeCmsReusableSections([{
+      id: 'hero-variant',
+      name: 'Hero Variant',
+      description: '',
+      category: 'hero',
+      contentModelId: 'landing-page',
+      presetId: 'hero',
+      label: 'Hero',
+      enabled: true,
+      branchSourceId: 'hero-base',
+      branchRootId: 'hero-root',
+      blocks: [],
+    }], [])
+
+    expect(normalized[0]?.branchSourceId).toBe('hero-base')
+    expect(normalized[0]?.branchRootId).toBe('hero-root')
+  })
+
   it('normalizes reactive Vue section payloads without clone errors', () => {
     const reactiveSections = reactive([{
       id: 'hero-proxy',
@@ -237,5 +257,46 @@ describe('reusable-sections', () => {
     expect(detachedSection.blocks[0]?.props).toEqual({
       title: 'Reusable section title',
     })
+  })
+
+  it('creates reusable section variants that keep source and root lineage', () => {
+    const reusableSection = createCmsReusableSectionFromSection({
+      page: {
+        id: 'landing-main',
+        contentModelId: 'landing-page',
+        title: 'Main Landing',
+        path: '/',
+        status: 'published',
+        description: '',
+        sections: [],
+      },
+      section: {
+        id: 'hero',
+        presetId: 'hero',
+        label: 'Hero',
+        enabled: true,
+        blocks: [{
+          id: 'hero-block-1',
+          type: 'landing.hero',
+          presetId: 'landing-hero-product-launch',
+          enabled: true,
+          props: {
+            title: 'Reusable section title',
+          },
+        }],
+      },
+      existingSections: [],
+    })
+
+    const variant = createCmsReusableSectionVariantFromReusable({
+      reusableSection,
+      existingSections: [reusableSection],
+    })
+
+    expect(variant.id).not.toBe(reusableSection.id)
+    expect(variant.name).toContain('Variant')
+    expect(variant.branchSourceId).toBe(reusableSection.id)
+    expect(variant.branchRootId).toBe(reusableSection.id)
+    expect(variant.blocks[0]?.props).toEqual(reusableSection.blocks[0]?.props)
   })
 })

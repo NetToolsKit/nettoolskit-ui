@@ -66,7 +66,6 @@
                 </div>
               </div>
             </div>
-            <q-separator />
             <div class="cms-shell-card__body cms-designer-card__body">
               <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--settings">
                 <div class="cms-designer-card__ruler-gutter">
@@ -78,7 +77,6 @@
                   </span>
                 </div>
                 <div class="cms-designer-card__ruler-meta">
-                  <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
                   <span class="cms-designer-card__ruler-zoom">100%</span>
                   <q-btn
                     flat
@@ -1810,7 +1808,6 @@
                     <strong>{{ tr('Designer rail', 'Rail do designer') }}</strong>
                     <small>{{ tr('Context and recovery stay pinned while you edit without duplicating the top action bar.', 'Contexto e recovery ficam fixos durante a edicao sem duplicar a barra superior.') }}</small>
                     <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Active surface', 'Superficie ativa') }}: <strong>{{ activeSettingsWorkbenchTab?.label }}</strong></span>
                       <span>{{ tr('Locale', 'Locale') }}: <strong>{{ settings.content.locale }}</strong></span>
                       <span>{{ tr('Advanced fields', 'Campos avancados') }}: <strong>{{ showAdvancedThemeFields ? tr('Visible', 'Visiveis') : tr('Hidden', 'Ocultos') }}</strong></span>
                     </div>
@@ -1829,9 +1826,12 @@
                 </aside>
               </div>
               <div class="cms-designer-card__statusbar cms-settings__statusbar">
-                <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</q-chip>
-                <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
-                <q-chip dense square :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</q-chip>
+                <span class="cms-designer-card__status-text">
+                  <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
+                </span>
+                <span class="cms-designer-card__status-text">
+                  {{ activeSettingsWorkbenchTab?.label }}
+                </span>
                 <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
               </div>
             </div>
@@ -2034,7 +2034,6 @@
                 </div>
               </div>
             </div>
-            <q-separator />
             <div class="cms-shell-card__body cms-pages__editor">
               <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--pages">
                 <div class="cms-designer-card__ruler-gutter">
@@ -2628,6 +2627,15 @@
                       @click="saveCmsPageSectionAsReusable(pageIndex, sectionIndex)"
                     />
                     <q-btn
+                      v-if="section.reusableSourceId"
+                      flat
+                      dense
+                      no-caps
+                      icon="fork_right"
+                      :label="tr('Branch variant', 'Ramificar variante')"
+                      @click="branchCmsPageSectionToVariant(pageIndex, sectionIndex)"
+                    />
+                    <q-btn
                       v-if="isCmsPageSectionLinked(section)"
                       flat
                       dense
@@ -2759,6 +2767,9 @@
                           >
                             {{ getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id) }}
                           </small>
+                          <small v-if="isCmsReusableSectionVariant(reusableSection)">
+                            {{ getCmsReusableSectionVariantLabel(reusableSection) }}
+                          </small>
                           <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
                           <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
                           <q-select
@@ -2783,6 +2794,15 @@
                           />
                         </div>
                         <div class="cms-reusable-block-row__actions">
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            icon="fork_right"
+                            :label="tr('Create variant', 'Criar variante')"
+                            :disable="isCmsArchivedEntity(reusableSection)"
+                            @click="createReusableSectionVariant(reusableSection.id)"
+                          />
                           <q-btn
                             v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.replacementEntityId"
                             flat
@@ -3284,7 +3304,6 @@
                 </div>
               </div>
             </div>
-            <q-separator />
             <div class="cms-shell-card__body cms-blocks__editor">
               <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--blocks">
                 <div class="cms-designer-card__ruler-gutter">
@@ -3852,6 +3871,9 @@
                       >
                         {{ getCmsReplacementAssistantSummaryLabel('reusable-block', reusableBlock.id) }}
                       </small>
+                      <small v-if="isCmsReusableBlockVariant(reusableBlock)">
+                        {{ getCmsReusableBlockVariantLabel(reusableBlock) }}
+                      </small>
                       <small>{{ getCmsReusableBlockUsageSummaryLabel(reusableBlock.id) }}</small>
                       <small v-if="reusableBlock.description">{{ reusableBlock.description }}</small>
                       <q-select
@@ -3876,6 +3898,15 @@
                       />
                     </div>
                     <div class="cms-reusable-block-row__actions">
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      icon="fork_right"
+                      :label="tr('Create variant', 'Criar variante')"
+                      :disable="isCmsArchivedEntity(reusableBlock)"
+                      @click="createReusableBlockVariant(reusableBlock.id)"
+                    />
                     <q-btn
                       flat
                       dense
@@ -4218,6 +4249,15 @@
                         icon="link_off"
                         :label="tr('Detach', 'Desvincular')"
                         @click="detachCmsBuilderBlockByRecord(block)"
+                      />
+                      <q-btn
+                        v-if="block.reusableSourceId && !activeBlocksSectionIsLinked"
+                        flat
+                        dense
+                        no-caps
+                        icon="fork_right"
+                        :label="tr('Branch variant', 'Ramificar variante')"
+                        @click="branchCmsBuilderBlockToVariant(block)"
                       />
                       <q-btn
                         flat
@@ -5842,12 +5882,14 @@ import {
 import {
   cloneCmsReusableBlockIntoPageBlock,
   createCmsReusableBlockFromBlock,
+  createCmsReusableBlockVariantFromReusable,
   detachCmsPageBlockFromReusable,
   resolveCmsReusableBlockReference,
 } from '../src/modules/cms/white-label/reusable-blocks'
 import {
   cloneCmsReusableSectionIntoPageSection,
   createCmsReusableSectionFromSection,
+  createCmsReusableSectionVariantFromReusable,
   detachCmsPageSectionFromReusable,
   resolveCmsReusableSectionReference,
 } from '../src/modules/cms/white-label/reusable-sections'
@@ -13686,6 +13728,48 @@ function getCmsReusableSourceLabel(sourceId: string | null | undefined, kind: 's
 }
 
 /**
+ * Returns whether one reusable section is a branched variant of another section.
+ */
+function isCmsReusableSectionVariant(section: CmsReusableSectionSettings | null | undefined): boolean {
+  return Boolean(String(section?.branchSourceId ?? '').trim())
+}
+
+/**
+ * Returns whether one reusable block is a branched variant of another block.
+ */
+function isCmsReusableBlockVariant(block: CmsReusableBlockSettings | null | undefined): boolean {
+  return Boolean(String(block?.branchSourceId ?? '').trim())
+}
+
+/**
+ * Builds a readable branch label for reusable section variants.
+ */
+function getCmsReusableSectionVariantLabel(section: CmsReusableSectionSettings): string {
+  if (!isCmsReusableSectionVariant(section)) {
+    return ''
+  }
+
+  return tr(
+    `Variant of ${getCmsReusableSourceLabel(section.branchSourceId, 'section')}`,
+    `Variante de ${getCmsReusableSourceLabel(section.branchSourceId, 'section')}`
+  )
+}
+
+/**
+ * Builds a readable branch label for reusable block variants.
+ */
+function getCmsReusableBlockVariantLabel(block: CmsReusableBlockSettings): string {
+  if (!isCmsReusableBlockVariant(block)) {
+    return ''
+  }
+
+  return tr(
+    `Variant of ${getCmsReusableSourceLabel(block.branchSourceId, 'block')}`,
+    `Variante de ${getCmsReusableSourceLabel(block.branchSourceId, 'block')}`
+  )
+}
+
+/**
  * Resolves one reusable-section label for the active authoring locale.
  */
 function getCmsReusableSectionLabelValue(section: CmsReusableSectionSettings): string {
@@ -14561,6 +14645,73 @@ function saveSelectedBlockAsReusable(): void {
   reusableBlockNameDraft.value = ''
   reusableBlockDescriptionDraft.value = ''
   savedAtLabel.value = `${tr('Reusable block saved at', 'Bloco reutilizavel salvo as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
+ * Creates one reusable block variant from an existing reusable source.
+ */
+function createReusableBlockVariant(reusableBlockId: string): CmsReusableBlockSettings | null {
+  const sourceReusableBlock = settings.value.reusableBlocks.find(reusableBlock => reusableBlock.id === reusableBlockId)
+  if (!sourceReusableBlock) {
+    return null
+  }
+
+  const variant = createCmsReusableBlockVariantFromReusable({
+    reusableBlock: sourceReusableBlock,
+    existingBlocks: settings.value.reusableBlocks,
+  })
+
+  settings.value.reusableBlocks = [variant, ...settings.value.reusableBlocks]
+  selectedReusableBlockId.value = variant.id
+  savedAtLabel.value = `${tr('Reusable block variant created at', 'Variante de bloco reutilizavel criada as')} ${new Date().toLocaleTimeString()}`
+  return variant
+}
+
+/**
+ * Branches the selected block into a new reusable variant and relinks the page block to it.
+ */
+function branchCmsBuilderBlockToVariant(blockRecord: CmsSectionBlockRecord): void {
+  const page = settings.value.pages[blockRecord.pageIndex]
+  const section = page?.sections[blockRecord.sectionIndex]
+  const rawBlock = section?.blocks[blockRecord.blockIndex]
+  if (!page || !section || !rawBlock) {
+    return
+  }
+
+  const sourceReusableBlock = rawBlock.reusableSourceId
+    ? settings.value.reusableBlocks.find(reusableBlock => reusableBlock.id === rawBlock.reusableSourceId) ?? null
+    : null
+  const resolvedBlock = resolveCmsReusableBlockReference({
+    block: rawBlock,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
+
+  const variant = createCmsReusableBlockFromBlock({
+    block: resolvedBlock,
+    existingBlocks: settings.value.reusableBlocks,
+    displayName: resolveCmsBlockDisplayName(resolvedBlock.type),
+    name: sourceReusableBlock
+      ? undefined
+      : `${resolveCmsBlockDisplayName(resolvedBlock.type)} ${tr('Variant', 'Variante')}`,
+    description: sourceReusableBlock?.description ?? '',
+    category: sourceReusableBlock?.category ?? 'custom',
+    sourceReusableBlock,
+  })
+
+  settings.value.reusableBlocks = [variant, ...settings.value.reusableBlocks]
+  selectedReusableBlockId.value = variant.id
+  section.blocks.splice(blockRecord.blockIndex, 1, {
+    ...cloneCmsReusableBlockIntoPageBlock({
+      reusableBlock: variant,
+      blockId: rawBlock.id,
+      mode: 'linked',
+    }),
+    id: rawBlock.id,
+    enabled: rawBlock.enabled,
+  })
+  syncSelectedBlockPropsDraft()
+  syncSelectedBlockFieldJsonDrafts()
+  savedAtLabel.value = `${tr('Reusable block branched at', 'Bloco reutilizavel ramificado as')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -17996,6 +18147,79 @@ function saveCmsPageSectionAsReusable(pageIndex: number, sectionIndex: number): 
 }
 
 /**
+ * Creates one reusable section variant from an existing reusable source.
+ */
+function createReusableSectionVariant(reusableSectionId: string, pageIndex?: number): CmsReusableSectionSettings | null {
+  const sourceReusableSection = settings.value.reusableSections.find(reusableSection => reusableSection.id === reusableSectionId)
+  if (!sourceReusableSection) {
+    return null
+  }
+
+  const variant = createCmsReusableSectionVariantFromReusable({
+    reusableSection: sourceReusableSection,
+    existingSections: settings.value.reusableSections,
+  })
+
+  settings.value.reusableSections = [variant, ...settings.value.reusableSections]
+  if (typeof pageIndex === 'number') {
+    pageReusableSectionSelections.value = {
+      ...pageReusableSectionSelections.value,
+      [pageIndex]: variant.id,
+    }
+  }
+  savedAtLabel.value = `${tr('Reusable section variant created at', 'Variante de secao reutilizavel criada as')} ${new Date().toLocaleTimeString()}`
+  return variant
+}
+
+/**
+ * Branches one page section into a new reusable variant and relinks the page section to it.
+ */
+function branchCmsPageSectionToVariant(pageIndex: number, sectionIndex: number): void {
+  const page = settings.value.pages[pageIndex]
+  const rawSection = page?.sections[sectionIndex]
+  if (!page || !rawSection) {
+    return
+  }
+
+  const sourceReusableSection = rawSection.reusableSourceId
+    ? settings.value.reusableSections.find(reusableSection => reusableSection.id === rawSection.reusableSourceId) ?? null
+    : null
+  const resolvedSection = resolveCmsReusableSectionReference({
+    section: rawSection,
+    reusableSections: settings.value.reusableSections,
+    reusableBlocks: settings.value.reusableBlocks,
+  })
+
+  const variant = createCmsReusableSectionFromSection({
+    page,
+    section: resolvedSection,
+    existingSections: settings.value.reusableSections,
+    name: sourceReusableSection
+      ? undefined
+      : `${getCmsSectionLabelValue(resolvedSection) || resolvedSection.id} ${tr('Variant', 'Variante')}`,
+    description: sourceReusableSection?.description ?? '',
+    category: sourceReusableSection?.category ?? resolvedSection.presetId,
+    sourceReusableSection,
+  })
+
+  settings.value.reusableSections = [variant, ...settings.value.reusableSections]
+  pageReusableSectionSelections.value = {
+    ...pageReusableSectionSelections.value,
+    [pageIndex]: variant.id,
+  }
+  page.sections.splice(sectionIndex, 1, {
+    ...cloneCmsReusableSectionIntoPageSection({
+      reusableSection: variant,
+      existingSections: page.sections,
+      mode: 'linked',
+    }),
+    id: rawSection.id,
+    enabled: rawSection.enabled,
+  })
+  savedAtLabel.value = `${tr('Reusable section branched at', 'Secao reutilizavel ramificada as')} ${new Date().toLocaleTimeString()}`
+}
+
+/**
  * Inserts the selected reusable section into the target page.
  */
 function insertSelectedReusableSection(pageIndex: number): void {
@@ -18530,11 +18754,14 @@ function resetToDefaults(): void {
   flex-direction: column;
   gap: var(--ntk-cms-space-lg);
   min-width: 0;
-  min-height: calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 3)));
+  min-height: calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 2)));
   flex: 1 1 auto;
+  height: 100%;
   width: 100%;
   background: transparent;
   border-radius: 0;
+  align-items: stretch;
+  justify-content: stretch;
 }
 
 .cms-shell-page__hero {
@@ -18616,24 +18843,26 @@ function resetToDefaults(): void {
 }
 
 .cms-pages {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: var(--ntk-cms-space-lg);
   align-items: stretch;
   min-width: 0;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
+  height: 100%;
 }
 
 .cms-blocks-shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
   min-width: 0;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
+  height: 100%;
 }
 
 .cms-pages__header-actions {
@@ -20219,12 +20448,12 @@ function resetToDefaults(): void {
   --ntk-cms-text-secondary: #5f6c7b;
   --ntk-cms-tab-active: #2563eb;
   --ntk-cms-accent: #2563eb;
-  overflow: hidden;
+  overflow: visible;
   color: var(--ntk-cms-text-primary);
-  background:
-    linear-gradient(180deg, #f8fbff 0%, #f1f5fa 100%);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-  min-height: var(--ntk-cms-editor-min-height);
+  background: transparent;
+  box-shadow: none;
+  border: 0 !important;
+  min-height: calc(100vh - (var(--ntk-shell-header-height) + 11rem));
   flex: 1 1 auto;
 }
 
@@ -20239,13 +20468,14 @@ function resetToDefaults(): void {
 .cms-designer-card__toolbar-header {
   min-height: 3.3rem;
   padding: var(--ntk-cms-space-md) var(--ntk-cms-space-lg);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 249, 253, 0.94) 100%);
-  border-bottom: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 75%, white);
+  background: #ffffff;
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 75%, white);
+  border-radius: var(--ntk-cms-radius-lg);
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
   gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cms-designer-card__toolbar-row {
@@ -20318,9 +20548,9 @@ function resetToDefaults(): void {
 .cms-designer-card__body {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--ntk-cms-space-md);
   padding: 0;
-  background: linear-gradient(180deg, #eef3f9 0%, #e7edf5 100%);
+  background: transparent;
   flex: 1 1 auto;
   min-height: 0;
 }
@@ -20374,11 +20604,12 @@ function resetToDefaults(): void {
 .cms-designer-card__workbench {
   display: grid;
   grid-template-columns: 18rem minmax(0, 1fr) 18rem;
-  gap: 0;
+  gap: var(--ntk-cms-space-md);
   min-height: 0;
   max-height: none;
   align-items: stretch;
   flex: 1 1 auto;
+  background: transparent;
 }
 
 .cms-designer-card__workbench--pages {
@@ -20395,9 +20626,9 @@ function resetToDefaults(): void {
   min-width: 0;
   min-height: 0;
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
-  border-radius: 0;
+  border-radius: var(--ntk-cms-radius-lg);
   background: #ffffff;
-  box-shadow: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cms-designer-card__sidebar,
@@ -20431,6 +20662,7 @@ function resetToDefaults(): void {
     linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
     linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   background-size: 24px 24px, 24px 24px, auto;
+  flex: 1 1 auto;
 }
 
 .cms-designer-card__stage--plain {
@@ -20443,7 +20675,9 @@ function resetToDefaults(): void {
   gap: 0;
   align-items: center;
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-lg);
-  border-bottom: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: #f8fbff;
 }
 
 .cms-designer-card__ruler-shell--pages,
@@ -20599,11 +20833,9 @@ function resetToDefaults(): void {
   flex-wrap: wrap;
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
-  border-radius: 0;
-  border-inline: 0;
-  border-bottom: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(239, 244, 250, 0.94) 100%);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cms-settings {

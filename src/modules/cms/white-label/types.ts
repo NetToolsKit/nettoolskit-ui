@@ -306,6 +306,15 @@ export interface CmsDeprecationMetadataSettings {
 }
 
 /**
+ * Shared lineage metadata for reusable CMS entities that were branched into
+ * authorable variants while keeping a root reusable source.
+ */
+export interface CmsReusableVariantMetadataSettings {
+  branchSourceId?: string | null
+  branchRootId?: string | null
+}
+
+/**
  * User-authored schema-field preset persisted by the CMS engine for reusable content-model authoring.
  */
 export interface CmsAuthoredContentModelFieldPresetSettings extends CmsDeprecationMetadataSettings {
@@ -488,7 +497,7 @@ export interface CmsPageBlockSettings {
 /**
  * Reusable block template persisted by the CMS engine for fast re-authoring.
  */
-export interface CmsReusableBlockSettings extends CmsDeprecationMetadataSettings {
+export interface CmsReusableBlockSettings extends CmsDeprecationMetadataSettings, CmsReusableVariantMetadataSettings {
   id: string
   name: string
   description: string
@@ -503,7 +512,7 @@ export interface CmsReusableBlockSettings extends CmsDeprecationMetadataSettings
 /**
  * Reusable section template persisted by the CMS engine for page-level authoring.
  */
-export interface CmsReusableSectionSettings extends CmsDeprecationMetadataSettings {
+export interface CmsReusableSectionSettings extends CmsDeprecationMetadataSettings, CmsReusableVariantMetadataSettings {
   id: string
   name: string
   description: string

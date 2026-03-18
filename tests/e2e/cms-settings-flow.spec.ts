@@ -1191,10 +1191,13 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-banner')).toContainText(/linked to the reusable library|vinculad/i)
 
     await openDrawerModule(page, /^Pages$/)
-    await linkedSectionRow.getByRole('button', { name: /^(Detach|Desvincular)$/ }).first().click({ force: true })
-    await expect(linkedSectionRow.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
+    const detachedSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
+      .first()
+    await detachedSectionRow.getByRole('button', { name: /^(Detach|Desvincular)$/ }).first().click({ force: true })
+    await expect(detachedSectionRow.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
 
-    await linkedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await detachedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
     await expect(page.locator('.cms-banner')).toHaveCount(0)
 
     const titleInput = page
@@ -1215,6 +1218,44 @@ test.describe('CMS settings white-label flow', () => {
 
     const linkedBlockRow = page.locator('.cms-block-row', { hasText: reusableBlockName }).first()
     await expect(linkedBlockRow.locator('.q-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
+  })
+
+  test('branches linked reusable sections and blocks into variant library entries', async ({ page }) => {
+    const reusableBlockName = 'Variant Hero Block QA'
+
+    await page.goto('/?cms=1')
+    await openDrawerModule(page, /^Pages$/)
+
+    const heroSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero"]') })
+      .first()
+
+    await heroSectionRow.locator('.q-btn', { hasText: 'Save reusable' }).first().click()
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+
+    const linkedSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
+      .first()
+
+    await linkedSectionRow.getByRole('button', { name: /^(Branch variant|Ramificar variante)$/ }).first().click({ force: true })
+    await expect(linkedSectionRow.locator('.q-chip', { hasText: /Variant|Variante/i })).toBeVisible()
+    await expect(
+      page.locator('.cms-pages__reusable-library .cms-reusable-block-row', { hasText: 'Main Landing · Hero Variant' }).first()
+    ).toContainText(/Variant of Main Landing · Hero|Variante de Main Landing · Hero/i)
+
+    await linkedSectionRow.getByRole('button', { name: /^(Detach|Desvincular)$/ }).first().click({ force: true })
+    await linkedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+
+    await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableBlockName)
+    await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
+    await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
+
+    const linkedBlockRow = page.locator('.cms-block-row', { hasText: reusableBlockName }).first()
+    await linkedBlockRow.getByRole('button', { name: /^(Branch variant|Ramificar variante)$/ }).first().click({ force: true })
+
+    const variantReusableBlockRow = page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: `${reusableBlockName} Variant` }).first()
+    await expect(variantReusableBlockRow).toContainText(/Variant of Variant Hero Block QA|Variante de Variant Hero Block QA/i)
+    await expect(linkedBlockRow.locator('.q-chip', { hasText: /Variant|Variante/i })).toBeVisible()
   })
 
   test('surfaces usage summaries and blocks deletes for in-use reusable entities', async ({ page }) => {
@@ -2360,10 +2401,12 @@ test.describe('CMS settings white-label flow', () => {
       .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
       .first()
     const legacyReusableBlockRow = reusableBlockLibrary
-      .locator('.cms-reusable-block-row', { hasText: legacyReusableBlockName })
+      .locator('.cms-reusable-block-row')
+      .filter({ has: page.locator('.cms-blocks-library__header strong', { hasText: legacyReusableBlockName }) })
       .first()
     const replacementReusableBlockRow = reusableBlockLibrary
-      .locator('.cms-reusable-block-row', { hasText: replacementReusableBlockName })
+      .locator('.cms-reusable-block-row')
+      .filter({ has: page.locator('.cms-blocks-library__header strong', { hasText: replacementReusableBlockName }) })
       .first()
 
     await expect(legacyReusableBlockRow).toBeVisible()

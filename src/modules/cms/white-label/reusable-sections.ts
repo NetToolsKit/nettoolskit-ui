@@ -76,6 +76,32 @@ function createUniqueValue(base: string, occupiedValues: Set<string>): string {
   return candidate
 }
 
+function normalizeOptionalString(value: unknown): string | null {
+  const normalized = String(value ?? '').trim()
+  return normalized || null
+}
+
+function buildReusableSectionVariantName(
+  source: CmsReusableSectionSettings,
+  existingSections: CmsReusableSectionSettings[]
+): string {
+  const baseName = `${source.name} Variant`
+  const occupiedNames = new Set(
+    existingSections.map(reusableSection => String(reusableSection.name ?? '').trim()).filter(Boolean)
+  )
+  if (!occupiedNames.has(baseName)) {
+    return baseName
+  }
+
+  let suffix = 2
+  let candidate = `${baseName} ${suffix}`
+  while (occupiedNames.has(candidate)) {
+    suffix += 1
+    candidate = `${baseName} ${suffix}`
+  }
+  return candidate
+}
+
 function normalizeReusableSectionBlocks(
   blocks: unknown,
   sectionId: string,
@@ -209,6 +235,8 @@ export function normalizeCmsReusableSections(
         deprecatedAt: String(reusableSection.deprecatedAt ?? '').trim() || null,
         deprecationNote: String(reusableSection.deprecationNote ?? '').trim() || null,
         replacementEntityId: String(reusableSection.replacementEntityId ?? '').trim() || null,
+        branchSourceId: normalizeOptionalString(reusableSection.branchSourceId),
+        branchRootId: normalizeOptionalString(reusableSection.branchRootId),
       } satisfies CmsReusableSectionSettings
     })
     .filter((reusableSection): reusableSection is CmsReusableSectionSettings => reusableSection !== null)
@@ -226,13 +254,17 @@ export function createCmsReusableSectionFromSection(input: {
   name?: unknown
   description?: unknown
   category?: unknown
+  sourceReusableSection?: CmsReusableSectionSettings | null
 }): CmsReusableSectionSettings {
   const occupiedIds = new Set(
     input.existingSections.map(reusableSection => String(reusableSection.id ?? '').trim()).filter(Boolean)
   )
   const normalizedName = String(input.name ?? '').trim()
   const fallbackName = `${input.page.title} · ${input.section.label || input.section.id}`
-  const name = normalizedName || fallbackName
+  const sourceReusableSection = input.sourceReusableSection ?? null
+  const name = normalizedName || (sourceReusableSection
+    ? buildReusableSectionVariantName(sourceReusableSection, input.existingSections)
+    : fallbackName)
   const id = createUniqueValue(
     normalizeSegment(name, normalizeSegment(input.section.id, 'reusable-section')),
     occupiedIds
@@ -258,7 +290,52 @@ export function createCmsReusableSectionFromSection(input: {
     ),
     localization: normalizeCmsPageSectionLocalizationSettings(input.section.localization),
     blocks: cloneValue(input.section.blocks ?? []),
+    branchSourceId: sourceReusableSection?.id ?? null,
+    branchRootId: sourceReusableSection
+      ? (sourceReusableSection.branchRootId || sourceReusableSection.id)
+      : null,
   }
+}
+
+/**
+ * Creates one reusable section variant from an existing reusable source while
+ * preserving lineage metadata and the full resolved section payload.
+ */
+export function createCmsReusableSectionVariantFromReusable(input: {
+  reusableSection: CmsReusableSectionSettings
+  existingSections: CmsReusableSectionSettings[]
+  name?: unknown
+  description?: unknown
+}): CmsReusableSectionSettings {
+  const source = cloneValue(input.reusableSection)
+
+  return createCmsReusableSectionFromSection({
+    page: {
+      id: source.contentModelId,
+      title: source.name,
+      description: source.description,
+      path: '/',
+      status: 'draft',
+      contentModelId: source.contentModelId,
+      sections: [],
+      customFields: {},
+      contentModelVersion: 1,
+    },
+    section: {
+      id: source.label || source.id,
+      presetId: source.presetId,
+      label: source.label,
+      enabled: source.enabled,
+      customFields: cloneValue(source.customFields ?? {}),
+      localization: normalizeCmsPageSectionLocalizationSettings(source.localization),
+      blocks: cloneValue(source.blocks),
+    },
+    existingSections: input.existingSections,
+    name: String(input.name ?? '').trim() || buildReusableSectionVariantName(source, input.existingSections),
+    description: String(input.description ?? '').trim() || source.description,
+    category: source.category,
+    sourceReusableSection: source,
+  })
 }
 
 /**

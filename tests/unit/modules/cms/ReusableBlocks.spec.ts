@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import {
   cloneCmsReusableBlockIntoPageBlock,
   createCmsReusableBlockFromBlock,
+  createCmsReusableBlockVariantFromReusable,
   createDefaultCmsReusableBlocks,
   detachCmsPageBlockFromReusable,
   normalizeCmsReusableBlocks,
@@ -98,6 +99,22 @@ describe('reusable-blocks', () => {
     expect(normalized[0]?.archivedAt).toBe('2026-03-11T12:00:00.000Z')
   })
 
+  it('preserves variant lineage metadata while normalizing reusable blocks', () => {
+    const normalized = normalizeCmsReusableBlocks([{
+      id: 'hero-variant',
+      name: 'Hero Variant',
+      description: '',
+      category: 'hero',
+      type: 'landing.hero',
+      props: {},
+      branchSourceId: 'hero-base',
+      branchRootId: 'hero-root',
+    }], [])
+
+    expect(normalized[0]?.branchSourceId).toBe('hero-base')
+    expect(normalized[0]?.branchRootId).toBe('hero-root')
+  })
+
   it('normalizes reactive Vue objects without throwing clone errors', () => {
     const defaults = createDefaultCmsReusableBlocks('en')
     const reactiveReusableBlocks = reactive([
@@ -177,5 +194,33 @@ describe('reusable-blocks', () => {
     expect(detachedBlock.props).toEqual({
       title: 'Reusable source title',
     })
+  })
+
+  it('creates reusable block variants that keep source and root lineage', () => {
+    const reusableBlock = createCmsReusableBlockFromBlock({
+      block: {
+        id: 'hero-block-1',
+        type: 'landing.hero',
+        presetId: 'landing-hero-product-launch',
+        enabled: true,
+        props: {
+          title: 'Reusable source title',
+        },
+      },
+      existingBlocks: [],
+      displayName: 'Reusable Hero',
+      category: 'hero',
+    })
+
+    const variant = createCmsReusableBlockVariantFromReusable({
+      reusableBlock,
+      existingBlocks: [reusableBlock],
+    })
+
+    expect(variant.id).not.toBe(reusableBlock.id)
+    expect(variant.name).toContain('Variant')
+    expect(variant.branchSourceId).toBe(reusableBlock.id)
+    expect(variant.branchRootId).toBe(reusableBlock.id)
+    expect(variant.props).toEqual(reusableBlock.props)
   })
 })
