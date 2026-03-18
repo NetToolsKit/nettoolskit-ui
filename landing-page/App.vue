@@ -2,10 +2,8 @@
   <div id="app">
     <LandingHeaderSection
       :is-dark="isDark"
-      :drawer-open="drawerOpen"
       @toggle-theme="toggleTheme"
-      @open-drawer="openDrawer"
-      @close-drawer="closeDrawer"
+      @mobile-toggle="handleMobileToggle"
     />
 
     <LandingHeroSection />
@@ -58,7 +56,6 @@ provideLandingI18n(landingI18n)
 const { t } = landingI18n
 
 const isDark = ref(false)
-const drawerOpen = ref(false)
 const activeTab = ref('form')
 const isScrolled = ref(false)
 
@@ -71,12 +68,12 @@ interface LandingAnimationBlueprint {
 }
 
 const landingAnimationBlueprints: LandingAnimationBlueprint[] = [
-  { selector: '.hero-badge', type: 'fade-left', delay: 40 },
-  { selector: '.hero h1', type: 'fade-left', delay: 110 },
-  { selector: '.hero p', type: 'fade-left', delay: 165 },
-  { selector: '.hero-actions', type: 'fade-left', delay: 220 },
-  { selector: '.hero-visual', type: 'fade-left', delay: 190 },
-  { selector: '.stats .stat', type: 'fade-left', delay: 150, stagger: 90 },
+  { selector: '.landing-hero .ntk-hero__badge', type: 'fade-left', delay: 40 },
+  { selector: '.landing-hero .ntk-hero__title', type: 'fade-left', delay: 110 },
+  { selector: '.landing-hero .ntk-hero__subtitle', type: 'fade-left', delay: 165 },
+  { selector: '.landing-hero .hero-actions', type: 'fade-left', delay: 220 },
+  { selector: '.landing-hero .hero-visual', type: 'fade-left', delay: 190 },
+  { selector: '.landing-hero .stats .stat', type: 'fade-left', delay: 150, stagger: 90 },
   { selector: '.section-header', type: 'fade-left', delay: 40 },
   { selector: '.feature-card', type: 'fade-left', delay: 80, stagger: 70 },
   { selector: '.component-tabs', type: 'fade-left', delay: 80 },
@@ -110,14 +107,11 @@ const toggleTheme = () => {
   localStorage.setItem('ntk-theme', isDark.value ? 'dark' : 'light')
 }
 
-const openDrawer = () => {
-  drawerOpen.value = true
-  document.body.style.overflow = 'hidden'
-}
-
-const closeDrawer = () => {
-  drawerOpen.value = false
+const handleMobileToggle = (isOpen: boolean) => {
   document.body.style.overflow = ''
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  }
 }
 
 const updateScrollState = () => {
@@ -249,6 +243,7 @@ onBeforeUnmount(() => {
   }
 
   document.body.classList.remove('landing-scrolled')
+  document.body.style.overflow = ''
 })
 </script>
 
