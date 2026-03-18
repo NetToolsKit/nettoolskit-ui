@@ -346,6 +346,13 @@ async function expectDesignerShellStatus(page: Page, selector: string, options?:
   await expect(page.locator(`${selector} .cms-designer-card__status-text`).first()).toBeVisible()
 }
 
+async function openCmsWorkspaceTab(page: Page, label: RegExp): Promise<void> {
+  const tab = page.getByRole('tab', { name: label }).first()
+  await expect(tab).toBeVisible()
+  await tab.click()
+  await expect(tab).toHaveAttribute('aria-selected', 'true')
+}
+
 async function enableAdvancedThemeOverrides(page: Page): Promise<void> {
   const advancedToggle = page.locator('.cms-settings__advanced-toggle .q-toggle').first()
   await expect(advancedToggle).toBeVisible()
@@ -451,7 +458,7 @@ test.describe('CMS settings white-label flow', () => {
       /(Workspace actions|Acoes do workspace)/i
     )
     await expect(page.locator('.cms-pages__rail .cms-designer-card__rail-card').first()).toContainText(
-      /(Page launch rail|Rail de lancamento da pagina)/i
+      /(Reusable content rail|Rail de conteudo reutilizavel)/i
     )
 
     await openDrawerModule(page, /^(Blocks|Blocos)$/)
@@ -513,20 +520,13 @@ test.describe('CMS settings white-label flow', () => {
     await expect(firstFieldInput).toHaveCSS('color', hexToRgbRegex(cmsAuthoringPalette.pageTextColor))
   })
 
-  test('opens Pages preview in a new tab from the designer toolbar', async ({ page }) => {
+  test('opens Pages preview in the workspace tab from the designer toolbar', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
-    const popupPromise = page.waitForEvent('popup')
     await page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-group--preview .q-btn').first().click()
-    const popup = await popupPromise
-    await popup.waitForLoadState('domcontentloaded')
-
-    await expect(popup).toHaveURL(/cms=1/)
-    await expect(popup).toHaveURL(/cmsModule=pages/)
-    await expect(popup).toHaveURL(/cmsPreview=1/)
-    await expect(popup.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
-    await expect(popup.locator('.cms-pages__preview').first()).toBeVisible()
+    await expect(page.getByRole('tab', { name: /^(Preview)$/i }).first()).toHaveAttribute('aria-selected', 'true')
+    await expect(page.locator('.cms-pages__preview').first()).toBeVisible()
   })
 
   test('persists advanced landing layout tokens and applies them on landing runtime', async ({ page }) => {
@@ -1381,7 +1381,9 @@ test.describe('CMS settings white-label flow', () => {
       .locator('input, textarea')
       .first()
     await fillTextInput(localizedPageTitleInput, localizedPageTitle)
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(page.locator('.cms-pages__preview').getByText(localizedPageTitle, { exact: true })).toBeVisible()
+    await openCmsWorkspaceTab(page, /^(Editor)$/i)
 
     await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
     await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero (1)')
@@ -2803,6 +2805,7 @@ test.describe('CMS settings white-label flow', () => {
       .first()
     await fillTextInput(firstSectionLabelInput, '')
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(
       page.locator('.cms-pages__preview .cms-diagnostics-item', { hasText: diagnosticsCode }).first()
     ).toBeVisible()
@@ -2814,6 +2817,7 @@ test.describe('CMS settings white-label flow', () => {
       .first()
     await targetPageField.click()
     await page.locator('.q-menu .q-item', { hasText: diagnosticsPageTitle }).first().click()
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(
       page.locator('.cms-blocks__preview .cms-diagnostics-item', { hasText: diagnosticsCode }).first()
     ).toBeVisible()
@@ -3191,6 +3195,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(heroRow).toBeVisible()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     const blocksPreview = page.locator('.cms-blocks__preview').first()
     const previewCard = blocksPreview.locator('.cms-preview-card--content').first()
 
@@ -3208,6 +3213,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(heroRow).toBeVisible()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
     await fillTextInput(cmsInputByLabel(page, 'Title'), 'Draft preview title')
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(previewCard).toContainText('Draft preview title')
 
     await selectOptionByFieldLabel(page, 'Preview source', 'Published')
@@ -3242,6 +3248,7 @@ test.describe('CMS settings white-label flow', () => {
       .first()
     await fillTextInput(pageTitleInput, 'Landing diff review')
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     const pagesPreview = page.locator('.cms-pages__preview').first()
     await expect(pagesPreview.locator('.cms-review-summary').first()).toContainText('Draft vs published review')
     await expect(pagesPreview.locator('.cms-review-summary').first()).toContainText('Changes detected')
@@ -3255,6 +3262,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(heroRow).toBeVisible()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     const blocksPreview = page.locator('.cms-blocks__preview').first()
     await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Draft vs published review')
     await expect(blocksPreview.locator('.cms-review-summary').first()).toContainText('Landing diff review')
@@ -3356,6 +3364,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.goto('/?cms=1')
 
     await openDrawerModule(page, /^Pages$/)
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     const pagesPreview = page.locator('.cms-pages__preview').first()
     const pagesLocaleCoverage = pagesPreview.locator('.cms-review-summary--locale').first()
 
@@ -3369,6 +3378,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     const blocksPreview = page.locator('.cms-blocks__preview').first()
     const blocksLocaleCoverage = blocksPreview.locator('.cms-review-summary--locale').first()
 

@@ -15,29 +15,41 @@
         </div>
 
         <div v-if="isSettingsModule" class="cms-settings">
-          <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--settings">
+          <div class="cms-workspace-tabs" role="tablist" :aria-label="tr('Settings workspace tabs', 'Abas do workspace de configuracoes')">
+            <button
+              type="button"
+              role="tab"
+              class="cms-workspace-tab"
+              :class="{ 'cms-workspace-tab--active': cmsSettingsWorkspaceView === 'editor' && !cmsDesignerPreviewMode }"
+              :aria-selected="cmsSettingsWorkspaceView === 'editor' && !cmsDesignerPreviewMode ? 'true' : 'false'"
+              @click="cmsDesignerPreviewMode = false; cmsSettingsWorkspaceView = 'editor'"
+            >
+              {{ tr('Editor', 'Editor') }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="cms-workspace-tab"
+              :class="{ 'cms-workspace-tab--active': cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode }"
+              :aria-selected="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode ? 'true' : 'false'"
+              @click="cmsDesignerPreviewMode = false; showCmsDesignerPreview('settings')"
+            >
+              {{ tr('Preview', 'Preview') }}
+            </button>
+          </div>
+          <q-card v-show="cmsSettingsWorkspaceView === 'editor' && !cmsDesignerPreviewMode" flat bordered class="cms-shell-card cms-designer-card cms-designer-card--settings">
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
-                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open settings workspace', 'Abrir workspace de configuracoes')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')">
-                    <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="note_add" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt">
-                    <q-tooltip>{{ tr('New', 'Novo') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
-                    <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="undo" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange">
-                    <q-tooltip>{{ tr('Undo', 'Desfazer') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="redo" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange">
-                    <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
-                  </q-btn>
+                  <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open settings workspace', 'Abrir workspace de configuracoes')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
+                  <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt" />
+                  <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
+                  <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange" />
+                  <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
                 </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
-                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('settings')" />
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('settings')" />
                 </div>
               </div>
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
@@ -1824,32 +1836,192 @@
               </div>
             </div>
           </q-card>
+          <q-card v-show="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
+            <div class="cms-shell-card__header">
+              <strong>{{ tr('Settings preview', 'Preview de configuracoes') }}</strong>
+              <div class="cms-preview-toolbar__chips">
+                <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</q-chip>
+                <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
+                <q-chip dense square :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</q-chip>
+              </div>
+            </div>
+            <q-separator />
+            <div class="cms-shell-card__body cms-settings__preview">
+              <div class="cms-settings__preview-grid">
+                <section class="cms-example-section">
+                  <div class="cms-example-section__header">
+                    <strong>{{ tr('Branding example', 'Exemplo de branding') }}</strong>
+                    <small>{{ tr('Live preview of logo, product identity and account information.', 'Preview em tempo real do logo, identidade do produto e conta.') }}</small>
+                  </div>
+                  <div class="cms-preview-card cms-preview-card--branding">
+                    <div class="cms-preview-brand">
+                      <img :src="settings.branding.brandLogo" :alt="settings.branding.brandLogoAlt" class="cms-preview-brand__logo">
+                      <div class="cms-preview-brand__copy">
+                        <strong>{{ settings.branding.appName }}</strong>
+                        <small>{{ settings.branding.appSubtitle }}</small>
+                      </div>
+                    </div>
+                    <div class="cms-preview-brand__meta">
+                      <div class="cms-preview-brand__meta-row">
+                        <span>{{ tr('Favicon', 'Favicon') }}</span>
+                        <code>{{ settings.branding.faviconUrl || settings.branding.brandLogo }}</code>
+                      </div>
+                      <div class="cms-preview-brand__meta-row">
+                        <span>{{ tr('User', 'Usuario') }}</span>
+                        <div class="cms-preview-user">
+                          <img v-if="settings.branding.userAvatar" :src="settings.branding.userAvatar" alt="User avatar">
+                          <q-icon v-else name="account_circle" class="cms-icon cms-icon--avatar" />
+                          <small>{{ settings.branding.userTooltip }}</small>
+                        </div>
+                      </div>
+                      <q-chip dense square icon="notifications" :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
+                        <q-tooltip v-if="settings.branding.notificationsTooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
+                        {{ settings.branding.notificationCount }}
+                      </q-chip>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="cms-example-section">
+                  <div class="cms-example-section__header">
+                    <strong>{{ tr('Sidebar menu example', 'Exemplo do menu lateral') }}</strong>
+                    <small>{{ tr('Groups and items structure preview with active state.', 'Preview da estrutura de grupos e itens com estado ativo.') }}</small>
+                  </div>
+                  <div class="cms-preview-card cms-preview-card--menu">
+                    <div v-for="group in menuPreviewGroups" :key="group.id" class="cms-preview-menu-group">
+                      <small>{{ group.label }}</small>
+                      <div class="cms-preview-menu-items">
+                        <button
+                          v-for="item in group.items"
+                          :key="item.id"
+                          type="button"
+                          class="cms-preview-menu-item"
+                          :class="{ 'cms-preview-menu-item--active': item.id === previewActiveItemId }"
+                        >
+                          <q-icon :name="item.icon || 'radio_button_unchecked'" class="cms-icon cms-icon--sm" />
+                          <span>{{ item.label }}</span>
+                          <q-badge
+                            v-if="item.badge !== undefined && item.badge !== ''"
+                            :style="{
+                              background: String(item.badgeColor || notificationBadgeColor),
+                              color: String(item.badgeTextColor || notificationBadgeTextColor),
+                            }"
+                          >
+                            {{ item.badge }}
+                          </q-badge>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="cms-example-section">
+                  <div class="cms-example-section__header">
+                    <strong>{{ tr('Topbar example', 'Exemplo de topbar') }}</strong>
+                    <small>{{ tr('Header height, search visibility and actions rendered together.', 'Altura do cabecalho, visibilidade da busca e acoes renderizadas em conjunto.') }}</small>
+                  </div>
+                  <div class="cms-preview-card cms-preview-card--topbar">
+                    <div class="cms-preview-topbar">
+                      <div class="cms-preview-topbar__left">
+                        <q-icon :name="settings.layout.menuIcon" class="cms-icon cms-icon--md" />
+                        <strong>{{ settings.branding.appName }}</strong>
+                      </div>
+                      <div v-if="settings.layout.showSearch" class="cms-preview-topbar__search">
+                        <q-icon name="search" class="cms-icon cms-icon--sm" />
+                        <span>{{ settings.layout.searchPlaceholder }}</span>
+                      </div>
+                      <div class="cms-preview-topbar__actions">
+                        <button
+                          v-for="action in toolbarPreviewActions"
+                          :key="action.id"
+                          type="button"
+                          class="cms-preview-topbar__action"
+                        >
+                          <q-icon :name="action.icon || 'bolt'" class="cms-icon cms-icon--sm" />
+                          <span v-if="action.showLabel">{{ action.label }}</span>
+                          <q-badge
+                            v-if="action.badge !== undefined && action.badge !== ''"
+                            :style="{
+                              background: String(action.badgeColor || notificationBadgeColor),
+                              color: String(action.badgeTextColor || notificationBadgeTextColor),
+                            }"
+                          >
+                            {{ action.badge }}
+                          </q-badge>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="cms-example-section">
+                  <div class="cms-example-section__header">
+                    <strong>{{ tr('Content copy example', 'Exemplo de copy de conteudo') }}</strong>
+                    <small>{{ tr('Preview of tab labels, banners and instructional text.', 'Preview de labels de abas, banners e texto instrucional.') }}</small>
+                  </div>
+                  <div class="cms-preview-card cms-preview-card--content">
+                    <div class="cms-preview-content-tabs">
+                      <q-chip dense square>{{ settings.content.tabBrandingLabel }}</q-chip>
+                      <q-chip dense square>{{ settings.content.tabTypographyLabel }}</q-chip>
+                      <q-chip dense square>{{ settings.content.tabLayoutLabel }}</q-chip>
+                      <q-chip dense square>{{ settings.content.tabColorsLabel }}</q-chip>
+                      <q-chip dense square>{{ settings.content.tabMenuLabel }}</q-chip>
+                      <q-chip dense square>{{ settings.content.tabTopbarLabel }}</q-chip>
+                      <q-chip dense square>{{ settings.content.tabContentLabel }}</q-chip>
+                    </div>
+                    <p class="cms-preview-content-text">{{ settings.content.moduleFallbackDescription }}</p>
+                    <q-banner rounded class="cms-banner" :style="bannerStyle">
+                      {{ settings.content.brandingBannerText }}
+                    </q-banner>
+                    <div class="cms-preview-content-status">
+                      <span>{{ settings.content.statusThemeText }}</span>
+                      <span>{{ settings.content.statusBrandingText }}</span>
+                      <span>{{ settings.content.statusMenuText }}</span>
+                      <span>{{ settings.content.statusTopbarText }}</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </q-card>
         </div>
 
         <div v-else-if="isPagesModule" class="cms-pages">
-          <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--pages">
+          <div class="cms-workspace-tabs" role="tablist" :aria-label="tr('Pages workspace tabs', 'Abas do workspace de paginas')">
+            <button
+              type="button"
+              role="tab"
+              class="cms-workspace-tab"
+              :class="{ 'cms-workspace-tab--active': cmsPagesWorkspaceView === 'editor' && !cmsDesignerPreviewMode }"
+              :aria-selected="cmsPagesWorkspaceView === 'editor' && !cmsDesignerPreviewMode ? 'true' : 'false'"
+              @click="cmsDesignerPreviewMode = false; cmsPagesWorkspaceView = 'editor'"
+            >
+              {{ tr('Editor', 'Editor') }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="cms-workspace-tab"
+              :class="{ 'cms-workspace-tab--active': cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode }"
+              :aria-selected="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode ? 'true' : 'false'"
+              @click="cmsDesignerPreviewMode = false; showCmsDesignerPreview('pages')"
+            >
+              {{ tr('Preview', 'Preview') }}
+            </button>
+          </div>
+          <q-card v-show="cmsPagesWorkspaceView === 'editor' && !cmsDesignerPreviewMode" flat bordered class="cms-shell-card cms-designer-card cms-designer-card--pages">
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
-                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open pages workspace', 'Abrir workspace de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')">
-                    <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="note_add" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage">
-                    <q-tooltip>{{ tr('New', 'Novo') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
-                    <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="undo" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange">
-                    <q-tooltip>{{ tr('Undo', 'Desfazer') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="redo" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange">
-                    <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
-                  </q-btn>
+                  <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open pages workspace', 'Abrir workspace de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')" />
+                  <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage" />
+                  <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
+                  <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange" />
+                  <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
                 </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
-                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('pages')" />
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('pages')" />
                 </div>
               </div>
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
@@ -1897,7 +2069,7 @@
                     <span>{{ tr('Template', 'Template') }}: <strong>{{ cmsPageTemplateOptions.find(option => option.value === selectedPageTemplateId)?.label || selectedPageTemplateId }}</strong></span>
                     <span>{{ tr('Pages in tenant', 'Paginas no tenant') }}: <strong>{{ settings.pages.length }}</strong></span>
                     <span>{{ tr('Reusable sections', 'Secoes reutilizaveis') }}: <strong>{{ settings.reusableSections.length }}</strong></span>
-                    <span>{{ tr('Preview', 'Preview') }}: <strong>{{ tr('New browser tab', 'Nova aba do navegador') }}</strong></span>
+                    <span>{{ tr('Quick command', 'Comando rapido') }}: <strong>{{ selectedCmsBuilderCommandOption?.label || tr('None selected', 'Nenhum selecionado') }}</strong></span>
                   </div>
                   <div class="cms-pages__sidebar-section">
                     <strong>{{ tr('Workspace actions', 'Acoes do workspace') }}</strong>
@@ -2517,172 +2689,139 @@
                 </small>
               </div>
 
-              <div class="cms-pages__reusable-library">
-                <div class="cms-shell-card__header">
-                  <strong>{{ tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis') }}</strong>
-                  <div class="cms-blocks-library__header-actions">
-                    <q-toggle
-                      v-model="showArchivedReusableSections"
-                      dense
-                      :label="tr('Show archived', 'Mostrar arquivados')"
-                    />
-                    <q-chip dense square :style="statusChipStyle">
-                      {{ filteredCmsReusableSectionLibrary.length }}/{{ settings.reusableSections.length }}
-                    </q-chip>
-                  </div>
-                </div>
-                <q-separator />
-                <div class="cms-pages__reusable-list">
-                  <div v-if="filteredCmsReusableSectionLibrary.length === 0" class="cms-block-item__empty">
-                    {{
-                      hasCmsBuilderSearch
-                        ? tr('No reusable section matched the current search.', 'Nenhuma secao reutilizavel corresponde a busca atual.')
-                        : tr('No reusable sections saved yet.', 'Nenhuma secao reutilizavel salva ainda.')
-                    }}
-                  </div>
-                  <article
-                    v-for="reusableSection in filteredCmsReusableSectionLibrary"
-                    :key="reusableSection.id"
-                    class="cms-reusable-block-row"
-                  >
-                    <div class="cms-reusable-block-row__meta">
-                      <div class="cms-blocks-library__header">
-                        <strong>{{ reusableSection.name }}</strong>
-                        <q-chip dense square :style="statusChipStyle">
-                          {{ getCmsReusableSectionUsageCount(reusableSection.id) }} {{ tr('uses', 'usos') }}
-                        </q-chip>
-                      </div>
-                      <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
-                      <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
-                      <small v-if="isCmsArchivedEntity(reusableSection)">{{ tr('Archived', 'Arquivada') }}</small>
-                      <small v-if="isCmsDeprecatedEntity(reusableSection)">
-                        {{
-                          getCmsReplacementLabel(
-                            reusableSection.replacementEntityId,
-                            settings.reusableSections,
-                            section => section.name
-                          )
-                            ? `${tr('Deprecated -> replacement', 'Descontinuado -> substituto')}: ${getCmsReplacementLabel(
-                              reusableSection.replacementEntityId,
-                              settings.reusableSections,
-                              section => section.name
-                            )}`
-                            : tr('Deprecated for new page composition', 'Descontinuado para nova composicao de paginas')
-                        }}
-                      </small>
-                      <small v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.deprecationNote">{{ reusableSection.deprecationNote }}</small>
-                      <small
-                        v-if="isCmsDeprecatedEntity(reusableSection) && getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id)"
-                      >
-                        {{ getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id) }}
-                      </small>
-                      <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
-                      <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
-                      <q-select
-                        v-if="isCmsDeprecatedEntity(reusableSection)"
-                        :model-value="reusableSection.replacementEntityId ?? null"
-                        outlined
-                        dense
-                        clearable
-                        emit-value
-                        map-options
-                        :options="getCmsReusableSectionReplacementOptions(reusableSection)"
-                        :label="tr('Replacement section', 'Secao substituta')"
-                        @update:model-value="updateReusableSectionReplacement(reusableSection.id, $event)"
-                      />
-                      <q-input
-                        v-if="isCmsDeprecatedEntity(reusableSection)"
-                        :model-value="reusableSection.deprecationNote ?? ''"
-                        outlined
-                        dense
-                        :label="tr('Deprecation note', 'Nota de descontinuacao')"
-                        @update:model-value="updateReusableSectionDeprecationNote(reusableSection.id, $event)"
-                      />
-                    </div>
-                    <div class="cms-reusable-block-row__actions">
-                      <q-btn
-                        v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.replacementEntityId"
-                        flat
-                        dense
-                        no-caps
-                        icon="published_with_changes"
-                        :label="tr('Apply replacement', 'Aplicar substituto')"
-                        :disable="!getCmsReplacementAssistantSummary('reusable-section', reusableSection.id)?.canApply"
-                        @click="applyCmsDeprecatedReplacement('reusable-section', reusableSection.id)"
-                      />
-                      <q-btn
-                        flat
-                        round
-                        dense
-                        icon="travel_explore"
-                        :aria-label="tr('Inspect reusable section usage', 'Inspecionar uso da secao reutilizavel')"
-                        @click="openCmsUsageDrawer('reusable-section', reusableSection.id, reusableSection.name, reusableSection.description ?? '')"
-                      />
-                      <q-btn
-                        flat
-                        dense
-                        no-caps
-                        :icon="isCmsDeprecatedEntity(reusableSection) ? 'restore_from_trash' : 'history_toggle_off'"
-                        :label="isCmsDeprecatedEntity(reusableSection) ? tr('Reinstate', 'Reativar') : tr('Deprecate', 'Descontinuar')"
-                        :style="isCmsDeprecatedEntity(reusableSection) ? undefined : warningActionStyle"
-                        @click="isCmsDeprecatedEntity(reusableSection) ? undeprecateReusableSection(reusableSection.id) : deprecateReusableSection(reusableSection.id)"
-                      />
-                      <q-btn
-                        flat
-                        dense
-                        no-caps
-                        :icon="isCmsArchivedEntity(reusableSection) ? 'unarchive' : 'archive'"
-                        :label="isCmsArchivedEntity(reusableSection) ? tr('Restore', 'Restaurar') : tr('Archive', 'Arquivar')"
-                        :style="isCmsArchivedEntity(reusableSection) ? undefined : warningActionStyle"
-                        @click="isCmsArchivedEntity(reusableSection) ? unarchiveReusableSection(reusableSection.id) : archiveReusableSection(reusableSection.id)"
-                      />
-                    </div>
-                  </article>
-                </div>
-              </div>
                 </div>
                 <aside class="cms-designer-card__rail cms-pages__rail">
                   <div class="cms-designer-card__rail-card">
-                    <strong>{{ tr('Page launch rail', 'Rail de lancamento da pagina') }}</strong>
-                    <small>{{ tr('Preview context, starter kits and quick-start flows stay on the right so the editor center remains dedicated to authoring.', 'Contexto de preview, starter kits e quick-starts ficam na direita para o centro permanecer dedicado a edicao.') }}</small>
+                    <strong>{{ tr('Reusable content rail', 'Rail de conteudo reutilizavel') }}</strong>
+                    <small>{{ tr('Keep reusable sections and launch flows on the right so the center stays focused on live page editing.', 'Mantenha secoes reutilizaveis e fluxos de lancamento na direita para o centro ficar focado na edicao real da pagina.') }}</small>
                     <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Preview source', 'Origem do preview') }}: <strong>{{ cmsPreviewSource }}</strong></span>
-                      <span>{{ tr('Preview locale', 'Locale do preview') }}: <strong>{{ cmsPreviewLocale }}</strong></span>
-                      <span>{{ tr('Preview viewport', 'Viewport do preview') }}: <strong>{{ cmsPreviewViewport }}</strong></span>
+                      <span>{{ tr('Visible sections', 'Secoes visiveis') }}: <strong>{{ filteredCmsReusableSectionLibrary.length }}</strong></span>
+                      <span>{{ tr('Total library', 'Biblioteca total') }}: <strong>{{ settings.reusableSections.length }}</strong></span>
+                      <span>{{ tr('Archived hidden', 'Arquivadas ocultas') }}: <strong>{{ showArchivedReusableSections ? tr('No', 'Nao') : tr('Yes', 'Sim') }}</strong></span>
                     </div>
                   </div>
-                  <div class="cms-pages__sidebar-section">
-                    <strong>{{ tr('Preview launch', 'Lancamento do preview') }}</strong>
-                    <div class="cms-preview-toolbar" :data-cms-preview-source="cmsPreviewSource" :data-cms-preview-viewport="cmsPreviewViewport">
-                      <q-select
-                        v-model="cmsPreviewSource"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="cmsPreviewSourceOptions"
-                        :label="tr('Preview source', 'Origem do preview')"
-                      />
-                      <q-select
-                        v-model="cmsPreviewLocale"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="cmsLocaleOptions"
-                        :label="tr('Preview locale', 'Locale do preview')"
-                      />
-                      <q-select
-                        v-model="cmsPreviewViewport"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="cmsPreviewViewportOptions"
-                        :label="tr('Preview viewport', 'Viewport do preview')"
-                      />
+                  <div class="cms-pages__reusable-library">
+                    <div class="cms-shell-card__header">
+                      <strong>{{ tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis') }}</strong>
+                      <div class="cms-blocks-library__header-actions">
+                        <q-toggle
+                          v-model="showArchivedReusableSections"
+                          dense
+                          :label="tr('Show archived', 'Mostrar arquivados')"
+                        />
+                        <q-chip dense square :style="statusChipStyle">
+                          {{ filteredCmsReusableSectionLibrary.length }}/{{ settings.reusableSections.length }}
+                        </q-chip>
+                      </div>
                     </div>
-                    <small class="cms-config-caption">{{ tr('Use Preview in the top bar to open the runtime in a separate tab.', 'Use Preview na barra superior para abrir o runtime em uma nova aba.') }}</small>
+                    <q-separator />
+                    <div class="cms-pages__reusable-list">
+                      <div v-if="filteredCmsReusableSectionLibrary.length === 0" class="cms-block-item__empty">
+                        {{
+                          hasCmsBuilderSearch
+                            ? tr('No reusable section matched the current search.', 'Nenhuma secao reutilizavel corresponde a busca atual.')
+                            : tr('No reusable sections saved yet.', 'Nenhuma secao reutilizavel salva ainda.')
+                        }}
+                      </div>
+                      <article
+                        v-for="reusableSection in filteredCmsReusableSectionLibrary"
+                        :key="reusableSection.id"
+                        class="cms-reusable-block-row"
+                      >
+                        <div class="cms-reusable-block-row__meta">
+                          <div class="cms-blocks-library__header">
+                            <strong>{{ reusableSection.name }}</strong>
+                            <q-chip dense square :style="statusChipStyle">
+                              {{ getCmsReusableSectionUsageCount(reusableSection.id) }} {{ tr('uses', 'usos') }}
+                            </q-chip>
+                          </div>
+                          <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
+                          <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
+                          <small v-if="isCmsArchivedEntity(reusableSection)">{{ tr('Archived', 'Arquivada') }}</small>
+                          <small v-if="isCmsDeprecatedEntity(reusableSection)">
+                            {{
+                              getCmsReplacementLabel(
+                                reusableSection.replacementEntityId,
+                                settings.reusableSections,
+                                section => section.name
+                              )
+                                ? `${tr('Deprecated -> replacement', 'Descontinuado -> substituto')}: ${getCmsReplacementLabel(
+                                  reusableSection.replacementEntityId,
+                                  settings.reusableSections,
+                                  section => section.name
+                                )}`
+                                : tr('Deprecated for new page composition', 'Descontinuado para nova composicao de paginas')
+                            }}
+                          </small>
+                          <small v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.deprecationNote">{{ reusableSection.deprecationNote }}</small>
+                          <small
+                            v-if="isCmsDeprecatedEntity(reusableSection) && getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id)"
+                          >
+                            {{ getCmsReplacementAssistantSummaryLabel('reusable-section', reusableSection.id) }}
+                          </small>
+                          <small>{{ getCmsReusableSectionUsageSummaryLabel(reusableSection.id) }}</small>
+                          <small v-if="reusableSection.description">{{ reusableSection.description }}</small>
+                          <q-select
+                            v-if="isCmsDeprecatedEntity(reusableSection)"
+                            :model-value="reusableSection.replacementEntityId ?? null"
+                            outlined
+                            dense
+                            clearable
+                            emit-value
+                            map-options
+                            :options="getCmsReusableSectionReplacementOptions(reusableSection)"
+                            :label="tr('Replacement section', 'Secao substituta')"
+                            @update:model-value="updateReusableSectionReplacement(reusableSection.id, $event)"
+                          />
+                          <q-input
+                            v-if="isCmsDeprecatedEntity(reusableSection)"
+                            :model-value="reusableSection.deprecationNote ?? ''"
+                            outlined
+                            dense
+                            :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                            @update:model-value="updateReusableSectionDeprecationNote(reusableSection.id, $event)"
+                          />
+                        </div>
+                        <div class="cms-reusable-block-row__actions">
+                          <q-btn
+                            v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.replacementEntityId"
+                            flat
+                            dense
+                            no-caps
+                            icon="published_with_changes"
+                            :label="tr('Apply replacement', 'Aplicar substituto')"
+                            :disable="!getCmsReplacementAssistantSummary('reusable-section', reusableSection.id)?.canApply"
+                            @click="applyCmsDeprecatedReplacement('reusable-section', reusableSection.id)"
+                          />
+                          <q-btn
+                            flat
+                            round
+                            dense
+                            icon="travel_explore"
+                            :aria-label="tr('Inspect reusable section usage', 'Inspecionar uso da secao reutilizavel')"
+                            @click="openCmsUsageDrawer('reusable-section', reusableSection.id, reusableSection.name, reusableSection.description ?? '')"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            :icon="isCmsDeprecatedEntity(reusableSection) ? 'restore_from_trash' : 'history_toggle_off'"
+                            :label="isCmsDeprecatedEntity(reusableSection) ? tr('Reinstate', 'Reativar') : tr('Deprecate', 'Descontinuar')"
+                            :style="isCmsDeprecatedEntity(reusableSection) ? undefined : warningActionStyle"
+                            @click="isCmsDeprecatedEntity(reusableSection) ? undeprecateReusableSection(reusableSection.id) : deprecateReusableSection(reusableSection.id)"
+                          />
+                          <q-btn
+                            flat
+                            dense
+                            no-caps
+                            :icon="isCmsArchivedEntity(reusableSection) ? 'unarchive' : 'archive'"
+                            :label="isCmsArchivedEntity(reusableSection) ? tr('Restore', 'Restaurar') : tr('Archive', 'Arquivar')"
+                            :style="isCmsArchivedEntity(reusableSection) ? undefined : warningActionStyle"
+                            @click="isCmsArchivedEntity(reusableSection) ? unarchiveReusableSection(reusableSection.id) : archiveReusableSection(reusableSection.id)"
+                          />
+                        </div>
+                      </article>
+                    </div>
                   </div>
                   <div class="cms-pages__sidebar-section cms-pages__starter-kits">
                     <div class="cms-pages__quick-starts-header">
@@ -2839,9 +2978,17 @@
             </div>
           </q-card>
 
-          <q-card v-if="cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
+          <q-card v-show="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Pages preview', 'Preview de paginas') }}</strong>
+              <q-btn
+                flat
+                dense
+                no-caps
+                icon="open_in_new"
+                :label="tr('Open in new window', 'Abrir em nova janela')"
+                @click="openCmsDesignerPreviewInWindow('pages')"
+              />
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__preview">
@@ -3090,29 +3237,41 @@
         </div>
 
         <div v-else-if="isBlocksModule" class="cms-shell-page__grid cms-blocks-shell">
-          <q-card flat bordered class="cms-shell-card cms-designer-card cms-designer-card--blocks">
+          <div class="cms-workspace-tabs" role="tablist" :aria-label="tr('Blocks workspace tabs', 'Abas do workspace de blocos')">
+            <button
+              type="button"
+              role="tab"
+              class="cms-workspace-tab"
+              :class="{ 'cms-workspace-tab--active': cmsBlocksWorkspaceView === 'editor' && !cmsDesignerPreviewMode }"
+              :aria-selected="cmsBlocksWorkspaceView === 'editor' && !cmsDesignerPreviewMode ? 'true' : 'false'"
+              @click="cmsDesignerPreviewMode = false; cmsBlocksWorkspaceView = 'editor'"
+            >
+              {{ tr('Editor', 'Editor') }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="cms-workspace-tab"
+              :class="{ 'cms-workspace-tab--active': cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode }"
+              :aria-selected="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode ? 'true' : 'false'"
+              @click="cmsDesignerPreviewMode = false; showCmsDesignerPreview('blocks')"
+            >
+              {{ tr('Preview', 'Preview') }}
+            </button>
+          </div>
+          <q-card v-show="cmsBlocksWorkspaceView === 'editor' && !cmsDesignerPreviewMode" flat bordered class="cms-shell-card cms-designer-card cms-designer-card--blocks">
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
-                  <q-btn dense flat square icon="folder_open" :aria-label="tr('Open blocks workspace', 'Abrir workspace de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')">
-                    <q-tooltip>{{ tr('Open', 'Abrir') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="note_add" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette">
-                    <q-tooltip>{{ tr('New', 'Novo') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="save" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow">
-                    <q-tooltip>{{ cmsUiText.saveLabel }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="undo" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange">
-                    <q-tooltip>{{ tr('Undo', 'Desfazer') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn dense flat square icon="redo" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange">
-                    <q-tooltip>{{ tr('Redo', 'Refazer') }}</q-tooltip>
-                  </q-btn>
+                  <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open blocks workspace', 'Abrir workspace de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')" />
+                  <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette" />
+                  <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
+                  <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange" />
+                  <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
                 </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
-                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="openCmsDesignerPreview('blocks')" />
+                  <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('blocks')" />
                 </div>
               </div>
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
@@ -4101,39 +4260,6 @@
                 </div>
                 <aside class="cms-designer-card__rail cms-blocks__rail">
                   <div class="cms-designer-card__rail-card">
-                    <strong>{{ tr('Preview launch', 'Lancamento do preview') }}</strong>
-                    <small>{{ tr('Tune the preview context here and open the runtime in a new browser tab from the top bar.', 'Ajuste o contexto do preview aqui e abra o runtime em uma nova aba pela barra superior.') }}</small>
-                    <div class="cms-preview-toolbar" :data-cms-preview-source="cmsPreviewSource" :data-cms-preview-viewport="cmsPreviewViewport">
-                      <q-select
-                        v-model="cmsPreviewSource"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="cmsPreviewSourceOptions"
-                        :label="tr('Preview source', 'Origem do preview')"
-                      />
-                      <q-select
-                        v-model="cmsPreviewLocale"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="cmsLocaleOptions"
-                        :label="tr('Preview locale', 'Locale do preview')"
-                      />
-                      <q-select
-                        v-model="cmsPreviewViewport"
-                        outlined
-                        dense
-                        emit-value
-                        map-options
-                        :options="cmsPreviewViewportOptions"
-                        :label="tr('Preview viewport', 'Viewport do preview')"
-                      />
-                    </div>
-                  </div>
-                  <div class="cms-designer-card__rail-card">
                     <strong>{{ tr('Selection rail', 'Rail da selecao') }}</strong>
                     <small>{{ tr('Bulk operations stay attached to the current section contract without repeating top-bar actions.', 'Operacoes em lote ficam anexadas ao contrato da secao atual sem repetir as acoes da barra superior.') }}</small>
                     <div class="cms-designer-card__metrics">
@@ -4164,9 +4290,17 @@
             </div>
           </q-card>
 
-          <q-card v-if="cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
+          <q-card v-show="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Blocks preview', 'Preview de blocos') }}</strong>
+              <q-btn
+                flat
+                dense
+                no-caps
+                icon="open_in_new"
+                :label="tr('Open in new window', 'Abrir em nova janela')"
+                @click="openCmsDesignerPreviewInWindow('blocks')"
+              />
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-blocks__preview">
@@ -7068,6 +7202,9 @@ const cmsPreviewSource = ref<CmsPreviewSource>('draft')
 const cmsPreviewViewport = ref<CmsPreviewViewport>('desktop')
 const cmsPreviewLocale = ref<CmsLocale>(resolveCmsLocale(settings.value.content.locale))
 const cmsDesignerPreviewMode = ref(false)
+const cmsSettingsWorkspaceView = ref<CmsDesignerWorkspaceView>('editor')
+const cmsPagesWorkspaceView = ref<CmsDesignerWorkspaceView>('editor')
+const cmsBlocksWorkspaceView = ref<CmsDesignerWorkspaceView>('editor')
 const cmsPreviewSourceOptions = computed(() => ([
   { label: tr('Draft', 'Rascunho'), value: 'draft' },
   { label: tr('Published', 'Publicado'), value: 'published' },
@@ -9403,6 +9540,7 @@ const cmsAuthoringShellThemeOverrides = computed(() => ({
 const cmsResolvedAuthoringTheme = computed(() => ({
   ...settings.value.theme,
   ...cmsAuthoringShellThemeOverrides.value,
+  workspaceMaxWidth: 'none',
 }))
 
 const shellSnapshot = computed(() => {
@@ -14161,6 +14299,7 @@ function scrollCmsDesignerSurface(selector: string): void {
 }
 
 type CmsDesignerPreviewModule = 'settings' | 'pages' | 'blocks'
+type CmsDesignerWorkspaceView = 'editor' | 'preview'
 
 /**
  * Resolves the preview anchor selector used by one CMS designer module.
@@ -14205,7 +14344,21 @@ function buildCmsDesignerPreviewUrl(module: CmsDesignerPreviewModule): string {
 /**
  * Opens the most relevant preview surface for the current designer module in a dedicated tab.
  */
-function openCmsDesignerPreview(module: CmsDesignerPreviewModule): void {
+function showCmsDesignerPreview(module: CmsDesignerPreviewModule): void {
+  if (module === 'settings') {
+    cmsSettingsWorkspaceView.value = 'preview'
+  } else if (module === 'pages') {
+    cmsPagesWorkspaceView.value = 'preview'
+  } else if (module === 'blocks') {
+    cmsBlocksWorkspaceView.value = 'preview'
+  }
+
+  nextTick(() => {
+    scrollCmsDesignerSurface(getCmsDesignerPreviewSelector(module))
+  })
+}
+
+function openCmsDesignerPreviewInWindow(module: CmsDesignerPreviewModule): void {
   if (typeof window === 'undefined') {
     return
   }
@@ -16386,6 +16539,16 @@ onMounted(async () => {
     return
   }
 
+  if (requestedModule === 'settings') {
+    cmsSettingsWorkspaceView.value = 'preview'
+  }
+  if (requestedModule === 'pages') {
+    cmsPagesWorkspaceView.value = 'preview'
+  }
+  if (requestedModule === 'blocks') {
+    cmsBlocksWorkspaceView.value = 'preview'
+  }
+
   await nextTick()
   scrollCmsDesignerSurface(getCmsDesignerPreviewSelector(
     requestedModule === 'pages' || requestedModule === 'blocks' || requestedModule === 'settings'
@@ -18299,6 +18462,15 @@ function resetToDefaults(): void {
   min-width: 0;
   min-height: 100%;
   width: 100%;
+  background: #f5f8fc;
+}
+
+.cms-shell-page :deep(.ntk-app-shell__workspace-card) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }
 
 .cms-shell-page :deep(.q-field__native),
@@ -18361,6 +18533,14 @@ function resetToDefaults(): void {
   min-height: calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 3)));
   flex: 1 1 auto;
   width: 100%;
+  background: transparent;
+  border-radius: 0;
+}
+
+.cms-shell-page__hero {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ntk-cms-space-xs) * 0.5);
 }
 
 .cms-icon {
@@ -18404,6 +18584,37 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-lg);
 }
 
+.cms-workspace-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  flex-wrap: wrap;
+}
+
+.cms-workspace-tab {
+  min-height: 2rem;
+  padding: 0 var(--ntk-cms-space-md);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ntk-cms-text-secondary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.cms-workspace-tab--active {
+  border-color: color-mix(in srgb, var(--ntk-cms-accent) 55%, white);
+  background: color-mix(in srgb, var(--ntk-cms-accent) 12%, #ffffff);
+  color: var(--ntk-cms-text-primary);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 20%, transparent);
+}
+
 .cms-pages {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -18411,13 +18622,18 @@ function resetToDefaults(): void {
   align-items: stretch;
   min-width: 0;
   width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .cms-blocks-shell {
+  display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   min-width: 0;
   width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .cms-pages__header-actions {
@@ -18460,12 +18676,34 @@ function resetToDefaults(): void {
   gap: var(--ntk-cms-space-sm);
 }
 
+.cms-pages__rail {
+  gap: var(--ntk-cms-space-sm);
+}
+
 .cms-pages__sidebar-section {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-sm);
   padding-top: var(--ntk-cms-space-sm);
   border-top: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
+}
+
+.cms-pages__reusable-library {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border-radius: var(--ntk-cms-radius-lg);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.cms-pages__reusable-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-cms-space-sm);
+  padding: var(--ntk-cms-space-sm);
+  overflow: auto;
 }
 
 .cms-pages__sidebar .cms-pages__quick-start-grid,
@@ -19969,6 +20207,8 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .cms-designer-card {
@@ -19985,6 +20225,7 @@ function resetToDefaults(): void {
     linear-gradient(180deg, #f8fbff 0%, #f1f5fa 100%);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
   min-height: var(--ntk-cms-editor-min-height);
+  flex: 1 1 auto;
 }
 
 .cms-shell-card__header {
@@ -19997,7 +20238,7 @@ function resetToDefaults(): void {
 
 .cms-designer-card__toolbar-header {
   min-height: 3.3rem;
-  padding: calc(var(--ntk-cms-space-xs) * 1.5) var(--ntk-cms-space-md);
+  padding: var(--ntk-cms-space-md) var(--ntk-cms-space-lg);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 249, 253, 0.94) 100%);
   border-bottom: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 75%, white);
@@ -20027,6 +20268,10 @@ function resetToDefaults(): void {
   align-items: center;
   gap: calc(var(--ntk-cms-space-xs) * 0.75);
   min-width: 0;
+}
+
+.cms-designer-card__toolbar-group--icons {
+  flex-wrap: wrap;
 }
 
 .cms-designer-card__toolbar-group--fields {
@@ -20073,10 +20318,11 @@ function resetToDefaults(): void {
 .cms-designer-card__body {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
-  padding: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  gap: 0;
+  padding: 0;
   background: linear-gradient(180deg, #eef3f9 0%, #e7edf5 100%);
   flex: 1 1 auto;
+  min-height: 0;
 }
 
 .cms-designer-card__header-chips {
@@ -20104,7 +20350,12 @@ function resetToDefaults(): void {
 }
 
 .cms-designer-card__toolbar-group :deep(.q-btn) {
-  min-height: 2rem;
+  min-height: 2.25rem;
+}
+
+.cms-designer-card__toolbar-action {
+  padding-inline: var(--ntk-cms-space-sm);
+  font-weight: 600;
 }
 
 .cms-designer-card__toolbar-group :deep(.q-btn-dropdown) {
@@ -20122,20 +20373,20 @@ function resetToDefaults(): void {
 
 .cms-designer-card__workbench {
   display: grid;
-  grid-template-columns: minmax(220px, 0.24fr) minmax(0, 1fr) minmax(220px, 0.24fr);
-  gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
-  min-height: var(--ntk-cms-editor-min-height);
+  grid-template-columns: 18rem minmax(0, 1fr) 18rem;
+  gap: 0;
+  min-height: 0;
   max-height: none;
   align-items: stretch;
   flex: 1 1 auto;
 }
 
 .cms-designer-card__workbench--pages {
-  grid-template-columns: minmax(260px, 0.24fr) minmax(0, 1fr) minmax(280px, 0.28fr);
+  grid-template-columns: 20rem minmax(0, 1fr) 22rem;
 }
 
 .cms-designer-card__workbench--blocks {
-  grid-template-columns: minmax(220px, 0.22fr) minmax(0, 1fr) minmax(220px, 0.2fr);
+  grid-template-columns: 18rem minmax(0, 1fr) 18rem;
 }
 
 .cms-designer-card__sidebar,
@@ -20144,11 +20395,9 @@ function resetToDefaults(): void {
   min-width: 0;
   min-height: 0;
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
-  border-radius: var(--ntk-cms-radius-lg);
+  border-radius: 0;
   background: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: none;
 }
 
 .cms-designer-card__sidebar,
@@ -20156,9 +20405,9 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
-  padding: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  padding: var(--ntk-cms-space-md);
   overflow: auto;
-  background: #f8fafc;
+  background: #f7f9fc;
 }
 
 .cms-pages__rail .cms-preview-toolbar,
@@ -20175,7 +20424,7 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
-  padding: var(--ntk-cms-space-md);
+  padding: var(--ntk-cms-space-lg);
   overflow: auto;
   background:
     linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
@@ -20191,8 +20440,10 @@ function resetToDefaults(): void {
 .cms-designer-card__ruler-shell {
   display: grid;
   grid-template-columns: minmax(220px, 0.24fr) minmax(0, 1fr) minmax(220px, 0.24fr);
-  gap: calc(var(--ntk-cms-space-sm) + 0.125rem);
+  gap: 0;
   align-items: center;
+  padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-lg);
+  border-bottom: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
 }
 
 .cms-designer-card__ruler-shell--pages,
@@ -20246,7 +20497,7 @@ function resetToDefaults(): void {
   gap: 0;
   padding: calc(var(--ntk-cms-space-xs) * 0.75) var(--ntk-cms-space-sm) calc(var(--ntk-cms-space-xs) * 0.6);
   border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
-  border-radius: var(--ntk-cms-radius-lg);
+  border-radius: var(--ntk-cms-radius-md);
   background:
     repeating-linear-gradient(to right, rgba(148, 163, 184, 0.14) 0, rgba(148, 163, 184, 0.14) 1px, transparent 1px, transparent calc(100% / 17)),
     linear-gradient(180deg, #ffffff 0%, #f3f6fb 100%);
@@ -20348,7 +20599,9 @@ function resetToDefaults(): void {
   flex-wrap: wrap;
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-md);
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
-  border-radius: var(--ntk-cms-radius-lg);
+  border-radius: 0;
+  border-inline: 0;
+  border-bottom: 0;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(239, 244, 250, 0.94) 100%);
 }
@@ -20356,6 +20609,18 @@ function resetToDefaults(): void {
 .cms-settings {
   display: flex;
   flex-direction: column;
+  gap: var(--ntk-cms-space-lg);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cms-settings__preview {
+  background: linear-gradient(180deg, #eef3f9 0%, #e7edf5 100%);
+}
+
+.cms-settings__preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--ntk-cms-space-lg);
 }
 
@@ -21601,6 +21866,10 @@ function resetToDefaults(): void {
 
 .cms-shell-page--md-compact .cms-toolbar-card__separator {
   display: none;
+}
+
+.cms-shell-page--md-compact .cms-settings__preview-grid {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .cms-shell-page--md-compact .cms-toolbar-card__saved-at {
