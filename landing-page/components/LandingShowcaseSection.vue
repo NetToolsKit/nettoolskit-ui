@@ -1,36 +1,37 @@
 <template>
-  <section id="components" class="showcase">
-    <div class="container">
-      <div class="section-header">
-        <h2>{{ t('showcase.title') }}</h2>
-        <p>{{ t('showcase.subtitle') }}</p>
-      </div>
+  <NtkSection id="components" class="showcase" variant="light" size="lg">
+    <template #header>
+      <NtkSectionHeader
+        :title="t('showcase.title')"
+        :subtitle="t('showcase.subtitle')"
+        spacing="lg"
+      />
+    </template>
 
-      <div class="component-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          class="tab-btn"
-          :class="{ active: activeTab === tab.id }"
-          @click="$emit('update:active-tab', tab.id)"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
-
-      <div
+    <div class="component-tabs">
+      <button
         v-for="tab in tabs"
-        v-show="activeTab === tab.id"
-        :key="`grid-${tab.id}`"
-        class="component-grid"
+        :key="tab.id"
+        class="tab-btn"
+        :class="{ active: activeTab === tab.id }"
+        @click="$emit('update:active-tab', tab.id)"
       >
-        <div v-for="item in showcaseItems[tab.id] ?? []" :key="`${tab.id}-${item.name}`" class="component-item">
-          <code>{{ item.name }}</code>
-          <p>{{ item.description }}</p>
-        </div>
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <div
+      v-for="tab in tabs"
+      v-show="activeTab === tab.id"
+      :key="`grid-${tab.id}`"
+      class="component-grid"
+    >
+      <div v-for="item in showcaseItems[tab.id] ?? []" :key="`${tab.id}-${item.name}`" class="component-item">
+        <code>{{ item.name }}</code>
+        <p>{{ item.description }}</p>
       </div>
     </div>
-  </section>
+  </NtkSection>
 </template>
 
 <script setup lang="ts">
@@ -38,6 +39,8 @@
  * Landing page/components/Landing Showcase Section module.
  */
 import { computed } from 'vue'
+import NtkSection from '../../src/components/layout/NtkSection.vue'
+import NtkSectionHeader from '../../src/components/ui/NtkSectionHeader.vue'
 import { useLandingI18n } from '../composables/useLandingI18n'
 
 interface TabItem {

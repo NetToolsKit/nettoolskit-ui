@@ -46,7 +46,7 @@ Out of scope:
    - migrate `LandingHeroSection` to `NtkHero`
    - preserve existing copy, highlight treatment, CTA links, stats and hero media
 
-3. Normalize landing structure [Pending]
+3. Normalize landing structure [In Progress]
    - reduce custom container duplication in `App.vue` and section wrappers
    - keep the new landing content order and section list intact
 
@@ -58,7 +58,8 @@ Out of scope:
 
 - `2026-03-18`: `LandingHeaderSection.vue` was rebuilt on top of `NtkLandingHeader`, keeping the existing nav labels, theme toggle, locale toggle, GitHub CTA and mobile drawer behavior.
 - `2026-03-18`: `LandingHeroSection.vue` was rebuilt on top of `NtkHero`, preserving the current hero copy, highlight, CTAs, stats and media asset while keeping the landing animation hooks intact.
-- Remaining standardization debt is now concentrated in `landing-page/App.vue` global CSS and the custom section wrappers after the hero (`features`, `showcase`, `developer`, `dashboard`, `themes`, `installation`, `footer`).
+- `2026-03-18`: `LandingFeaturesSection.vue` and `LandingShowcaseSection.vue` were moved to `NtkSection`/`NtkSectionHeader`, removing duplicated outer section/container/header shells while preserving their current content and CSS contracts.
+- Remaining standardization debt is now concentrated in `landing-page/App.vue` global CSS and the remaining custom section wrappers after the showcase (`developer`, `dashboard`, `themes`, `installation`, `footer`).
 
 ## Validation
 

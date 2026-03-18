@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Landing header and hero standardized on shared landing primitives**
   - Rebuilt `landing-page/components/LandingHeaderSection.vue` on top of `NtkLandingHeader`, preserving the existing navigation labels, GitHub CTA, theme toggle, locale toggle and mobile drawer flow while removing the previous standalone header shell.
   - Rebuilt `landing-page/components/LandingHeroSection.vue` on top of `NtkHero`, preserving the current copy, highlight treatment, CTA links, stats and hero media while keeping the landing animation hooks intact.
+  - Rebuilt `landing-page/components/LandingFeaturesSection.vue` and `landing-page/components/LandingShowcaseSection.vue` on top of `NtkSection` and `NtkSectionHeader`, removing duplicated outer section/container/header shells while preserving the current content order and interactive tabs.
   - Simplified `landing-page/App.vue` by removing the old custom mobile-drawer state/handlers and retargeting the landing reveal blueprints to the shared hero markup.
   - Revalidated `npm run type-check`, `npm run lint` and `npm run build:landing` after the landing standardization slice.
 - **CMS authoring workspace layout cleanup aligned with `layout-cms.md`**
