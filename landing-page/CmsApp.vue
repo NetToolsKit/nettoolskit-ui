@@ -10316,6 +10316,8 @@ function getReleaseChecklistItemLabel(itemId: CmsReleaseCandidateChecklistItemId
       return tr('Publish permissions', 'Permissoes de publicacao')
     case 'content_integrity':
       return tr('Content integrity', 'Integridade do conteudo')
+    case 'content_qa':
+      return tr('Accessibility and content QA', 'Acessibilidade e QA de conteudo')
     case 'brand_assets':
       return tr('Brand assets', 'Assets da marca')
     default:
@@ -10382,6 +10384,11 @@ function getReleaseChecklistItemDescription(item: CmsReleaseCandidateChecklistIt
       return tr(
         'Aggregates page, section, block, schema and reference diagnostics from the release snapshot.',
         'Agrupa diagnosticos de paginas, secoes, blocos, schema e referencias do snapshot do release.'
+      )
+    case 'content_qa':
+      return tr(
+        'Highlights editorial and accessibility gaps such as missing page summaries and image alt text.',
+        'Destaca lacunas editoriais e de acessibilidade, como resumos de pagina ausentes e texto alternativo de imagem.'
       )
     case 'brand_assets':
       return item.environment === 'production'
@@ -10464,6 +10471,10 @@ function getReleaseChecklistDrilldownLabel(action: CmsReleaseChecklistDrilldownA
 
   if (action.target === 'content') {
     return tr('Open Content', 'Abrir conteudo')
+  }
+
+  if (action.target === 'media') {
+    return tr('Open Media', 'Abrir midia')
   }
 
   if (action.target === 'releases') {
@@ -14362,6 +14373,13 @@ function openPagesModule(): void {
 }
 
 /**
+ * Switches the shell to the Media module.
+ */
+function openMediaModule(): void {
+  activeMenuId.value = mediaModuleId.value
+}
+
+/**
  * Switches to Settings and focuses a specific authoring tab.
  */
 function openSettingsTabById(
@@ -14509,6 +14527,9 @@ function runReleaseChecklistDrilldown(action: CmsReleaseChecklistDrilldownAction
         return
       }
       openPagesModule()
+      return
+    case 'media':
+      openMediaModule()
       return
     case 'releases':
     default:

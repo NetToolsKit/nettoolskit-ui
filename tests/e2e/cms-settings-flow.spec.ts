@@ -3172,6 +3172,33 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
   })
 
+  test('surfaces accessibility and content QA findings in the release checklist', async ({ page }) => {
+    await page.goto('/?cms=1')
+
+    await openDrawerModule(page, /^Pages$/)
+    const firstPage = page.locator('.cms-page-item').first()
+    const pageDescriptionInput = firstPage
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Description|Descricao)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    await fillTextInput(pageDescriptionInput, '')
+
+    await openDrawerModule(page, /^Releases$/)
+    const releasesEditor = page.locator('.cms-releases__editor').first()
+    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+
+    const checklist = page.locator('.cms-release-checklist').first()
+    const contentQaItem = checklist.locator('[data-cms-checklist-item="content_qa"]').first()
+
+    await expect(contentQaItem).toHaveAttribute('data-cms-checklist-status', 'warning')
+    await expect(contentQaItem).toContainText(/Accessibility and content QA|Acessibilidade e QA de conteudo/)
+    await expect(contentQaItem).toContainText(/missing a description|descricao/)
+    await contentQaItem.getByRole('button', { name: /^(Open Pages|Abrir paginas)/ }).first().click()
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
+  })
+
   test('surfaces a unified release review hub in Releases', async ({ page }) => {
     await page.goto('/?cms=1')
     await openDrawerModule(page, /^Releases$/)

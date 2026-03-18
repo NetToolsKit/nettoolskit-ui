@@ -110,4 +110,30 @@ describe('cms.release-checklist-drilldown', () => {
     expect(actions).toHaveLength(3)
     expect(actions.every(action => action.target === 'releases')).toBe(true)
   })
+
+  it('routes content qa media issues to the Media module', () => {
+    const item = {
+      id: 'content_qa',
+      status: 'warning',
+      issueCount: 1,
+      issues: [
+        {
+          code: 'a11y.media.alt.missing',
+          severity: 'warning',
+          path: 'mediaAssets.asset-1.alt',
+          message: 'Image asset alt is missing.',
+        },
+      ],
+    } as CmsReleaseCandidateChecklistItem
+
+    const actions = resolveCmsReleaseChecklistDrilldownActions(item)
+
+    expect(actions).toEqual([
+      expect.objectContaining({
+        checklistItemId: 'content_qa',
+        target: 'media',
+        issueCode: 'a11y.media.alt.missing',
+      }),
+    ])
+  })
 })

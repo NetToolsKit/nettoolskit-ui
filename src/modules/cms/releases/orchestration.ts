@@ -21,6 +21,7 @@ import type {
   CmsWhiteLabelWorkflowStatus,
 } from '../white-label/types'
 import { validateCmsContentPages } from '../white-label/content-validation'
+import { validateCmsContentQa } from '../white-label/content-qa'
 
 /**
  * Persisted schema version for release settings payloads.
@@ -204,6 +205,7 @@ export type CmsReleaseCandidateChecklistItemId =
   | 'workflow'
   | 'permissions'
   | 'content_integrity'
+  | 'content_qa'
   | 'brand_assets'
 
 /**
@@ -411,8 +413,14 @@ export function buildCmsReleaseCandidateChecklist(
   const permissionIssues = gateIssues.filter(issue => issue.code === 'permissions.publish.denied')
   const workflowIssues = gateIssues.filter(issue => issue.code === 'workflow.status.not_ready')
   const brandAssetIssues = gateIssues.filter(issue => issue.code.startsWith('assets.'))
+  const contentQaIssues = gateIssues.filter(issue => issue.code.startsWith('a11y.') || issue.code.startsWith('quality.'))
   const contentIssues = gateIssues.filter(issue => {
-    if (permissionIssues.includes(issue) || workflowIssues.includes(issue) || brandAssetIssues.includes(issue)) {
+    if (
+      permissionIssues.includes(issue)
+      || workflowIssues.includes(issue)
+      || brandAssetIssues.includes(issue)
+      || contentQaIssues.includes(issue)
+    ) {
       return false
     }
     return true
@@ -511,6 +519,12 @@ export function buildCmsReleaseCandidateChecklist(
       status: resolveChecklistStatusFromIssues(contentIssues),
       issueCount: contentIssues.length,
       issues: contentIssues,
+    },
+    {
+      id: 'content_qa',
+      status: resolveChecklistStatusFromIssues(contentQaIssues),
+      issueCount: contentQaIssues.length,
+      issues: contentQaIssues,
     },
     {
       id: 'brand_assets',
@@ -816,6 +830,9 @@ export function validateCmsReleaseSnapshot(snapshot: CmsReleaseSnapshot, at?: st
     message: issue.message,
     path: issue.path,
   })))
+
+  const contentQa = validateCmsContentQa(snapshot, generatedAt)
+  issues.push(...contentQa.issues)
 
   const moduleIds = new Set(snapshot.items.map(item => String(item.id ?? '').trim()))
   for (const requiredModuleId of REQUIRED_MODULE_IDS) {

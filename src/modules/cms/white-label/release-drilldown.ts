@@ -6,6 +6,7 @@ export type CmsReleaseChecklistDrilldownTarget =
   | 'content'
   | 'pages'
   | 'blocks'
+  | 'media'
   | 'releases'
 
 export interface CmsReleaseChecklistDrilldownAction {
@@ -68,6 +69,10 @@ function resolveCmsReleaseChecklistDrilldownTarget(
     return 'branding'
   }
 
+  if (issuePath.startsWith('mediaAssets.')) {
+    return 'media'
+  }
+
   if (issuePath.startsWith('reusableSections.')) {
     return 'pages'
   }
@@ -90,7 +95,7 @@ function resolveCmsReleaseChecklistDrilldownTarget(
       : 'pages'
   }
 
-  if (item.id === 'content_integrity') {
+  if (item.id === 'content_integrity' || item.id === 'content_qa') {
     return 'pages'
   }
 

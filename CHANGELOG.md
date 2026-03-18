@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Accessibility and content QA gates for release review**
+  - Added an engine-level content QA helper that evaluates release snapshots for editorial quality and accessibility gaps, including missing/weak page descriptions, empty authored pages and image assets without usable alt text.
+  - Integrated the new QA diagnostics into release snapshot validation and the release candidate checklist through a dedicated `Accessibility and content QA` row, keeping schema/reference integrity separate from editorial/a11y review.
+  - Extended checklist drill-down routing so QA issues can open `Pages` or `Media` directly from the `Releases` module.
+  - Added focused unit coverage for the QA helper, checklist integration and drill-down routing, plus focused Playwright coverage proving QA findings surface in the release checklist and navigate back to authoring.
+  - Revalidated `type-check`, `lint`, `build:landing`, focused CMS unit suites, focused release checklist E2E coverage and `npm audit --omit=dev`.
 - **Provider sync, conflict and version contracts for backend-oriented CMS persistence**
   - Added revision-aware provider document contracts for the `content`, `assets` and `releases` domains, including version metadata, optimistic save requests and typed conflict payloads.
   - Added engine helpers to load, hydrate and save revisioned provider documents across all CMS domains without changing the aggregate authoring settings contract.
