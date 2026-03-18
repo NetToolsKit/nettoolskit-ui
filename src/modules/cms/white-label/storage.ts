@@ -29,6 +29,10 @@ import {
   applyCmsAssetRepositorySnapshot,
   applyCmsContentRepositorySnapshot,
   applyCmsReleaseRepositorySnapshot,
+  cmsProviderSyncRequestMatchesDocument,
+  createCmsProviderSyncConflict,
+  createCmsProviderSyncDocument,
+  createNextCmsProviderSyncDocument,
   createCmsAssetRepositorySnapshot,
   createCmsContentRepositorySnapshot,
   createCmsReleaseRepositorySnapshot,
@@ -41,12 +45,18 @@ import {
   type CmsAsyncAssetRepositoryProvider,
   type CmsAsyncContentRepositoryProvider,
   type CmsAsyncEngineProviders,
+  type CmsAsyncEngineSyncProviders,
   type CmsAsyncReleaseRepositoryProvider,
+  type CmsAsyncAssetSyncRepositoryProvider,
+  type CmsAsyncContentSyncRepositoryProvider,
+  type CmsAsyncReleaseSyncRepositoryProvider,
   type CmsContentRepositoryProvider,
   type CmsAssetRepositorySnapshot,
   type CmsContentRepositorySnapshot,
   type CmsPersistenceOptions,
   type CmsEngineProviders,
+  type CmsProviderSyncDomain,
+  type CmsProviderSyncVersion,
   type CmsReleaseRepositoryProvider,
   type CmsReleaseRepositorySnapshot,
 } from './providers'
@@ -80,7 +90,11 @@ const REQUIRED_CMS_ITEM_IDS = new Set(['settings', 'pages', 'blocks', 'media', '
 const COMPAT_PAGE_BACKGROUND_TOKEN = 'var(--ntk-bg-primary)'
 const COMPAT_SURFACE_BACKGROUND_TOKEN = 'var(--ntk-bg-card)'
 const CMS_WHITE_LABEL_SETTINGS_SCHEMA_VERSION = 10
+const CMS_PROVIDER_SYNC_STATE_STORAGE_KEY = `${CMS_WHITE_LABEL_STORAGE_KEY}:provider-sync`
+const CMS_PROVIDER_SYNC_STATE_STORAGE_VERSION = 1
 const THEME_RUNTIME_TOKEN_PATTERN = /^var\(--ntk-(text|bg|border)-/i
+
+type CmsProviderSyncState = Partial<Record<CmsProviderSyncDomain, CmsProviderSyncVersion>>
 
 type ThemeReadablePair = {
   foreground: keyof AppShellTheme
@@ -319,6 +333,82 @@ function resolveStoredSchemaVersion(value: unknown, fallback: number): number {
  */
 function isBrowserRuntime(): boolean {
   return typeof window !== 'undefined' && typeof document !== 'undefined'
+}
+
+/**
+ * Reads provider sync metadata used by optimistic-concurrency storage adapters.
+ */
+function loadCmsProviderSyncState(options: CmsPersistenceOptions = {}): CmsProviderSyncState {
+  const store = resolveCmsPersistenceStore(options.store)
+  if (!store) {
+    return {}
+  }
+
+  const rawValue = store.getItem(CMS_PROVIDER_SYNC_STATE_STORAGE_KEY)
+  if (!rawValue) {
+    return {}
+  }
+
+  try {
+    const parsed = JSON.parse(rawValue) as unknown
+    if (!parsed || typeof parsed !== 'object') {
+      return {}
+    }
+
+    const root = parsed as Record<string, unknown>
+    const version = Number.parseInt(String(root.version ?? ''), 10)
+    if (Number.isFinite(version) && version > CMS_PROVIDER_SYNC_STATE_STORAGE_VERSION) {
+      return {}
+    }
+
+    const domains = root.domains
+    if (!domains || typeof domains !== 'object') {
+      return {}
+    }
+
+    const state: CmsProviderSyncState = {}
+    for (const domain of ['content', 'assets', 'releases'] as const) {
+      const entry = (domains as Record<string, unknown>)[domain]
+      if (!entry || typeof entry !== 'object') {
+        continue
+      }
+
+      const rawEntry = entry as Record<string, unknown>
+      state[domain] = {
+        revision: typeof rawEntry.revision === 'string' && rawEntry.revision.trim().length > 0
+          ? rawEntry.revision.trim()
+          : null,
+        version: Number.isFinite(rawEntry.version)
+          ? Math.max(0, Math.floor(Number(rawEntry.version)))
+          : 0,
+        updatedAt: typeof rawEntry.updatedAt === 'string' && rawEntry.updatedAt.trim().length > 0
+          ? rawEntry.updatedAt.trim()
+          : null,
+      }
+    }
+
+    return state
+  } catch {
+    return {}
+  }
+}
+
+/**
+ * Persists provider sync metadata used by optimistic-concurrency storage adapters.
+ */
+function saveCmsProviderSyncState(
+  state: CmsProviderSyncState,
+  options: CmsPersistenceOptions = {}
+): void {
+  const store = resolveCmsPersistenceStore(options.store)
+  if (!store) {
+    return
+  }
+
+  store.setItem(CMS_PROVIDER_SYNC_STATE_STORAGE_KEY, JSON.stringify({
+    version: CMS_PROVIDER_SYNC_STATE_STORAGE_VERSION,
+    domains: state,
+  }))
 }
 
 /**
@@ -1025,6 +1115,142 @@ export function createCmsAsyncStorageEngineProviders(
 }
 
 /**
+ * Creates a sync-capable content repository adapter backed by current storage metadata.
+ */
+export function createCmsAsyncStorageContentSyncRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncContentSyncRepositoryProvider {
+  return {
+    async loadContentDocument() {
+      const snapshot = loadCmsContentRepositorySnapshot(options)
+      const version = loadCmsProviderSyncState(options).content
+      return createCmsProviderSyncDocument(snapshot, version)
+    },
+    async saveContentDocument(request) {
+      const snapshot = loadCmsContentRepositorySnapshot(options)
+      const current = createCmsProviderSyncDocument(snapshot, loadCmsProviderSyncState(options).content)
+      if (!cmsProviderSyncRequestMatchesDocument(request, current)) {
+        return {
+          ok: false,
+          conflict: createCmsProviderSyncConflict('content', request, current),
+        }
+      }
+
+      saveCmsContentRepositorySnapshot(request.snapshot, options)
+      const nextDocument = createNextCmsProviderSyncDocument('content', request.snapshot, current)
+      saveCmsProviderSyncState({
+        ...loadCmsProviderSyncState(options),
+        content: {
+          revision: nextDocument.revision,
+          version: nextDocument.version,
+          updatedAt: nextDocument.updatedAt,
+        },
+      }, options)
+
+      return {
+        ok: true,
+        document: nextDocument,
+      }
+    },
+  }
+}
+
+/**
+ * Creates a sync-capable asset repository adapter backed by current storage metadata.
+ */
+export function createCmsAsyncStorageAssetSyncRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncAssetSyncRepositoryProvider {
+  return {
+    async loadAssetDocument() {
+      const snapshot = loadCmsAssetRepositorySnapshot(options)
+      const version = loadCmsProviderSyncState(options).assets
+      return createCmsProviderSyncDocument(snapshot, version)
+    },
+    async saveAssetDocument(request) {
+      const snapshot = loadCmsAssetRepositorySnapshot(options)
+      const current = createCmsProviderSyncDocument(snapshot, loadCmsProviderSyncState(options).assets)
+      if (!cmsProviderSyncRequestMatchesDocument(request, current)) {
+        return {
+          ok: false,
+          conflict: createCmsProviderSyncConflict('assets', request, current),
+        }
+      }
+
+      saveCmsAssetRepositorySnapshot(request.snapshot, options)
+      const nextDocument = createNextCmsProviderSyncDocument('assets', request.snapshot, current)
+      saveCmsProviderSyncState({
+        ...loadCmsProviderSyncState(options),
+        assets: {
+          revision: nextDocument.revision,
+          version: nextDocument.version,
+          updatedAt: nextDocument.updatedAt,
+        },
+      }, options)
+
+      return {
+        ok: true,
+        document: nextDocument,
+      }
+    },
+  }
+}
+
+/**
+ * Creates a sync-capable release repository adapter backed by current storage metadata.
+ */
+export function createCmsAsyncStorageReleaseSyncRepositoryProvider(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncReleaseSyncRepositoryProvider {
+  return {
+    async loadReleaseDocument() {
+      const snapshot = loadCmsReleaseRepositorySnapshot(options)
+      const version = loadCmsProviderSyncState(options).releases
+      return createCmsProviderSyncDocument(snapshot, version)
+    },
+    async saveReleaseDocument(request) {
+      const snapshot = loadCmsReleaseRepositorySnapshot(options)
+      const current = createCmsProviderSyncDocument(snapshot, loadCmsProviderSyncState(options).releases)
+      if (!cmsProviderSyncRequestMatchesDocument(request, current)) {
+        return {
+          ok: false,
+          conflict: createCmsProviderSyncConflict('releases', request, current),
+        }
+      }
+
+      saveCmsReleaseRepositorySnapshot(request.snapshot, options)
+      const nextDocument = createNextCmsProviderSyncDocument('releases', request.snapshot, current)
+      saveCmsProviderSyncState({
+        ...loadCmsProviderSyncState(options),
+        releases: {
+          revision: nextDocument.revision,
+          version: nextDocument.version,
+          updatedAt: nextDocument.updatedAt,
+        },
+      }, options)
+
+      return {
+        ok: true,
+        document: nextDocument,
+      }
+    },
+  }
+}
+
+/**
+ * Creates the promise-native storage-backed sync provider bundle used by backend-oriented integration tests.
+ */
+export function createCmsAsyncStorageEngineSyncProviders(
+  options: CmsPersistenceOptions = {}
+): CmsAsyncEngineSyncProviders {
+  return {
+    contentRepository: createCmsAsyncStorageContentSyncRepositoryProvider(options),
+    assetRepository: createCmsAsyncStorageAssetSyncRepositoryProvider(options),
+    releaseRepository: createCmsAsyncStorageReleaseSyncRepositoryProvider(options),
+  }
+}
+
+/**
  * Clears persisted settings through the active persistence provider and returns current defaults.
  */
 export function resetCmsWhiteLabelSettings(options: CmsPersistenceOptions = {}): CmsWhiteLabelSettings {
@@ -1032,6 +1258,7 @@ export function resetCmsWhiteLabelSettings(options: CmsPersistenceOptions = {}):
   const store = resolveCmsPersistenceStore(options.store)
   if (store) {
     store.removeItem(CMS_WHITE_LABEL_STORAGE_KEY)
+    store.removeItem(CMS_PROVIDER_SYNC_STATE_STORAGE_KEY)
   }
 
   return defaults

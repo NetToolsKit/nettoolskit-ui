@@ -108,6 +108,83 @@ export interface CmsEngineProviderSnapshots {
 }
 
 /**
+ * Repository domains that can be synchronized independently against backend persistence.
+ */
+export type CmsProviderSyncDomain = 'content' | 'assets' | 'releases'
+
+/**
+ * Version metadata associated with one persisted repository domain.
+ * Version starts at 0 for unsynchronized local state and increments after each successful save.
+ */
+export interface CmsProviderSyncVersion {
+  revision: string | null
+  version: number
+  updatedAt: string | null
+}
+
+/**
+ * Versioned repository document used by optimistic-concurrency flows.
+ */
+export interface CmsProviderSyncDocument<TSnapshot> extends CmsProviderSyncVersion {
+  snapshot: TSnapshot
+}
+
+export type CmsContentRepositorySyncDocument = CmsProviderSyncDocument<CmsContentRepositorySnapshot>
+export type CmsAssetRepositorySyncDocument = CmsProviderSyncDocument<CmsAssetRepositorySnapshot>
+export type CmsReleaseRepositorySyncDocument = CmsProviderSyncDocument<CmsReleaseRepositorySnapshot>
+
+/**
+ * Aggregate document bundle used by backend-aware sync helpers.
+ */
+export interface CmsEngineProviderSyncDocuments {
+  content: CmsContentRepositorySyncDocument
+  assets: CmsAssetRepositorySyncDocument
+  releases: CmsReleaseRepositorySyncDocument
+}
+
+/**
+ * Save request carrying optimistic concurrency expectations for one repository domain.
+ */
+export interface CmsProviderSyncSaveRequest<TSnapshot> {
+  snapshot: TSnapshot
+  expectedRevision?: string | null
+  expectedVersion?: number | null
+}
+
+/**
+ * Conflict payload returned when a provider rejects a stale save attempt.
+ */
+export interface CmsProviderSyncConflict<TSnapshot> {
+  domain: CmsProviderSyncDomain
+  expectedRevision: string | null
+  expectedVersion: number | null
+  current: CmsProviderSyncDocument<TSnapshot> | null
+  reason: 'revision_mismatch' | 'version_mismatch'
+}
+
+/**
+ * Save result for one optimistic repository write.
+ */
+export type CmsProviderSyncSaveResult<TSnapshot> =
+  | {
+    ok: true
+    document: CmsProviderSyncDocument<TSnapshot>
+  }
+  | {
+    ok: false
+    conflict: CmsProviderSyncConflict<TSnapshot>
+  }
+
+/**
+ * Aggregate save report across all provider domains.
+ */
+export interface CmsEngineProviderSyncSaveReport {
+  content?: CmsProviderSyncSaveResult<CmsContentRepositorySnapshot>
+  assets?: CmsProviderSyncSaveResult<CmsAssetRepositorySnapshot>
+  releases?: CmsProviderSyncSaveResult<CmsReleaseRepositorySnapshot>
+}
+
+/**
  * Contract used by external content repositories.
  * Implementations can persist to APIs, IndexedDB, filesystem or server caches without changing the engine.
  */
@@ -175,10 +252,144 @@ export interface CmsAsyncEngineProviders {
 }
 
 /**
+ * Promise-native content repository contract with optimistic concurrency semantics.
+ */
+export interface CmsAsyncContentSyncRepositoryProvider {
+  loadContentDocument(): Promise<CmsContentRepositorySyncDocument | null>
+  saveContentDocument(
+    request: CmsProviderSyncSaveRequest<CmsContentRepositorySnapshot>
+  ): Promise<CmsProviderSyncSaveResult<CmsContentRepositorySnapshot>>
+}
+
+/**
+ * Promise-native asset repository contract with optimistic concurrency semantics.
+ */
+export interface CmsAsyncAssetSyncRepositoryProvider {
+  loadAssetDocument(): Promise<CmsAssetRepositorySyncDocument | null>
+  saveAssetDocument(
+    request: CmsProviderSyncSaveRequest<CmsAssetRepositorySnapshot>
+  ): Promise<CmsProviderSyncSaveResult<CmsAssetRepositorySnapshot>>
+}
+
+/**
+ * Promise-native release repository contract with optimistic concurrency semantics.
+ */
+export interface CmsAsyncReleaseSyncRepositoryProvider {
+  loadReleaseDocument(): Promise<CmsReleaseRepositorySyncDocument | null>
+  saveReleaseDocument(
+    request: CmsProviderSyncSaveRequest<CmsReleaseRepositorySnapshot>
+  ): Promise<CmsProviderSyncSaveResult<CmsReleaseRepositorySnapshot>>
+}
+
+/**
+ * Aggregate sync-capable provider bundle used by backend integrations that need revision safety.
+ */
+export interface CmsAsyncEngineSyncProviders {
+  contentRepository?: CmsAsyncContentSyncRepositoryProvider | null
+  assetRepository?: CmsAsyncAssetSyncRepositoryProvider | null
+  releaseRepository?: CmsAsyncReleaseSyncRepositoryProvider | null
+}
+
+/**
  * Normalizes a sync-or-async provider result into a promise.
  */
 export function resolveCmsProviderResult<T>(result: CmsProviderResult<T>): Promise<T> {
   return Promise.resolve(result)
+}
+
+/**
+ * Creates a normalized sync document envelope for one repository domain.
+ */
+export function createCmsProviderSyncDocument<TSnapshot>(
+  snapshot: TSnapshot,
+  version: Partial<CmsProviderSyncVersion> = {}
+): CmsProviderSyncDocument<TSnapshot> {
+  const normalizedVersion = Number.isFinite(version.version)
+    ? Math.max(0, Math.floor(Number(version.version)))
+    : 0
+
+  return {
+    snapshot: cloneValue(snapshot),
+    revision: typeof version.revision === 'string' && version.revision.trim().length > 0
+      ? version.revision.trim()
+      : null,
+    version: normalizedVersion,
+    updatedAt: typeof version.updatedAt === 'string' && version.updatedAt.trim().length > 0
+      ? version.updatedAt.trim()
+      : null,
+  }
+}
+
+/**
+ * Creates the next sync document version after a successful save.
+ */
+export function createNextCmsProviderSyncDocument<TSnapshot>(
+  domain: CmsProviderSyncDomain,
+  snapshot: TSnapshot,
+  previous?: CmsProviderSyncDocument<TSnapshot> | null,
+  at = new Date().toISOString()
+): CmsProviderSyncDocument<TSnapshot> {
+  const nextVersion = Number.isFinite(previous?.version)
+    ? Math.max(0, Number(previous?.version)) + 1
+    : 1
+  const normalizedAt = String(at ?? '').trim() || new Date().toISOString()
+
+  return createCmsProviderSyncDocument(snapshot, {
+    revision: `${domain}-v${nextVersion}-${normalizedAt.replace(/[^0-9a-z]/gi, '').toLowerCase()}`,
+    version: nextVersion,
+    updatedAt: normalizedAt,
+  })
+}
+
+/**
+ * Builds a typed optimistic concurrency conflict payload.
+ */
+export function createCmsProviderSyncConflict<TSnapshot>(
+  domain: CmsProviderSyncDomain,
+  request: CmsProviderSyncSaveRequest<TSnapshot>,
+  current: CmsProviderSyncDocument<TSnapshot> | null
+): CmsProviderSyncConflict<TSnapshot> {
+  const expectedVersion = Number.isFinite(request.expectedVersion)
+    ? Math.max(0, Math.floor(Number(request.expectedVersion)))
+    : null
+  const normalizedExpectedRevision = typeof request.expectedRevision === 'string' && request.expectedRevision.trim().length > 0
+    ? request.expectedRevision.trim()
+    : null
+
+  return {
+    domain,
+    expectedRevision: normalizedExpectedRevision,
+    expectedVersion,
+    current: current ? createCmsProviderSyncDocument(current.snapshot, current) : null,
+    reason: normalizedExpectedRevision !== (current?.revision ?? null)
+      ? 'revision_mismatch'
+      : 'version_mismatch',
+  }
+}
+
+/**
+ * Checks whether a save request still matches the current persisted document revision.
+ */
+export function cmsProviderSyncRequestMatchesDocument<TSnapshot>(
+  request: CmsProviderSyncSaveRequest<TSnapshot>,
+  current: CmsProviderSyncDocument<TSnapshot> | null
+): boolean {
+  const expectedRevision = typeof request.expectedRevision === 'string' && request.expectedRevision.trim().length > 0
+    ? request.expectedRevision.trim()
+    : null
+  const expectedVersion = Number.isFinite(request.expectedVersion)
+    ? Math.max(0, Math.floor(Number(request.expectedVersion)))
+    : null
+
+  if (expectedRevision !== (current?.revision ?? null)) {
+    return false
+  }
+
+  if (expectedVersion !== null && expectedVersion !== (current?.version ?? 0)) {
+    return false
+  }
+
+  return true
 }
 
 /**
@@ -443,4 +654,78 @@ export async function hydrateCmsWhiteLabelSettingsFromProvidersAsync(
 ): Promise<CmsWhiteLabelSettings> {
   const snapshots = await loadCmsEngineProviderSnapshotsAsync(providers)
   return applyCmsEngineProviderSnapshots(settings, snapshots)
+}
+
+/**
+ * Loads all available versioned repository documents through sync-capable providers.
+ */
+export async function loadCmsEngineProviderSyncDocumentsAsync(
+  providers: CmsAsyncEngineSyncProviders
+): Promise<Partial<CmsEngineProviderSyncDocuments>> {
+  const [content, assets, releases] = await Promise.all([
+    providers.contentRepository?.loadContentDocument() ?? Promise.resolve(null),
+    providers.assetRepository?.loadAssetDocument() ?? Promise.resolve(null),
+    providers.releaseRepository?.loadReleaseDocument() ?? Promise.resolve(null),
+  ])
+
+  return {
+    ...(content ? { content } : {}),
+    ...(assets ? { assets } : {}),
+    ...(releases ? { releases } : {}),
+  }
+}
+
+/**
+ * Loads sync-capable provider documents and hydrates aggregate white-label settings from their snapshots.
+ */
+export async function hydrateCmsWhiteLabelSettingsFromSyncProvidersAsync(
+  settings: CmsWhiteLabelSettings,
+  providers: CmsAsyncEngineSyncProviders
+): Promise<{
+  settings: CmsWhiteLabelSettings
+  documents: Partial<CmsEngineProviderSyncDocuments>
+}> {
+  const documents = await loadCmsEngineProviderSyncDocumentsAsync(providers)
+  return {
+    settings: applyCmsEngineProviderSnapshots(settings, {
+      ...(documents.content ? { content: documents.content.snapshot } : {}),
+      ...(documents.assets ? { assets: documents.assets.snapshot } : {}),
+      ...(documents.releases ? { releases: documents.releases.snapshot } : {}),
+    }),
+    documents,
+  }
+}
+
+/**
+ * Persists repository snapshots through sync-capable providers using optimistic concurrency expectations.
+ */
+export async function saveCmsEngineProviderSyncDocumentsAsync(
+  settings: CmsWhiteLabelSettings,
+  providers: CmsAsyncEngineSyncProviders,
+  baseDocuments: Partial<CmsEngineProviderSyncDocuments> = {}
+): Promise<CmsEngineProviderSyncSaveReport> {
+  const snapshots = createCmsEngineProviderSnapshots(settings)
+  const [content, assets, releases] = await Promise.all([
+    providers.contentRepository?.saveContentDocument({
+      snapshot: snapshots.content,
+      expectedRevision: baseDocuments.content?.revision ?? null,
+      expectedVersion: baseDocuments.content?.version ?? 0,
+    }) ?? Promise.resolve(undefined),
+    providers.assetRepository?.saveAssetDocument({
+      snapshot: snapshots.assets,
+      expectedRevision: baseDocuments.assets?.revision ?? null,
+      expectedVersion: baseDocuments.assets?.version ?? 0,
+    }) ?? Promise.resolve(undefined),
+    providers.releaseRepository?.saveReleaseDocument({
+      snapshot: snapshots.releases,
+      expectedRevision: baseDocuments.releases?.revision ?? null,
+      expectedVersion: baseDocuments.releases?.version ?? 0,
+    }) ?? Promise.resolve(undefined),
+  ])
+
+  return {
+    ...(content ? { content } : {}),
+    ...(assets ? { assets } : {}),
+    ...(releases ? { releases } : {}),
+  }
 }

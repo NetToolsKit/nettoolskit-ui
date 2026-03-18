@@ -6,10 +6,17 @@
 import type {
   CmsAssetRepositorySnapshot,
   CmsAsyncAssetRepositoryProvider,
+  CmsAsyncAssetSyncRepositoryProvider,
   CmsAsyncContentRepositoryProvider,
+  CmsAsyncContentSyncRepositoryProvider,
   CmsAsyncEngineProviders,
+  CmsAsyncEngineSyncProviders,
+  CmsAsyncReleaseSyncRepositoryProvider,
   CmsAsyncReleaseRepositoryProvider,
   CmsContentRepositorySnapshot,
+  CmsProviderSyncDocument,
+  CmsProviderSyncSaveRequest,
+  CmsProviderSyncSaveResult,
   CmsReleaseRepositorySnapshot,
 } from './providers'
 
@@ -25,6 +32,17 @@ export type CmsProviderHydrationDomain = 'content' | 'assets' | 'releases'
 export interface CmsProviderHydrationTransport {
   loadSnapshot<T>(domain: CmsProviderHydrationDomain): Promise<T | null>
   saveSnapshot<T>(domain: CmsProviderHydrationDomain, snapshot: T): Promise<void>
+}
+
+/**
+ * Generic transport used by async repositories that need revision-safe save contracts.
+ */
+export interface CmsProviderHydrationSyncTransport {
+  loadDocument<T>(domain: CmsProviderHydrationDomain): Promise<CmsProviderSyncDocument<T> | null>
+  saveDocument<T>(
+    domain: CmsProviderHydrationDomain,
+    request: CmsProviderSyncSaveRequest<T>
+  ): Promise<CmsProviderSyncSaveResult<T>>
 }
 
 /**
@@ -46,6 +64,34 @@ export function createCmsAsyncEngineProvidersFromTransport(
   const releaseRepository: CmsAsyncReleaseRepositoryProvider = {
     loadReleaseSnapshot: () => transport.loadSnapshot<CmsReleaseRepositorySnapshot>('releases'),
     saveReleaseSnapshot: snapshot => transport.saveSnapshot('releases', snapshot),
+  }
+
+  return {
+    contentRepository,
+    assetRepository,
+    releaseRepository,
+  }
+}
+
+/**
+ * Creates sync-capable async engine providers from a generic revision-aware transport.
+ */
+export function createCmsAsyncEngineSyncProvidersFromTransport(
+  transport: CmsProviderHydrationSyncTransport
+): CmsAsyncEngineSyncProviders {
+  const contentRepository: CmsAsyncContentSyncRepositoryProvider = {
+    loadContentDocument: () => transport.loadDocument<CmsContentRepositorySnapshot>('content'),
+    saveContentDocument: request => transport.saveDocument('content', request),
+  }
+
+  const assetRepository: CmsAsyncAssetSyncRepositoryProvider = {
+    loadAssetDocument: () => transport.loadDocument<CmsAssetRepositorySnapshot>('assets'),
+    saveAssetDocument: request => transport.saveDocument('assets', request),
+  }
+
+  const releaseRepository: CmsAsyncReleaseSyncRepositoryProvider = {
+    loadReleaseDocument: () => transport.loadDocument<CmsReleaseRepositorySnapshot>('releases'),
+    saveReleaseDocument: request => transport.saveDocument('releases', request),
   }
 
   return {

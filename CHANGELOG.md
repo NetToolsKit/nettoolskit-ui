@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Provider sync, conflict and version contracts for backend-oriented CMS persistence**
+  - Added revision-aware provider document contracts for the `content`, `assets` and `releases` domains, including version metadata, optimistic save requests and typed conflict payloads.
+  - Added engine helpers to load, hydrate and save revisioned provider documents across all CMS domains without changing the aggregate authoring settings contract.
+  - Added storage-backed async sync providers that persist revision metadata separately from the tenant snapshot and reject stale writes through optimistic concurrency checks.
+  - Added transport-to-provider sync adapters for backend hydration examples so future API integrations can expose revision-safe save flows without coupling the CMS engine to a specific backend client.
+  - Added focused unit coverage for sync-document loading, optimistic conflict handling, sync hydration and transport adapter mapping, then revalidated `type-check`, `lint`, `build:landing`, focused provider tests and `npm audit --omit=dev`.
 - **Schema migration runner and upgrade report for authored content models**
   - Added a new engine-level schema migration helper that builds dry-run upgrade reports for pages against the latest authored content-model schema, including field-level adds, updates and removals across page fields and localized overrides.
   - Replaced the previous blind schema sync flow in `Pages` with a reviewable upgrade surface showing migration status, version delta, migration notes and the top field changes before applying the upgrade, now blocking invalid content-model ids instead of silently migrating them against the fallback model.

@@ -4,11 +4,13 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
   createCmsAsyncEngineProvidersFromTransport,
+  createCmsAsyncEngineSyncProvidersFromTransport,
   createCmsFetchEngineProviders,
   createCmsFetchProviderHydrationTransport,
   type CmsHydrationFetch,
   type CmsProviderHydrationDomain,
 } from '../../../../src/modules/cms/white-label/provider-hydration'
+import { createCmsProviderSyncDocument } from '../../../../src/modules/cms/white-label/providers'
 
 describe('white-label.provider-hydration', () => {
   it('maps a generic transport into async engine providers by domain', async () => {
@@ -118,5 +120,48 @@ describe('white-label.provider-hydration', () => {
         body: JSON.stringify({ mediaAssets: [] }),
       })
     )
+  })
+
+  it('maps a revision-aware transport into sync-capable async engine providers', async () => {
+    const loadDocument = vi.fn(async (domain: CmsProviderHydrationDomain) => {
+      if (domain === 'content') {
+        return createCmsProviderSyncDocument({ branding: { appName: 'Synced Tenant' } }, {
+          revision: 'content-v4',
+          version: 4,
+          updatedAt: '2026-03-18T08:00:00.000Z',
+        })
+      }
+
+      return null
+    })
+    const saveDocument = vi.fn(async () => ({
+      ok: true as const,
+      document: createCmsProviderSyncDocument({ branding: { appName: 'Saved Tenant' } }, {
+        revision: 'content-v5',
+        version: 5,
+        updatedAt: '2026-03-18T08:01:00.000Z',
+      }),
+    }))
+
+    const providers = createCmsAsyncEngineSyncProvidersFromTransport({
+      loadDocument,
+      saveDocument,
+    })
+
+    const loaded = await providers.contentRepository?.loadContentDocument()
+    const saved = await providers.contentRepository?.saveContentDocument({
+      snapshot: { branding: { appName: 'Saved Tenant' } } as never,
+      expectedRevision: 'content-v4',
+      expectedVersion: 4,
+    })
+
+    expect(loaded?.version).toBe(4)
+    expect(loaded?.revision).toBe('content-v4')
+    expect(saved?.ok).toBe(true)
+    expect(saveDocument).toHaveBeenCalledWith('content', {
+      snapshot: { branding: { appName: 'Saved Tenant' } },
+      expectedRevision: 'content-v4',
+      expectedVersion: 4,
+    })
   })
 })

@@ -45,18 +45,20 @@ Delivered before this unified plan:
 | 114 | CMS shell heading placement outside cards | workspace framing + hero/title consistency | Completed | Keep module title and description outside the editor card in every CMS surface. |
 | 115 | CMS authoring chrome deduplication | top bar + left rail + right rail role cleanup | Completed | Preserve the three editing bars while removing duplicated actions and overlapping controls. |
 | 116 | Preview launch in separate tab | preview routing + explicit external open behavior | Completed | Clicking preview must open the runtime preview in a new browser tab instead of only scrolling to the side panel. |
-| 108 | Reusable content branching and variant flows | linked baseline + detached/variant authoring ergonomics | Pending | Support enterprise reuse without forcing one mutable source of truth. |
-| 109 | Provider sync, conflict and version contracts | async provider adapters + optimistic concurrency hooks | Pending | Prepare the engine for real backend persistence with revision safety. |
+| 108 | Reusable content branching and variant flows | linked baseline + detached/variant authoring ergonomics | Completed | Support enterprise reuse without forcing one mutable source of truth. |
+| 109 | Provider sync, conflict and version contracts | async provider adapters + optimistic concurrency hooks | Completed | Prepare the engine for real backend persistence with revision safety. |
 | 110 | Accessibility and content QA gates | engine review helpers + release integration | Pending | Add author-facing a11y and content quality signals before publish. |
 | 111 | Editor performance and virtualization hardening | large-library rendering + lazy authoring surfaces | Pending | Keep CMS authoring responsive as reusable libraries grow. |
 | 112 | Enterprise regression and release criteria | full-suite hardening + final quality gates | Pending | Close the enterprise plan with regression and operational criteria. |
 
 ## Delivery Order
 
-1. Item 108: reusable content branching and variant flows`r`n2. Item 109: provider sync, conflict and version contracts`r`n3. Item 110: accessibility and content QA gates`r`n4. Item 111: editor performance and virtualization hardening`r`n5. Item 112: enterprise regression and release criteria
+1. Item 110: accessibility and content QA gates
+2. Item 111: editor performance and virtualization hardening
+3. Item 112: enterprise regression and release criteria
 
 ## Practical Reading
 
 - There is now one active enterprise roadmap.
 - Previous planning files were consolidated and removed.
-- The current execution target is item `108`.
+- The current execution target is item `110`.

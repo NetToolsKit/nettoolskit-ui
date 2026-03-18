@@ -9,17 +9,22 @@ import {
   applyCmsContentRepositorySnapshot,
   applyCmsEngineProviderSnapshots,
   applyCmsReleaseRepositorySnapshot,
+  createCmsProviderSyncDocument,
   createCmsAssetRepositorySnapshot,
   createCmsContentRepositorySnapshot,
   createCmsEngineProviderSnapshots,
   createCmsReleaseRepositorySnapshot,
+  hydrateCmsWhiteLabelSettingsFromSyncProvidersAsync,
+  loadCmsEngineProviderSyncDocumentsAsync,
   hydrateCmsWhiteLabelSettingsFromProvidersAsync,
+  saveCmsEngineProviderSyncDocumentsAsync,
   loadCmsEngineProviderSnapshotsAsync,
   saveCmsEngineProviderSnapshotsAsync,
   toAsyncCmsEngineProviders,
   type CmsPersistenceStore,
 } from '../../../../src/modules/cms/white-label/providers'
 import {
+  createCmsAsyncStorageEngineSyncProviders,
   createCmsAsyncStorageEngineProviders,
   loadCmsAssetRepositorySnapshot,
   loadCmsContentRepositorySnapshot,
@@ -293,5 +298,91 @@ describe('white-label.providers', () => {
     expect(reloaded.content.locale).toBe('pt-BR')
     expect(reloaded.mediaAssets[0]?.name).toBe('Async Storage Asset')
     expect(reloaded.releases.activeEnvironment).toBe('production')
+  })
+
+  it('loads versioned provider documents and persists domain revisions through sync-capable storage adapters', async () => {
+    const store = createMemoryStore()
+    const providers = createCmsAsyncStorageEngineSyncProviders({ store })
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.appName = 'Sync Tenant'
+    settings.releases.activeEnvironment = 'staging'
+
+    const initialDocuments = await loadCmsEngineProviderSyncDocumentsAsync(providers)
+    expect(initialDocuments.content?.version).toBe(0)
+    expect(initialDocuments.content?.revision).toBeNull()
+
+    const saveReport = await saveCmsEngineProviderSyncDocumentsAsync(settings, providers, {
+      content: createCmsProviderSyncDocument(createCmsContentRepositorySnapshot(settings)),
+      assets: createCmsProviderSyncDocument(createCmsAssetRepositorySnapshot(settings)),
+      releases: createCmsProviderSyncDocument(createCmsReleaseRepositorySnapshot(settings)),
+    })
+
+    expect(saveReport.content?.ok).toBe(true)
+    expect(saveReport.assets?.ok).toBe(true)
+    expect(saveReport.releases?.ok).toBe(true)
+    expect(saveReport.content && saveReport.content.ok ? saveReport.content.document.version : -1).toBe(1)
+
+    const reloadedDocuments = await loadCmsEngineProviderSyncDocumentsAsync(providers)
+    expect(reloadedDocuments.content?.version).toBe(1)
+    expect(reloadedDocuments.content?.revision).toMatch(/^content-v1-/)
+    expect(reloadedDocuments.releases?.version).toBe(1)
+  })
+
+  it('returns optimistic concurrency conflicts when sync providers receive stale revision metadata', async () => {
+    const store = createMemoryStore()
+    const providers = createCmsAsyncStorageEngineSyncProviders({ store })
+    const baseSettings = createDefaultWhiteLabelSettings()
+    baseSettings.branding.appName = 'Versioned Tenant'
+
+    const firstSave = await saveCmsEngineProviderSyncDocumentsAsync(baseSettings, providers, {
+      content: createCmsProviderSyncDocument(createCmsContentRepositorySnapshot(baseSettings)),
+      assets: createCmsProviderSyncDocument(createCmsAssetRepositorySnapshot(baseSettings)),
+      releases: createCmsProviderSyncDocument(createCmsReleaseRepositorySnapshot(baseSettings)),
+    })
+
+    const staleBase = await loadCmsEngineProviderSyncDocumentsAsync(providers)
+    const latestSettings = createDefaultWhiteLabelSettings()
+    latestSettings.branding.appName = 'Latest Tenant'
+    await saveCmsEngineProviderSyncDocumentsAsync(latestSettings, providers, staleBase)
+
+    const conflictingSettings = createDefaultWhiteLabelSettings()
+    conflictingSettings.branding.appName = 'Stale Tenant'
+    const conflictReport = await saveCmsEngineProviderSyncDocumentsAsync(conflictingSettings, providers, {
+      content: firstSave.content && firstSave.content.ok ? firstSave.content.document : undefined,
+    })
+
+    expect(conflictReport.content?.ok).toBe(false)
+    if (conflictReport.content?.ok === false) {
+      expect(conflictReport.content.conflict.domain).toBe('content')
+      expect(conflictReport.content.conflict.reason).toBe('revision_mismatch')
+      expect(conflictReport.content.conflict.current?.snapshot.branding.appName).toBe('Latest Tenant')
+    }
+  })
+
+  it('hydrates settings from sync-capable providers while preserving loaded revision documents', async () => {
+    const store = createMemoryStore()
+    const providers = createCmsAsyncStorageEngineSyncProviders({ store })
+    const settings = createDefaultWhiteLabelSettings()
+    settings.branding.appName = 'Hydrated Sync Tenant'
+    if (settings.mediaAssets[0]) {
+      settings.mediaAssets[0].name = 'Hydrated Sync Asset'
+    }
+    settings.releases.activeEnvironment = 'production'
+
+    await saveCmsEngineProviderSyncDocumentsAsync(settings, providers, {
+      content: createCmsProviderSyncDocument(createCmsContentRepositorySnapshot(settings)),
+      assets: createCmsProviderSyncDocument(createCmsAssetRepositorySnapshot(settings)),
+      releases: createCmsProviderSyncDocument(createCmsReleaseRepositorySnapshot(settings)),
+    })
+
+    const hydrated = await hydrateCmsWhiteLabelSettingsFromSyncProvidersAsync(
+      createDefaultWhiteLabelSettings(),
+      providers
+    )
+
+    expect(hydrated.settings.branding.appName).toBe('Hydrated Sync Tenant')
+    expect(hydrated.settings.mediaAssets[0]?.name).toBe('Hydrated Sync Asset')
+    expect(hydrated.documents.content?.version).toBe(1)
+    expect(hydrated.documents.releases?.snapshot.releases.activeEnvironment).toBe('production')
   })
 })
