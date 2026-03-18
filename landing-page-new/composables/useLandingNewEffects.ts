@@ -2,7 +2,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 interface LandingNewAnimationBlueprint {
   selector: string
-  type: 'fade-up' | 'fade-right' | 'fade-left' | 'zoom-in'
+  type: 'fade-up' | 'fade-right' | 'fade-left' | 'zoom-in' | 'fade-in-blur' | 'reveal-center'
   delay?: number
   stagger?: number
 }
@@ -29,7 +29,7 @@ export function useLandingNewEffects(sectionIds: string[]) {
     { selector: '.video-section-content .section-title', type: 'fade-left', delay: 90 },
     { selector: '.video-section-content .section-body', type: 'fade-left', delay: 140 },
     { selector: '.video-section-content .section-link', type: 'fade-left', delay: 190 },
-    { selector: '.video-section-bg img', type: 'zoom-in', delay: 120, stagger: 55 },
+    { selector: '.video-section-bg', type: 'reveal-center', delay: 120 },
     { selector: '.grand-content .section-eyebrow', type: 'fade-up', delay: 40 },
     { selector: '.grand-content h2', type: 'fade-up', delay: 90 },
     { selector: '.grand-content p', type: 'fade-up', delay: 145 },
@@ -158,8 +158,11 @@ export function useLandingNewEffects(sectionIds: string[]) {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible')
           entry.target.classList.add('in-view')
-          revealObserver?.unobserve(entry.target)
+          return
         }
+
+        entry.target.classList.remove('visible')
+        entry.target.classList.remove('in-view')
       })
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' })
 

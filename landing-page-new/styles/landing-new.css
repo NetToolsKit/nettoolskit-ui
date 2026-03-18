@@ -1082,10 +1082,24 @@ ol {
   filter: blur(6px);
 }
 
+[data-animate='fade-in-blur'] {
+  filter: blur(8px);
+}
+
+[data-animate='reveal-center'] {
+  opacity: 0.08;
+  filter: none;
+  transform: none;
+}
+
 [data-animate].in-view {
   opacity: 1;
   transform: none;
   filter: none;
+}
+
+[data-animate='reveal-center'].in-view {
+  transform: none;
 }
 
 .divider {
