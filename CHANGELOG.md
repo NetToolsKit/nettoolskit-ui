@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CMS authoring workspace layout cleanup aligned with `layout-cms.md`**
+  - Removed the remaining centered-workspace constraints from the CMS authoring shell by overriding the app-shell workspace max-width and card wrapper so the editor now uses the full available workspace width.
+  - Reshaped the workspace tabs, editor shell and workbench proportions to follow the `topbar -> ruler -> editor body -> statusbar` structure described in the local layout specification.
+  - Moved tenant import/export back to the `Settings` editor topbar and reduced duplicate recovery/actions from the right rail so the three editing bars keep distinct responsibilities.
+  - Revalidated `type-check`, `lint`, `build:landing` and focused CMS Playwright coverage for the rebuilt designer shell and internal preview-tab flow.
 - **Accessibility and content QA gates for release review**
   - Added an engine-level content QA helper that evaluates release snapshots for editorial quality and accessibility gaps, including missing/weak page descriptions, empty authored pages and image assets without usable alt text.
   - Integrated the new QA diagnostics into release snapshot validation and the release candidate checklist through a dedicated `Accessibility and content QA` row, keeping schema/reference integrity separate from editorial/a11y review.

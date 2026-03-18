@@ -432,6 +432,30 @@ test.describe('CMS settings white-label flow', () => {
     await expect(settingsShell.locator('.cms-designer-card__info-strip').first()).toContainText(/Default Tenant/i)
     await expect(settingsShell.locator('.cms-designer-card__toolbar-group--preview').first()).toContainText(/Preview/i)
     await expect(settingsShell.locator('.cms-designer-card__ruler').first()).toBeVisible()
+    const workspaceMetrics = await page.evaluate(() => {
+      const workspace = document.querySelector('.ntk-app-shell__workspace') as HTMLElement | null
+      const shellPage = document.querySelector('.ntk-app-shell__page') as HTMLElement | null
+      if (!workspace || !shellPage) {
+        return null
+      }
+
+      const workspaceRect = workspace.getBoundingClientRect()
+      const shellPageRect = shellPage.getBoundingClientRect()
+      const workspaceStyles = window.getComputedStyle(workspace)
+
+      return {
+        width: workspaceRect.width,
+        shellPageWidth: shellPageRect.width,
+        maxWidth: workspaceStyles.maxWidth,
+        marginLeft: workspaceStyles.marginLeft,
+        marginRight: workspaceStyles.marginRight,
+      }
+    })
+    expect(workspaceMetrics).not.toBeNull()
+    expect(workspaceMetrics?.maxWidth).toBe('none')
+    expect(workspaceMetrics?.marginLeft).toBe('0px')
+    expect(workspaceMetrics?.marginRight).toBe('0px')
+    expect(Math.abs((workspaceMetrics?.shellPageWidth ?? 0) - (workspaceMetrics?.width ?? 0))).toBeLessThanOrEqual(40)
 
     const contentWorkbenchButton = page
       .locator('.cms-settings__sidebar')
@@ -3289,8 +3313,23 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^Pages$/)
     await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
-    await expect(heroRow).toBeVisible()
-    await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
+    await openCmsWorkspaceTab(page, /^(Editor)$/i)
+    const reopenedBlocksEditor = page.locator('.cms-blocks__editor').first()
+    await expect(reopenedBlocksEditor).toBeVisible()
+    await reopenedBlocksEditor.evaluate(node => {
+      node.scrollTop = 0
+    })
+    const reopenedHeroSection = reopenedBlocksEditor
+      .locator('.cms-block-item')
+      .filter({ has: page.locator('.cms-block-item__meta strong', { hasText: 'Hero' }) })
+      .first()
+    const reopenedHeroRow = reopenedHeroSection
+      .locator('.cms-block-row')
+      .filter({ hasText: 'landing.hero' })
+      .first()
+    await reopenedHeroRow.scrollIntoViewIfNeeded()
+    await expect(reopenedHeroRow).toBeVisible()
+    await reopenedHeroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
     await fillTextInput(cmsInputByLabel(page, 'Title'), 'Draft preview title')
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(previewCard).toContainText('Draft preview title')

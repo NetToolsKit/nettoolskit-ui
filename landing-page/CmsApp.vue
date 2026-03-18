@@ -46,6 +46,8 @@
                   <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
                   <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange" />
                   <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
+                  <q-btn flat dense no-caps icon="download" class="cms-designer-card__toolbar-action" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile" />
+                  <q-btn flat dense no-caps icon="upload_file" class="cms-designer-card__toolbar-action" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog" />
                 </div>
                 <div class="cms-designer-card__toolbar-spacer" />
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
@@ -159,12 +161,6 @@
               <div class="cms-toolbar-card__actions">
                 <q-btn flat no-caps icon="restart_alt" :label="cmsUiText.resetLabel" :aria-label="cmsUiText.resetAriaLabel" :style="dangerActionStyle" @click="resetToDefaults" />
               </div>
-              <q-separator vertical inset class="cms-toolbar-card__separator" />
-              <div class="cms-toolbar-card__actions">
-                <q-btn flat dense no-caps icon="download" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile" />
-                <q-btn flat dense no-caps icon="upload_file" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog" />
-              </div>
-              <q-separator vertical inset class="cms-toolbar-card__separator" />
               <div class="cms-toolbar-card__domain-transfer">
                 <q-select
                   v-model="selectedDomainTransfer"
@@ -1810,15 +1806,10 @@
                     <div class="cms-designer-card__metrics">
                       <span>{{ tr('Locale', 'Locale') }}: <strong>{{ settings.content.locale }}</strong></span>
                       <span>{{ tr('Advanced fields', 'Campos avancados') }}: <strong>{{ showAdvancedThemeFields ? tr('Visible', 'Visiveis') : tr('Hidden', 'Ocultos') }}</strong></span>
+                      <span>{{ tr('Recovery', 'Recovery') }}: <strong>{{ canRestoreDraftRecovery ? tr('Available', 'Disponivel') : tr('Idle', 'Inativo') }}</strong></span>
                     </div>
                   </div>
                   <div class="cms-designer-card__rail-actions">
-                    <q-btn round flat icon="restore" :disable="!canRestoreDraftRecovery" :aria-label="cmsUiText.autoSaveRestoreLabel" @click="restoreCmsDraftRecovery">
-                      <q-tooltip>{{ cmsUiText.autoSaveRestoreLabel }}</q-tooltip>
-                    </q-btn>
-                    <q-btn round flat icon="delete_sweep" :disable="!hasDraftRecoveryEntry" :aria-label="cmsUiText.autoSaveDiscardLabel" @click="discardCmsDraftRecovery">
-                      <q-tooltip>{{ cmsUiText.autoSaveDiscardLabel }}</q-tooltip>
-                    </q-btn>
                     <q-btn round flat icon="tune" :aria-label="cmsUiText.showAdvancedOverridesLabel" @click="showAdvancedThemeFields = !showAdvancedThemeFields">
                       <q-tooltip>{{ cmsUiText.showAdvancedOverridesLabel }}</q-tooltip>
                     </q-btn>
@@ -18716,14 +18707,30 @@ function resetToDefaults(): void {
 .cms-shell-page {
   display: flex;
   flex-direction: column;
-  gap: var(--ntk-cms-space-lg);
+  gap: var(--ntk-cms-space-md);
   font-family: var(--ntk-cms-font-family);
   font-style: var(--ntk-cms-font-style-base);
   color: var(--ntk-cms-text-primary);
   min-width: 0;
   min-height: 100%;
   width: 100%;
-  background: #f5f8fc;
+  background: #f3f7fc;
+}
+
+.cms-shell-page :deep(.ntk-app-shell__page-container) {
+  background: linear-gradient(180deg, #eef4fb 0%, #f7faff 100%);
+}
+
+.cms-shell-page :deep(.ntk-app-shell__page) {
+  padding: var(--ntk-cms-space-md) var(--ntk-cms-space-lg) var(--ntk-cms-space-lg);
+  min-height: calc(var(--ntk-shell-viewport-height) - var(--ntk-shell-header-height));
+}
+
+.cms-shell-page :deep(.ntk-app-shell__workspace) {
+  max-width: none;
+  margin: 0;
+  min-height: inherit;
+  display: flex;
 }
 
 .cms-shell-page :deep(.ntk-app-shell__workspace-card) {
@@ -18732,6 +18739,8 @@ function resetToDefaults(): void {
   background: transparent;
   box-shadow: none;
   padding: 0;
+  width: 100%;
+  min-height: inherit;
 }
 
 .cms-shell-page :deep(.q-field__native),
@@ -18789,9 +18798,9 @@ function resetToDefaults(): void {
 .cms-shell-page__workspace {
   display: flex;
   flex-direction: column;
-  gap: var(--ntk-cms-space-lg);
+  gap: var(--ntk-cms-space-md);
   min-width: 0;
-  min-height: calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 2)));
+  min-height: calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 1.5)));
   flex: 1 1 auto;
   height: 100%;
   width: 100%;
@@ -18805,6 +18814,7 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: calc(var(--ntk-cms-space-xs) * 0.5);
+  padding-inline: calc(var(--ntk-cms-space-xs) * 0.5);
 }
 
 .cms-icon {
@@ -18849,18 +18859,21 @@ function resetToDefaults(): void {
 }
 
 .cms-workspace-tabs {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: calc(var(--ntk-cms-space-xs) * 0.75);
   flex-wrap: wrap;
+  padding: 0 calc(var(--ntk-cms-space-xs) * 0.5);
+  border-bottom: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 85%, white);
 }
 
 .cms-workspace-tab {
-  min-height: 2rem;
-  padding: 0 var(--ntk-cms-space-md);
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
-  border-radius: 999px;
-  background: #ffffff;
+  min-height: 2.4rem;
+  padding: 0 calc(var(--ntk-cms-space-md) + (var(--ntk-cms-space-xs) * 0.5));
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: var(--ntk-cms-radius-md) var(--ntk-cms-radius-md) 0 0;
+  background: transparent;
   color: var(--ntk-cms-text-secondary);
   font: inherit;
   font-weight: 600;
@@ -18873,10 +18886,10 @@ function resetToDefaults(): void {
 }
 
 .cms-workspace-tab--active {
-  border-color: color-mix(in srgb, var(--ntk-cms-accent) 55%, white);
-  background: color-mix(in srgb, var(--ntk-cms-accent) 12%, #ffffff);
+  border-color: color-mix(in srgb, var(--ntk-cms-border-color) 88%, white);
+  background: #ffffff;
   color: var(--ntk-cms-text-primary);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-cms-accent) 20%, transparent);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--ntk-cms-accent) 40%, transparent);
 }
 
 .cms-pages {
@@ -20476,14 +20489,16 @@ function resetToDefaults(): void {
 }
 
 .cms-shell-card {
-  border-radius: var(--ntk-cms-radius-lg);
-  border-color: var(--ntk-cms-border-color);
-  background: var(--ntk-cms-bg-card);
+  border-radius: 0;
+  border: 0 !important;
+  background: transparent;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
+  overflow: visible;
 }
 
 .cms-designer-card {
@@ -20499,8 +20514,9 @@ function resetToDefaults(): void {
   background: transparent;
   box-shadow: none;
   border: 0 !important;
-  min-height: calc(100vh - (var(--ntk-shell-header-height) + 11rem));
+  min-height: calc(100vh - (var(--ntk-shell-header-height) + 8.5rem));
   flex: 1 1 auto;
+  height: 100%;
 }
 
 .cms-shell-card__header {
@@ -20651,19 +20667,23 @@ function resetToDefaults(): void {
   display: grid;
   grid-template-columns: 18rem minmax(0, 1fr) 18rem;
   gap: var(--ntk-cms-space-md);
-  min-height: 0;
+  min-height: var(--ntk-cms-editor-min-height);
   max-height: none;
   align-items: stretch;
   flex: 1 1 auto;
   background: transparent;
 }
 
+.cms-designer-card__workbench--settings {
+  grid-template-columns: 17rem minmax(0, 1fr) 16rem;
+}
+
 .cms-designer-card__workbench--pages {
-  grid-template-columns: 20rem minmax(0, 1fr) 22rem;
+  grid-template-columns: 18rem minmax(0, 1fr) 20rem;
 }
 
 .cms-designer-card__workbench--blocks {
-  grid-template-columns: 18rem minmax(0, 1fr) 18rem;
+  grid-template-columns: 17rem minmax(0, 1fr) 18rem;
 }
 
 .cms-designer-card__sidebar,
@@ -20702,13 +20722,33 @@ function resetToDefaults(): void {
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
   padding: var(--ntk-cms-space-lg);
+  padding-inline-start: calc(var(--ntk-cms-space-lg) + 2.25rem);
   overflow: auto;
+  position: relative;
   background:
     linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
     linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   background-size: 24px 24px, 24px 24px, auto;
   flex: 1 1 auto;
+}
+
+.cms-designer-card__stage::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2.25rem;
+  border-inline-end: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(148, 163, 184, 0.22) 0,
+      rgba(148, 163, 184, 0.22) 1px,
+      transparent 1px,
+      transparent 24px
+    );
+  pointer-events: none;
 }
 
 .cms-designer-card__stage--plain {
@@ -20870,6 +20910,7 @@ function resetToDefaults(): void {
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
   background: rgba(255, 255, 255, 0.92);
+  min-height: 2.75rem;
 }
 
 .cms-designer-card__statusbar {
@@ -20904,10 +20945,10 @@ function resetToDefaults(): void {
 
 /* ── Admin Card (Tenant + Actions) ─────────────────── */
 .cms-settings__admin {
-  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
   border-radius: var(--ntk-cms-radius-lg);
-  background: var(--ntk-cms-bg-card);
-  padding: var(--ntk-cms-space-lg);
+  background: color-mix(in srgb, #ffffff 90%, #f7faff);
+  padding: var(--ntk-cms-space-md);
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
