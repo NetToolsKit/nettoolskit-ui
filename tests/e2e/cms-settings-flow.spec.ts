@@ -1195,9 +1195,13 @@ test.describe('CMS settings white-label flow', () => {
       .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
       .first()
     await detachedSectionRow.getByRole('button', { name: /^(Detach|Desvincular)$/ }).first().click({ force: true })
-    await expect(detachedSectionRow.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero-2')
+    const detachedSectionRowAfterDetach = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
+      .first()
+    await expect(detachedSectionRowAfterDetach.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
 
-    await detachedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await detachedSectionRowAfterDetach.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
     await expect(page.locator('.cms-banner')).toHaveCount(0)
 
     const titleInput = page
@@ -1244,7 +1248,12 @@ test.describe('CMS settings white-label flow', () => {
     ).toContainText(/Variant of Main Landing · Hero|Variante de Main Landing · Hero/i)
 
     await linkedSectionRow.getByRole('button', { name: /^(Detach|Desvincular)$/ }).first().click({ force: true })
-    await linkedSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
+    await expect.poll(async () => listTextboxValues(page, 'Section ID')).toContain('hero-2')
+    const detachedVariantSectionRow = page
+      .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
+      .first()
+    await expect(detachedVariantSectionRow.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
+    await detachedVariantSectionRow.getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).first().click({ force: true })
 
     await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableBlockName)
     await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()

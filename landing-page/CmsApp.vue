@@ -2610,56 +2610,64 @@
                           : `${tr('Detached', 'Desvinculado')} · ${getCmsReusableSourceLabel(section.reusableSourceId, 'section')}`
                       }}
                     </q-chip>
-                    <q-btn
-                      flat
-                      dense
-                      no-caps
-                      icon="content_copy"
-                      :label="tr('Duplicate', 'Duplicar')"
-                      @click="duplicateCmsPageSection(pageIndex, sectionIndex)"
-                    />
-                    <q-btn
-                      flat
-                      dense
-                      no-caps
-                      icon="bookmark_add"
-                      :label="tr('Save reusable', 'Salvar reutilizavel')"
-                      @click="saveCmsPageSectionAsReusable(pageIndex, sectionIndex)"
-                    />
-                    <q-btn
-                      v-if="section.reusableSourceId"
-                      flat
-                      dense
-                      no-caps
-                      icon="fork_right"
-                      :label="tr('Branch variant', 'Ramificar variante')"
-                      @click="branchCmsPageSectionToVariant(pageIndex, sectionIndex)"
-                    />
-                    <q-btn
-                      v-if="isCmsPageSectionLinked(section)"
-                      flat
-                      dense
-                      no-caps
-                      icon="link_off"
-                      :label="tr('Detach', 'Desvincular')"
-                      @click="detachCmsPageSection(pageIndex, sectionIndex)"
-                    />
-                    <q-btn
-                      flat
-                      dense
-                      no-caps
-                      icon="widgets"
-                      :label="tr('Open blocks', 'Abrir blocos')"
-                      @click="openPageInBlocksEditor(page.id, section.id)"
-                    />
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      icon="delete"
-                      :style="dangerActionStyle"
-                      @click="removeCmsPageSection(pageIndex, sectionIndex)"
-                    />
+                    <div class="cms-page-section-row__actions">
+                      <q-btn
+                        :key="`${section.id}-duplicate`"
+                        flat
+                        dense
+                        no-caps
+                        icon="content_copy"
+                        :label="tr('Duplicate', 'Duplicar')"
+                        @click.stop="duplicateCmsPageSection(pageIndex, sectionIndex)"
+                      />
+                      <q-btn
+                        :key="`${section.id}-save-reusable`"
+                        flat
+                        dense
+                        no-caps
+                        icon="bookmark_add"
+                        :label="tr('Save reusable', 'Salvar reutilizavel')"
+                        @click.stop="saveCmsPageSectionAsReusable(pageIndex, sectionIndex)"
+                      />
+                      <q-btn
+                        v-if="section.reusableSourceId"
+                        :key="`${section.id}-branch-variant`"
+                        flat
+                        dense
+                        no-caps
+                        icon="fork_right"
+                        :label="tr('Branch variant', 'Ramificar variante')"
+                        @click.stop="branchCmsPageSectionToVariant(pageIndex, sectionIndex)"
+                      />
+                      <q-btn
+                        v-if="isCmsPageSectionLinked(section)"
+                        :key="`${section.id}-detach`"
+                        flat
+                        dense
+                        no-caps
+                        icon="link_off"
+                        :label="tr('Detach', 'Desvincular')"
+                        @click.stop="detachCmsPageSection(pageIndex, sectionIndex)"
+                      />
+                      <q-btn
+                        :key="`${section.id}-open-blocks`"
+                        flat
+                        dense
+                        no-caps
+                        icon="widgets"
+                        :label="tr('Open blocks', 'Abrir blocos')"
+                        @click.stop="openPageInBlocksEditor(page.id, section.id)"
+                      />
+                      <q-btn
+                        :key="`${section.id}-delete`"
+                        flat
+                        round
+                        dense
+                        icon="delete"
+                        :style="dangerActionStyle"
+                        @click.stop="removeCmsPageSection(pageIndex, sectionIndex)"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -18207,14 +18215,22 @@ function branchCmsPageSectionToVariant(pageIndex: number, sectionIndex: number):
     ...pageReusableSectionSelections.value,
     [pageIndex]: variant.id,
   }
+  const relinkedSection = cloneCmsReusableSectionIntoPageSection({
+    reusableSection: variant,
+    existingSections: page.sections,
+    mode: 'linked',
+  })
   page.sections.splice(sectionIndex, 1, {
-    ...cloneCmsReusableSectionIntoPageSection({
-      reusableSection: variant,
-      existingSections: page.sections,
-      mode: 'linked',
-    }),
+    ...relinkedSection,
     id: rawSection.id,
     enabled: rawSection.enabled,
+    blocks: relinkedSection.blocks.map((block, blockIndex) => ({
+      ...block,
+      id: rawSection.blocks[blockIndex]?.id ?? block.id,
+      enabled: typeof rawSection.blocks[blockIndex]?.enabled === 'boolean'
+        ? rawSection.blocks[blockIndex].enabled
+        : block.enabled,
+    })),
   })
   savedAtLabel.value = `${tr('Reusable section branched at', 'Secao reutilizavel ramificada as')} ${new Date().toLocaleTimeString()}`
 }
@@ -20313,7 +20329,7 @@ function resetToDefaults(): void {
   background: var(--ntk-cms-shell-bg);
   padding: var(--ntk-cms-space-sm);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto auto auto auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto minmax(20rem, auto);
   gap: var(--ntk-cms-space-sm);
   align-items: center;
   cursor: grab;
@@ -20332,6 +20348,15 @@ function resetToDefaults(): void {
   display: flex;
   justify-content: flex-end;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-page-section-row__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--ntk-cms-space-xs);
+  min-width: 20rem;
 }
 
 .cms-pages__reusable-library {
@@ -22005,6 +22030,12 @@ function resetToDefaults(): void {
 
 .cms-shell-page--lg-compact .cms-page-section-row {
   grid-template-columns: 1fr;
+}
+
+.cms-shell-page--lg-compact .cms-page-section-row__actions {
+  min-width: 0;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .cms-shell-page--lg-compact .cms-list-item--menu {
