@@ -2,7 +2,8 @@
  * Tests/unit/landing/Landing Tokenization spec module.
  */
 
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
@@ -10,72 +11,54 @@ import { describe, expect, it } from 'vitest'
  * Reads a repository file relative to this spec.
  */
 function readRepoFile(relativePath: string): string {
-  const absolutePath = fileURLToPath(new URL(relativePath, import.meta.url))
+const absolutePath = fileURLToPath(new URL(relativePath, import.meta.url))
   return readFileSync(absolutePath, 'utf8')
 }
 
 const landingAppSource = readRepoFile('../../../landing-page/App.vue')
+const landingMainSource = readRepoFile('../../../landing-page/main.ts')
 const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
-const devLandingAppSource = readRepoFile('../../../landing-page/App-Dev.vue')
-const landingDeveloperSectionSource = readRepoFile('../../../landing-page/components/LandingDeveloperSection.vue')
-const headerSource = readRepoFile('../../../src/components/layout/NtkHeader.vue')
-const landingHeaderSource = readRepoFile('../../../src/components/layout/NtkLandingHeader.vue')
-const mobileDrawerSource = readRepoFile('../../../src/components/layout/NtkMobileDrawer.vue')
-const tokensSource = readRepoFile('../../../src/styles/tokens.scss')
+const packageJsonSource = readRepoFile('../../../package.json')
+const landingStylesSource = readRepoFile('../../../landing-page/styles/landing.css')
+const specDirectory = dirname(fileURLToPath(import.meta.url))
 
-describe('Landing tokenization coverage', () => {
-  it('avoids hardcoded numeric font declarations in key landing files', () => {
-    const sources = [
-      landingAppSource,
-      devLandingAppSource,
-      landingDeveloperSectionSource,
-      headerSource,
-      landingHeaderSource,
-      mobileDrawerSource,
-    ]
-
-    for (const source of sources) {
-      expect(/font-size:\s*[0-9]/.test(source)).toBe(false)
-      expect(/font-weight:\s*[0-9]/.test(source)).toBe(false)
-    }
+describe('Landing consolidation coverage', () => {
+  it('uses landing-page as the canonical public entry while keeping CMS mode split', () => {
+    expect(landingMainSource).toContain("const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))")
+    expect(landingMainSource).toContain("searchParams.get('cms') === '1'")
+    expect(landingMainSource).toContain("const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))")
   })
 
-  it('keeps only canonical token aliases used by current components', () => {
-    const requiredAliases = [
-      '--ntk-font-body:',
-      '--ntk-font-display:',
-      '--ntk-text-base:',
-      '--ntk-text-sm:',
-      '--ntk-spacing-sm:',
-      '--ntk-spacing-md:',
-      '--ntk-spacing-lg:',
-      '--ntk-shadow-medium:',
-      '--ntk-shadow-large:',
-      '--ntk-line-height-tight:',
-      '--ntk-line-height-relaxed:',
-    ]
-
-    for (const alias of requiredAliases) {
-      expect(tokensSource.includes(alias)).toBe(true)
-    }
-
-    expect(tokensSource.includes('--border-radius-')).toBe(false)
-    expect(tokensSource.includes('--line-height-')).toBe(false)
+  it('removes parallel landing-new build scripts after consolidation', () => {
+    expect(packageJsonSource).not.toContain('build:landing-new')
+    expect(packageJsonSource).not.toContain('dev:landing-new')
+    expect(packageJsonSource).toContain('"dev": "npm run dev:landing"')
   })
 
-  it('keeps responsive hooks in landing app runtime', () => {
-    const hasRuntimeBreakpointClasses = landingAppSource.includes('landing-bp-')
-    const hasResponsiveMediaQueries = landingAppSource.includes('@media (max-width')
-    expect(hasRuntimeBreakpointClasses || hasResponsiveMediaQueries).toBe(true)
+  it('renders the canonical landing with the new composition and keeps CMS access visible', () => {
+    expect(landingAppSource).toContain('LandingNewTopNav')
+    expect(landingAppSource).toContain('LandingNewHeroSection')
+    expect(landingAppSource).toContain('LandingNewVideoSection')
+    expect(landingAppSource).toContain('LandingNewFooterSection')
+    expect(landingAppSource).toContain('href="/?cms=1"')
+    expect(landingAppSource).not.toContain('LandingHeaderSection')
+    expect(landingAppSource).not.toContain('LandingThemesSection')
   })
 
-  it('keeps landing typography controls exposed in CMS and tokenized styles in landing app', () => {
+  it('removes the dev-only legacy landing artifact from the canonical source tree', () => {
+    const legacyDevAppPath = resolve(specDirectory, '../../../landing-page/App-Dev.vue')
+    expect(existsSync(legacyDevAppPath)).toBe(false)
+  })
+
+  it('keeps canonical landing styles in the merged landing-page root', () => {
+    expect(landingStylesSource).toContain('.nav-wrapper')
+    expect(landingStylesSource).toContain('.hero')
+    expect(landingStylesSource).toContain('.cms-mode-btn')
+  })
+
+  it('keeps landing typography controls exposed in CMS for the shared authoring model', () => {
     expect(cmsAppSource).toContain('Section badge letter spacing')
     expect(cmsAppSource).toContain('CTA subtitle line height')
     expect(cmsAppSource).toContain('Footer link title letter spacing')
-
-    expect(landingAppSource).toContain('line-height')
-    expect(landingAppSource).toContain('letter-spacing')
-    expect(landingAppSource).toContain('var(--')
   })
 })

@@ -9,10 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Landing-page-new consolidated as the only public landing**
+  - Merged the `landing-page-new` public experience into the canonical `landing-page` source tree while keeping `landing-page/main.ts` as the single split entry for public landing vs `?cms=1` CMS mode.
+  - Added `landing-page/LandingPublicApp.ts` so the public landing keeps its dedicated CSS bundle without leaking landing-only styles into CMS mode.
+  - Removed duplicated landing runtime paths from `package.json` by dropping `build:landing-new` and `dev:landing-new` in favor of the canonical `build:landing` and `dev:landing` commands.
+  - Rebased `landing-page/index.html` onto the consolidated landing metadata/fonts and reworked the landing tokenization test to assert canonical entry, script cleanup and legacy artifact removal instead of inspecting deleted `App-Dev.vue` sources.
 - **Landing header and hero standardized on shared landing primitives**
   - Rebuilt `landing-page/components/LandingHeaderSection.vue` on top of `NtkLandingHeader`, preserving the existing navigation labels, GitHub CTA, theme toggle, locale toggle and mobile drawer flow while removing the previous standalone header shell.
   - Rebuilt `landing-page/components/LandingHeroSection.vue` on top of `NtkHero`, preserving the current copy, highlight treatment, CTA links, stats and hero media while keeping the landing animation hooks intact.
   - Rebuilt `landing-page/components/LandingFeaturesSection.vue` and `landing-page/components/LandingShowcaseSection.vue` on top of `NtkSection` and `NtkSectionHeader`, removing duplicated outer section/container/header shells while preserving the current content order and interactive tabs.
+  - Rebuilt `landing-page/components/LandingDeveloperSection.vue` and `landing-page/components/LandingDashboardSection.vue` on top of `NtkSection` and `NtkSectionHeader`, removing duplicated section/container wrappers while preserving the existing code example, media blocks, metrics and chart content.
   - Simplified `landing-page/App.vue` by removing the old custom mobile-drawer state/handlers and retargeting the landing reveal blueprints to the shared hero markup.
   - Revalidated `npm run type-check`, `npm run lint` and `npm run build:landing` after the landing standardization slice.
 - **CMS authoring workspace layout cleanup aligned with `layout-cms.md`**
