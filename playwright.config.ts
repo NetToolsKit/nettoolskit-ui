@@ -5,6 +5,7 @@ const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:4173'
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
+  outputDir: './.build/test-results/playwright',
   retries: process.env.CI ? 2 : 0,
   timeout: 60_000,
   expect: {
@@ -27,6 +28,10 @@ export default defineConfig({
     timeout: 240_000,
     reuseExistingServer: !process.env.CI,
   },
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: './.build/playwright-report', open: 'never' }],
+  ],
   projects: [
     {
       name: 'chromium',
