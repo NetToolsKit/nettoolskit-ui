@@ -6,24 +6,23 @@ Status: In Progress
 
 ## Scope
 
-This roadmap consolidates the previous phased planning into one enterprise plan for the CMS engine.
+Close the remaining enterprise CMS backlog with a reuse-first refactor of the authoring shell and a final release-grade regression hardening pass.
 
 In scope:
-- headless CMS engine capabilities
-- schema-driven authoring
-- reusable content lifecycle
-- provider contracts for later backend integration
-- review, release and governance surfaces
-- enterprise-grade authoring hardening
+- extract reusable CMS authoring components, composables, and shell templates from `landing-page/CmsApp.vue`
+- reduce repetition and improve SOLID boundaries in the Vue authoring layer without regressing current CMS behavior
+- harden authoring performance for preview, review, search, and large reusable libraries
+- preserve the DOM, ARIA, and `data-*` contracts currently used by E2E and visual regression coverage
+- close the enterprise plan with explicit release criteria, validation commands, and closeout expectations
 
 Out of scope:
-- application-specific RBAC enforcement
-- backend job orchestration
-- business-specific moderation workflows
+- redesigning the CMS product model or release workflow semantics
+- backend-specific persistence work beyond the revision-safe provider contracts already delivered
+- changing public E2E selectors or visual-baseline hooks unless a safer compatibility wrapper is kept
 
 ## Completed Foundation
 
-Delivered before this unified plan:
+Delivered before the final enterprise items:
 - Phases 1 through 9 completed
 - white-label engine and theme/token system
 - CMS builder for pages, blocks, media and releases
@@ -32,7 +31,20 @@ Delivered before this unified plan:
 - domain import/export and schema packages
 - preview, review, locale coverage and release checklists
 - governance, review history and deprecation guidance
+- provider sync/version contracts
+- accessibility and content QA gates
 - E2E and visual regression baselines
+
+## Findings Baseline
+
+- `landing-page/CmsApp.vue` is the dominant maintainability and performance hotspot in the CMS surface.
+- The Vue authoring layer carries most of the remaining duplication; the engine under `src/modules/cms/white-label/` is already comparatively modular.
+- Preview surfaces are still mounted behind `v-show`, so hidden DOM remains alive even when not visible.
+- The preview toolbar and review summary blocks are duplicated across `Settings`, `Pages`, and `Blocks`.
+- Reusable/preset libraries render full lists inline, which does not scale when enterprise tenants accumulate large libraries.
+- Builder search recalculates several expensive filtered lists on every keystroke.
+- Multiple `watch(settings, { deep: true })` pipelines duplicate work for history, persistence, and autosave.
+- E2E coverage already defines a stable DOM/ARIA facade for the CMS shell; refactors must preserve that facade.
 
 ## Enterprise Backlog
 
@@ -48,16 +60,159 @@ Delivered before this unified plan:
 | 108 | Reusable content branching and variant flows | linked baseline + detached/variant authoring ergonomics | Completed | Support enterprise reuse without forcing one mutable source of truth. |
 | 109 | Provider sync, conflict and version contracts | async provider adapters + optimistic concurrency hooks | Completed | Prepare the engine for real backend persistence with revision safety. |
 | 110 | Accessibility and content QA gates | engine review helpers + release integration | Completed | Add author-facing a11y and content quality signals before publish. |
-| 111 | Editor performance and virtualization hardening | large-library rendering + lazy authoring surfaces | Pending | Keep CMS authoring responsive as reusable libraries grow. |
-| 112 | Enterprise regression and release criteria | full-suite hardening + final quality gates | Pending | Close the enterprise plan with regression and operational criteria. |
+| 111 | Editor performance and virtualization hardening | component extraction + lazy preview + scalable library rendering | Pending | Refactor `CmsApp.vue` into reusable components/composables, keep E2E contracts stable, replace hidden preview `v-show` surfaces, reduce duplicate review markup, debounce builder search, consolidate deep watchers, and introduce scalable rendering for large library surfaces. |
+| 112 | Enterprise regression and release criteria | full-suite hardening + release-grade closeout | Pending | Revalidate the full CMS authoring surface after item 111, refresh visual/functional baselines when required, document final release criteria, and close the enterprise plan only after tester and reviewer gates pass. |
 
-## Delivery Order
+## Ordered Tasks
 
-1. Item 111: editor performance and virtualization hardening
-2. Item 112: enterprise regression and release criteria
+1. Item 111: editor performance and virtualization hardening [Pending]
+   - extract shared authoring-shell components from `landing-page/CmsApp.vue`
+   - preserve the current CSS hooks, roles, ARIA labels, and `data-*` attributes used by Playwright
+   - replace preview/review hidden surfaces that use `v-show` with lazy-mounted variants
+   - reduce duplicate preview/review markup across `Settings`, `Pages`, and `Blocks`
+   - debounce builder search and reuse derived state instead of recomputing across multiple lists on every keystroke
+   - consolidate deep `settings` watch pipelines where behavior allows
+   - introduce scalable rendering for reusable libraries and preset libraries
+
+2. Item 112: enterprise regression and release criteria [Pending]
+   - run the full validation matrix for CMS authoring, releases, previews, and visual baselines
+   - verify the preserved DOM/ARIA facade for all critical authoring flows
+   - update changelog and final closeout artifacts only after tester and reviewer gates pass
+   - close the plan when release criteria below are fully satisfied
+
+## Item 111 Execution Targets
+
+Primary target paths:
+- `landing-page/CmsApp.vue`
+- `landing-page/cms/*.vue`
+- `landing-page/cms/*.ts`
+- `tests/e2e/cms-settings-flow.spec.ts`
+
+Preferred extraction targets:
+- `CmsPreviewToolbar.vue`
+- `CmsLocaleCoverageMatrix.vue`
+- `CmsDraftPublishedReviewSummary.vue`
+- `CmsBlocksReviewSummary.vue`
+- `CmsWindowedLibraryList.vue`
+- `useCmsBuilderSearch.ts`
+- `useCmsWorkspacePreview.ts`
+- `useCmsSettingsWatchPipeline.ts`
+
+Execution checkpoints:
+1. preview/review chrome extracted without changing the DOM facade
+2. hidden preview surfaces lazy-mounted
+3. builder search and large libraries hardened for scale
+4. deep watch duplication reduced without breaking autosave/history/persistence
+
+## Item 112 Execution Targets
+
+Primary target paths:
+- `tests/e2e/cms-settings-flow.spec.ts`
+- `tests/e2e/cms-visual-regression.spec.ts`
+- `tests/unit/modules/cms/*.spec.ts`
+- `CHANGELOG.md`
+- `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
+
+Closeout checkpoints:
+1. targeted validations for extracted surfaces pass
+2. full Chromium CMS E2E suite passes
+3. CMS visual regression suite passes
+4. build, lint, type-check, and vulnerability audit pass
+5. final review reports no blocking findings
+
+## DOM and Automation Contracts To Preserve
+
+The refactor may move implementation internals, but these wrappers and hooks must stay stable:
+
+- Shell and workspace framing
+  - `.ntk-app-shell__drawer .ntk-app-shell__item`
+  - `.q-item__label`
+  - `.ntk-app-shell__workspace`
+  - `.ntk-app-shell__page`
+  - `.ntk-app-shell__header`
+  - `.ntk-app-shell__title-app`
+  - `.cms-shell-page__hero h1`
+
+- Designer shell skeleton
+  - `.cms-designer-card--settings`
+  - `.cms-designer-card--pages`
+  - `.cms-designer-card--blocks`
+  - `__toolbar-header`
+  - `__toolbar-row--actions`
+  - `__toolbar-row--info`
+  - `__ruler`
+  - `__stage`
+  - `__rail`
+  - `__statusbar`
+  - `__status-text`
+
+- Accessible tabs and sidebars
+  - `role="tab"`
+  - `aria-selected`
+  - `.cms-settings__sidebar`
+  - `.cms-designer-card__nav-button--active`
+
+- Preview and review hooks
+  - `.cms-preview-toolbar[data-cms-preview-source][data-cms-preview-viewport]`
+  - `.cms-pages__preview`
+  - `.cms-blocks__preview`
+  - `.cms-runtime-preview__frame[data-preview-viewport]`
+  - `.cms-review-summary`
+  - `.cms-review-summary--locale`
+  - `.cms-preview-header__action`
+  - `.cms-notification-actions-preview__action`
+
+- Releases/review/governance hooks
+  - `.cms-releases__editor`
+  - `.cms-release-checklist[data-cms-checklist-item][data-cms-checklist-status]`
+  - `[data-cms-release-review-hub]`
+  - `[data-cms-review-card]`
+  - `[data-cms-governance-hub]`
+  - `[data-cms-governance-card]`
+  - `[data-cms-governance-status]`
+  - `[data-cms-release-history]`
+  - `[data-cms-release-acks]`
+  - `[data-cms-release-ack-item]`
+
+- Content authoring rows
+  - `.cms-page-item`
+  - `.cms-page-item__grid`
+  - `.cms-page-item__actions`
+  - `.cms-block-item`
+  - `.cms-block-item__meta strong`
+  - `.cms-block-row`
+  - `.cms-block-row--active`
+  - `.cms-reusable-block-row`
+
+## Validation Matrix
+
+Item 111 targeted validation:
+- `npm audit --omit=dev`
+- `npm run type-check`
+- `npm run lint`
+- `npm run build:landing`
+- focused unit tests for extracted/reworked helpers
+- focused E2E coverage for `Settings`, `Pages`, `Blocks`, `Preview`, and `Releases`
+
+Item 112 final validation:
+- `npm audit --omit=dev`
+- `npm run type-check`
+- `npm run lint`
+- `npm run build:landing`
+- `npm run test -- tests/unit/modules/cms/*.spec.ts`
+- `npm run test:e2e -- --project=chromium`
+- `npx playwright test tests/e2e/cms-visual-regression.spec.ts --project=chromium`
+
+## Specialists
+
+- Recommended implementation specialist: `dev-frontend-vue-quasar-engineer`
+- Planner: `plan-active-work-planner`
+- Test gate: mandatory
+- Review gate: mandatory
+- Release closeout: required
 
 ## Practical Reading
 
-- There is now one active enterprise roadmap.
-- Previous planning files were consolidated and removed.
-- The current execution target is item `111`.
+- There is one active enterprise roadmap.
+- The remaining execution target is item `111`.
+- Item `112` must not be marked complete until tester and reviewer gates both pass against the final extracted CMS shell.
