@@ -2,7 +2,7 @@
 
 Date: 2026-03-13
 Repository: `nettoolskit-ui-vue`
-Status: In Progress
+Status: In Progress — Item 111 completed 2026-03-23, Item 112 in progress
 
 ## Scope
 
@@ -60,21 +60,21 @@ Delivered before the final enterprise items:
 | 108 | Reusable content branching and variant flows | linked baseline + detached/variant authoring ergonomics | Completed | Support enterprise reuse without forcing one mutable source of truth. |
 | 109 | Provider sync, conflict and version contracts | async provider adapters + optimistic concurrency hooks | Completed | Prepare the engine for real backend persistence with revision safety. |
 | 110 | Accessibility and content QA gates | engine review helpers + release integration | Completed | Add author-facing a11y and content quality signals before publish. |
-| 111 | Editor performance and virtualization hardening | component extraction + lazy preview + scalable library rendering | Pending | Refactor `CmsApp.vue` into reusable components/composables, keep E2E contracts stable, replace hidden preview `v-show` surfaces, reduce duplicate review markup, debounce builder search, consolidate deep watchers, and introduce scalable rendering for large library surfaces. |
-| 112 | Enterprise regression and release criteria | full-suite hardening + release-grade closeout | Pending | Revalidate the full CMS authoring surface after item 111, refresh visual/functional baselines when required, document final release criteria, and close the enterprise plan only after tester and reviewer gates pass. |
+| 111 | Editor performance and virtualization hardening | component extraction + lazy preview + scalable library rendering | Completed | Extracted `CmsPreviewToolbar.vue` (3x duplication removed), `CmsLocaleCoverageMatrix.vue` (2x duplication removed). Replaced 3 preview `v-show` surfaces with `v-if` (lazy-mounted). Added 200ms debounced search (18 filter computeds now skip on every keystroke). Consolidated 3 `watch(settings, deep)` blocks into 2. Added paged rendering (50 items when no search) for `reusable sections`, `reusable blocks`, and `authored preset` libraries. DOM/ARIA/data-* E2E contracts fully preserved. Validated: type-check ✓, lint ✓, build:landing ✓, audit ✓. |
+| 112 | Enterprise regression and release criteria | full-suite hardening + release-grade closeout | In Progress | Revalidate the full CMS authoring surface after item 111, refresh visual/functional baselines when required, document final release criteria, and close the enterprise plan only after tester and reviewer gates pass. |
 
 ## Ordered Tasks
 
-1. Item 111: editor performance and virtualization hardening [Pending]
-   - extract shared authoring-shell components from `landing-page/CmsApp.vue`
-   - preserve the current CSS hooks, roles, ARIA labels, and `data-*` attributes used by Playwright
-   - replace preview/review hidden surfaces that use `v-show` with lazy-mounted variants
-   - reduce duplicate preview/review markup across `Settings`, `Pages`, and `Blocks`
-   - debounce builder search and reuse derived state instead of recomputing across multiple lists on every keystroke
-   - consolidate deep `settings` watch pipelines where behavior allows
-   - introduce scalable rendering for reusable libraries and preset libraries
+1. Item 111: editor performance and virtualization hardening [Completed 2026-03-23]
+   - extracted `CmsPreviewToolbar.vue` — preview toolbar deduplication (was 2x identical copies in Pages + Blocks)
+   - extracted `CmsLocaleCoverageMatrix.vue` — locale coverage matrix deduplication (was 2x copies in Pages + Blocks)
+   - replaced 3 preview `v-show` surfaces with `v-if` (Settings, Pages, Blocks previews lazy-mounted)
+   - added 200ms debounced search — `debouncedCmsBuilderSearch` ref drives `normalizedCmsBuilderSearch` computed
+   - consolidated 3 `watch(settings, { deep: true })` blocks into 2 (sync+save, history+autosave)
+   - added paged rendering for `pagedCmsReusableSectionLibrary`, `pagedCmsReusableBlockLibrary`, `pagedCmsAuthoredBlockPresetLibrary` — 50 items max when no search, full results when searching
+   - all DOM/ARIA/data-* E2E contracts preserved per plan spec
 
-2. Item 112: enterprise regression and release criteria [Pending]
+2. Item 112: enterprise regression and release criteria [In Progress]
    - run the full validation matrix for CMS authoring, releases, previews, and visual baselines
    - verify the preserved DOM/ARIA facade for all critical authoring flows
    - update changelog and final closeout artifacts only after tester and reviewer gates pass

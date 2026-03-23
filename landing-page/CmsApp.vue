@@ -1827,7 +1827,7 @@
               </div>
             </div>
           </q-card>
-          <q-card v-show="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
+          <q-card v-if="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Settings preview', 'Preview de configuracoes') }}</strong>
               <div class="cms-preview-toolbar__chips">
@@ -2731,7 +2731,7 @@
                         }}
                       </div>
                       <article
-                        v-for="reusableSection in filteredCmsReusableSectionLibrary"
+                        v-for="reusableSection in pagedCmsReusableSectionLibrary"
                         :key="reusableSection.id"
                         class="cms-reusable-block-row"
                       >
@@ -2997,7 +2997,7 @@
             </div>
           </q-card>
 
-          <q-card v-show="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
+          <q-card v-if="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Pages preview', 'Preview de paginas') }}</strong>
               <q-btn
@@ -3011,47 +3011,17 @@
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-pages__preview">
-              <div
-                class="cms-preview-toolbar"
-                :data-cms-preview-source="cmsPreviewSource"
-                :data-cms-preview-viewport="cmsPreviewViewport"
-              >
-                <q-select
-                  v-model="cmsPreviewSource"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsPreviewSourceOptions"
-                  :label="tr('Preview source', 'Origem do preview')"
-                />
-                <q-select
-                  v-model="cmsPreviewLocale"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsLocaleOptions"
-                  :label="tr('Preview locale', 'Locale do preview')"
-                />
-                <q-select
-                  v-model="cmsPreviewViewport"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsPreviewViewportOptions"
-                  :label="tr('Preview viewport', 'Viewport do preview')"
-                />
-                <div class="cms-preview-toolbar__chips">
-                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewSource }}</q-chip>
-                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewViewport }}</q-chip>
-                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewLocale }}</q-chip>
-                  <q-chip v-if="cmsPreviewPublishedReleaseLabel" dense square :style="statusChipStyle">
-                    {{ cmsPreviewPublishedReleaseLabel }}
-                  </q-chip>
-                </div>
-              </div>
+              <CmsPreviewToolbar
+                v-model:source="cmsPreviewSource"
+                v-model:locale="cmsPreviewLocale"
+                v-model:viewport="cmsPreviewViewport"
+                :source-options="cmsPreviewSourceOptions"
+                :locale-options="cmsLocaleOptions"
+                :viewport-options="cmsPreviewViewportOptions"
+                :published-release-label="cmsPreviewPublishedReleaseLabel"
+                :status-chip-style="statusChipStyle"
+                :is-pt-br="isPtBrLocale"
+              />
 
               <q-banner v-if="cmsPreviewEmptyMessage" rounded class="cms-banner" :style="bannerStyle">
                 {{ cmsPreviewEmptyMessage }}
@@ -3117,65 +3087,19 @@
                   </div>
                 </div>
 
-                <div v-if="cmsPreviewLocaleCoverageMatrix.length > 0" class="cms-review-summary cms-review-summary--locale">
-                  <div class="cms-review-summary__header">
-                    <strong>{{ tr('Locale coverage matrix', 'Matriz de cobertura por locale') }}</strong>
-                    <div class="cms-page-preview__chips">
-                      <q-chip dense square :style="statusChipStyle">
-                        {{ tr('Active preview', 'Preview ativo') }} · {{ getCmsLocaleCoverageLocaleLabel(cmsPreviewLocale) }}
-                      </q-chip>
-                      <q-chip
-                        v-if="cmsPreviewActiveLocaleCoverage"
-                        dense
-                        square
-                        :style="getCmsLocaleCoverageStatusStyle(cmsPreviewActiveLocaleCoverage.status)"
-                      >
-                        {{ getCmsLocaleCoverageSummaryLabel(cmsPreviewActiveLocaleCoverage) }}
-                      </q-chip>
-                    </div>
-                  </div>
-                  <div class="cms-locale-coverage-grid">
-                    <article
-                      v-for="summary in cmsPreviewLocaleCoverageMatrix"
-                      :key="`pages-locale-coverage-${summary.locale}`"
-                      class="cms-locale-coverage-card"
-                    >
-                      <div class="cms-locale-coverage-card__header">
-                        <q-chip dense square :style="statusChipStyle">{{ getCmsLocaleCoverageLocaleLabel(summary.locale) }}</q-chip>
-                        <q-chip dense square :style="getCmsLocaleCoverageStatusStyle(summary.status)">
-                          {{ getCmsLocaleCoverageStatusLabel(summary.status) }}
-                        </q-chip>
-                      </div>
-                      <small>{{ getCmsLocaleCoverageSummaryLabel(summary) }}</small>
-                      <div class="cms-blocks-summary-grid">
-                        <div
-                          v-for="category in cmsLocaleCoverageCategories"
-                          :key="`pages-locale-category-${summary.locale}-${category}`"
-                          class="cms-blocks-summary-card"
-                        >
-                          <span>{{ getCmsLocaleCoverageCategoryLabel(category) }}</span>
-                          <strong>{{ summary.categories[category].covered }} / {{ summary.categories[category].total }}</strong>
-                          <small>{{ summary.categories[category].percentage }}%</small>
-                        </div>
-                      </div>
-                      <div v-if="summary.missingEntries.length > 0" class="cms-review-summary__list">
-                        <article
-                          v-for="entry in summary.missingEntries.slice(0, 4)"
-                          :key="entry.id"
-                          class="cms-review-summary__item"
-                        >
-                          <q-chip dense square :style="getCmsLocaleCoverageStatusStyle('empty')">
-                            {{ getCmsLocaleCoverageCategoryLabel(entry.category) }}
-                          </q-chip>
-                          <div class="cms-review-summary__body">
-                            <strong>{{ entry.label }}</strong>
-                            <small>{{ entry.fieldLabel }}</small>
-                          </div>
-                        </article>
-                      </div>
-                    </article>
-                  </div>
-                </div>
+                <CmsLocaleCoverageMatrix
+                  :matrix="cmsPreviewLocaleCoverageMatrix"
+                  :active-locale="cmsPreviewLocale"
+                  :active-locale-coverage="cmsPreviewActiveLocaleCoverage"
+                  :categories="cmsLocaleCoverageCategories"
+                  :status-chip-style="statusChipStyle"
+                  :get-status-style="getCmsLocaleCoverageStatusStyle"
+                  :get-summary-label="getCmsLocaleCoverageSummaryLabel"
+                  :get-status-label="getCmsLocaleCoverageStatusLabel"
+                  :get-category-label="getCmsLocaleCoverageCategoryLabel"
+                  :get-locale-label="getCmsLocaleCoverageLocaleLabel"
+                  :is-pt-br="isPtBrLocale"
+                />
 
                 <article
                   v-for="(page, pageIndex) in cmsPreviewPagesForRender"
@@ -3835,7 +3759,7 @@
                 </div>
 
                 <div
-                  v-for="reusableBlock in filteredCmsReusableBlockLibrary"
+                  v-for="reusableBlock in pagedCmsReusableBlockLibrary"
                   :key="reusableBlock.id"
                   class="cms-reusable-block-row"
                   :class="{ 'cms-reusable-block-row--active': reusableBlock.id === selectedReusableBlockId }"
@@ -3994,7 +3918,7 @@
                 </div>
 
                 <div
-                  v-for="preset in filteredCmsAuthoredBlockPresetLibrary"
+                  v-for="preset in pagedCmsAuthoredBlockPresetLibrary"
                   :key="preset.id"
                   class="cms-reusable-block-row"
                   :class="{ 'cms-reusable-block-row--active': preset.id === selectedAuthoredBlockPresetId }"
@@ -4329,7 +4253,7 @@
             </div>
           </q-card>
 
-          <q-card v-show="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
+          <q-card v-if="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Blocks preview', 'Preview de blocos') }}</strong>
               <q-btn
@@ -4343,47 +4267,17 @@
             </div>
             <q-separator />
             <div class="cms-shell-card__body cms-blocks__preview">
-              <div
-                class="cms-preview-toolbar"
-                :data-cms-preview-source="cmsPreviewSource"
-                :data-cms-preview-viewport="cmsPreviewViewport"
-              >
-                <q-select
-                  v-model="cmsPreviewSource"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsPreviewSourceOptions"
-                  :label="tr('Preview source', 'Origem do preview')"
-                />
-                <q-select
-                  v-model="cmsPreviewLocale"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsLocaleOptions"
-                  :label="tr('Preview locale', 'Locale do preview')"
-                />
-                <q-select
-                  v-model="cmsPreviewViewport"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsPreviewViewportOptions"
-                  :label="tr('Preview viewport', 'Viewport do preview')"
-                />
-                <div class="cms-preview-toolbar__chips">
-                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewSource }}</q-chip>
-                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewViewport }}</q-chip>
-                  <q-chip dense square :style="statusChipStyle">{{ cmsPreviewLocale }}</q-chip>
-                  <q-chip v-if="cmsPreviewPublishedReleaseLabel" dense square :style="statusChipStyle">
-                    {{ cmsPreviewPublishedReleaseLabel }}
-                  </q-chip>
-                </div>
-              </div>
+              <CmsPreviewToolbar
+                v-model:source="cmsPreviewSource"
+                v-model:locale="cmsPreviewLocale"
+                v-model:viewport="cmsPreviewViewport"
+                :source-options="cmsPreviewSourceOptions"
+                :locale-options="cmsLocaleOptions"
+                :viewport-options="cmsPreviewViewportOptions"
+                :published-release-label="cmsPreviewPublishedReleaseLabel"
+                :status-chip-style="statusChipStyle"
+                :is-pt-br="isPtBrLocale"
+              />
 
               <div class="cms-blocks-summary-grid">
                 <div class="cms-blocks-summary-card">
@@ -4481,65 +4375,19 @@
                 </div>
               </div>
 
-              <div v-if="cmsPreviewLocaleCoverageMatrix.length > 0" class="cms-review-summary cms-review-summary--locale">
-                <div class="cms-review-summary__header">
-                  <strong>{{ tr('Locale coverage matrix', 'Matriz de cobertura por locale') }}</strong>
-                  <div class="cms-page-preview__chips">
-                    <q-chip dense square :style="statusChipStyle">
-                      {{ tr('Active preview', 'Preview ativo') }} · {{ getCmsLocaleCoverageLocaleLabel(cmsPreviewLocale) }}
-                    </q-chip>
-                    <q-chip
-                      v-if="cmsPreviewActiveLocaleCoverage"
-                      dense
-                      square
-                      :style="getCmsLocaleCoverageStatusStyle(cmsPreviewActiveLocaleCoverage.status)"
-                    >
-                      {{ getCmsLocaleCoverageSummaryLabel(cmsPreviewActiveLocaleCoverage) }}
-                    </q-chip>
-                  </div>
-                </div>
-                <div class="cms-locale-coverage-grid">
-                  <article
-                    v-for="summary in cmsPreviewLocaleCoverageMatrix"
-                    :key="`blocks-locale-coverage-${summary.locale}`"
-                    class="cms-locale-coverage-card"
-                  >
-                    <div class="cms-locale-coverage-card__header">
-                      <q-chip dense square :style="statusChipStyle">{{ getCmsLocaleCoverageLocaleLabel(summary.locale) }}</q-chip>
-                      <q-chip dense square :style="getCmsLocaleCoverageStatusStyle(summary.status)">
-                        {{ getCmsLocaleCoverageStatusLabel(summary.status) }}
-                      </q-chip>
-                    </div>
-                    <small>{{ getCmsLocaleCoverageSummaryLabel(summary) }}</small>
-                    <div class="cms-blocks-summary-grid">
-                      <div
-                        v-for="category in cmsLocaleCoverageCategories"
-                        :key="`blocks-locale-category-${summary.locale}-${category}`"
-                        class="cms-blocks-summary-card"
-                      >
-                        <span>{{ getCmsLocaleCoverageCategoryLabel(category) }}</span>
-                        <strong>{{ summary.categories[category].covered }} / {{ summary.categories[category].total }}</strong>
-                        <small>{{ summary.categories[category].percentage }}%</small>
-                      </div>
-                    </div>
-                    <div v-if="summary.missingEntries.length > 0" class="cms-review-summary__list">
-                      <article
-                        v-for="entry in summary.missingEntries.slice(0, 4)"
-                        :key="entry.id"
-                        class="cms-review-summary__item"
-                      >
-                        <q-chip dense square :style="getCmsLocaleCoverageStatusStyle('empty')">
-                          {{ getCmsLocaleCoverageCategoryLabel(entry.category) }}
-                        </q-chip>
-                        <div class="cms-review-summary__body">
-                          <strong>{{ entry.label }}</strong>
-                          <small>{{ entry.fieldLabel }}</small>
-                        </div>
-                      </article>
-                    </div>
-                  </article>
-                </div>
-              </div>
+              <CmsLocaleCoverageMatrix
+                :matrix="cmsPreviewLocaleCoverageMatrix"
+                :active-locale="cmsPreviewLocale"
+                :active-locale-coverage="cmsPreviewActiveLocaleCoverage"
+                :categories="cmsLocaleCoverageCategories"
+                :status-chip-style="statusChipStyle"
+                :get-status-style="getCmsLocaleCoverageStatusStyle"
+                :get-summary-label="getCmsLocaleCoverageSummaryLabel"
+                :get-status-label="getCmsLocaleCoverageStatusLabel"
+                :get-category-label="getCmsLocaleCoverageCategoryLabel"
+                :get-locale-label="getCmsLocaleCoverageLocaleLabel"
+                :is-pt-br="isPtBrLocale"
+              />
 
               <q-banner v-if="cmsPreviewEmptyMessage" rounded class="cms-banner" :style="bannerStyle">
                 {{ cmsPreviewEmptyMessage }}
@@ -6026,6 +5874,8 @@ import {
 } from '../src/modules/cms/releases/orchestration'
 import { createLandingRegistry } from './cms/landing.registry'
 import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
+import CmsPreviewToolbar from './cms/CmsPreviewToolbar.vue'
+import CmsLocaleCoverageMatrix from './cms/CmsLocaleCoverageMatrix.vue'
 import {
   getLandingBlockFieldDefinitions,
   getLandingBlockMediaBindingDefinitions,
@@ -6949,6 +6799,18 @@ function getCurrentThemePresets(): CmsThemePreset[] {
 
 const activeMenuId = ref(settings.value.items[0]?.id ?? defaultMenuId)
 const searchQuery = ref('')
+const debouncedCmsBuilderSearch = ref('')
+let _cmsSearchDebounceTimer: ReturnType<typeof setTimeout> | undefined
+watch(
+  searchQuery,
+  (value) => {
+    clearTimeout(_cmsSearchDebounceTimer)
+    _cmsSearchDebounceTimer = setTimeout(() => {
+      debouncedCmsBuilderSearch.value = normalizeCmsBuilderSearchValue(value)
+    }, 200)
+  },
+  { immediate: true }
+)
 const selectedBuilderCommandId = ref('')
 const activeSettingsTab = ref<'branding' | 'typography' | 'layout' | 'colors' | 'menu' | 'topbar' | 'content'>('branding')
 type CmsSettingsWorkbenchTabId = typeof activeSettingsTab.value
@@ -7082,7 +6944,7 @@ const cmsStarterKitOptions = computed(() => {
     settings.value.authoredContentModels
   )
 })
-const normalizedCmsBuilderSearch = computed(() => normalizeCmsBuilderSearchValue(searchQuery.value))
+const normalizedCmsBuilderSearch = computed(() => debouncedCmsBuilderSearch.value)
 const hasCmsBuilderSearch = computed(() => normalizedCmsBuilderSearch.value.length > 0)
 const filteredCmsStarterKitOptions = computed(() => {
   if (!hasCmsBuilderSearch.value) {
@@ -11748,6 +11610,13 @@ const filteredCmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>
   ))
 })
 
+const pagedCmsReusableSectionLibrary = computed<CmsReusableSectionSettings[]>(() => {
+  if (hasCmsBuilderSearch.value) {
+    return filteredCmsReusableSectionLibrary.value
+  }
+  return filteredCmsReusableSectionLibrary.value.slice(0, 50)
+})
+
 const cmsEntityUsageIndex = computed(() => collectCmsEntityUsageIndex({
   pages: settings.value.pages,
   authoredContentModels: settings.value.authoredContentModels,
@@ -11901,6 +11770,13 @@ const filteredCmsReusableBlockLibrary = computed<CmsReusableBlockSettings[]>(() 
   ))
 })
 
+const pagedCmsReusableBlockLibrary = computed<CmsReusableBlockSettings[]>(() => {
+  if (hasCmsBuilderSearch.value) {
+    return filteredCmsReusableBlockLibrary.value
+  }
+  return filteredCmsReusableBlockLibrary.value.slice(0, 50)
+})
+
 const filteredCmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>(() => {
   if (!hasCmsBuilderSearch.value) {
     return cmsAuthoredBlockPresetLibrary.value
@@ -11915,6 +11791,13 @@ const filteredCmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSet
     resolveCmsBlockDisplayName(preset.type),
     getCmsAuthoredPresetStarterSectionsLabel(preset),
   ))
+})
+
+const pagedCmsAuthoredBlockPresetLibrary = computed<CmsAuthoredBlockPresetSettings[]>(() => {
+  if (hasCmsBuilderSearch.value) {
+    return filteredCmsAuthoredBlockPresetLibrary.value
+  }
+  return filteredCmsAuthoredBlockPresetLibrary.value.slice(0, 50)
 })
 
 const cmsAuthoredBlockPresetOptions = computed(() => {
@@ -16594,24 +16477,6 @@ watch(
 watch(
   settings,
   value => {
-    if (isApplyingCmsAuthoringHistory.value) {
-      return
-    }
-
-    cmsAuthoringHistory.value = recordCmsSnapshot(
-      cmsAuthoringHistory.value,
-      cloneWhiteLabelSettings(value),
-      {
-        equals: areCmsSettingsSnapshotsEqual,
-      }
-    )
-  },
-  { deep: true }
-)
-
-watch(
-  settings,
-  value => {
     syncActiveTenantProfileSettings(value)
     saveCmsWhiteLabelSettings(value)
     savedAtLabel.value = buildSavedAtLabel()
@@ -16621,7 +16486,16 @@ watch(
 
 watch(
   settings,
-  () => {
+  value => {
+    if (!isApplyingCmsAuthoringHistory.value) {
+      cmsAuthoringHistory.value = recordCmsSnapshot(
+        cmsAuthoringHistory.value,
+        cloneWhiteLabelSettings(value),
+        {
+          equals: areCmsSettingsSnapshotsEqual,
+        }
+      )
+    }
     scheduleCmsDraftAutosave()
   },
   { deep: true }
@@ -16730,6 +16604,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   clearCmsAutosaveTimer()
+  clearTimeout(_cmsSearchDebounceTimer)
 })
 
 /**
