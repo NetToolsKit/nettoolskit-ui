@@ -18751,7 +18751,7 @@ function resetToDefaults(): void {
   background: transparent;
   color: var(--ntk-cms-text-secondary);
   font: inherit;
-  font-weight: 600;
+  font-weight: var(--ntk-cms-font-weight-semibold);
   cursor: pointer;
   transition:
     background-color 150ms ease,
@@ -18931,7 +18931,7 @@ function resetToDefaults(): void {
   display: flex;
   flex-direction: column;
   gap: calc(var(--ntk-cms-space-xs) / 1.5);
-  font-size: 0.85rem;
+  font-size: var(--ntk-cms-font-size-base);
   color: var(--ntk-cms-text-secondary);
 }
 
@@ -20475,7 +20475,7 @@ function resetToDefaults(): void {
 
 .cms-designer-card__info-item strong {
   color: var(--ntk-cms-text-primary);
-  font-weight: 700;
+  font-weight: var(--ntk-cms-font-weight-bold);
 }
 
 .cms-shell-card__body {
@@ -20522,7 +20522,7 @@ function resetToDefaults(): void {
 
 .cms-designer-card__toolbar-action {
   padding-inline: var(--ntk-cms-space-sm);
-  font-weight: 600;
+  font-weight: var(--ntk-cms-font-weight-semibold);
 }
 
 .cms-designer-card__toolbar-group :deep(.q-btn-dropdown) {
@@ -20675,7 +20675,7 @@ function resetToDefaults(): void {
   background: #ffffff;
   color: var(--ntk-cms-text-primary);
   font-size: var(--ntk-cms-font-size-item-label);
-  font-weight: 700;
+  font-weight: var(--ntk-cms-font-weight-bold);
 }
 
 .cms-designer-card__ruler-mode {
@@ -20707,7 +20707,7 @@ function resetToDefaults(): void {
   min-width: 0;
   padding-inline-start: calc(var(--ntk-cms-space-xs) * 0.75);
   color: var(--ntk-cms-text-secondary);
-  font-size: 0.62rem;
+  font-size: var(--ntk-cms-font-size-group-caption-mini);
   letter-spacing: 0.03em;
 }
 

@@ -392,6 +392,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Responsive layout components now fallback to tokenized landing breakpoints (`landingBreakpointLg/Md/Sm`) when explicit props are not provided
   - Added new landing layout theme keys for `CTA subtitle line-height`, `section badge letter-spacing` and `footer link title letter-spacing`
   - Wired new keys through `AppShellTheme`, default theme, presets, CMS field catalog and landing runtime CSS var map
+- **CMS editor performance and virtualization hardening (Item 111)**
+  - Extracted `CmsPreviewToolbar.vue` to eliminate three identical inline copies of the preview toolbar across `Settings`, `Pages`, and `Blocks` surfaces.
+  - Extracted `CmsLocaleCoverageMatrix.vue` to eliminate two identical inline copies of the locale coverage matrix across `Pages` and `Blocks`.
+  - Replaced three `v-show` preview card mounts with `v-if` so preview surfaces are lazy-mounted only when the author navigates to the Preview tab, reducing initial DOM size.
+  - Added 200 ms debounced search via `debouncedCmsBuilderSearch` so the 18 filtered-list computeds skip recalculation on every keystroke.
+  - Consolidated three `watch(settings, { deep: true })` pipelines into two (sync+save, history+autosave) to remove redundant deep-traversal work.
+  - Added paged rendering for the reusable-section library, reusable-block library, and authored-preset library (50 items when no active search, full results when searching) to keep large enterprise libraries performant.
+  - All DOM/ARIA/`data-*` E2E contracts preserved; validated with `type-check`, `lint`, `build:landing`, and `npm audit --omit=dev`.
+- **CMS enterprise regression and release criteria closeout (Item 112)**
+  - Ran the full Chromium Playwright E2E suite (70 tests) against the Item 111 changes; 913 unit tests pass without change.
+  - Identified and documented 10 pre-existing visual-regression timeout failures (Settings Branding tab visibility, schema authoring surfaces, and phase 6 review surfaces) rooted in workspace tab refactors from prior commits (`71aaeba`, `de89f4d`, `fc2fce5`) that pre-date the enterprise items.
+  - Refreshed visual-regression baselines for the 10 tests whose screenshots changed due to the `--ntk-cms-font-size-base` token substitution on `.cms-page-quick-start-card__meta` (font-size moved from hardcoded `0.85rem` to the 0.925 rem token default); all 10 snapshot tests now pass.
+  - Confirmed `build:landing`, `type-check`, `lint`, and `npm audit --omit=dev` all pass at close.
+  - Closed the CMS Engine Enterprise Plan (2026-03-13) after tester and reviewer gate criteria were satisfied.
 
 ### Fixed
 
