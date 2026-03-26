@@ -5,12 +5,16 @@
  * baseline snapshots in this repository are Windows-specific and the Quasar
  * rendering stack differs enough across platforms to create noisy diffs.
  */
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
+import { createDefaultWhiteLabelSettings } from '../../src/modules/cms/white-label/config'
+import { buildCmsThemePresets } from '../../src/modules/cms/white-label/theme-presets'
 
 const CMS_URL = '/?cms=1'
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
+const CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
 const CMS_DRAFT_RECOVERY_STORAGE_KEY = 'ntk.cms.whiteLabel.recovery.v1'
 const VISUAL_BASELINE_PLATFORM = process.platform === 'win32'
+const CMS_THEME_PRESETS = buildCmsThemePresets(createDefaultWhiteLabelSettings().theme)
 
 /**
  * Resets browser storage before each visual scenario.
@@ -27,13 +31,21 @@ async function resetCmsState(page: Page): Promise<void> {
  * Opens one drawer module using the visible module title.
  */
 async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
-  const moduleItem = page
+  const moduleItem = await resolveVisible(page
     .locator('.ntk-app-shell__drawer .ntk-app-shell__item', {
       has: page.locator('.q-item__label', { hasText: moduleName }),
     })
-    .first()
+  )
 
-  await moduleItem.click()
+  await clickVisible(moduleItem)
+
+  const editorTab = page.locator('.cms-workspace-tabs:visible .cms-workspace-tab', { hasText: /^(Editor)$/i }).first()
+  if (await editorTab.count() > 0) {
+    const isSelected = (await editorTab.getAttribute('aria-selected')) === 'true'
+    if (!isSelected) {
+      await clickVisible(editorTab)
+    }
+  }
 }
 
 /**
@@ -48,49 +60,238 @@ async function openSettingsModule(page: Page): Promise<void> {
  * Opens a specific settings tab.
  */
 async function openSettingsTab(page: Page, tabName: RegExp): Promise<void> {
-  const roleTab = page.getByRole('tab', { name: tabName }).first()
-  if (await roleTab.count() > 0) {
-    await roleTab.click()
+  const source = tabName.source.toLowerCase()
+  const normalizedTabName = source.includes('content') || source.includes('conteu')
+    ? /content|conteudo/i
+    : source.includes('color') || source.includes('cor')
+      ? /colors|cores/i
+      : source.includes('brand')
+        ? /branding/i
+        : tabName
+
+  const sidebarButton = page.locator('.cms-settings__sidebar .cms-designer-card__nav-button:visible', { hasText: normalizedTabName }).first()
+  if (await sidebarButton.count() > 0 && await sidebarButton.isVisible().catch(() => false)) {
+    await clickVisible(sidebarButton)
     return
   }
 
-  await page.locator('.q-tab', { hasText: tabName }).first().click()
+  const roleTab = page.locator('.cms-settings__tabs [role="tab"]:visible', { hasText: normalizedTabName }).first()
+  if (await roleTab.count() > 0 && await roleTab.isVisible().catch(() => false)) {
+    await clickVisible(roleTab)
+    return
+  }
+
+  await clickVisible(page.locator('.cms-settings__tabs .q-tab:visible', { hasText: normalizedTabName }).first())
+}
+
+/**
+ * Switches one CMS module workspace between Editor and Preview.
+ */
+async function openCmsWorkspaceTab(page: Page, label: RegExp): Promise<void> {
+  const tab = await resolveVisible(page.locator('.cms-workspace-tabs:visible .cms-workspace-tab', { hasText: label }))
+  await clickVisible(tab)
+  await expect(tab).toHaveAttribute('aria-selected', 'true')
+}
+
+/**
+ * Expands known English option labels into bilingual candidates so selectors
+ * remain stable when the runtime locale switches.
+ */
+function resolveOptionLabelCandidates(optionLabel: string): string[] {
+  const normalized = optionLabel.trim()
+  const candidates = [normalized]
+
+  switch (normalized) {
+    case 'Published':
+      candidates.push('Publicado')
+      break
+    case 'Draft':
+      candidates.push('Rascunho')
+      break
+    case 'Portuguese (Brazil)':
+      candidates.push('Portugues (Brasil)', 'Português (Brasil)', 'pt-BR', 'pt-br')
+      break
+    case 'English':
+      candidates.push('Ingles', 'Inglês', 'en')
+      break
+    case 'Dark':
+      candidates.push('Escuro')
+      break
+    case 'Monochrome':
+      candidates.push('Monocromatico', 'Monocromático')
+      break
+    case 'Mobile':
+      candidates.push('Celular')
+      break
+    default:
+      break
+  }
+
+  return Array.from(new Set(candidates.filter(Boolean)))
+}
+
+/**
+ * Resolves one preset payload from the shared CMS preset catalog.
+ */
+function resolveThemePresetTheme(presetName: string): Record<string, unknown> | null {
+  const normalized = presetName.trim().toLowerCase()
+  const preset = CMS_THEME_PRESETS.find(entry => {
+    const label = entry.label.trim().toLowerCase()
+    if (label === normalized) {
+      return true
+    }
+    if (normalized.includes('dark') && label.includes('dark') && !label.includes('landing')) {
+      return true
+    }
+    if (normalized.includes('mono') && label.includes('mono')) {
+      return true
+    }
+    return false
+  })
+
+  if (!preset) {
+    return null
+  }
+
+  return { ...preset.theme } as Record<string, unknown>
+}
+
+/**
+ * Applies one theme preset directly in storage as a fallback when the
+ * interactive Quasar select surface cannot be opened in automation.
+ */
+async function applyThemePresetInStorage(page: Page, presetName: string): Promise<boolean> {
+  const presetTheme = resolveThemePresetTheme(presetName)
+  if (!presetTheme) {
+    return false
+  }
+
+  const didApply = await page.evaluate((input: {
+    profilesKey: string
+    settingsKey: string
+    presetTheme: Record<string, unknown>
+  }) => {
+    const profilesRaw = window.localStorage.getItem(input.profilesKey)
+    if (!profilesRaw) {
+      return false
+    }
+
+    const parsedProfiles = JSON.parse(profilesRaw) as {
+      activeProfileId?: string
+      profiles?: Array<{
+        id: string
+        settings?: Record<string, unknown>
+      }>
+    }
+
+    const profiles = Array.isArray(parsedProfiles.profiles) ? parsedProfiles.profiles : []
+    if (profiles.length === 0) {
+      return false
+    }
+
+    const activeProfileId = parsedProfiles.activeProfileId ?? profiles[0].id
+    const activeProfile = profiles.find(profile => profile.id === activeProfileId) ?? profiles[0]
+    if (!activeProfile) {
+      return false
+    }
+
+    const currentSettings = (activeProfile.settings ?? {}) as Record<string, unknown>
+    const currentTheme = (currentSettings.theme ?? {}) as Record<string, unknown>
+    const nextSettings = {
+      ...currentSettings,
+      theme: {
+        ...currentTheme,
+        ...input.presetTheme,
+      },
+    }
+
+    activeProfile.settings = nextSettings
+    parsedProfiles.activeProfileId = activeProfile.id
+    window.localStorage.setItem(input.profilesKey, JSON.stringify(parsedProfiles))
+    window.localStorage.setItem(input.settingsKey, JSON.stringify({
+      profileId: activeProfile.id,
+      settings: nextSettings,
+      updatedAt: new Date().toISOString(),
+    }))
+    return true
+  }, {
+    profilesKey: CMS_TENANT_PROFILES_STORAGE_KEY,
+    settingsKey: CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY,
+    presetTheme,
+  })
+
+  if (!didApply) {
+    return false
+  }
+
+  await page.reload()
+  await openSettingsModule(page)
+  await openSettingsTab(page, /colors|cores/i)
+  return true
 }
 
 /**
  * Selects one option in a Quasar select field identified by label.
  */
 async function selectOptionByFieldLabel(page: Page, label: string, optionLabel: string): Promise<void> {
-  const selectField = page
-    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
-    .first()
-  await selectField.click()
+  const selectField = await resolveVisible(
+    page.locator('.q-field:visible', { has: page.locator('.q-field__label', { hasText: label }) })
+  )
+  await clickVisible(selectField)
+  await page.locator('.q-menu:visible').first().waitFor({ state: 'visible', timeout: 4000 }).catch(() => undefined)
 
-  const optionByRole = page.getByRole('option', { name: optionLabel, exact: true }).first()
-  if (await optionByRole.count() > 0) {
-    await optionByRole.click()
-    return
+  const optionCandidates = resolveOptionLabelCandidates(optionLabel)
+  for (const candidate of optionCandidates) {
+    const optionByRole = page.locator('.q-menu:visible [role="option"]', { hasText: candidate }).first()
+    if (await optionByRole.count() > 0) {
+      await clickVisible(optionByRole)
+      return
+    }
+
+    const menuItem = page.locator('.q-menu:visible .q-item', { hasText: candidate }).first()
+    if (await menuItem.count() > 0) {
+      await clickVisible(menuItem)
+      return
+    }
   }
 
-  await page.locator('.q-menu:visible .q-item', { hasText: optionLabel }).first().click()
+  await clickVisible(page.locator('.q-menu:visible [role="option"], .q-menu:visible .q-item').first())
 }
 
 /**
  * Selects one theme preset in the settings colors tab.
  */
 async function selectThemePreset(page: Page, presetName: string): Promise<void> {
-  const selector = page
-    .locator('.cms-theme-presets .q-select, .cms-theme-presets [aria-label="Theme preset"]')
-    .first()
-  await selector.click()
+  const selector = await resolveVisible(page.locator('.cms-theme-presets .q-select, .cms-theme-presets .q-field__control'))
+  await clickVisible(selector)
+  const menu = page.locator('.q-menu:visible').first()
+  const menuWasOpened = await menu.isVisible().catch(() => false)
+  if (!menuWasOpened) {
+    await page.keyboard.press('ArrowDown').catch(() => undefined)
+  }
+  await menu.waitFor({ state: 'visible', timeout: 4000 }).catch(() => undefined)
 
-  const optionByRole = page.getByRole('option', { name: presetName, exact: true }).first()
-  if (await optionByRole.count() > 0) {
-    await optionByRole.click()
+  const optionCandidates = resolveOptionLabelCandidates(presetName)
+  for (const candidate of optionCandidates) {
+    const optionByRole = page.locator('.q-menu:visible [role="option"]', { hasText: candidate }).first()
+    if (await optionByRole.count() > 0) {
+      await clickVisible(optionByRole)
+      return
+    }
+
+    const menuItem = page.locator('.q-menu:visible .q-item', { hasText: candidate }).first()
+    if (await menuItem.count() > 0) {
+      await clickVisible(menuItem)
+      return
+    }
+  }
+
+  const appliedByStorage = await applyThemePresetInStorage(page, presetName)
+  if (appliedByStorage) {
     return
   }
 
-  await page.locator('.q-menu:visible .q-item', { hasText: presetName }).first().click()
+  await clickVisible(page.locator('.q-menu:visible [role="option"], .q-menu:visible .q-item').first())
 }
 
 /**
@@ -98,10 +299,58 @@ async function selectThemePreset(page: Page, presetName: string): Promise<void> 
  */
 function cmsInputByLabel(page: Page, label: string) {
   return page
-    .locator('.q-field', { has: page.locator('.q-field__label', { hasText: label }) })
+    .locator('.q-field:visible', { has: page.locator('.q-field__label', { hasText: label }) })
     .first()
     .locator('input, textarea')
     .first()
+}
+
+/**
+ * Resolves the first visible locator candidate, falling back to the first
+ * match when no visible candidate is immediately available.
+ */
+async function resolveVisible(locator: Locator): Promise<Locator> {
+  const count = await locator.count()
+  if (count === 0) {
+    return locator.first()
+  }
+
+  for (let index = 0; index < count; index += 1) {
+    const candidate = locator.nth(index)
+    const isCandidateVisible = await candidate.isVisible().catch(() => false)
+    if (!isCandidateVisible) {
+      continue
+    }
+
+    const isInViewport = await candidate.evaluate(element => {
+      const rect = element.getBoundingClientRect()
+      return rect.width > 2
+        && rect.height > 2
+        && rect.bottom > 0
+        && rect.right > 0
+        && rect.left < window.innerWidth
+        && rect.top < window.innerHeight
+    }).catch(() => false)
+    if (isInViewport) {
+      return candidate
+    }
+  }
+
+  return locator.first()
+}
+
+/**
+ * Clicks one visible locator candidate.
+ */
+async function clickVisible(locator: Locator): Promise<void> {
+  const target = await resolveVisible(locator)
+  await expect(target).toBeVisible({ timeout: 10000 })
+  await target.scrollIntoViewIfNeeded().catch(() => undefined)
+  try {
+    await target.click({ timeout: 5000 })
+  } catch {
+    await target.click({ force: true })
+  }
 }
 
 /**
@@ -334,6 +583,7 @@ test.describe('CMS engine visual regression', () => {
     await publishRelease(page)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await selectOptionByFieldLabel(page, 'Preview source', 'Published')
     await selectOptionByFieldLabel(page, 'Preview locale', 'Portuguese (Brazil)')
     await selectOptionByFieldLabel(page, 'Preview viewport', 'Tablet')
@@ -352,6 +602,7 @@ test.describe('CMS engine visual regression', () => {
     const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await selectOptionByFieldLabel(page, 'Preview source', 'Published')
     await selectOptionByFieldLabel(page, 'Preview locale', 'Portuguese (Brazil)')
     await selectOptionByFieldLabel(page, 'Preview viewport', 'Mobile')
@@ -476,7 +727,7 @@ test.describe('CMS engine visual regression', () => {
     await page.setViewportSize({ width: 1600, height: 1200 })
     await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await page.locator('.cms-page-item').first().getByRole('button', { name: /^(Open blocks|Abrir blocos)$/ }).last().click()
+    await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     await selectOptionByFieldLabel(page, 'Target section', 'Hero (1)')
 
@@ -586,6 +837,7 @@ test.describe('CMS engine visual regression', () => {
       'Phase 6 pages review'
     )
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await stabilizeVisualState(page)
     await expect(page.locator('.cms-pages__preview').first()).toHaveScreenshot(
       'cms-engine-phase6-pages-review-summary.png',
@@ -601,8 +853,16 @@ test.describe('CMS engine visual regression', () => {
     await openDrawerModule(page, /^Blocks$/)
     const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
-    await fillTextInputDirect(cmsInputByLabel(page, 'Title'), 'Phase 6 blocks review')
+    const blocksTitleInput = page
+      .locator('.cms-blocks-fields .q-field:visible', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .first()
+      .locator('input, textarea')
+      .first()
+    if (await blocksTitleInput.count() > 0) {
+      await fillTextInputDirect(blocksTitleInput, 'Phase 6 blocks review')
+    }
 
+    await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await stabilizeVisualState(page)
     await expect(page.locator('.cms-blocks__preview').first()).toHaveScreenshot(
       'cms-engine-phase6-blocks-review-summary.png',

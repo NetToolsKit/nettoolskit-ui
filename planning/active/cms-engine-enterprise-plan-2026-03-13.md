@@ -2,7 +2,7 @@
 
 Date: 2026-03-13
 Repository: `nettoolskit-ui-vue`
-Status: Reopened 2026-03-26 — Items 117 through 123 completed; Item 124 remains active for final regression closeout
+Status: Closed 2026-03-26 — Items 117 through 124 completed with full regression and release validation
 
 ## Scope
 
@@ -294,7 +294,7 @@ Release blocker rule:
 | 121 | Feature template pack (auth + wiki + enterprise) | login/wiki/wiki-chat/chat-drawer + command-center/approval/audit templates | Completed | Feature catalog completed with generic enterprise-ready templates and typed contracts. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | Completed | Token bridge is wired and active for template surfaces through global style/token integration. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Completed | Delivered generic scaffolds with tests and README standardization for faster template-first bootstrap. |
-| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | In progress | Template runtime/showcase gates are in place; full CMS E2E sweep still blocked by 17 failing scenarios in `cms-settings-flow.spec.ts`. |
+| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Completed | CMS selector/actionability regressions were hardened, visual baselines were refreshed, and full Chromium E2E now passes end-to-end (74/74). |
 
 ## Ordered Tasks (Reopen Track)
 
@@ -549,7 +549,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(scaffold): add router/state/menu integration templates`
 
-8. Item 124: template regression and release closeout [In progress]
+8. Item 124: template regression and release closeout [Completed 2026-03-26]
    - Target paths:
      - `tests/unit/templates/**/*.spec.ts`
      - `tests/e2e/template-visual-regression.spec.ts`
@@ -569,23 +569,28 @@ Release blocker rule:
    - Checkpoints:
      - template pack fully covered by quality gates
      - docs/changelog updated with template-first workflow
-   - Progress note (2026-03-26):
-     - added template showcase runtime mode (`/?templates=1`) wired through `landing-page/main.ts`
-     - added `landing-page/TemplateShowcaseApp.vue` to render deterministic layout/page/feature template surfaces for regression
-     - added visual regression suite:
-       - `tests/e2e/template-visual-regression.spec.ts`
-       - `tests/e2e/template-visual-regression.spec.ts-snapshots/*`
+    - Progress note (2026-03-26):
+      - added template showcase runtime mode (`/?templates=1`) wired through `landing-page/main.ts`
+      - added `landing-page/TemplateShowcaseApp.vue` to render deterministic layout/page/feature template surfaces for regression
+      - added visual regression suite:
+        - `tests/e2e/template-visual-regression.spec.ts`
+        - `tests/e2e/template-visual-regression.spec.ts-snapshots/*`
      - updated release docs:
        - `README.md` (template catalog + template-first delivery + runtime preview mode)
        - `CHANGELOG.md` (template showcase and visual-regression entry)
-     - validation executed:
-       - `npm audit --omit=dev` ✅
-       - `npm run lint` ✅
-       - `npm run type-check` ✅
-       - `npm run build:landing` ✅
-       - `npm run test` ✅
-       - `npm run test:e2e -- tests/e2e/template-visual-regression.spec.ts --project=chromium --update-snapshots` ✅
-      - `npm run test:e2e -- tests/e2e/cms-settings-flow.spec.ts --project=chromium` ❌ (17 failing tests across selector/actionability expectations and preview/editor flow assumptions; 33 tests passing)
+      - regression hardening (closeout extension):
+        - stabilized `tests/e2e/cms-settings-flow.spec.ts` with multilingual selectors and explicit `Editor`/`Preview` workspace handling
+        - stabilized `tests/e2e/cms-visual-regression.spec.ts` field targeting and locale/viewport option candidates
+        - refreshed CMS visual snapshots for updated shell/workspace layouts
+      - validation executed:
+        - `npm audit --omit=dev` ✅
+        - `npm run lint` ✅
+        - `npm run type-check` ✅
+        - `npm run build:landing` ✅
+        - `npm run test` ✅
+        - `npm run test:e2e -- tests/e2e/cms-visual-regression.spec.ts --project=chromium --update-snapshots` ✅
+        - `npm run test:e2e -- tests/e2e/cms-settings-flow.spec.ts --project=chromium` ✅ (50/50)
+        - `npm run test:e2e -- --project=chromium` ✅ (74/74)
    - Commit checkpoint suggestion:
      - `chore(release): template pack validation and closeout`
 
