@@ -290,7 +290,7 @@ Release blocker rule:
 | 117 | Visual reference parity inventory freeze | matrix + mapping + target scopes | In progress | Baseline from `.temp/reference` captured and mapped to current structure. |
 | 118 | Template architecture and catalog | folder contract + exports + docs | In progress | `src/templates/**` scaffold started with contracts, registry, and acceptance gate helpers. |
 | 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | In progress | Initial template components added and exported; route-level adoption pending. |
-| 120 | Core page template pack | dashboard/profile/placeholder/not-found templates | In progress | Initial page template components and exports added; route-level adoption pending. |
+| 120 | Core page template pack | dashboard/profile/placeholder/not-found + generic dashboard workspace + CRUD list templates | In progress | Core templates expanded with reusable dashboard workspace and CRUD list archetypes for cross-scenario speed. |
 | 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | In progress | Generic feature templates added with typed props/events for cross-scenario reuse. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | In progress | Tokenized bridge added and wired into global styles for template surfaces. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
@@ -372,33 +372,44 @@ Release blocker rule:
 
 4. Item 120: deliver core page templates [In progress]
    - Target paths:
-     - `src/templates/pages/DashboardTemplate.vue`
-     - `src/templates/pages/ProfileTemplate.vue`
-     - `src/templates/pages/PlaceholderTemplate.vue`
-     - `src/templates/pages/ErrorNotFoundTemplate.vue`
-     - `src/templates/pages/page-template.types.ts`
+      - `src/templates/pages/DashboardTemplate.vue`
+      - `src/templates/pages/DashboardWorkspaceTemplate.vue`
+      - `src/templates/pages/CrudListTemplate.vue`
+      - `src/templates/pages/ProfileTemplate.vue`
+      - `src/templates/pages/PlaceholderTemplate.vue`
+      - `src/templates/pages/ErrorNotFoundTemplate.vue`
+      - `src/templates/pages/page-template.types.ts`
    - Commands:
      - `npm run lint`
      - `npm run type-check`
      - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
-   - Checkpoints:
-     - four page archetypes reusable through props/config
-     - no hardcoded reference-brand strings in shared templates
-   - Progress note (2026-03-26):
-     - implemented initial page templates:
-       - `src/templates/pages/DashboardTemplate.vue` (a11y prop contracts extended)
-       - `src/templates/pages/ProfileTemplate.vue`
-       - `src/templates/pages/PlaceholderTemplate.vue`
-       - `src/templates/pages/ErrorNotFoundTemplate.vue`
-       - `src/templates/pages/page-template.types.ts`
-     - updated page template exports and catalog:
-       - `src/templates/pages/index.ts`
-       - `src/templates/pages/page-template.catalog.ts`
-     - validation executed:
-       - `npm run lint`
-       - `npm run type-check`
-       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
-       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
+    - Checkpoints:
+      - page archetypes reusable through props/config, including dashboard workspace and CRUD list scenarios
+      - no hardcoded reference-brand strings in shared templates
+      - dashboard/CRUD templates remain generic for reuse across CMS, backoffice and operational modules
+    - Progress note (2026-03-26):
+      - implemented initial page templates:
+        - `src/templates/pages/DashboardTemplate.vue` (a11y prop contracts extended)
+        - `src/templates/pages/DashboardWorkspaceTemplate.vue` (generic control panel + metrics + workflow lane contract)
+        - `src/templates/pages/CrudListTemplate.vue` (generic CRUD list/table-cards + row/bulk actions contract)
+        - `src/templates/pages/ProfileTemplate.vue`
+        - `src/templates/pages/PlaceholderTemplate.vue`
+        - `src/templates/pages/ErrorNotFoundTemplate.vue`
+        - `src/templates/pages/page-template.types.ts`
+      - updated page template exports and catalog:
+        - `src/templates/pages/index.ts`
+        - `src/templates/pages/page-template.catalog.ts`
+      - aligned generic template baseline from:
+        - `.temp/reference/src/pages/PipelinePage.vue`
+        - `.temp/reference/src/modules/wiki/pages/WikiPage.vue`
+        - `https://github.com/odoo/odoo` (`addons/web/static/src/search/control_panel`, `addons/web/static/src/views/list`)
+      - validation executed:
+        - `npm run lint`
+        - `npm run type-check`
+        - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+        - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
+        - `npm run test -- tests/unit/templates/DashboardWorkspaceTemplate.spec.ts`
+        - `npm run test -- tests/unit/templates/CrudListTemplate.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add page archetype templates`
 

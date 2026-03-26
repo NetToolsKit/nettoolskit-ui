@@ -1,6 +1,8 @@
 export * from './page-template.catalog'
 export * from './page-template.types'
 export { default as DashboardTemplate } from './DashboardTemplate.vue'
+export { default as DashboardWorkspaceTemplate } from './DashboardWorkspaceTemplate.vue'
+export { default as CrudListTemplate } from './CrudListTemplate.vue'
 export { default as ProfileTemplate } from './ProfileTemplate.vue'
 export { default as PlaceholderTemplate } from './PlaceholderTemplate.vue'
 export { default as ErrorNotFoundTemplate } from './ErrorNotFoundTemplate.vue'

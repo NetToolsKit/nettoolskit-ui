@@ -29,6 +29,9 @@ This folder is the canonical source for new visual work. Direct one-off implemen
   - navigation template catalog and exports
 - `pages/`
   - page template catalog and exports
+  - includes generic cross-scenario templates such as:
+    - `DashboardWorkspaceTemplate.vue`
+    - `CrudListTemplate.vue`
 - `features/`
   - feature template catalog and exports
 - `styles/`
@@ -50,6 +53,15 @@ A visual slice is only releasable when all mandatory acceptance criteria are com
 - README/documentation contract
 
 Use helpers from `contracts/template-acceptance.ts` to verify readiness.
+
+## Generic Template Reuse Rule
+
+Templates under `pages/` and `features/` must stay generic enough to be reused in:
+- dashboard surfaces
+- CRUD/list modules
+- CMS and backoffice variants
+
+Do not hardcode business-domain copy, route assumptions, or store bindings directly inside shared template files.
 
 ## Validation Baseline
 
