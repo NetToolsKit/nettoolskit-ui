@@ -2,7 +2,7 @@
 
 Date: 2026-03-13
 Repository: `nettoolskit-ui-vue`
-Status: Reopened 2026-03-26 — Item 111 and Item 112 remain completed (2026-03-23); visual-reference/template track added
+Status: Reopened 2026-03-26 — Items 117 through 123 completed; Item 124 remains active for final regression closeout
 
 ## Scope
 
@@ -287,18 +287,18 @@ Release blocker rule:
 
 | # | Item | Scope | Status | Notes |
 |---|------|-------|--------|-------|
-| 117 | Visual reference parity inventory freeze | matrix + mapping + target scopes | In progress | Baseline from `.temp/reference` captured and mapped to current structure. |
-| 118 | Template architecture and catalog | folder contract + exports + docs | In progress | `src/templates/**` scaffold started with contracts, registry, and acceptance gate helpers. |
-| 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | In progress | Initial template components added and exported; route-level adoption pending. |
-| 120 | Core page template pack | dashboard/profile/placeholder/not-found + generic dashboard workspace + CRUD list templates | In progress | Core templates expanded with reusable dashboard workspace and CRUD list archetypes for cross-scenario speed. |
-| 121 | Feature template pack (auth + wiki + enterprise) | login/wiki/wiki-chat/chat-drawer + command-center/approval/audit templates | In progress | Feature catalog expanded with enterprise-ready templates for approval, observability and governance flows. |
-| 122 | Style/token bridge for template pack | app-level style bridge + token mapping | In progress | Tokenized bridge added and wired into global styles for template surfaces. |
+| 117 | Visual reference parity inventory freeze | matrix + mapping + target scopes | Completed | Baseline from `.temp/reference` is frozen in this plan with deterministic ownership for Items 118–124. |
+| 118 | Template architecture and catalog | folder contract + exports + docs | Completed | `src/templates/**` is now canonical with contracts, registry, acceptance gate helpers, and README-standard coverage. |
+| 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | Completed | Route-level adoption delivered through `/?template-runtime=1` using scaffolded router/menu composition. |
+| 120 | Core page template pack | dashboard/profile/placeholder/not-found + generic dashboard workspace + CRUD list templates | Completed | Core template catalog expanded and validated, including dashboard workspace, CRUD list, and editor workbench archetypes. |
+| 121 | Feature template pack (auth + wiki + enterprise) | login/wiki/wiki-chat/chat-drawer + command-center/approval/audit templates | Completed | Feature catalog completed with generic enterprise-ready templates and typed contracts. |
+| 122 | Style/token bridge for template pack | app-level style bridge + token mapping | Completed | Token bridge is wired and active for template surfaces through global style/token integration. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Completed | Delivered generic scaffolds with tests and README standardization for faster template-first bootstrap. |
-| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | In progress | Template showcase runtime and dedicated visual regression suite delivered; full CMS E2E sweep still blocked by existing timeout instability. |
+| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | In progress | Template runtime/showcase gates are in place; full CMS E2E sweep still blocked by 17 failing scenarios in `cms-settings-flow.spec.ts`. |
 
 ## Ordered Tasks (Reopen Track)
 
-1. Item 117: lock reference parity matrix [In progress]
+1. Item 117: lock reference parity matrix [Completed 2026-03-26]
    - Target paths:
      - `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
      - `.temp/reference/src/**`
@@ -314,7 +314,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `docs(plan): add visual reference parity matrix and reopen scope`
 
-2. Item 118: establish template architecture and catalog [In progress]
+2. Item 118: establish template architecture and catalog [Completed 2026-03-26]
    - Target paths:
      - `src/templates/README.md`
      - `src/templates/index.ts`
@@ -333,7 +333,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): scaffold template catalog and root exports`
 
-3. Item 119: deliver layout and navigation templates [In progress]
+3. Item 119: deliver layout and navigation templates [Completed 2026-03-26]
    - Target paths:
      - `src/templates/layouts/MainLayoutTemplate.vue`
      - `src/templates/layouts/AuthLayoutTemplate.vue`
@@ -367,10 +367,18 @@ Release blocker rule:
        - `npm run type-check`
        - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
        - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
+     - route-level runtime adoption delivered:
+       - `landing-page/template-runtime/router.ts`
+       - `landing-page/TemplateRuntimeApp.vue`
+       - `/?template-runtime=1` boot mode in `landing-page/main.ts`
+       - `tests/unit/templates/TemplateRuntimeRouter.spec.ts`
+     - route-runtime validation executed:
+       - `npm run build:landing`
+       - `npm run test -- tests/unit/templates/TemplateRuntimeRouter.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add layout and navigation template pack`
 
-4. Item 120: deliver core page templates [In progress]
+4. Item 120: deliver core page templates [Completed 2026-03-26]
    - Target paths:
       - `src/templates/pages/dashboard/DashboardTemplate.vue`
       - `src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue`
@@ -421,7 +429,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): add page archetype templates`
 
-5. Item 121: deliver feature templates (Auth + Wiki + Enterprise) [In progress]
+5. Item 121: deliver feature templates (Auth + Wiki + Enterprise) [Completed 2026-03-26]
     - Target paths:
       - `src/templates/features/auth/LoginTemplate.vue`
       - `src/templates/features/wiki/WikiTemplate.vue`
@@ -469,7 +477,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): add auth and knowledge-base feature templates`
 
-6. Item 122: bridge style and tokens for template parity [In progress]
+6. Item 122: bridge style and tokens for template parity [Completed 2026-03-26]
    - Target paths:
      - `src/templates/styles/reference-app-bridge.scss`
      - `src/styles/global.scss`
@@ -577,7 +585,7 @@ Release blocker rule:
        - `npm run build:landing` ✅
        - `npm run test` ✅
        - `npm run test:e2e -- tests/e2e/template-visual-regression.spec.ts --project=chromium --update-snapshots` ✅
-       - `npm run test:e2e -- --project=chromium` ❌ (first failure in `tests/e2e/cms-settings-flow.spec.ts` at `keeps the authoring shell readable after applying the dark preset`, then cascading `ERR_CONNECTION_REFUSED` failures across remaining CMS E2E specs)
+      - `npm run test:e2e -- tests/e2e/cms-settings-flow.spec.ts --project=chromium` ❌ (17 failing tests across selector/actionability expectations and preview/editor flow assumptions; 33 tests passing)
    - Commit checkpoint suggestion:
      - `chore(release): template pack validation and closeout`
 
