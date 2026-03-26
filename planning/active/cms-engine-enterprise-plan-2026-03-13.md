@@ -375,6 +375,7 @@ Release blocker rule:
       - `src/templates/pages/dashboard/DashboardTemplate.vue`
       - `src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue`
       - `src/templates/pages/crud/CrudListTemplate.vue`
+      - `src/templates/pages/editor/EditorWorkbenchTemplate.vue`
       - `src/templates/pages/account/ProfileTemplate.vue`
       - `src/templates/pages/system/PlaceholderTemplate.vue`
       - `src/templates/pages/system/ErrorNotFoundTemplate.vue`
@@ -388,12 +389,13 @@ Release blocker rule:
       - page archetypes reusable through props/config, including dashboard workspace and CRUD list scenarios
       - no hardcoded reference-brand strings in shared templates
       - dashboard/CRUD templates remain generic for reuse across CMS, backoffice and operational modules
-      - page template folders follow domain-oriented structure (`dashboard/`, `crud/`, `account/`, `system/`)
+      - page template folders follow domain-oriented structure (`dashboard/`, `crud/`, `editor/`, `account/`, `system/`)
     - Progress note (2026-03-26):
       - implemented initial page templates:
         - `src/templates/pages/dashboard/DashboardTemplate.vue` (a11y prop contracts extended)
         - `src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue` (generic control panel + metrics + workflow lane contract)
         - `src/templates/pages/crud/CrudListTemplate.vue` (generic CRUD list/table-cards + row/bulk actions contract)
+        - `src/templates/pages/editor/EditorWorkbenchTemplate.vue` (report-designer style workspace with command/menu bars, left widget toolbox, ruler/grid canvas, right rail and statusbar)
         - `src/templates/pages/account/ProfileTemplate.vue`
         - `src/templates/pages/system/PlaceholderTemplate.vue`
         - `src/templates/pages/system/ErrorNotFoundTemplate.vue`
@@ -406,6 +408,7 @@ Release blocker rule:
       - aligned generic template baseline from:
         - `.temp/reference/src/pages/PipelinePage.vue`
         - `.temp/reference/src/modules/wiki/pages/WikiPage.vue`
+        - user-validated report-designer baseline inspired by BoldReports editing shell structure
         - `https://github.com/odoo/odoo` (`addons/web/static/src/search/control_panel`, `addons/web/static/src/views/list`)
       - validation executed:
         - `npm run lint`
@@ -414,6 +417,7 @@ Release blocker rule:
         - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
         - `npm run test -- tests/unit/templates/DashboardWorkspaceTemplate.spec.ts`
         - `npm run test -- tests/unit/templates/CrudListTemplate.spec.ts`
+        - `npm run test -- tests/unit/templates/EditorWorkbenchTemplate.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add page archetype templates`
 

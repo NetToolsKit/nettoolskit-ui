@@ -65,6 +65,7 @@ test.describe('Template showcase visual regression', () => {
 
   test('captures CRUD and enterprise template surfaces', async ({ page }) => {
     await expectSurfaceSnapshot(page, 'crud-profile-placeholder', 'template-showcase-crud-profile-placeholder.png')
+    await expectSurfaceSnapshot(page, 'editor-workbench', 'template-showcase-editor-workbench.png')
     await expectSurfaceSnapshot(page, 'enterprise', 'template-showcase-enterprise.png')
   })
 

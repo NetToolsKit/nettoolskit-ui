@@ -21,6 +21,8 @@ Keep page templates organized by domain to maximize reuse and speed:
   - `DashboardWorkspaceTemplate.vue`
 - `crud/`
   - `CrudListTemplate.vue`
+- `editor/`
+  - `EditorWorkbenchTemplate.vue`
 - `account/`
   - `ProfileTemplate.vue`
 - `system/`

@@ -32,6 +32,16 @@ export const pageTemplateCatalog: TemplateCatalogEntry[] = [
     sourceReferencePath: '.temp/reference/src/modules/wiki/pages/WikiPage.vue + https://github.com/odoo/odoo/tree/18.0/addons/web/static/src/views/list',
   }),
   createTemplateCatalogEntry({
+    id: 'page-editor-workbench',
+    area: 'page',
+    title: 'Editor Workbench Template',
+    description: 'Enterprise visual editor template with command bars, widget palette, ruler/grid canvas, right tools rail and status strips.',
+    targetPath: 'src/templates/pages/editor/EditorWorkbenchTemplate.vue',
+    status: 'in_progress',
+    customizableScopes: ['theme', 'content', 'data', 'behavior', 'navigation', 'a11y', 'testing'],
+    sourceReferencePath: '.temp/reference + user-validated BoldReports-style editing shell baseline',
+  }),
+  createTemplateCatalogEntry({
     id: 'page-profile',
     area: 'page',
     title: 'Profile Template',

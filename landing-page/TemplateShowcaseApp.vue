@@ -146,6 +146,30 @@
 
     <section
       class="ntk-template-showcase__surface"
+      data-template-surface="editor-workbench"
+    >
+      <h2>Editor Workbench Template</h2>
+      <EditorWorkbenchTemplate
+        document-title="Bateladas Operations Report"
+        document-subtitle="Enterprise editor shell with menus, command bars and report design canvas."
+        :topbar-actions="editorTopbarActions"
+        :quick-actions="editorQuickActions"
+        :zoom-options="[50, 75, 100, 125, 150]"
+        :zoom-value="editorZoomValue"
+        :widget-sections="editorWidgetSections"
+        :selected-widget-id="editorSelectedWidgetId"
+        :canvas-columns="editorCanvasColumns"
+        :canvas-objects="editorCanvasObjects"
+        :rail-actions="editorRailActions"
+        :left-status-segments="editorLeftStatusSegments"
+        :right-status-segments="editorRightStatusSegments"
+        @update:selected-widget-id="editorSelectedWidgetId = $event"
+        @update:zoom-value="editorZoomValue = $event"
+      />
+    </section>
+
+    <section
+      class="ntk-template-showcase__surface"
       data-template-surface="enterprise"
     >
       <h2>Enterprise Feature Templates</h2>
@@ -216,6 +240,7 @@ import MainLayoutTemplate from '../src/templates/layouts/MainLayoutTemplate.vue'
 import DashboardTemplate from '../src/templates/pages/dashboard/DashboardTemplate.vue'
 import DashboardWorkspaceTemplate from '../src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue'
 import CrudListTemplate from '../src/templates/pages/crud/CrudListTemplate.vue'
+import EditorWorkbenchTemplate from '../src/templates/pages/editor/EditorWorkbenchTemplate.vue'
 import PlaceholderTemplate from '../src/templates/pages/system/PlaceholderTemplate.vue'
 import ProfileTemplate from '../src/templates/pages/account/ProfileTemplate.vue'
 
@@ -242,6 +267,8 @@ const auditSearchValue = ref('')
 const auditActiveFilterId = ref('all')
 
 const activeConversationId = ref<string | null>('conversation-release')
+const editorSelectedWidgetId = ref<string | null>('widget-text')
+const editorZoomValue = ref(100)
 
 const templatesByArea = computed(() => {
   return TEMPLATE_AREAS.map(area => ({
@@ -430,6 +457,90 @@ const placeholderHints = [
 
 const placeholderPrimaryAction = { id: 'primary-open', label: 'Open planning board', icon: 'open_in_new' }
 const placeholderSecondaryAction = { id: 'secondary-docs', label: 'Read template docs', icon: 'description', outline: true, unelevated: false }
+
+const editorTopbarActions = [
+  { id: 'new', icon: 'note_add', ariaLabel: 'New file' },
+  { id: 'open', icon: 'folder_open', ariaLabel: 'Open file' },
+  { id: 'save', icon: 'save', ariaLabel: 'Save file' },
+  { id: 'cut', icon: 'content_cut', ariaLabel: 'Cut' },
+  { id: 'copy', icon: 'content_copy', ariaLabel: 'Copy' },
+  { id: 'delete', icon: 'delete', ariaLabel: 'Delete' },
+]
+
+const editorQuickActions = [
+  { id: 'undo', icon: 'undo', ariaLabel: 'Undo' },
+  { id: 'redo', icon: 'redo', ariaLabel: 'Redo' },
+  { id: 'duplicate', icon: 'content_copy', ariaLabel: 'Duplicate' },
+]
+
+const editorWidgetSections = [
+  {
+    id: 'basic',
+    title: 'Basic items',
+    items: [
+      { id: 'widget-text', label: 'Text', icon: 'text_fields' },
+      { id: 'widget-image', label: 'Image', icon: 'image' },
+      { id: 'widget-line', label: 'Line', icon: 'show_chart' },
+      { id: 'widget-rect', label: 'Rectangle', icon: 'crop_16_9' },
+    ],
+  },
+  {
+    id: 'comparison',
+    title: 'Comparison',
+    items: [
+      { id: 'widget-column', label: 'Column', icon: 'bar_chart' },
+      { id: 'widget-stacked', label: 'Stacked', icon: 'stacked_bar_chart' },
+      { id: 'widget-range', label: 'Range', icon: 'equalizer' },
+      { id: 'widget-kpi', label: 'KPI', icon: 'query_stats' },
+    ],
+  },
+  {
+    id: 'regions',
+    title: 'Data regions',
+    items: [
+      { id: 'widget-table', label: 'Table', icon: 'table_chart' },
+      { id: 'widget-list', label: 'List', icon: 'view_list' },
+      { id: 'widget-matrix', label: 'Matrix', icon: 'grid_view' },
+      { id: 'widget-map', label: 'Map', icon: 'public' },
+    ],
+  },
+]
+
+const editorCanvasColumns = [
+  'DATE',
+  'ORDER #',
+  'TYPE',
+  'CLIENT',
+  'OPERATOR',
+  'PRODUCT',
+  'QUANTITY',
+]
+
+const editorCanvasObjects = [
+  { id: 'obj-logo', label: 'Brand logo', subtitle: 'Image block', x: 46, y: 52, width: 182, height: 102, locked: true },
+  { id: 'obj-title', label: 'BATELADAS', subtitle: 'Main report title', x: 498, y: 54, width: 340, height: 86, tone: 'info' as const },
+  { id: 'obj-header', label: 'Header row', subtitle: 'Bound dataset fields', x: 42, y: 184, width: 1200, height: 118, tone: 'primary' as const },
+  { id: 'obj-metrics', label: 'KPI strip', subtitle: 'Operational icons and status', x: 42, y: 340, width: 820, height: 82, tone: 'warning' as const },
+  { id: 'obj-footer', label: 'Footer line', subtitle: 'System ownership and disclaimers', x: 42, y: 444, width: 1200, height: 66 },
+]
+
+const editorRailActions = [
+  { id: 'properties', icon: 'tune', ariaLabel: 'Properties' },
+  { id: 'layers', icon: 'layers', ariaLabel: 'Layers' },
+  { id: 'filters', icon: 'filter_list', ariaLabel: 'Filters' },
+  { id: 'data', icon: 'dataset', ariaLabel: 'Data source' },
+  { id: 'settings', icon: 'settings', ariaLabel: 'Settings' },
+]
+
+const editorLeftStatusSegments = [
+  { id: 'row-groups', label: 'Row groups', value: 3 },
+  { id: 'warnings', label: 'Warnings', value: 2, tone: 'warning' as const },
+]
+
+const editorRightStatusSegments = [
+  { id: 'column-groups', label: 'Column groups', value: 4, tone: 'info' as const },
+  { id: 'snap', label: 'Snap', value: 'On', tone: 'success' as const },
+]
 
 const enterpriseActions = [
   { id: 'refresh', label: 'Refresh', icon: 'refresh' },

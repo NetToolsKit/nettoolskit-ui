@@ -173,3 +173,53 @@ export interface TemplatePageHint {
   text: string
   icon?: string
 }
+
+export interface TemplateEditorToolbarAction {
+  id: string
+  label?: string
+  icon?: string
+  disable?: boolean
+  ariaLabel?: string
+}
+
+export interface TemplateEditorWidgetItem {
+  id: string
+  label: string
+  icon?: string
+  description?: string
+  disabled?: boolean
+  filterKeys?: string[]
+}
+
+export interface TemplateEditorWidgetSection {
+  id: string
+  title: string
+  items: TemplateEditorWidgetItem[]
+}
+
+export interface TemplateEditorCanvasObject {
+  id: string
+  label: string
+  subtitle?: string
+  tone?: TemplatePageTone
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  locked?: boolean
+}
+
+export interface TemplateEditorRailAction {
+  id: string
+  icon: string
+  label?: string
+  ariaLabel?: string
+  disable?: boolean
+}
+
+export interface TemplateEditorStatusSegment {
+  id: string
+  label: string
+  value?: string | number
+  tone?: TemplatePageTone
+}
