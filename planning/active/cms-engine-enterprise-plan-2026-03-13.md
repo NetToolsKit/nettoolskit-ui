@@ -293,7 +293,7 @@ Release blocker rule:
 | 120 | Core page template pack | dashboard/profile/placeholder/not-found + generic dashboard workspace + CRUD list templates | In progress | Core templates expanded with reusable dashboard workspace and CRUD list archetypes for cross-scenario speed. |
 | 121 | Feature template pack (auth + wiki + enterprise) | login/wiki/wiki-chat/chat-drawer + command-center/approval/audit templates | In progress | Feature catalog expanded with enterprise-ready templates for approval, observability and governance flows. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | In progress | Tokenized bridge added and wired into global styles for template surfaces. |
-| 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
+| 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Completed | Delivered generic scaffolds with tests and README standardization for faster template-first bootstrap. |
 | 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Planned | Release gate for template-first workflow. |
 
 ## Ordered Tasks (Reopen Track)
@@ -495,18 +495,45 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(styles): add reference parity bridge for template pack`
 
-7. Item 123: add integration scaffolding templates [Planned]
+7. Item 123: add integration scaffolding templates [Completed 2026-03-26]
    - Target paths:
      - `src/templates/scaffolding/router-template.ts`
      - `src/templates/scaffolding/menu.constants.template.ts`
      - `src/templates/scaffolding/layout-store.template.ts`
      - `src/templates/scaffolding/notification.template.ts`
+     - `src/templates/scaffolding/README.md`
+     - `tests/unit/templates/ScaffoldingTemplates.spec.ts`
    - Commands:
      - `npm run lint`
      - `npm run type-check`
+     - `npm run test -- tests/unit/templates/ScaffoldingTemplates.spec.ts`
    - Checkpoints:
      - drop-in scaffolds enable faster app bootstrap
      - scaffolds reference templates instead of ad-hoc pages/components
+   - Progress note (2026-03-26):
+     - implemented generic integration scaffolds:
+       - `src/templates/scaffolding/router-template.ts`
+       - `src/templates/scaffolding/menu.constants.template.ts`
+       - `src/templates/scaffolding/layout-store.template.ts`
+       - `src/templates/scaffolding/notification.template.ts`
+     - updated scaffolding exports and catalog readiness:
+       - `src/templates/scaffolding/index.ts`
+       - `src/templates/scaffolding/scaffold-template.catalog.ts`
+     - added scaffolding behavior tests:
+       - `tests/unit/templates/ScaffoldingTemplates.spec.ts`
+     - added README standard coverage for template folders:
+       - `src/templates/contracts/README.md`
+       - `src/templates/layouts/README.md`
+       - `src/templates/navigation/README.md`
+       - `src/templates/features/README.md`
+       - `src/templates/styles/README.md`
+       - `src/templates/scaffolding/README.md`
+     - validation executed:
+       - `npm run lint`
+       - `npm run type-check`
+       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts tests/unit/templates/DashboardWorkspaceTemplate.spec.ts tests/unit/templates/CrudListTemplate.spec.ts tests/unit/templates/EnterpriseFeatureTemplates.spec.ts tests/unit/templates/ScaffoldingTemplates.spec.ts`
+       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+       - `npm run build:landing`
    - Commit checkpoint suggestion:
      - `feat(scaffold): add router/state/menu integration templates`
 
