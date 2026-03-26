@@ -29,11 +29,14 @@ This folder is the canonical source for new visual work. Direct one-off implemen
   - navigation template catalog and exports
 - `pages/`
   - page template catalog and exports
-  - includes generic cross-scenario templates such as:
-    - `DashboardWorkspaceTemplate.vue`
-    - `CrudListTemplate.vue`
+  - domain-oriented folders (`dashboard/`, `crud/`, `account/`, `system/`)
+  - see `pages/README.md` for organization and contracts
 - `features/`
   - feature template catalog and exports
+  - domain folders include:
+    - `auth/`
+    - `wiki/`
+    - `enterprise/`
 - `styles/`
   - style/template bridge catalog and exports
 - `scaffolding/`

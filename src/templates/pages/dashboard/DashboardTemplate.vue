@@ -127,7 +127,7 @@ import type {
   TemplateDashboardChip,
   TemplateDashboardMetric,
   TemplateDashboardTopItem,
-} from './page-template.types'
+} from '../page-template.types'
 
 const props = withDefaults(
   defineProps<{

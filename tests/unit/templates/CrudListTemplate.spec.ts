@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 
-import CrudListTemplate from '../../../src/templates/pages/CrudListTemplate.vue'
+import CrudListTemplate from '../../../src/templates/pages/crud/CrudListTemplate.vue'
 
 const globalMountOptions = {
   global: {

@@ -107,7 +107,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { TemplatePageAction, TemplatePageHint } from './page-template.types'
+import type { TemplatePageAction, TemplatePageHint } from '../page-template.types'
 
 const props = withDefaults(defineProps<{
   title?: string

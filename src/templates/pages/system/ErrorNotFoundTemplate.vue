@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-import type { TemplatePageAction } from './page-template.types'
+import type { TemplatePageAction } from '../page-template.types'
 
 const props = withDefaults(defineProps<{
   code?: string

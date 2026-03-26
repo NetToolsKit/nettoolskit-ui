@@ -359,7 +359,7 @@ import type {
   TemplateCrudRowAction,
   TemplateCrudViewMode,
   TemplatePageAction,
-} from './page-template.types'
+} from '../page-template.types'
 
 const props = withDefaults(defineProps<{
   title?: string

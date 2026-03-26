@@ -291,7 +291,7 @@ Release blocker rule:
 | 118 | Template architecture and catalog | folder contract + exports + docs | In progress | `src/templates/**` scaffold started with contracts, registry, and acceptance gate helpers. |
 | 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | In progress | Initial template components added and exported; route-level adoption pending. |
 | 120 | Core page template pack | dashboard/profile/placeholder/not-found + generic dashboard workspace + CRUD list templates | In progress | Core templates expanded with reusable dashboard workspace and CRUD list archetypes for cross-scenario speed. |
-| 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | In progress | Generic feature templates added with typed props/events for cross-scenario reuse. |
+| 121 | Feature template pack (auth + wiki + enterprise) | login/wiki/wiki-chat/chat-drawer + command-center/approval/audit templates | In progress | Feature catalog expanded with enterprise-ready templates for approval, observability and governance flows. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | In progress | Tokenized bridge added and wired into global styles for template surfaces. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
 | 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Planned | Release gate for template-first workflow. |
@@ -372,30 +372,34 @@ Release blocker rule:
 
 4. Item 120: deliver core page templates [In progress]
    - Target paths:
-      - `src/templates/pages/DashboardTemplate.vue`
-      - `src/templates/pages/DashboardWorkspaceTemplate.vue`
-      - `src/templates/pages/CrudListTemplate.vue`
-      - `src/templates/pages/ProfileTemplate.vue`
-      - `src/templates/pages/PlaceholderTemplate.vue`
-      - `src/templates/pages/ErrorNotFoundTemplate.vue`
+      - `src/templates/pages/dashboard/DashboardTemplate.vue`
+      - `src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue`
+      - `src/templates/pages/crud/CrudListTemplate.vue`
+      - `src/templates/pages/account/ProfileTemplate.vue`
+      - `src/templates/pages/system/PlaceholderTemplate.vue`
+      - `src/templates/pages/system/ErrorNotFoundTemplate.vue`
       - `src/templates/pages/page-template.types.ts`
-   - Commands:
-     - `npm run lint`
-     - `npm run type-check`
-     - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+      - `src/templates/pages/README.md`
+    - Commands:
+      - `npm run lint`
+      - `npm run type-check`
+      - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
     - Checkpoints:
       - page archetypes reusable through props/config, including dashboard workspace and CRUD list scenarios
       - no hardcoded reference-brand strings in shared templates
       - dashboard/CRUD templates remain generic for reuse across CMS, backoffice and operational modules
+      - page template folders follow domain-oriented structure (`dashboard/`, `crud/`, `account/`, `system/`)
     - Progress note (2026-03-26):
       - implemented initial page templates:
-        - `src/templates/pages/DashboardTemplate.vue` (a11y prop contracts extended)
-        - `src/templates/pages/DashboardWorkspaceTemplate.vue` (generic control panel + metrics + workflow lane contract)
-        - `src/templates/pages/CrudListTemplate.vue` (generic CRUD list/table-cards + row/bulk actions contract)
-        - `src/templates/pages/ProfileTemplate.vue`
-        - `src/templates/pages/PlaceholderTemplate.vue`
-        - `src/templates/pages/ErrorNotFoundTemplate.vue`
+        - `src/templates/pages/dashboard/DashboardTemplate.vue` (a11y prop contracts extended)
+        - `src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue` (generic control panel + metrics + workflow lane contract)
+        - `src/templates/pages/crud/CrudListTemplate.vue` (generic CRUD list/table-cards + row/bulk actions contract)
+        - `src/templates/pages/account/ProfileTemplate.vue`
+        - `src/templates/pages/system/PlaceholderTemplate.vue`
+        - `src/templates/pages/system/ErrorNotFoundTemplate.vue`
         - `src/templates/pages/page-template.types.ts`
+      - reorganized page templates to domain folders and documented organization:
+        - `src/templates/pages/README.md`
       - updated page template exports and catalog:
         - `src/templates/pages/index.ts`
         - `src/templates/pages/page-template.catalog.ts`
@@ -413,35 +417,51 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): add page archetype templates`
 
-5. Item 121: deliver feature templates (Auth + Wiki + Chat) [In progress]
-   - Target paths:
-     - `src/templates/features/auth/LoginTemplate.vue`
-     - `src/templates/features/wiki/WikiTemplate.vue`
-     - `src/templates/features/wiki/WikiChatTemplate.vue`
-     - `src/templates/features/wiki/WikiChatDrawerTemplate.vue`
-     - `src/templates/features/wiki/wiki-template.types.ts`
-   - Commands:
-     - `npm run lint`
-     - `npm run type-check`
-     - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
-   - Checkpoints:
-     - auth/wiki/chat flows available as template modules
-     - chat drawer behavior templateized and decoupled from domain copy
-   - Progress note (2026-03-26):
-     - implemented generic and reusable feature templates (props/events typed, no store/router coupling):
-       - `src/templates/features/auth/LoginTemplate.vue`
-       - `src/templates/features/wiki/WikiTemplate.vue`
-       - `src/templates/features/wiki/WikiChatTemplate.vue`
-       - `src/templates/features/wiki/WikiChatDrawerTemplate.vue`
-       - `src/templates/features/wiki/wiki-template.types.ts`
-     - updated feature exports and catalog:
-       - `src/templates/features/index.ts`
-       - `src/templates/features/feature-template.catalog.ts`
-     - validation executed:
-       - `npm run lint`
-       - `npm run type-check`
-       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
-       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
+5. Item 121: deliver feature templates (Auth + Wiki + Enterprise) [In progress]
+    - Target paths:
+      - `src/templates/features/auth/LoginTemplate.vue`
+      - `src/templates/features/wiki/WikiTemplate.vue`
+      - `src/templates/features/wiki/WikiChatTemplate.vue`
+      - `src/templates/features/wiki/WikiChatDrawerTemplate.vue`
+      - `src/templates/features/wiki/wiki-template.types.ts`
+      - `src/templates/features/enterprise/EnterpriseCommandCenterTemplate.vue`
+      - `src/templates/features/enterprise/ApprovalQueueTemplate.vue`
+      - `src/templates/features/enterprise/AuditTimelineTemplate.vue`
+      - `src/templates/features/enterprise/enterprise-template.types.ts`
+      - `src/templates/features/enterprise/index.ts`
+    - Commands:
+      - `npm run lint`
+      - `npm run type-check`
+      - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+    - Checkpoints:
+      - auth/wiki/enterprise flows available as template modules
+      - chat drawer, approval queue and audit timeline behavior templateized and decoupled from domain copy
+      - enterprise templates follow market-aligned control-panel/list/timeline patterns without tenant coupling
+    - Progress note (2026-03-26):
+      - implemented generic and reusable feature templates (props/events typed, no store/router coupling):
+        - `src/templates/features/auth/LoginTemplate.vue`
+        - `src/templates/features/wiki/WikiTemplate.vue`
+        - `src/templates/features/wiki/WikiChatTemplate.vue`
+        - `src/templates/features/wiki/WikiChatDrawerTemplate.vue`
+        - `src/templates/features/wiki/wiki-template.types.ts`
+        - `src/templates/features/enterprise/EnterpriseCommandCenterTemplate.vue`
+        - `src/templates/features/enterprise/ApprovalQueueTemplate.vue`
+        - `src/templates/features/enterprise/AuditTimelineTemplate.vue`
+        - `src/templates/features/enterprise/enterprise-template.types.ts`
+        - `src/templates/features/enterprise/index.ts`
+      - updated feature exports and catalog:
+        - `src/templates/features/index.ts`
+        - `src/templates/features/feature-template.catalog.ts`
+      - market references considered for enterprise baselines:
+        - `https://github.com/odoo/odoo` (`search/control_panel`, `views/list`, `views/form`)
+        - `https://mui.com/material-ui/getting-started/templates/dashboard/`
+        - `https://www.atlassian.com/software/jira/features/kanban-boards`
+      - validation executed:
+        - `npm run lint`
+        - `npm run type-check`
+        - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+        - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
+        - `npm run test -- tests/unit/templates/EnterpriseFeatureTemplates.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add auth and knowledge-base feature templates`
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 
-import DashboardWorkspaceTemplate from '../../../src/templates/pages/DashboardWorkspaceTemplate.vue'
+import DashboardWorkspaceTemplate from '../../../src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue'
 
 const globalMountOptions = {
   global: {

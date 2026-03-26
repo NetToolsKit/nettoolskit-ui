@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { TemplateProfileGroup, TemplateUserProfile } from './page-template.types'
+import type { TemplateProfileGroup, TemplateUserProfile } from '../page-template.types'
 
 const props = withDefaults(defineProps<{
   profile?: TemplateUserProfile

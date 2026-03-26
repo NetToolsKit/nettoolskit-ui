@@ -1,5 +1,6 @@
 export * from './feature-template.catalog'
 export { default as LoginTemplate } from './auth/LoginTemplate.vue'
+export * from './enterprise'
 export { default as WikiChatDrawerTemplate } from './wiki/WikiChatDrawerTemplate.vue'
 export { default as WikiChatTemplate } from './wiki/WikiChatTemplate.vue'
 export { default as WikiTemplate } from './wiki/WikiTemplate.vue'
