@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Template-first release closeout with visual regression showcase**
+  - Added a dedicated template showcase runtime mode at `/?templates=1`, wired through `landing-page/main.ts`, to render reusable template surfaces with deterministic fixture data for release validation.
+  - Added `landing-page/TemplateShowcaseApp.vue` covering layout, auth/login, dashboard workspace, CRUD list, profile/placeholder, enterprise command/approval/audit, and wiki/chat template surfaces in one enterprise-oriented preview.
+  - Added `tests/e2e/template-visual-regression.spec.ts` with Windows-maintained visual baselines for catalog, layout/dashboard, CRUD+enterprise, and wiki/chat surfaces.
+  - Generated and committed the new snapshot set under `tests/e2e/template-visual-regression.spec.ts-snapshots/` to enforce template visual stability in CI and local regression flows.
 - **Landing-page-new consolidated as the only public landing**
   - Merged the `landing-page-new` public experience into the canonical `landing-page` source tree while keeping `landing-page/main.ts` as the single split entry for public landing vs `?cms=1` CMS mode.
   - Added `landing-page/LandingPublicApp.ts` so the public landing keeps its dedicated CSS bundle without leaking landing-only styles into CMS mode.

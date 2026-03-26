@@ -294,7 +294,7 @@ Release blocker rule:
 | 121 | Feature template pack (auth + wiki + enterprise) | login/wiki/wiki-chat/chat-drawer + command-center/approval/audit templates | In progress | Feature catalog expanded with enterprise-ready templates for approval, observability and governance flows. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | In progress | Tokenized bridge added and wired into global styles for template surfaces. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Completed | Delivered generic scaffolds with tests and README standardization for faster template-first bootstrap. |
-| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Planned | Release gate for template-first workflow. |
+| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | In progress | Template showcase runtime and dedicated visual regression suite delivered; full CMS E2E sweep still blocked by existing timeout instability. |
 
 ## Ordered Tasks (Reopen Track)
 
@@ -537,10 +537,13 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(scaffold): add router/state/menu integration templates`
 
-8. Item 124: template regression and release closeout [Planned]
+8. Item 124: template regression and release closeout [In progress]
    - Target paths:
      - `tests/unit/templates/**/*.spec.ts`
      - `tests/e2e/template-visual-regression.spec.ts`
+     - `tests/e2e/template-visual-regression.spec.ts-snapshots/*`
+     - `landing-page/TemplateShowcaseApp.vue`
+     - `landing-page/main.ts`
      - `README.md`
      - `CHANGELOG.md`
      - `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
@@ -554,6 +557,23 @@ Release blocker rule:
    - Checkpoints:
      - template pack fully covered by quality gates
      - docs/changelog updated with template-first workflow
+   - Progress note (2026-03-26):
+     - added template showcase runtime mode (`/?templates=1`) wired through `landing-page/main.ts`
+     - added `landing-page/TemplateShowcaseApp.vue` to render deterministic layout/page/feature template surfaces for regression
+     - added visual regression suite:
+       - `tests/e2e/template-visual-regression.spec.ts`
+       - `tests/e2e/template-visual-regression.spec.ts-snapshots/*`
+     - updated release docs:
+       - `README.md` (template catalog + template-first delivery + runtime preview mode)
+       - `CHANGELOG.md` (template showcase and visual-regression entry)
+     - validation executed:
+       - `npm audit --omit=dev` ✅
+       - `npm run lint` ✅
+       - `npm run type-check` ✅
+       - `npm run build:landing` ✅
+       - `npm run test` ✅
+       - `npm run test:e2e -- tests/e2e/template-visual-regression.spec.ts --project=chromium --update-snapshots` ✅
+       - `npm run test:e2e -- --project=chromium` ❌ (first failure in `tests/e2e/cms-settings-flow.spec.ts` at `keeps the authoring shell readable after applying the dark preset`, then cascading `ERR_CONNECTION_REFUSED` failures across remaining CMS E2E specs)
    - Commit checkpoint suggestion:
      - `chore(release): template pack validation and closeout`
 

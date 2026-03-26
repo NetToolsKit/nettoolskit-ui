@@ -869,6 +869,7 @@ interface ThemeGradients {
 - 📘 **[New Project Setup](./templates/new-project-setup.md)** - Complete setup guide for new projects
 - 🎨 **[Customization Guide](./docs/CUSTOMIZATION.md)** - Theme and branding customization
 - 📝 **[Visual Identity Manual](./docs/nettoolskit-visual-identity-manual.md)** - Brand guidelines
+- 🧱 **[Template Catalog](./src/templates/README.md)** - Canonical template-first architecture, contracts, and reusable visual packs
 - 🧩 **[CMS Backend Integration Handbook](./docs/cms-backend-integration-handbook.md)** - How backend-oriented teams should persist, validate and publish CMS engine payloads
 - 🔌 **[CMS Provider Hydration](./docs/cms-provider-hydration.md)** - Async provider examples for content, assets and releases
 - 📦 **[CMS Review Package](./docs/cms-review-package.md)** - Export draft-vs-published review artifacts for release analysis and approvals
@@ -877,6 +878,34 @@ interface ThemeGradients {
 
 - **[custom-theme-template.ts](./templates/custom-theme-template.ts)** - TypeScript theme configuration template
 - **[custom-branding.scss](./templates/custom-branding.scss)** - SCSS design tokens template
+
+### Template Runtime Preview
+
+- `/?templates=1` renders the enterprise template showcase used by the visual-regression gate.
+- `/?cms=1` renders the CMS authoring runtime.
+- Local preview command:
+
+```bash
+npm run dev:landing
+```
+
+### Template-First Delivery
+
+All visual slices must start from reusable contracts in `src/templates/**`.
+
+Minimum release expectation for template-based frontend work:
+1. typed layout/page/feature contracts
+2. reusable state or scaffolding contracts
+3. token-driven styles
+4. unit coverage for critical behavior
+5. visual regression baseline when template surfaces change
+
+Template release checks:
+
+```bash
+npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts
+npm run test:e2e -- tests/e2e/template-visual-regression.spec.ts --project=chromium
+```
 
 ### API References
 

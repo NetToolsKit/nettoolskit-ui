@@ -56,13 +56,17 @@ import '../src/styles/global.scss'
 // Route-mode async loading keeps landing and CMS bundles split at runtime.
 const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))
 const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))
+const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
 
 const searchParams = new URLSearchParams(window.location.search)
 const isCmsMode = searchParams.get('cms') === '1'
+const isTemplateMode = searchParams.get('templates') === '1'
 
 const RootComponent = isCmsMode
   ? CmsApp
-  : LandingApp
+  : isTemplateMode
+    ? TemplateShowcaseApp
+    : LandingApp
 
 const app = createApp(RootComponent)
 
