@@ -288,6 +288,52 @@
   --ntk-popup-shadow: var(--ntk-shadow-popup);
   --ntk-popup-header-bg: var(--ntk-primary);
   --ntk-popup-header-text: var(--ntk-text-inverse);
+
+  /* ============================================
+   * Template Bridge Tokens
+   * Generic visual baseline for reusable templates
+   * ============================================ */
+  --ntk-template-surface-radius: var(--ntk-radius-lg);
+  --ntk-template-surface-border: var(--ntk-border-color);
+  --ntk-template-surface-shadow: var(--ntk-shadow-sm);
+  --ntk-template-surface-shadow-hover: var(--ntk-shadow-md);
+
+  --ntk-template-toolbar-height: 48px;
+  --ntk-template-toolbar-padding-x: 12px;
+  --ntk-template-toolbar-gap: 8px;
+
+  --ntk-template-button-radius: var(--ntk-radius-md);
+  --ntk-template-button-height: 34px;
+  --ntk-template-button-padding-x: 14px;
+
+  --ntk-template-form-control-height: 44px;
+  --ntk-template-form-control-radius: var(--ntk-radius-md);
+  --ntk-template-form-control-bg: var(--ntk-input-bg);
+  --ntk-template-form-label-color: var(--ntk-input-label);
+  --ntk-template-form-label-size: 13px;
+  --ntk-template-form-label-weight: var(--ntk-font-weight-medium);
+  --ntk-template-form-icon-color: var(--ntk-input-icon);
+
+  --ntk-template-notification-bg: var(--ntk-bg-card);
+  --ntk-template-notification-border: var(--ntk-border-color);
+  --ntk-template-notification-radius: var(--ntk-radius-md);
+  --ntk-template-notification-shadow: var(--ntk-shadow-md);
+  --ntk-template-notification-message: var(--ntk-text-primary);
+  --ntk-template-notification-positive: var(--semantic-success-primary);
+  --ntk-template-notification-negative: var(--semantic-error-primary);
+  --ntk-template-notification-warning: var(--semantic-warning-primary);
+  --ntk-template-notification-info: var(--semantic-info-primary);
+
+  --ntk-template-page-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-card-bg: var(--ntk-bg-card);
+  --ntk-template-page-border: var(--ntk-border-color);
+  --ntk-template-page-title: var(--ntk-text-primary);
+  --ntk-template-page-subtitle: var(--ntk-text-secondary);
+  --ntk-template-page-text: var(--ntk-text-primary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-page-chip-bg: var(--ntk-bg-tertiary);
+  --ntk-template-page-chip-border: var(--ntk-border-color);
+  --ntk-template-page-chip-text: var(--ntk-text-secondary);
 }
 
 /* ============================================
@@ -362,6 +408,12 @@
   --ntk-popup-bg: var(--ntk-bg-secondary);
   
   --ntk-sidebar-item-hover: var(--ntk-bg-tertiary);
+
+  /* Template bridge dark overrides */
+  --ntk-template-page-bg: var(--ntk-bg-primary);
+  --ntk-template-page-card-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-notification-bg: var(--ntk-bg-secondary);
 }
 
 /* ============================================

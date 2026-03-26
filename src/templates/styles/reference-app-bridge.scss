@@ -1,0 +1,212 @@
+/**
+ * Template style bridge.
+ * Keeps template surfaces visually coherent using token aliases only.
+ */
+
+:root {
+  --ntk-template-surface-radius: var(--ntk-radius-lg);
+  --ntk-template-surface-border: var(--ntk-border-color);
+  --ntk-template-surface-shadow: var(--ntk-shadow-sm);
+  --ntk-template-surface-shadow-hover: var(--ntk-shadow-md);
+
+  --ntk-template-toolbar-height: 48px;
+  --ntk-template-toolbar-padding-x: 12px;
+  --ntk-template-toolbar-gap: 8px;
+
+  --ntk-template-button-radius: var(--ntk-radius-md);
+  --ntk-template-button-height: 34px;
+  --ntk-template-button-padding-x: 14px;
+
+  --ntk-template-badge-radius: var(--ntk-radius-full);
+  --ntk-template-badge-weight: var(--ntk-font-weight-semibold);
+
+  --ntk-template-form-control-height: 44px;
+  --ntk-template-form-control-radius: var(--ntk-radius-md);
+  --ntk-template-form-control-bg: var(--ntk-input-bg);
+  --ntk-template-form-label-color: var(--ntk-input-label);
+  --ntk-template-form-label-size: 13px;
+  --ntk-template-form-label-weight: var(--ntk-font-weight-medium);
+  --ntk-template-form-icon-color: var(--ntk-input-icon);
+
+  --ntk-template-notification-bg: var(--ntk-bg-card);
+  --ntk-template-notification-border: var(--ntk-border-color);
+  --ntk-template-notification-radius: var(--ntk-radius-md);
+  --ntk-template-notification-shadow: var(--ntk-shadow-md);
+  --ntk-template-notification-message: var(--ntk-text-primary);
+  --ntk-template-notification-positive: var(--semantic-success-primary);
+  --ntk-template-notification-negative: var(--semantic-error-primary);
+  --ntk-template-notification-warning: var(--semantic-warning-primary);
+  --ntk-template-notification-info: var(--semantic-info-primary);
+
+  --ntk-template-page-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-card-bg: var(--ntk-bg-card);
+  --ntk-template-page-border: var(--ntk-border-color);
+  --ntk-template-page-title: var(--ntk-text-primary);
+  --ntk-template-page-subtitle: var(--ntk-text-secondary);
+  --ntk-template-page-text: var(--ntk-text-primary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-page-chip-bg: var(--ntk-bg-tertiary);
+  --ntk-template-page-chip-border: var(--ntk-border-color);
+  --ntk-template-page-chip-text: var(--ntk-text-secondary);
+
+  --ntk-template-layout-header-bg: var(--ntk-bg-card);
+  --ntk-template-layout-header-text: var(--ntk-text-primary);
+  --ntk-template-layout-title-color: var(--ntk-text-primary);
+  --ntk-template-layout-horizontal-bg: linear-gradient(90deg, #1f2937 0%, #334155 100%);
+  --ntk-template-layout-horizontal-text: #ffffff;
+  --ntk-template-layout-drawer-bg: linear-gradient(180deg, #1f2937 0%, #334155 100%);
+  --ntk-template-layout-drawer-text: #ffffff;
+  --ntk-template-layout-page-bg: var(--ntk-template-page-bg);
+  --ntk-template-auth-layout-bg: var(--ntk-template-page-bg);
+
+  --ntk-template-menu-link-color: rgba(255, 255, 255, 0.88);
+  --ntk-template-menu-link-hover-bg: rgba(255, 255, 255, 0.08);
+  --ntk-template-menu-link-active-border: rgba(255, 255, 255, 0.94);
+  --ntk-template-menu-link-active-bg: rgba(255, 255, 255, 0.16);
+  --ntk-template-menu-link-child-active-bg: rgba(59, 130, 246, 0.2);
+
+  --ntk-template-horizontal-link-color: rgba(255, 255, 255, 0.84);
+  --ntk-template-horizontal-link-hover-color: #ffffff;
+  --ntk-template-horizontal-link-hover-bg: rgba(255, 255, 255, 0.08);
+  --ntk-template-horizontal-link-active-color: #ffffff;
+  --ntk-template-horizontal-link-active-border: #ffffff;
+  --ntk-template-horizontal-link-active-bg: rgba(255, 255, 255, 0.12);
+  --ntk-template-horizontal-link-submenu-hover-bg: rgba(15, 23, 42, 0.05);
+  --ntk-template-horizontal-link-submenu-active-border: var(--semantic-info-primary);
+  --ntk-template-horizontal-link-submenu-active-bg: rgba(59, 130, 246, 0.12);
+  --ntk-template-horizontal-link-submenu-active-color: var(--semantic-info-primary);
+
+  --ntk-template-user-menu-avatar-border: rgba(255, 255, 255, 0.88);
+  --ntk-template-user-menu-avatar-bg: var(--ntk-secondary);
+  --ntk-template-user-menu-avatar-color: #ffffff;
+  --ntk-template-user-menu-header-bg: rgba(15, 23, 42, 0.04);
+  --ntk-template-user-menu-profile-bg: #ffffff;
+
+  --ntk-template-breadcrumb-bg: var(--ntk-bg-tertiary);
+  --ntk-template-breadcrumb-link-color: var(--ntk-text-secondary);
+  --ntk-template-breadcrumb-link-hover-color: var(--ntk-text-link);
+  --ntk-template-breadcrumb-current-color: var(--ntk-text-primary);
+  --ntk-template-breadcrumb-sep-color: var(--ntk-border-dark);
+
+  --ntk-template-login-page-bg: var(--ntk-bg-secondary);
+  --ntk-template-login-brand-bg: linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #164e63 100%);
+  --ntk-template-login-brand-text: #ffffff;
+  --ntk-template-login-brand-subtitle: rgba(255, 255, 255, 0.78);
+  --ntk-template-login-brand-feature-text: rgba(255, 255, 255, 0.92);
+  --ntk-template-login-brand-feature-bg: rgba(20, 184, 166, 0.2);
+  --ntk-template-login-brand-footer: rgba(255, 255, 255, 0.6);
+  --ntk-template-login-form-bg: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  --ntk-template-login-form-border: var(--ntk-border-color);
+  --ntk-template-login-form-card-bg: var(--ntk-bg-card);
+  --ntk-template-login-form-shadow: rgba(15, 23, 42, 0.06);
+  --ntk-template-login-form-title: var(--ntk-text-primary);
+  --ntk-template-login-form-subtitle: var(--ntk-text-secondary);
+  --ntk-template-login-version: var(--ntk-text-muted);
+
+  --ntk-template-wiki-bg: var(--ntk-bg-secondary);
+  --ntk-template-wiki-icon-bg: #0f766e;
+  --ntk-template-wiki-icon-text: #ffffff;
+  --ntk-template-wiki-chat-bg: var(--ntk-bg-secondary);
+
+  --ntk-template-placeholder-bg: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  --ntk-template-placeholder-shadow: rgba(15, 23, 42, 0.08);
+  --ntk-template-placeholder-icon-color: var(--semantic-info-primary);
+  --ntk-template-placeholder-icon-bg: rgba(37, 99, 235, 0.12);
+
+  --ntk-template-profile-hero-bg: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  --ntk-template-profile-avatar-bg: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  --ntk-template-profile-avatar-border: #ffffff;
+  --ntk-template-profile-avatar-shadow: rgba(30, 41, 59, 0.2);
+
+  --ntk-template-not-found-bg: radial-gradient(circle at top, #0f172a 0%, #1e3a8a 45%, #172554 100%);
+  --ntk-template-not-found-text: #ffffff;
+  --ntk-template-not-found-card-bg: rgba(15, 23, 42, 0.6);
+  --ntk-template-not-found-border: rgba(148, 163, 184, 0.35);
+  --ntk-template-not-found-code-color: #93c5fd;
+  --ntk-template-not-found-code-shadow: rgba(15, 23, 42, 0.35);
+  --ntk-template-not-found-subtitle: #e2e8f0;
+}
+
+.dark,
+[data-theme='dark'],
+.body--dark {
+  --ntk-template-surface-border: var(--ntk-border-color);
+  --ntk-template-page-bg: var(--ntk-bg-primary);
+  --ntk-template-page-card-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-notification-bg: var(--ntk-bg-secondary);
+  --ntk-template-login-form-bg: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+}
+
+[class*='ntk-template-'] .q-card {
+  border-radius: var(--ntk-template-surface-radius);
+  border: 1px solid var(--ntk-template-surface-border);
+  box-shadow: var(--ntk-template-surface-shadow);
+}
+
+[class*='ntk-template-'] .q-btn:not(.q-btn--round) {
+  min-height: var(--ntk-template-button-height);
+  border-radius: var(--ntk-template-button-radius);
+  padding-inline: var(--ntk-template-button-padding-x);
+}
+
+[class*='ntk-template-'] .q-badge {
+  border-radius: var(--ntk-template-badge-radius);
+  font-weight: var(--ntk-template-badge-weight);
+}
+
+[class*='ntk-template-'] .q-toolbar {
+  min-height: var(--ntk-template-toolbar-height);
+  padding-inline: var(--ntk-template-toolbar-padding-x);
+  gap: var(--ntk-template-toolbar-gap);
+}
+
+[class*='ntk-template-'] .q-field__control {
+  min-height: var(--ntk-template-form-control-height);
+  border-radius: var(--ntk-template-form-control-radius);
+  background: var(--ntk-template-form-control-bg);
+}
+
+[class*='ntk-template-'] .q-field__label {
+  color: var(--ntk-template-form-label-color) !important;
+  font-size: var(--ntk-template-form-label-size) !important;
+  font-weight: var(--ntk-template-form-label-weight);
+}
+
+[class*='ntk-template-'] .q-field__prepend,
+[class*='ntk-template-'] .q-field__append {
+  color: var(--ntk-template-form-icon-color);
+}
+
+[class*='ntk-template-'] :is(button, [role='button'], a, input, textarea):focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+
+.q-notification {
+  background: var(--ntk-template-notification-bg) !important;
+  border-radius: var(--ntk-template-notification-radius) !important;
+  border: 1px solid var(--ntk-template-notification-border) !important;
+  border-left: 4px solid var(--ntk-template-notification-info) !important;
+  box-shadow: var(--ntk-template-notification-shadow) !important;
+}
+
+.q-notification .q-notification__message {
+  color: var(--ntk-template-notification-message) !important;
+}
+
+.q-notification.bg-positive {
+  border-left-color: var(--ntk-template-notification-positive) !important;
+}
+
+.q-notification.bg-negative {
+  border-left-color: var(--ntk-template-notification-negative) !important;
+}
+
+.q-notification.bg-warning {
+  border-left-color: var(--ntk-template-notification-warning) !important;
+}
+
+.q-notification.bg-info {
+  border-left-color: var(--ntk-template-notification-info) !important;
+}

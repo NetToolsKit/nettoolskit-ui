@@ -292,7 +292,7 @@ Release blocker rule:
 | 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | In progress | Initial template components added and exported; route-level adoption pending. |
 | 120 | Core page template pack | dashboard/profile/placeholder/not-found templates | In progress | Initial page template components and exports added; route-level adoption pending. |
 | 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | In progress | Generic feature templates added with typed props/events for cross-scenario reuse. |
-| 122 | Style/token bridge for template pack | app-level style bridge + token mapping | Planned | Align cards, chips, forms, notifications, and state badges. |
+| 122 | Style/token bridge for template pack | app-level style bridge + token mapping | In progress | Tokenized bridge added and wired into global styles for template surfaces. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
 | 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Planned | Release gate for template-first workflow. |
 
@@ -434,7 +434,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): add auth and knowledge-base feature templates`
 
-6. Item 122: bridge style and tokens for template parity [Planned]
+6. Item 122: bridge style and tokens for template parity [In progress]
    - Target paths:
      - `src/templates/styles/reference-app-bridge.scss`
      - `src/styles/global.scss`
@@ -446,6 +446,21 @@ Release blocker rule:
    - Checkpoints:
      - notification/card/form/toolbar states align with reference baseline direction
      - tokenized values replace hardcoded colors/sizes wherever feasible
+   - Progress note (2026-03-26):
+     - implemented tokenized style bridge for reusable templates:
+       - `src/templates/styles/reference-app-bridge.scss`
+     - mapped template bridge tokens into global token source:
+       - `src/styles/tokens.scss`
+     - wired bridge into app global stylesheet load path:
+       - `src/styles/global.scss`
+     - updated style template catalog status:
+       - `src/templates/styles/style-template.catalog.ts`
+     - validation executed:
+       - `npm run lint`
+       - `npm run type-check`
+       - `npm run build:landing`
+       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(styles): add reference parity bridge for template pack`
 
