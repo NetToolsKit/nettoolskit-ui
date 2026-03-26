@@ -289,8 +289,8 @@ Release blocker rule:
 |---|------|-------|--------|-------|
 | 117 | Visual reference parity inventory freeze | matrix + mapping + target scopes | In progress | Baseline from `.temp/reference` captured and mapped to current structure. |
 | 118 | Template architecture and catalog | folder contract + exports + docs | In progress | `src/templates/**` scaffold started with contracts, registry, and acceptance gate helpers. |
-| 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | Planned | Route-ready wrappers over existing shell primitives. |
-| 120 | Core page template pack | dashboard/profile/placeholder/not-found templates | Planned | Fast page bootstrap without ad-hoc markup. |
+| 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | In progress | Initial template components added and exported; route-level adoption pending. |
+| 120 | Core page template pack | dashboard/profile/placeholder/not-found templates | In progress | Initial page template components and exports added; route-level adoption pending. |
 | 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | Planned | Visual parity with validated reference behaviors. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | Planned | Align cards, chips, forms, notifications, and state badges. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
@@ -333,7 +333,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): scaffold template catalog and root exports`
 
-3. Item 119: deliver layout and navigation templates [Planned]
+3. Item 119: deliver layout and navigation templates [In progress]
    - Target paths:
      - `src/templates/layouts/MainLayoutTemplate.vue`
      - `src/templates/layouts/AuthLayoutTemplate.vue`
@@ -350,10 +350,27 @@ Release blocker rule:
    - Checkpoints:
      - horizontal/vertical nav mode available via template contract
      - breadcrumb and user-menu patterns reusable without business coupling
+     - `src/templates/layouts/*.vue` and `src/templates/navigation/*.vue` available through template exports
+   - Progress note (2026-03-26):
+     - implemented initial layout templates:
+       - `src/templates/layouts/MainLayoutTemplate.vue`
+       - `src/templates/layouts/AuthLayoutTemplate.vue`
+     - implemented initial navigation templates:
+       - `src/templates/navigation/MenuLinkTemplate.vue`
+       - `src/templates/navigation/HorizontalMenuLinkTemplate.vue`
+       - `src/templates/navigation/UserMenuTemplate.vue`
+       - `src/templates/navigation/AppBreadcrumbTemplate.vue`
+       - `src/templates/navigation/menu-template.types.ts`
+     - updated template exports in `src/templates/layouts/index.ts` and `src/templates/navigation/index.ts`
+     - validation executed:
+       - `npm run lint`
+       - `npm run type-check`
+       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add layout and navigation template pack`
 
-4. Item 120: deliver core page templates [Planned]
+4. Item 120: deliver core page templates [In progress]
    - Target paths:
      - `src/templates/pages/DashboardTemplate.vue`
      - `src/templates/pages/ProfileTemplate.vue`
@@ -367,6 +384,21 @@ Release blocker rule:
    - Checkpoints:
      - four page archetypes reusable through props/config
      - no hardcoded reference-brand strings in shared templates
+   - Progress note (2026-03-26):
+     - implemented initial page templates:
+       - `src/templates/pages/DashboardTemplate.vue` (a11y prop contracts extended)
+       - `src/templates/pages/ProfileTemplate.vue`
+       - `src/templates/pages/PlaceholderTemplate.vue`
+       - `src/templates/pages/ErrorNotFoundTemplate.vue`
+       - `src/templates/pages/page-template.types.ts`
+     - updated page template exports and catalog:
+       - `src/templates/pages/index.ts`
+       - `src/templates/pages/page-template.catalog.ts`
+     - validation executed:
+       - `npm run lint`
+       - `npm run type-check`
+       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add page archetype templates`
 

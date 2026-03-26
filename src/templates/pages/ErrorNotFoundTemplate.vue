@@ -1,0 +1,169 @@
+<template>
+  <q-page
+    class="ntk-template-not-found"
+    role="alert"
+    :aria-label="pageAriaLabel"
+  >
+    <section class="ntk-template-not-found__container">
+      <div class="ntk-template-not-found__code">
+        {{ code }}
+      </div>
+
+      <h1 class="ntk-template-not-found__title">
+        {{ title }}
+      </h1>
+
+      <p class="ntk-template-not-found__description">
+        {{ description }}
+      </p>
+
+      <div class="ntk-template-not-found__actions">
+        <q-btn
+          v-if="showSecondaryAction"
+          no-caps
+          :label="secondaryAction.label"
+          :icon="secondaryAction.icon"
+          :to="secondaryAction.to"
+          :color="secondaryAction.color || 'grey-8'"
+          :disable="secondaryAction.disable"
+          :flat="secondaryAction.flat ?? false"
+          :outline="secondaryAction.outline ?? true"
+          :unelevated="secondaryAction.unelevated ?? false"
+          :aria-label="secondaryAction.ariaLabel || secondaryAction.label"
+          @click="handleSecondaryActionClick"
+        />
+
+        <q-btn
+          no-caps
+          :label="primaryAction.label"
+          :icon="primaryAction.icon"
+          :to="primaryAction.to"
+          :color="primaryAction.color || 'primary'"
+          :disable="primaryAction.disable"
+          :flat="primaryAction.flat ?? false"
+          :outline="primaryAction.outline ?? false"
+          :unelevated="primaryAction.unelevated ?? true"
+          :aria-label="primaryAction.ariaLabel || primaryAction.label"
+          @click="handlePrimaryActionClick"
+        />
+      </div>
+    </section>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+import type { TemplatePageAction } from './page-template.types'
+
+const props = withDefaults(defineProps<{
+  code?: string
+  title?: string
+  description?: string
+  primaryAction?: TemplatePageAction
+  secondaryAction?: TemplatePageAction
+  showSecondaryAction?: boolean
+  pageAriaLabel?: string
+}>(), {
+  code: '404',
+  title: 'Page not found',
+  description: 'The page you are looking for does not exist or was moved.',
+  primaryAction: () => ({
+    id: 'go-home',
+    label: 'Go to home',
+    icon: 'home',
+    to: '/',
+  }),
+  secondaryAction: () => ({
+    id: 'go-back',
+    label: 'Go back',
+    icon: 'arrow_back',
+  }),
+  showSecondaryAction: true,
+  pageAriaLabel: 'Not found page',
+})
+
+const emit = defineEmits<{
+  'action-click': [actionId: string]
+}>()
+
+const router = useRouter()
+
+function handlePrimaryActionClick(): void {
+  emit('action-click', props.primaryAction.id)
+}
+
+function handleSecondaryActionClick(): void {
+  emit('action-click', props.secondaryAction.id)
+
+  if (!props.secondaryAction.to) {
+    router.back()
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.ntk-template-not-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 18px;
+  background: var(
+    --ntk-template-not-found-bg,
+    radial-gradient(circle at top, #0f172a 0%, #1e3a8a 45%, #172554 100%)
+  );
+  color: var(--ntk-template-not-found-text, #ffffff);
+}
+
+.ntk-template-not-found__container {
+  width: min(620px, 100%);
+  text-align: center;
+  padding: 28px 24px;
+  border-radius: 18px;
+  background: var(--ntk-template-not-found-card-bg, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--ntk-template-not-found-border, rgba(148, 163, 184, 0.35));
+  backdrop-filter: blur(4px);
+}
+
+.ntk-template-not-found__code {
+  font-size: clamp(72px, 16vw, 160px);
+  line-height: 0.85;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--ntk-template-not-found-code-color, #93c5fd);
+  text-shadow: 0 6px 16px var(--ntk-template-not-found-code-shadow, rgba(15, 23, 42, 0.35));
+}
+
+.ntk-template-not-found__title {
+  margin: 12px 0 0;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.ntk-template-not-found__description {
+  margin: 10px auto 0;
+  max-width: 500px;
+  font-size: 15px;
+  color: var(--ntk-template-not-found-subtitle, #e2e8f0);
+}
+
+.ntk-template-not-found__actions {
+  margin-top: 22px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .ntk-template-not-found__container {
+    padding: 22px 16px;
+  }
+
+  .ntk-template-not-found__title {
+    font-size: 24px;
+  }
+}
+</style>
