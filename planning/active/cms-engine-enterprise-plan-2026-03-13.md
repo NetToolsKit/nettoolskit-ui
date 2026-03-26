@@ -291,7 +291,7 @@ Release blocker rule:
 | 118 | Template architecture and catalog | folder contract + exports + docs | In progress | `src/templates/**` scaffold started with contracts, registry, and acceptance gate helpers. |
 | 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | In progress | Initial template components added and exported; route-level adoption pending. |
 | 120 | Core page template pack | dashboard/profile/placeholder/not-found templates | In progress | Initial page template components and exports added; route-level adoption pending. |
-| 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | Planned | Visual parity with validated reference behaviors. |
+| 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | In progress | Generic feature templates added with typed props/events for cross-scenario reuse. |
 | 122 | Style/token bridge for template pack | app-level style bridge + token mapping | Planned | Align cards, chips, forms, notifications, and state badges. |
 | 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
 | 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Planned | Release gate for template-first workflow. |
@@ -402,7 +402,7 @@ Release blocker rule:
    - Commit checkpoint suggestion:
      - `feat(templates): add page archetype templates`
 
-5. Item 121: deliver feature templates (Auth + Wiki + Chat) [Planned]
+5. Item 121: deliver feature templates (Auth + Wiki + Chat) [In progress]
    - Target paths:
      - `src/templates/features/auth/LoginTemplate.vue`
      - `src/templates/features/wiki/WikiTemplate.vue`
@@ -416,6 +416,21 @@ Release blocker rule:
    - Checkpoints:
      - auth/wiki/chat flows available as template modules
      - chat drawer behavior templateized and decoupled from domain copy
+   - Progress note (2026-03-26):
+     - implemented generic and reusable feature templates (props/events typed, no store/router coupling):
+       - `src/templates/features/auth/LoginTemplate.vue`
+       - `src/templates/features/wiki/WikiTemplate.vue`
+       - `src/templates/features/wiki/WikiChatTemplate.vue`
+       - `src/templates/features/wiki/WikiChatDrawerTemplate.vue`
+       - `src/templates/features/wiki/wiki-template.types.ts`
+     - updated feature exports and catalog:
+       - `src/templates/features/index.ts`
+       - `src/templates/features/feature-template.catalog.ts`
+     - validation executed:
+       - `npm run lint`
+       - `npm run type-check`
+       - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+       - `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts`
    - Commit checkpoint suggestion:
      - `feat(templates): add auth and knowledge-base feature templates`
 
