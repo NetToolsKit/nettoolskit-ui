@@ -2,7 +2,7 @@
 
 Date: 2026-03-13
 Repository: `nettoolskit-ui-vue`
-Status: Closed — Item 111 completed 2026-03-23, Item 112 completed 2026-03-23
+Status: Reopened 2026-03-26 — Item 111 and Item 112 remain completed (2026-03-23); visual-reference/template track added
 
 ## Scope
 
@@ -215,7 +215,264 @@ Item 112 final validation:
 
 ## Practical Reading
 
-- This enterprise roadmap is closed as of 2026-03-23.
-- All backlog items (105–116) are completed.
+- Historical note: the original enterprise roadmap (Items 105–116) was closed on 2026-03-23.
+- All backlog items (105–116) remain completed.
 - 10 pre-existing visual-regression timeout failures are documented above; they pre-date this workstream and are not regressions from it.
-- No further execution targets remain.
+- Reopen addendum below defines active execution targets (Items 117–124).
+
+## Reopen Addendum (2026-03-26): Visual Reference Alignment
+
+### Reopen Intent
+
+Finalize planning by adding a new execution track that aligns the current UI/CMS visual layer with the validated reference project in `.temp/reference`, without regressing the completed enterprise CMS items.
+
+This addendum keeps Items 105–116 as completed history and introduces a new backlog focused on reusable templates, faster delivery, and visual consistency.
+
+### Reference Baseline Used
+
+- Reference root: `.temp/reference`
+- Primary visual baseline sources:
+  - `.temp/reference/src/layouts/MainLayoutHorizontal.vue`
+  - `.temp/reference/src/layouts/AuthLayout.vue`
+  - `.temp/reference/src/components/MenuLink.vue`
+  - `.temp/reference/src/components/HorizontalMenuLink.vue`
+  - `.temp/reference/src/components/UserMenu.vue`
+  - `.temp/reference/src/shared/components/common/AppBreadcrumb.vue`
+  - `.temp/reference/src/pages/PipelinePage.vue`
+  - `.temp/reference/src/pages/PlaceholderPage.vue`
+  - `.temp/reference/src/pages/ProfilePage.vue`
+  - `.temp/reference/src/modules/auth/pages/LoginPage.vue`
+  - `.temp/reference/src/modules/wiki/pages/WikiPage.vue`
+  - `.temp/reference/src/modules/wiki/components/ChatDrawer.vue`
+  - `.temp/reference/src/css/app.scss`
+
+### Visual Gap Analysis (Reference vs Current Repo)
+
+| Area | Reference Coverage | Current Coverage | Gap to Close |
+|---|---|---|---|
+| App layout templates | Main + Auth layouts with header/drawer/horizontal behavior | Generic shell components (`NtkAppShell`, `NtkHeader`, `NtkSidebar`) but no route-ready template pack | Create route-ready layout templates wrapping current primitives |
+| Navigation templates | Vertical/horizontal menu links, user menu, breadcrumb | Reusable sidebar/shell parts exist but no equivalent template set | Add reusable navigation templates and shared menu contract |
+| Page templates | Dashboard, profile, placeholder, not-found pages | Landing + CMS screens only | Add reusable page templates for fast app assembly |
+| Feature templates | Login page template + wiki/list/chat surfaces | No equivalent feature template pack | Add Auth/Wiki/Chat template modules |
+| Visual style baseline | Dedicated app-level SCSS baseline for cards/notifications/inputs | Global styles are landing/CMS-oriented | Add template style bridge with tokenized compatibility |
+| Runtime scaffolding | Router/boot/store/template wiring in reference | No template scaffolding pack in `src` | Add scaffold templates for routes, menu, layout state, notification integration |
+
+### Mandatory Rule (Template-First) — Effective Immediately
+
+Everything in the visual delivery stream must have templates.
+
+Mandatory policy:
+- every new visual feature MUST start from reusable templates under `src/templates/**`
+- every new screen MUST include:
+  - layout template contract
+  - page template contract
+  - shared visual/state template (composable or store stub)
+  - minimal unit test template coverage
+- direct one-off page implementation in `landing-page/**` or module surfaces without template extraction is blocked unless explicitly documented as an exception in this plan
+
+Mandatory acceptance criteria (merge gate for visual work):
+1. layout template exists and is configurable via typed props/contracts
+2. page template exists and consumes the layout contract without hardcoded business copy
+3. state template exists (store/composable scaffold) with typed integration surface
+4. styles are token-driven (no non-exception hardcoded color, spacing, or typography values)
+5. accessibility contract is present (`role`, `aria-*`, keyboard navigation points)
+6. template unit tests are present and passing for critical behavior/states
+7. route/menu scaffolding references template modules instead of one-off page wiring
+8. related README documentation follows `docs/standards/readme-frontend-super-agent-standard.md`
+
+Release blocker rule:
+- if any criterion above is missing, the slice is not releasable and must stay in planned/in-progress status
+
+## Backlog Extension
+
+| # | Item | Scope | Status | Notes |
+|---|------|-------|--------|-------|
+| 117 | Visual reference parity inventory freeze | matrix + mapping + target scopes | In progress | Baseline from `.temp/reference` captured and mapped to current structure. |
+| 118 | Template architecture and catalog | folder contract + exports + docs | In progress | `src/templates/**` scaffold started with contracts, registry, and acceptance gate helpers. |
+| 119 | Layout and navigation template pack | main/auth layouts + menu + breadcrumb + user menu templates | Planned | Route-ready wrappers over existing shell primitives. |
+| 120 | Core page template pack | dashboard/profile/placeholder/not-found templates | Planned | Fast page bootstrap without ad-hoc markup. |
+| 121 | Feature template pack (auth + wiki + chat) | login/wiki/wiki-chat/chat-drawer templates | Planned | Visual parity with validated reference behaviors. |
+| 122 | Style/token bridge for template pack | app-level style bridge + token mapping | Planned | Align cards, chips, forms, notifications, and state badges. |
+| 123 | Scaffolding templates for integration speed | router/menu/layout-state/notification scaffolds | Planned | Copy-ready integration templates for new apps. |
+| 124 | Template regression and release criteria | visual + unit + lint/type/build + closeout | Planned | Release gate for template-first workflow. |
+
+## Ordered Tasks (Reopen Track)
+
+1. Item 117: lock reference parity matrix [In progress]
+   - Target paths:
+     - `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
+     - `.temp/reference/src/**`
+     - `src/**`
+     - `landing-page/**`
+   - Commands:
+     - `rg --files .temp/reference/src`
+     - `rg --files src landing-page`
+     - `npm run type-check`
+   - Checkpoints:
+     - reference-vs-current matrix approved
+     - no ambiguity on scope ownership for items 118–124
+   - Commit checkpoint suggestion:
+     - `docs(plan): add visual reference parity matrix and reopen scope`
+
+2. Item 118: establish template architecture and catalog [In progress]
+   - Target paths:
+     - `src/templates/README.md`
+     - `src/templates/index.ts`
+     - `src/templates/layouts/`
+     - `src/templates/navigation/`
+     - `src/templates/pages/`
+     - `src/templates/features/`
+     - `src/templates/styles/`
+   - Commands:
+     - `npm run lint`
+     - `npm run type-check`
+   - Checkpoints:
+     - `src/templates/**` is the canonical template root
+     - naming contract and export contract documented
+     - acceptance gate helpers available for merge-readiness checks
+   - Commit checkpoint suggestion:
+     - `feat(templates): scaffold template catalog and root exports`
+
+3. Item 119: deliver layout and navigation templates [Planned]
+   - Target paths:
+     - `src/templates/layouts/MainLayoutTemplate.vue`
+     - `src/templates/layouts/AuthLayoutTemplate.vue`
+     - `src/templates/navigation/MenuLinkTemplate.vue`
+     - `src/templates/navigation/HorizontalMenuLinkTemplate.vue`
+     - `src/templates/navigation/UserMenuTemplate.vue`
+     - `src/templates/navigation/AppBreadcrumbTemplate.vue`
+     - `src/templates/navigation/menu-template.types.ts`
+   - Commands:
+     - `npm run test -- tests/unit/components/layout/NtkAppShell.spec.ts`
+     - `npm run test -- tests/unit/components/layout/NtkHeader.spec.ts`
+     - `npm run lint`
+     - `npm run type-check`
+   - Checkpoints:
+     - horizontal/vertical nav mode available via template contract
+     - breadcrumb and user-menu patterns reusable without business coupling
+   - Commit checkpoint suggestion:
+     - `feat(templates): add layout and navigation template pack`
+
+4. Item 120: deliver core page templates [Planned]
+   - Target paths:
+     - `src/templates/pages/DashboardTemplate.vue`
+     - `src/templates/pages/ProfileTemplate.vue`
+     - `src/templates/pages/PlaceholderTemplate.vue`
+     - `src/templates/pages/ErrorNotFoundTemplate.vue`
+     - `src/templates/pages/page-template.types.ts`
+   - Commands:
+     - `npm run lint`
+     - `npm run type-check`
+     - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+   - Checkpoints:
+     - four page archetypes reusable through props/config
+     - no hardcoded reference-brand strings in shared templates
+   - Commit checkpoint suggestion:
+     - `feat(templates): add page archetype templates`
+
+5. Item 121: deliver feature templates (Auth + Wiki + Chat) [Planned]
+   - Target paths:
+     - `src/templates/features/auth/LoginTemplate.vue`
+     - `src/templates/features/wiki/WikiTemplate.vue`
+     - `src/templates/features/wiki/WikiChatTemplate.vue`
+     - `src/templates/features/wiki/WikiChatDrawerTemplate.vue`
+     - `src/templates/features/wiki/wiki-template.types.ts`
+   - Commands:
+     - `npm run lint`
+     - `npm run type-check`
+     - `npm run test -- tests/unit/components/AllComponentsSmoke.spec.ts`
+   - Checkpoints:
+     - auth/wiki/chat flows available as template modules
+     - chat drawer behavior templateized and decoupled from domain copy
+   - Commit checkpoint suggestion:
+     - `feat(templates): add auth and knowledge-base feature templates`
+
+6. Item 122: bridge style and tokens for template parity [Planned]
+   - Target paths:
+     - `src/templates/styles/reference-app-bridge.scss`
+     - `src/styles/global.scss`
+     - `src/styles/tokens.scss`
+   - Commands:
+     - `npm run lint`
+     - `npm run type-check`
+     - `npm run build:landing`
+   - Checkpoints:
+     - notification/card/form/toolbar states align with reference baseline direction
+     - tokenized values replace hardcoded colors/sizes wherever feasible
+   - Commit checkpoint suggestion:
+     - `feat(styles): add reference parity bridge for template pack`
+
+7. Item 123: add integration scaffolding templates [Planned]
+   - Target paths:
+     - `src/templates/scaffolding/router-template.ts`
+     - `src/templates/scaffolding/menu.constants.template.ts`
+     - `src/templates/scaffolding/layout-store.template.ts`
+     - `src/templates/scaffolding/notification.template.ts`
+   - Commands:
+     - `npm run lint`
+     - `npm run type-check`
+   - Checkpoints:
+     - drop-in scaffolds enable faster app bootstrap
+     - scaffolds reference templates instead of ad-hoc pages/components
+   - Commit checkpoint suggestion:
+     - `feat(scaffold): add router/state/menu integration templates`
+
+8. Item 124: template regression and release closeout [Planned]
+   - Target paths:
+     - `tests/unit/templates/**/*.spec.ts`
+     - `tests/e2e/template-visual-regression.spec.ts`
+     - `README.md`
+     - `CHANGELOG.md`
+     - `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
+   - Commands:
+     - `npm audit --omit=dev`
+     - `npm run type-check`
+     - `npm run lint`
+     - `npm run build:landing`
+     - `npm run test`
+     - `npm run test:e2e -- --project=chromium`
+   - Checkpoints:
+     - template pack fully covered by quality gates
+     - docs/changelog updated with template-first workflow
+   - Commit checkpoint suggestion:
+     - `chore(release): template pack validation and closeout`
+
+## Reopen Validation Checklist
+
+- `npm audit --omit=dev`
+- `npm run type-check`
+- `npm run lint`
+- `npm run build:landing`
+- `npm run test`
+- `npm run test:e2e -- --project=chromium`
+- visual regression for template surfaces and existing CMS surfaces
+
+## Reopen Risks and Mitigations
+
+- Risk: accidental coupling to reference business/domain text.
+  - Mitigation: enforce generic props/content contracts in all templates.
+- Risk: style drift between template pack and existing CMS shell.
+  - Mitigation: token bridge in Item 122 + visual-regression gate in Item 124.
+- Risk: duplicated implementation in `landing-page/**` bypassing template policy.
+  - Mitigation: template-first rule is mandatory and review gate blocks bypass.
+- Risk: regressions in existing CMS selectors/hooks.
+  - Mitigation: preserve DOM/ARIA/data contracts defined earlier in this plan.
+
+## Delivery Slices
+
+- POC slice: Items 117–118 (inventory + template architecture contract).
+- Incremental slice: Items 119–123 (layout/navigation/pages/features/styles/scaffolds).
+- Final slice: Item 124 (full validation, docs/changelog, release readiness).
+
+## Reopen Specialists and Closeout
+
+- Recommended implementation specialist: `dev-frontend-vue-quasar-engineer`
+- Planner: `plan-active-work-planner`
+- Test gate: mandatory
+- Review gate: mandatory
+- Release closeout: required
+
+Closeout expectations:
+- README must include template catalog and template-first usage guide.
+- commit checkpoints should follow the per-item suggestions above.
+- CHANGELOG must explicitly record template-first policy and delivered template packs.

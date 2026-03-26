@@ -32,6 +32,40 @@ export * from './src/adapters/QuasarNotificationAdapter'
 // ============================================================================
 // COMPONENTS - Form
 // ============================================================================
+export { default as NtkInput } from './src/components/fo/**
+ * NetToolsKit UI Vue - Single Entry Point
+ *
+ * ⭐ ÚNICO PONTO DE ENTRADA para todo o módulo
+ *
+ * Zero repetição: Importa tudo diretamente de cada arquivo,
+ * sem index.ts intermediários nas subpastas.
+ *
+ * @example
+ * ```typescript
+ * import {
+ *   // Components
+ *   NtkButton, NtkInput, NtkMetricCard,
+ *
+ *   // Composables
+ *   useNotification, useFormRules, useAsync,
+ *
+ *   // Services
+ *   NotificationService, FilterService,
+ *
+ *   // Utils
+ *   validateEmail, validateCPF, retry, timeout
+ * } from '@nettoolskit/ui-vue'
+ * ```
+ */
+
+// ============================================================================
+// ADAPTERS
+// ============================================================================
+export * from './src/adapters/QuasarNotificationAdapter'
+
+// ============================================================================
+// COMPONENTS - Form
+// ============================================================================
 export { default as NtkInput } from './src/components/form/NtkInput.vue'
 export { default as NtkSelect } from './src/components/form/NtkSelect.vue'
 export { default as NtkMultiSelect } from './src/components/form/NtkMultiSelect.vue'
@@ -172,3 +206,8 @@ export * from './src/config/colors/theme-mode.config'
 // MODULES - CMS
 // ============================================================================
 export * from './src/modules/cms'
+
+// ============================================================================
+// TEMPLATES - Visual Template Catalog
+// ============================================================================
+export * from './src/templates'

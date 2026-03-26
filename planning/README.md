@@ -2,6 +2,17 @@
 
 Planning artifacts for this repository live under `planning/`.
 
+## Standard Compliance
+
+This README follows:
+- [docs/standards/readme-frontend-super-agent-standard.md](../docs/standards/readme-frontend-super-agent-standard.md)
+
+Minimum contract covered:
+- scope
+- structure
+- rules
+- validation expectations
+
 ## Structure
 
 - `active/`
@@ -20,3 +31,9 @@ Planning artifacts for this repository live under `planning/`.
 - Generated build, coverage, Playwright and other test artifacts must prefer `.build/` whenever the toolchain allows an explicit output path.
 - Generated deployment bundles, scripts and operational output must prefer `.deployment/` whenever the hosting/deploy tool does not require a root-level file.
 - Explicit exceptions stay at repository root when toolchains require them, such as `node_modules/`, lockfiles and provider manifests like `vercel.json`.
+
+## Validation Baseline
+
+When planning changes include frontend impact, validate with:
+- `npm run lint`
+- `npm run type-check`

@@ -9,6 +9,35 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 
 ---
 
+## README Standard Compliance
+
+This README follows the repository documentation and frontend quality standard:
+- [docs/standards/readme-frontend-super-agent-standard.md](./docs/standards/readme-frontend-super-agent-standard.md)
+
+Minimum contract covered in this file:
+- scope and platform purpose
+- architecture and structure
+- quality gates and contribution rules
+- validation and references
+
+## Frontend Quality Gate
+
+For frontend changes, use this mandatory baseline:
+
+```bash
+npm run lint
+npm run type-check
+npm run test
+```
+
+For visual/CMS slices, also run:
+
+```bash
+npm run test:e2e -- --project=chromium
+```
+
+---
+
 ## Features
 
 - ✅ 22 reusable Vue 3 components (form, layout, UI)
