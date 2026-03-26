@@ -48,6 +48,7 @@ import {
 } from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
+import { createTemplateRuntimeRouter } from './template-runtime/router'
 
 // NetToolsKit style tokens
 import '../src/styles/tokens.scss'
@@ -57,18 +58,25 @@ import '../src/styles/global.scss'
 const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))
 const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))
 const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
+const TemplateRuntimeApp = defineAsyncComponent(() => import('./TemplateRuntimeApp.vue'))
 
 const searchParams = new URLSearchParams(window.location.search)
 const isCmsMode = searchParams.get('cms') === '1'
 const isTemplateMode = searchParams.get('templates') === '1'
+const isTemplateRuntimeMode = searchParams.get('template-runtime') === '1'
 
 const RootComponent = isCmsMode
   ? CmsApp
-  : isTemplateMode
+  : isTemplateRuntimeMode
+    ? TemplateRuntimeApp
+    : isTemplateMode
     ? TemplateShowcaseApp
     : LandingApp
 
 const app = createApp(RootComponent)
+const templateRuntimeRouter = isTemplateRuntimeMode
+  ? createTemplateRuntimeRouter()
+  : null
 
 app.use(Quasar, {
   plugins: {},
@@ -117,5 +125,9 @@ app.use(Quasar, {
     ClosePopup,
   },
 })
+
+if (templateRuntimeRouter) {
+  app.use(templateRuntimeRouter)
+}
 
 app.mount('#app')

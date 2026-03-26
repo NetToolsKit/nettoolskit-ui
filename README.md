@@ -882,6 +882,7 @@ interface ThemeGradients {
 ### Template Runtime Preview
 
 - `/?templates=1` renders the enterprise template showcase used by the visual-regression gate.
+- `/?template-runtime=1` renders the router-enabled template runtime (layout/navigation/page/feature templates composed via scaffolded routes).
 - `/?cms=1` renders the CMS authoring runtime.
 - Local preview command:
 
