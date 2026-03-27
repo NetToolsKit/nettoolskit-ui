@@ -1,7 +1,12 @@
 <template>
   <q-layout
-    view="lHh lpR fFf"
-    class="ntk-template-main-layout"
+    view="hHh lpR fFf"
+    :class="[
+      'ntk-template-main-layout',
+      sideMenuVariant === 'vercel'
+        ? 'ntk-template-main-layout--side-vercel'
+        : 'ntk-template-main-layout--side-reference',
+    ]"
   >
     <q-header
       v-if="showHeader"
@@ -44,10 +49,21 @@
 
         <q-space />
 
-        <slot name="header-actions">
+        <slot
+          name="header-actions"
+          :layout-controls="{
+            horizontalMode,
+            setHorizontalMode,
+            showLabelsInMini,
+            setShowLabelsInMini,
+            sideMenuVariant,
+            setSideMenuVariant,
+          }"
+        >
           <UserMenuTemplate
             v-model="horizontalMode"
             v-model:show-labels-in-mini="showLabelsInMini"
+            v-model:side-menu-variant="sideMenuVariant"
             :app-name="appName"
             :profile-name="userName"
             :profile-initials="userInitials"
@@ -81,7 +97,10 @@
       :width="drawerWidth"
       :mini="miniMode && !showLabelsInMini"
       :mini-width="miniDrawerWidth"
-      class="ntk-template-main-layout__drawer"
+      :class="[
+        'ntk-template-main-layout__drawer',
+        { 'ntk-template-main-layout__drawer--mini': isDrawerMiniMode },
+      ]"
     >
       <div class="ntk-template-main-layout__drawer-container">
         <div class="ntk-template-main-layout__drawer-scroll">
@@ -89,13 +108,35 @@
             class="q-pt-none"
             style="margin-top: 2px"
           >
-            <MenuLinkTemplate
-              v-for="item in primaryMenuItems"
+            <template
+              v-for="(item, index) in primaryMenuItems"
               :key="item.id"
-              :item="item"
-              :mini-mode="miniMode"
-              :show-labels-in-mini="showLabelsInMini"
-            />
+            >
+              <q-item-label
+                v-if="shouldRenderGroupLabel(primaryMenuItems, index)"
+                class="ntk-template-main-layout__group-caption"
+                :class="{ 'ntk-template-main-layout__group-caption--mini': isDrawerMiniMode }"
+              >
+                <span class="ntk-template-main-layout__group-caption-text">
+                  {{ isDrawerMiniMode ? getCompactGroupLabel(item.groupLabel) : item.groupLabel }}
+                </span>
+                <q-tooltip
+                  v-if="isDrawerMiniMode && item.groupLabel"
+                  :offset="[10, 0]"
+                >
+                  {{ item.groupLabel }}
+                </q-tooltip>
+              </q-item-label>
+
+              <MenuLinkTemplate
+                :item="item"
+                :mini-mode="miniMode"
+                :show-labels-in-mini="showLabelsInMini"
+                :menu-visual-style="sideMenuVariant"
+                :active-item-id="activeItemId"
+                @item-click="forwardMenuItemClick"
+              />
+            </template>
           </q-list>
         </div>
 
@@ -109,6 +150,9 @@
             :item="item"
             :mini-mode="miniMode"
             :show-labels-in-mini="showLabelsInMini"
+            :menu-visual-style="sideMenuVariant"
+            :active-item-id="activeItemId"
+            @item-click="forwardMenuItemClick"
           />
         </div>
       </div>
@@ -141,7 +185,7 @@ import AppBreadcrumbTemplate from '../navigation/AppBreadcrumbTemplate.vue'
 import HorizontalMenuLinkTemplate from '../navigation/HorizontalMenuLinkTemplate.vue'
 import MenuLinkTemplate from '../navigation/MenuLinkTemplate.vue'
 import UserMenuTemplate from '../navigation/UserMenuTemplate.vue'
-import type { TemplateMenuItem } from '../navigation/menu-template.types'
+import type { TemplateMenuChildItem, TemplateMenuItem } from '../navigation/menu-template.types'
 
 const props = withDefaults(defineProps<{
   appName?: string
@@ -161,6 +205,8 @@ const props = withDefaults(defineProps<{
   pageContainerClass?: string
   expandMenuAriaLabel?: string
   collapseMenuAriaLabel?: string
+  sideMenuVariant?: 'vercel' | 'reference'
+  activeItemId?: string
 }>(), {
   appName: 'NetToolsKit',
   logoSrc: '',
@@ -178,16 +224,24 @@ const props = withDefaults(defineProps<{
   pageContainerClass: '',
   expandMenuAriaLabel: 'Expand side menu',
   collapseMenuAriaLabel: 'Collapse side menu',
+  sideMenuVariant: 'vercel',
+  activeItemId: '',
 })
 
-defineEmits<{
+const emit = defineEmits<{
   'account-click': []
   'logout-click': []
+  'menu-item-click': [item: TemplateMenuItem | TemplateMenuChildItem]
 }>()
 
 const horizontalMode = ref(false)
 const miniMode = ref(false)
 const showLabelsInMini = ref(false)
+const sideMenuVariant = ref<'vercel' | 'reference'>(props.sideMenuVariant)
+
+const isDrawerMiniMode = computed<boolean>(() => {
+  return miniMode.value && !showLabelsInMini.value
+})
 
 const primaryMenuItems = computed<TemplateMenuItem[]>(() => {
   return props.menuItems.filter(item => !item.stickyBottom)
@@ -196,6 +250,38 @@ const primaryMenuItems = computed<TemplateMenuItem[]>(() => {
 const secondaryMenuItems = computed<TemplateMenuItem[]>(() => {
   return props.menuItems.filter(item => item.stickyBottom)
 })
+
+function normalizeGroupLabel(item: TemplateMenuItem): string {
+  return String(item.groupLabel ?? '').trim()
+}
+
+function shouldRenderGroupLabel(items: TemplateMenuItem[], index: number): boolean {
+  const currentGroupLabel = normalizeGroupLabel(items[index] as TemplateMenuItem)
+  if (!currentGroupLabel) {
+    return false
+  }
+
+  if (index === 0) {
+    return true
+  }
+
+  const previousGroupLabel = normalizeGroupLabel(items[index - 1] as TemplateMenuItem)
+  return currentGroupLabel !== previousGroupLabel
+}
+
+function getCompactGroupLabel(label?: string): string {
+  const normalized = String(label ?? '').trim()
+  if (!normalized) {
+    return '•'
+  }
+
+  const compact = normalized
+    .split(/\s+/)
+    .map(chunk => chunk.charAt(0).toUpperCase())
+    .join('')
+
+  return compact.slice(0, 3)
+}
 
 function storageKey(suffix: string): string {
   return `${props.storageKeyPrefix}:${suffix}`
@@ -212,6 +298,17 @@ function readStoredFlag(key: string): boolean {
   }
 }
 
+function readStoredValue(key: string): string | null {
+  if (!props.persistMode) {
+    return null
+  }
+  try {
+    return localStorage.getItem(storageKey(key))
+  } catch {
+    return null
+  }
+}
+
 function writeStoredFlag(key: string, value: boolean): void {
   if (!props.persistMode) {
     return
@@ -223,14 +320,49 @@ function writeStoredFlag(key: string, value: boolean): void {
   }
 }
 
+function writeStoredValue(key: string, value: string): void {
+  if (!props.persistMode) {
+    return
+  }
+  try {
+    localStorage.setItem(storageKey(key), value)
+  } catch {
+    // Intentionally ignore persistence failures (private mode, quota, SSR).
+  }
+}
+
+function normalizeSideMenuVariant(value: string | null | undefined): 'vercel' | 'reference' {
+  if (value === 'reference' || value === 'classic') {
+    return 'reference'
+  }
+  return 'vercel'
+}
+
 function toggleMiniMode(): void {
   miniMode.value = !miniMode.value
+}
+
+function setHorizontalMode(value: boolean): void {
+  horizontalMode.value = value
+}
+
+function setShowLabelsInMini(value: boolean): void {
+  showLabelsInMini.value = value
+}
+
+function setSideMenuVariant(value: 'vercel' | 'reference'): void {
+  sideMenuVariant.value = value
+}
+
+function forwardMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): void {
+  emit('menu-item-click', item)
 }
 
 onMounted(() => {
   horizontalMode.value = readStoredFlag('horizontal-mode')
   miniMode.value = readStoredFlag('mini-mode')
   showLabelsInMini.value = readStoredFlag('mini-labels')
+  sideMenuVariant.value = normalizeSideMenuVariant(readStoredValue('side-menu-variant') ?? props.sideMenuVariant)
 })
 
 watch(horizontalMode, value => {
@@ -244,12 +376,18 @@ watch(miniMode, value => {
 watch(showLabelsInMini, value => {
   writeStoredFlag('mini-labels', value)
 })
+
+watch(sideMenuVariant, value => {
+  writeStoredValue('side-menu-variant', value)
+})
 </script>
 
 <style lang="scss">
 .ntk-template-main-layout__header {
   background: var(--ntk-template-layout-header-bg, #ffffff);
   color: var(--ntk-template-layout-header-text, #1f2937);
+  box-shadow: var(--ntk-template-layout-header-shadow, 0 2px 14px rgba(15, 23, 42, 0.08)) !important;
+  z-index: 2100 !important;
 }
 
 .ntk-template-main-layout__brand {
@@ -287,7 +425,7 @@ watch(showLabelsInMini, value => {
   min-height: 48px !important;
   background: var(
     --ntk-template-layout-horizontal-bg,
-    linear-gradient(90deg, #1f2937 0%, #334155 100%)
+    linear-gradient(90deg, #1e293b 0%, #334155 100%)
   );
   color: var(--ntk-template-layout-horizontal-text, #ffffff);
 }
@@ -301,9 +439,27 @@ watch(showLabelsInMini, value => {
 .ntk-template-main-layout__drawer {
   background: var(
     --ntk-template-layout-drawer-bg,
-    linear-gradient(180deg, #1f2937 0%, #334155 100%)
+    linear-gradient(180deg, #1e293b 0%, #334155 100%)
   ) !important;
   color: var(--ntk-template-layout-drawer-text, #ffffff) !important;
+  transition:
+    width 0.24s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ntk-template-main-layout__drawer--mini {
+  box-shadow: inset -1px 0 0 rgba(148, 163, 184, 0.28);
+}
+
+.ntk-template-main-layout--side-vercel .ntk-template-main-layout__drawer {
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%) !important;
+}
+
+.ntk-template-main-layout--side-reference .ntk-template-main-layout__drawer {
+  background: var(
+    --ntk-template-layout-drawer-bg,
+    linear-gradient(180deg, #1e293b 0%, #334155 100%)
+  ) !important;
 }
 
 .ntk-template-main-layout__drawer-container {
@@ -317,6 +473,37 @@ watch(showLabelsInMini, value => {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.ntk-template-main-layout__group-caption {
+  min-height: 26px;
+  padding: 8px 14px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(203, 213, 225, 0.9);
+}
+
+.ntk-template-main-layout__group-caption-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ntk-template-main-layout__group-caption--mini {
+  display: flex;
+  justify-content: center;
+  padding: 8px 4px 4px;
+}
+
+.ntk-template-main-layout__group-caption--mini .ntk-template-main-layout__group-caption-text {
+  min-width: 28px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  font-size: 10px;
 }
 
 .ntk-template-main-layout__drawer-bottom {
@@ -355,6 +542,10 @@ watch(showLabelsInMini, value => {
 .ntk-template-main-layout__route-fade-enter-from,
 .ntk-template-main-layout__route-fade-leave-to {
   opacity: 0;
+}
+
+.q-drawer--left.q-drawer--bordered {
+  border-right: 1px solid rgba(0, 0, 0, 0.21);
 }
 
 @media (max-width: 768px) {

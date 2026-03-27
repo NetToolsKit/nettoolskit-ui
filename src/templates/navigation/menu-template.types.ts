@@ -14,7 +14,10 @@ export interface TemplateMenuChildItem {
 export interface TemplateMenuItem {
   id: string
   text: string
+  caption?: string
   icon: string
+  groupId?: string
+  groupLabel?: string
   to?: string
   routeName?: string
   disabled?: boolean

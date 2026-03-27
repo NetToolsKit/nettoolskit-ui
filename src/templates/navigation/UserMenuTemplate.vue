@@ -116,6 +116,32 @@
             />
           </q-item-section>
         </q-item>
+
+        <q-item
+          v-if="showSideMenuStyleToggle"
+          :disable="modelValue"
+        >
+          <q-item-section avatar>
+            <q-icon
+              :name="sideMenuVariant === 'vercel' ? 'auto_awesome' : 'tune'"
+              color="grey-7"
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ sideMenuStyleLabel }}</q-item-label>
+            <q-item-label caption>
+              {{ sideMenuStyleCaption }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-toggle
+              :model-value="sideMenuVariant === 'vercel'"
+              :disable="modelValue"
+              color="primary"
+              @update:model-value="$emit('update:sideMenuVariant', $event ? 'vercel' : 'reference')"
+            />
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-menu>
   </q-btn>
@@ -129,6 +155,7 @@ import type { TemplateUserMenuProfile } from './menu-template.types'
 const props = withDefaults(defineProps<{
   modelValue: boolean
   showLabelsInMini: boolean
+  sideMenuVariant: 'vercel' | 'reference'
   appName?: string
   profileName?: string
   profileInitials?: string
@@ -139,6 +166,9 @@ const props = withDefaults(defineProps<{
   horizontalMenuCaption?: string
   miniLabelsLabel?: string
   miniLabelsCaption?: string
+  sideMenuStyleLabel?: string
+  sideMenuStyleCaption?: string
+  showSideMenuStyleToggle?: boolean
 }>(), {
   appName: 'NetToolsKit',
   profileName: 'User',
@@ -150,11 +180,16 @@ const props = withDefaults(defineProps<{
   horizontalMenuCaption: 'Toggle between side and top navigation',
   miniLabelsLabel: 'Labels in mini menu',
   miniLabelsCaption: 'Show labels below icons in compact mode',
+  sideMenuStyleLabel: 'Sidebar style',
+  sideMenuStyleCaption: 'Switch between Vercel and reference side menu visuals',
+  sideMenuVariant: 'vercel',
+  showSideMenuStyleToggle: true,
 })
 
 defineEmits<{
   'update:modelValue': [value: boolean]
   'update:showLabelsInMini': [value: boolean]
+  'update:sideMenuVariant': [value: 'vercel' | 'reference']
   'account-click': []
   'logout-click': []
 }>()

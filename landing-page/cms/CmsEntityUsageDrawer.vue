@@ -1,0 +1,91 @@
+<template>
+  <q-dialog
+    :model-value="modelValue"
+    position="right"
+    @update:model-value="$emit('update:modelValue', $event)"
+  >
+    <q-card class="cms-usage-drawer">
+      <div class="cms-usage-drawer__header">
+        <div>
+          <strong>{{ headerLabel }}</strong>
+          <small>{{ title || detailsLabel }}</small>
+        </div>
+        <q-btn
+          flat
+          round
+          dense
+          icon="close"
+          class="cms-usage-drawer__close"
+          @click="$emit('update:modelValue', false)"
+        />
+      </div>
+      <q-separator />
+      <div class="cms-usage-drawer__body">
+        <p v-if="subtitle" class="cms-preview-content-text">
+          {{ subtitle }}
+        </p>
+        <div class="cms-usage-drawer__summary">
+          <q-chip dense square :style="statusChipStyle">
+            {{ referenceCount }} {{ refsLabel }}
+          </q-chip>
+          <small>{{ summaryLabel }}</small>
+        </div>
+        <div v-if="references.length === 0" class="cms-block-item__empty">
+          <strong>{{ emptyTitle }}</strong>
+          <small>{{ emptyDescription }}</small>
+        </div>
+        <div v-else class="cms-usage-drawer__references">
+          <article
+            v-for="reference in references"
+            :key="reference.key"
+            class="cms-usage-drawer__reference"
+          >
+            <div class="cms-usage-drawer__reference-header">
+              <strong>{{ reference.label }}</strong>
+              <q-chip dense square :style="statusChipStyle">
+                {{ reference.sourceLabel }}
+              </q-chip>
+            </div>
+            <small>{{ reference.description }}</small>
+            <small v-if="reference.locationLabel">
+              {{ reference.locationLabel }}
+            </small>
+          </article>
+        </div>
+      </div>
+    </q-card>
+  </q-dialog>
+</template>
+
+<script setup lang="ts">
+export interface CmsEntityUsageDrawerReferenceView {
+  key: string
+  label: string
+  sourceLabel: string
+  description: string
+  locationLabel?: string
+}
+
+withDefaults(defineProps<{
+  modelValue: boolean
+  headerLabel: string
+  detailsLabel: string
+  title?: string
+  subtitle?: string
+  referenceCount: number
+  refsLabel: string
+  summaryLabel: string
+  references: CmsEntityUsageDrawerReferenceView[]
+  emptyTitle: string
+  emptyDescription: string
+  statusChipStyle?: Record<string, string>
+}>(), {
+  title: '',
+  subtitle: '',
+  statusChipStyle: () => ({}),
+})
+
+defineEmits<{
+  (event: 'update:modelValue', value: boolean): void
+}>()
+</script>
