@@ -85,6 +85,14 @@ Out of scope:
   - extract the `Media` authoring screen into:
     - `src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue`
   - reduce `landing-page/CmsApp.vue` again by replacing the inline media editor/preview surface with the reusable module component while keeping the runtime behavior intact
+- 2026-03-27 phase 8:
+  - extract the `Releases` authoring screen into:
+    - `src/templates/features/cms/authoring/modules/CmsReleasesModuleSurface.vue`
+  - move release orchestration, review package history, governance summary, acknowledgements, checklist, timeline, and calendar markup behind the reusable module surface
+  - keep release domain state and command handlers inside `landing-page/CmsApp.vue` while the new surface owns the presentational shell and emitted interactions
+  - export the new reusable module through:
+    - `src/templates/features/cms/authoring/index.ts`
+  - reduce `landing-page/CmsApp.vue` from `14914` lines to `14445` lines after replacing the inline releases workspace with the reusable module component
 
 ## Ordered Tasks
 

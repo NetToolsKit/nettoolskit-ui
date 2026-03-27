@@ -4613,579 +4613,83 @@
           @apply-selected-asset-to-branding="applySelectedMediaAssetToBranding"
         />
 
-        <div v-else-if="isReleasesModule" class="cms-shell-page__grid">
-          <CmsShellCard
-            :title="cmsUiText.releaseOrchestrationTitle"
-            body-class="cms-releases__editor"
-          >
-            <template #header-actions>
-              <q-chip dense square :style="statusChipStyle">{{ releaseCountLabel }}</q-chip>
-            </template>
-              <div class="cms-form-grid">
-                <q-select
-                  v-model="activeReleaseEnvironment"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="releaseEnvironmentOptions"
-                  :label="tr('Environment', 'Ambiente')"
-                />
-                <q-select
-                  v-model="selectedReleaseId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="releaseOptions"
-                  :label="tr('Active release', 'Release ativo')"
-                />
-                <q-input
-                  v-model="releaseScheduleAt"
-                  outlined
-                  dense
-                  type="datetime-local"
-                  :label="tr('Schedule publish at', 'Agendar publicacao para')"
-                />
-                <q-select
-                  v-model="releaseRollbackTargetId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="rollbackTargetOptions"
-                  :label="tr('Rollback target', 'Alvo do rollback')"
-                />
-                <q-select
-                  v-model="releasePromotionTargetEnvironment"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="promotionTargetEnvironmentOptions"
-                  :label="tr('Promote to environment', 'Promover para ambiente')"
-                />
-              </div>
-
-              <div class="cms-releases__actions">
-                <q-btn
-                  no-caps
-                  unelevated
-                  icon="add"
-                  :label="tr('New draft', 'Novo rascunho')"
-                  :style="primaryActionStyle"
-                  @click="createReleaseDraftFromCurrentSettings"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="fact_check"
-                  :label="tr('Validate', 'Validar')"
-                  :disable="!selectedReleaseId"
-                  @click="validateSelectedReleaseEntry"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="schedule"
-                  :label="tr('Schedule', 'Agendar')"
-                  :disable="!selectedReleaseId || !releaseScheduleAt"
-                  @click="scheduleSelectedReleaseEntry"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="publish"
-                  :label="tr('Publish now', 'Publicar agora')"
-                  :disable="!selectedReleaseId"
-                  @click="publishSelectedReleaseEntry"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="event_available"
-                  :label="tr('Run scheduled', 'Executar agendados')"
-                  :disable="!releaseEntriesAll.some(item => item.status === 'scheduled')"
-                  @click="processDueScheduledReleaseEntries"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="north_east"
-                  :label="tr('Promote', 'Promover')"
-                  :disable="!selectedReleaseId || !releasePromotionTargetEnvironment || releasePromotionTargetEnvironment === activeReleaseEnvironment"
-                  @click="promoteSelectedReleaseEntry"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="restore"
-                  :label="tr('Rollback', 'Rollback')"
-                  :style="dangerActionStyle"
-                  :disable="!selectedReleaseId || !releaseRollbackTargetId"
-                  @click="rollbackSelectedReleaseEntry"
-                />
-                <q-btn
-                  flat
-                  dense
-                  no-caps
-                  icon="download"
-                  :label="tr('Export review package', 'Exportar pacote de revisao')"
-                  :disable="!cmsPreviewDraftPublishedDiff"
-                  @click="exportCmsDraftComparisonPackage"
-                />
-              </div>
-
-              <q-banner rounded class="cms-banner" :style="bannerStyle">
-                <template v-if="selectedRelease">
-                  {{ selectedRelease.name }} · {{ tr('status', 'status') }} {{ selectedRelease.status }} · {{ selectedRelease.validation.errorCount }} {{ tr('errors', 'erros') }} · {{ selectedRelease.validation.warningCount }} {{ tr('warnings', 'avisos') }} · {{ selectedRelease.environment }}
-                </template>
-                <template v-else>
-                  {{ tr('Create a draft release to validate, schedule and publish tenant snapshots.', 'Crie um rascunho de release para validar, agendar e publicar snapshots do tenant.') }}
-                </template>
-              </q-banner>
-
-              <div
-                v-if="selectedReleaseReviewHub"
-                class="cms-release-review-hub"
-                data-cms-release-review-hub
-              >
-                <CmsSectionHeaderSummary
-                  :title="tr('Unified release review', 'Revisao unificada da release')"
-                  :description="tr('Review changes, locale readiness and publish checklist in one place.', 'Revise mudancas, cobertura de locale e checklist de publicacao em um unico lugar.')"
-                  container-class="cms-release-review-hub__header"
-                  copy-class="cms-release-review-hub__copy"
-                  summary-class="cms-release-review-hub__summary"
-                >
-                  <template #summary>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.status)">
-                      {{ getReleaseChecklistStatusLabel(selectedReleaseReviewHub.status) }}
-                    </q-chip>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.diff.status)">
-                      {{ selectedReleaseReviewHub.diff.changedPages + selectedReleaseReviewHub.diff.changedSections + selectedReleaseReviewHub.diff.changedBlocks }}
-                      {{ tr('change signals', 'sinais de mudanca') }}
-                    </q-chip>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.locales.status)">
-                      {{ selectedReleaseReviewHub.locales.missingEntries }}
-                      {{ tr('locale gaps', 'lacunas de locale') }}
-                    </q-chip>
-                  </template>
-                </CmsSectionHeaderSummary>
-
-                <CmsStatusMetricCardGrid
-                  :items="selectedReleaseReviewHubCardItems"
-                  grid-class="cms-release-review-hub__cards"
-                  card-class="cms-release-review-hub__card"
-                  header-class="cms-release-review-hub__card-header"
-                  copy-class="cms-release-review-hub__card-copy"
-                  metrics-class="cms-release-review-hub__metrics"
-                  metric-class="cms-release-review-hub__metric"
-                  card-data-attr-name="data-cms-review-card"
-                  status-data-attr-name="data-cms-review-status"
-                />
-              </div>
-
-              <div
-                v-if="releaseReviewPackageHistoryEntries.length > 0"
-                class="cms-release-history"
-                data-cms-release-history
-              >
-                <CmsSectionHeaderSummary
-                  :title="tr('Review package history', 'Historico de pacotes de revisao')"
-                  :description="tr('Recent review exports for this environment, with quick recall metadata.', 'Exportacoes recentes de revisao deste ambiente, com metadados para consulta rapida.')"
-                  container-class="cms-release-history__header"
-                  copy-class="cms-release-history__copy"
-                >
-                  <template #summary>
-                    <q-chip dense square :style="bannerStyle">
-                      {{ releaseReviewPackageHistoryEntries.length }}
-                      {{ tr('recent exports', 'exports recentes') }}
-                    </q-chip>
-                  </template>
-                </CmsSectionHeaderSummary>
-
-                <div class="cms-release-history__items">
-                  <article
-                    v-for="entry in releaseReviewPackageHistoryEntries"
-                    :key="entry.id"
-                    class="cms-release-history__item"
-                    :data-cms-review-history-item="entry.id"
-                  >
-                    <div class="cms-release-history__item-header">
-                      <div class="cms-release-history__item-copy">
-                        <strong>{{ entry.fileName }}</strong>
-                        <small>{{ getReviewPackageHistoryDescription(entry) }}</small>
-                      </div>
-                      <div class="cms-release-history__item-summary">
-                        <q-chip dense square :style="getReleaseChecklistStatusStyle(getReviewPackageHistoryStatus(entry))">
-                          {{ getReleaseChecklistStatusLabel(getReviewPackageHistoryStatus(entry)) }}
-                        </q-chip>
-                        <q-chip
-                          v-if="selectedRelease && entry.releaseId === selectedRelease.id"
-                          dense
-                          square
-                          :style="primaryActionStyle"
-                        >
-                          {{ tr('Current release', 'Release atual') }}
-                        </q-chip>
-                      </div>
-                    </div>
-
-                    <div class="cms-release-history__metrics">
-                      <span class="cms-release-history__metric">
-                        <strong>{{ entry.changedPages }}</strong>
-                        <small>{{ tr('Pages', 'Paginas') }}</small>
-                      </span>
-                      <span class="cms-release-history__metric">
-                        <strong>{{ entry.changedSections }}</strong>
-                        <small>{{ tr('Sections', 'Secoes') }}</small>
-                      </span>
-                      <span class="cms-release-history__metric">
-                        <strong>{{ entry.changedBlocks }}</strong>
-                        <small>{{ tr('Blocks', 'Blocos') }}</small>
-                      </span>
-                      <span class="cms-release-history__metric">
-                        <strong>{{ entry.localeCoverage.reduce((sum, locale) => sum + locale.missing, 0) }}</strong>
-                        <small>{{ tr('Locale gaps', 'Lacunas de locale') }}</small>
-                      </span>
-                    </div>
-                  </article>
-                </div>
-              </div>
-
-              <div
-                class="cms-governance-hub"
-                data-cms-governance-hub
-              >
-                <CmsSectionHeaderSummary
-                  :title="tr('Governance workflow and audit', 'Workflow de governanca e auditoria')"
-                  :description="tr('Track workflow state, revision cadence, audit activity and role-policy readiness for this tenant.', 'Acompanhe estado do workflow, cadencia de revisoes, auditoria e prontidao das politicas de papel deste tenant.')"
-                  container-class="cms-governance-hub__header"
-                  copy-class="cms-governance-hub__copy"
-                  summary-class="cms-governance-hub__summary"
-                >
-                  <template #summary>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle(cmsGovernanceHubSummary.status)">
-                      {{ getReleaseChecklistStatusLabel(cmsGovernanceHubSummary.status) }}
-                    </q-chip>
-                    <q-chip dense square :style="bannerStyle">
-                      v{{ cmsGovernanceHubSummary.workflow.version }}
-                      {{ tr('draft version', 'versao draft') }}
-                    </q-chip>
-                    <q-chip dense square :style="bannerStyle">
-                      {{ cmsGovernanceHubSummary.audit.count }}
-                      {{ tr('audit entries', 'entradas de auditoria') }}
-                    </q-chip>
-                  </template>
-                </CmsSectionHeaderSummary>
-
-                <CmsStatusMetricCardGrid
-                  :items="cmsGovernanceHubCardItems"
-                  grid-class="cms-governance-hub__cards"
-                  card-class="cms-governance-hub__card"
-                  header-class="cms-governance-hub__card-header"
-                  copy-class="cms-governance-hub__card-copy"
-                  metrics-class="cms-governance-hub__metrics"
-                  metric-class="cms-governance-hub__metric"
-                  card-data-attr-name="data-cms-governance-card"
-                  status-data-attr-name="data-cms-governance-status"
-                />
-
-                <div class="cms-governance-hub__lists">
-                  <CmsPanelListSection
-                    :title="tr('Recent revisions', 'Revisoes recentes')"
-                    :summary-label="`${cmsGovernanceHubSummary.revisions.count} ${tr('total', 'total')}`"
-                    :items="cmsGovernanceRevisionPanelItems"
-                    :chip-style="bannerStyle"
-                    section-class="cms-governance-hub__list"
-                    header-class="cms-governance-hub__list-header"
-                    items-class="cms-governance-hub__items"
-                    item-class="cms-governance-hub__item"
-                    item-header-class="cms-governance-hub__item-header"
-                    item-data-attr-name="data-cms-governance-revision"
-                  />
-
-                  <CmsPanelListSection
-                    :title="tr('Recent audit entries', 'Entradas recentes de auditoria')"
-                    :summary-label="`${cmsGovernanceHubSummary.audit.topActions.length} ${tr('top actions', 'acoes principais')}`"
-                    :items="cmsGovernanceAuditPanelItems"
-                    :chip-style="bannerStyle"
-                    section-class="cms-governance-hub__list"
-                    header-class="cms-governance-hub__list-header"
-                    items-class="cms-governance-hub__items"
-                    item-class="cms-governance-hub__item"
-                    item-header-class="cms-governance-hub__item-header"
-                    item-data-attr-name="data-cms-governance-audit"
-                  />
-
-                  <CmsPanelListSection
-                    :title="tr('Role policies', 'Politicas de papel')"
-                    :summary-label="`${cmsGovernanceHubSummary.roles.count} ${tr('roles', 'papeis')}`"
-                    :items="cmsGovernanceRolePolicyPanelItems"
-                    :chip-style="bannerStyle"
-                    section-class="cms-governance-hub__list"
-                    header-class="cms-governance-hub__list-header"
-                    items-class="cms-governance-hub__items"
-                    item-class="cms-governance-hub__item"
-                    item-header-class="cms-governance-hub__item-header"
-                    item-data-attr-name="data-cms-governance-role"
-                  />
-                </div>
-              </div>
-
-              <div
-                v-if="selectedRelease"
-                class="cms-release-acknowledgements"
-                data-cms-release-acks
-              >
-                <CmsSectionHeaderSummary
-                  :title="tr('Review acknowledgements', 'Reconhecimentos de revisao')"
-                  :description="tr('Capture lightweight sign-off notes for the current release candidate without requiring backend workflow execution.', 'Capture notas leves de aprovacao para o candidato atual sem exigir execucao de workflow no backend.')"
-                  container-class="cms-release-acknowledgements__header"
-                  copy-class="cms-release-acknowledgements__copy"
-                  summary-class="cms-release-acknowledgements__summary"
-                >
-                  <template #summary>
-                    <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('approved')">
-                      {{ selectedReleaseAcknowledgementSummary.approvedCount }} {{ tr('approved', 'aprovados') }}
-                    </q-chip>
-                    <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('noted')">
-                      {{ selectedReleaseAcknowledgementSummary.notedCount }} {{ tr('noted', 'registrados') }}
-                    </q-chip>
-                    <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('changes_requested')">
-                      {{ selectedReleaseAcknowledgementSummary.changesRequestedCount }} {{ tr('changes requested', 'mudancas solicitadas') }}
-                    </q-chip>
-                  </template>
-                </CmsSectionHeaderSummary>
-
-                <div class="cms-release-acknowledgements__form">
-                  <q-select
-                    v-model="releaseAcknowledgementDecision"
-                    outlined
-                    dense
-                    emit-value
-                    map-options
-                    :options="releaseAcknowledgementDecisionOptions"
-                    :label="tr('Decision', 'Decisao')"
-                    :aria-label="tr('Review acknowledgement decision', 'Decisao do reconhecimento de revisao')"
-                  />
-                  <q-input
-                    v-model="releaseAcknowledgementNote"
-                    outlined
-                    dense
-                    autogrow
-                    type="textarea"
-                    :label="tr('Acknowledgement note', 'Nota do reconhecimento')"
-                    :aria-label="tr('Review acknowledgement note', 'Nota do reconhecimento de revisao')"
-                    :placeholder="tr('Optional context for the review decision.', 'Contexto opcional para a decisao de revisao.')"
-                  />
-                  <q-btn
-                    no-caps
-                    unelevated
-                    icon="fact_check"
-                    :label="tr('Add acknowledgement', 'Adicionar reconhecimento')"
-                    :style="primaryActionStyle"
-                    @click="addSelectedReleaseAcknowledgement"
-                  />
-                </div>
-
-                <div v-if="selectedReleaseAcknowledgements.length > 0" class="cms-release-acknowledgements__items">
-                  <article
-                    v-for="entry in selectedReleaseAcknowledgements"
-                    :key="entry.id"
-                    class="cms-release-acknowledgements__item"
-                    :data-cms-release-ack-item="entry.id"
-                    :data-cms-release-ack-decision="entry.decision"
-                  >
-                    <div class="cms-release-acknowledgements__item-header">
-                      <div class="cms-release-acknowledgements__item-copy">
-                        <strong>{{ getReleaseAcknowledgementDecisionLabel(entry.decision) }}</strong>
-                        <small>{{ getReleaseAcknowledgementDescription(entry) }}</small>
-                      </div>
-                      <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle(entry.decision)">
-                        {{ getReleaseAcknowledgementDecisionLabel(entry.decision) }}
-                      </q-chip>
-                    </div>
-                    <p v-if="entry.note" class="cms-release-acknowledgements__note">
-                      {{ entry.note }}
-                    </p>
-                  </article>
-                </div>
-
-                <q-banner v-else rounded class="cms-banner" :style="bannerStyle">
-                  {{ tr('No acknowledgements recorded yet for this release and environment.', 'Nenhum reconhecimento foi registrado ainda para este release e ambiente.') }}
-                </q-banner>
-              </div>
-
-              <div v-if="selectedReleaseCandidateChecklist" class="cms-release-checklist">
-                <CmsSectionHeaderSummary
-                  :title="tr('Release candidate checklist', 'Checklist do candidato a release')"
-                  :description="tr('Review publish readiness before scheduling or publishing this snapshot.', 'Revise a prontidao para publicar antes de agendar ou publicar este snapshot.')"
-                  container-class="cms-release-checklist__header"
-                  copy-class="cms-release-checklist__copy"
-                  summary-class="cms-release-checklist__summary"
-                >
-                  <template #summary>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle('ready')">
-                      {{ selectedReleaseCandidateChecklist.summary.readyCount }} {{ tr('ready', 'prontos') }}
-                    </q-chip>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle('warning')">
-                      {{ selectedReleaseCandidateChecklist.summary.warningCount }} {{ tr('review', 'revisar') }}
-                    </q-chip>
-                    <q-chip dense square :style="getReleaseChecklistStatusStyle('blocking')">
-                      {{ selectedReleaseCandidateChecklist.summary.blockingCount }} {{ tr('blocking', 'bloqueando') }}
-                    </q-chip>
-                  </template>
-                </CmsSectionHeaderSummary>
-
-                <div class="cms-release-checklist__items">
-                  <article
-                    v-for="item in selectedReleaseCandidateChecklist.items"
-                    :key="item.id"
-                    class="cms-release-checklist__item"
-                    :data-cms-checklist-item="item.id"
-                    :data-cms-checklist-status="item.status"
-                  >
-                    <div class="cms-release-checklist__item-header">
-                      <div class="cms-release-checklist__item-copy">
-                        <strong>{{ getReleaseChecklistItemLabel(item.id) }}</strong>
-                        <small>{{ getReleaseChecklistItemDescription(item) }}</small>
-                      </div>
-                      <q-chip dense square :style="getReleaseChecklistStatusStyle(item.status)">
-                        {{ getReleaseChecklistStatusLabel(item.status) }}
-                      </q-chip>
-                    </div>
-
-                    <ul v-if="item.issues.length > 0" class="cms-release-checklist__issues">
-                      <li v-for="issue in item.issues" :key="`${item.id}-${issue.code}-${issue.path}`">
-                        <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
-                      </li>
-                    </ul>
-
-                    <div
-                      v-if="getReleaseChecklistDrilldownActions(item).length > 0 || hasReleaseChecklistValidationShortcut(item)"
-                      class="cms-release-checklist__actions"
-                    >
-                      <q-btn
-                        v-if="hasReleaseChecklistValidationShortcut(item)"
-                        flat
-                        dense
-                        no-caps
-                        icon="fact_check"
-                        :label="tr('Run Validate', 'Executar validar')"
-                        @click="runReleaseChecklistValidationShortcut(item)"
-                      />
-                      <q-btn
-                        v-for="action in getReleaseChecklistDrilldownActions(item)"
-                        :key="action.id"
-                        flat
-                        dense
-                        no-caps
-                        icon="open_in_new"
-                        :label="getReleaseChecklistDrilldownLabel(action)"
-                        :aria-label="getReleaseChecklistDrilldownLabel(action)"
-                        :data-cms-checklist-action="action.target"
-                        @click="runReleaseChecklistDrilldown(action)"
-                      />
-                    </div>
-                  </article>
-                </div>
-              </div>
-
-              <ul v-if="selectedReleaseGateIssues.length > 0" class="cms-release-diagnostics">
-                <li v-for="issue in selectedReleaseGateIssues" :key="`${issue.code}-${issue.path}`">
-                  <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
-                </li>
-              </ul>
-          </CmsShellCard>
-
-          <CmsShellCard
-            :title="cmsUiText.releaseTimelineTitle"
-            body-class="cms-releases__timeline"
-          >
-              <article
-                v-for="release in releaseTimelineEntries"
-                :key="release.id"
-                class="cms-release-item"
-                :class="{ 'cms-release-item--active': release.id === selectedReleaseId }"
-              >
-                <div class="cms-release-item__header">
-                  <strong>{{ release.name }}</strong>
-                  <q-chip dense square :style="getReleaseStatusStyle(release.status)">
-                    {{ release.status }}
-                  </q-chip>
-                </div>
-                <small class="cms-release-item__meta">
-                  {{ release.id }} · {{ tr('workflow', 'workflow') }} v{{ release.sourceVersion }} · {{ release.environment }}
-                </small>
-                <p class="cms-release-item__summary">{{ release.summary || tr('No summary provided.', 'Nenhum resumo informado.') }}</p>
-                <div class="cms-release-item__metrics">
-                  <q-chip dense square :style="release.validation.errorCount > 0 ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('validated')">
-                    {{ tr('Errors', 'Erros') }}: {{ release.validation.errorCount }}
-                  </q-chip>
-                  <q-chip dense square :style="getReleaseStatusStyle('draft')">
-                    {{ tr('Warnings', 'Avisos') }}: {{ release.validation.warningCount }}
-                  </q-chip>
-                </div>
-                <div class="cms-release-item__dates">
-                  <span>{{ tr('Created', 'Criado') }}: {{ formatReleaseTimestamp(release.createdAt) }}</span>
-                  <span>{{ tr('Scheduled', 'Agendado') }}: {{ formatReleaseTimestamp(release.scheduledAt) }}</span>
-                  <span>{{ tr('Published', 'Publicado') }}: {{ formatReleaseTimestamp(release.publishedAt) }}</span>
-                  <span>{{ tr('Rolled back', 'Revertido') }}: {{ formatReleaseTimestamp(release.rolledBackAt) }}</span>
-                </div>
-              </article>
-
-              <p v-if="releaseTimelineEntries.length === 0" class="cms-release-item__empty">
-                {{ cmsUiText.noReleasesYetMessage }}
-              </p>
-          </CmsShellCard>
-
-          <CmsShellCard
-            :title="cmsUiText.releaseCalendarTitle"
-            body-class="cms-releases__calendar"
-          >
-            <template #header-actions>
-              <q-chip dense square :style="statusChipStyle">{{ tr(`${scheduledReleaseCalendarEntries.length} scheduled`, `${scheduledReleaseCalendarEntries.length} agendados`) }}</q-chip>
-            </template>
-              <article
-                v-for="entry in scheduledReleaseCalendarEntries"
-                :key="entry.id"
-                class="cms-release-calendar-item"
-              >
-                <strong>{{ entry.name }}</strong>
-                <small>{{ formatReleaseTimestamp(entry.scheduledAt) }} · {{ entry.environment }}</small>
-              </article>
-              <p v-if="scheduledReleaseCalendarEntries.length === 0" class="cms-release-item__empty">
-                {{ cmsUiText.noScheduledReleasesMessage }}
-              </p>
-
-              <q-separator spaced />
-
-              <article
-                v-for="conflict in releaseCalendarConflicts"
-                :key="conflict.id"
-                class="cms-release-calendar-conflict"
-              >
-                <q-chip
-                  dense
-                  square
-                  :style="conflict.severity === 'error' ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('draft')"
-                >
-                  {{ conflict.type }}
-                </q-chip>
-                <p>{{ conflict.message }}</p>
-              </article>
-              <p v-if="releaseCalendarConflicts.length === 0" class="cms-release-item__empty">
-                {{ cmsUiText.noCalendarConflictsMessage }}
-              </p>
-          </CmsShellCard>
-        </div>
+        <CmsReleasesModuleSurface
+          v-else-if="isReleasesModule"
+          :release-orchestration-title="cmsUiText.releaseOrchestrationTitle"
+          :release-timeline-title="cmsUiText.releaseTimelineTitle"
+          :release-calendar-title="cmsUiText.releaseCalendarTitle"
+          :no-releases-yet-message="cmsUiText.noReleasesYetMessage"
+          :no-scheduled-releases-message="cmsUiText.noScheduledReleasesMessage"
+          :no-calendar-conflicts-message="cmsUiText.noCalendarConflictsMessage"
+          :release-count-label="releaseCountLabel"
+          :active-release-environment="activeReleaseEnvironment"
+          :release-environment-options="releaseEnvironmentOptions"
+          :selected-release-id="selectedReleaseId"
+          :release-options="releaseOptions"
+          :release-schedule-at="releaseScheduleAt"
+          :release-rollback-target-id="releaseRollbackTargetId"
+          :rollback-target-options="rollbackTargetOptions"
+          :release-promotion-target-environment="releasePromotionTargetEnvironment"
+          :promotion-target-environment-options="promotionTargetEnvironmentOptions"
+          :has-scheduled-releases="releaseEntriesAll.some(item => item.status === 'scheduled')"
+          :can-export-review-package="Boolean(cmsPreviewDraftPublishedDiff)"
+          :selected-release="selectedRelease"
+          :selected-release-review-hub="selectedReleaseReviewHub"
+          :selected-release-review-hub-card-items="selectedReleaseReviewHubCardItems"
+          :release-review-package-history-entries="releaseReviewPackageHistoryEntries"
+          :cms-governance-hub-summary="cmsGovernanceHubSummary"
+          :cms-governance-hub-card-items="cmsGovernanceHubCardItems"
+          :cms-governance-revision-panel-items="cmsGovernanceRevisionPanelItems"
+          :cms-governance-audit-panel-items="cmsGovernanceAuditPanelItems"
+          :cms-governance-role-policy-panel-items="cmsGovernanceRolePolicyPanelItems"
+          :selected-release-acknowledgement-summary="selectedReleaseAcknowledgementSummary"
+          :release-acknowledgement-decision="releaseAcknowledgementDecision"
+          :release-acknowledgement-decision-options="releaseAcknowledgementDecisionOptions"
+          :release-acknowledgement-note="releaseAcknowledgementNote"
+          :selected-release-acknowledgements="selectedReleaseAcknowledgements"
+          :selected-release-candidate-checklist="selectedReleaseCandidateChecklist"
+          :selected-release-gate-issues="selectedReleaseGateIssues"
+          :release-timeline-entries="releaseTimelineEntries"
+          :scheduled-release-calendar-entries="scheduledReleaseCalendarEntries"
+          :release-calendar-conflicts="releaseCalendarConflicts"
+          :status-chip-style="statusChipStyle"
+          :banner-style="bannerStyle"
+          :primary-action-style="primaryActionStyle"
+          :danger-action-style="dangerActionStyle"
+          :t="tr"
+          :get-release-checklist-status-style="getReleaseChecklistStatusStyle"
+          :get-release-checklist-status-label="getReleaseChecklistStatusLabel"
+          :get-review-package-history-description="getReviewPackageHistoryDescription"
+          :get-review-package-history-status="getReviewPackageHistoryStatus"
+          :get-release-acknowledgement-decision-style="getReleaseAcknowledgementDecisionStyle"
+          :get-release-acknowledgement-decision-label="getReleaseAcknowledgementDecisionLabel"
+          :get-release-acknowledgement-description="getReleaseAcknowledgementDescription"
+          :get-release-checklist-item-label="getReleaseChecklistItemLabel"
+          :get-release-checklist-item-description="getReleaseChecklistItemDescription"
+          :get-release-checklist-drilldown-actions="getReleaseChecklistDrilldownActions"
+          :has-release-checklist-validation-shortcut="hasReleaseChecklistValidationShortcut"
+          :get-release-checklist-drilldown-label="getReleaseChecklistDrilldownLabel"
+          :get-release-status-style="getReleaseStatusStyle"
+          :format-release-timestamp="formatReleaseTimestamp"
+          @update:active-release-environment="activeReleaseEnvironment = $event"
+          @update:selected-release-id="selectedReleaseId = $event"
+          @update:release-schedule-at="releaseScheduleAt = $event"
+          @update:release-rollback-target-id="releaseRollbackTargetId = $event"
+          @update:release-promotion-target-environment="releasePromotionTargetEnvironment = $event"
+          @create-draft="createReleaseDraftFromCurrentSettings"
+          @validate-selected="validateSelectedReleaseEntry"
+          @schedule-selected="scheduleSelectedReleaseEntry"
+          @publish-selected="publishSelectedReleaseEntry"
+          @run-scheduled="processDueScheduledReleaseEntries"
+          @promote-selected="promoteSelectedReleaseEntry"
+          @rollback-selected="rollbackSelectedReleaseEntry"
+          @export-review-package="exportCmsDraftComparisonPackage"
+          @update:release-acknowledgement-decision="releaseAcknowledgementDecision = $event"
+          @update:release-acknowledgement-note="releaseAcknowledgementNote = $event"
+          @add-acknowledgement="addSelectedReleaseAcknowledgement"
+          @run-checklist-validation-shortcut="runReleaseChecklistValidationShortcut"
+          @run-checklist-drilldown="runReleaseChecklistDrilldown"
+        />
 
         <div v-else class="cms-shell-page__grid">
           <CmsShellCard
@@ -5578,6 +5082,7 @@ import {
   CmsLocaleCoverageMatrix,
   CmsEntityUsageDrawer,
   CmsMediaModuleSurface,
+  CmsReleasesModuleSurface,
   type CmsEntityUsageDrawerReferenceView,
   CmsAuthoringWorkbench,
   CmsAuthoringPanelHeader,
