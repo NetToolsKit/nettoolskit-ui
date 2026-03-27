@@ -49,6 +49,10 @@ Out of scope:
     - `landing-page/cms/CmsAuthoringToolbar.vue`
     - `landing-page/cms/CmsAuthoringRulerBar.vue`
   - `Settings`, `Pages`, and `Blocks` now reuse the same toolbar and ruler contracts instead of duplicating those shells inline inside `CmsApp.vue`
+- 2026-03-27 phase 4:
+  - add `landing-page/cms/CmsShellCard.vue` as a reusable shell for CMS cards with shared header, actions, separator, and body regions
+  - migrate the `Settings`, `Pages`, and `Blocks` preview surfaces onto `CmsShellCard`
+  - keep the preview runtime behavior intact while removing repeated `q-card` scaffolding from `CmsApp.vue`
 
 ## Ordered Tasks
 

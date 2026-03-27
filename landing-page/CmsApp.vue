@@ -1893,17 +1893,18 @@
               </div>
             </template>
           </CmsAuthoringWorkbench>
-          <q-card v-if="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ tr('Settings preview', 'Preview de configuracoes') }}</strong>
+          <CmsShellCard
+            v-if="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode"
+            :title="tr('Settings preview', 'Preview de configuracoes')"
+            body-class="cms-settings__preview"
+          >
+            <template #header-actions>
               <div class="cms-preview-toolbar__chips">
                 <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</q-chip>
                 <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTab?.label }}</q-chip>
                 <q-chip dense square :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</q-chip>
               </div>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-settings__preview">
+            </template>
               <div class="cms-settings__preview-grid">
                 <section class="cms-example-section">
                   <div class="cms-example-section__header">
@@ -2039,8 +2040,7 @@
                   </div>
                 </section>
               </div>
-            </div>
-          </q-card>
+          </CmsShellCard>
         </div>
 
         <div v-else-if="isPagesModule" class="cms-pages">
@@ -3035,9 +3035,12 @@
             </template>
           </CmsAuthoringWorkbench>
 
-          <q-card v-if="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ tr('Pages preview', 'Preview de paginas') }}</strong>
+          <CmsShellCard
+            v-if="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode"
+            :title="tr('Pages preview', 'Preview de paginas')"
+            body-class="cms-pages__preview"
+          >
+            <template #header-actions>
               <q-btn
                 flat
                 dense
@@ -3046,9 +3049,7 @@
                 :label="tr('Open in new window', 'Abrir em nova janela')"
                 @click="openCmsDesignerPreviewInWindow('pages')"
               />
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-pages__preview">
+            </template>
               <CmsPreviewToolbar
                 v-model:source="cmsPreviewSource"
                 v-model:locale="cmsPreviewLocale"
@@ -3213,8 +3214,7 @@
                   </div>
                 </article>
               </template>
-            </div>
-          </q-card>
+          </CmsShellCard>
         </div>
 
         <div v-else-if="isBlocksModule" class="cms-shell-page__grid cms-blocks-shell">
@@ -4263,9 +4263,12 @@
             </template>
           </CmsAuthoringWorkbench>
 
-          <q-card v-if="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ tr('Blocks preview', 'Preview de blocos') }}</strong>
+          <CmsShellCard
+            v-if="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode"
+            :title="tr('Blocks preview', 'Preview de blocos')"
+            body-class="cms-blocks__preview"
+          >
+            <template #header-actions>
               <q-btn
                 flat
                 dense
@@ -4274,9 +4277,7 @@
                 :label="tr('Open in new window', 'Abrir em nova janela')"
                 @click="openCmsDesignerPreviewInWindow('blocks')"
               />
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-blocks__preview">
+            </template>
               <CmsPreviewToolbar
                 v-model:source="cmsPreviewSource"
                 v-model:locale="cmsPreviewLocale"
@@ -4626,8 +4627,7 @@
                 </div>
                 <p v-else>{{ tr('No page selected for preview.', 'Nenhuma pagina selecionada para preview.') }}</p>
               </div>
-            </div>
-          </q-card>
+          </CmsShellCard>
         </div>
 
         <div v-else-if="isMediaModule" class="cms-shell-page__grid">
@@ -5836,6 +5836,7 @@ import CmsEntityUsageDrawer, { type CmsEntityUsageDrawerReferenceView } from './
 import CmsAuthoringWorkbench from './cms/CmsAuthoringWorkbench.vue'
 import CmsAuthoringToolbar, { type CmsAuthoringToolbarInfoItem } from './cms/CmsAuthoringToolbar.vue'
 import CmsAuthoringRulerBar from './cms/CmsAuthoringRulerBar.vue'
+import CmsShellCard from './cms/CmsShellCard.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from './cms/CmsWorkspaceTabs.vue'
 import { useCmsUiText } from './cms/composables/useCmsUiText'
 import {
