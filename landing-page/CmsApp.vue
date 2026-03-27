@@ -1,17 +1,118 @@
 <template>
-  <NtkAppShell
-    v-bind="shellSnapshot.shellConfig"
-    v-model:active-item="activeMenuId"
-    v-model:search-value="searchQuery"
-    :items="shellSnapshot.filteredItems"
-    @toolbar-action="onToolbarAction"
+  <MainLayoutTemplate
+    :app-name="settings.branding.appName || 'NetToolsKit'"
+    :logo-src="settings.branding.brandLogo || ''"
+    :logo-alt="settings.branding.brandLogoAlt || settings.branding.appName || 'NetToolsKit'"
+    :user-name="cmsShellUserName"
+    :user-initials="cmsShellUserInitials"
+    :menu-items="cmsTemplateMenuItems"
+    :show-breadcrumb="false"
+    :side-menu-variant="'reference'"
+    :active-item-id="activeMenuId"
+    storage-key-prefix="ntk-cms-template-layout"
+    page-container-class="cms-shell-page-container"
+    @menu-item-click="onCmsTemplateMenuItemClick"
+    @account-click="onCmsHeaderAccountClick"
+    @logout-click="onCmsHeaderLogoutClick"
   >
-    <template #default="{ activeItem }">
-      <div class="cms-shell-page" :class="cmsViewportClasses" :style="cmsStyleVars">
-        <div class="cms-shell-page__workspace">
+    <template #brand>
+      <div class="ntk-template-main-layout__brand">
+        <img
+          v-if="settings.branding.brandLogo"
+          :src="settings.branding.brandLogo"
+          :alt="settings.branding.brandLogoAlt || settings.branding.appName || 'NetToolsKit'"
+          class="ntk-template-main-layout__logo"
+        >
+        <div class="cms-template-header-brand">
+          <span class="ntk-template-main-layout__title">{{ settings.branding.appName || 'NetToolsKit' }}</span>
+          <small class="cms-template-header-brand__subtitle">{{ settings.branding.appSubtitle || 'NTK CMS' }}</small>
+        </div>
+      </div>
+    </template>
+
+    <template #breadcrumb>
+      <div class="cms-template-header-trail">
+        <span class="cms-template-header-trail__section">{{ settings.branding.appName || 'NetToolsKit' }}</span>
+        <q-icon name="chevron_right" size="16px" />
+        <span class="cms-template-header-trail__current">{{ activeShellItem.label }}</span>
+      </div>
+    </template>
+
+    <template #header-actions="slotProps">
+      <div class="cms-template-header-actions">
+        <q-input
+          v-if="settings.layout.showSearch"
+          v-model="searchQuery"
+          dense
+          outlined
+          standout="bg-white text-dark"
+          :placeholder="shellSnapshot.shellConfig.searchPlaceholder || tr('Search module', 'Buscar modulo')"
+          :aria-label="shellSnapshot.shellConfig.searchPlaceholder || tr('Search module', 'Buscar modulo')"
+          class="cms-template-header-actions__search"
+        >
+          <template #prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+
+        <q-btn
+          v-for="action in cmsShellHeaderActions"
+          :key="`cms-shell-header-${action.id}`"
+          :icon="action.icon"
+          :label="action.showLabel ? action.label : undefined"
+          :flat="action.flat ?? true"
+          :dense="action.dense ?? true"
+          :round="action.round ?? !action.showLabel"
+          :unelevated="action.unelevated"
+          :outline="action.outline"
+          :no-caps="action.noCaps ?? true"
+          :href="action.href"
+          :target="action.external ? '_blank' : undefined"
+          :rel="action.external ? 'noreferrer' : undefined"
+          :aria-label="action.tooltip || action.label || action.id"
+          class="cms-template-header-actions__button"
+          @click="handleCmsShellHeaderAction(action)"
+        >
+          <q-badge
+            v-if="action.badge !== undefined && action.badge !== null && action.badge !== ''"
+            floating
+            rounded
+            :color="action.badgeColor || 'negative'"
+            :text-color="action.badgeTextColor || 'white'"
+          >
+            {{ action.badge }}
+          </q-badge>
+          <q-tooltip v-if="action.tooltip">{{ action.tooltip }}</q-tooltip>
+        </q-btn>
+
+        <UserMenuTemplate
+          :model-value="slotProps.layoutControls.horizontalMode"
+          :show-labels-in-mini="slotProps.layoutControls.showLabelsInMini"
+          :side-menu-variant="slotProps.layoutControls.sideMenuVariant"
+          :app-name="settings.branding.appName || 'NetToolsKit'"
+          :profile-name="cmsShellUserName"
+          :profile-initials="cmsShellUserInitials"
+          :sign-out-label="tr('Sign out', 'Sair')"
+          :account-label="tr('View account', 'Ver conta')"
+          :preferences-label="tr('Preferences', 'Preferencias')"
+          :horizontal-menu-label="tr('Horizontal menu', 'Menu horizontal')"
+          :horizontal-menu-caption="tr('Toggle between side and top navigation', 'Alterna entre navegacao lateral e superior')"
+          :mini-labels-label="tr('Labels in mini menu', 'Labels no mini menu')"
+          :mini-labels-caption="tr('Show labels below icons in compact mode', 'Exibe texto abaixo dos icones no modo compacto')"
+          :show-side-menu-style-toggle="false"
+          @update:model-value="slotProps.layoutControls.setHorizontalMode"
+          @update:show-labels-in-mini="slotProps.layoutControls.setShowLabelsInMini"
+          @account-click="onCmsHeaderAccountClick"
+          @logout-click="onCmsHeaderLogoutClick"
+        />
+      </div>
+    </template>
+
+    <div class="cms-shell-page" :class="cmsViewportClasses" :style="cmsStyleVars">
+      <div class="cms-shell-page__workspace">
         <div class="cms-shell-page__hero">
-          <h1>{{ activeItem.label }}</h1>
-          <p>{{ activeItem.description || settings.content.moduleFallbackDescription }}</p>
+          <h1>{{ activeShellItem.label }}</h1>
+          <p>{{ activeShellItem.description || settings.content.moduleFallbackDescription }}</p>
         </div>
 
         <div v-if="isSettingsModule" class="cms-settings">
@@ -21,7 +122,14 @@
             :tabs="cmsWorkspaceTabOptions"
             @update:model-value="onSettingsWorkspaceTabChange"
           />
-          <q-card v-show="cmsSettingsWorkspaceView === 'editor' && !cmsDesignerPreviewMode" flat bordered class="cms-shell-card cms-designer-card cms-designer-card--settings">
+          <CmsAuthoringWorkbench
+            v-show="cmsSettingsWorkspaceView === 'editor' && !cmsDesignerPreviewMode"
+            class="cms-designer-card--settings"
+            :page-aria-label="tr('Settings workbench', 'Workbench de configuracoes')"
+            :canvas-aria-label="tr('Settings authoring workspace', 'Workspace de autoria de configuracoes')"
+            :status-bar-aria-label="tr('Settings status bar', 'Barra de status de configuracoes')"
+          >
+            <template #header>
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
@@ -52,7 +160,8 @@
                 </div>
               </div>
             </div>
-            <div class="cms-shell-card__body cms-designer-card__body">
+            </template>
+            <template #ruler>
               <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--settings">
                 <div class="cms-designer-card__ruler-gutter">
                   <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus workbench', 'Focar workbench')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
@@ -75,6 +184,8 @@
                   />
                 </div>
               </div>
+            </template>
+            <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--settings">
                 <aside class="cms-designer-card__sidebar cms-settings__sidebar">
                   <div class="cms-designer-card__sidebar-header">
@@ -1800,6 +1911,8 @@
                   </div>
                 </aside>
               </div>
+            </template>
+            <template #status>
               <div class="cms-designer-card__statusbar cms-settings__statusbar">
                 <span class="cms-designer-card__status-text">
                   <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
@@ -1809,8 +1922,8 @@
                 </span>
                 <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
               </div>
-            </div>
-          </q-card>
+            </template>
+          </CmsAuthoringWorkbench>
           <q-card v-if="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
               <strong>{{ tr('Settings preview', 'Preview de configuracoes') }}</strong>
@@ -1968,7 +2081,14 @@
             :tabs="cmsWorkspaceTabOptions"
             @update:model-value="onPagesWorkspaceTabChange"
           />
-          <q-card v-show="cmsPagesWorkspaceView === 'editor' && !cmsDesignerPreviewMode" flat bordered class="cms-shell-card cms-designer-card cms-designer-card--pages">
+          <CmsAuthoringWorkbench
+            v-show="cmsPagesWorkspaceView === 'editor' && !cmsDesignerPreviewMode"
+            class="cms-designer-card--pages"
+            :page-aria-label="tr('Pages workbench', 'Workbench de paginas')"
+            :canvas-aria-label="tr('Pages authoring workspace', 'Workspace de autoria de paginas')"
+            :status-bar-aria-label="tr('Pages status bar', 'Barra de status de paginas')"
+          >
+            <template #header>
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
@@ -1989,11 +2109,12 @@
                     <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
                   </span>
                   <span class="cms-designer-card__info-item">{{ cmsAutosaveStatusLabel }}</span>
-                  <span class="cms-designer-card__info-item">{{ activeItem.label }}</span>
+                  <span class="cms-designer-card__info-item">{{ activeShellItem.label }}</span>
                 </div>
               </div>
             </div>
-            <div class="cms-shell-card__body cms-pages__editor">
+            </template>
+            <template #ruler>
               <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--pages">
                 <div class="cms-designer-card__ruler-gutter">
                   <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus page workbench', 'Focar workbench de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')" />
@@ -2017,6 +2138,8 @@
                   />
                 </div>
               </div>
+            </template>
+            <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--pages">
                 <aside class="cms-designer-card__sidebar cms-pages__sidebar">
                   <div class="cms-designer-card__sidebar-header">
@@ -2956,14 +3079,16 @@
                   </div>
                 </aside>
               </div>
+            </template>
+            <template #status>
               <div class="cms-designer-card__statusbar cms-pages__statusbar">
                 <q-chip dense square :style="statusChipStyle">{{ tr('Pages', 'Paginas') }}: {{ settings.pages.length }}</q-chip>
                 <q-chip dense square :style="statusChipStyle">{{ tr('Visible', 'Visiveis') }}: {{ filteredCmsPageRows.length }}</q-chip>
                 <q-chip dense square :style="statusChipStyle">{{ tr('Reusable', 'Reutilizaveis') }}: {{ filteredCmsReusableSectionLibrary.length }}</q-chip>
                 <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
               </div>
-            </div>
-          </q-card>
+            </template>
+          </CmsAuthoringWorkbench>
 
           <q-card v-if="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
@@ -3154,7 +3279,14 @@
             :tabs="cmsWorkspaceTabOptions"
             @update:model-value="onBlocksWorkspaceTabChange"
           />
-          <q-card v-show="cmsBlocksWorkspaceView === 'editor' && !cmsDesignerPreviewMode" flat bordered class="cms-shell-card cms-designer-card cms-designer-card--blocks">
+          <CmsAuthoringWorkbench
+            v-show="cmsBlocksWorkspaceView === 'editor' && !cmsDesignerPreviewMode"
+            class="cms-designer-card--blocks"
+            :page-aria-label="tr('Blocks workbench', 'Workbench de blocos')"
+            :canvas-aria-label="tr('Blocks authoring workspace', 'Workspace de autoria de blocos')"
+            :status-bar-aria-label="tr('Blocks status bar', 'Barra de status de blocos')"
+          >
+            <template #header>
             <div class="cms-shell-card__header cms-designer-card__toolbar-header">
               <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
                 <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
@@ -3175,11 +3307,12 @@
                     <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
                   </span>
                   <span class="cms-designer-card__info-item">{{ cmsAutosaveStatusLabel }}</span>
-                  <span class="cms-designer-card__info-item">{{ activeItem.label }}</span>
+                  <span class="cms-designer-card__info-item">{{ activeShellItem.label }}</span>
                 </div>
               </div>
             </div>
-            <div class="cms-shell-card__body cms-blocks__editor">
+            </template>
+            <template #ruler>
               <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--blocks">
                 <div class="cms-designer-card__ruler-gutter">
                   <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus block workbench', 'Focar workbench de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')" />
@@ -3203,6 +3336,8 @@
                   />
                 </div>
               </div>
+            </template>
+            <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--blocks">
                 <aside class="cms-designer-card__sidebar cms-blocks__sidebar">
                   <div class="cms-designer-card__sidebar-header">
@@ -4196,14 +4331,16 @@
                   </div>
                 </aside>
               </div>
+            </template>
+            <template #status>
               <div class="cms-designer-card__statusbar cms-blocks__statusbar">
                 <q-chip dense square :style="statusChipStyle">{{ tr('Sections', 'Secoes') }}: {{ filteredActiveBlocksSections.length }}</q-chip>
                 <q-chip dense square :style="statusChipStyle">{{ tr('Blocks', 'Blocos') }}: {{ cmsSectionBlocks.length }}</q-chip>
                 <q-chip dense square :style="statusChipStyle">{{ tr('Reusable', 'Reutilizaveis') }}: {{ filteredCmsReusableBlockLibrary.length }}</q-chip>
                 <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
               </div>
-            </div>
-          </q-card>
+            </template>
+          </CmsAuthoringWorkbench>
 
           <q-card v-if="cmsBlocksWorkspaceView === 'preview' || cmsDesignerPreviewMode" flat bordered class="cms-shell-card">
             <div class="cms-shell-card__header">
@@ -5448,10 +5585,9 @@
             </div>
           </q-card>
         </div>
-        </div>
       </div>
-    </template>
-  </NtkAppShell>
+    </div>
+  </MainLayoutTemplate>
   <CmsEntityUsageDrawer
     v-model="isCmsUsageDrawerOpen"
     :header-label="tr('Impact analysis', 'Analise de impacto')"
@@ -5476,8 +5612,10 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import type { AppShellAction } from '../src/components/layout/app-shell.types'
-import NtkAppShell from '../src/components/layout/NtkAppShell.vue'
 import { CmsRenderer } from '../src/modules/cms/renderer'
+import MainLayoutTemplate from '../src/templates/layouts/MainLayoutTemplate.vue'
+import UserMenuTemplate from '../src/templates/navigation/UserMenuTemplate.vue'
+import type { TemplateMenuChildItem, TemplateMenuItem } from '../src/templates/navigation/menu-template.types'
 import {
   createDefaultWhiteLabelSettings,
   createNewMenuItem,
@@ -5774,6 +5912,7 @@ import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
 import CmsPreviewToolbar from './cms/CmsPreviewToolbar.vue'
 import CmsLocaleCoverageMatrix from './cms/CmsLocaleCoverageMatrix.vue'
 import CmsEntityUsageDrawer, { type CmsEntityUsageDrawerReferenceView } from './cms/CmsEntityUsageDrawer.vue'
+import CmsAuthoringWorkbench from './cms/CmsAuthoringWorkbench.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from './cms/CmsWorkspaceTabs.vue'
 import { useCmsUiText } from './cms/composables/useCmsUiText'
 import {
@@ -6791,6 +6930,52 @@ const shellSnapshot = computed(() => {
   })
 })
 
+const cmsTemplateMenuItems = computed<TemplateMenuItem[]>(() => {
+  const groupLabels = new Map(settings.value.navGroups.map(group => [group.id, group.label]))
+
+  return shellSnapshot.value.filteredItems.map(item => ({
+    id: item.id,
+    text: item.label,
+    caption: item.caption,
+    icon: item.icon,
+    groupId: item.group,
+    groupLabel: settings.value.layout.showGroupCaptions ? groupLabels.get(item.group) || '' : '',
+    badge: item.badge,
+  }))
+})
+
+const activeShellItem = computed(() => {
+  return shellSnapshot.value.filteredItems.find(item => item.id === activeMenuId.value)
+    ?? settings.value.items.find(item => item.id === activeMenuId.value)
+    ?? shellSnapshot.value.filteredItems[0]
+    ?? settings.value.items[0]
+    ?? {
+      id: defaultMenuId,
+      group: '',
+      label: tr('Settings', 'Configuracoes'),
+      icon: 'settings',
+      caption: '',
+      description: settings.value.content.moduleFallbackDescription,
+    }
+})
+
+const cmsShellHeaderActions = computed<AppShellAction[]>(() => {
+  return shellSnapshot.value.shellConfig.toolbarActions.filter(action => {
+    const normalizedId = String(action.id ?? '').trim().toLowerCase()
+    return normalizedId !== 'account'
+  })
+})
+
+const cmsShellUserName = computed(() => governanceActor.name || 'CMS Admin')
+const cmsShellUserInitials = computed(() => {
+  return (governanceActor.name || 'CMS Admin')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase() ?? '')
+    .join('') || 'CA'
+})
+
 const accentColor = computed(() => settings.value.theme.itemActiveColor || defaultTheme.itemActiveColor || '')
 const accentSoftBackground = computed(() => {
   return settings.value.theme.itemHoverBackground || defaultTheme.itemHoverBackground || ''
@@ -6885,6 +7070,8 @@ const cmsStyleVars = computed<Record<string, string>>(() => {
   const authoringTheme = cmsResolvedAuthoringTheme.value
 
   return {
+  '--ntk-shell-header-height': `${shellSnapshot.value.shellConfig.headerHeight ?? 60}px`,
+  '--ntk-shell-viewport-height': '100vh',
   '--ntk-cms-font-family': authoringTheme.fontFamily || defaultTheme.fontFamily || '',
   '--ntk-cms-font-display': authoringTheme.fontFamilyDisplay || authoringTheme.fontFamily || defaultTheme.fontFamilyDisplay || defaultTheme.fontFamily || '',
   '--ntk-cms-font-style-base': authoringTheme.fontStyleBase || defaultTheme.fontStyleBase || 'normal',
@@ -6929,9 +7116,18 @@ const cmsStyleVars = computed<Record<string, string>>(() => {
   '--ntk-cms-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '',
   '--ntk-cms-header-blur': authoringTheme.headerBlur || defaultTheme.headerBlur || 'blur(calc(var(--ntk-cms-space-sm) * 2))',
+  '--ntk-template-layout-header-bg': authoringTheme.headerBackground || defaultTheme.headerBackground || '#ffffff',
+  '--ntk-template-layout-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '#16202b',
+  '--ntk-template-layout-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '0 10px 30px rgba(15, 23, 42, 0.08)',
+  '--ntk-template-layout-title-color': authoringTheme.titleTextColor || authoringTheme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '#16202b',
   '--ntk-cms-drawer-shadow': authoringTheme.drawerShadow || defaultTheme.drawerShadow || '',
   '--ntk-cms-drawer-footer-bg': authoringTheme.drawerFooterBackground || authoringTheme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
   '--ntk-cms-drawer-footer-shadow': authoringTheme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
+  '--ntk-template-layout-horizontal-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || 'linear-gradient(180deg, #1f2937 0%, #334155 100%)',
+  '--ntk-template-layout-horizontal-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#ffffff',
+  '--ntk-template-layout-drawer-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || 'linear-gradient(180deg, #1f2937 0%, #334155 100%)',
+  '--ntk-template-layout-drawer-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#ffffff',
+  '--ntk-template-layout-page-bg': authoringTheme.pageBackground || defaultTheme.pageBackground || '#f3f7fc',
   '--ntk-cms-search-bg': authoringTheme.searchBackground || defaultTheme.searchBackground || '',
   '--ntk-cms-search-text': authoringTheme.searchTextColor || defaultTheme.searchTextColor || '',
   '--ntk-cms-search-icon': authoringTheme.searchIconColor || authoringTheme.headerTextColor || defaultTheme.searchIconColor || defaultTheme.headerTextColor || '',
@@ -6949,6 +7145,11 @@ const cmsStyleVars = computed<Record<string, string>>(() => {
   '--ntk-cms-toolbar-icon': authoringTheme.toolbarButtonColor || authoringTheme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-brand-title': authoringTheme.brandTitleColor || authoringTheme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-brand-subtitle': authoringTheme.brandSubtitleColor || authoringTheme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
+  '--ntk-template-user-menu-avatar-bg': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '#5b7cff',
+  '--ntk-template-user-menu-avatar-border': '#ffffff',
+  '--ntk-template-user-menu-avatar-color': notificationBadgeTextColor.value,
+  '--ntk-template-user-menu-header-bg': 'rgba(15, 23, 42, 0.03)',
+  '--ntk-template-user-menu-profile-bg': '#ffffff',
   '--ntk-cms-group-caption': authoringTheme.groupCaptionColor || authoringTheme.drawerTextColor || defaultTheme.groupCaptionColor || defaultTheme.drawerTextColor || '',
   '--ntk-cms-group-caption-mini-bg': authoringTheme.groupCaptionMiniBackground || authoringTheme.itemHoverBackground || defaultTheme.groupCaptionMiniBackground || defaultTheme.itemHoverBackground || '',
   '--ntk-cms-item-text': authoringTheme.itemTextColor || authoringTheme.drawerTextColor || defaultTheme.itemTextColor || defaultTheme.drawerTextColor || '',
@@ -15925,6 +16126,37 @@ function onToolbarAction(action: AppShellAction): void {
 
   if (action.id === 'notifications' || action.id === 'account') {
     return
+  }
+}
+
+function handleCmsShellHeaderAction(action: AppShellAction): void {
+  if (!action.id) {
+    return
+  }
+
+  if (action.href) {
+    return
+  }
+
+  onToolbarAction(action)
+}
+
+function onCmsTemplateMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): void {
+  if (!item.id) {
+    return
+  }
+
+  activeMenuId.value = item.id
+}
+
+function onCmsHeaderAccountClick(): void {
+  // CMS runtime keeps the account menu visual contract but does not yet route
+  // to a dedicated profile surface.
+}
+
+function onCmsHeaderLogoutClick(): void {
+  if (typeof window !== 'undefined') {
+    window.location.href = '/'
   }
 }
 

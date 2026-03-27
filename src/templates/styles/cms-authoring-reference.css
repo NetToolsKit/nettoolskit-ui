@@ -11,30 +11,13 @@
   background: #f3f7fc;
 }
 
-.cms-shell-page :deep(.ntk-app-shell__page-container) {
+.cms-shell-page-container {
   background: linear-gradient(180deg, #eef4fb 0%, #f7faff 100%);
-}
-
-.cms-shell-page :deep(.ntk-app-shell__page) {
   padding: var(--ntk-cms-space-md) var(--ntk-cms-space-lg) var(--ntk-cms-space-lg);
+}
+
+.cms-shell-page {
   min-height: calc(var(--ntk-shell-viewport-height) - var(--ntk-shell-header-height));
-}
-
-.cms-shell-page :deep(.ntk-app-shell__workspace) {
-  max-width: none;
-  margin: 0;
-  min-height: inherit;
-  display: flex;
-}
-
-.cms-shell-page :deep(.ntk-app-shell__workspace-card) {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-  width: 100%;
-  min-height: inherit;
 }
 
 .cms-shell-page :deep(.q-field__native),
@@ -102,6 +85,57 @@
   border-radius: 0;
   align-items: stretch;
   justify-content: stretch;
+}
+
+.cms-template-header-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cms-template-header-brand__subtitle {
+  color: var(--ntk-cms-text-secondary);
+  font-size: 0.7rem;
+  font-weight: var(--ntk-cms-font-weight-medium);
+  line-height: 1;
+}
+
+.cms-template-header-trail {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ntk-cms-space-xs) * 0.75);
+  margin-inline-start: var(--ntk-cms-space-md);
+  color: var(--ntk-cms-text-secondary);
+  font-size: var(--ntk-cms-font-size-item-label);
+}
+
+.cms-template-header-trail__section,
+.cms-template-header-trail__current {
+  white-space: nowrap;
+}
+
+.cms-template-header-trail__current {
+  color: var(--ntk-cms-text-primary);
+  font-weight: var(--ntk-cms-font-weight-semibold);
+}
+
+.cms-template-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-cms-space-sm);
+}
+
+.cms-template-header-actions__search {
+  min-width: 18rem;
+}
+
+.cms-template-header-actions__search .q-field__control {
+  border-radius: var(--ntk-cms-radius-md);
+  background: #ffffff;
+}
+
+.cms-template-header-actions__button {
+  color: var(--ntk-cms-toolbar-icon);
 }
 
 .cms-shell-page__hero {
