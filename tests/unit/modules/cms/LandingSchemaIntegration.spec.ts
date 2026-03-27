@@ -4,8 +4,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { validateCmsPageSchema } from '../../../../src/modules/cms'
-import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'
-import { landingPageSchema } from '../../../../landing-page/cms/landing.schema'
+import { createLandingRegistry, landingPageSchema } from '../../../../src/modules/cms/presets/landing'
 
 describe('Landing CMS integration', () => {
   it('should keep landing schema valid against landing registry', () => {

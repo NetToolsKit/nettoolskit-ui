@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import EditorWorkbenchTemplate from '../../src/templates/pages/editor/EditorWorkbenchTemplate.vue'
+import EditorWorkbenchTemplate from '../../../pages/editor/EditorWorkbenchTemplate.vue'
 
 withDefaults(defineProps<{
   pageAriaLabel?: string

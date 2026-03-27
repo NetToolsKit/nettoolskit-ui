@@ -66,8 +66,8 @@ import type {
   CmsLocaleCoverageCategory,
   CmsLocaleCoverageStatus,
   CmsLocaleCoverageSummary,
-} from '../../src/modules/cms/white-label/locale-coverage'
-import type { CmsLocale } from '../../src/modules/cms/white-label/types'
+} from '../../../../modules/cms/white-label/locale-coverage'
+import type { CmsLocale } from '../../../../modules/cms/white-label/types'
 
 const props = defineProps({
   matrix: {

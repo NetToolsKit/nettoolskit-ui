@@ -162,6 +162,11 @@ export * from './src/config/brand/content.config'
 export * from './src/config/landing/landing-page.config'
 
 // ============================================================================
+// CONFIG - Presets
+// ============================================================================
+export * from './src/config/presets'
+
+// ============================================================================
 // CONFIG - Colors
 // ============================================================================
 export * from './src/config/colors/palette.config'

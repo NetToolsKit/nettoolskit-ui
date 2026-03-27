@@ -2,7 +2,7 @@ import { toRaw } from 'vue'
 import type {
   CmsMediaAssetFocalPointSettings,
   CmsWhiteLabelSettings,
-} from '../../../src/modules/cms/white-label/types'
+} from '../types'
 
 export interface CmsMediaAssetDraftFocalPointInput {
   focalPointX: string

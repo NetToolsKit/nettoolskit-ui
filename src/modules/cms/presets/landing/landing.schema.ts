@@ -1,7 +1,7 @@
 /**
  * Default landing-page schema consumed by the CMS page renderer.
  */
-import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../../src/modules/cms'
+import { CMS_SCHEMA_VERSION, type CmsPageSchema } from '../../index'
 
 /**
  * Canonical landing-page schema with sections, block props and metadata.

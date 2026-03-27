@@ -70,6 +70,21 @@ Out of scope:
   - migrate release review/governance card grids onto `CmsStatusMetricCardGrid`
   - migrate governance list panels onto `CmsPanelListSection`
   - keep release domain logic in `CmsApp.vue` while moving section chrome and summary scaffolding into reusable CMS components
+- 2026-03-27 phase 7:
+  - create a local safety backup of the current public landing experience before further architecture work:
+    - `.temp/backups/landing-public-example-2026-03-27/**`
+  - move reusable CMS authoring surfaces out of `landing-page/cms/**` into `src/**`:
+    - `src/templates/features/cms/authoring/**`
+    - `src/modules/cms/white-label/authoring/**`
+    - `src/modules/cms/presets/landing/**`
+  - update CMS tests and Vite chunking so the migrated `src/**` surfaces become the authoritative import path
+  - move the product preset from `landing-page/config/nettoolskit.preset.ts` to:
+    - `src/config/presets/nettoolskit.preset.ts`
+  - move generic template runtime infrastructure from `landing-page/**` to:
+    - `src/templates/runtime/**`
+  - extract the `Media` authoring screen into:
+    - `src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue`
+  - reduce `landing-page/CmsApp.vue` again by replacing the inline media editor/preview surface with the reusable module component while keeping the runtime behavior intact
 
 ## Ordered Tasks
 
@@ -126,9 +141,10 @@ Out of scope:
    - Status: in progress
    - Target paths:
      - `landing-page/CmsApp.vue`
-     - `landing-page/cms/*.vue`
-     - `landing-page/cms/composables/*.ts`
-     - `landing-page/cms/utils/*.ts`
+     - `src/templates/features/cms/authoring/*.vue`
+     - `src/templates/features/cms/authoring/modules/*.vue`
+     - `src/modules/cms/white-label/authoring/*.ts`
+     - `src/modules/cms/presets/landing/*.ts`
      - `src/templates/styles/cms-authoring-reference.css`
    - Commands:
      - `npm run lint`
@@ -141,7 +157,26 @@ Out of scope:
    - Commit checkpoint suggestion:
      - `refactor(cms): extract reusable authoring chrome components`
 
-5. Reference-parity validation and release closeout
+5. Move reusable landing/template runtime infrastructure into `src`
+   - Status: in progress
+   - Target paths:
+     - `landing-page/main.ts`
+     - `src/templates/runtime/**`
+     - `src/config/presets/**`
+     - `tests/unit/templates/TemplateRuntimeRouter.spec.ts`
+   - Commands:
+     - `npm run lint`
+     - `npm run type-check`
+     - `npm run build:landing`
+     - `npm run test -- tests/unit/templates/TemplateRuntimeRouter.spec.ts`
+   - Checkpoints:
+     - landing-page keeps only app/demo boot concerns
+     - template runtime router/host live under `src/templates/**`
+     - product presets no longer live under `landing-page/config/**`
+   - Commit checkpoint suggestion:
+     - `refactor(templates): move reusable runtime and preset infrastructure into src`
+
+6. Reference-parity validation and release closeout
    - Target paths:
      - `.temp/reference/**`
      - `.temp/comparison/**`

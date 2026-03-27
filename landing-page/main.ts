@@ -48,7 +48,7 @@ import {
 } from 'quasar'
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
-import { createTemplateRuntimeRouter } from './template-runtime/router'
+import { createTemplateRuntimeRouter } from '../src/templates/runtime'
 
 // NetToolsKit style tokens
 import '../src/styles/tokens.scss'
@@ -58,7 +58,7 @@ import '../src/styles/global.scss'
 const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))
 const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))
 const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
-const TemplateRuntimeApp = defineAsyncComponent(() => import('./TemplateRuntimeApp.vue'))
+const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))
 
 const searchParams = new URLSearchParams(window.location.search)
 const isCmsMode = searchParams.get('cms') === '1'

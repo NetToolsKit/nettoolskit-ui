@@ -4,8 +4,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { reactive } from 'vue'
-import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'
-import { landingPageSchema } from '../../../../landing-page/cms/landing.schema'
+import { createLandingRegistry, landingPageSchema } from '../../../../src/modules/cms/presets/landing'
 import {
   createCmsBuilderState,
   insertCmsBuilderBlock,

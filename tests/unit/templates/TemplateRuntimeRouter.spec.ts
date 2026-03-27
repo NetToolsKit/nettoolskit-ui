@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   createTemplateRuntimeRoutes,
   templateRuntimeMenuItems,
-} from '../../../landing-page/template-runtime/router'
+} from '../../../src/templates/runtime/router'
 
 describe('template runtime router', () => {
   it('builds scaffolded layout routes with a catch-all redirect', () => {

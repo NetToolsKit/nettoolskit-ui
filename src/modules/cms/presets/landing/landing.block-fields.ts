@@ -1,7 +1,7 @@
 /**
  * Landing block field catalog used by CMS blocks editor forms.
  */
-import type { CmsMediaAssetKind } from '../../src/modules/cms/white-label/types'
+import type { CmsMediaAssetKind } from '../../white-label/types'
 
 export type CmsBlockFieldType =
   | 'text'

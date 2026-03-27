@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getLandingBlockFieldDefinitions,
   getLandingBlockMediaBindingDefinitions,
-} from '../../../../landing-page/cms/landing.block-fields'
+} from '../../../../src/modules/cms/presets/landing'
 
 const LANDING_BLOCK_TYPES = [
   'landing.header',

@@ -27,23 +27,23 @@
  */
 
 // Colors
-import { nettoolskitPalette, type BrandPalette } from '../../src/config/colors/palette.config'
-import { semanticColors, type SemanticColors } from '../../src/config/colors/semantic.config'
-import { lightThemeColors, darkThemeColors, type ThemeColorPalette } from '../../src/config/colors/theme-mode.config'
+import { nettoolskitPalette, type BrandPalette } from '../colors/palette.config'
+import { semanticColors, type SemanticColors } from '../colors/semantic.config'
+import { lightThemeColors, darkThemeColors, type ThemeColorPalette } from '../colors/theme-mode.config'
 
 // Visual
-import { nettoolskitTypography, applyTypography, type TypographyConfig } from '../../src/config/visual/typography.config'
-import { nettoolskitEffects, applyEffects, type EffectsConfig } from '../../src/config/visual/effects.config'
-import { defaultSpacing, applySpacing, type SpacingConfig } from '../../src/config/visual/spacing.config'
+import { nettoolskitTypography, applyTypography, type TypographyConfig } from '../visual/typography.config'
+import { nettoolskitEffects, applyEffects, type EffectsConfig } from '../visual/effects.config'
+import { defaultSpacing, applySpacing, type SpacingConfig } from '../visual/spacing.config'
 
 // Layout
-import { dashboardLayout, type LayoutConfig } from '../../src/config/layout/structure.config'
-import { defaultResponsive, type ResponsiveConfig } from '../../src/config/layout/responsive.config'
+import { dashboardLayout, type LayoutConfig } from '../layout/structure.config'
+import { defaultResponsive, type ResponsiveConfig } from '../layout/responsive.config'
 
 // Brand
-import { nettoolskitIdentity, type BrandIdentity } from '../../src/config/brand/identity.config'
-import { nettoolskitNavigation, type BrandNavigation } from '../../src/config/brand/navigation.config'
-import { nettoolskitContent, type BrandContent } from '../../src/config/brand/content.config'
+import { nettoolskitIdentity, type BrandIdentity } from '../brand/identity.config'
+import { nettoolskitNavigation, type BrandNavigation } from '../brand/navigation.config'
+import { nettoolskitContent, type BrandContent } from '../brand/content.config'
 
 // ============================
 // NetToolsKit Preset

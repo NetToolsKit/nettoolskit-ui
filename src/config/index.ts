@@ -268,6 +268,12 @@ export {
 } from './brand/content.config'
 
 // ============================
+// Presets
+// ============================
+
+export * from './presets'
+
+// ============================
 // Legacy Exports (Deprecated - for backward compatibility)
 // ============================
 // These exports are deprecated and will be removed in future versions.

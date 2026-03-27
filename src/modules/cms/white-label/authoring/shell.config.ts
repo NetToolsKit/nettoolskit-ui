@@ -1,13 +1,13 @@
 /**
  * CMS app-shell defaults used by the white-label settings workspace.
  */
-import { sentinelaLikePreset } from '../../src/components/layout/app-shell.config'
+import { sentinelaLikePreset } from '../../../../components/layout/app-shell.config'
 import type {
   AppShellAction,
   AppShellConfig,
   AppShellGroup,
   AppShellItem,
-} from '../../src/components/layout/app-shell.types'
+} from '../../../../components/layout/app-shell.types'
 
 const groups: AppShellGroup[] = [
   { id: 'configuration', label: 'Configuration' },

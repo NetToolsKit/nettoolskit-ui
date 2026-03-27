@@ -12,7 +12,7 @@ import {
 import { validateCmsContentPages } from '../../../../src/modules/cms/white-label/content-validation'
 import { createCmsAuthoredBlockPresetFromBlock } from '../../../../src/modules/cms/white-label/block-presets'
 import type { CmsPageSettings } from '../../../../src/modules/cms/white-label/types'
-import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'
+import { createLandingRegistry } from '../../../../src/modules/cms/presets/landing'
 
 function clonePages(pages: CmsPageSettings[]): CmsPageSettings[] {
   return JSON.parse(JSON.stringify(pages)) as CmsPageSettings[]

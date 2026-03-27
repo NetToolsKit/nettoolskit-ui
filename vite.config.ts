@@ -14,7 +14,10 @@ function manualChunkByModule(id: string): string | undefined {
     if (normalized.includes('/landing-page/CmsApp.vue')) {
       return 'cms-app'
     }
-    if (normalized.includes('/landing-page/cms/')) {
+    if (
+      normalized.includes('/landing-page/cms/')
+      || normalized.includes('/src/templates/features/cms/')
+    ) {
       return 'cms-ui'
     }
     if (
@@ -27,7 +30,10 @@ function manualChunkByModule(id: string): string | undefined {
     ) {
       return 'cms-engine'
     }
-    if (normalized.includes('/src/modules/cms/blocks/')) {
+    if (
+      normalized.includes('/src/modules/cms/blocks/')
+      || normalized.includes('/src/modules/cms/presets/')
+    ) {
       return 'cms-blocks'
     }
     return undefined

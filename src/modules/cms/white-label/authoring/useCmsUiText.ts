@@ -1,5 +1,5 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
-import { resolveCmsLocale } from '../../../src/modules/cms/white-label/i18n'
+import { resolveCmsLocale } from '../i18n'
 
 export interface CmsUiText {
   autoSaveEnabled: string

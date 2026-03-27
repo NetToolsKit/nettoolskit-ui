@@ -1,4 +1,4 @@
-import { createDefaultWhiteLabelSettings } from '../../../src/modules/cms/white-label/config'
+import { createDefaultWhiteLabelSettings } from '../config'
 
 export type ThemeFieldKey = keyof ReturnType<typeof createDefaultWhiteLabelSettings>['theme']
 export type ThemeFieldGroup = 'foundation' | 'typography' | 'layout' | 'navigation' | 'header' | 'notifications' | 'landing'

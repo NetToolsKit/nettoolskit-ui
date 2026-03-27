@@ -4578,168 +4578,40 @@
           </CmsShellCard>
         </div>
 
-        <div v-else-if="isMediaModule" class="cms-shell-page__grid">
-          <CmsShellCard
-            :title="cmsUiText.mediaSettingsTitle"
-            body-class="cms-media__editor"
-          >
-            <template #header-actions>
-              <q-chip dense square :style="statusChipStyle">{{ settings.mediaAssets.length }}</q-chip>
-            </template>
-              <div class="cms-form-grid">
-                <q-select
-                  v-model="selectedMediaAssetId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsMediaAssetOptions"
-                  :label="tr('Media library asset', 'Asset da biblioteca de midia')"
-                  :hint="tr('Select an asset to edit it or start a blank draft.', 'Selecione um asset para editar ou inicie um rascunho em branco.')"
-                />
-                <q-select
-                  v-model="mediaAssetDraft.kind"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  :options="cmsMediaAssetKindOptions"
-                  :label="tr('Asset kind', 'Tipo do asset')"
-                />
-                <q-input v-model="mediaAssetDraft.name" outlined dense :label="tr('Asset name', 'Nome do asset')" />
-                <q-input v-model="mediaAssetDraft.alt" outlined dense :label="tr('Asset alt text', 'Texto alternativo do asset')" />
-                <q-input v-model="mediaAssetDraft.url" outlined dense :label="tr('Asset URL', 'URL do asset')" />
-                <q-input v-model="mediaAssetDraft.focalPointX" outlined dense type="number" min="0" max="100" :label="tr('Focal point X (0-100)', 'Ponto focal X (0-100)')" />
-                <q-input v-model="mediaAssetDraft.focalPointY" outlined dense type="number" min="0" max="100" :label="tr('Focal point Y (0-100)', 'Ponto focal Y (0-100)')" />
-                <q-input v-model="mediaAssetDraft.tags" outlined dense :label="tr('Tags (comma separated)', 'Tags (separadas por virgula)')" />
-                <q-input v-model="mediaAssetDraft.usage" outlined dense :label="tr('Usage tags (comma separated)', 'Tags de uso (separadas por virgula)')" />
-                <q-select
-                  v-model="mediaAssetDraft.replaceTargetAssetId"
-                  outlined
-                  dense
-                  emit-value
-                  map-options
-                  clearable
-                  :options="cmsMediaReplacementOptions"
-                  :label="tr('Replace target asset', 'Asset alvo da substituicao')"
-                  :hint="tr('Optional. Use with Replace references to swap runtime bindings safely.', 'Opcional. Use com Substituir referencias para trocar vinculos de runtime com seguranca.')"
-                />
-                <q-input v-model="mediaAssetDraft.description" outlined dense type="textarea" autogrow :label="tr('Asset description', 'Descricao do asset')" />
-              </div>
-
-              <div class="cms-media__actions">
-                <q-btn flat no-caps icon="add_photo_alternate" :label="tr('New asset', 'Novo asset')" @click="createNewMediaAssetDraft" />
-                <q-btn no-caps unelevated icon="save" :label="tr('Save asset', 'Salvar asset')" :style="primaryActionStyle" @click="saveMediaAssetDraft" />
-                <q-btn flat no-caps icon="delete" :label="tr('Delete asset', 'Excluir asset')" :disable="!selectedMediaAssetId" :style="dangerActionStyle" @click="removeSelectedMediaAsset" />
-                <q-btn
-                  flat
-                  no-caps
-                  icon="swap_horiz"
-                  :label="tr('Replace references', 'Substituir referencias')"
-                  :disable="!selectedMediaAssetId || !mediaAssetDraft.replaceTargetAssetId"
-                  @click="replaceSelectedMediaAssetReferences"
-                />
-              </div>
-
-              <div class="cms-media__actions cms-media__actions--secondary">
-                <q-btn flat dense no-caps icon="branding_watermark" :label="tr('Apply as brand logo', 'Aplicar como logo da marca')" :disable="!selectedMediaAssetId" @click="applySelectedMediaAssetToBranding('brandLogo')" />
-                <q-btn flat dense no-caps icon="web" :label="tr('Apply as favicon', 'Aplicar como favicon')" :disable="!selectedMediaAssetId" @click="applySelectedMediaAssetToBranding('faviconUrl')" />
-                <q-btn flat dense no-caps icon="account_circle" :label="tr('Apply as user avatar', 'Aplicar como avatar do usuario')" :disable="!selectedMediaAssetId" @click="applySelectedMediaAssetToBranding('userAvatar')" />
-              </div>
-              <q-banner rounded class="cms-banner" :style="bannerStyle">
-                {{ tr('Media references are tenant-scoped and remain backend-agnostic. Apply any saved asset to branding slots immediately.', 'Referencias de midia sao por tenant e continuam desacopladas de backend. Aplique qualquer asset salvo nos slots de branding imediatamente.') }}
-              </q-banner>
-          </CmsShellCard>
-
-          <CmsShellCard
-            :title="tr('Media preview', 'Preview de midia')"
-            body-class="cms-media__preview"
-          >
-            <template #header-actions>
-              <q-chip v-if="cmsMediaDiagnostics.length > 0" dense square :style="getCmsDiagnosticStyle('warning')">
-                {{ cmsMediaDiagnostics.length }} {{ tr('diagnostics', 'diagnosticos') }}
-              </q-chip>
-            </template>
-              <CmsDiagnosticsListSection
-                :title="tr('Library diagnostics', 'Diagnosticos da biblioteca')"
-                :items="toCmsDiagnosticsListItems(cmsMediaDiagnostics)"
-                :show-count="false"
-              />
-              <CmsDiagnosticsListSection
-                :title="tr('Selected asset diagnostics', 'Diagnosticos do asset selecionado')"
-                :items="toCmsDiagnosticsListItems(selectedMediaAssetDiagnostics)"
-                :show-count="false"
-              />
-              <article
-                v-for="binding in cmsBrandingMediaBindings"
-                :key="binding.id"
-                class="cms-media-preview-item cms-media-preview-item--binding"
-              >
-                <div class="cms-media-preview-item__meta">
-                  <strong>{{ binding.label }}</strong>
-                  <small>{{ binding.description }}</small>
-                </div>
-                <div class="cms-media-preview-item__tags">
-                  <q-chip dense square :style="statusChipStyle">{{ binding.assetName }}</q-chip>
-                  <q-chip v-if="binding.assetId" dense square :style="previewChipStyle">{{ binding.assetId }}</q-chip>
-                </div>
-                <code class="cms-media-preview-item__url">{{ binding.url || tr('No URL configured', 'Nenhuma URL configurada') }}</code>
-              </article>
-              <article
-                v-for="asset in cmsMediaAssets"
-                :key="asset.id"
-                class="cms-media-preview-item"
-                :class="{ 'cms-media-preview-item--active': asset.id === selectedMediaAssetId }"
-              >
-                <div class="cms-media-preview-item__meta">
-                  <strong>{{ asset.name }}</strong>
-                  <small>{{ asset.description || getCmsMediaKindLabel(asset.kind) }}</small>
-                </div>
-                <div class="cms-media-preview-item__visual">
-                  <img
-                    v-if="isPreviewImageAsset(asset.url)"
-                    :src="asset.url"
-                    :alt="asset.alt || asset.name"
-                  >
-                  <q-icon v-else name="image_not_supported" class="cms-icon cms-icon--lg" />
-                </div>
-                <div class="cms-media-preview-item__tags">
-                  <q-chip dense square :style="statusChipStyle">{{ getCmsMediaKindLabel(asset.kind) }}</q-chip>
-                  <q-chip dense square :style="previewChipStyle">
-                    {{ getCmsMediaUsageCount(asset.id) }} {{ tr('refs', 'refs') }}
-                  </q-chip>
-                  <q-chip dense square :style="previewChipStyle">
-                    {{ getCmsMediaUsageSummaryLabel(asset.id) }}
-                  </q-chip>
-                  <q-chip v-if="asset.focalPoint" dense square :style="previewChipStyle">
-                    FP {{ asset.focalPoint.x }}, {{ asset.focalPoint.y }}
-                  </q-chip>
-                  <q-chip v-if="asset.replaceTargetAssetId" dense square :style="previewChipStyle">
-                    {{ tr('replaces to', 'substitui para') }} {{ asset.replaceTargetAssetId }}
-                  </q-chip>
-                  <q-chip
-                    v-for="tag in asset.tags"
-                    :key="`${asset.id}-${tag}`"
-                    dense
-                    square
-                    :style="previewChipStyle"
-                  >
-                    {{ tag }}
-                  </q-chip>
-                  <q-chip
-                    v-for="diagnostic in getCmsMediaDiagnosticsForAsset(asset.id)"
-                    :key="diagnostic.id"
-                    dense
-                    square
-                    :style="getCmsDiagnosticStyle(diagnostic.severity)"
-                  >
-                    {{ diagnostic.code }}
-                  </q-chip>
-                </div>
-                <code class="cms-media-preview-item__url">{{ asset.url || tr('No URL configured', 'Nenhuma URL configurada') }}</code>
-              </article>
-          </CmsShellCard>
-        </div>
+        <CmsMediaModuleSurface
+          v-else-if="isMediaModule"
+          :media-settings-title="cmsUiText.mediaSettingsTitle"
+          :asset-count="settings.mediaAssets.length"
+          :selected-media-asset-id="selectedMediaAssetId"
+          :media-asset-draft="mediaAssetDraft"
+          :media-asset-options="cmsMediaAssetOptions"
+          :media-asset-kind-options="cmsMediaAssetKindOptions"
+          :media-replacement-options="cmsMediaReplacementOptions"
+          :media-diagnostics="cmsMediaDiagnostics"
+          :selected-media-asset-diagnostics="selectedMediaAssetDiagnostics"
+          :branding-media-bindings="cmsBrandingMediaBindings"
+          :media-assets="cmsMediaAssets"
+          :status-chip-style="statusChipStyle"
+          :preview-chip-style="previewChipStyle"
+          :banner-style="bannerStyle"
+          :primary-action-style="primaryActionStyle"
+          :danger-action-style="dangerActionStyle"
+          :t="tr"
+          :to-diagnostics-list-items="toCmsDiagnosticsListItems"
+          :get-cms-diagnostic-style="getCmsDiagnosticStyle"
+          :get-cms-media-kind-label="getCmsMediaKindLabel"
+          :is-preview-image-asset="isPreviewImageAsset"
+          :get-cms-media-usage-count="getCmsMediaUsageCount"
+          :get-cms-media-usage-summary-label="getCmsMediaUsageSummaryLabel"
+          :get-cms-media-diagnostics-for-asset="getCmsMediaDiagnosticsForAsset"
+          @update:selected-media-asset-id="selectedMediaAssetId = $event"
+          @update:media-asset-draft="mediaAssetDraft = $event"
+          @create-new-asset="createNewMediaAssetDraft"
+          @save-asset="saveMediaAssetDraft"
+          @remove-selected-asset="removeSelectedMediaAsset"
+          @replace-selected-asset-references="replaceSelectedMediaAssetReferences"
+          @apply-selected-asset-to-branding="applySelectedMediaAssetToBranding"
+        />
 
         <div v-else-if="isReleasesModule" class="cms-shell-page__grid">
           <CmsShellCard
@@ -5675,25 +5547,13 @@ import {
   type CmsReleaseCandidateChecklistItemId,
   type CmsReleaseCandidateChecklistStatus,
 } from '../src/modules/cms/releases/orchestration'
-import { createLandingRegistry } from './cms/landing.registry'
-import CmsMediaAssetPicker from './cms/CmsMediaAssetPicker.vue'
-import CmsPreviewToolbar from './cms/CmsPreviewToolbar.vue'
-import CmsLocaleCoverageMatrix from './cms/CmsLocaleCoverageMatrix.vue'
-import CmsEntityUsageDrawer, { type CmsEntityUsageDrawerReferenceView } from './cms/CmsEntityUsageDrawer.vue'
-import CmsAuthoringWorkbench from './cms/CmsAuthoringWorkbench.vue'
-import CmsAuthoringPanelHeader from './cms/CmsAuthoringPanelHeader.vue'
-import CmsAuthoringMetricsList, { type CmsAuthoringMetricItem } from './cms/CmsAuthoringMetricsList.vue'
-import CmsAuthoringStatusBar, { type CmsAuthoringStatusItem } from './cms/CmsAuthoringStatusBar.vue'
-import CmsAuthoringToolbar, { type CmsAuthoringToolbarInfoItem } from './cms/CmsAuthoringToolbar.vue'
-import CmsAuthoringRulerBar from './cms/CmsAuthoringRulerBar.vue'
-import CmsDiagnosticsListSection, { type CmsDiagnosticsListItem } from './cms/CmsDiagnosticsListSection.vue'
-import CmsSectionHeaderSummary from './cms/CmsSectionHeaderSummary.vue'
-import CmsStatusMetricCardGrid, { type CmsStatusMetricCardItem } from './cms/CmsStatusMetricCardGrid.vue'
-import CmsPanelListSection, { type CmsPanelListSectionItem } from './cms/CmsPanelListSection.vue'
-import CmsShellCard from './cms/CmsShellCard.vue'
-import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from './cms/CmsWorkspaceTabs.vue'
-import { useCmsUiText } from './cms/composables/useCmsUiText'
 import {
+  createLandingRegistry,
+  getLandingBlockFieldDefinitions,
+  getLandingBlockMediaBindingDefinitions,
+} from '../src/modules/cms/presets/landing'
+import {
+  useCmsUiText,
   areCmsSettingsSnapshotsEqual,
   cloneSerializableValue,
   cloneWhiteLabelSettings,
@@ -5701,8 +5561,6 @@ import {
   parseMediaDraftFocalPoint,
   parseMediaDraftList,
   resolveViewportWidth,
-} from './cms/utils/cms-authoring.utils'
-import {
   createThemeFields,
   getThemeFieldSections,
   getThemeFieldsByGroup,
@@ -5713,12 +5571,37 @@ import {
   type ThemeFieldSection,
   typographyFieldGroupsDefinition,
   colorFieldGroupsDefinition,
-} from './cms/theme/theme-field-catalog'
+} from '../src/modules/cms/white-label/authoring'
 import {
-  getLandingBlockFieldDefinitions,
-  getLandingBlockMediaBindingDefinitions,
+  CmsMediaAssetPicker,
+  CmsPreviewToolbar,
+  CmsLocaleCoverageMatrix,
+  CmsEntityUsageDrawer,
+  CmsMediaModuleSurface,
+  type CmsEntityUsageDrawerReferenceView,
+  CmsAuthoringWorkbench,
+  CmsAuthoringPanelHeader,
+  CmsAuthoringMetricsList,
+  type CmsAuthoringMetricItem,
+  CmsAuthoringStatusBar,
+  type CmsAuthoringStatusItem,
+  CmsAuthoringToolbar,
+  type CmsAuthoringToolbarInfoItem,
+  CmsAuthoringRulerBar,
+  CmsDiagnosticsListSection,
+  type CmsDiagnosticsListItem,
+  CmsSectionHeaderSummary,
+  CmsStatusMetricCardGrid,
+  type CmsStatusMetricCardItem,
+  CmsPanelListSection,
+  type CmsPanelListSectionItem,
+  CmsShellCard,
+  CmsWorkspaceTabs,
+  type CmsWorkspaceTabOption,
+} from '../src/templates/features/cms'
+import {
   type CmsBlockFieldDefinition,
-} from './cms/landing.block-fields'
+} from '../src/modules/cms/presets/landing'
 import type {
   CmsAuthoredContentModelFieldPresetId,
   CmsAuthoredContentModelFieldPresetSettings,

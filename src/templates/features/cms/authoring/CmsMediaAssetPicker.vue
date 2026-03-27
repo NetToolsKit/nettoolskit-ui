@@ -100,11 +100,11 @@
  * Reusable CMS media asset picker with previews and compatibility feedback.
  */
 import { computed, type PropType } from 'vue'
-import type { CmsMediaAssetKind } from '../../src/modules/cms/white-label/types'
+import type { CmsMediaAssetKind } from '../../../../modules/cms/white-label/types'
 import {
   resolveCmsMediaPickerSelectedOptions,
   type CmsMediaPickerOption,
-} from '../../src/modules/cms/white-label/media-picker'
+} from '../../../../modules/cms/white-label/media-picker'
 
 const props = defineProps({
   modelValue: {

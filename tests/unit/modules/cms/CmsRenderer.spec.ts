@@ -7,7 +7,7 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import { CMS_SCHEMA_VERSION, CmsBlockRegistry } from '../../../../src/modules/cms'
 import { CmsRenderer } from '../../../../src/modules/cms/renderer'
-import { createLandingRegistry } from '../../../../landing-page/cms/landing.registry'
+import { createLandingRegistry } from '../../../../src/modules/cms/presets/landing'
 
 describe('CmsRenderer', () => {
   const HeroBlock = defineComponent({

@@ -14,7 +14,7 @@ import {
   replaceCmsMediaAssetReferences,
   resolveCmsMediaBindingProps,
 } from '../../../../src/modules/cms/white-label/media-library'
-import { getLandingBlockMediaBindingDefinitions } from '../../../../landing-page/cms/landing.block-fields'
+import { getLandingBlockMediaBindingDefinitions } from '../../../../src/modules/cms/presets/landing'
 
 describe('media-library', () => {
   it('creates branding-aware default media assets for both supported locales', () => {

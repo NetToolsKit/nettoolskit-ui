@@ -2,11 +2,11 @@
  * Landing-page block registry for CMS runtime rendering.
  */
 import { markRaw } from 'vue'
-import { CmsBlockRegistry, type CmsBlockDefinition } from '../../src/modules/cms'
+import { CmsBlockRegistry, type CmsBlockDefinition } from '../../index'
 import {
   resolveCmsMediaBindingProps,
   type CmsMediaAssetSettings,
-} from '../../src/modules/cms/white-label'
+} from '../../white-label/index'
 import {
   CmsLandingHeaderBlock,
   CmsLandingHeroBlock,
@@ -14,7 +14,7 @@ import {
   CmsLandingFeaturesBlock,
   CmsLandingCtaBlock,
   CmsLandingFooterBlock,
-} from '../../src/modules/cms/blocks'
+} from '../../blocks/index'
 import { getLandingBlockMediaBindingDefinitions } from './landing.block-fields'
 
 function createLandingMediaPropsResolver(type: string): CmsBlockDefinition['resolveProps'] {

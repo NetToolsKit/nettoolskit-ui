@@ -20,21 +20,21 @@ import {
   LoginTemplate,
   WikiChatTemplate,
   WikiTemplate,
-} from '../../src/templates/features'
-import { AuthLayoutTemplate, MainLayoutTemplate } from '../../src/templates/layouts'
+} from '../features'
+import { AuthLayoutTemplate, MainLayoutTemplate } from '../layouts'
 import {
   CrudListTemplate,
   DashboardWorkspaceTemplate,
   EditorWorkbenchTemplate,
   ErrorNotFoundTemplate,
   ProfileTemplate,
-} from '../../src/templates/pages'
+} from '../pages'
 import {
   createDefaultTemplateLayoutShells,
   createTemplateMenuFromScaffoldRoutes,
   createTemplateRouteScaffold,
   type TemplateScaffoldRouteNode,
-} from '../../src/templates/scaffolding'
+} from '../scaffolding'
 
 const RuntimeDashboardPage = defineComponent({
   name: 'TemplateRuntimeDashboardPage',
