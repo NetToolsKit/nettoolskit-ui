@@ -61,6 +61,15 @@ Out of scope:
     - `landing-page/cms/CmsDiagnosticsListSection.vue`
   - migrate repeated sidebar, rail, status, and diagnostics chrome in `Settings`, `Pages`, `Blocks`, and `Media` onto those shared components
   - keep CMS-specific behavior in `CmsApp.vue` while moving the repeated markup into reusable CMS/template-aligned view components
+- 2026-03-27 phase 6:
+  - add reusable section/review summary contracts:
+    - `landing-page/cms/CmsSectionHeaderSummary.vue`
+    - `landing-page/cms/CmsStatusMetricCardGrid.vue`
+    - `landing-page/cms/CmsPanelListSection.vue`
+  - migrate remaining repeated section headers in `Pages`, preview diff review panels, and `Releases` onto `CmsSectionHeaderSummary`
+  - migrate release review/governance card grids onto `CmsStatusMetricCardGrid`
+  - migrate governance list panels onto `CmsPanelListSection`
+  - keep release domain logic in `CmsApp.vue` while moving section chrome and summary scaffolding into reusable CMS components
 
 ## Ordered Tasks
 
@@ -126,7 +135,7 @@ Out of scope:
      - `npm run type-check`
      - `npm run build:landing`
    - Checkpoints:
-     - repeated toolbar/ruler/sidebar/status/diagnostics blocks extracted
+     - repeated toolbar/ruler/sidebar/status/diagnostics/section-summary blocks extracted
      - shared styles used instead of per-screen duplication
      - `CmsApp.vue` becomes orchestration-heavy instead of markup-heavy
    - Commit checkpoint suggestion:

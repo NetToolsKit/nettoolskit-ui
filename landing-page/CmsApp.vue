@@ -2132,9 +2132,12 @@
                 v-if="cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount > 0 || cmsSchemaMigrationBatchReport.summary.versionMissingCount > 0 || cmsSchemaMigrationBatchReport.summary.aheadCount > 0 || cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0"
                 class="cms-page-migration-summary"
               >
-                <div class="cms-review-summary__header">
-                  <strong>{{ tr('Schema migration review', 'Revisao de migracao de schema') }}</strong>
-                  <div class="cms-page-migration-summary__chips">
+                <CmsSectionHeaderSummary
+                  :title="tr('Schema migration review', 'Revisao de migracao de schema')"
+                  container-class="cms-review-summary__header"
+                  summary-class="cms-page-migration-summary__chips"
+                >
+                  <template #summary>
                     <q-chip dense square :style="warningActionStyle">
                       {{ tr('Pending', 'Pendentes') }}: {{ cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount + cmsSchemaMigrationBatchReport.summary.versionMissingCount }}
                     </q-chip>
@@ -2157,8 +2160,8 @@
                     <q-chip dense square :style="statusChipStyle">
                       {{ getCmsSchemaMigrationBatchSummaryLabel() }}
                     </q-chip>
-                  </div>
-                </div>
+                  </template>
+                </CmsSectionHeaderSummary>
               </div>
               <div
                 v-for="{ page, pageIndex } in filteredCmsPageRows"
@@ -2512,9 +2515,12 @@
                     v-if="getCmsPageSchemaMigrationReport(page.id) && (getCmsPageSchemaMigrationReport(page.id)?.hasChanges || getCmsPageSchemaMigrationReport(page.id)?.status === 'ahead' || getCmsPageSchemaMigrationReport(page.id)?.status === 'invalid-model')"
                     class="cms-page-item__schema-migration"
                   >
-                    <div class="cms-review-summary__header">
-                      <strong>{{ tr('Schema upgrade report', 'Relatorio de upgrade do schema') }}</strong>
-                      <div class="cms-page-item__schema-migration-chips">
+                    <CmsSectionHeaderSummary
+                      :title="tr('Schema upgrade report', 'Relatorio de upgrade do schema')"
+                      container-class="cms-review-summary__header"
+                      summary-class="cms-page-item__schema-migration-chips"
+                    >
+                      <template #summary>
                         <q-chip
                           dense
                           square
@@ -2527,8 +2533,8 @@
                             `v${getCmsPageSchemaMigrationReport(page.id)?.appliedVersion ?? '?'} -> v${getCmsPageSchemaMigrationReport(page.id)?.targetVersion ?? '?'}`
                           }}
                         </q-chip>
-                      </div>
-                    </div>
+                      </template>
+                    </CmsSectionHeaderSummary>
                     <small v-if="getCmsPageSchemaMigrationReport(page.id)?.migrationNotes">
                       {{ getCmsPageSchemaMigrationReport(page.id)?.migrationNotes }}
                     </small>
@@ -2730,9 +2736,12 @@
                     <CmsAuthoringMetricsList :items="cmsPagesRailMetrics" />
                   </div>
                   <div class="cms-pages__reusable-library">
-                    <div class="cms-shell-card__header">
-                      <strong>{{ tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis') }}</strong>
-                      <div class="cms-blocks-library__header-actions">
+                    <CmsSectionHeaderSummary
+                      :title="tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis')"
+                      container-class="cms-shell-card__header"
+                      summary-class="cms-blocks-library__header-actions"
+                    >
+                      <template #summary>
                         <q-toggle
                           v-model="showArchivedReusableSections"
                           dense
@@ -2741,8 +2750,8 @@
                         <q-chip dense square :style="statusChipStyle">
                           {{ filteredCmsReusableSectionLibrary.length }}/{{ settings.reusableSections.length }}
                         </q-chip>
-                      </div>
-                    </div>
+                      </template>
+                    </CmsSectionHeaderSummary>
                     <q-separator />
                     <div class="cms-pages__reusable-list">
                       <div v-if="filteredCmsReusableSectionLibrary.length === 0" class="cms-block-item__empty">
@@ -3052,9 +3061,12 @@
 
               <template v-else>
                 <div v-if="cmsPreviewDraftPublishedDiff" class="cms-review-summary">
-                  <div class="cms-review-summary__header">
-                    <strong>{{ tr('Draft vs published review', 'Revisao rascunho vs publicado') }}</strong>
-                    <div class="cms-page-preview__chips">
+                  <CmsSectionHeaderSummary
+                    :title="tr('Draft vs published review', 'Revisao rascunho vs publicado')"
+                    container-class="cms-review-summary__header"
+                    summary-class="cms-page-preview__chips"
+                  >
+                    <template #summary>
                       <q-chip dense square :style="statusChipStyle">
                         {{ cmsPreviewDraftPublishedDiff.releaseName }} · {{ cmsPreviewDraftPublishedDiff.releaseEnvironment }}
                       </q-chip>
@@ -3069,8 +3081,8 @@
                             : tr('No changes against published', 'Sem mudancas contra o publicado')
                         }}
                       </q-chip>
-                    </div>
-                  </div>
+                    </template>
+                  </CmsSectionHeaderSummary>
                   <div class="cms-blocks-summary-grid">
                     <div class="cms-blocks-summary-card">
                       <span>{{ tr('Pages changed', 'Paginas alteradas') }}</span>
@@ -4271,9 +4283,12 @@
               </div>
 
               <div v-if="cmsPreviewDraftPublishedDiff" class="cms-review-summary">
-                <div class="cms-review-summary__header">
-                  <strong>{{ tr('Draft vs published review', 'Revisao rascunho vs publicado') }}</strong>
-                  <div class="cms-page-preview__chips">
+                <CmsSectionHeaderSummary
+                  :title="tr('Draft vs published review', 'Revisao rascunho vs publicado')"
+                  container-class="cms-review-summary__header"
+                  summary-class="cms-page-preview__chips"
+                >
+                  <template #summary>
                     <q-chip
                       dense
                       square
@@ -4285,8 +4300,8 @@
                           : tr('No changes against published', 'Sem mudancas contra o publicado')
                       }}
                     </q-chip>
-                  </div>
-                </div>
+                  </template>
+                </CmsSectionHeaderSummary>
                 <div class="cms-blocks-summary-grid">
                   <div class="cms-blocks-summary-card">
                     <span>{{ tr('Page changes', 'Mudancas na pagina') }}</span>
@@ -4869,12 +4884,14 @@
                 class="cms-release-review-hub"
                 data-cms-release-review-hub
               >
-                <div class="cms-release-review-hub__header">
-                  <div class="cms-release-review-hub__copy">
-                    <strong>{{ tr('Unified release review', 'Revisao unificada da release') }}</strong>
-                    <small>{{ tr('Review changes, locale readiness and publish checklist in one place.', 'Revise mudancas, cobertura de locale e checklist de publicacao em um unico lugar.') }}</small>
-                  </div>
-                  <div class="cms-release-review-hub__summary">
+                <CmsSectionHeaderSummary
+                  :title="tr('Unified release review', 'Revisao unificada da release')"
+                  :description="tr('Review changes, locale readiness and publish checklist in one place.', 'Revise mudancas, cobertura de locale e checklist de publicacao em um unico lugar.')"
+                  container-class="cms-release-review-hub__header"
+                  copy-class="cms-release-review-hub__copy"
+                  summary-class="cms-release-review-hub__summary"
+                >
+                  <template #summary>
                     <q-chip dense square :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.status)">
                       {{ getReleaseChecklistStatusLabel(selectedReleaseReviewHub.status) }}
                     </q-chip>
@@ -4886,39 +4903,20 @@
                       {{ selectedReleaseReviewHub.locales.missingEntries }}
                       {{ tr('locale gaps', 'lacunas de locale') }}
                     </q-chip>
-                  </div>
-                </div>
+                  </template>
+                </CmsSectionHeaderSummary>
 
-                <div class="cms-release-review-hub__cards">
-                  <article
-                    v-for="card in selectedReleaseReviewHub.cards"
-                    :key="card.id"
-                    class="cms-release-review-hub__card"
-                    :data-cms-review-card="card.id"
-                    :data-cms-review-status="card.status"
-                  >
-                    <div class="cms-release-review-hub__card-header">
-                      <div class="cms-release-review-hub__card-copy">
-                        <strong>{{ getReleaseReviewHubCardLabel(card.id) }}</strong>
-                        <small>{{ getReleaseReviewHubCardDescription(card) }}</small>
-                      </div>
-                      <q-chip dense square :style="getReleaseChecklistStatusStyle(card.status)">
-                        {{ getReleaseChecklistStatusLabel(card.status) }}
-                      </q-chip>
-                    </div>
-
-                    <div class="cms-release-review-hub__metrics">
-                      <span
-                        v-for="metric in card.metrics"
-                        :key="`${card.id}-${metric.id}`"
-                        class="cms-release-review-hub__metric"
-                      >
-                        <strong>{{ metric.value }}</strong>
-                        <small>{{ getReleaseReviewHubMetricLabel(card.id, metric.id) }}</small>
-                      </span>
-                    </div>
-                  </article>
-                </div>
+                <CmsStatusMetricCardGrid
+                  :items="selectedReleaseReviewHubCardItems"
+                  grid-class="cms-release-review-hub__cards"
+                  card-class="cms-release-review-hub__card"
+                  header-class="cms-release-review-hub__card-header"
+                  copy-class="cms-release-review-hub__card-copy"
+                  metrics-class="cms-release-review-hub__metrics"
+                  metric-class="cms-release-review-hub__metric"
+                  card-data-attr-name="data-cms-review-card"
+                  status-data-attr-name="data-cms-review-status"
+                />
               </div>
 
               <div
@@ -4926,16 +4924,19 @@
                 class="cms-release-history"
                 data-cms-release-history
               >
-                <div class="cms-release-history__header">
-                  <div class="cms-release-history__copy">
-                    <strong>{{ tr('Review package history', 'Historico de pacotes de revisao') }}</strong>
-                    <small>{{ tr('Recent review exports for this environment, with quick recall metadata.', 'Exportacoes recentes de revisao deste ambiente, com metadados para consulta rapida.') }}</small>
-                  </div>
-                  <q-chip dense square :style="bannerStyle">
-                    {{ releaseReviewPackageHistoryEntries.length }}
-                    {{ tr('recent exports', 'exports recentes') }}
-                  </q-chip>
-                </div>
+                <CmsSectionHeaderSummary
+                  :title="tr('Review package history', 'Historico de pacotes de revisao')"
+                  :description="tr('Recent review exports for this environment, with quick recall metadata.', 'Exportacoes recentes de revisao deste ambiente, com metadados para consulta rapida.')"
+                  container-class="cms-release-history__header"
+                  copy-class="cms-release-history__copy"
+                >
+                  <template #summary>
+                    <q-chip dense square :style="bannerStyle">
+                      {{ releaseReviewPackageHistoryEntries.length }}
+                      {{ tr('recent exports', 'exports recentes') }}
+                    </q-chip>
+                  </template>
+                </CmsSectionHeaderSummary>
 
                 <div class="cms-release-history__items">
                   <article
@@ -4990,12 +4991,14 @@
                 class="cms-governance-hub"
                 data-cms-governance-hub
               >
-                <div class="cms-governance-hub__header">
-                  <div class="cms-governance-hub__copy">
-                    <strong>{{ tr('Governance workflow and audit', 'Workflow de governanca e auditoria') }}</strong>
-                    <small>{{ tr('Track workflow state, revision cadence, audit activity and role-policy readiness for this tenant.', 'Acompanhe estado do workflow, cadencia de revisoes, auditoria e prontidao das politicas de papel deste tenant.') }}</small>
-                  </div>
-                  <div class="cms-governance-hub__summary">
+                <CmsSectionHeaderSummary
+                  :title="tr('Governance workflow and audit', 'Workflow de governanca e auditoria')"
+                  :description="tr('Track workflow state, revision cadence, audit activity and role-policy readiness for this tenant.', 'Acompanhe estado do workflow, cadencia de revisoes, auditoria e prontidao das politicas de papel deste tenant.')"
+                  container-class="cms-governance-hub__header"
+                  copy-class="cms-governance-hub__copy"
+                  summary-class="cms-governance-hub__summary"
+                >
+                  <template #summary>
                     <q-chip dense square :style="getReleaseChecklistStatusStyle(cmsGovernanceHubSummary.status)">
                       {{ getReleaseChecklistStatusLabel(cmsGovernanceHubSummary.status) }}
                     </q-chip>
@@ -5007,114 +5010,60 @@
                       {{ cmsGovernanceHubSummary.audit.count }}
                       {{ tr('audit entries', 'entradas de auditoria') }}
                     </q-chip>
-                  </div>
-                </div>
+                  </template>
+                </CmsSectionHeaderSummary>
 
-                <div class="cms-governance-hub__cards">
-                  <article
-                    v-for="card in cmsGovernanceHubSummary.cards"
-                    :key="card.id"
-                    class="cms-governance-hub__card"
-                    :data-cms-governance-card="card.id"
-                    :data-cms-governance-status="card.status"
-                  >
-                    <div class="cms-governance-hub__card-header">
-                      <div class="cms-governance-hub__card-copy">
-                        <strong>{{ getGovernanceHubCardLabel(card.id) }}</strong>
-                        <small>{{ getGovernanceHubCardDescription(card) }}</small>
-                      </div>
-                      <q-chip dense square :style="getReleaseChecklistStatusStyle(card.status)">
-                        {{ getReleaseChecklistStatusLabel(card.status) }}
-                      </q-chip>
-                    </div>
-
-                    <div class="cms-governance-hub__metrics">
-                      <span
-                        v-for="metric in card.metrics"
-                        :key="`${card.id}-${metric.id}`"
-                        class="cms-governance-hub__metric"
-                      >
-                        <strong>{{ metric.value }}</strong>
-                        <small>{{ getGovernanceHubMetricLabel(card.id, metric.id) }}</small>
-                      </span>
-                    </div>
-                  </article>
-                </div>
+                <CmsStatusMetricCardGrid
+                  :items="cmsGovernanceHubCardItems"
+                  grid-class="cms-governance-hub__cards"
+                  card-class="cms-governance-hub__card"
+                  header-class="cms-governance-hub__card-header"
+                  copy-class="cms-governance-hub__card-copy"
+                  metrics-class="cms-governance-hub__metrics"
+                  metric-class="cms-governance-hub__metric"
+                  card-data-attr-name="data-cms-governance-card"
+                  status-data-attr-name="data-cms-governance-status"
+                />
 
                 <div class="cms-governance-hub__lists">
-                  <section class="cms-governance-hub__list">
-                    <div class="cms-governance-hub__list-header">
-                      <strong>{{ tr('Recent revisions', 'Revisoes recentes') }}</strong>
-                      <q-chip dense square :style="bannerStyle">
-                        {{ cmsGovernanceHubSummary.revisions.count }}
-                        {{ tr('total', 'total') }}
-                      </q-chip>
-                    </div>
-                    <div class="cms-governance-hub__items">
-                      <article
-                        v-for="revision in cmsGovernanceHubSummary.revisions.recent"
-                        :key="`${revision.version}-${revision.at}`"
-                        class="cms-governance-hub__item"
-                        data-cms-governance-revision
-                      >
-                        <div class="cms-governance-hub__item-header">
-                          <strong>v{{ revision.version }} · {{ getGovernanceWorkflowStatusLabel(revision.status) }}</strong>
-                          <small>{{ formatReleaseTimestamp(revision.at) }}</small>
-                        </div>
-                        <small>{{ getGovernanceActionLabel(revision.action) }} · {{ revision.by }} · {{ getGovernanceRoleLabel(revision.byRole) }}</small>
-                        <small>{{ revision.summary }}</small>
-                      </article>
-                    </div>
-                  </section>
+                  <CmsPanelListSection
+                    :title="tr('Recent revisions', 'Revisoes recentes')"
+                    :summary-label="`${cmsGovernanceHubSummary.revisions.count} ${tr('total', 'total')}`"
+                    :items="cmsGovernanceRevisionPanelItems"
+                    :chip-style="bannerStyle"
+                    section-class="cms-governance-hub__list"
+                    header-class="cms-governance-hub__list-header"
+                    items-class="cms-governance-hub__items"
+                    item-class="cms-governance-hub__item"
+                    item-header-class="cms-governance-hub__item-header"
+                    item-data-attr-name="data-cms-governance-revision"
+                  />
 
-                  <section class="cms-governance-hub__list">
-                    <div class="cms-governance-hub__list-header">
-                      <strong>{{ tr('Recent audit entries', 'Entradas recentes de auditoria') }}</strong>
-                      <q-chip dense square :style="bannerStyle">
-                        {{ cmsGovernanceHubSummary.audit.topActions.length }}
-                        {{ tr('top actions', 'acoes principais') }}
-                      </q-chip>
-                    </div>
-                    <div class="cms-governance-hub__items">
-                      <article
-                        v-for="entry in cmsGovernanceHubSummary.audit.recent"
-                        :key="entry.id"
-                        class="cms-governance-hub__item"
-                        data-cms-governance-audit
-                      >
-                        <div class="cms-governance-hub__item-header">
-                          <strong>{{ getGovernanceActionLabel(entry.action) }}</strong>
-                          <small>{{ formatReleaseTimestamp(entry.at) }}</small>
-                        </div>
-                        <small>{{ entry.actorId }} · {{ getGovernanceRoleLabel(entry.actorRole) }} · v{{ entry.fromVersion }} → v{{ entry.toVersion }}</small>
-                        <small>{{ entry.summary }}</small>
-                      </article>
-                    </div>
-                  </section>
+                  <CmsPanelListSection
+                    :title="tr('Recent audit entries', 'Entradas recentes de auditoria')"
+                    :summary-label="`${cmsGovernanceHubSummary.audit.topActions.length} ${tr('top actions', 'acoes principais')}`"
+                    :items="cmsGovernanceAuditPanelItems"
+                    :chip-style="bannerStyle"
+                    section-class="cms-governance-hub__list"
+                    header-class="cms-governance-hub__list-header"
+                    items-class="cms-governance-hub__items"
+                    item-class="cms-governance-hub__item"
+                    item-header-class="cms-governance-hub__item-header"
+                    item-data-attr-name="data-cms-governance-audit"
+                  />
 
-                  <section class="cms-governance-hub__list">
-                    <div class="cms-governance-hub__list-header">
-                      <strong>{{ tr('Role policies', 'Politicas de papel') }}</strong>
-                      <q-chip dense square :style="bannerStyle">
-                        {{ cmsGovernanceHubSummary.roles.count }}
-                        {{ tr('roles', 'papeis') }}
-                      </q-chip>
-                    </div>
-                    <div class="cms-governance-hub__items">
-                      <article
-                        v-for="policy in cmsGovernanceHubSummary.roles.policies"
-                        :key="policy.role"
-                        class="cms-governance-hub__item"
-                        data-cms-governance-role
-                      >
-                        <div class="cms-governance-hub__item-header">
-                          <strong>{{ policy.label }}</strong>
-                          <small>{{ policy.groupsCount }} {{ tr('groups', 'grupos') }}</small>
-                        </div>
-                        <small>{{ policy.allowCount }} {{ tr('allow', 'allow') }} · {{ policy.denyCount }} {{ tr('deny', 'deny') }}</small>
-                      </article>
-                    </div>
-                  </section>
+                  <CmsPanelListSection
+                    :title="tr('Role policies', 'Politicas de papel')"
+                    :summary-label="`${cmsGovernanceHubSummary.roles.count} ${tr('roles', 'papeis')}`"
+                    :items="cmsGovernanceRolePolicyPanelItems"
+                    :chip-style="bannerStyle"
+                    section-class="cms-governance-hub__list"
+                    header-class="cms-governance-hub__list-header"
+                    items-class="cms-governance-hub__items"
+                    item-class="cms-governance-hub__item"
+                    item-header-class="cms-governance-hub__item-header"
+                    item-data-attr-name="data-cms-governance-role"
+                  />
                 </div>
               </div>
 
@@ -5123,12 +5072,14 @@
                 class="cms-release-acknowledgements"
                 data-cms-release-acks
               >
-                <div class="cms-release-acknowledgements__header">
-                  <div class="cms-release-acknowledgements__copy">
-                    <strong>{{ tr('Review acknowledgements', 'Reconhecimentos de revisao') }}</strong>
-                    <small>{{ tr('Capture lightweight sign-off notes for the current release candidate without requiring backend workflow execution.', 'Capture notas leves de aprovacao para o candidato atual sem exigir execucao de workflow no backend.') }}</small>
-                  </div>
-                  <div class="cms-release-acknowledgements__summary">
+                <CmsSectionHeaderSummary
+                  :title="tr('Review acknowledgements', 'Reconhecimentos de revisao')"
+                  :description="tr('Capture lightweight sign-off notes for the current release candidate without requiring backend workflow execution.', 'Capture notas leves de aprovacao para o candidato atual sem exigir execucao de workflow no backend.')"
+                  container-class="cms-release-acknowledgements__header"
+                  copy-class="cms-release-acknowledgements__copy"
+                  summary-class="cms-release-acknowledgements__summary"
+                >
+                  <template #summary>
                     <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('approved')">
                       {{ selectedReleaseAcknowledgementSummary.approvedCount }} {{ tr('approved', 'aprovados') }}
                     </q-chip>
@@ -5138,8 +5089,8 @@
                     <q-chip dense square :style="getReleaseAcknowledgementDecisionStyle('changes_requested')">
                       {{ selectedReleaseAcknowledgementSummary.changesRequestedCount }} {{ tr('changes requested', 'mudancas solicitadas') }}
                     </q-chip>
-                  </div>
-                </div>
+                  </template>
+                </CmsSectionHeaderSummary>
 
                 <div class="cms-release-acknowledgements__form">
                   <q-select
@@ -5201,12 +5152,14 @@
               </div>
 
               <div v-if="selectedReleaseCandidateChecklist" class="cms-release-checklist">
-                <div class="cms-release-checklist__header">
-                  <div class="cms-release-checklist__copy">
-                    <strong>{{ tr('Release candidate checklist', 'Checklist do candidato a release') }}</strong>
-                    <small>{{ tr('Review publish readiness before scheduling or publishing this snapshot.', 'Revise a prontidao para publicar antes de agendar ou publicar este snapshot.') }}</small>
-                  </div>
-                  <div class="cms-release-checklist__summary">
+                <CmsSectionHeaderSummary
+                  :title="tr('Release candidate checklist', 'Checklist do candidato a release')"
+                  :description="tr('Review publish readiness before scheduling or publishing this snapshot.', 'Revise a prontidao para publicar antes de agendar ou publicar este snapshot.')"
+                  container-class="cms-release-checklist__header"
+                  copy-class="cms-release-checklist__copy"
+                  summary-class="cms-release-checklist__summary"
+                >
+                  <template #summary>
                     <q-chip dense square :style="getReleaseChecklistStatusStyle('ready')">
                       {{ selectedReleaseCandidateChecklist.summary.readyCount }} {{ tr('ready', 'prontos') }}
                     </q-chip>
@@ -5216,8 +5169,8 @@
                     <q-chip dense square :style="getReleaseChecklistStatusStyle('blocking')">
                       {{ selectedReleaseCandidateChecklist.summary.blockingCount }} {{ tr('blocking', 'bloqueando') }}
                     </q-chip>
-                  </div>
-                </div>
+                  </template>
+                </CmsSectionHeaderSummary>
 
                 <div class="cms-release-checklist__items">
                   <article
@@ -5734,6 +5687,9 @@ import CmsAuthoringStatusBar, { type CmsAuthoringStatusItem } from './cms/CmsAut
 import CmsAuthoringToolbar, { type CmsAuthoringToolbarInfoItem } from './cms/CmsAuthoringToolbar.vue'
 import CmsAuthoringRulerBar from './cms/CmsAuthoringRulerBar.vue'
 import CmsDiagnosticsListSection, { type CmsDiagnosticsListItem } from './cms/CmsDiagnosticsListSection.vue'
+import CmsSectionHeaderSummary from './cms/CmsSectionHeaderSummary.vue'
+import CmsStatusMetricCardGrid, { type CmsStatusMetricCardItem } from './cms/CmsStatusMetricCardGrid.vue'
+import CmsPanelListSection, { type CmsPanelListSectionItem } from './cms/CmsPanelListSection.vue'
 import CmsShellCard from './cms/CmsShellCard.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from './cms/CmsWorkspaceTabs.vue'
 import { useCmsUiText } from './cms/composables/useCmsUiText'
@@ -9589,6 +9545,73 @@ const releaseReviewPackageHistoryEntries = computed<CmsReviewPackageHistoryEntry
     })
     .slice(0, 8)
 })
+const selectedReleaseReviewHubCardItems = computed<CmsStatusMetricCardItem[]>(() => {
+  const hub = selectedReleaseReviewHub.value
+  if (!hub) {
+    return []
+  }
+
+  return hub.cards.map(card => ({
+    id: card.id,
+    title: getReleaseReviewHubCardLabel(card.id),
+    description: getReleaseReviewHubCardDescription(card),
+    statusLabel: getReleaseChecklistStatusLabel(card.status),
+    statusStyle: getReleaseChecklistStatusStyle(card.status),
+    statusValue: card.status,
+    metrics: card.metrics.map(metric => ({
+      id: metric.id,
+      label: getReleaseReviewHubMetricLabel(card.id, metric.id),
+      value: metric.value,
+    })),
+  }))
+})
+const cmsGovernanceHubCardItems = computed<CmsStatusMetricCardItem[]>(() => (
+  cmsGovernanceHubSummary.value.cards.map(card => ({
+    id: card.id,
+    title: getGovernanceHubCardLabel(card.id),
+    description: getGovernanceHubCardDescription(card),
+    statusLabel: getReleaseChecklistStatusLabel(card.status),
+    statusStyle: getReleaseChecklistStatusStyle(card.status),
+    statusValue: card.status,
+    metrics: card.metrics.map(metric => ({
+      id: metric.id,
+      label: getGovernanceHubMetricLabel(card.id, metric.id),
+      value: metric.value,
+    })),
+  }))
+))
+const cmsGovernanceRevisionPanelItems = computed<CmsPanelListSectionItem[]>(() => (
+  cmsGovernanceHubSummary.value.revisions.recent.map(revision => ({
+    id: `${revision.version}-${revision.at}`,
+    title: `v${revision.version} · ${getGovernanceWorkflowStatusLabel(revision.status)}`,
+    meta: formatReleaseTimestamp(revision.at),
+    lines: [
+      `${getGovernanceActionLabel(revision.action)} · ${revision.by} · ${getGovernanceRoleLabel(revision.byRole)}`,
+      revision.summary,
+    ],
+  }))
+))
+const cmsGovernanceAuditPanelItems = computed<CmsPanelListSectionItem[]>(() => (
+  cmsGovernanceHubSummary.value.audit.recent.map(entry => ({
+    id: entry.id,
+    title: getGovernanceActionLabel(entry.action),
+    meta: formatReleaseTimestamp(entry.at),
+    lines: [
+      `${entry.actorId} · ${getGovernanceRoleLabel(entry.actorRole)} · v${entry.fromVersion} → v${entry.toVersion}`,
+      entry.summary,
+    ],
+  }))
+))
+const cmsGovernanceRolePolicyPanelItems = computed<CmsPanelListSectionItem[]>(() => (
+  cmsGovernanceHubSummary.value.roles.policies.map(policy => ({
+    id: policy.role,
+    title: policy.label,
+    meta: `${policy.groupsCount} ${tr('groups', 'grupos')}`,
+    lines: [
+      `${policy.allowCount} ${tr('allow', 'allow')} · ${policy.denyCount} ${tr('deny', 'deny')}`,
+    ],
+  }))
+))
 
 const cmsPreviewChangedPageDiffs = computed(() => {
   return (cmsPreviewDraftPublishedDiff.value?.pages ?? []).filter(page => page.status !== 'unchanged')
