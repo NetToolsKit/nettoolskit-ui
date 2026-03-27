@@ -157,10 +157,10 @@
             <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--settings">
                 <aside class="cms-designer-card__sidebar cms-settings__sidebar">
-                  <div class="cms-designer-card__sidebar-header">
-                    <strong>{{ tr('Workbench', 'Workbench') }}</strong>
-                    <small>{{ tr('White-label surfaces and CMS authoring contracts in one editing shell.', 'Superficies white-label e contratos de autoria CMS em um unico shell de edicao.') }}</small>
-                  </div>
+                  <CmsAuthoringPanelHeader
+                    :title="tr('Workbench', 'Workbench')"
+                    :description="tr('White-label surfaces and CMS authoring contracts in one editing shell.', 'Superficies white-label e contratos de autoria CMS em um unico shell de edicao.')"
+                  />
                   <div class="cms-designer-card__nav-list">
                     <button
                       v-for="tab in cmsSettingsWorkbenchTabs"
@@ -1865,13 +1865,11 @@
                 </div>
                 <aside class="cms-designer-card__rail cms-settings__rail">
                   <div class="cms-designer-card__rail-card">
-                    <strong>{{ tr('Designer rail', 'Rail do designer') }}</strong>
-                    <small>{{ tr('Context and recovery stay pinned while you edit without duplicating the top action bar.', 'Contexto e recovery ficam fixos durante a edicao sem duplicar a barra superior.') }}</small>
-                    <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Locale', 'Locale') }}: <strong>{{ settings.content.locale }}</strong></span>
-                      <span>{{ tr('Advanced fields', 'Campos avancados') }}: <strong>{{ showAdvancedThemeFields ? tr('Visible', 'Visiveis') : tr('Hidden', 'Ocultos') }}</strong></span>
-                      <span>{{ tr('Recovery', 'Recovery') }}: <strong>{{ canRestoreDraftRecovery ? tr('Available', 'Disponivel') : tr('Idle', 'Inativo') }}</strong></span>
-                    </div>
+                    <CmsAuthoringPanelHeader
+                      :title="tr('Designer rail', 'Rail do designer')"
+                      :description="tr('Context and recovery stay pinned while you edit without duplicating the top action bar.', 'Contexto e recovery ficam fixos durante a edicao sem duplicar a barra superior.')"
+                    />
+                    <CmsAuthoringMetricsList :items="cmsSettingsRailMetrics" />
                   </div>
                   <div class="cms-designer-card__rail-actions">
                     <q-btn round flat icon="tune" :aria-label="cmsUiText.showAdvancedOverridesLabel" @click="showAdvancedThemeFields = !showAdvancedThemeFields">
@@ -1882,15 +1880,10 @@
               </div>
             </template>
             <template #status>
-              <div class="cms-designer-card__statusbar cms-settings__statusbar">
-                <span class="cms-designer-card__status-text">
-                  <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
-                </span>
-                <span class="cms-designer-card__status-text">
-                  {{ activeSettingsWorkbenchTab?.label }}
-                </span>
-                <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
-              </div>
+              <CmsAuthoringStatusBar
+                class-name="cms-settings__statusbar"
+                :items="cmsSettingsStatusItems"
+              />
             </template>
           </CmsAuthoringWorkbench>
           <CmsShellCard
@@ -2087,16 +2080,11 @@
             <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--pages">
                 <aside class="cms-designer-card__sidebar cms-pages__sidebar">
-                  <div class="cms-designer-card__sidebar-header">
-                    <strong>{{ tr('Page setup', 'Setup da pagina') }}</strong>
-                    <small>{{ tr('Template, quick actions and starter flows stay together on the left while the center stays focused on editing.', 'Template, acoes rapidas e fluxos iniciais ficam juntos na esquerda enquanto o centro fica focado na edicao.') }}</small>
-                  </div>
-                  <div class="cms-designer-card__metrics">
-                    <span>{{ tr('Template', 'Template') }}: <strong>{{ cmsPageTemplateOptions.find(option => option.value === selectedPageTemplateId)?.label || selectedPageTemplateId }}</strong></span>
-                    <span>{{ tr('Pages in tenant', 'Paginas no tenant') }}: <strong>{{ settings.pages.length }}</strong></span>
-                    <span>{{ tr('Reusable sections', 'Secoes reutilizaveis') }}: <strong>{{ settings.reusableSections.length }}</strong></span>
-                    <span>{{ tr('Quick command', 'Comando rapido') }}: <strong>{{ selectedCmsBuilderCommandOption?.label || tr('None selected', 'Nenhum selecionado') }}</strong></span>
-                  </div>
+                  <CmsAuthoringPanelHeader
+                    :title="tr('Page setup', 'Setup da pagina')"
+                    :description="tr('Template, quick actions and starter flows stay together on the left while the center stays focused on editing.', 'Template, acoes rapidas e fluxos iniciais ficam juntos na esquerda enquanto o centro fica focado na edicao.')"
+                  />
+                  <CmsAuthoringMetricsList :items="cmsPagesSidebarMetrics" />
                   <div class="cms-pages__sidebar-section">
                     <strong>{{ tr('Workspace actions', 'Acoes do workspace') }}</strong>
                     <div class="cms-form-grid cms-pages__stage-toolbar">
@@ -2735,13 +2723,11 @@
                 </div>
                 <aside class="cms-designer-card__rail cms-pages__rail">
                   <div class="cms-designer-card__rail-card">
-                    <strong>{{ tr('Reusable content rail', 'Rail de conteudo reutilizavel') }}</strong>
-                    <small>{{ tr('Keep reusable sections and launch flows on the right so the center stays focused on live page editing.', 'Mantenha secoes reutilizaveis e fluxos de lancamento na direita para o centro ficar focado na edicao real da pagina.') }}</small>
-                    <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Visible sections', 'Secoes visiveis') }}: <strong>{{ filteredCmsReusableSectionLibrary.length }}</strong></span>
-                      <span>{{ tr('Total library', 'Biblioteca total') }}: <strong>{{ settings.reusableSections.length }}</strong></span>
-                      <span>{{ tr('Archived hidden', 'Arquivadas ocultas') }}: <strong>{{ showArchivedReusableSections ? tr('No', 'Nao') : tr('Yes', 'Sim') }}</strong></span>
-                    </div>
+                    <CmsAuthoringPanelHeader
+                      :title="tr('Reusable content rail', 'Rail de conteudo reutilizavel')"
+                      :description="tr('Keep reusable sections and launch flows on the right so the center stays focused on live page editing.', 'Mantenha secoes reutilizaveis e fluxos de lancamento na direita para o centro ficar focado na edicao real da pagina.')"
+                    />
+                    <CmsAuthoringMetricsList :items="cmsPagesRailMetrics" />
                   </div>
                   <div class="cms-pages__reusable-library">
                     <div class="cms-shell-card__header">
@@ -3026,12 +3012,10 @@
               </div>
             </template>
             <template #status>
-              <div class="cms-designer-card__statusbar cms-pages__statusbar">
-                <q-chip dense square :style="statusChipStyle">{{ tr('Pages', 'Paginas') }}: {{ settings.pages.length }}</q-chip>
-                <q-chip dense square :style="statusChipStyle">{{ tr('Visible', 'Visiveis') }}: {{ filteredCmsPageRows.length }}</q-chip>
-                <q-chip dense square :style="statusChipStyle">{{ tr('Reusable', 'Reutilizaveis') }}: {{ filteredCmsReusableSectionLibrary.length }}</q-chip>
-                <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
-              </div>
+              <CmsAuthoringStatusBar
+                class-name="cms-pages__statusbar"
+                :items="cmsPagesStatusItems"
+              />
             </template>
           </CmsAuthoringWorkbench>
 
@@ -3182,25 +3166,11 @@
                     </div>
                   </div>
 
-                  <div v-if="getCmsPreviewPageDiagnostics(page.id, pageIndex).length > 0" class="cms-diagnostics-list">
-                    <div class="cms-diagnostics-list__header">
-                      <strong>{{ tr('Content diagnostics', 'Diagnosticos de conteudo') }}</strong>
-                      <q-chip dense square :style="statusChipStyle">{{ getCmsPreviewPageDiagnostics(page.id, pageIndex).length }}</q-chip>
-                    </div>
-                    <article
-                      v-for="diagnostic in getCmsPreviewPageDiagnostics(page.id, pageIndex)"
-                      :key="diagnostic.id"
-                      class="cms-diagnostics-item"
-                    >
-                      <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
-                        {{ diagnostic.severity }}
-                      </q-chip>
-                      <div class="cms-diagnostics-item__body">
-                        <strong>{{ diagnostic.code }}</strong>
-                        <small>{{ diagnostic.message }}</small>
-                      </div>
-                    </article>
-                  </div>
+                  <CmsDiagnosticsListSection
+                    :title="tr('Content diagnostics', 'Diagnosticos de conteudo')"
+                    :items="toCmsDiagnosticsListItems(getCmsPreviewPageDiagnostics(page.id, pageIndex))"
+                    :count-style="statusChipStyle"
+                  />
                   <div class="cms-page-preview__sections">
                     <q-chip
                       v-for="section in page.sections"
@@ -3261,16 +3231,11 @@
             <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--blocks">
                 <aside class="cms-designer-card__sidebar cms-blocks__sidebar">
-                  <div class="cms-designer-card__sidebar-header">
-                    <strong>{{ tr('Block designer', 'Designer de blocos') }}</strong>
-                    <small>{{ tr('Keep focus on page, section and block context while authoring reusable pieces.', 'Mantenha foco em pagina, secao e bloco enquanto voce cria pecas reutilizaveis.') }}</small>
-                  </div>
-                  <div class="cms-designer-card__metrics">
-                    <span>{{ tr('Page', 'Pagina') }}: <strong>{{ activeBlocksPage?.title || tr('None selected', 'Nenhuma selecionada') }}</strong></span>
-                    <span>{{ tr('Section', 'Secao') }}: <strong>{{ activeBlocksSection?.label || tr('None selected', 'Nenhuma selecionada') }}</strong></span>
-                    <span>{{ tr('Block', 'Bloco') }}: <strong>{{ activeBlocksSelectedBlockRecord?.id || tr('None selected', 'Nenhum selecionado') }}</strong></span>
-                    <span>{{ tr('Visible sections', 'Secoes visiveis') }}: <strong>{{ filteredActiveBlocksSections.length }}</strong></span>
-                  </div>
+                  <CmsAuthoringPanelHeader
+                    :title="tr('Block designer', 'Designer de blocos')"
+                    :description="tr('Keep focus on page, section and block context while authoring reusable pieces.', 'Mantenha foco em pagina, secao e bloco enquanto voce cria pecas reutilizaveis.')"
+                  />
+                  <CmsAuthoringMetricsList :items="cmsBlocksSidebarMetrics" />
                 </aside>
                 <div class="cms-designer-card__stage cms-blocks__stage" :class="{ 'cms-designer-card__stage--plain': !showCmsDesignerStageGrid }">
               <div v-if="cmsBuilderCommandOptions.length > 0" class="cms-form-grid cms-blocks__stage-command-bar">
@@ -4231,13 +4196,11 @@
                 </div>
                 <aside class="cms-designer-card__rail cms-blocks__rail">
                   <div class="cms-designer-card__rail-card">
-                    <strong>{{ tr('Selection rail', 'Rail da selecao') }}</strong>
-                    <small>{{ tr('Bulk operations stay attached to the current section contract without repeating top-bar actions.', 'Operacoes em lote ficam anexadas ao contrato da secao atual sem repetir as acoes da barra superior.') }}</small>
-                    <div class="cms-designer-card__metrics">
-                      <span>{{ tr('Blocks in focus section', 'Blocos na secao em foco') }}: <strong>{{ cmsSectionBlocks.length }}</strong></span>
-                      <span>{{ tr('Limit reached', 'Limite atingido') }}: <strong>{{ activeBlocksSectionLimitReached ? tr('Yes', 'Sim') : tr('No', 'Nao') }}</strong></span>
-                      <span>{{ tr('Linked section', 'Secao vinculada') }}: <strong>{{ activeBlocksSectionIsLinked ? tr('Yes', 'Sim') : tr('No', 'Nao') }}</strong></span>
-                    </div>
+                    <CmsAuthoringPanelHeader
+                      :title="tr('Selection rail', 'Rail da selecao')"
+                      :description="tr('Bulk operations stay attached to the current section contract without repeating top-bar actions.', 'Operacoes em lote ficam anexadas ao contrato da secao atual sem repetir as acoes da barra superior.')"
+                    />
+                    <CmsAuthoringMetricsList :items="cmsBlocksRailMetrics" />
                   </div>
                   <div class="cms-designer-card__rail-actions">
                     <q-btn round flat icon="done_all" :disable="!canToggleActiveSectionBlocks" :aria-label="tr('Enable all blocks', 'Ativar todos os blocos')" @click="setCmsBuilderSectionBlocksEnabled(true)">
@@ -4254,12 +4217,10 @@
               </div>
             </template>
             <template #status>
-              <div class="cms-designer-card__statusbar cms-blocks__statusbar">
-                <q-chip dense square :style="statusChipStyle">{{ tr('Sections', 'Secoes') }}: {{ filteredActiveBlocksSections.length }}</q-chip>
-                <q-chip dense square :style="statusChipStyle">{{ tr('Blocks', 'Blocos') }}: {{ cmsSectionBlocks.length }}</q-chip>
-                <q-chip dense square :style="statusChipStyle">{{ tr('Reusable', 'Reutilizaveis') }}: {{ filteredCmsReusableBlockLibrary.length }}</q-chip>
-                <span class="cms-designer-card__status-text">{{ savedAtLabel }}</span>
-              </div>
+              <CmsAuthoringStatusBar
+                class-name="cms-blocks__statusbar"
+                :items="cmsBlocksStatusItems"
+              />
             </template>
           </CmsAuthoringWorkbench>
 
@@ -4417,45 +4378,17 @@
                 }}
               </q-banner>
 
-              <div v-if="activeBlocksContentDiagnostics.length > 0" class="cms-diagnostics-list">
-                <div class="cms-diagnostics-list__header">
-                  <strong>{{ tr('Content diagnostics', 'Diagnosticos de conteudo') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">{{ activeBlocksContentDiagnostics.length }}</q-chip>
-                </div>
-                <article
-                  v-for="diagnostic in activeBlocksContentDiagnostics"
-                  :key="diagnostic.id"
-                  class="cms-diagnostics-item"
-                >
-                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
-                    {{ diagnostic.severity }}
-                  </q-chip>
-                  <div class="cms-diagnostics-item__body">
-                    <strong>{{ diagnostic.code }}</strong>
-                    <small>{{ diagnostic.message }}</small>
-                  </div>
-                </article>
-              </div>
+              <CmsDiagnosticsListSection
+                :title="tr('Content diagnostics', 'Diagnosticos de conteudo')"
+                :items="toCmsDiagnosticsListItems(activeBlocksContentDiagnostics)"
+                :count-style="statusChipStyle"
+              />
 
-              <div v-if="activeBlocksMediaDiagnostics.length > 0" class="cms-diagnostics-list">
-                <div class="cms-diagnostics-list__header">
-                  <strong>{{ tr('Media diagnostics', 'Diagnosticos de midia') }}</strong>
-                  <q-chip dense square :style="statusChipStyle">{{ activeBlocksMediaDiagnostics.length }}</q-chip>
-                </div>
-                <article
-                  v-for="diagnostic in activeBlocksMediaDiagnostics"
-                  :key="diagnostic.id"
-                  class="cms-diagnostics-item"
-                >
-                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
-                    {{ diagnostic.severity }}
-                  </q-chip>
-                  <div class="cms-diagnostics-item__body">
-                    <strong>{{ diagnostic.code }}</strong>
-                    <small>{{ diagnostic.message }}</small>
-                  </div>
-                </article>
-              </div>
+              <CmsDiagnosticsListSection
+                :title="tr('Media diagnostics', 'Diagnosticos de midia')"
+                :items="toCmsDiagnosticsListItems(activeBlocksMediaDiagnostics)"
+                :count-style="statusChipStyle"
+              />
 
               <div class="cms-blocks-props">
                 <div class="cms-blocks-props__header">
@@ -4631,13 +4564,13 @@
         </div>
 
         <div v-else-if="isMediaModule" class="cms-shell-page__grid">
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ cmsUiText.mediaSettingsTitle }}</strong>
+          <CmsShellCard
+            :title="cmsUiText.mediaSettingsTitle"
+            body-class="cms-media__editor"
+          >
+            <template #header-actions>
               <q-chip dense square :style="statusChipStyle">{{ settings.mediaAssets.length }}</q-chip>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-media__editor">
+            </template>
               <div class="cms-form-grid">
                 <q-select
                   v-model="selectedMediaAssetId"
@@ -4701,54 +4634,27 @@
               <q-banner rounded class="cms-banner" :style="bannerStyle">
                 {{ tr('Media references are tenant-scoped and remain backend-agnostic. Apply any saved asset to branding slots immediately.', 'Referencias de midia sao por tenant e continuam desacopladas de backend. Aplique qualquer asset salvo nos slots de branding imediatamente.') }}
               </q-banner>
-            </div>
-          </q-card>
+          </CmsShellCard>
 
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ tr('Media preview', 'Preview de midia') }}</strong>
+          <CmsShellCard
+            :title="tr('Media preview', 'Preview de midia')"
+            body-class="cms-media__preview"
+          >
+            <template #header-actions>
               <q-chip v-if="cmsMediaDiagnostics.length > 0" dense square :style="getCmsDiagnosticStyle('warning')">
                 {{ cmsMediaDiagnostics.length }} {{ tr('diagnostics', 'diagnosticos') }}
               </q-chip>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-media__preview">
-              <div v-if="cmsMediaDiagnostics.length > 0" class="cms-diagnostics-list">
-                <div class="cms-diagnostics-list__header">
-                  <strong>{{ tr('Library diagnostics', 'Diagnosticos da biblioteca') }}</strong>
-                </div>
-                <article
-                  v-for="diagnostic in cmsMediaDiagnostics"
-                  :key="diagnostic.id"
-                  class="cms-diagnostics-item"
-                >
-                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
-                    {{ diagnostic.severity }}
-                  </q-chip>
-                  <div class="cms-diagnostics-item__body">
-                    <strong>{{ diagnostic.code }}</strong>
-                    <small>{{ diagnostic.message }}</small>
-                  </div>
-                </article>
-              </div>
-              <div v-if="selectedMediaAssetDiagnostics.length > 0" class="cms-diagnostics-list">
-                <div class="cms-diagnostics-list__header">
-                  <strong>{{ tr('Selected asset diagnostics', 'Diagnosticos do asset selecionado') }}</strong>
-                </div>
-                <article
-                  v-for="diagnostic in selectedMediaAssetDiagnostics"
-                  :key="diagnostic.id"
-                  class="cms-diagnostics-item"
-                >
-                  <q-chip dense square :style="getCmsDiagnosticStyle(diagnostic.severity)">
-                    {{ diagnostic.severity }}
-                  </q-chip>
-                  <div class="cms-diagnostics-item__body">
-                    <strong>{{ diagnostic.code }}</strong>
-                    <small>{{ diagnostic.message }}</small>
-                  </div>
-                </article>
-              </div>
+            </template>
+              <CmsDiagnosticsListSection
+                :title="tr('Library diagnostics', 'Diagnosticos da biblioteca')"
+                :items="toCmsDiagnosticsListItems(cmsMediaDiagnostics)"
+                :show-count="false"
+              />
+              <CmsDiagnosticsListSection
+                :title="tr('Selected asset diagnostics', 'Diagnosticos do asset selecionado')"
+                :items="toCmsDiagnosticsListItems(selectedMediaAssetDiagnostics)"
+                :show-count="false"
+              />
               <article
                 v-for="binding in cmsBrandingMediaBindings"
                 :key="binding.id"
@@ -4817,18 +4723,17 @@
                 </div>
                 <code class="cms-media-preview-item__url">{{ asset.url || tr('No URL configured', 'Nenhuma URL configurada') }}</code>
               </article>
-            </div>
-          </q-card>
+          </CmsShellCard>
         </div>
 
         <div v-else-if="isReleasesModule" class="cms-shell-page__grid">
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ cmsUiText.releaseOrchestrationTitle }}</strong>
+          <CmsShellCard
+            :title="cmsUiText.releaseOrchestrationTitle"
+            body-class="cms-releases__editor"
+          >
+            <template #header-actions>
               <q-chip dense square :style="statusChipStyle">{{ releaseCountLabel }}</q-chip>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-releases__editor">
+            </template>
               <div class="cms-form-grid">
                 <q-select
                   v-model="activeReleaseEnvironment"
@@ -5373,15 +5278,12 @@
                   <strong>[{{ issue.severity }}]</strong> {{ issue.message }}
                 </li>
               </ul>
-            </div>
-          </q-card>
+          </CmsShellCard>
 
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ cmsUiText.releaseTimelineTitle }}</strong>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-releases__timeline">
+          <CmsShellCard
+            :title="cmsUiText.releaseTimelineTitle"
+            body-class="cms-releases__timeline"
+          >
               <article
                 v-for="release in releaseTimelineEntries"
                 :key="release.id"
@@ -5417,16 +5319,15 @@
               <p v-if="releaseTimelineEntries.length === 0" class="cms-release-item__empty">
                 {{ cmsUiText.noReleasesYetMessage }}
               </p>
-            </div>
-          </q-card>
+          </CmsShellCard>
 
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ cmsUiText.releaseCalendarTitle }}</strong>
+          <CmsShellCard
+            :title="cmsUiText.releaseCalendarTitle"
+            body-class="cms-releases__calendar"
+          >
+            <template #header-actions>
               <q-chip dense square :style="statusChipStyle">{{ tr(`${scheduledReleaseCalendarEntries.length} scheduled`, `${scheduledReleaseCalendarEntries.length} agendados`) }}</q-chip>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body cms-releases__calendar">
+            </template>
               <article
                 v-for="entry in scheduledReleaseCalendarEntries"
                 :key="entry.id"
@@ -5458,18 +5359,16 @@
               <p v-if="releaseCalendarConflicts.length === 0" class="cms-release-item__empty">
                 {{ cmsUiText.noCalendarConflictsMessage }}
               </p>
-            </div>
-          </q-card>
+          </CmsShellCard>
         </div>
 
         <div v-else class="cms-shell-page__grid">
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ settings.content.statusTitle }}</strong>
+          <CmsShellCard
+            :title="settings.content.statusTitle"
+          >
+            <template #header-actions>
               <q-chip dense square icon="check_circle" :style="statusChipStyle">{{ settings.content.statusChipLabel }}</q-chip>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body">
+            </template>
               <q-list dense>
                 <q-item>
                   <q-item-section avatar><q-icon name="palette" :style="{ color: accentColor }" /></q-item-section>
@@ -5488,23 +5387,18 @@
                   <q-item-section>{{ settings.content.statusTopbarText }}</q-item-section>
                 </q-item>
               </q-list>
-            </div>
-          </q-card>
+          </CmsShellCard>
 
-          <q-card flat bordered class="cms-shell-card">
-            <div class="cms-shell-card__header">
-              <strong>{{ settings.content.howToTitle }}</strong>
-            </div>
-            <q-separator />
-            <div class="cms-shell-card__body">
+          <CmsShellCard
+            :title="settings.content.howToTitle"
+          >
               <p class="q-mb-md">
                 {{ settings.content.howToBody }}
               </p>
               <q-banner rounded class="cms-banner" :style="bannerStyle">
                 {{ settings.content.howToNextStep }}
               </q-banner>
-            </div>
-          </q-card>
+          </CmsShellCard>
         </div>
       </div>
     </div>
@@ -5834,8 +5728,12 @@ import CmsPreviewToolbar from './cms/CmsPreviewToolbar.vue'
 import CmsLocaleCoverageMatrix from './cms/CmsLocaleCoverageMatrix.vue'
 import CmsEntityUsageDrawer, { type CmsEntityUsageDrawerReferenceView } from './cms/CmsEntityUsageDrawer.vue'
 import CmsAuthoringWorkbench from './cms/CmsAuthoringWorkbench.vue'
+import CmsAuthoringPanelHeader from './cms/CmsAuthoringPanelHeader.vue'
+import CmsAuthoringMetricsList, { type CmsAuthoringMetricItem } from './cms/CmsAuthoringMetricsList.vue'
+import CmsAuthoringStatusBar, { type CmsAuthoringStatusItem } from './cms/CmsAuthoringStatusBar.vue'
 import CmsAuthoringToolbar, { type CmsAuthoringToolbarInfoItem } from './cms/CmsAuthoringToolbar.vue'
 import CmsAuthoringRulerBar from './cms/CmsAuthoringRulerBar.vue'
+import CmsDiagnosticsListSection, { type CmsDiagnosticsListItem } from './cms/CmsDiagnosticsListSection.vue'
 import CmsShellCard from './cms/CmsShellCard.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from './cms/CmsWorkspaceTabs.vue'
 import { useCmsUiText } from './cms/composables/useCmsUiText'
@@ -6720,6 +6618,183 @@ const cmsBlocksToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => 
     label: activeShellItem.value.label,
   },
 ]))
+const cmsSettingsRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
+  {
+    id: 'locale',
+    label: tr('Locale', 'Locale'),
+    value: settings.value.content.locale,
+  },
+  {
+    id: 'advanced-fields',
+    label: tr('Advanced fields', 'Campos avancados'),
+    value: showAdvancedThemeFields.value ? tr('Visible', 'Visiveis') : tr('Hidden', 'Ocultos'),
+  },
+  {
+    id: 'recovery',
+    label: tr('Recovery', 'Recovery'),
+    value: canRestoreDraftRecovery.value ? tr('Available', 'Disponivel') : tr('Idle', 'Inativo'),
+  },
+]))
+const cmsPagesSidebarMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
+  {
+    id: 'template',
+    label: tr('Template', 'Template'),
+    value: cmsPageTemplateOptions.value.find(option => option.value === selectedPageTemplateId.value)?.label || selectedPageTemplateId.value,
+  },
+  {
+    id: 'tenant-pages',
+    label: tr('Pages in tenant', 'Paginas no tenant'),
+    value: settings.value.pages.length,
+  },
+  {
+    id: 'reusable-sections',
+    label: tr('Reusable sections', 'Secoes reutilizaveis'),
+    value: settings.value.reusableSections.length,
+  },
+  {
+    id: 'quick-command',
+    label: tr('Quick command', 'Comando rapido'),
+    value: selectedCmsBuilderCommandOption.value?.label || tr('None selected', 'Nenhum selecionado'),
+  },
+]))
+const cmsPagesRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
+  {
+    id: 'visible-sections',
+    label: tr('Visible sections', 'Secoes visiveis'),
+    value: filteredCmsReusableSectionLibrary.value.length,
+  },
+  {
+    id: 'total-library',
+    label: tr('Total library', 'Biblioteca total'),
+    value: settings.value.reusableSections.length,
+  },
+  {
+    id: 'archived-hidden',
+    label: tr('Archived hidden', 'Arquivadas ocultas'),
+    value: showArchivedReusableSections.value ? tr('No', 'Nao') : tr('Yes', 'Sim'),
+  },
+]))
+const cmsBlocksSidebarMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
+  {
+    id: 'page',
+    label: tr('Page', 'Pagina'),
+    value: activeBlocksPage.value?.title || tr('None selected', 'Nenhuma selecionada'),
+  },
+  {
+    id: 'section',
+    label: tr('Section', 'Secao'),
+    value: activeBlocksSection.value?.label || tr('None selected', 'Nenhuma selecionada'),
+  },
+  {
+    id: 'block',
+    label: tr('Block', 'Bloco'),
+    value: activeBlocksSelectedBlockRecord.value?.id || tr('None selected', 'Nenhum selecionado'),
+  },
+  {
+    id: 'visible-sections',
+    label: tr('Visible sections', 'Secoes visiveis'),
+    value: filteredActiveBlocksSections.value.length,
+  },
+]))
+const cmsBlocksRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
+  {
+    id: 'blocks-in-focus-section',
+    label: tr('Blocks in focus section', 'Blocos na secao em foco'),
+    value: cmsSectionBlocks.value.length,
+  },
+  {
+    id: 'limit-reached',
+    label: tr('Limit reached', 'Limite atingido'),
+    value: activeBlocksSectionLimitReached.value ? tr('Yes', 'Sim') : tr('No', 'Nao'),
+  },
+  {
+    id: 'linked-section',
+    label: tr('Linked section', 'Secao vinculada'),
+    value: activeBlocksSectionIsLinked.value ? tr('Yes', 'Sim') : tr('No', 'Nao'),
+  },
+]))
+const cmsSettingsStatusItems = computed<CmsAuthoringStatusItem[]>(() => ([
+  {
+    id: 'tenant',
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    emphasis: true,
+  },
+  {
+    id: 'tab',
+    label: activeSettingsWorkbenchTab.value?.label || '',
+  },
+  {
+    id: 'saved-at',
+    label: savedAtLabel.value,
+  },
+]))
+const cmsPagesStatusItems = computed<CmsAuthoringStatusItem[]>(() => ([
+  {
+    id: 'pages',
+    kind: 'chip',
+    label: `${tr('Pages', 'Paginas')}: ${settings.value.pages.length}`,
+    style: statusChipStyle.value,
+  },
+  {
+    id: 'visible',
+    kind: 'chip',
+    label: `${tr('Visible', 'Visiveis')}: ${filteredCmsPageRows.value.length}`,
+    style: statusChipStyle.value,
+  },
+  {
+    id: 'reusable',
+    kind: 'chip',
+    label: `${tr('Reusable', 'Reutilizaveis')}: ${filteredCmsReusableSectionLibrary.value.length}`,
+    style: statusChipStyle.value,
+  },
+  {
+    id: 'saved-at',
+    label: savedAtLabel.value,
+  },
+]))
+const cmsBlocksStatusItems = computed<CmsAuthoringStatusItem[]>(() => ([
+  {
+    id: 'sections',
+    kind: 'chip',
+    label: `${tr('Sections', 'Secoes')}: ${filteredActiveBlocksSections.value.length}`,
+    style: statusChipStyle.value,
+  },
+  {
+    id: 'blocks',
+    kind: 'chip',
+    label: `${tr('Blocks', 'Blocos')}: ${cmsSectionBlocks.value.length}`,
+    style: statusChipStyle.value,
+  },
+  {
+    id: 'reusable',
+    kind: 'chip',
+    label: `${tr('Reusable', 'Reutilizaveis')}: ${filteredCmsReusableBlockLibrary.value.length}`,
+    style: statusChipStyle.value,
+  },
+  {
+    id: 'saved-at',
+    label: savedAtLabel.value,
+  },
+]))
+function toCmsDiagnosticsListItems(
+  diagnostics: ReadonlyArray<{
+    id: string
+    code: string
+    message: string
+    severity:
+      | CmsMediaDiagnostic['severity']
+      | CmsReleaseValidationIssue['severity']
+      | CmsContentValidationIssue['severity']
+  }>
+): CmsDiagnosticsListItem[] {
+  return diagnostics.map(diagnostic => ({
+    id: diagnostic.id,
+    code: diagnostic.code,
+    message: diagnostic.message,
+    severity: diagnostic.severity,
+    severityStyle: getCmsDiagnosticStyle(diagnostic.severity),
+  }))
+}
 const cmsSettingsWorkspaceTabValue = computed(() => (
   cmsDesignerPreviewMode.value || cmsSettingsWorkspaceView.value === 'preview' ? 'preview' : 'editor'
 ))

@@ -53,6 +53,14 @@ Out of scope:
   - add `landing-page/cms/CmsShellCard.vue` as a reusable shell for CMS cards with shared header, actions, separator, and body regions
   - migrate the `Settings`, `Pages`, and `Blocks` preview surfaces onto `CmsShellCard`
   - keep the preview runtime behavior intact while removing repeated `q-card` scaffolding from `CmsApp.vue`
+- 2026-03-27 phase 5:
+  - add reusable authoring presentational contracts:
+    - `landing-page/cms/CmsAuthoringPanelHeader.vue`
+    - `landing-page/cms/CmsAuthoringMetricsList.vue`
+    - `landing-page/cms/CmsAuthoringStatusBar.vue`
+    - `landing-page/cms/CmsDiagnosticsListSection.vue`
+  - migrate repeated sidebar, rail, status, and diagnostics chrome in `Settings`, `Pages`, `Blocks`, and `Media` onto those shared components
+  - keep CMS-specific behavior in `CmsApp.vue` while moving the repeated markup into reusable CMS/template-aligned view components
 
 ## Ordered Tasks
 
@@ -118,7 +126,7 @@ Out of scope:
      - `npm run type-check`
      - `npm run build:landing`
    - Checkpoints:
-     - repeated toolbar/ruler/sidebar/status blocks extracted
+     - repeated toolbar/ruler/sidebar/status/diagnostics blocks extracted
      - shared styles used instead of per-screen duplication
      - `CmsApp.vue` becomes orchestration-heavy instead of markup-heavy
    - Commit checkpoint suggestion:
