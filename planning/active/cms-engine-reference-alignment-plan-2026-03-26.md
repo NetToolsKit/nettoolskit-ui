@@ -44,6 +44,11 @@ Out of scope:
   - `CmsAuthoringWorkbench` is backed by `EditorWorkbenchTemplate`
   - the three editor modules keep their legacy inner authoring content while sharing one template-driven host
   - `landing-page/CmsApp.vue` was stabilized again after the earlier broken workbench migration attempt
+- 2026-03-26 phase 3:
+  - extract shared authoring chrome into dedicated reusable components:
+    - `landing-page/cms/CmsAuthoringToolbar.vue`
+    - `landing-page/cms/CmsAuthoringRulerBar.vue`
+  - `Settings`, `Pages`, and `Blocks` now reuse the same toolbar and ruler contracts instead of duplicating those shells inline inside `CmsApp.vue`
 
 ## Ordered Tasks
 

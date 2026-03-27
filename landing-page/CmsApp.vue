@@ -130,9 +130,8 @@
             :status-bar-aria-label="tr('Settings status bar', 'Barra de status de configuracoes')"
           >
             <template #header>
-            <div class="cms-shell-card__header cms-designer-card__toolbar-header">
-              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
+              <CmsAuthoringToolbar :info-items="cmsSettingsToolbarInfoItems">
+                <template #actions>
                   <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open settings workspace', 'Abrir workspace de configuracoes')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
                   <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt" />
                   <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
@@ -140,50 +139,20 @@
                   <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
                   <q-btn flat dense no-caps icon="download" class="cms-designer-card__toolbar-action" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile" />
                   <q-btn flat dense no-caps icon="upload_file" class="cms-designer-card__toolbar-action" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog" />
-                </div>
-                <div class="cms-designer-card__toolbar-spacer" />
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
+                </template>
+                <template #trailing>
                   <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('settings')" />
-                </div>
-              </div>
-              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
-                <div class="cms-designer-card__info-strip">
-                  <span class="cms-designer-card__info-item">
-                    <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
-                  </span>
-                  <span class="cms-designer-card__info-item">
-                    {{ cmsAutosaveStatusLabel }}
-                  </span>
-                  <span class="cms-designer-card__info-item">
-                    {{ activeSettingsWorkbenchTab?.label }}
-                  </span>
-                </div>
-              </div>
-            </div>
+                </template>
+              </CmsAuthoringToolbar>
             </template>
             <template #ruler>
-              <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--settings">
-                <div class="cms-designer-card__ruler-gutter">
-                  <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus workbench', 'Focar workbench')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
-                </div>
-                <div class="cms-designer-card__ruler">
-                  <span v-for="mark in cmsDesignerRulerMarks" :key="`settings-ruler-${mark}`" class="cms-designer-card__ruler-mark">
-                    {{ mark }}
-                  </span>
-                </div>
-                <div class="cms-designer-card__ruler-meta">
-                  <span class="cms-designer-card__ruler-zoom">100%</span>
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    icon="grid_4x4"
-                    class="cms-designer-card__ruler-mode"
-                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
-                    @click="toggleCmsDesignerStageGrid"
-                  />
-                </div>
-              </div>
+              <CmsAuthoringRulerBar
+                :marks="cmsDesignerRulerMarks"
+                :focus-aria-label="tr('Focus workbench', 'Focar workbench')"
+                :mode-label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                @focus="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')"
+                @toggle-mode="toggleCmsDesignerStageGrid"
+              />
             </template>
             <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--settings">
@@ -2089,55 +2058,31 @@
             :status-bar-aria-label="tr('Pages status bar', 'Barra de status de paginas')"
           >
             <template #header>
-            <div class="cms-shell-card__header cms-designer-card__toolbar-header">
-              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
+              <CmsAuthoringToolbar :info-items="cmsPagesToolbarInfoItems">
+                <template #actions>
                   <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open pages workspace', 'Abrir workspace de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')" />
                   <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.addPageLabel" @click="addCmsPage" />
                   <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
                   <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange" />
                   <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
-                </div>
-                <div class="cms-designer-card__toolbar-spacer" />
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
+                </template>
+                <template #trailing>
                   <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('pages')" />
-                </div>
-              </div>
-              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
-                <div class="cms-designer-card__info-strip">
-                  <span class="cms-designer-card__info-item">
-                    <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
-                  </span>
-                  <span class="cms-designer-card__info-item">{{ cmsAutosaveStatusLabel }}</span>
-                  <span class="cms-designer-card__info-item">{{ activeShellItem.label }}</span>
-                </div>
-              </div>
-            </div>
+                </template>
+              </CmsAuthoringToolbar>
             </template>
             <template #ruler>
-              <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--pages">
-                <div class="cms-designer-card__ruler-gutter">
-                  <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus page workbench', 'Focar workbench de paginas')" @click="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')" />
-                </div>
-                <div class="cms-designer-card__ruler">
-                  <span v-for="mark in cmsDesignerRulerMarks" :key="`pages-ruler-${mark}`" class="cms-designer-card__ruler-mark">
-                    {{ mark }}
-                  </span>
-                </div>
-                <div class="cms-designer-card__ruler-meta">
+              <CmsAuthoringRulerBar
+                :marks="cmsDesignerRulerMarks"
+                :focus-aria-label="tr('Focus page workbench', 'Focar workbench de paginas')"
+                :mode-label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                @focus="scrollCmsDesignerSurface('.cms-designer-card--pages .cms-designer-card__workbench')"
+                @toggle-mode="toggleCmsDesignerStageGrid"
+              >
+                <template #meta-prefix>
                   <q-chip dense square :style="statusChipStyle">{{ selectedPageTemplateId }}</q-chip>
-                  <span class="cms-designer-card__ruler-zoom">100%</span>
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    icon="grid_4x4"
-                    class="cms-designer-card__ruler-mode"
-                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
-                    @click="toggleCmsDesignerStageGrid"
-                  />
-                </div>
-              </div>
+                </template>
+              </CmsAuthoringRulerBar>
             </template>
             <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--pages">
@@ -3287,55 +3232,31 @@
             :status-bar-aria-label="tr('Blocks status bar', 'Barra de status de blocos')"
           >
             <template #header>
-            <div class="cms-shell-card__header cms-designer-card__toolbar-header">
-              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--actions">
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--icons">
+              <CmsAuthoringToolbar :info-items="cmsBlocksToolbarInfoItems">
+                <template #actions>
                   <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open blocks workspace', 'Abrir workspace de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')" />
                   <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :disable="!canAddPaletteBlockToActiveSection" :aria-label="tr('Add block', 'Adicionar bloco')" @click="addCmsBuilderBlockFromPalette" />
                   <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow" />
                   <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange" />
                   <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange" />
-                </div>
-                <div class="cms-designer-card__toolbar-spacer" />
-                <div class="cms-designer-card__toolbar-group cms-designer-card__toolbar-group--preview">
+                </template>
+                <template #trailing>
                   <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('blocks')" />
-                </div>
-              </div>
-              <div class="cms-designer-card__toolbar-row cms-designer-card__toolbar-row--info">
-                <div class="cms-designer-card__info-strip">
-                  <span class="cms-designer-card__info-item">
-                    <strong>{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</strong>
-                  </span>
-                  <span class="cms-designer-card__info-item">{{ cmsAutosaveStatusLabel }}</span>
-                  <span class="cms-designer-card__info-item">{{ activeShellItem.label }}</span>
-                </div>
-              </div>
-            </div>
+                </template>
+              </CmsAuthoringToolbar>
             </template>
             <template #ruler>
-              <div class="cms-designer-card__ruler-shell cms-designer-card__ruler-shell--blocks">
-                <div class="cms-designer-card__ruler-gutter">
-                  <q-btn flat dense round icon="chevron_left" :aria-label="tr('Focus block workbench', 'Focar workbench de blocos')" @click="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')" />
-                </div>
-                <div class="cms-designer-card__ruler">
-                  <span v-for="mark in cmsDesignerRulerMarks" :key="`blocks-ruler-${mark}`" class="cms-designer-card__ruler-mark">
-                    {{ mark }}
-                  </span>
-                </div>
-                <div class="cms-designer-card__ruler-meta">
+              <CmsAuthoringRulerBar
+                :marks="cmsDesignerRulerMarks"
+                :focus-aria-label="tr('Focus block workbench', 'Focar workbench de blocos')"
+                :mode-label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
+                @focus="scrollCmsDesignerSurface('.cms-designer-card--blocks .cms-designer-card__workbench')"
+                @toggle-mode="toggleCmsDesignerStageGrid"
+              >
+                <template #meta-prefix>
                   <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} {{ tr('blocks', 'blocos') }}</q-chip>
-                  <span class="cms-designer-card__ruler-zoom">100%</span>
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    icon="grid_4x4"
-                    class="cms-designer-card__ruler-mode"
-                    :label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
-                    @click="toggleCmsDesignerStageGrid"
-                  />
-                </div>
-              </div>
+                </template>
+              </CmsAuthoringRulerBar>
             </template>
             <template #workbench>
               <div class="cms-designer-card__workbench cms-designer-card__workbench--blocks">
@@ -5913,6 +5834,8 @@ import CmsPreviewToolbar from './cms/CmsPreviewToolbar.vue'
 import CmsLocaleCoverageMatrix from './cms/CmsLocaleCoverageMatrix.vue'
 import CmsEntityUsageDrawer, { type CmsEntityUsageDrawerReferenceView } from './cms/CmsEntityUsageDrawer.vue'
 import CmsAuthoringWorkbench from './cms/CmsAuthoringWorkbench.vue'
+import CmsAuthoringToolbar, { type CmsAuthoringToolbarInfoItem } from './cms/CmsAuthoringToolbar.vue'
+import CmsAuthoringRulerBar from './cms/CmsAuthoringRulerBar.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from './cms/CmsWorkspaceTabs.vue'
 import { useCmsUiText } from './cms/composables/useCmsUiText'
 import {
@@ -6750,6 +6673,51 @@ const cmsBlocksWorkspaceView = ref<CmsDesignerWorkspaceView>('editor')
 const cmsWorkspaceTabOptions = computed<CmsWorkspaceTabOption[]>(() => ([
   { id: 'editor', label: tr('Editor', 'Editor') },
   { id: 'preview', label: tr('Preview', 'Preview') },
+]))
+const cmsSettingsToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => ([
+  {
+    id: 'tenant',
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    emphasis: true,
+  },
+  {
+    id: 'autosave',
+    label: cmsAutosaveStatusLabel.value,
+  },
+  {
+    id: 'tab',
+    label: activeSettingsWorkbenchTab.value?.label || '',
+  },
+]))
+const cmsPagesToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => ([
+  {
+    id: 'tenant',
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    emphasis: true,
+  },
+  {
+    id: 'autosave',
+    label: cmsAutosaveStatusLabel.value,
+  },
+  {
+    id: 'module',
+    label: activeShellItem.value.label,
+  },
+]))
+const cmsBlocksToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => ([
+  {
+    id: 'tenant',
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    emphasis: true,
+  },
+  {
+    id: 'autosave',
+    label: cmsAutosaveStatusLabel.value,
+  },
+  {
+    id: 'module',
+    label: activeShellItem.value.label,
+  },
 ]))
 const cmsSettingsWorkspaceTabValue = computed(() => (
   cmsDesignerPreviewMode.value || cmsSettingsWorkspaceView.value === 'preview' ? 'preview' : 'editor'
