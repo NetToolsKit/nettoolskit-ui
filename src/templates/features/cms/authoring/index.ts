@@ -23,5 +23,6 @@ export type { CmsStatusMetricCardItem, CmsStatusMetricCardMetric } from './CmsSt
 export { default as CmsWorkspaceTabs } from './CmsWorkspaceTabs.vue'
 export type { CmsWorkspaceTabOption } from './CmsWorkspaceTabs.vue'
 export { default as CmsMediaModuleSurface } from './modules/CmsMediaModuleSurface.vue'
+export { default as CmsPagesModuleSurface } from './modules/CmsPagesModuleSurface.vue'
 export { default as CmsReleasesModuleSurface } from './modules/CmsReleasesModuleSurface.vue'
 export { default as CmsPagesPreviewSurface } from './modules/CmsPagesPreviewSurface.vue'
