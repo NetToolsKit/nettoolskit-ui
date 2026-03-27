@@ -3028,175 +3028,55 @@
             </template>
           </CmsAuthoringWorkbench>
 
-          <CmsShellCard
+          <CmsPagesPreviewSurface
             v-if="cmsPagesWorkspaceView === 'preview' || cmsDesignerPreviewMode"
-            :title="tr('Pages preview', 'Preview de paginas')"
-            body-class="cms-pages__preview"
-          >
-            <template #header-actions>
-              <q-btn
-                flat
-                dense
-                no-caps
-                icon="open_in_new"
-                :label="tr('Open in new window', 'Abrir em nova janela')"
-                @click="openCmsDesignerPreviewInWindow('pages')"
-              />
-            </template>
-              <CmsPreviewToolbar
-                v-model:source="cmsPreviewSource"
-                v-model:locale="cmsPreviewLocale"
-                v-model:viewport="cmsPreviewViewport"
-                :source-options="cmsPreviewSourceOptions"
-                :locale-options="cmsLocaleOptions"
-                :viewport-options="cmsPreviewViewportOptions"
-                :published-release-label="cmsPreviewPublishedReleaseLabel"
-                :status-chip-style="statusChipStyle"
-                :is-pt-br="isPtBrLocale"
-              />
-
-              <q-banner v-if="cmsPreviewEmptyMessage" rounded class="cms-banner" :style="bannerStyle">
-                {{ cmsPreviewEmptyMessage }}
-              </q-banner>
-
-              <template v-else>
-                <div v-if="cmsPreviewDraftPublishedDiff" class="cms-review-summary">
-                  <CmsSectionHeaderSummary
-                    :title="tr('Draft vs published review', 'Revisao rascunho vs publicado')"
-                    container-class="cms-review-summary__header"
-                    summary-class="cms-page-preview__chips"
-                  >
-                    <template #summary>
-                      <q-chip dense square :style="statusChipStyle">
-                        {{ cmsPreviewDraftPublishedDiff.releaseName }} · {{ cmsPreviewDraftPublishedDiff.releaseEnvironment }}
-                      </q-chip>
-                      <q-chip
-                        dense
-                        square
-                        :style="cmsPreviewDraftPublishedDiff.hasChanges ? getCmsPreviewDiffStatusStyle('changed') : getCmsPreviewDiffStatusStyle('unchanged')"
-                      >
-                        {{
-                          cmsPreviewDraftPublishedDiff.hasChanges
-                            ? tr('Changes detected', 'Mudancas detectadas')
-                            : tr('No changes against published', 'Sem mudancas contra o publicado')
-                        }}
-                      </q-chip>
-                    </template>
-                  </CmsSectionHeaderSummary>
-                  <div class="cms-blocks-summary-grid">
-                    <div class="cms-blocks-summary-card">
-                      <span>{{ tr('Pages changed', 'Paginas alteradas') }}</span>
-                      <strong>{{ getCmsPreviewDiffChangeCount(cmsPreviewDraftPublishedDiff.pageSummary) }}</strong>
-                    </div>
-                    <div class="cms-blocks-summary-card">
-                      <span>{{ tr('Sections changed', 'Secoes alteradas') }}</span>
-                      <strong>{{ getCmsPreviewDiffChangeCount(cmsPreviewDraftPublishedDiff.sectionSummary) }}</strong>
-                    </div>
-                    <div class="cms-blocks-summary-card">
-                      <span>{{ tr('Blocks changed', 'Blocos alterados') }}</span>
-                      <strong>{{ getCmsPreviewDiffChangeCount(cmsPreviewDraftPublishedDiff.blockSummary) }}</strong>
-                    </div>
-                  </div>
-                  <div v-if="cmsPreviewChangedPageDiffs.length > 0" class="cms-review-summary__list">
-                    <article
-                      v-for="pageDiff in cmsPreviewChangedPageDiffs.slice(0, 6)"
-                      :key="`page-review-${pageDiff.pageId}`"
-                      class="cms-review-summary__item"
-                    >
-                      <q-chip dense square :style="getCmsPreviewDiffStatusStyle(pageDiff.status)">
-                        {{ getCmsPreviewDiffStatusLabel(pageDiff.status) }}
-                      </q-chip>
-                      <div class="cms-review-summary__body">
-                        <strong>{{ getCmsPreviewDiffPageLabel(pageDiff) }}</strong>
-                        <small v-if="getCmsPreviewDiffPagePath(pageDiff)">{{ getCmsPreviewDiffPagePath(pageDiff) }}</small>
-                        <small>
-                          {{
-                            tr(
-                              `${pageDiff.sectionSummary.added} sections added · ${pageDiff.sectionSummary.removed} removed · ${pageDiff.sectionSummary.changed} changed · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} block changes`,
-                              `${pageDiff.sectionSummary.added} secoes adicionadas · ${pageDiff.sectionSummary.removed} removidas · ${pageDiff.sectionSummary.changed} alteradas · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} mudancas em blocos`
-                            )
-                          }}
-                        </small>
-                      </div>
-                    </article>
-                  </div>
-                </div>
-
-                <CmsLocaleCoverageMatrix
-                  :matrix="cmsPreviewLocaleCoverageMatrix"
-                  :active-locale="cmsPreviewLocale"
-                  :active-locale-coverage="cmsPreviewActiveLocaleCoverage"
-                  :categories="cmsLocaleCoverageCategories"
-                  :status-chip-style="statusChipStyle"
-                  :get-status-style="getCmsLocaleCoverageStatusStyle"
-                  :get-summary-label="getCmsLocaleCoverageSummaryLabel"
-                  :get-status-label="getCmsLocaleCoverageStatusLabel"
-                  :get-category-label="getCmsLocaleCoverageCategoryLabel"
-                  :get-locale-label="getCmsLocaleCoverageLocaleLabel"
-                  :is-pt-br="isPtBrLocale"
-                />
-
-                <article
-                  v-for="(page, pageIndex) in cmsPreviewPagesForRender"
-                  :key="`preview-${cmsPreviewSource}-${page.id}`"
-                  class="cms-page-preview"
-                >
-                  <div class="cms-page-preview__header">
-                    <strong>{{ getCmsPageTitleValue(page) }}</strong>
-                    <div class="cms-page-preview__chips">
-                      <q-chip dense square :style="statusChipStyle">
-                        {{ getCmsContentModelLabel(cmsPreviewLocale, page.contentModelId, cmsPreviewAuthoredContentModels) }}
-                      </q-chip>
-                      <q-chip dense square :style="statusChipStyle">
-                        {{
-                          `schema v${page.contentModelVersion ?? '?'} / v${getCmsPageCurrentSchemaVersion(page, cmsPreviewAuthoredContentModels)}`
-                        }}
-                      </q-chip>
-                      <q-chip dense square :style="getCmsPageStatusStyle(page.status)">
-                        {{ page.status }}
-                      </q-chip>
-                      <q-chip
-                        v-if="cmsPreviewPageDiffMap.get(page.id)"
-                        dense
-                        square
-                        :style="getCmsPreviewDiffStatusStyle(cmsPreviewPageDiffMap.get(page.id)?.status ?? 'unchanged')"
-                      >
-                        {{ getCmsPreviewDiffStatusLabel(cmsPreviewPageDiffMap.get(page.id)?.status ?? 'unchanged') }}
-                      </q-chip>
-                    </div>
-                  </div>
-                  <small class="cms-page-preview__path">{{ page.path }}</small>
-                  <p>{{ getCmsPageDescriptionValue(page) || tr('No description provided.', 'Nenhuma descricao informada.') }}</p>
-
-                  <div class="cms-runtime-preview">
-                    <div class="cms-runtime-preview__frame" :data-preview-viewport="cmsPreviewViewport">
-                      <CmsRenderer
-                        :page="toCmsPreviewPageSchema(page)"
-                        :registry="landingRegistry"
-                        :render-context="cmsPreviewRenderContext"
-                      />
-                    </div>
-                  </div>
-
-                  <CmsDiagnosticsListSection
-                    :title="tr('Content diagnostics', 'Diagnosticos de conteudo')"
-                    :items="toCmsDiagnosticsListItems(getCmsPreviewPageDiagnostics(page.id, pageIndex))"
-                    :count-style="statusChipStyle"
-                  />
-                  <div class="cms-page-preview__sections">
-                    <q-chip
-                      v-for="section in page.sections"
-                      :key="`${page.id}-${section.id}`"
-                      dense
-                      square
-                      :style="getCmsPageSectionStyle(section.enabled)"
-                    >
-                      {{ getCmsSectionLabelValue(section) }}
-                    </q-chip>
-                  </div>
-                </article>
-              </template>
-          </CmsShellCard>
+            :source="cmsPreviewSource"
+            :locale="cmsPreviewLocale"
+            :viewport="cmsPreviewViewport"
+            :source-options="cmsPreviewSourceOptions"
+            :locale-options="cmsLocaleOptions"
+            :viewport-options="cmsPreviewViewportOptions"
+            :published-release-label="cmsPreviewPublishedReleaseLabel"
+            :status-chip-style="statusChipStyle"
+            :banner-style="bannerStyle"
+            :is-pt-br="isPtBrLocale"
+            :empty-message="cmsPreviewEmptyMessage"
+            :draft-published-diff="cmsPreviewDraftPublishedDiff"
+            :changed-page-diffs="cmsPreviewChangedPageDiffs"
+            :locale-coverage-matrix="cmsPreviewLocaleCoverageMatrix"
+            :active-locale-coverage="cmsPreviewActiveLocaleCoverage"
+            :locale-coverage-categories="cmsLocaleCoverageCategories"
+            :pages-for-render="cmsPreviewPagesForRender"
+            :preview-page-diff-map="cmsPreviewPageDiffMap"
+            :preview-authored-content-models="cmsPreviewAuthoredContentModels"
+            :registry="landingRegistry"
+            :preview-render-context="cmsPreviewRenderContext"
+            :t="tr"
+            :get-preview-diff-status-style="getCmsPreviewDiffStatusStyle"
+            :get-preview-diff-status-label="getCmsPreviewDiffStatusLabel"
+            :get-preview-diff-change-count="getCmsPreviewDiffChangeCount"
+            :get-preview-diff-page-label="getCmsPreviewDiffPageLabel"
+            :get-preview-diff-page-path="getCmsPreviewDiffPagePath"
+            :get-locale-coverage-status-style="getCmsLocaleCoverageStatusStyle"
+            :get-locale-coverage-summary-label="getCmsLocaleCoverageSummaryLabel"
+            :get-locale-coverage-status-label="getCmsLocaleCoverageStatusLabel"
+            :get-locale-coverage-category-label="getCmsLocaleCoverageCategoryLabel"
+            :get-locale-coverage-locale-label="getCmsLocaleCoverageLocaleLabel"
+            :get-page-title-value="getCmsPageTitleValue"
+            :get-page-description-value="getCmsPageDescriptionValue"
+            :get-content-model-label="getCmsContentModelLabel"
+            :get-page-current-schema-version="getCmsPageCurrentSchemaVersion"
+            :get-page-status-style="getCmsPageStatusStyle"
+            :to-preview-page-schema="toCmsPreviewPageSchema"
+            :get-preview-page-diagnostics="getCmsPreviewPageDiagnostics"
+            :to-diagnostics-list-items="toCmsDiagnosticsListItems"
+            :get-page-section-style="getCmsPageSectionStyle"
+            :get-section-label-value="getCmsSectionLabelValue"
+            @open-in-window="openCmsDesignerPreviewInWindow('pages')"
+            @update:source="cmsPreviewSource = $event"
+            @update:locale="cmsPreviewLocale = $event"
+            @update:viewport="cmsPreviewViewport = $event"
+          />
         </div>
 
         <div v-else-if="isBlocksModule" class="cms-shell-page__grid cms-blocks-shell">
@@ -5082,6 +4962,7 @@ import {
   CmsLocaleCoverageMatrix,
   CmsEntityUsageDrawer,
   CmsMediaModuleSurface,
+  CmsPagesPreviewSurface,
   CmsReleasesModuleSurface,
   type CmsEntityUsageDrawerReferenceView,
   CmsAuthoringWorkbench,

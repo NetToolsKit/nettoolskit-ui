@@ -93,6 +93,14 @@ Out of scope:
   - export the new reusable module through:
     - `src/templates/features/cms/authoring/index.ts`
   - reduce `landing-page/CmsApp.vue` from `14914` lines to `14445` lines after replacing the inline releases workspace with the reusable module component
+- 2026-03-27 phase 9:
+  - extract the `Pages` preview runtime into:
+    - `src/templates/features/cms/authoring/modules/CmsPagesPreviewSurface.vue`
+  - move the pages preview shell, draft-vs-published review summary, locale coverage matrix integration, and rendered page preview cards behind the reusable preview surface
+  - keep pages preview selectors, render transforms, diagnostics producers, and diff helpers inside `landing-page/CmsApp.vue` while the new surface owns the reusable presentational shell
+  - export the new reusable preview surface through:
+    - `src/templates/features/cms/authoring/index.ts`
+  - reduce `landing-page/CmsApp.vue` from `14445` lines to `14332` lines after replacing the inline pages preview surface with the reusable component
 
 ## Ordered Tasks
 
