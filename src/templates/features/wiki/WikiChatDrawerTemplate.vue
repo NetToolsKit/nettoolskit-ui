@@ -118,6 +118,26 @@
             class="ntk-template-wiki-chat-drawer__bubble"
             v-html="formatContent(message.content)"
           />
+          <div
+            v-if="message.sources && message.sources.length > 0"
+            class="ntk-template-wiki-chat-drawer__sources"
+          >
+            <span class="ntk-template-wiki-chat-drawer__sources-label">{{ sourcesLabel }}</span>
+            <div
+              v-for="(source, index) in message.sources.slice(0, maxSources)"
+              :key="index"
+              class="ntk-template-wiki-chat-drawer__source"
+            >
+              <q-icon
+                name="description"
+                size="12px"
+              />
+              <div class="ntk-template-wiki-chat-drawer__source-info">
+                <strong>{{ source.documentName }}</strong>
+                <p>{{ source.chunkContent }}</p>
+              </div>
+            </div>
+          </div>
         </article>
 
         <div
@@ -187,6 +207,8 @@ const props = withDefaults(defineProps<{
   sending?: boolean
   messages?: TemplateWikiChatMessage[]
   suggestions?: TemplateWikiSuggestion[]
+  sourcesLabel?: string
+  maxSources?: number
 }>(), {
   title: 'Assistant drawer',
   contextHint: '',
@@ -207,6 +229,8 @@ const props = withDefaults(defineProps<{
   sending: false,
   messages: () => [],
   suggestions: () => [],
+  sourcesLabel: 'Sources',
+  maxSources: 3,
 })
 
 const emit = defineEmits<{
@@ -492,6 +516,52 @@ function sendQuestion(text?: string): void {
     right: 10px;
     bottom: 72px;
     width: calc(100vw - 20px);
+  }
+}
+
+.ntk-template-wiki-chat-drawer__sources {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ntk-template-wiki-chat-drawer__sources-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--ntk-template-wiki-chat-drawer-meta-color, #94a3b8);
+}
+
+.ntk-template-wiki-chat-drawer__source {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: var(--ntk-template-wiki-chat-drawer-source-bg, rgba(0, 0, 0, 0.04));
+  font-size: 11px;
+}
+
+.ntk-template-wiki-chat-drawer__source-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-weight: 600;
+    color: var(--ntk-template-wiki-chat-drawer-source-name-color, #334155);
+    font-size: 11px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ntk-template-wiki-chat-drawer-source-chunk-color, #64748b);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 </style>

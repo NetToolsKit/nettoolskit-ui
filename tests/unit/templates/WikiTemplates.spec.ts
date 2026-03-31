@@ -255,6 +255,46 @@ describe('WikiChatDrawerTemplate', () => {
 
     expect(wrapper.find('.ntk-template-wiki-chat-drawer').exists()).toBe(false)
   })
+
+  it('renders source citations on assistant messages', () => {
+    const wrapper = shallowMount(WikiChatDrawerTemplate, {
+      ...drawerGlobal,
+      props: {
+        modelValue: true,
+        sourcesLabel: 'Fontes',
+        messages: [
+          {
+            id: 'm1',
+            role: 'assistant',
+            content: 'Here is the answer.',
+            sources: [
+              { documentName: 'Manual de Operações', chunkContent: 'Section 3.1...', relevance: 0.9 },
+              { documentName: 'FAQ Geral', chunkContent: 'Question about...', relevance: 0.7 },
+            ],
+          },
+        ],
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-wiki-chat-drawer__sources').exists()).toBe(true)
+    expect(wrapper.find('.ntk-template-wiki-chat-drawer__sources-label').text()).toBe('Fontes')
+    const sources = wrapper.findAll('.ntk-template-wiki-chat-drawer__source')
+    expect(sources).toHaveLength(2)
+    expect(sources[0]?.text()).toContain('Manual de Operações')
+    expect(sources[1]?.text()).toContain('FAQ Geral')
+  })
+
+  it('does not render sources section when message has no sources', () => {
+    const wrapper = shallowMount(WikiChatDrawerTemplate, {
+      ...drawerGlobal,
+      props: {
+        modelValue: true,
+        messages: [{ id: 'm1', role: 'user', content: 'Hello' }],
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-wiki-chat-drawer__sources').exists()).toBe(false)
+  })
 })
 
 describe('WikiChatTemplate', () => {
