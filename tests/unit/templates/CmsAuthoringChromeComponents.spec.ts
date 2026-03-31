@@ -10,6 +10,9 @@ import CmsSectionHeaderSummary from '../../../src/templates/features/cms/authori
 import CmsStatusMetricCardGrid from '../../../src/templates/features/cms/authoring/CmsStatusMetricCardGrid.vue'
 import CmsPanelListSection from '../../../src/templates/features/cms/authoring/CmsPanelListSection.vue'
 import CmsAuthoringWorkbench from '../../../src/templates/features/cms/authoring/CmsAuthoringWorkbench.vue'
+import CmsAuthoringRulerBar from '../../../src/templates/features/cms/authoring/CmsAuthoringRulerBar.vue'
+import CmsPreviewToolbar from '../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue'
+import CmsEntityUsageDrawer from '../../../src/templates/features/cms/authoring/CmsEntityUsageDrawer.vue'
 
 const globalOpts = {
   global: {
@@ -266,6 +269,155 @@ describe('CmsPanelListSection', () => {
     expect(wrapper.text()).toContain('hero')
     expect(wrapper.text()).toContain('Color: #1e293b')
     expect(wrapper.text()).toContain('Footer Block')
+  })
+})
+
+describe('CmsAuthoringRulerBar', () => {
+  it('renders marks and zoom label', () => {
+    const wrapper = shallowMount(CmsAuthoringRulerBar, {
+      global: { stubs: { 'q-btn': { template: '<button @click="$emit(\'click\')"><slot /></button>' } } },
+      props: { marks: [0, 100, 200, 300], zoomLabel: '125%', modeLabel: 'Snap' },
+    })
+
+    const rulerMarks = wrapper.findAll('.cms-designer-card__ruler-mark')
+    expect(rulerMarks).toHaveLength(4)
+    expect(wrapper.find('.cms-designer-card__ruler-zoom').text()).toBe('125%')
+  })
+
+  it('emits focus when gutter button is clicked', async () => {
+    const wrapper = shallowMount(CmsAuthoringRulerBar, {
+      props: { focusAriaLabel: 'Focus workbench', modeLabel: 'Grid' },
+    })
+
+    await wrapper.find('q-btn-stub[aria-label="Focus workbench"]').trigger('click')
+    expect(wrapper.emitted('focus')).toHaveLength(1)
+  })
+
+  it('emits toggle-mode when mode button is clicked', async () => {
+    const wrapper = shallowMount(CmsAuthoringRulerBar, {
+      props: { focusAriaLabel: 'Focus workbench', modeLabel: 'Grid' },
+    })
+
+    await wrapper.find('.cms-designer-card__ruler-mode').trigger('click')
+    expect(wrapper.emitted('toggle-mode')).toHaveLength(1)
+  })
+})
+
+describe('CmsPreviewToolbar', () => {
+  const baseProps = {
+    source: 'draft',
+    locale: 'en',
+    viewport: 'desktop',
+    sourceOptions: [{ label: 'Draft', value: 'draft' }, { label: 'Published', value: 'published' }],
+    localeOptions: [{ label: 'English', value: 'en' }, { label: 'Português', value: 'pt' }],
+    viewportOptions: [{ label: 'Desktop', value: 'desktop' }, { label: 'Mobile', value: 'mobile' }],
+    statusChipStyle: { background: '#e0e0e0' },
+    isPtBr: false,
+  }
+
+  it('renders with data attributes reflecting source and viewport', () => {
+    const wrapper = shallowMount(CmsPreviewToolbar, {
+      global: { stubs: { 'q-select': true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      props: baseProps,
+    })
+
+    expect(wrapper.attributes('data-cms-preview-source')).toBe('draft')
+    expect(wrapper.attributes('data-cms-preview-viewport')).toBe('desktop')
+  })
+
+  it('shows publishedReleaseLabel chip when provided', () => {
+    const wrapper = shallowMount(CmsPreviewToolbar, {
+      global: { stubs: { 'q-select': true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      props: { ...baseProps, publishedReleaseLabel: 'v2.1.0' },
+    })
+
+    const chips = wrapper.findAll('.chip')
+    expect(chips.length).toBeGreaterThan(3)
+    const chipTexts = chips.map(c => c.text())
+    expect(chipTexts).toContain('v2.1.0')
+  })
+
+  it('hides publishedReleaseLabel chip when null', () => {
+    const wrapper = shallowMount(CmsPreviewToolbar, {
+      global: { stubs: { 'q-select': true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      props: { ...baseProps, publishedReleaseLabel: null },
+    })
+
+    const chips = wrapper.findAll('.chip')
+    expect(chips).toHaveLength(3)
+  })
+})
+
+describe('CmsEntityUsageDrawer', () => {
+  const dialogStub = { template: '<div v-if="modelValue" class="dialog"><slot /></div>', props: ['modelValue'] }
+  const chipStub = { template: '<span class="chip"><slot /></span>' }
+
+  it('renders header, references and count when open', () => {
+    const wrapper = shallowMount(CmsEntityUsageDrawer, {
+      global: { stubs: { 'q-dialog': dialogStub, 'q-card': { template: '<div><slot /></div>' }, 'q-separator': true, 'q-btn': true, 'q-chip': chipStub } },
+      props: {
+        modelValue: true,
+        headerLabel: 'Usage',
+        detailsLabel: 'Details',
+        title: 'Hero Banner',
+        referenceCount: 2,
+        refsLabel: 'references',
+        summaryLabel: 'Used in 2 places',
+        emptyTitle: 'No usage',
+        emptyDescription: 'Not used anywhere.',
+        references: [
+          { key: 'r1', label: 'Home Page', sourceLabel: 'Hero', description: 'Block slot 1' },
+          { key: 'r2', label: 'About Page', sourceLabel: 'Banner', description: 'Top section' },
+        ],
+      },
+    })
+
+    expect(wrapper.find('.dialog').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Usage')
+    expect(wrapper.text()).toContain('Hero Banner')
+    const refs = wrapper.findAll('.cms-usage-drawer__reference')
+    expect(refs).toHaveLength(2)
+    expect(refs[0]?.text()).toContain('Home Page')
+    expect(refs[1]?.text()).toContain('About Page')
+  })
+
+  it('does not render dialog content when modelValue is false', () => {
+    const wrapper = shallowMount(CmsEntityUsageDrawer, {
+      global: { stubs: { 'q-dialog': dialogStub, 'q-card': { template: '<div><slot /></div>' }, 'q-separator': true, 'q-btn': true, 'q-chip': chipStub } },
+      props: {
+        modelValue: false,
+        headerLabel: 'Usage',
+        detailsLabel: 'Details',
+        referenceCount: 0,
+        refsLabel: 'refs',
+        summaryLabel: '',
+        emptyTitle: 'No usage',
+        emptyDescription: '',
+        references: [],
+      },
+    })
+
+    expect(wrapper.find('.dialog').exists()).toBe(false)
+  })
+
+  it('shows empty state when references array is empty', () => {
+    const wrapper = shallowMount(CmsEntityUsageDrawer, {
+      global: { stubs: { 'q-dialog': dialogStub, 'q-card': { template: '<div><slot /></div>' }, 'q-separator': true, 'q-btn': true, 'q-chip': chipStub } },
+      props: {
+        modelValue: true,
+        headerLabel: 'Usage',
+        detailsLabel: 'Details',
+        referenceCount: 0,
+        refsLabel: 'refs',
+        summaryLabel: 'Not used',
+        emptyTitle: 'Not used anywhere',
+        emptyDescription: 'No references found.',
+        references: [],
+      },
+    })
+
+    expect(wrapper.find('.cms-block-item__empty').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Not used anywhere')
   })
 })
 
