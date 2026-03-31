@@ -184,6 +184,17 @@ describe('MainLayoutTemplate', () => {
     expect(wrapper.find('.page-content').text()).toBe('Hello world')
   })
 
+  it('renders floating slot content (FABs, overlays)', () => {
+    const wrapper = shallowMount(MainLayoutTemplate, {
+      ...layoutGlobal,
+      props: { menuItems: baseMenuItems },
+      slots: { floating: '<button class="my-fab">Chat</button>' },
+    })
+
+    expect(wrapper.find('.my-fab').exists()).toBe(true)
+    expect(wrapper.find('.my-fab').text()).toBe('Chat')
+  })
+
   it('emits menu-item-click when a menu item is clicked', async () => {
     const wrapper = shallowMount(MainLayoutTemplate, {
       ...layoutGlobal,

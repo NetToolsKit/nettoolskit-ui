@@ -175,6 +175,9 @@
       </router-view>
       <slot v-else />
     </q-page-container>
+
+    <!-- Slot for floating elements (FABs, overlay drawers, chat panels) -->
+    <slot name="floating" />
   </q-layout>
 </template>
 
