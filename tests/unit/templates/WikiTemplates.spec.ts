@@ -3,6 +3,7 @@ import { shallowMount } from '@vue/test-utils'
 
 import WikiTemplate from '../../../src/templates/features/wiki/WikiTemplate.vue'
 import WikiChatDrawerTemplate from '../../../src/templates/features/wiki/WikiChatDrawerTemplate.vue'
+import WikiChatTemplate from '../../../src/templates/features/wiki/WikiChatTemplate.vue'
 
 const wikiGlobal = {
   global: {
@@ -253,5 +254,129 @@ describe('WikiChatDrawerTemplate', () => {
     })
 
     expect(wrapper.find('.ntk-template-wiki-chat-drawer').exists()).toBe(false)
+  })
+})
+
+describe('WikiChatTemplate', () => {
+  const chatGlobal = {
+    global: {
+      renderStubDefaultSlot: true,
+      stubs: {
+        'q-page': { template: '<div><slot /></div>' },
+        'q-icon': { template: '<span />' },
+        'q-spinner-dots': { template: '<span />' },
+      },
+    },
+  }
+
+  const sampleConversations = [
+    { id: 'c1', title: 'Release planning', updatedAt: '09:00', messageCount: 3 },
+    { id: 'c2', title: 'Incident review', updatedAt: '08:30', messageCount: 1 },
+  ]
+
+  it('renders conversations list and marks the active one', () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: {
+        conversations: sampleConversations,
+        activeConversationId: 'c1',
+      },
+    })
+
+    const conversations = wrapper.findAll('.ntk-template-wiki-chat__conversation')
+    expect(conversations).toHaveLength(2)
+    expect(conversations[0]?.classes()).toContain('ntk-template-wiki-chat__conversation--active')
+    expect(conversations[1]?.classes()).not.toContain('ntk-template-wiki-chat__conversation--active')
+  })
+
+  it('filters conversations by search input', async () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: { conversations: sampleConversations },
+    })
+
+    await wrapper.find('.ntk-template-wiki-chat__search-input').setValue('incident')
+
+    const conversations = wrapper.findAll('.ntk-template-wiki-chat__conversation')
+    expect(conversations).toHaveLength(1)
+    expect(wrapper.text()).toContain('Incident review')
+    expect(wrapper.text()).not.toContain('Release planning')
+  })
+
+  it('emits select-conversation and update:activeConversationId when a conversation is clicked', async () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: { conversations: sampleConversations },
+    })
+
+    await wrapper.findAll('.ntk-template-wiki-chat__conversation')[1]?.trigger('click')
+
+    expect(wrapper.emitted('select-conversation')).toEqual([['c2']])
+    expect(wrapper.emitted('update:activeConversationId')).toEqual([['c2']])
+  })
+
+  it('shows active conversation title in the chat header', () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: {
+        title: 'Default title',
+        conversations: sampleConversations,
+        activeConversationId: 'c2',
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-wiki-chat__chat-title').text()).toBe('Incident review')
+  })
+
+  it('shows default title when no active conversation is selected', () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: {
+        title: 'My Chat',
+        conversations: sampleConversations,
+        activeConversationId: null,
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-wiki-chat__chat-title').text()).toBe('My Chat')
+  })
+
+  it('hides the conversation sidebar when showConversationPanel is false', () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: { showConversationPanel: false },
+    })
+
+    expect(wrapper.find('.ntk-template-wiki-chat__sidebar').exists()).toBe(false)
+  })
+
+  it('emits send-question when a suggestion is clicked in empty state', async () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: {
+        suggestions: [{ id: 's1', text: 'Show top incidents.' }],
+        messages: [],
+      },
+    })
+
+    const suggestion = wrapper.find('.ntk-template-wiki-chat__suggestion')
+    await suggestion.trigger('click')
+
+    expect(wrapper.emitted('send-question')).toEqual([['Show top incidents.']])
+  })
+
+  it('emits delete-conversation when delete button is clicked', async () => {
+    const wrapper = shallowMount(WikiChatTemplate, {
+      ...chatGlobal,
+      props: {
+        conversations: sampleConversations,
+        showDeleteConversationAction: true,
+      },
+    })
+
+    const deleteBtn = wrapper.find('.ntk-template-wiki-chat__conversation-delete')
+    await deleteBtn.trigger('click')
+
+    expect(wrapper.emitted('delete-conversation')).toEqual([['c1']])
   })
 })

@@ -306,7 +306,8 @@ config.global.directives = {
 }
 
 vi.mock('vue-router', () => ({
-  useRoute: () => ({ path: '/' })
+  useRoute: () => ({ path: '/' }),
+  useRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
 }))
 
 // Mock useBranding composable
