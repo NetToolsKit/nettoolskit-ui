@@ -300,9 +300,9 @@ const dashboardActivities = [
 ]
 
 const dashboardTopItems = [
-  { id: 'top-1', name: 'CMS authoring shell', value: 'Healthy', secondaryValue: '1 issue' },
-  { id: 'top-2', name: 'Template catalog', value: 'Stable', secondaryValue: '26 entries' },
-  { id: 'top-3', name: 'Release validation', value: 'Passing', secondaryValue: '5 gates' },
+  { id: 'top-1', name: 'CMS authoring shell', value: 'Healthy', secondaryValue: '1 issue', barPercent: 92 },
+  { id: 'top-2', name: 'Template catalog', value: 'Stable', secondaryValue: '26 entries', barPercent: 78 },
+  { id: 'top-3', name: 'Release validation', value: 'Passing', secondaryValue: '5 gates', barPercent: 55 },
 ]
 
 const loginFeatures = [

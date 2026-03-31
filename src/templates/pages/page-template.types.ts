@@ -30,6 +30,8 @@ export interface TemplateDashboardTopItem {
   name: string
   value: string | number
   secondaryValue?: string | number
+  /** 0–100 — when set, renders a progress bar under the name */
+  barPercent?: number
 }
 
 export type TemplatePageTone =

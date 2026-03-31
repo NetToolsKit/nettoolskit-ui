@@ -57,6 +57,14 @@
       </article>
     </section>
 
+    <section
+      v-if="$slots.charts"
+      class="ntk-template-dashboard__charts"
+      :aria-label="chartsAriaLabel"
+    >
+      <slot name="charts" />
+    </section>
+
     <section class="ntk-template-dashboard__content-grid">
       <q-card
         class="ntk-template-dashboard__card"
@@ -101,7 +109,18 @@
               class="ntk-template-dashboard__top-row"
             >
               <span class="ntk-template-dashboard__top-rank">{{ index + 1 }}</span>
-              <span class="ntk-template-dashboard__top-name">{{ item.name }}</span>
+              <div class="ntk-template-dashboard__top-info">
+                <span class="ntk-template-dashboard__top-name">{{ item.name }}</span>
+                <div
+                  v-if="item.barPercent !== undefined"
+                  class="ntk-template-dashboard__top-bar-track"
+                >
+                  <div
+                    class="ntk-template-dashboard__top-bar-fill"
+                    :style="{ width: `${Math.min(Math.max(item.barPercent, 2), 100)}%` }"
+                  />
+                </div>
+              </div>
               <span class="ntk-template-dashboard__top-value">{{ item.value }}</span>
               <span
                 v-if="item.secondaryValue !== undefined"
@@ -137,6 +156,7 @@ const props = withDefaults(
     topItemsTitle?: string
     pageAriaLabel?: string
     metricsAriaLabel?: string
+    chartsAriaLabel?: string
     activityAriaLabel?: string
     topItemsAriaLabel?: string
     chips?: TemplateDashboardChip[]
@@ -151,6 +171,7 @@ const props = withDefaults(
     topItemsTitle: 'Top items',
     pageAriaLabel: 'Dashboard page',
     metricsAriaLabel: 'Dashboard metrics',
+    chartsAriaLabel: 'Dashboard charts',
     activityAriaLabel: 'Recent activity',
     topItemsAriaLabel: 'Top items ranking',
     chips: () => [],
@@ -277,6 +298,12 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   color: var(--ntk-template-page-subtitle, #64748b);
 }
 
+.ntk-template-dashboard__charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
 .ntk-template-dashboard__content-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -329,6 +356,28 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 
 .ntk-template-dashboard__top-row {
   grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.ntk-template-dashboard__top-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ntk-template-dashboard__top-bar-track {
+  height: 4px;
+  background: var(--ntk-template-page-border, #e2e8f0);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ntk-template-dashboard__top-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--ntk-template-page-bar-fill, #0f766e);
+  transition: width 0.4s ease;
 }
 
 .ntk-template-dashboard__top-rank {
@@ -345,10 +394,12 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 }
 
 .ntk-template-dashboard__top-name {
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ntk-template-page-text, #334155);
 }
 
 .ntk-template-dashboard__top-value {
