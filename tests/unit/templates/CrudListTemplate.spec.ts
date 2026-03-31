@@ -92,6 +92,84 @@ describe('CrudListTemplate', () => {
     ])
   })
 
+  it('renders title, subtitle, and metric chips', () => {
+    const wrapper = shallowMount(CrudListTemplate, {
+      ...globalMountOptions,
+      props: {
+        columns: baseColumns,
+        records: baseRecords,
+        title: 'Clients',
+        subtitle: 'Manage your client list',
+        metrics: [
+          { id: 'm1', label: 'Total', value: 2, icon: 'people' },
+          { id: 'm2', label: 'Active', value: 1, icon: 'check_circle', tone: 'success' },
+        ],
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-crud-list__title').text()).toBe('Clients')
+    expect(wrapper.find('.ntk-template-crud-list__subtitle').text()).toContain('Manage your client list')
+    const metrics = wrapper.findAll('.ntk-template-crud-list__metric')
+    expect(metrics).toHaveLength(2)
+    expect(metrics[0]?.text()).toContain('Total')
+    expect(metrics[1]?.text()).toContain('Active')
+  })
+
+  it('renders record status badge with correct tone class', () => {
+    const wrapper = shallowMount(CrudListTemplate, {
+      ...globalMountOptions,
+      props: { columns: baseColumns, records: baseRecords },
+    })
+
+    const statusEls = wrapper.findAll('.ntk-template-crud-list__status')
+    expect(statusEls.length).toBeGreaterThan(0)
+    // First record has status tone 'success'
+    expect(statusEls[0]?.classes()).toContain('ntk-template-crud-list__status--success')
+    expect(statusEls[0]?.text()).toBe('Active')
+  })
+
+  it('renders records as cards in card view mode', () => {
+    const wrapper = shallowMount(CrudListTemplate, {
+      ...globalMountOptions,
+      props: {
+        columns: baseColumns,
+        records: [
+          {
+            id: 'r1',
+            title: 'Acme Corp',
+            subtitle: 'Enterprise client',
+            values: { name: 'Acme Corp', owner: 'Ana' },
+            tags: ['vip', 'healthcare'],
+          },
+        ],
+        viewMode: 'cards',
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-crud-list__cards').exists()).toBe(true)
+    expect(wrapper.find('.ntk-template-crud-list__table-wrap').exists()).toBe(false)
+
+    const card = wrapper.find('.ntk-template-crud-list__card')
+    expect(card.exists()).toBe(true)
+    expect(card.find('.ntk-template-crud-list__card-title').text()).toBe('Acme Corp')
+    expect(card.find('.ntk-template-crud-list__card-subtitle').text()).toContain('Enterprise client')
+
+    const tags = wrapper.findAll('.ntk-template-crud-list__tag')
+    expect(tags).toHaveLength(2)
+    expect(tags[0]?.text()).toBe('vip')
+    expect(tags[1]?.text()).toBe('healthcare')
+  })
+
+  it('renders loading skeletons when loading is true', () => {
+    const wrapper = shallowMount(CrudListTemplate, {
+      ...globalMountOptions,
+      props: { columns: baseColumns, records: [], loading: true },
+    })
+
+    expect(wrapper.find('.ntk-template-crud-list__loading').exists()).toBe(true)
+    expect(wrapper.findAll('.ntk-template-crud-list__loading-item').length).toBeGreaterThan(0)
+  })
+
   it('filters records and updates selection through checkbox events', async () => {
     const wrapper = shallowMount(CrudListTemplate, {
       ...globalMountOptions,
