@@ -224,6 +224,46 @@
         @update:active-conversation-id="activeConversationId = $event"
       />
     </section>
+
+    <section
+      class="ntk-template-showcase__surface"
+      data-template-surface="cms-authoring"
+    >
+      <h2>CMS Authoring Workspace Templates</h2>
+      <p class="ntk-template-showcase__surface-note">
+        Module surfaces (Settings, Blocks, Media, Pages, Releases) are orchestrated by CmsApp.vue.
+        The workbench shell below is the reusable template that composes them.
+      </p>
+      <CmsAuthoringWorkbench>
+        <template #header>
+          <div class="ntk-template-showcase__cms-header">
+            <span class="ntk-template-showcase__cms-module-badge">Settings</span>
+            <span class="ntk-template-showcase__cms-module-badge">Blocks</span>
+            <span class="ntk-template-showcase__cms-module-badge">Media</span>
+            <span class="ntk-template-showcase__cms-module-badge">Pages</span>
+            <span class="ntk-template-showcase__cms-module-badge">Releases</span>
+          </div>
+        </template>
+        <template #workbench>
+          <div class="ntk-template-showcase__cms-canvas">
+            <p>CMS module surfaces mount here. Each surface is an independently reusable template extracted from the authoring monolith.</p>
+            <div class="ntk-template-showcase__cms-surface-grid">
+              <div
+                v-for="surface in cmsSurfaces"
+                :key="surface.id"
+                class="ntk-template-showcase__cms-surface-card"
+              >
+                <strong>{{ surface.title }}</strong>
+                <span>{{ surface.path }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template #status>
+          <span class="ntk-template-showcase__cms-status">{{ cmsSurfaces.length }} module surfaces · ready</span>
+        </template>
+      </CmsAuthoringWorkbench>
+    </section>
   </div>
 </template>
 
@@ -232,6 +272,7 @@ import { computed, ref } from 'vue'
 
 import { TEMPLATE_AREAS, getTemplateCatalogByArea, templateCatalogRegistry } from '../src/templates'
 import { ApprovalQueueTemplate, AuditTimelineTemplate, EnterpriseCommandCenterTemplate } from '../src/templates/features/enterprise'
+import CmsAuthoringWorkbench from '../src/templates/features/cms/authoring/CmsAuthoringWorkbench.vue'
 import LoginTemplate from '../src/templates/features/auth/LoginTemplate.vue'
 import WikiChatTemplate from '../src/templates/features/wiki/WikiChatTemplate.vue'
 import WikiTemplate from '../src/templates/features/wiki/WikiTemplate.vue'
@@ -650,6 +691,15 @@ const wikiMessages = [
   },
 ]
 
+const cmsSurfaces = [
+  { id: 'settings', title: 'CmsSettingsModuleSurface', path: 'authoring/modules/CmsSettingsModuleSurface.vue' },
+  { id: 'blocks', title: 'CmsBlocksModuleSurface', path: 'authoring/modules/CmsBlocksModuleSurface.vue' },
+  { id: 'media', title: 'CmsMediaModuleSurface', path: 'authoring/modules/CmsMediaModuleSurface.vue' },
+  { id: 'pages', title: 'CmsPagesModuleSurface', path: 'authoring/modules/CmsPagesModuleSurface.vue' },
+  { id: 'pages-preview', title: 'CmsPagesPreviewSurface', path: 'authoring/modules/CmsPagesPreviewSurface.vue' },
+  { id: 'releases', title: 'CmsReleasesModuleSurface', path: 'authoring/modules/CmsReleasesModuleSurface.vue' },
+]
+
 function handleLoginSubmit(): void {
   // Showcase mode keeps auth actions no-op to preserve deterministic visual baselines.
 }
@@ -788,6 +838,71 @@ function handleLoginSubmit(): void {
   .ntk-template-showcase__stats {
     width: 100%;
   }
+}
+
+.ntk-template-showcase__surface-note {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ntk-template-showcase__cms-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+}
+
+.ntk-template-showcase__cms-module-badge {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+}
+
+.ntk-template-showcase__cms-canvas {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.ntk-template-showcase__cms-surface-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.ntk-template-showcase__cms-surface-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ntk-template-showcase__cms-surface-card strong {
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.ntk-template-showcase__cms-surface-card span {
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: ui-monospace, monospace;
+}
+
+.ntk-template-showcase__cms-status {
+  font-size: 12px;
+  color: #64748b;
+  padding: 0 8px;
 }
 
 @media (max-width: 980px) {
