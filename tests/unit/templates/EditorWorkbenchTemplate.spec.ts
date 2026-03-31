@@ -65,6 +65,42 @@ describe('EditorWorkbenchTemplate', () => {
     expect(wrapper.emitted('update:zoomValue')?.at(0)).toEqual([125])
   })
 
+  it('renders document title and canvas objects with subtitle', () => {
+    const wrapper = shallowMount(EditorWorkbenchTemplate, {
+      ...globalMountOptions,
+      props: {
+        documentTitle: 'Q1 Sales Report',
+        canvasObjects: [
+          { id: 'obj-1', label: 'KPI Panel', subtitle: 'Revenue metric' },
+          { id: 'obj-2', label: 'Chart', subtitle: 'Bar chart' },
+        ],
+      },
+    })
+
+    expect(wrapper.find('.ntk-template-editor-workbench__document h1').text()).toBe('Q1 Sales Report')
+    const objects = wrapper.findAll('.ntk-template-editor-workbench__canvas-object')
+    expect(objects).toHaveLength(2)
+    expect(objects[0]?.text()).toContain('KPI Panel')
+    expect(objects[0]?.text()).toContain('Revenue metric')
+  })
+
+  it('renders status bar segments', () => {
+    const wrapper = shallowMount(EditorWorkbenchTemplate, {
+      ...globalMountOptions,
+      props: {
+        leftStatusSegments: [
+          { id: 's1', label: 'Objects', value: 5 },
+          { id: 's2', label: 'Mode', value: 'Edit', tone: 'primary' },
+        ],
+      },
+    })
+
+    const segments = wrapper.findAll('.ntk-template-editor-workbench__status-segment')
+    expect(segments.length).toBeGreaterThanOrEqual(2)
+    expect(wrapper.text()).toContain('Objects')
+    expect(wrapper.text()).toContain('Edit')
+  })
+
   it('filters widget sections by search term', () => {
     const wrapper = shallowMount(EditorWorkbenchTemplate, {
       ...globalMountOptions,
