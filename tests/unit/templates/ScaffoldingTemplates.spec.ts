@@ -3,11 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { INotificationService } from '../../../src/services/NotificationService'
 import {
   createDefaultTemplateLayoutShells,
+  createTemplateAuthStore,
   createTemplateLayoutStore,
   createTemplateMenuConstants,
   createTemplateMenuFromScaffoldRoutes,
   createTemplateNotificationBridge,
   createTemplateRouteScaffold,
+  createTemplateUseAuth,
   type TemplateScaffoldRouteNode,
 } from '../../../src/templates/scaffolding'
 
@@ -294,6 +296,94 @@ describe('template scaffolding helpers', () => {
     )
     expect(notify).toHaveBeenCalledTimes(2)
     expect(loading).toHaveBeenCalledWith('Fetching data...')
+  })
+
+  it('auth store: sets, reads and clears user + token state', () => {
+    const storage = new Map<string, string>()
+    const store = createTemplateAuthStore({
+      persist: (key, value) => storage.set(key, JSON.stringify(value)),
+      remove: (key) => storage.delete(key),
+      read: <T>(key: string): T | null => {
+        const raw = storage.get(key)
+        return raw !== undefined ? (JSON.parse(raw) as T) : null
+      },
+    })
+
+    expect(store.isAuthenticated.value).toBe(false)
+    expect(store.userName.value).toBe('')
+    expect(store.userInitials.value).toBe('')
+    expect(store.userRole.value).toBeNull()
+
+    store.setAuth({ id: '1', name: 'Ana Lima', email: 'ana@example.com', role: 'Admin' }, 'tok-abc')
+
+    expect(store.isAuthenticated.value).toBe(true)
+    expect(store.userName.value).toBe('Ana Lima')
+    expect(store.userInitials.value).toBe('AL')
+    expect(store.userRole.value).toBe('Admin')
+    expect(storage.has('auth_token')).toBe(true)
+
+    store.logout()
+
+    expect(store.isAuthenticated.value).toBe(false)
+    expect(storage.has('auth_token')).toBe(false)
+    expect(storage.has('auth_user')).toBe(false)
+  })
+
+  it('auth store: checkAuth restores state from persistence', () => {
+    const user = { id: '2', name: 'Carlos Melo', email: 'carlos@example.com' }
+    const storage = new Map<string, string>([
+      ['auth_token', JSON.stringify('tok-xyz')],
+      ['auth_user', JSON.stringify(user)],
+    ])
+
+    const store = createTemplateAuthStore({
+      read: <T>(key: string): T | null => {
+        const raw = storage.get(key)
+        return raw !== undefined ? (JSON.parse(raw) as T) : null
+      },
+    })
+
+    expect(store.isAuthenticated.value).toBe(true)
+    expect(store.userName.value).toBe('Carlos Melo')
+    expect(store.userInitials.value).toBe('CM')
+  })
+
+  it('auth store: single-word name produces two-char initials', () => {
+    const store = createTemplateAuthStore()
+    store.setAuth({ id: '3', name: 'Bruno', email: 'b@b.com' }, 'tok')
+    expect(store.userInitials.value).toBe('BR')
+  })
+
+  it('auth store: updateUserName mutates name and re-persists', () => {
+    const storage = new Map<string, string>()
+    const store = createTemplateAuthStore({
+      persist: (key, value) => storage.set(key, JSON.stringify(value)),
+      read: <T>(key: string): T | null => {
+        const raw = storage.get(key)
+        return raw !== undefined ? (JSON.parse(raw) as T) : null
+      },
+    })
+
+    store.setAuth({ id: '4', name: 'Old Name', email: 'x@x.com' }, 'tok')
+    store.updateUserName('New Name')
+
+    expect(store.userName.value).toBe('New Name')
+    const persisted = JSON.parse(storage.get('auth_user')!) as { name: string }
+    expect(persisted.name).toBe('New Name')
+  })
+
+  it('createTemplateUseAuth: logout calls store.logout and navigate', async () => {
+    const store = createTemplateAuthStore()
+    store.setAuth({ id: '5', name: 'Dev User', email: 'd@d.com' }, 'tok')
+
+    const navigate = vi.fn().mockResolvedValue(undefined)
+    const auth = createTemplateUseAuth(store, navigate)
+
+    expect(auth.isAuthenticated.value).toBe(true)
+    await auth.logout()
+
+    expect(store.isAuthenticated.value).toBe(false)
+    expect(navigate).toHaveBeenCalledTimes(1)
   })
 })
 
