@@ -20,6 +20,9 @@ const landingMainSource = readRepoFile('../../../landing-page/main.ts')
 const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
 const packageJsonSource = readRepoFile('../../../package.json')
 const landingStylesSource = readRepoFile('../../../landing-page/styles/landing.css')
+// Typography label strings moved to the canonical theme-field catalog during the
+// settings workspace extraction — check there for the shared authoring model coverage.
+const themeFieldCatalogSource = readRepoFile('../../../src/modules/cms/white-label/authoring/theme-field-catalog.ts')
 const specDirectory = dirname(fileURLToPath(import.meta.url))
 
 describe('Landing consolidation coverage', () => {
@@ -57,8 +60,8 @@ describe('Landing consolidation coverage', () => {
   })
 
   it('keeps landing typography controls exposed in CMS for the shared authoring model', () => {
-    expect(cmsAppSource).toContain('Section badge letter spacing')
-    expect(cmsAppSource).toContain('CTA subtitle line height')
-    expect(cmsAppSource).toContain('Footer link title letter spacing')
+    expect(themeFieldCatalogSource).toContain('Section badge letter spacing')
+    expect(themeFieldCatalogSource).toContain('CTA subtitle line height')
+    expect(themeFieldCatalogSource).toContain('Footer link title letter spacing')
   })
 })
