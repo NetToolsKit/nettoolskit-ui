@@ -205,6 +205,9 @@ const QExpansionItem = createQuasarStub('QExpansionItem')
 const QForm = createQuasarStub('QForm', 'form')
 const QCardActions = createQuasarStub('QCardActions')
 const QCheckbox = createQuasarStub('QCheckbox')
+const QBtnDropdown = createQuasarStub('QBtnDropdown')
+const QToggle = createQuasarStub('QToggle')
+const QSpinner = createQuasarStub('QSpinner')
 
 // Mock the `quasar` module to avoid installing the real plugin (which requires SSR/runtime globals)
 // and to keep component mounting stable.
@@ -253,7 +256,10 @@ vi.mock('quasar', () => {
     QExpansionItem,
     QForm,
     QCardActions,
-    QCheckbox
+    QCheckbox,
+    QBtnDropdown,
+    QToggle,
+    QSpinner
   }
 })
 
@@ -297,7 +303,10 @@ config.global.components = {
   QExpansionItem,
   QForm,
   QCardActions,
-  QCheckbox
+  QCheckbox,
+  QBtnDropdown,
+  QToggle,
+  QSpinner
 }
 
 config.global.directives = {
