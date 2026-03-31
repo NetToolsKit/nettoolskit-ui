@@ -113,9 +113,11 @@
               size="14px"
             />
           </div>
-          <div class="ntk-template-wiki-chat-drawer__bubble">
-            {{ message.content }}
-          </div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div
+            class="ntk-template-wiki-chat-drawer__bubble"
+            v-html="formatContent(message.content)"
+          />
         </article>
 
         <div
@@ -256,6 +258,17 @@ watch(
     void scrollToBottom()
   }
 )
+
+function formatContent(raw: string): string {
+  return raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>')
+}
 
 function sendQuestion(text?: string): void {
   const candidate = (text || question.value).trim()
@@ -412,7 +425,15 @@ function sendQuestion(text?: string): void {
   background: #f8fafc;
   color: #1e293b;
   font-size: 13px;
-  white-space: pre-wrap;
+  line-height: 1.5;
+
+  :deep(code) {
+    font-size: 12px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    padding: 1px 4px;
+    font-family: ui-monospace, monospace;
+  }
 }
 
 .ntk-template-wiki-chat-drawer__input-area {

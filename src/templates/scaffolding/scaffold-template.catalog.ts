@@ -2,6 +2,16 @@ import { createTemplateCatalogEntry, type TemplateCatalogEntry } from '../contra
 
 export const scaffoldTemplateCatalog: TemplateCatalogEntry[] = [
   createTemplateCatalogEntry({
+    id: 'scaffold-auth-store',
+    area: 'scaffolding',
+    title: 'Auth Store Scaffold Template',
+    description: 'Framework-agnostic auth state scaffold with user, token, initials, persistence hooks and a useAuth composable factory.',
+    targetPath: 'src/templates/scaffolding/auth-store.template.ts',
+    status: 'ready',
+    customizableScopes: ['behavior', 'data', 'testing'],
+    sourceReferencePath: '.temp/reference/src/modules/auth/stores/authStore.ts + .temp/reference/src/modules/auth/composables/useAuth.ts',
+  }),
+  createTemplateCatalogEntry({
     id: 'scaffold-router',
     area: 'scaffolding',
     title: 'Router Scaffold Template',
