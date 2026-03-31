@@ -18,11 +18,24 @@ export interface TemplateDashboardMetric {
   tone?: 'neutral' | 'primary' | 'info' | 'success' | 'warning' | 'danger'
 }
 
+export type TemplateDashboardIconTone =
+  | 'blue'
+  | 'indigo'
+  | 'violet'
+  | 'green'
+  | 'amber'
+  | 'slate'
+  | 'red'
+  | 'teal'
+  | 'pink'
+
 export interface TemplateDashboardActivityItem {
   id: string
   label: string
   value: string | number
   icon?: string
+  /** When set, renders a colored background behind the icon */
+  iconTone?: TemplateDashboardIconTone
 }
 
 export interface TemplateDashboardTopItem {
@@ -30,6 +43,8 @@ export interface TemplateDashboardTopItem {
   name: string
   value: string | number
   secondaryValue?: string | number
+  /** When set, renders an avatar circle with initials before the name */
+  avatar?: string
   /** 0–100 — when set, renders a progress bar under the name */
   barPercent?: number
 }

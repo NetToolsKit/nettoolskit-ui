@@ -129,4 +129,54 @@ describe('DashboardTemplate', () => {
 
     expect(wrapper.find('.ntk-template-dashboard__charts').exists()).toBe(false)
   })
+
+  it('renders greetingIcon before the title', () => {
+    const wrapper = shallowMount(DashboardTemplate, {
+      ...globalMountOptions,
+      props: { title: 'Bom dia, João', greetingIcon: '☀️' },
+    })
+
+    const icon = wrapper.find('.ntk-template-dashboard__greeting-icon')
+    expect(icon.exists()).toBe(true)
+    expect(icon.text()).toBe('☀️')
+    expect(wrapper.find('.ntk-template-dashboard__title').text()).toBe('Bom dia, João')
+  })
+
+  it('does not render greeting-icon element when greetingIcon is not set', () => {
+    const wrapper = shallowMount(DashboardTemplate, { ...globalMountOptions })
+
+    expect(wrapper.find('.ntk-template-dashboard__greeting-icon').exists()).toBe(false)
+  })
+
+  it('renders activity items with iconTone color class', () => {
+    const wrapper = shallowMount(DashboardTemplate, {
+      ...globalMountOptions,
+      props: {
+        activities: [
+          { id: 'a1', label: 'Orders today', value: 18, icon: 'today', iconTone: 'blue' },
+          { id: 'a2', label: 'Revenue', value: 'R$ 1.200', icon: 'attach_money', iconTone: 'green' },
+        ],
+      },
+    })
+
+    const icons = wrapper.findAll('.ntk-template-dashboard__activity-icon')
+    expect(icons[0]?.classes()).toContain('ntk-template-dashboard__activity-icon--blue')
+    expect(icons[1]?.classes()).toContain('ntk-template-dashboard__activity-icon--green')
+  })
+
+  it('renders avatar on top items when avatar is set', () => {
+    const wrapper = shallowMount(DashboardTemplate, {
+      ...globalMountOptions,
+      props: {
+        topItems: [
+          { id: 't1', name: 'Distribuidora Alfa', value: 45, avatar: 'DA' },
+          { id: 't2', name: 'Comercio Beta', value: 38 },
+        ],
+      },
+    })
+
+    const avatars = wrapper.findAll('.ntk-template-dashboard__top-avatar')
+    expect(avatars).toHaveLength(1)
+    expect(avatars[0]?.text()).toBe('DA')
+  })
 })

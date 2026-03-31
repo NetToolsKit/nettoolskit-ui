@@ -6,9 +6,16 @@
   >
     <section class="ntk-template-dashboard__hero">
       <div class="ntk-template-dashboard__hero-left">
-        <h1 class="ntk-template-dashboard__title">
-          {{ title }}
-        </h1>
+        <div class="ntk-template-dashboard__hero-title-row">
+          <span
+            v-if="greetingIcon"
+            class="ntk-template-dashboard__greeting-icon"
+            aria-hidden="true"
+          >{{ greetingIcon }}</span>
+          <h1 class="ntk-template-dashboard__title">
+            {{ title }}
+          </h1>
+        </div>
         <p class="ntk-template-dashboard__subtitle">
           {{ subtitle }}
         </p>
@@ -81,11 +88,16 @@
               class="ntk-template-dashboard__activity-row"
             >
               <div class="ntk-template-dashboard__activity-label">
-                <q-icon
+                <div
                   v-if="item.icon"
-                  :name="item.icon"
-                  size="16px"
-                />
+                  class="ntk-template-dashboard__activity-icon"
+                  :class="item.iconTone ? `ntk-template-dashboard__activity-icon--${item.iconTone}` : ''"
+                >
+                  <q-icon
+                    :name="item.icon"
+                    size="16px"
+                  />
+                </div>
                 <span>{{ item.label }}</span>
               </div>
               <strong>{{ item.value }}</strong>
@@ -109,6 +121,13 @@
               class="ntk-template-dashboard__top-row"
             >
               <span class="ntk-template-dashboard__top-rank">{{ index + 1 }}</span>
+              <div
+                v-if="item.avatar"
+                class="ntk-template-dashboard__top-avatar"
+                aria-hidden="true"
+              >
+                {{ item.avatar }}
+              </div>
               <div class="ntk-template-dashboard__top-info">
                 <span class="ntk-template-dashboard__top-name">{{ item.name }}</span>
                 <div
@@ -152,6 +171,8 @@ const props = withDefaults(
   defineProps<{
     title?: string
     subtitle?: string
+    /** Emoji or short text rendered before the title — e.g. '☀️', '🌙' */
+    greetingIcon?: string
     activityTitle?: string
     topItemsTitle?: string
     pageAriaLabel?: string
@@ -205,6 +226,18 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   border: 1px solid var(--ntk-template-page-border, #e2e8f0);
   border-radius: 12px;
   background: var(--ntk-template-page-card-bg, #ffffff);
+}
+
+.ntk-template-dashboard__hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ntk-template-dashboard__greeting-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .ntk-template-dashboard__title {
@@ -350,13 +383,53 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 .ntk-template-dashboard__activity-label {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   color: var(--ntk-template-page-text, #334155);
 }
+
+.ntk-template-dashboard__activity-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.ntk-template-dashboard__activity-icon--blue { background: #dbeafe; color: #1d4ed8; }
+.ntk-template-dashboard__activity-icon--indigo { background: #e0e7ff; color: #4338ca; }
+.ntk-template-dashboard__activity-icon--violet { background: #ede9fe; color: #7c3aed; }
+.ntk-template-dashboard__activity-icon--green { background: #dcfce7; color: #15803d; }
+.ntk-template-dashboard__activity-icon--amber { background: #fef3c7; color: #b45309; }
+.ntk-template-dashboard__activity-icon--slate { background: #f1f5f9; color: #475569; }
+.ntk-template-dashboard__activity-icon--red { background: #fee2e2; color: #b91c1c; }
+.ntk-template-dashboard__activity-icon--teal { background: #ccfbf1; color: #0f766e; }
+.ntk-template-dashboard__activity-icon--pink { background: #fce7f3; color: #be185d; }
 
 .ntk-template-dashboard__top-row {
   grid-template-columns: 28px minmax(0, 1fr) auto auto;
   align-items: center;
+}
+
+.ntk-template-dashboard__top-row:has(.ntk-template-dashboard__top-avatar) {
+  grid-template-columns: 28px 30px minmax(0, 1fr) auto auto;
+}
+
+.ntk-template-dashboard__top-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ntk-template-page-avatar-bg, #1e293b);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .ntk-template-dashboard__top-info {
