@@ -1,6 +1,7 @@
 <template>
   <q-input
-    v-model="internalValue"
+    v-bind="$attrs"
+    :model-value="modelValue"
     :label="label"
     :type="type"
     :placeholder="placeholder"
@@ -11,85 +12,106 @@
     :disable="disable"
     :rules="rules"
     :lazy-rules="lazyRules"
-    :aria-describedby="ariaDescribedBy"
-    stack-label
+    :clearable="clearable"
+    :maxlength="maxlength"
+    :counter="counter"
+    :mask="mask"
+    :loading="loading"
+    :autofocus="autofocus"
+    :stack-label="stackLabel"
     class="base-input"
-    @update:model-value="handleUpdate"
+    :class="customClass"
+    @update:model-value="emitModelValue"
+    @blur="$emit('blur', $event)"
+    @focus="$emit('focus', $event)"
   >
-    <template v-if="prependIcon" v-slot:prepend>
-      <q-icon :name="prependIcon" />
-    </template>
-    
-    <template v-if="appendIcon" v-slot:append>
-      <q-icon :name="appendIcon" />
-    </template>
-
-    <template v-if="$slots.prepend" v-slot:prepend>
+    <template
+      v-if="$slots.prepend"
+      #prepend
+    >
       <slot name="prepend" />
     </template>
 
-    <template v-if="$slots.append" v-slot:append>
+    <template
+      v-if="$slots.append"
+      #append
+    >
       <slot name="append" />
     </template>
 
-    <template v-if="hint" v-slot:hint>
-      {{ hint }}
+    <template
+      v-if="$slots.hint || hint"
+      #hint
+    >
+      <slot name="hint">
+        {{ hint }}
+      </slot>
     </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
-import { baseFieldPropsDefaults, useBaseField } from '../../composables/forms/useBaseField'
+/**
+ * Src/components/form/Base Input module.
+ */
 
-const props = defineProps({
-  ...baseFieldPropsDefaults,
-  modelValue: {
-    type: [String, Number],
-    default: ''
-  },
-  type: {
-    type: String as () => 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' | 'search' | 'textarea',
-    default: 'text'
-  }
+import type { ValidationRule } from 'quasar'
+
+interface Props {
+  modelValue?: string | number | null
+  label?: string
+  type?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' | 'search' | 'textarea' | 'date' | 'time' | 'file' | 'datetime-local'
+  placeholder?: string
+  outlined?: boolean
+  filled?: boolean
+  dense?: boolean
+  readonly?: boolean
+  disable?: boolean
+  rules?: ValidationRule[]
+  lazyRules?: boolean
+  clearable?: boolean
+  maxlength?: number | string
+  counter?: boolean
+  mask?: string
+  loading?: boolean
+  autofocus?: boolean
+  stackLabel?: boolean
+  customClass?: string
+  hint?: string
+  showPasswordToggle?: boolean
+}
+
+withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  label: '',
+  type: 'text',
+  placeholder: '',
+  outlined: true,
+  filled: false,
+  dense: false,
+  readonly: false,
+  disable: false,
+  rules: () => [],
+  lazyRules: true,
+  clearable: false,
+  maxlength: undefined,
+  counter: false,
+  mask: '',
+  loading: false,
+  autofocus: false,
+  stackLabel: true,
+  customClass: '',
+  hint: '',
+  showPasswordToggle: false,
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits([
+  'update:modelValue',
+  'blur',
+  'focus',
+])
 
-const { internalValue, handleUpdate } = useBaseField(props, emit)
-</script>
-
-<style scoped lang="scss">
-.base-input {
-  font-family: var(--ntk-font-family);
-
-  :deep(.q-field__control) {
-    border-radius: var(--ntk-radius-md);
-    border: 1px solid var(--ntk-input-border);
-    background: var(--ntk-input-bg);
-    transition: all var(--ntk-transition-base);
-
-    &:hover {
-      border-color: var(--ntk-input-border-hover);
-    }
-  }
-
-  :deep(.q-field--outlined.q-field--focused .q-field__control) {
-    border-color: var(--ntk-input-border-focus);
-    box-shadow: none;
-  }
-
-  :deep(.q-field__label) {
-    color: var(--ntk-input-label);
-    font-weight: var(--ntk-font-weight-medium);
-  }
-
-  :deep(.q-field__native) {
-    color: var(--ntk-input-text);
-    font-family: var(--ntk-font-family);
-  }
-
-  :deep(.q-icon) {
-    color: var(--ntk-input-icon);
-  }
+const emitModelValue = (value: unknown) => {
+  emit('update:modelValue', value)
 }
-</style>
+</script>

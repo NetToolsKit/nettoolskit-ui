@@ -1,6 +1,7 @@
 <template>
   <q-input
-    v-model="internalValue"
+    v-bind="$attrs"
+    :model-value="internalValue"
     :label="label"
     :placeholder="placeholder"
     :outlined="outlined"
@@ -10,29 +11,42 @@
     :disable="disable"
     :rules="rules"
     :lazy-rules="lazyRules"
-    stack-label
+    :stack-label="true"
     class="base-date-picker"
-    @update:model-value="handleUpdate"
+    :class="customClass"
+    @update:model-value="emitModelValue"
   >
-    <template v-slot:append>
-      <q-icon name="event" class="cursor-pointer">
-        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date 
-            v-model="internalValue" 
-            minimal
-            today-btn
+    <template #append>
+      <q-icon
+        name="event"
+        class="cursor-pointer"
+      >
+        <q-popup-proxy
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+        >
+          <q-date
+            v-model="internalValue"
+            :minimal="true"
+            :today-btn="true"
             color="primary"
-            locale="{
-              days: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-              daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-              months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-              monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-            }"
-            @update:model-value="handleUpdate"
+            :locale="dateLocale"
+            @update:model-value="emitModelValue"
           >
             <div class="row items-center justify-end q-gutter-xs">
-              <q-btn label="Hoje" flat color="primary" @click="setToday" />
-              <q-btn v-close-popup label="Fechar" flat color="primary" />
+              <q-btn
+                label="Hoje"
+                flat
+                color="primary"
+                @click="setToday"
+              />
+              <q-btn
+                v-bind="{ 'v-close-popup': true }"
+                label="Fechar"
+                flat
+                color="primary"
+              />
             </div>
           </q-date>
         </q-popup-proxy>
@@ -42,115 +56,84 @@
 </template>
 
 <script setup lang="ts">
-import { baseFieldPropsDefaults, useBaseField } from '../../composables/forms/useBaseField'
+/**
+ * Src/components/form/Base Date Picker module.
+ */
 
-const props = defineProps({
-  ...baseFieldPropsDefaults,
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
-    default: 'DD/MM/YYYY'
-  }
+import { ref, watch } from 'vue'
+import type { ValidationRule } from 'quasar'
+
+interface Props {
+  modelValue?: string
+  label?: string
+  placeholder?: string
+  outlined?: boolean
+  filled?: boolean
+  dense?: boolean
+  readonly?: boolean
+  disable?: boolean
+  rules?: ValidationRule[]
+  lazyRules?: boolean
+  customClass?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  label: '',
+  placeholder: 'DD/MM/YYYY',
+  outlined: true,
+  filled: false,
+  dense: false,
+  readonly: false,
+  disable: false,
+  rules: () => [],
+  lazyRules: true,
+  customClass: '',
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits([
+  'update:modelValue',
+])
 
-const { internalValue, handleUpdate } = useBaseField(props, emit)
+const internalValue = ref(props.modelValue)
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    internalValue.value = newValue
+  }
+)
+
+const emitModelValue = (value: unknown) => {
+  internalValue.value = String(value ?? '')
+  emit('update:modelValue', internalValue.value)
+}
+
+const dateLocale = {
+  days: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+  daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+  months: [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ],
+  monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+}
 
 const setToday = () => {
   const today = new Date()
   const year = today.getFullYear()
   const month = String(today.getMonth() + 1).padStart(2, '0')
   const day = String(today.getDate()).padStart(2, '0')
-  const dateString = `${year}/${month}/${day}`
-  
-  internalValue.value = dateString
-  handleUpdate(dateString)
+  emitModelValue(`${year}/${month}/${day}`)
 }
 </script>
-
-<style scoped lang="scss">
-.base-date-picker {
-  font-family: var(--ntk-font-family);
-
-  :deep(.q-field__control) {
-    border-radius: var(--ntk-radius-md);
-    border: 1px solid var(--ntk-input-border);
-    background: var(--ntk-input-bg);
-    transition: all var(--ntk-transition-base);
-
-    &:hover {
-      border-color: var(--ntk-input-border-hover);
-    }
-  }
-
-  :deep(.q-field--outlined.q-field--focused .q-field__control) {
-    border-color: var(--ntk-input-border-focus);
-    box-shadow: none;
-  }
-
-  :deep(.q-field__label) {
-    color: var(--ntk-input-label);
-    font-weight: var(--ntk-font-weight-medium);
-  }
-
-  :deep(.q-field__native) {
-    color: var(--ntk-input-text);
-    font-family: var(--ntk-font-family);
-  }
-
-  :deep(.q-icon) {
-    color: var(--ntk-input-icon);
-  }
-}
-</style>
-
-<style lang="scss">
-.q-date {
-  font-family: var(--ntk-font-family);
-  box-shadow: var(--ntk-shadow-popup);
-  border-radius: var(--ntk-radius-md);
-  background: var(--ntk-popup-bg) !important;
-
-  .q-date__header {
-    background-color: var(--ntk-popup-header-bg) !important;
-    color: var(--ntk-popup-header-text) !important;
-  }
-
-  .q-date__view {
-    background: var(--ntk-popup-bg) !important;
-  }
-
-  .q-date__calendar {
-    background: var(--ntk-popup-bg) !important;
-    
-    .q-btn {
-      color: var(--ntk-text-dark) !important;
-      
-      &.q-btn--flat {
-        color: var(--ntk-text-dark) !important;
-      }
-    }
-  }
-
-  .q-date__calendar-item .q-btn {
-    color: var(--ntk-text-dark) !important;
-    
-    &:hover {
-      background-color: var(--ntk-bg-hover) !important;
-    }
-    
-    &.q-btn--unelevated {
-      background-color: var(--ntk-primary) !important;
-      color: var(--ntk-text-inverse) !important;
-    }
-  }
-
-  .q-btn--flat {
-    color: var(--ntk-primary) !important;
-  }
-}
-</style>

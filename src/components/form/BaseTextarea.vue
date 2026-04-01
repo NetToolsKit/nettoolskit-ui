@@ -1,6 +1,7 @@
 <template>
   <q-input
-    v-model="internalValue"
+    v-bind="$attrs"
+    :model-value="modelValue"
     :label="label"
     :placeholder="placeholder"
     :outlined="outlined"
@@ -8,85 +9,115 @@
     :dense="dense"
     :readonly="readonly"
     :disable="disable"
-    :rows="rows"
     :rules="rules"
     :lazy-rules="lazyRules"
+    :rows="rows"
+    :maxlength="maxlength"
+    :counter="counter"
+    :autogrow="autogrow"
+    :error="error"
+    :error-message="errorMessage"
+    :loading="loading"
+    :stack-label="stackLabel"
+    :clearable="clearable"
+    :bottom-slots="bottomSlots"
+    :hint="hint"
     type="textarea"
-    stack-label
     class="base-textarea"
-    @update:model-value="handleUpdate"
+    :class="customClass"
+    @update:model-value="emitModelValue"
+    @blur="$emit('blur', $event)"
+    @focus="$emit('focus', $event)"
+    @input="$emit('input', $event)"
   >
-    <template v-if="prependIcon" v-slot:prepend>
-      <q-icon :name="prependIcon" />
-    </template>
-    
-    <template v-if="appendIcon" v-slot:append>
-      <q-icon :name="appendIcon" />
-    </template>
-
-    <template v-if="$slots.prepend" v-slot:prepend>
+    <template
+      v-if="$slots.prepend"
+      #prepend
+    >
       <slot name="prepend" />
     </template>
 
-    <template v-if="$slots.append" v-slot:append>
+    <template
+      v-if="$slots.append"
+      #append
+    >
       <slot name="append" />
+    </template>
+
+    <template
+      v-if="$slots.hint"
+      #hint
+    >
+      <slot name="hint" />
     </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
-import { baseFieldPropsDefaults, useBaseField } from '../../composables/forms/useBaseField'
+/**
+ * Src/components/form/Base Textarea module.
+ */
 
-const props = defineProps({
-  ...baseFieldPropsDefaults,
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  rows: {
-    type: [Number, String],
-    default: 3
-  }
+import type { ValidationRule } from 'quasar'
+
+interface Props {
+  modelValue?: string | null
+  label?: string
+  placeholder?: string
+  outlined?: boolean
+  filled?: boolean
+  dense?: boolean
+  readonly?: boolean
+  disable?: boolean
+  rules?: ValidationRule[]
+  lazyRules?: boolean
+  rows?: number | string
+  maxlength?: number | string
+  counter?: boolean
+  autogrow?: boolean
+  error?: boolean
+  errorMessage?: string
+  loading?: boolean
+  stackLabel?: boolean
+  clearable?: boolean
+  bottomSlots?: boolean
+  hint?: string
+  customClass?: string
+}
+
+withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  label: '',
+  placeholder: '',
+  outlined: true,
+  filled: false,
+  dense: false,
+  readonly: false,
+  disable: false,
+  rules: () => [],
+  lazyRules: true,
+  rows: 3,
+  maxlength: undefined,
+  counter: false,
+  autogrow: false,
+  error: false,
+  errorMessage: '',
+  loading: false,
+  stackLabel: true,
+  clearable: false,
+  bottomSlots: false,
+  hint: '',
+  customClass: '',
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits([
+  'update:modelValue',
+  'blur',
+  'focus',
+  'input',
+])
 
-const { internalValue, handleUpdate } = useBaseField(props, emit)
-</script>
-
-<style scoped lang="scss">
-.base-textarea {
-  font-family: var(--ntk-font-family);
-
-  :deep(.q-field__control) {
-    border-radius: var(--ntk-radius-lg);
-    border: 2px solid var(--ntk-border-light);
-    background: var(--ntk-input-bg);
-    transition: all var(--ntk-transition-base);
-
-    &:hover {
-      border-color: var(--ntk-input-border-focus);
-    }
-  }
-
-  :deep(.q-field--outlined.q-field--focused .q-field__control) {
-    border-color: var(--ntk-input-border-focus);
-    box-shadow: var(--ntk-shadow-focus);
-  }
-
-  :deep(.q-field__label) {
-    color: var(--ntk-input-label);
-    font-weight: var(--ntk-font-weight-medium);
-  }
-
-  :deep(.q-field__native) {
-    color: var(--ntk-input-text);
-    font-family: var(--ntk-font-family);
-    line-height: 1.6;
-  }
-
-  :deep(.q-icon) {
-    color: var(--ntk-input-icon);
-  }
+const emitModelValue = (value: unknown) => {
+  emit('update:modelValue', value)
 }
-</style>
+</script>

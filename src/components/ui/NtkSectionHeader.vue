@@ -1,11 +1,25 @@
 <template>
-  <div class="section-header" :class="spacingClass">
-    <h2 class="section-header__title">{{ title }}</h2>
-    <p v-if="subtitle" class="section-header__subtitle">{{ subtitle }}</p>
+  <div
+    class="section-header"
+    :class="spacingClass"
+  >
+    <h2 class="section-header__title">
+      {{ title }}
+    </h2>
+    <p
+      v-if="subtitle"
+      class="section-header__subtitle"
+    >
+      {{ subtitle }}
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
+/**
+ * Src/components/ui/Ntk Section Header module.
+ */
+
 import { computed } from 'vue'
 
 interface Props {
