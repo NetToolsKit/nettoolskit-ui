@@ -6,9 +6,11 @@
     :preset-options="presetOptions"
     :menu-items="referenceSampleMenuItems"
     :active-item-id="activeMenuId"
+    :search-value="searchValue"
+    @update:search-value="searchValue = $event"
     @menu-item-click="onMenuItemClick"
     @update:selected-preset-id="onPresetChange"
-    @primary-action-click="openDesigner"
+    @back-home-click="onBackHomeClick"
   >
     <ReferenceWorkspaceComposer
       :mode="activeMenuId === 'catalog' ? 'catalog' : 'designer'"
@@ -52,6 +54,12 @@ import {
   useReferenceWorkspaceHost,
 } from '../src/templates/features/reference-system'
 
+function onBackHomeClick(): void {
+  if (typeof window !== 'undefined') {
+    window.location.href = '/'
+  }
+}
+
 const {
   activeDocumentTabId,
   activeMenuId,
@@ -59,7 +67,6 @@ const {
   onManagerActionClick,
   onMenuItemClick,
   onPresetChange,
-  openDesigner,
   presetOptions,
   searchValue,
   selectedPreset,
@@ -71,10 +78,6 @@ const {
   initialReportId: referenceSampleReportGroups[0]?.items[0]?.id ?? '',
   initialDocumentTabId: referenceSampleDocumentTabs[0]?.id ?? 'layout',
   initialZoomValue: referenceSampleDesignerConfig.zoomOptions[2] ?? 100,
-  onBackHome: () => {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/'
-    }
-  },
+  onBackHome: onBackHomeClick,
 })
 </script>

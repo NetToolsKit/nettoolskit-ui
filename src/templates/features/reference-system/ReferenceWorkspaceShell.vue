@@ -21,15 +21,19 @@
 
       <template #header-actions>
         <slot name="header-actions">
-          <ReferencePresetSelectorBar
-            :model-value="selectedPresetId"
-            :options="presetOptions"
-            :label="presetLabel"
-            :primary-action-label="primaryActionLabel"
-            :primary-action-icon="primaryActionIcon"
-            :show-primary-action="showPrimaryAction"
-            @update:model-value="emit('update:selectedPresetId', $event)"
-            @primary-action-click="emit('primary-action-click')"
+          <ReferenceTopbarActions
+            :search-value="searchValue"
+            :selected-preset-id="selectedPresetId"
+            :preset-options="presetOptions"
+            :preset-label="presetLabel"
+            :user-name="userName"
+            :user-initials="userInitials"
+            :notification-count="notificationCount"
+            @update:search-value="emit('update:searchValue', $event)"
+            @update:selected-preset-id="emit('update:selectedPresetId', $event)"
+            @profile-click="emit('profile-click')"
+            @settings-click="emit('settings-click')"
+            @back-home-click="emit('back-home-click')"
           />
         </slot>
       </template>
@@ -46,7 +50,7 @@ import type { TemplateMenuChildItem, TemplateMenuItem } from '../../navigation/m
 import MainLayoutTemplate from '../../layouts/MainLayoutTemplate.vue'
 import type { ReferenceWhitelabelPreset } from '../../../whitelabel'
 import ReferenceBrandLockup from './components/ReferenceBrandLockup.vue'
-import ReferencePresetSelectorBar from './components/ReferencePresetSelectorBar.vue'
+import ReferenceTopbarActions from './components/ReferenceTopbarActions.vue'
 
 interface ReferencePresetOption {
   label: string
@@ -64,10 +68,9 @@ withDefaults(defineProps<{
   userInitials?: string
   storageKeyPrefix?: string
   pageContainerClass?: string
+  searchValue?: string
+  notificationCount?: number
   presetLabel?: string
-  primaryActionLabel?: string
-  primaryActionIcon?: string
-  showPrimaryAction?: boolean
 }>(), {
   whitelabelStyleVars: () => ({}),
   presetOptions: () => [],
@@ -76,15 +79,17 @@ withDefaults(defineProps<{
   userInitials: 'RT',
   storageKeyPrefix: 'ntk-reference-samples-layout',
   pageContainerClass: 'ntk-reference-workspace-shell__page-container',
+  searchValue: '',
+  notificationCount: 0,
   presetLabel: 'Whitelabel preset',
-  primaryActionLabel: 'Open designer',
-  primaryActionIcon: 'design_services',
-  showPrimaryAction: true,
 })
 
 const emit = defineEmits<{
   'update:selectedPresetId': [value: string | number | null]
-  'primary-action-click': []
+  'update:searchValue': [value: string]
+  'profile-click': []
+  'settings-click': []
+  'back-home-click': []
   'menu-item-click': [item: TemplateMenuItem | TemplateMenuChildItem]
 }>()
 </script>
