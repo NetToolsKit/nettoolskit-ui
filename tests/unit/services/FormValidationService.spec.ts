@@ -7,8 +7,6 @@ import { FormValidationService, FormValidator } from '../../../src/services/Form
 
 describe('FormValidationService', () => {
   // ============================================================================
-  // required()
-  // ============================================================================
   describe('required()', () => {
     const rule = FormValidationService.required()
 
@@ -51,8 +49,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // email()
-  // ============================================================================
   describe('email()', () => {
     const rule = FormValidationService.email()
 
@@ -82,8 +78,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // minLength()
-  // ============================================================================
   describe('minLength()', () => {
     const rule = FormValidationService.minLength(5)
 
@@ -110,8 +104,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // maxLength()
-  // ============================================================================
   describe('maxLength()', () => {
     const rule = FormValidationService.maxLength(5)
 
@@ -132,8 +124,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // lengthBetween()
   // ============================================================================
   describe('lengthBetween()', () => {
     const rule = FormValidationService.lengthBetween(3, 5)
@@ -160,8 +150,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // numeric()
-  // ============================================================================
   describe('numeric()', () => {
     const rule = FormValidationService.numeric()
 
@@ -182,8 +170,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // cpf()
   // ============================================================================
   describe('cpf()', () => {
     const rule = FormValidationService.cpf()
@@ -214,8 +200,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // cnpj()
-  // ============================================================================
   describe('cnpj()', () => {
     const rule = FormValidationService.cnpj()
 
@@ -241,8 +225,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // phone()
-  // ============================================================================
   describe('phone()', () => {
     const rule = FormValidationService.phone()
 
@@ -267,8 +249,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // url()
   // ============================================================================
   describe('url()', () => {
     const rule = FormValidationService.url()
@@ -299,8 +279,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // dateFormat()
-  // ============================================================================
   describe('dateFormat()', () => {
     const rule = FormValidationService.dateFormat()
 
@@ -321,8 +299,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // between()
   // ============================================================================
   describe('between()', () => {
     const rule = FormValidationService.between(1, 10)
@@ -353,8 +329,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // min()
-  // ============================================================================
   describe('min()', () => {
     const rule = FormValidationService.min(5)
 
@@ -371,8 +345,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // max()
   // ============================================================================
   describe('max()', () => {
     const rule = FormValidationService.max(10)
@@ -391,8 +363,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // match()
-  // ============================================================================
   describe('match()', () => {
     it('should return true when values match', () => {
       const rule = FormValidationService.match('password123', 'Senha')
@@ -405,8 +375,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // pattern()
   // ============================================================================
   describe('pattern()', () => {
     const rule = FormValidationService.pattern(/^[A-Z]{3}$/, 'Must be 3 uppercase letters')
@@ -424,8 +392,6 @@ describe('FormValidationService', () => {
     })
   })
 
-  // ============================================================================
-  // strongPassword()
   // ============================================================================
   describe('strongPassword()', () => {
     const rule = FormValidationService.strongPassword()
@@ -460,8 +426,6 @@ describe('FormValidationService', () => {
   })
 
   // ============================================================================
-  // combine()
-  // ============================================================================
   describe('combine()', () => {
     it('should return true when all rules pass', () => {
       const rule = FormValidationService.combine(
@@ -490,8 +454,6 @@ describe('FormValidationService', () => {
   })
 })
 
-// ============================================================================
-// FormValidator
 // ============================================================================
 describe('FormValidator', () => {
   describe('validate()', () => {
