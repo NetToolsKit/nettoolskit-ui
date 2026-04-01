@@ -71,4 +71,3 @@ export function useFormRules() {
  * Re-exporta tipos para conveniência
  */
 export type { ValidationRule, ValidationResult } from '../../services/FormValidationService'
-

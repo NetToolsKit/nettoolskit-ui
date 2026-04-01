@@ -1,23 +1,23 @@
 /**
  * NetToolsKit UI Vue - Single Entry Point
- * 
+ *
  * ⭐ ÚNICO PONTO DE ENTRADA para todo o módulo
- * 
+ *
  * Zero repetição: Importa tudo diretamente de cada arquivo,
  * sem index.ts intermediários nas subpastas.
- * 
+ *
  * @example
  * ```typescript
  * import {
  *   // Components
- *   BaseButton, BaseInput, MetricCard,
- *   
+ *   NtkButton, NtkInput, NtkMetricCard,
+ *
  *   // Composables
  *   useNotification, useFormRules, useAsync,
- *   
+ *
  *   // Services
  *   NotificationService, FilterService,
- *   
+ *
  *   // Utils
  *   validateEmail, validateCPF, retry, timeout
  * } from '@nettoolskit/ui-vue'
@@ -32,6 +32,12 @@ export * from './src/adapters/QuasarNotificationAdapter'
 // ============================================================================
 // COMPONENTS - Form
 // ============================================================================
+export { default as NtkInput } from './src/components/form/NtkInput.vue'
+export { default as NtkSelect } from './src/components/form/NtkSelect.vue'
+export { default as NtkMultiSelect } from './src/components/form/NtkMultiSelect.vue'
+export { default as NtkTextarea } from './src/components/form/NtkTextarea.vue'
+export { default as NtkDatePicker } from './src/components/form/NtkDatePicker.vue'
+export { default as NtkTimePicker } from './src/components/form/NtkTimePicker.vue'
 export { default as BaseInput } from './src/components/form/BaseInput.vue'
 export { default as BaseSelect } from './src/components/form/BaseSelect.vue'
 export { default as BaseMultiSelect } from './src/components/form/BaseMultiSelect.vue'
@@ -42,31 +48,60 @@ export { default as BaseTimePicker } from './src/components/form/BaseTimePicker.
 // ============================================================================
 // COMPONENTS - Layout
 // ============================================================================
+export { default as NtkHeader } from './src/components/layout/NtkHeader.vue'
+export { default as NtkSidebar } from './src/components/layout/NtkSidebar.vue'
+export { default as NtkFooter } from './src/components/layout/NtkFooter.vue'
+export { default as NtkSection } from './src/components/layout/NtkSection.vue'
+export { default as NtkHero } from './src/components/layout/NtkHero.vue'
+export { default as NtkLandingHeader } from './src/components/layout/NtkLandingHeader.vue'
+export { default as NtkMobileDrawer } from './src/components/layout/NtkMobileDrawer.vue'
+export { default as NtkCTASection } from './src/components/layout/NtkCTASection.vue'
+export { default as NtkStatsSection } from './src/components/layout/NtkStatsSection.vue'
+export { default as NtkServiceGrid } from './src/components/layout/NtkServiceGrid.vue'
+export { default as NtkTechStack } from './src/components/layout/NtkTechStack.vue'
+export { default as NtkContactSection } from './src/components/layout/NtkContactSection.vue'
+export { default as NtkLandingComposer } from './src/components/layout/NtkLandingComposer.vue'
+export { default as NtkAppShell } from './src/components/layout/NtkAppShell.vue'
 export { default as BaseHeader } from './src/components/layout/BaseHeader.vue'
 export { default as BaseSidebar } from './src/components/layout/BaseSidebar.vue'
 export { default as BaseFooter } from './src/components/layout/BaseFooter.vue'
 export { default as BaseSection } from './src/components/layout/BaseSection.vue'
 export { default as BaseHero } from './src/components/layout/BaseHero.vue'
+export * from './src/components/layout/app-shell.types'
+export * from './src/components/layout/app-shell.config'
+export * from './src/components/layout/app-shell.theme'
 
 // ============================================================================
 // COMPONENTS - UI
 // ============================================================================
+export { default as NtkButton } from './src/components/ui/NtkButton.vue'
+export { default as NtkCard } from './src/components/ui/NtkCard.vue'
+export { default as NtkChip } from './src/components/ui/NtkChip.vue'
+export { default as NtkMetricCard } from './src/components/ui/NtkMetricCard.vue'
+export { default as NtkSectionHeader } from './src/components/ui/NtkSectionHeader.vue'
+export { default as NtkInfoCard } from './src/components/ui/NtkInfoCard.vue'
+export { default as NtkPricingCard } from './src/components/ui/NtkPricingCard.vue'
+export { default as NtkLogo } from './src/components/ui/NtkLogo.vue'
+export { default as NtkFeatureCard } from './src/components/ui/NtkFeatureCard.vue'
+export { default as NtkSteps } from './src/components/ui/NtkSteps.vue'
+export { default as NtkCreditCard } from './src/components/ui/NtkCreditCard.vue'
+export { default as NtkStatCard } from './src/components/ui/NtkStatCard.vue'
+export { default as NtkTestimonialCard } from './src/components/ui/NtkTestimonialCard.vue'
 export { default as BaseButton } from './src/components/ui/BaseButton.vue'
 export { default as BaseCard } from './src/components/ui/BaseCard.vue'
 export { default as BaseChip } from './src/components/ui/BaseChip.vue'
-export { default as MetricCard } from './src/components/ui/MetricCard.vue'
-export { default as SectionHeader } from './src/components/ui/SectionHeader.vue'
-export { default as InfoCard } from './src/components/ui/InfoCard.vue'
-export { default as BasePricingCard } from './src/components/ui/BasePricingCard.vue'
 export { default as BaseLogo } from './src/components/ui/BaseLogo.vue'
 export { default as BaseFeatureCard } from './src/components/ui/BaseFeatureCard.vue'
-export { default as BaseSteps } from './src/components/ui/BaseSteps.vue'
+export { default as BasePricingCard } from './src/components/ui/BasePricingCard.vue'
 export { default as BaseCreditCard } from './src/components/ui/BaseCreditCard.vue'
+export { default as BaseSteps } from './src/components/ui/BaseSteps.vue'
+export { default as MetricCard } from './src/components/ui/MetricCard.vue'
 
 // ============================================================================
 // COMPOSABLES - Forms
 // ============================================================================
 export * from './src/composables/forms/useFormRules'
+export * from './src/composables/forms/useNtkField'
 export * from './src/composables/forms/useBaseField'
 
 // ============================================================================
@@ -76,6 +111,7 @@ export * from './src/composables/ui/useDialog'
 export * from './src/composables/ui/useDialogActions'
 export * from './src/composables/ui/useResponsive'
 export * from './src/composables/ui/useTheme'
+export * from './src/composables/ui/useBranding'
 
 // ============================================================================
 // COMPOSABLES - Data
@@ -114,4 +150,35 @@ export * from './src/utils/async'
 // ============================================================================
 // CONFIG - Theme
 // ============================================================================
-export * from './src/config/theme.config'
+export * from './src/config/theme/theme.config'
+export * from './src/config/theme/theme.plugin'
+
+// ============================================================================
+// CONFIG - Brand
+// ============================================================================
+export * from './src/config/brand/identity.config'
+export * from './src/config/brand/navigation.config'
+export * from './src/config/brand/content.config'
+export * from './src/config/landing/landing-page.config'
+
+// ============================================================================
+// CONFIG - Presets
+// ============================================================================
+export * from './src/config/presets'
+
+// ============================================================================
+// CONFIG - Colors
+// ============================================================================
+export * from './src/config/colors/palette.config'
+export * from './src/config/colors/semantic.config'
+export * from './src/config/colors/theme-mode.config'
+
+// ============================================================================
+// TEMPLATES - Visual Template Catalog
+// ============================================================================
+export * from './src/templates'
+
+// ============================================================================
+// WHITELABEL - Reference Samples
+// ============================================================================
+export * from './src/whitelabel'

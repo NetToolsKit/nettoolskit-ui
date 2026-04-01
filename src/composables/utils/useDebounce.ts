@@ -1,3 +1,7 @@
+/**
+ * Src/composables/utils/use Debounce module.
+ */
+
 import { ref } from 'vue'
 
 /**
@@ -8,7 +12,7 @@ export function useDebouncedSearch<T extends (...args: any[]) => any>(
   callback: T,
   delay = 300
 ) {
-  const timeoutId = ref<NodeJS.Timeout | null>(null)
+  const timeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
   const isWaiting = ref(false)
 
   const debouncedFunction = (...args: Parameters<T>) => {
@@ -54,7 +58,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
   callback: T,
   delay = 300
 ) {
-  const timeoutId = ref<NodeJS.Timeout | null>(null)
+  const timeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
   const lastExecuted = ref<number>(0)
   const isThrottled = ref(false)
 

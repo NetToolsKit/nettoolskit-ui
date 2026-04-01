@@ -1,9 +1,10 @@
 /**
  * Global Application Styles - Landing Page Design System
- * Modern, clean design with Inter font
+ * Modern, clean design with refined luxury typography
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@use '../templates/styles/reference-app-bridge';
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
 
 /* ============================================
  * CSS Reset & Base Styles
@@ -47,8 +48,10 @@ body {
  * Typography - Landing Page Style
  * ============================================ */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ntk-font-family-display);
   font-weight: var(--ntk-font-weight-bold);
   line-height: 1.2;
+  letter-spacing: 0.01em;
   margin-bottom: 1rem;
   color: var(--ntk-text-dark);
 }

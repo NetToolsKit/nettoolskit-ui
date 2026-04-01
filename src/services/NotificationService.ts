@@ -162,14 +162,15 @@ export class NotificationService implements INotificationService {
     // Base implementation (console.log)
     // Concrete adapter (Quasar) will be created in infrastructure
     const { type = 'info', message, icon } = options
-    console.log(`[${type.toUpperCase()}] ${icon ? icon + ' ' : ''}${message}`)
+    const log = type === 'error' ? console.error : console.warn
+    log(`[${type.toUpperCase()}] ${icon ? icon + ' ' : ''}${message}`)
   }
 
   loading(message: string = 'Carregando...'): NotificationHandle {
-    console.log(`[LOADING] ${message}`)
+    console.warn(`[LOADING] ${message}`)
     
     return {
-      dismiss: () => console.log('[LOADING] Dismissed')
+      dismiss: () => console.warn('[LOADING] Dismissed')
     }
   }
 }
@@ -179,6 +180,9 @@ export class NotificationService implements INotificationService {
  */
 let notificationServiceInstance: NotificationService | null = null
 
+/**
+ * Handles get notification service.
+ */
 export function getNotificationService(): NotificationService {
   if (!notificationServiceInstance) {
     notificationServiceInstance = new NotificationService()

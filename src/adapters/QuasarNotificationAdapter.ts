@@ -116,6 +116,9 @@ export class QuasarNotificationAdapter extends NotificationService {
  */
 let quasarNotificationInstance: QuasarNotificationAdapter | null = null
 
+/**
+ * Handles get quasar notification service.
+ */
 export function getQuasarNotificationService(): QuasarNotificationAdapter {
   if (!quasarNotificationInstance) {
     quasarNotificationInstance = new QuasarNotificationAdapter()

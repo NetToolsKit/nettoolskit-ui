@@ -1,0 +1,6 @@
+export * from './scaffold-template.catalog'
+export * from './auth-store.template'
+export * from './router-template'
+export * from './menu.constants.template'
+export * from './layout-store.template'
+export * from './notification.template'
