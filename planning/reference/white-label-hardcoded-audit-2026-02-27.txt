@@ -1,0 +1,26 @@
+White-label Hardcoded Audit (2026-02-27)
+
+Scope
+- src/components/layout/NtkAppShell.vue
+- landing-page/CmsApp.vue
+
+Resolved in this pass
+- Removed fixed icon sizes in shell/header/preview templates and switched to token-driven CSS classes.
+- Removed fixed shell header blur (was blur(10px)); now derived from spacing token.
+- Removed fixed header action hover Y transform (was -2px); now derived from spacing token.
+- Removed fixed item-caption top offset (was 0.15rem); now derived from spacing token.
+- Added token-driven preview icon sizing vars in CMS preview.
+- Replaced most CMS editor spacing/radius static values with existing CMS token vars (`space*`, `radius*`, typography vars).
+- Replaced static editor columns and max-height offsets with token-based CSS vars (`--ntk-cms-layout-*`, `--ntk-cms-editor-max-height`).
+
+Remaining explicit values (intentional/structural)
+- Layout breakpoints and viewport constraints:
+  - App shell viewport/min-height and compact breakpoint are now theme-token driven (`viewportHeight`, `compactBreakpoint`, compact paddings).
+  - Remaining fixed breakpoints are in CMS editor responsive layout (`1024/1280`) and are structural to authoring UI.
+- Generic utility values that are not tenant branding tokens: `1px` borders.
+- `999px` pill radius moved to theme token default (`groupCaptionMiniRadius`) and is now configurable in CMS.
+
+Notes
+- No remaining hardcoded HEX/RGB colors were found in the audited files.
+- Runtime shell colors, typography and main component dimensions are tokenized via AppShellTheme + CMS settings.
+- CMS editor layout now primarily uses theme-derived spacing/radius vars; remaining constants are structural responsiveness rules.

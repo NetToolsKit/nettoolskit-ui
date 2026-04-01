@@ -1,0 +1,77 @@
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
+
+const modernSassApiOption = { api: 'modern-compiler' } as Record<string, string>
+
+/**
+ * Split strategy used by landing, sample, and template builds.
+ * Keeps framework/vendor code separated from reference/template slices
+ * to reduce single-bundle size warnings and improve cacheability.
+ */
+function manualChunkByModule(id: string): string | undefined {
+  const normalized = id.replace(/\\/g, '/')
+
+  if (!normalized.includes('/node_modules/')) {
+    if (normalized.includes('/landing-page/ReferenceSamplesApp.vue')) {
+      return 'reference-samples'
+    }
+    if (
+      normalized.includes('/landing-page/reference-samples')
+      || normalized.includes('/src/whitelabel/')
+    ) {
+      return 'whitelabel-runtime'
+    }
+    if (
+      normalized.includes('/landing-page/TemplateShowcaseApp.vue')
+      || normalized.includes('/src/templates/')
+    ) {
+      return 'template-system'
+    }
+    return undefined
+  }
+
+  if (normalized.includes('/node_modules/quasar/')) {
+    return 'vendor-quasar'
+  }
+  if (normalized.includes('/node_modules/vue-router/')) {
+    return 'vendor-vue-router'
+  }
+
+  return 'vendor'
+}
+
+export default defineConfig({
+  plugins: [vue()],
+  root: './landing-page',
+  build: {
+    outDir: '../.build/landing',
+    emptyOutDir: true,
+    // Quasar runtime is slightly above the default 500KB warning threshold.
+    // Keep a strict limit while avoiding false positives for this known vendor chunk.
+    chunkSizeWarningLimit: 520,
+    rollupOptions: {
+      input: resolve(__dirname, './landing-page/index.html'),
+      output: {
+        manualChunks: manualChunkByModule,
+      },
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      // Keep the runtime option while avoiding excess-property friction across
+      // slightly different Vite/Sass type baselines.
+      scss: modernSassApiOption,
+      sass: modernSassApiOption,
+    },
+  },
+  resolve: {
+    alias: {
+      '@nettoolskit/ui-vue': resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src')
+    }
+  },
+  server: {
+    port: 3000
+  }
+})
