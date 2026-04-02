@@ -7,7 +7,7 @@
         outlined
         placeholder="Search reports…"
         class="ntk-reference-topbar__search-input"
-        @update:model-value="emit('update:searchValue', String($event ?? ''))"
+        @update:model-value="onSearchInput(String($event ?? ''))"
       >
         <template #prepend>
           <q-icon
@@ -154,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 
 interface PresetOption {
   label: string
@@ -192,10 +192,22 @@ watch(() => props.searchValue, value => {
   internalSearch.value = value
 })
 
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+function onSearchInput(val: string): void {
+  if (debounceTimer !== null) clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => emit('update:searchValue', val), 300)
+}
+
 function clearSearch(): void {
+  if (debounceTimer !== null) clearTimeout(debounceTimer)
   internalSearch.value = ''
   emit('update:searchValue', '')
 }
+
+onUnmounted(() => {
+  if (debounceTimer !== null) clearTimeout(debounceTimer)
+})
 </script>
 
 <style scoped lang="scss">
