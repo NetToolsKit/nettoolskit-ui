@@ -1,5 +1,5 @@
 import type { TemplateMenuItem } from '../../navigation/menu-template.types'
-import type { ReferenceReportGroup } from './reference-system.types'
+import type { ReferenceNotificationItem, ReferenceReportGroup } from './reference-system.types'
 
 export const referenceSampleMenuItems: TemplateMenuItem[] = [
   {
@@ -142,6 +142,41 @@ export const referenceSampleReportGroups: ReferenceReportGroup[] = [
         tags: ['hr', 'capacity'],
       },
     ],
+  },
+]
+
+export const referenceSampleNotifications: ReferenceNotificationItem[] = [
+  {
+    id: 'notif-1',
+    icon: 'check_circle',
+    title: 'Monthly Revenue Summary published',
+    description: 'Finance team approved and published the report.',
+    time: '2 min ago',
+    read: false,
+  },
+  {
+    id: 'notif-2',
+    icon: 'schedule',
+    title: 'Scheduled delivery completed',
+    description: 'Quarterly Performance was sent to 12 recipients.',
+    time: '1 hr ago',
+    read: false,
+  },
+  {
+    id: 'notif-3',
+    icon: 'edit',
+    title: 'Product Sales Analysis updated',
+    description: 'Product Analytics made changes to the report layout.',
+    time: '3 hr ago',
+    read: true,
+  },
+  {
+    id: 'notif-4',
+    icon: 'person_add',
+    title: 'New collaborator added',
+    description: 'HR Analytics was added to the Operations workspace.',
+    time: 'Yesterday',
+    read: true,
   },
 ]
 

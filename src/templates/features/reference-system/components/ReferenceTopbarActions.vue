@@ -48,6 +48,67 @@
           {{ notificationCount }}
         </q-badge>
         <q-tooltip>Notifications</q-tooltip>
+
+        <q-menu
+          anchor="bottom right"
+          self="top right"
+          class="ntk-reference-topbar__notifications-menu"
+        >
+          <div class="ntk-reference-topbar__notifications-header">
+            <span class="ntk-reference-topbar__notifications-title">Notifications</span>
+            <q-badge
+              v-if="unreadCount > 0"
+              color="negative"
+              rounded
+            >
+              {{ unreadCount }}
+            </q-badge>
+          </div>
+          <q-separator />
+          <q-list dense>
+            <q-item
+              v-for="notif in notifications"
+              :key="notif.id"
+              v-close-popup
+              clickable
+              :class="{ 'ntk-reference-topbar__notif-item--unread': !notif.read }"
+            >
+              <q-item-section avatar>
+                <q-icon
+                  :name="notif.icon"
+                  :color="notif.read ? 'grey-5' : 'primary'"
+                  size="18px"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label
+                  class="ntk-reference-topbar__notif-item-title"
+                  :class="{ 'text-weight-bold': !notif.read }"
+                >
+                  {{ notif.title }}
+                </q-item-label>
+                <q-item-label
+                  caption
+                  class="ntk-reference-topbar__notif-item-desc"
+                >
+                  {{ notif.description }}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section
+                side
+                class="ntk-reference-topbar__notif-item-time"
+              >
+                {{ notif.time }}
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <div
+            v-if="notifications.length === 0"
+            class="ntk-reference-topbar__notifications-empty"
+          >
+            No notifications
+          </div>
+        </q-menu>
       </q-btn>
 
       <q-btn
@@ -155,7 +216,9 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
+
+import type { ReferenceNotificationItem } from '../reference-system.types'
 
 interface PresetOption {
   label: string
@@ -170,6 +233,7 @@ const props = withDefaults(defineProps<{
   userName?: string
   userInitials?: string
   notificationCount?: number
+  notifications?: ReferenceNotificationItem[]
 }>(), {
   searchValue: '',
   presetOptions: () => [],
@@ -177,6 +241,7 @@ const props = withDefaults(defineProps<{
   userName: 'Reference Team',
   userInitials: 'RT',
   notificationCount: 0,
+  notifications: () => [],
 })
 
 const emit = defineEmits<{
@@ -187,6 +252,8 @@ const emit = defineEmits<{
   'settings-click': []
   'back-home-click': []
 }>()
+
+const unreadCount = computed(() => props.notifications.filter(n => !n.read).length)
 
 const internalSearch = ref(props.searchValue)
 
@@ -316,5 +383,53 @@ onUnmounted(() => {
 .ntk-reference-topbar__user-menu-role {
   font-size: 12px;
   color: var(--ntk-text-muted, #94a3b8);
+}
+
+.ntk-reference-topbar__notifications-menu {
+  min-width: 340px;
+  max-width: 400px;
+}
+
+.ntk-reference-topbar__notifications-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 10px;
+}
+
+.ntk-reference-topbar__notifications-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ntk-text-primary, #0f172a);
+  flex: 1;
+}
+
+.ntk-reference-topbar__notifications-empty {
+  padding: 20px 16px;
+  font-size: 13px;
+  color: var(--ntk-text-muted, #94a3b8);
+  text-align: center;
+}
+
+.ntk-reference-topbar__notif-item--unread {
+  background: var(--ntk-bg-secondary, #f1f5f9);
+}
+
+.ntk-reference-topbar__notif-item-title {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.ntk-reference-topbar__notif-item-desc {
+  font-size: 12px;
+  color: var(--ntk-text-muted, #94a3b8);
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.ntk-reference-topbar__notif-item-time {
+  font-size: 11px;
+  color: var(--ntk-text-muted, #94a3b8);
+  white-space: nowrap;
 }
 </style>

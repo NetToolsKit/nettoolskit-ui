@@ -7,6 +7,8 @@
     :menu-items="referenceSampleMenuItems"
     :active-item-id="activeMenuId"
     :search-value="searchValue"
+    :notification-count="referenceSampleNotifications.length"
+    :notifications="referenceSampleNotifications"
     @update:search-value="searchValue = $event"
     @menu-item-click="onMenuItemClick"
     @update:selected-preset-id="onPresetChange"
@@ -51,6 +53,7 @@ import {
   referenceSampleDocumentTabs,
   referenceSampleManagerConfig,
   referenceSampleMenuItems,
+  referenceSampleNotifications,
   referenceSampleReportGroups,
   useReferenceWorkspaceHost,
 } from '../src/templates/features/reference-system'

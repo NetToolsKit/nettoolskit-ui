@@ -29,6 +29,7 @@
             :user-name="userName"
             :user-initials="userInitials"
             :notification-count="notificationCount"
+            :notifications="notifications"
             @update:search-value="emit('update:searchValue', $event)"
             @update:selected-preset-id="emit('update:selectedPresetId', $event)"
             @help-click="emit('help-click')"
@@ -52,6 +53,7 @@ import MainLayoutTemplate from '../../layouts/MainLayoutTemplate.vue'
 import type { ReferenceWhitelabelPreset } from '../../../whitelabel'
 import ReferenceBrandLockup from './components/ReferenceBrandLockup.vue'
 import ReferenceTopbarActions from './components/ReferenceTopbarActions.vue'
+import type { ReferenceNotificationItem } from './reference-system.types'
 
 interface ReferencePresetOption {
   label: string
@@ -71,6 +73,7 @@ withDefaults(defineProps<{
   pageContainerClass?: string
   searchValue?: string
   notificationCount?: number
+  notifications?: ReferenceNotificationItem[]
   presetLabel?: string
 }>(), {
   whitelabelStyleVars: () => ({}),
@@ -82,6 +85,7 @@ withDefaults(defineProps<{
   pageContainerClass: 'ntk-reference-workspace-shell__page-container',
   searchValue: '',
   notificationCount: 0,
+  notifications: () => [],
   presetLabel: 'Whitelabel preset',
 })
 

@@ -49,6 +49,15 @@ export interface ReferenceDocumentTab {
   caption?: string
 }
 
+export interface ReferenceNotificationItem {
+  id: string
+  icon: string
+  title: string
+  description: string
+  time: string
+  read: boolean
+}
+
 export interface ReferenceDesignerSampleConfig {
   topbarActions: TemplateEditorToolbarAction[]
   quickActions: TemplateEditorToolbarAction[]
