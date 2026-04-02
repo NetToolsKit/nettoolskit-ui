@@ -140,77 +140,6 @@
         @update:model-value="emit('update:selectedPresetId', $event)"
       />
 
-      <q-separator
-        vertical
-        class="ntk-reference-topbar__separator q-mx-sm"
-      />
-
-      <q-btn
-        flat
-        dense
-        round
-        class="ntk-reference-topbar__user-btn"
-        aria-label="User menu"
-      >
-        <div class="ntk-reference-topbar__user-avatar">
-          {{ userInitials }}
-        </div>
-
-        <q-menu
-          anchor="bottom right"
-          self="top right"
-          class="ntk-reference-topbar__user-menu"
-        >
-          <div class="ntk-reference-topbar__user-menu-header">
-            <div class="ntk-reference-topbar__user-menu-avatar">
-              {{ userInitials }}
-            </div>
-            <div>
-              <div class="ntk-reference-topbar__user-menu-name">{{ userName }}</div>
-              <div class="ntk-reference-topbar__user-menu-role">Reference Workspace</div>
-            </div>
-          </div>
-
-          <q-separator />
-
-          <q-list dense>
-            <q-item
-              v-close-popup
-              clickable
-              @click="emit('profile-click')"
-            >
-              <q-item-section avatar>
-                <q-icon name="person_outline" />
-              </q-item-section>
-              <q-item-section>Profile</q-item-section>
-            </q-item>
-
-            <q-item
-              v-close-popup
-              clickable
-              @click="emit('settings-click')"
-            >
-              <q-item-section avatar>
-                <q-icon name="settings" />
-              </q-item-section>
-              <q-item-section>Settings</q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <q-item
-              v-close-popup
-              clickable
-              @click="emit('back-home-click')"
-            >
-              <q-item-section avatar>
-                <q-icon name="home" />
-              </q-item-section>
-              <q-item-section>Back to home</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
     </div>
   </div>
 </template>
@@ -230,16 +159,12 @@ const props = withDefaults(defineProps<{
   selectedPresetId: string
   presetOptions?: PresetOption[]
   presetLabel?: string
-  userName?: string
-  userInitials?: string
   notificationCount?: number
   notifications?: ReferenceNotificationItem[]
 }>(), {
   searchValue: '',
   presetOptions: () => [],
   presetLabel: 'Preset',
-  userName: 'Reference Team',
-  userInitials: 'RT',
   notificationCount: 0,
   notifications: () => [],
 })
@@ -248,9 +173,6 @@ const emit = defineEmits<{
   'update:searchValue': [value: string]
   'update:selectedPresetId': [value: string | number | null]
   'help-click': []
-  'profile-click': []
-  'settings-click': []
-  'back-home-click': []
 }>()
 
 const unreadCount = computed(() => props.notifications.filter(n => !n.read).length)
@@ -331,59 +253,6 @@ onUnmounted(() => {
   }
 }
 
-.ntk-reference-topbar__user-btn {
-  padding: 4px;
-}
-
-.ntk-reference-topbar__user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--ntk-primary, #2563eb);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.ntk-reference-topbar__user-menu {
-  min-width: 220px;
-}
-
-.ntk-reference-topbar__user-menu-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-}
-
-.ntk-reference-topbar__user-menu-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--ntk-primary, #2563eb);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.ntk-reference-topbar__user-menu-name {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--ntk-text-primary, #0f172a);
-}
-
-.ntk-reference-topbar__user-menu-role {
-  font-size: 12px;
-  color: var(--ntk-text-muted, #94a3b8);
-}
 
 .ntk-reference-topbar__notifications-menu {
   min-width: 340px;

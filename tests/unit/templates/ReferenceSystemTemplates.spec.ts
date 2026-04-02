@@ -42,7 +42,9 @@ const globalMountOptions = {
         template: `
           <div class="main-layout-stub">
             <div class="main-layout-stub__brand"><slot name="brand" /></div>
-            <div class="main-layout-stub__header"><slot name="header-actions" /></div>
+            <div class="main-layout-stub__header">
+              <slot name="header-actions" :layout-controls="{ horizontalMode: false, setHorizontalMode: () => {}, showLabelsInMini: false, setShowLabelsInMini: () => {}, sideMenuVariant: 'reference', setSideMenuVariant: () => {} }" />
+            </div>
             <div class="main-layout-stub__content"><slot /></div>
           </div>
         `,

@@ -19,23 +19,32 @@
         <ReferenceBrandLockup :preset="selectedPreset" />
       </template>
 
-      <template #header-actions>
+      <template #header-actions="{ layoutControls }">
         <slot name="header-actions">
           <ReferenceTopbarActions
             :search-value="searchValue"
             :selected-preset-id="selectedPresetId"
             :preset-options="presetOptions"
             :preset-label="presetLabel"
-            :user-name="userName"
-            :user-initials="userInitials"
             :notification-count="notificationCount"
             :notifications="notifications"
             @update:search-value="emit('update:searchValue', $event)"
             @update:selected-preset-id="emit('update:selectedPresetId', $event)"
             @help-click="emit('help-click')"
-            @profile-click="emit('profile-click')"
-            @settings-click="emit('settings-click')"
-            @back-home-click="emit('back-home-click')"
+          />
+          <UserMenuTemplate
+            :model-value="layoutControls.horizontalMode"
+            :show-labels-in-mini="layoutControls.showLabelsInMini"
+            :side-menu-variant="layoutControls.sideMenuVariant"
+            :app-name="selectedPreset.brand.name"
+            :profile-name="userName"
+            :profile-initials="userInitials"
+            :show-side-menu-style-toggle="false"
+            @update:model-value="layoutControls.setHorizontalMode($event)"
+            @update:show-labels-in-mini="layoutControls.setShowLabelsInMini($event)"
+            @update:side-menu-variant="layoutControls.setSideMenuVariant($event)"
+            @account-click="emit('profile-click')"
+            @logout-click="emit('back-home-click')"
           />
         </slot>
       </template>
@@ -50,6 +59,7 @@ import type { CSSProperties } from 'vue'
 
 import type { TemplateMenuChildItem, TemplateMenuItem } from '../../navigation/menu-template.types'
 import MainLayoutTemplate from '../../layouts/MainLayoutTemplate.vue'
+import UserMenuTemplate from '../../navigation/UserMenuTemplate.vue'
 import type { ReferenceWhitelabelPreset } from '../../../whitelabel'
 import ReferenceBrandLockup from './components/ReferenceBrandLockup.vue'
 import ReferenceTopbarActions from './components/ReferenceTopbarActions.vue'
@@ -94,7 +104,6 @@ const emit = defineEmits<{
   'update:searchValue': [value: string]
   'help-click': []
   'profile-click': []
-  'settings-click': []
   'back-home-click': []
   'menu-item-click': [item: TemplateMenuItem | TemplateMenuChildItem]
 }>()
