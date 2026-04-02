@@ -39,6 +39,8 @@
             :app-name="selectedPreset.brand.name"
             :profile-name="userName"
             :profile-initials="userInitials"
+            :sign-out-label="signOutLabel"
+            :account-label="accountLabel"
             :show-side-menu-style-toggle="false"
             @update:model-value="layoutControls.setHorizontalMode($event)"
             @update:show-labels-in-mini="layoutControls.setShowLabelsInMini($event)"
@@ -85,6 +87,8 @@ withDefaults(defineProps<{
   notificationCount?: number
   notifications?: ReferenceNotificationItem[]
   presetLabel?: string
+  signOutLabel?: string
+  accountLabel?: string
 }>(), {
   whitelabelStyleVars: () => ({}),
   presetOptions: () => [],
@@ -97,6 +101,8 @@ withDefaults(defineProps<{
   notificationCount: 0,
   notifications: () => [],
   presetLabel: 'Whitelabel preset',
+  signOutLabel: 'Exit workspace',
+  accountLabel: 'View profile',
 })
 
 const emit = defineEmits<{
