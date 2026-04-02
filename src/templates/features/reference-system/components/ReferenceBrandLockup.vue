@@ -1,6 +1,15 @@
 <template>
   <div class="ntk-reference-brand-lockup">
-    <span class="ntk-reference-brand-lockup__mark">{{ preset.brand.logoText }}</span>
+    <img
+      v-if="preset.brand.logoUrl"
+      :src="preset.brand.logoUrl"
+      :alt="preset.brand.name"
+      class="ntk-reference-brand-lockup__logo-img"
+    >
+    <span
+      v-else
+      class="ntk-reference-brand-lockup__mark"
+    >{{ preset.brand.logoText }}</span>
     <div>
       <span class="ntk-reference-brand-lockup__name">{{ preset.brand.name }}</span>
       <small class="ntk-reference-brand-lockup__subtitle">{{ preset.brand.subtitle }}</small>
@@ -21,6 +30,14 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.ntk-reference-brand-lockup__logo-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .ntk-reference-brand-lockup__mark {

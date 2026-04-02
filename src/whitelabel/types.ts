@@ -28,6 +28,7 @@ export interface ReferenceWhitelabelBrand {
   kicker: string
   description: string
   logoText: string
+  logoUrl?: string
 }
 
 export interface ReferenceWhitelabelPreset {
