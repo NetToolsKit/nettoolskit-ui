@@ -46,6 +46,7 @@
           class="ntk-reference-designer__workbench"
           :document-title="selectedReport?.title ?? fallbackEmptyTitle"
           :document-subtitle="selectedReport?.description ?? fallbackEmptyDescription"
+          :active-document-tab-id="activeDocumentTabId"
           :topbar-actions="topbarActions"
           :quick-actions="quickActions"
           :widget-sections="widgetSections"

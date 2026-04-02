@@ -219,36 +219,94 @@
             :aria-label="canvasAriaLabel"
           >
             <slot name="canvas-stage">
-              <div class="ntk-template-editor-workbench__canvas-header">
-                <span
-                  v-for="column in resolvedCanvasColumns"
-                  :key="column"
-                  class="ntk-template-editor-workbench__canvas-header-cell"
-                >
-                  {{ column }}
-                </span>
-              </div>
-
-              <button
-                v-for="(item, index) in resolvedCanvasObjects"
-                :key="item.id"
-                type="button"
-                class="ntk-template-editor-workbench__canvas-object"
-                :class="`ntk-template-editor-workbench__canvas-object--${item.tone || 'neutral'}`"
-                :style="resolveCanvasObjectStyle(item, index)"
-                :aria-label="item.label"
-                @click="emit('canvas-object-click', item.id)"
-              >
-                <div class="ntk-template-editor-workbench__canvas-object-title">
-                  <span>{{ item.label }}</span>
+              <template v-if="activeDocumentTabId === 'data'">
+                <div class="ntk-template-editor-workbench__tab-placeholder ntk-template-editor-workbench__tab-placeholder--data">
                   <q-icon
-                    v-if="item.locked"
-                    name="lock"
-                    size="13px"
+                    name="table_chart"
+                    size="28px"
+                    class="ntk-template-editor-workbench__tab-placeholder-icon"
                   />
+                  <p class="ntk-template-editor-workbench__tab-placeholder-label">Data Bindings</p>
+                  <table class="ntk-template-editor-workbench__data-table">
+                    <thead>
+                      <tr>
+                        <th>Field</th>
+                        <th>Source</th>
+                        <th>Format</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>report_id</td>
+                        <td>reports.id</td>
+                        <td>Text</td>
+                      </tr>
+                      <tr>
+                        <td>period</td>
+                        <td>reports.period</td>
+                        <td>Date range</td>
+                      </tr>
+                      <tr>
+                        <td>total_value</td>
+                        <td>metrics.total</td>
+                        <td>Currency</td>
+                      </tr>
+                      <tr>
+                        <td>assigned_to</td>
+                        <td>users.display_name</td>
+                        <td>Text</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <small v-if="item.subtitle">{{ item.subtitle }}</small>
-              </button>
+              </template>
+
+              <template v-else-if="activeDocumentTabId === 'preview'">
+                <div class="ntk-template-editor-workbench__tab-placeholder ntk-template-editor-workbench__tab-placeholder--preview">
+                  <q-icon
+                    name="preview"
+                    size="32px"
+                    class="ntk-template-editor-workbench__tab-placeholder-icon"
+                  />
+                  <p class="ntk-template-editor-workbench__tab-placeholder-label">Preview mode</p>
+                  <p class="ntk-template-editor-workbench__tab-placeholder-desc">
+                    The rendered output will appear here once the layout is complete.
+                  </p>
+                </div>
+              </template>
+
+              <template v-else>
+                <div class="ntk-template-editor-workbench__canvas-header">
+                  <span
+                    v-for="column in resolvedCanvasColumns"
+                    :key="column"
+                    class="ntk-template-editor-workbench__canvas-header-cell"
+                  >
+                    {{ column }}
+                  </span>
+                </div>
+
+                <button
+                  v-for="(item, index) in resolvedCanvasObjects"
+                  :key="item.id"
+                  type="button"
+                  class="ntk-template-editor-workbench__canvas-object"
+                  :class="`ntk-template-editor-workbench__canvas-object--${item.tone || 'neutral'}`"
+                  :style="resolveCanvasObjectStyle(item, index)"
+                  :aria-label="item.label"
+                  @click="emit('canvas-object-click', item.id)"
+                >
+                  <div class="ntk-template-editor-workbench__canvas-object-title">
+                    <span>{{ item.label }}</span>
+                    <q-icon
+                      v-if="item.locked"
+                      name="lock"
+                      size="13px"
+                    />
+                  </div>
+                  <small v-if="item.subtitle">{{ item.subtitle }}</small>
+                </button>
+              </template>
             </slot>
           </section>
         </div>
@@ -347,6 +405,7 @@ const props = withDefaults(defineProps<{
   widgetPanelAriaLabel?: string
   widgetSearchAriaLabel?: string
   selectedWidgetId?: string | null
+  activeDocumentTabId?: string
   canvasObjects?: TemplateEditorCanvasObject[]
   canvasColumns?: string[]
   showGrid?: boolean
@@ -377,6 +436,7 @@ const props = withDefaults(defineProps<{
   widgetPanelAriaLabel: 'Widget toolbox panel',
   widgetSearchAriaLabel: 'Search widgets',
   selectedWidgetId: null,
+  activeDocumentTabId: 'layout',
   canvasObjects: () => [],
   canvasColumns: () => [],
   showGrid: true,
@@ -1071,6 +1131,68 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
     border-top: 1px solid #d1d5db;
     flex-direction: row;
     justify-content: center;
+  }
+}
+
+.ntk-template-editor-workbench__tab-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 300px;
+  padding: 40px 24px;
+  gap: 12px;
+  color: var(--ntk-template-editor-canvas-text, #374151);
+}
+
+.ntk-template-editor-workbench__tab-placeholder-icon {
+  color: var(--ntk-template-editor-canvas-text, #94a3b8);
+  opacity: 0.5;
+}
+
+.ntk-template-editor-workbench__tab-placeholder-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ntk-template-editor-canvas-text, #374151);
+}
+
+.ntk-template-editor-workbench__tab-placeholder-desc {
+  font-size: 13px;
+  color: var(--ntk-template-editor-canvas-text, #94a3b8);
+  margin: 0;
+  text-align: center;
+  max-width: 320px;
+}
+
+.ntk-template-editor-workbench__data-table {
+  width: 100%;
+  max-width: 560px;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  }
+
+  th {
+    background: var(--ntk-template-editor-panel-bg, #f3f4f6);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ntk-template-editor-canvas-text, #374151);
+  }
+
+  td {
+    background: var(--ntk-template-editor-canvas-bg, #ffffff);
+    color: var(--ntk-template-editor-canvas-text, #374151);
+  }
+
+  tr:nth-child(even) td {
+    background: var(--ntk-template-editor-panel-bg, #f9fafb);
   }
 }
 </style>
