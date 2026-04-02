@@ -9,6 +9,7 @@ export { default as ReferenceReportManagerTemplate } from './ReferenceReportMana
 export { default as ReferenceWorkspaceComposer } from './ReferenceWorkspaceComposer.vue'
 export { default as ReferenceWorkspaceShell } from './ReferenceWorkspaceShell.vue'
 export { default as ReferenceBrandLockup } from './components/ReferenceBrandLockup.vue'
+export { default as ReferenceContextRailPanel } from './components/ReferenceContextRailPanel.vue'
 export { default as ReferenceTopbarActions } from './components/ReferenceTopbarActions.vue'
 export { default as ReferenceDocumentTabsBar } from './components/ReferenceDocumentTabsBar.vue'
 export { default as ReferencePresetSelectorBar } from './components/ReferencePresetSelectorBar.vue'

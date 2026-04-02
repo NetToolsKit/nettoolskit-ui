@@ -59,18 +59,25 @@
           :zoom-value="zoomValue"
           @toolbar-action-click="emit('toolbar-action-click', $event)"
           @widget-click="emit('widget-click', $event)"
-          @canvas-object-click="emit('canvas-object-click', $event)"
+          @canvas-object-click="onCanvasObjectClick"
           @rail-action-click="emit('rail-action-click', $event)"
           @status-click="emit('status-click', $event)"
           @update:zoom-value="emit('update:zoomValue', $event)"
-        />
+        >
+          <template #right-rail>
+            <ReferenceContextRailPanel
+              :selected-object-id="activeCanvasObjectId"
+              :canvas-objects="canvasObjects"
+            />
+          </template>
+        </EditorWorkbenchTemplate>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 import type { ReferenceWhitelabelPreset } from '../../../whitelabel'
 import type {
@@ -82,6 +89,7 @@ import type {
 } from '../../pages'
 import EditorWorkbenchTemplate from '../../pages/editor/EditorWorkbenchTemplate.vue'
 import ReferenceReportCatalogPanel from './components/ReferenceReportCatalogPanel.vue'
+import ReferenceContextRailPanel from './components/ReferenceContextRailPanel.vue'
 import ReferenceDocumentTabsBar from './components/ReferenceDocumentTabsBar.vue'
 import ReferenceReportStatusBadge from './components/ReferenceReportStatusBadge.vue'
 import { findReferenceReportById } from './reference-report.sample-data'
@@ -146,6 +154,13 @@ const emit = defineEmits<{
 const selectedReport = computed(() => {
   return findReferenceReportById(props.reportGroups, props.activeReportId)
 })
+
+const activeCanvasObjectId = ref<string | null>(null)
+
+function onCanvasObjectClick(objectId: string): void {
+  activeCanvasObjectId.value = activeCanvasObjectId.value === objectId ? null : objectId
+  emit('canvas-object-click', objectId)
+}
 </script>
 
 <style scoped lang="scss">
