@@ -31,6 +31,7 @@
             :notification-count="notificationCount"
             @update:search-value="emit('update:searchValue', $event)"
             @update:selected-preset-id="emit('update:selectedPresetId', $event)"
+            @help-click="emit('help-click')"
             @profile-click="emit('profile-click')"
             @settings-click="emit('settings-click')"
             @back-home-click="emit('back-home-click')"
@@ -87,6 +88,7 @@ withDefaults(defineProps<{
 const emit = defineEmits<{
   'update:selectedPresetId': [value: string | number | null]
   'update:searchValue': [value: string]
+  'help-click': []
   'profile-click': []
   'settings-click': []
   'back-home-click': []

@@ -10,6 +10,7 @@
     @update:search-value="searchValue = $event"
     @menu-item-click="onMenuItemClick"
     @update:selected-preset-id="onPresetChange"
+    @help-click="onHelpClick"
     @back-home-click="onBackHomeClick"
   >
     <ReferenceWorkspaceComposer
@@ -53,6 +54,10 @@ import {
   referenceSampleReportGroups,
   useReferenceWorkspaceHost,
 } from '../src/templates/features/reference-system'
+
+function onHelpClick(): void {
+  // placeholder — open help docs or contextual drawer
+}
 
 function onBackHomeClick(): void {
   if (typeof window !== 'undefined') {

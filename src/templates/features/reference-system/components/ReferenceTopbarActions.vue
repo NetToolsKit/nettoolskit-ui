@@ -57,6 +57,7 @@
         icon="help_outline"
         class="ntk-reference-topbar__action-btn"
         aria-label="Help"
+        @click="emit('help-click')"
       >
         <q-tooltip>Help</q-tooltip>
       </q-btn>
@@ -181,6 +182,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   'update:searchValue': [value: string]
   'update:selectedPresetId': [value: string | number | null]
+  'help-click': []
   'profile-click': []
   'settings-click': []
   'back-home-click': []
