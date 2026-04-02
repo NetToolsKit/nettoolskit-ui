@@ -9,7 +9,24 @@ import {
   resolveReferenceWhitelabelPreset,
 } from '../../../whitelabel'
 
-export type ReferenceWorkspaceMenuId = 'catalog' | 'designer'
+export type ReferenceWorkspaceMenuId =
+  | 'catalog'
+  | 'designer'
+  | 'scheduled'
+  | 'templates'
+  | 'assets'
+  | 'presets'
+  | 'permissions'
+
+const NAVIGABLE_MENU_IDS: ReferenceWorkspaceMenuId[] = [
+  'catalog',
+  'designer',
+  'scheduled',
+  'templates',
+  'assets',
+  'presets',
+  'permissions',
+]
 
 export interface UseReferenceWorkspaceHostOptions {
   initialMenuId?: ReferenceWorkspaceMenuId
@@ -19,6 +36,7 @@ export interface UseReferenceWorkspaceHostOptions {
   initialPresetId?: string
   persistPreset?: boolean
   onBackHome?: ((item: TemplateMenuItem | TemplateMenuChildItem) => void) | null
+  onHelp?: (() => void) | null
 }
 
 export function useReferenceWorkspaceHost(options: UseReferenceWorkspaceHostOptions = {}) {
@@ -81,8 +99,13 @@ export function useReferenceWorkspaceHost(options: UseReferenceWorkspaceHostOpti
       return
     }
 
-    if (item.id === 'catalog' || item.id === 'designer') {
-      activeMenuId.value = item.id
+    if (item.id === 'help') {
+      options.onHelp?.()
+      return
+    }
+
+    if (NAVIGABLE_MENU_IDS.includes(item.id as ReferenceWorkspaceMenuId)) {
+      activeMenuId.value = item.id as ReferenceWorkspaceMenuId
     }
   }
 
