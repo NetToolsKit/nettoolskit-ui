@@ -22,56 +22,52 @@
         @report-select="emit('report-select', $event)"
       />
 
-      <div class="ntk-reference-designer__workbench-shell">
-        <div class="ntk-reference-designer__workbench-header">
-          <div>
-            <p class="ntk-reference-designer__workbench-eyebrow">
+      <EditorWorkbenchTemplate
+        class="ntk-reference-designer__workbench"
+        :active-document-tab-id="activeDocumentTabId"
+        :topbar-actions="topbarActions"
+        :quick-actions="quickActions"
+        :widget-sections="widgetSections"
+        :canvas-columns="canvasColumns"
+        :canvas-objects="canvasObjects"
+        :rail-actions="railActions"
+        :left-status-segments="leftStatusSegments"
+        :right-status-segments="rightStatusSegments"
+        :zoom-options="zoomOptions"
+        :zoom-value="zoomValue"
+        @toolbar-action-click="emit('toolbar-action-click', $event)"
+        @widget-click="emit('widget-click', $event)"
+        @canvas-object-click="onCanvasObjectClick"
+        @rail-action-click="emit('rail-action-click', $event)"
+        @status-click="emit('status-click', $event)"
+        @update:zoom-value="emit('update:zoomValue', $event)"
+      >
+        <template #topbar-document>
+          <div class="ntk-reference-designer__doc-identity">
+            <p class="ntk-reference-designer__doc-eyebrow">
               {{ selectedPreset.brand.name }}
             </p>
-            <h2>{{ selectedReport?.fileName ?? fallbackEmptyTitle }}</h2>
-            <p>{{ selectedReport?.description ?? fallbackEmptyDescription }}</p>
+            <h1 class="ntk-reference-designer__doc-title">
+              {{ selectedReport?.fileName ?? fallbackEmptyTitle }}
+            </h1>
           </div>
-
           <div
             v-if="selectedReport"
-            class="ntk-reference-designer__workbench-meta"
+            class="ntk-reference-designer__doc-meta"
           >
             <ReferenceReportStatusBadge :status="selectedReport.status" />
-            <span>{{ selectedReport.category }}</span>
-            <strong>{{ selectedReport.updatedAt }}</strong>
+            <span class="ntk-reference-designer__doc-category">{{ selectedReport.category }}</span>
+            <strong class="ntk-reference-designer__doc-date">{{ selectedReport.updatedAt }}</strong>
           </div>
-        </div>
+        </template>
 
-        <EditorWorkbenchTemplate
-          class="ntk-reference-designer__workbench"
-          :document-title="selectedReport?.title ?? fallbackEmptyTitle"
-          :document-subtitle="selectedReport?.description ?? fallbackEmptyDescription"
-          :active-document-tab-id="activeDocumentTabId"
-          :topbar-actions="topbarActions"
-          :quick-actions="quickActions"
-          :widget-sections="widgetSections"
-          :canvas-columns="canvasColumns"
-          :canvas-objects="canvasObjects"
-          :rail-actions="railActions"
-          :left-status-segments="leftStatusSegments"
-          :right-status-segments="rightStatusSegments"
-          :zoom-options="zoomOptions"
-          :zoom-value="zoomValue"
-          @toolbar-action-click="emit('toolbar-action-click', $event)"
-          @widget-click="emit('widget-click', $event)"
-          @canvas-object-click="onCanvasObjectClick"
-          @rail-action-click="emit('rail-action-click', $event)"
-          @status-click="emit('status-click', $event)"
-          @update:zoom-value="emit('update:zoomValue', $event)"
-        >
-          <template #right-rail>
-            <ReferenceContextRailPanel
-              :selected-object-id="activeCanvasObjectId"
-              :canvas-objects="canvasObjects"
-            />
-          </template>
-        </EditorWorkbenchTemplate>
-      </div>
+        <template #right-rail>
+          <ReferenceContextRailPanel
+            :selected-object-id="activeCanvasObjectId"
+            :canvas-objects="canvasObjects"
+          />
+        </template>
+      </EditorWorkbenchTemplate>
     </div>
   </section>
 </template>
@@ -178,63 +174,50 @@ function onCanvasObjectClick(objectId: string): void {
   grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
   gap: 16px;
   min-height: 0;
-}
-
-.ntk-reference-designer__workbench-shell {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
-  border-radius: 20px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
-  padding: 16px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-
-.ntk-reference-designer__workbench-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.ntk-reference-designer__workbench-eyebrow {
-  margin: 0;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #64748b;
-}
-
-.ntk-reference-designer__workbench-header h2 {
-  margin: 6px 0 0;
-  color: #0f172a;
-}
-
-.ntk-reference-designer__workbench-header p {
-  margin: 8px 0 0;
-  color: #475569;
-}
-
-.ntk-reference-designer__workbench-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  color: #64748b;
-  font-size: 12px;
-}
-
-.ntk-reference-designer__workbench-meta :deep(.ntk-reference-status-badge) {
-  align-self: flex-end;
-}
-
-.ntk-reference-designer__workbench-meta strong {
-  color: #0f172a;
+  flex: 1;
 }
 
 .ntk-reference-designer__workbench {
   min-height: 720px;
+  min-width: 0;
+}
+
+.ntk-reference-designer__doc-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ntk-reference-designer__doc-eyebrow {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ntk-template-editor-muted-text, #6b7280);
+  white-space: nowrap;
+}
+
+.ntk-reference-designer__doc-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ntk-reference-designer__doc-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #64748b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ntk-reference-designer__doc-date {
+  color: #0f172a;
 }
 
 @media (max-width: 1180px) {
@@ -246,19 +229,6 @@ function onCanvasObjectClick(objectId: string): void {
 @media (max-width: 880px) {
   .ntk-reference-designer {
     padding: 14px;
-  }
-
-  .ntk-reference-designer__workbench-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .ntk-reference-designer__workbench-meta {
-    align-items: flex-start;
-  }
-
-  .ntk-reference-designer__workbench-meta :deep(.ntk-reference-status-badge) {
-    align-self: flex-start;
   }
 }
 </style>
