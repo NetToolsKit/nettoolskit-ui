@@ -215,7 +215,10 @@
 
           <section
             class="ntk-template-editor-workbench__canvas-stage"
-            :class="{ 'ntk-template-editor-workbench__canvas-stage--grid': showGrid }"
+            :class="{
+              'ntk-template-editor-workbench__canvas-stage--grid': showGrid && activeDocumentTabId !== 'preview',
+              'ntk-template-editor-workbench__canvas-stage--preview': activeDocumentTabId === 'preview',
+            }"
             :aria-label="canvasAriaLabel"
           >
             <slot name="canvas-stage">
@@ -262,20 +265,54 @@
               </template>
 
               <template v-else-if="activeDocumentTabId === 'preview'">
-                <div class="ntk-template-editor-workbench__tab-placeholder ntk-template-editor-workbench__tab-placeholder--preview">
-                  <q-icon
-                    name="preview"
-                    size="32px"
-                    class="ntk-template-editor-workbench__tab-placeholder-icon"
-                  />
-                  <p class="ntk-template-editor-workbench__tab-placeholder-label">Preview mode</p>
-                  <p class="ntk-template-editor-workbench__tab-placeholder-desc">
-                    The rendered output will appear here once the layout is complete.
-                  </p>
+                <div
+                  v-if="showDocumentRegions"
+                  class="ntk-template-editor-workbench__document-regions ntk-template-editor-workbench__document-regions--preview"
+                  aria-hidden="true"
+                >
+                  <div class="ntk-template-editor-workbench__document-region ntk-template-editor-workbench__document-region--header">
+                    <span class="ntk-template-editor-workbench__document-region-label">Header</span>
+                  </div>
+                  <div class="ntk-template-editor-workbench__document-region ntk-template-editor-workbench__document-region--body">
+                    <span class="ntk-template-editor-workbench__document-region-label">Body</span>
+                  </div>
+                  <div class="ntk-template-editor-workbench__document-region ntk-template-editor-workbench__document-region--footer">
+                    <span class="ntk-template-editor-workbench__document-region-label">Footer</span>
+                  </div>
+                </div>
+
+                <div
+                  v-for="(item, index) in resolvedCanvasObjects"
+                  :key="item.id"
+                  class="ntk-template-editor-workbench__canvas-object ntk-template-editor-workbench__canvas-object--readonly"
+                  :class="`ntk-template-editor-workbench__canvas-object--${item.tone || 'neutral'}`"
+                  :style="resolveCanvasObjectStyle(item, index)"
+                  :aria-label="item.label"
+                >
+                  <div class="ntk-template-editor-workbench__canvas-object-title">
+                    <span>{{ item.label }}</span>
+                  </div>
+                  <small v-if="item.subtitle">{{ item.subtitle }}</small>
                 </div>
               </template>
 
               <template v-else>
+                <div
+                  v-if="showDocumentRegions"
+                  class="ntk-template-editor-workbench__document-regions"
+                  aria-hidden="true"
+                >
+                  <div class="ntk-template-editor-workbench__document-region ntk-template-editor-workbench__document-region--header">
+                    <span class="ntk-template-editor-workbench__document-region-label">Header</span>
+                  </div>
+                  <div class="ntk-template-editor-workbench__document-region ntk-template-editor-workbench__document-region--body">
+                    <span class="ntk-template-editor-workbench__document-region-label">Body</span>
+                  </div>
+                  <div class="ntk-template-editor-workbench__document-region ntk-template-editor-workbench__document-region--footer">
+                    <span class="ntk-template-editor-workbench__document-region-label">Footer</span>
+                  </div>
+                </div>
+
                 <div class="ntk-template-editor-workbench__canvas-header">
                   <span
                     v-for="column in resolvedCanvasColumns"
@@ -409,6 +446,7 @@ const props = withDefaults(defineProps<{
   canvasObjects?: TemplateEditorCanvasObject[]
   canvasColumns?: string[]
   showGrid?: boolean
+  showDocumentRegions?: boolean
   railActions?: TemplateEditorRailAction[]
   leftStatusSegments?: TemplateEditorStatusSegment[]
   rightStatusSegments?: TemplateEditorStatusSegment[]
@@ -440,6 +478,7 @@ const props = withDefaults(defineProps<{
   canvasObjects: () => [],
   canvasColumns: () => [],
   showGrid: true,
+  showDocumentRegions: false,
   railActions: () => [],
   leftStatusSegments: () => [],
   rightStatusSegments: () => [],
@@ -1194,5 +1233,74 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   tr:nth-child(even) td {
     background: var(--ntk-template-editor-panel-bg, #f9fafb);
   }
+}
+
+/* ── Document region bands ─────────────────────────────────────────────── */
+
+.ntk-template-editor-workbench__document-regions {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ntk-template-editor-workbench__document-region {
+  display: flex;
+  align-items: flex-start;
+  padding: 6px 10px;
+  border-bottom: 1px dashed var(--ntk-template-editor-stage-grid, rgba(148, 163, 184, 0.35));
+}
+
+.ntk-template-editor-workbench__document-region--header {
+  height: 180px;
+  flex-shrink: 0;
+  background: rgba(224, 242, 254, 0.18);
+}
+
+.ntk-template-editor-workbench__document-region--body {
+  flex: 1;
+  background: rgba(240, 253, 244, 0.18);
+}
+
+.ntk-template-editor-workbench__document-region--footer {
+  height: 100px;
+  flex-shrink: 0;
+  background: rgba(254, 249, 195, 0.18);
+  border-bottom: none;
+}
+
+.ntk-template-editor-workbench__document-region-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ntk-template-editor-muted-text, #94a3b8);
+  opacity: 0.7;
+}
+
+/* ── Preview mode ──────────────────────────────────────────────────────── */
+
+.ntk-template-editor-workbench__canvas-stage--preview {
+  background: #ffffff;
+}
+
+.ntk-template-editor-workbench__canvas-stage--preview
+  .ntk-template-editor-workbench__ruler-top,
+.ntk-template-editor-workbench__canvas-stage--preview
+  .ntk-template-editor-workbench__ruler-left {
+  opacity: 0.25;
+}
+
+.ntk-template-editor-workbench__canvas-object--readonly {
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ntk-template-editor-workbench__canvas-stage--preview
+  .ntk-template-editor-workbench__document-regions {
+  opacity: 0.6;
 }
 </style>

@@ -25,6 +25,7 @@
       <EditorWorkbenchTemplate
         class="ntk-reference-designer__workbench"
         :active-document-tab-id="activeDocumentTabId"
+        :show-document-regions="true"
         :topbar-actions="topbarActions"
         :quick-actions="quickActions"
         :widget-sections="widgetSections"
