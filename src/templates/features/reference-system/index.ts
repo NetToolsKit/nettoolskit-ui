@@ -10,6 +10,7 @@ export { default as ReferenceWorkspaceComposer } from './ReferenceWorkspaceCompo
 export { default as ReferenceWorkspaceShell } from './ReferenceWorkspaceShell.vue'
 export { default as ReferenceBrandLockup } from './components/ReferenceBrandLockup.vue'
 export { default as ReferenceContextRailPanel } from './components/ReferenceContextRailPanel.vue'
+export { default as ReferenceDocumentNavigatorPanel } from './components/ReferenceDocumentNavigatorPanel.vue'
 export { default as ReferenceTopbarActions } from './components/ReferenceTopbarActions.vue'
 export { default as ReferenceDocumentTabsBar } from './components/ReferenceDocumentTabsBar.vue'
 export { default as ReferencePresetSelectorBar } from './components/ReferencePresetSelectorBar.vue'

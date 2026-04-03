@@ -62,6 +62,15 @@
           </div>
         </template>
 
+        <template #widgets-panel>
+          <ReferenceDocumentNavigatorPanel
+            :canvas-objects="canvasObjects"
+            :selected-object-id="activeCanvasObjectId"
+            :document-title="selectedReport?.fileName ?? fallbackEmptyTitle"
+            @object-select="onCanvasObjectClick"
+          />
+        </template>
+
         <template #right-rail>
           <ReferenceContextRailPanel
             :selected-object-id="activeCanvasObjectId"
@@ -87,6 +96,7 @@ import type {
 import EditorWorkbenchTemplate from '../../pages/editor/EditorWorkbenchTemplate.vue'
 import ReferenceReportCatalogPanel from './components/ReferenceReportCatalogPanel.vue'
 import ReferenceContextRailPanel from './components/ReferenceContextRailPanel.vue'
+import ReferenceDocumentNavigatorPanel from './components/ReferenceDocumentNavigatorPanel.vue'
 import ReferenceDocumentTabsBar from './components/ReferenceDocumentTabsBar.vue'
 import ReferenceReportStatusBadge from './components/ReferenceReportStatusBadge.vue'
 import { findReferenceReportById } from './reference-report.sample-data'
