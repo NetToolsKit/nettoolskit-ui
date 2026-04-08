@@ -27,7 +27,9 @@ Provide generic feature surfaces that accelerate delivery while remaining fully 
   - `enterprise-template.types.ts`
   - `index.ts`
 - `cms/`
-  - reusable CMS authoring chrome and module surfaces
+  - reusable CMS authoring chrome
+  - reusable internal module surfaces
+  - grouped module templates for public whitelabel consumption with fewer top-level parameters
 - `reference-system/`
   - reusable report manager/designer workspaces and host controller
 - `feature-template.catalog.ts`
@@ -39,6 +41,7 @@ Provide generic feature surfaces that accelerate delivery while remaining fully 
 
 - feature templates must be domain-agnostic and route/store independent
 - expose typed props/emits for extension instead of hardcoded behavior
+- prefer grouped domain contracts over large flat prop lists for reusable authoring modules
 - keep accessibility and empty/loading states explicit
 
 ## Validation

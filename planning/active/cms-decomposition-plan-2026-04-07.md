@@ -92,6 +92,42 @@
 3. review `landing-page/**` for any other reusable system contracts that still belong in `src/**`
 4. normalize README and template docs once the remaining surface/export moves stabilize
 
+## Continuation Checkpoint - 2026-04-08 (Grouped Module Template APIs)
+
+### Scope Extension
+- normalize the public CMS authoring module contracts around grouped template APIs with fewer top-level parameters
+- keep the internal surfaces intact as implementation details while moving `landing-page/CmsApp.vue` to wrapper/template consumption
+- document and test the grouped-template contract so future whitelabel consumers do not bind directly to the large flat surface prop sets
+
+### Completed Tasks
+1. Completed: add grouped wrapper templates for `Settings`, `Pages`, and `Blocks` under `src/templates/features/cms/authoring/modules/**`.
+2. Completed: update `landing-page/CmsApp.vue` to consume `CmsSettingsModuleTemplate`, `CmsPagesModuleTemplate`, and `CmsBlocksModuleTemplate` instead of binding directly to the internal surfaces.
+3. Completed: update the CMS feature catalog and feature-template README so the grouped wrapper templates are the documented public entry points.
+4. Completed: add wrapper contract tests for grouped prop flattening and event forwarding.
+5. Completed: re-run validation and record the results below.
+
+### Validation Evidence - 2026-04-08 (Grouped Module Template APIs)
+- `npm run type-check` passed after typing each wrapper `flatProps` projection against the internal surface `$props` contract.
+- `npm run lint` passed with pre-existing Vue formatting warnings only and no errors.
+- `npm run build:landing` passed.
+- `npm run test -- tests/unit/templates/CmsAuthoringModuleTemplates.spec.ts tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateAcceptance.spec.ts tests/unit/components/AllComponentsSmoke.spec.ts tests/unit/templates/ReferenceSystemTemplates.spec.ts tests/unit/modules/cms/CmsRenderer.spec.ts tests/unit/modules/cms/LandingSchemaIntegration.spec.ts` passed with 7 files / 48 tests.
+- `npm audit --omit=dev --audit-level=high` passed with `0 vulnerabilities`.
+
+### Implementation Outcome - 2026-04-08 (Grouped Module Template APIs)
+- `src/templates/features/cms/authoring/modules/CmsSettingsModuleTemplate.vue` now exposes the settings authoring workspace through grouped `shell`, `tenant`, `theme`, `contentModel`, and `actions` contracts.
+- `src/templates/features/cms/authoring/modules/CmsPagesModuleTemplate.vue` now exposes the pages authoring workspace through grouped `shell`, `builder`, `library`, `preview`, and `actions` contracts.
+- `src/templates/features/cms/authoring/modules/CmsBlocksModuleTemplate.vue` now exposes the blocks authoring workspace through grouped `shell`, `builder`, `library`, `preview`, and `actions` contracts.
+- `landing-page/CmsApp.vue` no longer binds directly to the flat public surface contracts for `Settings`, `Pages`, and `Blocks`; the large flat prop sets are now isolated behind grouped template wrappers.
+- `src/templates/features/feature-template.catalog.ts` now points the CMS module catalog entries at the grouped wrapper templates instead of the internal surface files.
+- `src/templates/features/README.md` now declares grouped domain contracts as the preferred public pattern for reusable authoring modules.
+- `landing-page/CmsApp.vue` remains large at `10281` lines, but the public CMS module API is now materially smaller and more reusable for future whitelabel consumers.
+
+### Remaining Work After Grouped Module Template APIs
+1. move the grouped module prop builders out of `landing-page/CmsApp.vue` and into reusable `src/modules/cms/white-label/authoring/**` helpers so the landing app shell keeps shrinking
+2. continue wrapping `Media` and `Releases` with grouped template entry points so every CMS module follows the same low-parameter public contract
+3. keep extracting remaining stateful authoring workflows from `landing-page/CmsApp.vue` into `src/modules/cms/white-label/**`
+4. normalize template docs/readmes once the remaining CMS module wrappers stabilize
+
 ## Recommended Specialist
 - primary: `dev-frontend-vue-quasar-engineer`
 - validation support: `test-engineer`
