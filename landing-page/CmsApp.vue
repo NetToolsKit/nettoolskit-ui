@@ -537,32 +537,20 @@ import {
 } from '../src/modules/cms/white-label/i18n'
 import {
   applyCmsFavicon,
-  loadCmsWhiteLabelSettings,
   normalizeCmsWhiteLabelSettings,
   resetCmsWhiteLabelSettings,
   saveCmsWhiteLabelSettings,
 } from '../src/modules/cms/white-label/storage'
 import {
-  createTenantProfileId,
   loadCmsTenantProfilesState,
-  removeCmsTenantProfile,
   saveCmsTenantProfilesState,
-  upsertCmsTenantProfile,
 } from '../src/modules/cms/white-label/tenant-profiles.storage'
 import {
-  createCmsTenantExportPayload,
-  parseCmsTenantImportPayload,
-} from '../src/modules/cms/white-label/tenant-payload'
-import {
-  createCmsDomainExportPayload,
-  parseCmsDomainImportPayload,
   type CmsDomainPayloadDomain,
 } from '../src/modules/cms/white-label/domain-payload'
 import {
   applyCmsSchemaPackageSnapshot,
-  createCmsSchemaExportPayload,
   createCmsSchemaPackageSnapshot,
-  parseCmsSchemaImportPayload,
 } from '../src/modules/cms/white-label/schema-payload'
 import {
   clearCmsDraftRecoveryEntry,
@@ -825,10 +813,25 @@ import {
   areCmsSettingsSnapshotsEqual,
   cloneSerializableValue,
   cloneWhiteLabelSettings,
+  createCmsAuthoringShellTheme,
+  createCmsDomainSnapshotDownload,
+  createCmsSchemaPackageDownload,
+  createCmsTenantProfileDownload,
+  createCmsTenantProfileFromName,
+  downloadCmsJsonPayload,
+  importCmsDomainFile,
+  importCmsSchemaFile,
+  importCmsTenantProfileFile,
   parseBreakpointToken,
   parseMediaDraftFocalPoint,
   parseMediaDraftList,
+  removeActiveCmsTenantProfileEntry,
+  resolveActiveCmsTenantProfile,
+  resolveCmsImportedFile,
   resolveViewportWidth,
+  selectCmsTenantProfile,
+  syncCmsTenantProfileSettings,
+  toCmsJsonFileName,
   createThemeFields,
   getThemeFieldSections,
   getThemeFieldsByGroup,
@@ -1134,30 +1137,14 @@ const selectedDomainTransfer = ref<CmsDomainPayloadDomain>('content')
  * Handles get active tenant profile snapshot.
  */
 function getActiveTenantProfileSnapshot(): CmsTenantProfile {
-  const activeProfile = tenantProfilesState.value.profiles.find(profile => profile.id === activeTenantProfileId.value)
-  if (activeProfile) {
-    return activeProfile
-  }
+  const resolved = resolveActiveCmsTenantProfile({
+    tenantProfilesState: tenantProfilesState.value,
+    activeProfileId: activeTenantProfileId.value,
+  })
 
-  const firstProfile = tenantProfilesState.value.profiles[0]
-  if (firstProfile) {
-    activeTenantProfileId.value = firstProfile.id
-    return firstProfile
-  }
-
-  const fallbackSettings = normalizeCmsWhiteLabelSettings(loadCmsWhiteLabelSettings())
-  const fallbackProfile: CmsTenantProfile = {
-    id: 'default',
-    name: 'Default Tenant',
-    settings: fallbackSettings,
-    updatedAt: new Date().toISOString(),
-  }
-  tenantProfilesState.value = {
-    activeProfileId: fallbackProfile.id,
-    profiles: [fallbackProfile],
-  }
-  activeTenantProfileId.value = fallbackProfile.id
-  return fallbackProfile
+  tenantProfilesState.value = resolved.tenantProfilesState
+  activeTenantProfileId.value = resolved.activeProfileId
+  return resolved.profile
 }
 
 const settings = ref<CmsWhiteLabelSettings>(
@@ -2353,50 +2340,7 @@ const activeThemePresetDescription = computed(() => {
   return activeThemePreset.value?.description ?? 'Custom values from manual token editing.'
 })
 
-const cmsAuthoringShellThemeOverrides = computed(() => ({
-  shellBackground: '#eef3f9',
-  pageBackground: '#f5f8fc',
-  pageTextColor: '#16202b',
-  drawerBackground: '#ffffff',
-  drawerFooterBackground: '#f8fbff',
-  drawerTextColor: '#5f6c7b',
-  dividerColor: '#d7e1ec',
-  itemActiveColor: '#2563eb',
-  itemTextColor: '#4b5a6a',
-  itemIconColor: '#5f6c7b',
-  itemHoverBackground: '#eaf2ff',
-  itemHoverColor: '#16202b',
-  itemIconHoverColor: '#2563eb',
-  itemActiveBackground: '#e1ecff',
-  focusColor: '#2563eb',
-  brandTitleColor: '#16202b',
-  brandSubtitleColor: '#6b7a8c',
-  groupCaptionColor: '#6b7a8c',
-  groupCaptionMiniBackground: '#edf3fb',
-  headerBackground: '#ffffff',
-  headerTextColor: '#16202b',
-  toolbarButtonColor: '#4b5a6a',
-  titleAppColor: '#16202b',
-  titleTextColor: '#5f6c7b',
-  titleSeparatorColor: '#d7e1ec',
-  searchBackground: '#ffffff',
-  searchTextColor: '#16202b',
-  searchIconColor: '#6b7a8c',
-  searchBorder: '#d7e1ec',
-  searchBorderHover: '#b8c8dc',
-  headerShadow: '0 10px 30px rgba(15, 23, 42, 0.08)',
-  headerBlur: 'blur(0px)',
-  drawerShadow: '0 8px 24px rgba(15, 23, 42, 0.06)',
-  drawerFooterShadow: 'inset 0 1px 0 rgba(215, 225, 236, 0.8)',
-  actionBackground: '#ffffff',
-  actionHoverBackground: '#eef4ff',
-}))
-
-const cmsResolvedAuthoringTheme = computed(() => ({
-  ...settings.value.theme,
-  ...cmsAuthoringShellThemeOverrides.value,
-  workspaceMaxWidth: 'none',
-}))
+const cmsResolvedAuthoringTheme = computed(() => createCmsAuthoringShellTheme(settings.value.theme, defaultTheme))
 
 const shellSnapshot = computed(() => {
   return mapWhiteLabelToShellSnapshot({
@@ -2587,6 +2531,12 @@ const cmsStyleVars = computed<Record<string, string>>(() => {
   '--ntk-cms-text-secondary': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '',
   '--ntk-cms-border-color': authoringTheme.dividerColor || defaultTheme.dividerColor || '',
   '--ntk-cms-bg-card': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '',
+  '--ntk-cms-page-bg': authoringTheme.pageBackground || defaultTheme.pageBackground || '#fafafa',
+  '--ntk-cms-card-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '#ffffff',
+  '--ntk-cms-shell-border': authoringTheme.dividerColor || defaultTheme.dividerColor || '#e5e5e5',
+  '--ntk-cms-shell-text': authoringTheme.pageTextColor || defaultTheme.pageTextColor || '#111111',
+  '--ntk-cms-shell-text-muted': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#525252',
+  '--ntk-cms-shell-accent': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '#111111',
   '--ntk-cms-tab-active': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-accent': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-accent-soft': authoringTheme.itemHoverBackground || defaultTheme.itemHoverBackground || '',
@@ -2597,17 +2547,17 @@ const cmsStyleVars = computed<Record<string, string>>(() => {
   '--ntk-cms-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '',
   '--ntk-cms-header-blur': authoringTheme.headerBlur || defaultTheme.headerBlur || 'blur(calc(var(--ntk-cms-space-sm) * 2))',
   '--ntk-template-layout-header-bg': authoringTheme.headerBackground || defaultTheme.headerBackground || '#ffffff',
-  '--ntk-template-layout-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '#16202b',
-  '--ntk-template-layout-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '0 10px 30px rgba(15, 23, 42, 0.08)',
-  '--ntk-template-layout-title-color': authoringTheme.titleTextColor || authoringTheme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '#16202b',
+  '--ntk-template-layout-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '#111111',
+  '--ntk-template-layout-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '0 8px 24px rgba(0, 0, 0, 0.05)',
+  '--ntk-template-layout-title-color': authoringTheme.titleTextColor || authoringTheme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '#111111',
   '--ntk-cms-drawer-shadow': authoringTheme.drawerShadow || defaultTheme.drawerShadow || '',
   '--ntk-cms-drawer-footer-bg': authoringTheme.drawerFooterBackground || authoringTheme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
   '--ntk-cms-drawer-footer-shadow': authoringTheme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
-  '--ntk-template-layout-horizontal-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || 'linear-gradient(180deg, #1f2937 0%, #334155 100%)',
-  '--ntk-template-layout-horizontal-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#ffffff',
-  '--ntk-template-layout-drawer-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || 'linear-gradient(180deg, #1f2937 0%, #334155 100%)',
-  '--ntk-template-layout-drawer-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#ffffff',
-  '--ntk-template-layout-page-bg': authoringTheme.pageBackground || defaultTheme.pageBackground || '#f3f7fc',
+  '--ntk-template-layout-horizontal-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '#ffffff',
+  '--ntk-template-layout-horizontal-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#111111',
+  '--ntk-template-layout-drawer-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '#ffffff',
+  '--ntk-template-layout-drawer-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#111111',
+  '--ntk-template-layout-page-bg': authoringTheme.pageBackground || defaultTheme.pageBackground || '#fafafa',
   '--ntk-cms-search-bg': authoringTheme.searchBackground || defaultTheme.searchBackground || '',
   '--ntk-cms-search-text': authoringTheme.searchTextColor || defaultTheme.searchTextColor || '',
   '--ntk-cms-search-icon': authoringTheme.searchIconColor || authoringTheme.headerTextColor || defaultTheme.searchIconColor || defaultTheme.headerTextColor || '',
@@ -2625,10 +2575,10 @@ const cmsStyleVars = computed<Record<string, string>>(() => {
   '--ntk-cms-toolbar-icon': authoringTheme.toolbarButtonColor || authoringTheme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
   '--ntk-cms-brand-title': authoringTheme.brandTitleColor || authoringTheme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
   '--ntk-cms-brand-subtitle': authoringTheme.brandSubtitleColor || authoringTheme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
-  '--ntk-template-user-menu-avatar-bg': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '#5b7cff',
+  '--ntk-template-user-menu-avatar-bg': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '#111111',
   '--ntk-template-user-menu-avatar-border': '#ffffff',
   '--ntk-template-user-menu-avatar-color': notificationBadgeTextColor.value,
-  '--ntk-template-user-menu-header-bg': 'rgba(15, 23, 42, 0.03)',
+  '--ntk-template-user-menu-header-bg': 'rgba(0, 0, 0, 0.03)',
   '--ntk-template-user-menu-profile-bg': '#ffffff',
   '--ntk-cms-group-caption': authoringTheme.groupCaptionColor || authoringTheme.drawerTextColor || defaultTheme.groupCaptionColor || defaultTheme.drawerTextColor || '',
   '--ntk-cms-group-caption-mini-bg': authoringTheme.groupCaptionMiniBackground || authoringTheme.itemHoverBackground || defaultTheme.groupCaptionMiniBackground || defaultTheme.itemHoverBackground || '',
@@ -9137,15 +9087,14 @@ function applyGovernanceAction(
  * Handles sync active tenant profile settings.
  */
 function syncActiveTenantProfileSettings(nextSettings: CmsWhiteLabelSettings): void {
-  const activeProfile = getActiveTenantProfileSnapshot()
-  tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
-    id: activeProfile.id,
-    name: activeProfile.name,
-    settings: cloneWhiteLabelSettings(nextSettings),
-    updatedAt: new Date().toISOString(),
+  const resolved = syncCmsTenantProfileSettings({
+    tenantProfilesState: tenantProfilesState.value,
+    activeProfileId: activeTenantProfileId.value,
+    nextSettings,
   })
-  tenantProfilesState.value.activeProfileId = activeProfile.id
-  activeTenantProfileId.value = activeProfile.id
+
+  tenantProfilesState.value = resolved.tenantProfilesState
+  activeTenantProfileId.value = resolved.activeProfileId
   saveCmsTenantProfilesState(tenantProfilesState.value)
 }
 
@@ -9973,22 +9922,25 @@ function onCmsLocaleChange(value: CmsLocale | string | null): void {
  */
 function onTenantProfileChange(value: string | null): void {
   const profileId = String(value ?? '').trim()
-  const profile = tenantProfilesState.value.profiles.find(item => item.id === profileId)
-  if (!profile) {
+  const selection = selectCmsTenantProfile({
+    tenantProfilesState: tenantProfilesState.value,
+    profileId,
+  })
+  if (!selection) {
     return
   }
 
-  activeTenantProfileId.value = profile.id
-  tenantProfilesState.value.activeProfileId = profile.id
+  tenantProfilesState.value = selection.tenantProfilesState
+  activeTenantProfileId.value = selection.activeProfileId
   saveCmsTenantProfilesState(tenantProfilesState.value)
 
-  settings.value = cloneWhiteLabelSettings(normalizeCmsWhiteLabelSettings(profile.settings))
+  settings.value = cloneWhiteLabelSettings(selection.settings)
   settings.value.content.locale = resolveCmsLocale(settings.value.content.locale)
   applySelectedThemePresetFromSettings()
   activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
   searchQuery.value = ''
   resetCmsAuthoringHistory()
-  savedAtLabel.value = `${profile.name} ${cmsUiText.value.tenantLoadedSuffix}`
+  savedAtLabel.value = `${selection.profile.name} ${cmsUiText.value.tenantLoadedSuffix}`
 }
 
 /**
@@ -10011,15 +9963,16 @@ function createTenantProfileFromPrompt(): void {
     return
   }
 
-  const profileId = createTenantProfileId(profileName, tenantProfilesState.value.profiles.map(profile => profile.id))
-  tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
-    id: profileId,
-    name: profileName,
-    settings: cloneWhiteLabelSettings(settings.value),
+  const created = createCmsTenantProfileFromName({
+    tenantProfilesState: tenantProfilesState.value,
+    currentSettings: settings.value,
+    profileName,
   })
-  tenantProfilesState.value.activeProfileId = profileId
+
+  tenantProfilesState.value = created.tenantProfilesState
+  activeTenantProfileId.value = created.activeProfileId
   saveCmsTenantProfilesState(tenantProfilesState.value)
-  onTenantProfileChange(profileId)
+  onTenantProfileChange(created.activeProfileId)
   savedAtLabel.value = `${profileName} ${cmsUiText.value.tenantCreatedSuffix}`
 }
 
@@ -10037,23 +9990,16 @@ function removeActiveTenantProfile(): void {
     return
   }
 
-  tenantProfilesState.value = removeCmsTenantProfile(tenantProfilesState.value, activeProfile.id)
-  activeTenantProfileId.value = tenantProfilesState.value.activeProfileId
+  const removed = removeActiveCmsTenantProfileEntry({
+    tenantProfilesState: tenantProfilesState.value,
+    activeProfileId: activeTenantProfileId.value,
+  })
+
+  tenantProfilesState.value = removed.tenantProfilesState
+  activeTenantProfileId.value = removed.activeProfileId
   saveCmsTenantProfilesState(tenantProfilesState.value)
   onTenantProfileChange(activeTenantProfileId.value)
   savedAtLabel.value = `${activeProfile.name} ${cmsUiText.value.tenantRemovedSuffix}`
-}
-
-/**
- * Handles to json file name.
- */
-function toJsonFileName(value: string): string {
-  const normalized = value
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-_]/g, '')
-  return normalized || 'tenant-profile'
 }
 
 /**
@@ -10098,48 +10044,9 @@ function applySelectedDomainSnapshot(
   }
 }
 
-function downloadJsonPayload(fileName: string, payload: unknown): void {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return
-  }
-
-  ;(window as Window & {
-    __NTK_CMS_LAST_DOWNLOAD__?: {
-      fileName: string
-      payload: string
-    }
-  }).__NTK_CMS_LAST_DOWNLOAD__ = {
-    fileName,
-    payload: JSON.stringify(payload, null, 2),
-  }
-
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
-  const url = window.URL.createObjectURL(blob)
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = fileName
-  anchor.style.display = 'none'
-  document.body.appendChild(anchor)
-  anchor.click()
-  anchor.remove()
-  window.setTimeout(() => {
-    window.URL.revokeObjectURL(url)
-  }, 0)
-}
-
-/**
- * Handles export active tenant profile.
- */
 function exportActiveTenantProfile(): void {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return
-  }
-
   const profile = getActiveTenantProfileSnapshot()
-  const payload = createCmsTenantExportPayload(profile)
-
-  const fileName = `ntk-cms-tenant-${toJsonFileName(profile.id)}.json`
-  downloadJsonPayload(fileName, payload)
+  downloadCmsJsonPayload(createCmsTenantProfileDownload(profile))
   savedAtLabel.value = `${profile.name} ${cmsUiText.value.tenantExportedSuffix}`
 }
 
@@ -10147,23 +10054,13 @@ function exportActiveTenantProfile(): void {
  * Handles export the selected repository domain snapshot.
  */
 function exportSelectedDomainSnapshot(): void {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return
-  }
-
   const activeProfile = getActiveTenantProfileSnapshot()
   const domain = selectedDomainTransfer.value
-  const payload = createCmsDomainExportPayload({
+  downloadCmsJsonPayload(createCmsDomainSnapshotDownload({
     domain,
     snapshot: createSelectedDomainSnapshot(domain) as never,
-    profile: {
-      id: activeProfile.id,
-      name: activeProfile.name,
-    },
-  })
-
-  const fileName = `ntk-cms-${domain}-${toJsonFileName(activeProfile.id)}.json`
-  downloadJsonPayload(fileName, payload)
+    profile: activeProfile,
+  }))
   savedAtLabel.value = getCmsDomainTransferExportedLabel(domain)
 }
 
@@ -10171,21 +10068,11 @@ function exportSelectedDomainSnapshot(): void {
  * Exports authored schemas and presets without touching page/media/release domains.
  */
 function exportCmsSchemaPackage(): void {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return
-  }
-
   const activeProfile = getActiveTenantProfileSnapshot()
-  const payload = createCmsSchemaExportPayload({
+  downloadCmsJsonPayload(createCmsSchemaPackageDownload({
     snapshot: createCmsSchemaPackageSnapshot(settings.value),
-    profile: {
-      id: activeProfile.id,
-      name: activeProfile.name,
-    },
-  })
-
-  const fileName = `ntk-cms-schema-${toJsonFileName(activeProfile.id)}.json`
-  downloadJsonPayload(fileName, payload)
+    profile: activeProfile,
+  }))
   savedAtLabel.value = getCmsSchemaPackageExportedLabel()
 }
 
@@ -10212,8 +10099,12 @@ function exportCmsDraftComparisonPackage(): void {
     checklist: selectedReleaseCandidateChecklist.value ?? null,
   })
 
-  const fileName = `ntk-cms-review-${toJsonFileName(activeProfile.id)}.json`
-  downloadJsonPayload(fileName, payload)
+  const fileName = `ntk-cms-review-${toCmsJsonFileName(activeProfile.id)}.json`
+  downloadCmsJsonPayload({
+    fileName,
+    payload,
+    serializedPayload: JSON.stringify(payload, null, 2),
+  })
   settings.value.releases.reviewPackages = appendCmsReviewPackageHistory(
     settings.value.releases.reviewPackages,
     createCmsReviewPackageHistoryEntry({
@@ -10254,18 +10145,6 @@ function addSelectedReleaseAcknowledgement(): void {
   savedAtLabel.value = tr('Review acknowledgement recorded', 'Reconhecimento de revisao registrado')
 }
 
-/**
- * Resolves an uploaded JSON file from either a native file input event or a direct File payload.
- */
-function resolveCmsImportedFile(input: Event | File): File | null {
-  if (input instanceof File) {
-    return input
-  }
-
-  const target = input.target as HTMLInputElement | null
-  return target?.files?.[0] ?? null
-}
-
 async function onTenantImportFileChange(input: Event | File): Promise<void> {
   const file = resolveCmsImportedFile(input)
   if (!file) {
@@ -10274,41 +10153,29 @@ async function onTenantImportFileChange(input: Event | File): Promise<void> {
 
   try {
     checkpointCmsDraftRecovery()
-    const fileContent = await file.text()
-    const parsed = JSON.parse(fileContent) as unknown
-    const imported = parseCmsTenantImportPayload(parsed, file.name)
+    const imported = await importCmsTenantProfileFile({
+      file,
+      tenantProfilesState: tenantProfilesState.value,
+      confirmReplace: profileId => typeof window !== 'undefined'
+        && window.confirm(cmsUiText.value.tenantReplaceConfirmLabel(profileId)),
+    })
     if (!imported) {
       savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
       return
     }
 
-    const normalizedSettings = normalizeCmsWhiteLabelSettings(imported.settings)
-    const existingIds = tenantProfilesState.value.profiles.map(profile => profile.id)
-    const requestedId = toJsonFileName(imported.id || imported.name)
-    const hasRequestedId = existingIds.includes(requestedId)
-    const shouldReplace = hasRequestedId
-      && typeof window !== 'undefined'
-      && window.confirm(cmsUiText.value.tenantReplaceConfirmLabel(requestedId))
-    const profileId = shouldReplace
-      ? requestedId
-      : createTenantProfileId(requestedId, existingIds)
-
-    tenantProfilesState.value = upsertCmsTenantProfile(tenantProfilesState.value, {
-      id: profileId,
-      name: imported.name.trim() || profileId,
-      settings: normalizedSettings,
-    })
-    tenantProfilesState.value.activeProfileId = profileId
+    tenantProfilesState.value = imported.tenantProfilesState
+    activeTenantProfileId.value = imported.activeProfileId
     saveCmsTenantProfilesState(tenantProfilesState.value)
-    onTenantProfileChange(profileId)
+    onTenantProfileChange(imported.activeProfileId)
     applyGovernanceAction('import_settings', {
-      summary: `${imported.name.trim() || profileId} ${tr('imported', 'importado')}`,
+      summary: `${imported.profileName} ${tr('imported', 'importado')}`,
       metadata: {
         sourceVersion: String(imported.sourceVersion),
-        profileId,
+        profileId: imported.profileId,
       },
     })
-    savedAtLabel.value = cmsUiText.value.tenantImportedWithVersionLabel(imported.name.trim() || profileId, imported.sourceVersion)
+    savedAtLabel.value = cmsUiText.value.tenantImportedWithVersionLabel(imported.profileName, imported.sourceVersion)
   } catch {
     savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
   }
@@ -10322,9 +10189,7 @@ async function onDomainImportFileChange(input: Event | File): Promise<void> {
 
   try {
     checkpointCmsDraftRecovery()
-    const fileContent = await file.text()
-    const parsed = JSON.parse(fileContent) as unknown
-    const imported = parseCmsDomainImportPayload(parsed, file.name, selectedDomainTransfer.value)
+    const imported = await importCmsDomainFile(file, selectedDomainTransfer.value)
     if (!imported) {
       savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
       return
@@ -10364,9 +10229,7 @@ async function onSchemaImportFileChange(input: Event | File): Promise<void> {
 
   try {
     checkpointCmsDraftRecovery()
-    const fileContent = await file.text()
-    const parsed = JSON.parse(fileContent) as unknown
-    const imported = parseCmsSchemaImportPayload(parsed, file.name)
+    const imported = await importCmsSchemaFile(file)
     if (!imported) {
       savedAtLabel.value = cmsUiText.value.importFailedInvalidJsonLabel
       return

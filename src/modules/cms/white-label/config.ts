@@ -24,6 +24,10 @@ import { createDefaultCmsMediaAssets } from './media-library'
 import { createDefaultCmsAuthoredBlockPresets } from './block-presets'
 import { createDefaultCmsAuthoredContentModelFieldPresets } from './schema-field-presets'
 import {
+  createCmsDefaultEnterpriseTheme,
+  CMS_AUTHORING_DEFAULT_THEME_PRESET_ID,
+} from './authoring/design-baseline'
+import {
   createLocalizedContentDefaults,
   createLocalizedShellActions,
   createLocalizedShellGroups,
@@ -180,6 +184,7 @@ export function createDefaultWhiteLabelSettings(
 ): CmsWhiteLabelSettings {
   const locale = resolveCmsLocale(localeInput)
   const shell = shellConfig ?? createDefaultShellConfig(locale)
+  const baseTheme = createDefaultWhiteLabelTheme(cloneValue(shell.theme))
   const branding = {
     appName: shell.appName,
     appSubtitle: shell.appSubtitle,
@@ -221,9 +226,9 @@ export function createDefaultWhiteLabelSettings(
     authoredBlockPresets: createDefaultCmsAuthoredBlockPresets(),
     mediaAssets: createDefaultCmsMediaAssets(branding, locale),
     releases: createDefaultCmsReleaseSettings(),
-    themePresetId: 'default',
+    themePresetId: CMS_AUTHORING_DEFAULT_THEME_PRESET_ID,
     themePresetOverrides: {},
-    theme: createDefaultWhiteLabelTheme(cloneValue(shell.theme)),
+    theme: createCmsDefaultEnterpriseTheme(baseTheme),
     navGroups: cloneValue(shell.navGroups),
     items: cloneValue(shell.items),
     toolbarActions: cloneValue(shell.toolbarActions),

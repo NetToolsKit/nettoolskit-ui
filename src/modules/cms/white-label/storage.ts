@@ -16,6 +16,7 @@ import {
   CMS_THEME_DARK_BASE_PRESET_IDS,
   buildCmsThemePresets,
   detectCmsThemePresetId,
+  getCmsThemePresetTheme,
   isCmsThemeBasePresetId,
   isCmsThemePresetId,
 } from './theme-presets'
@@ -201,10 +202,9 @@ function getContrastRatio(foreground: string | undefined, background: string | u
  * Gets the concrete dark preset theme used as readability fallback.
  */
 function getDarkPresetTheme(defaultTheme: AppShellTheme, presetId: string): Partial<AppShellTheme> {
-  const presets = buildCmsThemePresets(defaultTheme)
   return (
-    presets.find(preset => preset.id === presetId)?.theme
-    ?? presets.find(preset => preset.id === 'dark')?.theme
+    getCmsThemePresetTheme(defaultTheme, presetId === 'darkLanding' ? 'darkLanding' : 'dark')
+    ?? getCmsThemePresetTheme(defaultTheme, 'dark')
     ?? {}
   )
 }

@@ -12,6 +12,7 @@ export const CMS_THEME_PRESET_IDS = [
   'default',
   'dark',
   'darkLanding',
+  'enterpriseMinimal',
   'monochrome',
   'custom',
 ] as const
@@ -23,6 +24,7 @@ export const CMS_THEME_BASE_PRESET_IDS = [
   'default',
   'dark',
   'darkLanding',
+  'enterpriseMinimal',
   'monochrome',
 ] as const
 
@@ -36,6 +38,7 @@ export const CMS_THEME_DARK_BASE_PRESET_IDS = [
 
 export type CmsThemePresetId = (typeof CMS_THEME_PRESET_IDS)[number]
 export type CmsThemeBasePresetId = (typeof CMS_THEME_BASE_PRESET_IDS)[number]
+export const CMS_THEME_PRESET_DEFAULT_ID: Exclude<CmsThemePresetId, 'custom'> = 'enterpriseMinimal'
 
 /**
  * Type guard for all supported preset ids.
@@ -239,6 +242,60 @@ function createMonochromeTheme(): Partial<AppShellTheme> {
 }
 
 /**
+ * Builds a monochrome enterprise shell inspired by Vercel, Uber, and Ollama.
+ */
+function createEnterpriseMinimalTheme(): Partial<AppShellTheme> {
+  const accent = '#111111'
+  const accentSoft = hexToRgba(accent, 0.06)
+  const accentActive = hexToRgba(accent, 0.1)
+
+  return {
+    shellBackground: '#ffffff',
+    headerBackground: '#ffffff',
+    headerTextColor: '#1f1f1f',
+    toolbarButtonColor: '#525252',
+    titleAppColor: '#111111',
+    titleTextColor: '#525252',
+    titleSeparatorColor: '#d4d4d4',
+    drawerBackground: '#ffffff',
+    drawerFooterBackground: '#ffffff',
+    drawerTextColor: '#404040',
+    dividerColor: '#e5e5e5',
+    searchBackground: '#fafafa',
+    searchTextColor: '#111111',
+    searchIconColor: '#737373',
+    searchBorder: '#e5e5e5',
+    searchBorderHover: '#d4d4d4',
+    pageBackground: '#fafafa',
+    pageTextColor: '#171717',
+    brandTitleColor: '#111111',
+    brandSubtitleColor: '#525252',
+    groupCaptionColor: '#737373',
+    itemTextColor: '#404040',
+    itemIconColor: '#525252',
+    itemActiveColor: accent,
+    itemHoverColor: accent,
+    itemIconHoverColor: accent,
+    itemHoverBackground: accentSoft,
+    itemActiveBackground: accentActive,
+    groupCaptionMiniBackground: '#f5f5f5',
+    actionBackground: 'transparent',
+    actionHoverBackground: '#f3f4f6',
+    notificationSuccessColor: '#16a34a',
+    notificationWarningColor: '#ca8a04',
+    notificationErrorColor: '#dc2626',
+    notificationInfoColor: '#2563eb',
+    notificationBadgeColor: '#111111',
+    notificationBadgeTextColor: '#ffffff',
+    notificationIconColor: '#525252',
+    notificationSuccessTextColor: '#ffffff',
+    notificationWarningTextColor: '#111827',
+    notificationErrorTextColor: '#ffffff',
+    notificationInfoTextColor: '#ffffff',
+  }
+}
+
+/**
  * Normalizes token values for case/whitespace-insensitive comparisons.
  */
 function normalizeThemeValue(value: string | undefined): string {
@@ -284,12 +341,28 @@ export function buildCmsThemePresets(defaultTheme: AppShellTheme): CmsThemePrese
       theme: createLandingDarkTheme(),
     },
     {
+      id: 'enterpriseMinimal',
+      label: 'Enterprise Minimal',
+      description: 'Uber, Vercel, and Ollama-inspired monochrome enterprise shell.',
+      theme: createEnterpriseMinimalTheme(),
+    },
+    {
       id: 'monochrome',
       label: 'Monochrome',
       description: 'Neutral grayscale palette for minimal interfaces.',
       theme: createMonochromeTheme(),
     },
   ]
+}
+
+/**
+ * Resolves one preset theme by id returning an empty object when not found.
+ */
+export function getCmsThemePresetTheme(
+  defaultTheme: AppShellTheme,
+  presetId: Exclude<CmsThemePresetId, 'custom'>
+): Partial<AppShellTheme> {
+  return buildCmsThemePresets(defaultTheme).find(preset => preset.id === presetId)?.theme ?? {}
 }
 
 /**

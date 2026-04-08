@@ -1,4 +1,6 @@
 export * from './cms-authoring.utils'
+export * from './design-baseline'
 export * from './shell.config'
+export * from './tenant-profile-authoring'
 export * from './theme-field-catalog'
 export * from './useCmsUiText'
