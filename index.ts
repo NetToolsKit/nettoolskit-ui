@@ -174,11 +174,16 @@ export * from './src/config/colors/semantic.config'
 export * from './src/config/colors/theme-mode.config'
 
 // ============================================================================
-// TEMPLATES - Visual Template Catalog
+// MODULES - CMS
 // ============================================================================
-export * from './src/templates'
+export * from './src/modules/cms'
 
 // ============================================================================
 // WHITELABEL - Reference Samples
 // ============================================================================
 export * from './src/whitelabel'
+
+// ============================================================================
+// TEMPLATES - Visual Template Catalog
+// ============================================================================
+export * from './src/templates'

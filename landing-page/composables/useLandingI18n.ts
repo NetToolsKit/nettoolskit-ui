@@ -19,6 +19,10 @@ type LandingMessages = Record<LandingLocale, LandingDictionary>
 
 const messages: LandingMessages = {
   en: {
+    app: {
+      testCms: 'Test CMS',
+      testSamples: 'Open Samples',
+    },
     header: {
       brandName: 'NetToolsKit UI',
       openMenuAria: 'Open menu',
@@ -180,6 +184,10 @@ const messages: LandingMessages = {
     },
   },
   'pt-BR': {
+    app: {
+      testCms: 'Testar CMS',
+      testSamples: 'Abrir Samples',
+    },
     header: {
       brandName: 'NetToolsKit UI',
       openMenuAria: 'Abrir menu',

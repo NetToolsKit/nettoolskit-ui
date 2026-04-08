@@ -15,7 +15,7 @@ Provide reusable scaffolding blocks for app setup:
 - layout state bootstrap
 - notification bridge integration
 
-These scaffolds are generic and intended for reuse in dashboards, CRUD modules, reference-system backoffice, and other enterprise flows.
+These scaffolds are generic and intended for reuse in dashboards, CRUD modules, CMS backoffice, and other enterprise flows.
 
 ## Structure
 

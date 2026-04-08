@@ -9,7 +9,7 @@ This README follows:
 
 ## Purpose
 
-Provide generic layout templates that can be reused across dashboard, CRUD, reference-system, and backoffice scenarios without tenant coupling.
+Provide generic layout templates that can be reused across CMS, dashboard, CRUD, and backoffice scenarios without tenant coupling.
 
 ## Structure
 

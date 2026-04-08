@@ -30,7 +30,7 @@ npm run type-check
 npm run test
 ```
 
-For visual/template slices, also run:
+For visual/template and CMS slices, also run:
 
 ```bash
 npm run test:e2e -- --project=chromium
@@ -618,9 +618,9 @@ The theme system automatically sets these CSS variables:
 
 ## White-Label Theme Parameters
 
-This table documents the white-label theme parameters used by the reusable reference shell and sample runtime.
+This table documents all white-label theme parameters used by the CMS settings panel.
 
-- Source of truth: `planning/reference/white-label-parameters-table.md` and `src/components/layout/app-shell.types.ts`
+- Source of truth: landing-page/CmsApp.vue (colorFields)
 - Total parameters: **113**
 - Basic mode visible by default: **69**
 - Advanced mode (optional): **44**
@@ -682,8 +682,8 @@ This table documents the white-label theme parameters used by the reusable refer
 | <code>compactBreakpoint</code> | Layout | Compact breakpoint | Basic | - |
 | <code>compactPagePadding</code> | Layout | Compact page padding | Advanced | - |
 | <code>compactWorkspaceCardPadding</code> | Layout | Compact workspace card padding | Advanced | - |
-| <code>layoutBreakpointLg</code> | Layout | Reference shell layout breakpoint LG | Advanced | Legacy alias: <code>cmsLayoutBreakpointLg</code> |
-| <code>layoutBreakpointMd</code> | Layout | Reference shell layout breakpoint MD | Advanced | Legacy alias: <code>cmsLayoutBreakpointMd</code> |
+| <code>cmsLayoutBreakpointLg</code> | Layout | CMS layout breakpoint LG | Advanced | - |
+| <code>cmsLayoutBreakpointMd</code> | Layout | CMS layout breakpoint MD | Advanced | - |
 | <code>miniItemMarginRight</code> | Layout | Mini item margin right | Advanced | - |
 | <code>miniItemAvatarMinWidth</code> | Layout | Mini item avatar min width | Advanced | - |
 | <code>shellBackground</code> | Foundation | Shell background | Basic | - |
@@ -870,26 +870,20 @@ interface ThemeGradients {
 - 🎨 **[Customization Guide](./docs/CUSTOMIZATION.md)** - Theme and branding customization
 - 📝 **[Visual Identity Manual](./docs/nettoolskit-visual-identity-manual.md)** - Brand guidelines
 - 🧱 **[Template Catalog](./src/templates/README.md)** - Canonical template-first architecture, contracts, and reusable visual packs
-- 🧪 **[Reference Samples Runtime](./landing-page/ReferenceSamplesApp.vue)** - CMS-free showcase of the approved layout using reusable templates and whitelabel presets
-- 🎛️ **[Whitelabel Runtime](./src/whitelabel/index.ts)** - Presets, runtime helpers, and token contracts for shell-level brand personalization
+- 🧩 **[CMS Backend Integration Handbook](./docs/cms-backend-integration-handbook.md)** - How backend-oriented teams should persist, validate and publish CMS engine payloads
+- 🔌 **[CMS Provider Hydration](./docs/cms-provider-hydration.md)** - Async provider examples for content, assets and releases
+- 📦 **[CMS Review Package](./docs/cms-review-package.md)** - Export draft-vs-published review artifacts for release analysis and approvals
 
 ### Templates
 
 - **[custom-theme-template.ts](./templates/custom-theme-template.ts)** - TypeScript theme configuration template
 - **[custom-branding.scss](./templates/custom-branding.scss)** - SCSS design tokens template
 
-### Reference Workspace Runtime
-
-- `ReferenceSamplesApp.vue` now mounts the approved reference runtime through the shared workspace stack.
-- `src/templates/features/reference-system/ReferenceWorkspaceShell.vue` owns the reusable whitelabel shell chrome.
-- `src/templates/features/reference-system/ReferenceWorkspaceComposer.vue` owns the reusable catalog/designer composition.
-- `src/templates/features/reference-system/useReferenceWorkspaceHost.ts` owns the reusable host state for demos and sample runtimes.
-
 ### Template Runtime Preview
 
 - `/?templates=1` renders the enterprise template showcase used by the visual-regression gate.
-- `/?samples=1` renders the CMS-free reference samples runtime with whitelabel preset switching.
 - `/?template-runtime=1` renders the router-enabled template runtime (layout/navigation/page/feature templates composed via scaffolded routes).
+- `/?cms=1` renders the CMS authoring runtime.
 - Local preview command:
 
 ```bash
@@ -976,15 +970,18 @@ NetToolsKit UI Vue is intentionally layered so the project stays simple to consu
    - Adds opinionated product-facing components, design tokens, branding, landing sections, and the shared app shell.
    - This is the layer that standardizes how NetToolsKit applications look and behave on top of Quasar.
 
-3. **NTK Templates and Reference Samples**
-   - Adds reusable layouts, pages, enterprise features, auth screens, knowledge surfaces, and reference-system demos.
-   - This layer is template-first, product-agnostic, and intended for whitelabel reuse.
+3. **NTK CMS Engine**
+   - Adds schema-driven authoring, page/section/block composition, reusable presets, drag-and-drop builder flows, preview, validation, and release orchestration.
+   - This layer stays frontend-first and backend-agnostic.
 
 4. **Application / Backend Contracts**
-     - Persistence, auth, permissions, API orchestration, and business rules should plug into the templates and runtime shells through contracts.
-     - These concerns should live outside the shared UI library so the visual layer remains reusable and simple.
+     - Persistence providers, auth, permissions, media storage, audit workflows, and business rules should plug into the CMS engine through contracts.
+     - These concerns should live outside the core engine so the builder remains reusable and simple.
+     - For async provider examples, see [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
+     - For the backend-oriented integration flow, see [docs/cms-backend-integration-handbook.md](docs/cms-backend-integration-handbook.md).
+     - For offline release review exports, see [docs/cms-review-package.md](docs/cms-review-package.md).
 
-**Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or reference/template reuse.
+**Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
 
 ```
 nettoolskit-ui-vue/

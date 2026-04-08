@@ -39,4 +39,4 @@ npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts
 ## References
 
 - [Templates README](../README.md)
-- [Reference whitelabel samples plan](../../../planning/active/reference-whitelabel-samples-plan-2026-04-01.md)
+- [CMS enterprise plan](../../../planning/active/cms-engine-enterprise-plan-2026-03-13.md)

@@ -1,6 +1,6 @@
 # Feature Templates
 
-Reusable feature-level templates for auth, wiki, enterprise, and reference-system flows.
+Reusable feature-level templates for auth, wiki, enterprise operational flows, CMS authoring, and reference-system workspaces.
 
 ## Standard Compliance
 
@@ -26,28 +26,10 @@ Provide generic feature surfaces that accelerate delivery while remaining fully 
   - `AuditTimelineTemplate.vue`
   - `enterprise-template.types.ts`
   - `index.ts`
+- `cms/`
+  - reusable CMS authoring chrome and module surfaces
 - `reference-system/`
-  - `ReferenceReportManagerTemplate.vue`
-  - `ReferenceReportDesignerTemplate.vue`
-  - `ReferenceWorkspaceShell.vue`
-  - `ReferenceWorkspaceComposer.vue`
-  - `useReferenceWorkspaceHost.ts`
-  - `reference-system.types.ts`
-  - `reference-system.sample-data.ts`
-  - `reference-report.sample-data.ts`
-  - `reference-manager.sample-config.ts`
-  - `reference-designer.sample-config.ts`
-  - `components/`
-    - `ReferenceBrandLockup.vue`
-    - `ReferencePresetSelectorBar.vue`
-    - `ReferenceDocumentTabsBar.vue`
-    - `ReferenceReportCatalogPanel.vue`
-    - `ReferenceReportDetailCard.vue`
-    - `ReferenceReportStatusBadge.vue`
-    - `ReferenceWhitelabelPresetCard.vue`
-  - `index.ts`
-- `../../whitelabel/`
-  - shared preset, runtime and token mapping for reference samples
+  - reusable report manager/designer workspaces and host controller
 - `feature-template.catalog.ts`
   - registry metadata for feature templates
 - `index.ts`
@@ -65,7 +47,6 @@ Provide generic feature surfaces that accelerate delivery while remaining fully 
 npm run lint
 npm run type-check
 npm run test -- tests/unit/templates/EnterpriseFeatureTemplates.spec.ts
-npm run test -- tests/unit/templates/ReferenceSystemTemplates.spec.ts
 ```
 
 ## References

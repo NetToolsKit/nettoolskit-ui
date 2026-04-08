@@ -54,21 +54,25 @@ import { createTemplateRuntimeRouter } from '../src/templates/runtime'
 import '../src/styles/tokens.scss'
 import '../src/styles/global.scss'
 
-// Route-mode async loading keeps landing, sample, and template bundles split at runtime.
+// Route-mode async loading keeps landing, CMS, samples, and template bundles split at runtime.
 const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))
 const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))
+const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))
 const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
 const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))
 
 const searchParams = new URLSearchParams(window.location.search)
+const isCmsMode = searchParams.get('cms') === '1'
 const isSamplesMode = searchParams.get('samples') === '1'
 const isTemplateMode = searchParams.get('templates') === '1'
 const isTemplateRuntimeMode = searchParams.get('template-runtime') === '1'
 
-const RootComponent = isTemplateRuntimeMode
-  ? TemplateRuntimeApp
-  : isSamplesMode
-    ? ReferenceSamplesApp
+const RootComponent = isCmsMode
+  ? CmsApp
+  : isTemplateRuntimeMode
+    ? TemplateRuntimeApp
+    : isSamplesMode
+      ? ReferenceSamplesApp
     : isTemplateMode
       ? TemplateShowcaseApp
       : LandingApp

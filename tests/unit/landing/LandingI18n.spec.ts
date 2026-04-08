@@ -8,6 +8,31 @@ import {
   resolveLandingLocale,
 } from '../../../landing-page/composables/useLandingI18n'
 
+function createMemoryStorage(): Storage {
+  const data = new Map<string, string>()
+
+  return {
+    clear() {
+      data.clear()
+    },
+    getItem(key: string) {
+      return data.has(key) ? data.get(key)! : null
+    },
+    key(index: number) {
+      return Array.from(data.keys())[index] ?? null
+    },
+    get length() {
+      return data.size
+    },
+    removeItem(key: string) {
+      data.delete(key)
+    },
+    setItem(key: string, value: string) {
+      data.set(key, String(value))
+    },
+  }
+}
+
 describe('resolveLandingLocale', () => {
   it('resolves locale aliases and fallback safely', () => {
     expect(resolveLandingLocale('pt')).toBe('pt-BR')
@@ -30,8 +55,12 @@ describe('createLandingI18n — translations', () => {
 
     expect(english.t('header.nav.features')).toBe('Features')
     expect(english.t('hero.primaryCta')).toBe('Get Started')
+    expect(english.t('app.testCms')).toBe('Test CMS')
+    expect(english.t('app.testSamples')).toBe('Open Samples')
     expect(portuguese.t('header.nav.features')).toBe('Recursos')
     expect(portuguese.t('hero.primaryCta')).toBe('Comecar')
+    expect(portuguese.t('app.testCms')).toBe('Testar CMS')
+    expect(portuguese.t('app.testSamples')).toBe('Abrir Samples')
   })
 
   it('falls back to key when translation path is unknown', () => {
@@ -50,7 +79,15 @@ describe('createLandingI18n — translations', () => {
 
 describe('createLandingI18n — isPtBr and setLocale', () => {
   beforeEach(() => {
-    localStorage.clear()
+    const storage = createMemoryStorage()
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      value: storage,
+    })
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: storage,
+    })
   })
 
   it('isPtBr is true only for pt-BR locale', () => {

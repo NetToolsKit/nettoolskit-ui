@@ -15,6 +15,8 @@ Centralize template-specific style mappings so visual surfaces stay consistent w
 
 - `reference-app-bridge.scss`
   - template compatibility layer aligned with reference visual baseline
+- `cms-authoring-reference.css`
+  - shared CMS authoring shell CSS for builders, editor workbenches, review hubs, and release surfaces
 - `style-template.catalog.ts`
   - style template metadata for registry
 - `index.ts`
@@ -25,7 +27,7 @@ Centralize template-specific style mappings so visual surfaces stay consistent w
 - prefer tokens over hardcoded values for color, spacing, radius, typography
 - keep bridge selectors generic and template-focused
 - avoid coupling styles to one feature module or tenant naming
-- extend the shared reference bridge before creating one-off page CSS
+- when a CMS surface needs the same chrome across modules, extend `cms-authoring-reference.css` instead of creating one-off page CSS
 
 ## Validation
 

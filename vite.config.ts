@@ -5,8 +5,8 @@ import { resolve } from 'path'
 const modernSassApiOption = { api: 'modern-compiler' } as Record<string, string>
 
 /**
- * Split strategy used by landing, sample, and template builds.
- * Keeps framework/vendor code separated from reference/template slices
+ * Split strategy used by landing, CMS, samples, and template builds.
+ * Keeps framework/vendor code separated from feature-specific code
  * to reduce single-bundle size warnings and improve cacheability.
  */
 function manualChunkByModule(id: string): string | undefined {
@@ -15,6 +15,25 @@ function manualChunkByModule(id: string): string | undefined {
   if (!normalized.includes('/node_modules/')) {
     if (normalized.includes('/landing-page/ReferenceSamplesApp.vue')) {
       return 'reference-samples'
+    }
+    if (normalized.includes('/landing-page/CmsApp.vue')) {
+      return 'cms-app'
+    }
+    if (
+      normalized.includes('/src/modules/cms/releases/')
+      || normalized.includes('/src/modules/cms/index.ts')
+      || normalized.includes('/src/modules/cms/index')
+      || normalized.includes('/src/modules/cms/white-label/')
+      || normalized.includes('/src/modules/cms/core/')
+      || normalized.includes('/src/modules/cms/renderer/')
+    ) {
+      return 'cms-engine'
+    }
+    if (
+      normalized.includes('/src/modules/cms/blocks/')
+      || normalized.includes('/src/modules/cms/presets/')
+    ) {
+      return 'cms-blocks'
     }
     if (
       normalized.includes('/landing-page/reference-samples')

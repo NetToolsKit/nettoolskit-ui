@@ -136,13 +136,22 @@
 
     <LandingNewFooterSection v-model:reduce-motion="reduceMotion" />
 
-    <a
-      href="/?samples=1"
-      class="samples-mode-btn"
-      aria-label="Abrir samples"
-    >
-      Abrir Samples
-    </a>
+    <div class="runtime-mode-shortcuts">
+      <a
+        href="/?samples=1"
+        class="samples-mode-btn"
+        aria-label="Abrir samples"
+      >
+        Abrir Samples
+      </a>
+      <a
+        href="/?cms=1"
+        class="cms-mode-btn"
+        aria-label="Abrir CMS"
+      >
+        Abrir CMS
+      </a>
+    </div>
   </div>
 </template>
 

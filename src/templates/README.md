@@ -37,8 +37,10 @@ This folder is the canonical source for new visual work. Direct one-off implemen
     - `auth/`
     - `wiki/`
     - `enterprise/`
+    - `cms/`
     - `reference-system/`
-  - `reference-system/` also owns the reusable workspace shell, composition layer, and host controller used by the reference samples runtime
+  - `cms/` owns the reusable authoring shell and module surfaces extracted from the CMS runtime
+  - `reference-system/` owns the reusable workspace shell, composition layer, and host controller used by the reference samples runtime
 - `styles/`
   - style/template bridge catalog and exports
 - `scaffolding/`
@@ -64,7 +66,7 @@ Use helpers from `contracts/template-acceptance.ts` to verify readiness.
 Templates under `pages/` and `features/` must stay generic enough to be reused in:
 - dashboard surfaces
 - CRUD/list modules
-- backoffice and reference-system variants
+- CMS, backoffice, and reference-system variants
 
 Do not hardcode business-domain copy, route assumptions, or store bindings directly inside shared template files.
 

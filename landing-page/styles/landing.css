@@ -1023,11 +1023,19 @@ ol {
   accent-color: var(--gold);
 }
 
-.samples-mode-btn {
+.runtime-mode-shortcuts {
   position: fixed;
   right: 20px;
   bottom: 20px;
   z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cms-mode-btn,
+.samples-mode-btn {
+  position: static;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1044,6 +1052,7 @@ ol {
   transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
+.cms-mode-btn:hover,
 .samples-mode-btn:hover {
   background: rgba(255, 255, 255, 0.16);
   border-color: rgba(255, 255, 255, 0.32);
