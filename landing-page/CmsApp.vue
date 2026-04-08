@@ -568,10 +568,6 @@ import {
 import { applySemanticColors, semanticColors } from '../src/config/colors/semantic.config'
 import {
   buildCmsThemePresets,
-  detectCmsThemePresetId,
-  isCmsThemeBasePresetId,
-  isCmsThemePresetId,
-  type CmsThemeBasePresetId,
   type CmsThemePreset,
   type CmsThemePresetId,
 } from '../src/modules/cms/white-label/theme-presets'
@@ -810,15 +806,23 @@ import {
 } from '../src/modules/cms/presets/landing'
 import {
   useCmsUiText,
+  applyCmsThemeFieldValue,
+  applyCmsThemePreset,
   areCmsSettingsSnapshotsEqual,
   cloneSerializableValue,
   cloneWhiteLabelSettings,
+  createCmsAccentSurfaceStyle,
   createCmsAuthoringShellTheme,
+  createCmsAuthoringStyleVars,
   createCmsDomainSnapshotDownload,
+  createCmsNotificationChipStyles,
+  createCmsPrimaryActionStyle,
   createCmsSchemaPackageDownload,
   createCmsTenantProfileDownload,
   createCmsTenantProfileFromName,
+  createCmsTextActionStyle,
   downloadCmsJsonPayload,
+  getCmsThemeFieldPickerValue,
   importCmsDomainFile,
   importCmsSchemaFile,
   importCmsTenantProfileFile,
@@ -828,6 +832,7 @@ import {
   removeActiveCmsTenantProfileEntry,
   resolveActiveCmsTenantProfile,
   resolveCmsImportedFile,
+  resolveCmsSelectedThemePresetId,
   resolveViewportWidth,
   selectCmsTenantProfile,
   syncCmsTenantProfileSettings,
@@ -2246,9 +2251,7 @@ const cmsMediaAssetKindOptions = computed(() => ([
 ]))
 const initialThemePresets = getCurrentThemePresets()
 const selectedThemePreset = ref<CmsThemePresetId>(
-  isCmsThemePresetId(settings.value.themePresetId)
-    ? settings.value.themePresetId
-    : detectCmsThemePresetId(settings.value.theme, initialThemePresets, defaultTheme)
+  resolveCmsSelectedThemePresetId(settings.value, initialThemePresets, defaultTheme)
 )
 settings.value.themePresetId = selectedThemePreset.value
 const defaultCmsLayoutBreakpointLgPx = parseBreakpointToken(defaultTheme.cmsLayoutBreakpointLg, 1280)
@@ -2490,188 +2493,70 @@ const resolvedBorderWidth = computed(() => {
   return settings.value.theme.borderWidth || defaultTheme.borderWidth || '1px'
 })
 
-const cmsStyleVars = computed<Record<string, string>>(() => {
-  const authoringTheme = cmsResolvedAuthoringTheme.value
-
-  return {
-  '--ntk-shell-header-height': `${shellSnapshot.value.shellConfig.headerHeight ?? 60}px`,
-  '--ntk-shell-viewport-height': '100vh',
-  '--ntk-cms-font-family': authoringTheme.fontFamily || defaultTheme.fontFamily || '',
-  '--ntk-cms-font-display': authoringTheme.fontFamilyDisplay || authoringTheme.fontFamily || defaultTheme.fontFamilyDisplay || defaultTheme.fontFamily || '',
-  '--ntk-cms-font-style-base': authoringTheme.fontStyleBase || defaultTheme.fontStyleBase || 'normal',
-  '--ntk-cms-font-weight-regular': authoringTheme.fontWeightRegular || defaultTheme.fontWeightRegular || '400',
-  '--ntk-cms-font-weight-medium': authoringTheme.fontWeightMedium || defaultTheme.fontWeightMedium || authoringTheme.fontWeightRegular || defaultTheme.fontWeightRegular || '500',
-  '--ntk-cms-font-weight-semibold': authoringTheme.fontWeightSemibold || defaultTheme.fontWeightSemibold || authoringTheme.fontWeightMedium || defaultTheme.fontWeightMedium || '600',
-  '--ntk-cms-font-weight-bold': authoringTheme.fontWeightBold || defaultTheme.fontWeightBold || authoringTheme.fontWeightSemibold || defaultTheme.fontWeightSemibold || '700',
-  '--ntk-cms-font-size-base': authoringTheme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
-  '--ntk-cms-font-size-title': authoringTheme.fontSizeTitle || defaultTheme.fontSizeTitle || authoringTheme.fontSizeBase || defaultTheme.fontSizeBase || '0.925rem',
-  '--ntk-cms-font-size-title-app': authoringTheme.fontSizeTitleApp || defaultTheme.fontSizeTitleApp || authoringTheme.fontSizeTitle || defaultTheme.fontSizeTitle || '1.05rem',
-  '--ntk-cms-font-size-brand-title': authoringTheme.fontSizeBrandTitle || defaultTheme.fontSizeBrandTitle || authoringTheme.fontSizeBase || defaultTheme.fontSizeBase || '0.9rem',
-  '--ntk-cms-font-size-brand-subtitle': authoringTheme.fontSizeBrandSubtitle || defaultTheme.fontSizeBrandSubtitle || '0.72rem',
-  '--ntk-cms-font-size-item-label': authoringTheme.fontSizeItemLabel || defaultTheme.fontSizeItemLabel || '13px',
-  '--ntk-cms-font-size-item-caption': authoringTheme.fontSizeItemCaption || defaultTheme.fontSizeItemCaption || '11px',
-  '--ntk-cms-font-size-group-caption': authoringTheme.fontSizeGroupCaption || defaultTheme.fontSizeGroupCaption || '0.68rem',
-  '--ntk-cms-font-size-group-caption-mini': authoringTheme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
-  '--ntk-cms-letter-spacing-group-caption': authoringTheme.letterSpacingGroupCaption || defaultTheme.letterSpacingGroupCaption || '0.08em',
-  '--ntk-cms-letter-spacing-group-caption-mini': authoringTheme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
-  '--ntk-cms-line-height-item-label': authoringTheme.lineHeightItemLabel || defaultTheme.lineHeightItemLabel || '1.25',
-  '--ntk-cms-line-height-item-caption': authoringTheme.lineHeightItemCaption || defaultTheme.lineHeightItemCaption || '1.2',
-  '--ntk-cms-item-caption-offset': authoringTheme.itemCaptionOffset || defaultTheme.itemCaptionOffset || 'calc(var(--ntk-cms-space-xs) * 0.6)',
-  '--ntk-cms-radius-sm': authoringTheme.radiusSm || defaultTheme.radiusSm || '6px',
-  '--ntk-cms-radius-md': authoringTheme.radiusMd || defaultTheme.radiusMd || '8px',
-  '--ntk-cms-radius-lg': authoringTheme.radiusLg || defaultTheme.radiusLg || '10px',
-  '--ntk-cms-radius-item': authoringTheme.radiusItem || defaultTheme.radiusItem || '0 28px 28px 0',
-  '--ntk-cms-group-caption-mini-radius': authoringTheme.groupCaptionMiniRadius || defaultTheme.groupCaptionMiniRadius || '999px',
-  '--ntk-cms-space-xs': authoringTheme.spacingXs || defaultTheme.spacingXs || '0.25rem',
-  '--ntk-cms-space-sm': authoringTheme.spacingSm || defaultTheme.spacingSm || '0.5rem',
-  '--ntk-cms-space-md': authoringTheme.spacingMd || defaultTheme.spacingMd || '0.75rem',
-  '--ntk-cms-space-lg': authoringTheme.spacingLg || defaultTheme.spacingLg || '1rem',
-  '--ntk-cms-border-width': authoringTheme.borderWidth || defaultTheme.borderWidth || '1px',
-  '--ntk-cms-text-primary': authoringTheme.pageTextColor || defaultTheme.pageTextColor || '',
-  '--ntk-cms-text-secondary': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-border-color': authoringTheme.dividerColor || defaultTheme.dividerColor || '',
-  '--ntk-cms-bg-card': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '',
-  '--ntk-cms-page-bg': authoringTheme.pageBackground || defaultTheme.pageBackground || '#fafafa',
-  '--ntk-cms-card-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '#ffffff',
-  '--ntk-cms-shell-border': authoringTheme.dividerColor || defaultTheme.dividerColor || '#e5e5e5',
-  '--ntk-cms-shell-text': authoringTheme.pageTextColor || defaultTheme.pageTextColor || '#111111',
-  '--ntk-cms-shell-text-muted': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#525252',
-  '--ntk-cms-shell-accent': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '#111111',
-  '--ntk-cms-tab-active': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-accent': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-accent-soft': authoringTheme.itemHoverBackground || defaultTheme.itemHoverBackground || '',
-  '--ntk-cms-accent-text': authoringTheme.itemHoverColor || authoringTheme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-active-bg': authoringTheme.itemActiveBackground || defaultTheme.itemActiveBackground || '',
-  '--ntk-cms-header-bg': authoringTheme.headerBackground || defaultTheme.headerBackground || '',
-  '--ntk-cms-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '',
-  '--ntk-cms-header-blur': authoringTheme.headerBlur || defaultTheme.headerBlur || 'blur(calc(var(--ntk-cms-space-sm) * 2))',
-  '--ntk-template-layout-header-bg': authoringTheme.headerBackground || defaultTheme.headerBackground || '#ffffff',
-  '--ntk-template-layout-header-text': authoringTheme.headerTextColor || defaultTheme.headerTextColor || '#111111',
-  '--ntk-template-layout-header-shadow': authoringTheme.headerShadow || defaultTheme.headerShadow || '0 8px 24px rgba(0, 0, 0, 0.05)',
-  '--ntk-template-layout-title-color': authoringTheme.titleTextColor || authoringTheme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '#111111',
-  '--ntk-cms-drawer-shadow': authoringTheme.drawerShadow || defaultTheme.drawerShadow || '',
-  '--ntk-cms-drawer-footer-bg': authoringTheme.drawerFooterBackground || authoringTheme.drawerBackground || defaultTheme.drawerFooterBackground || defaultTheme.drawerBackground || '',
-  '--ntk-cms-drawer-footer-shadow': authoringTheme.drawerFooterShadow || defaultTheme.drawerFooterShadow || '',
-  '--ntk-template-layout-horizontal-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '#ffffff',
-  '--ntk-template-layout-horizontal-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#111111',
-  '--ntk-template-layout-drawer-bg': authoringTheme.drawerBackground || defaultTheme.drawerBackground || '#ffffff',
-  '--ntk-template-layout-drawer-text': authoringTheme.drawerTextColor || defaultTheme.drawerTextColor || '#111111',
-  '--ntk-template-layout-page-bg': authoringTheme.pageBackground || defaultTheme.pageBackground || '#fafafa',
-  '--ntk-cms-search-bg': authoringTheme.searchBackground || defaultTheme.searchBackground || '',
-  '--ntk-cms-search-text': authoringTheme.searchTextColor || defaultTheme.searchTextColor || '',
-  '--ntk-cms-search-icon': authoringTheme.searchIconColor || authoringTheme.headerTextColor || defaultTheme.searchIconColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-search-border': authoringTheme.searchBorder || defaultTheme.searchBorder || '',
-  '--ntk-cms-search-border-hover': authoringTheme.searchBorderHover || defaultTheme.searchBorderHover || '',
-  '--ntk-cms-transition': authoringTheme.transitionFast || defaultTheme.transitionFast || '',
-  '--ntk-cms-focus-color': authoringTheme.focusColor || authoringTheme.itemActiveColor || defaultTheme.focusColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-action-bg': authoringTheme.actionBackground || defaultTheme.actionBackground || 'transparent',
-  '--ntk-cms-action-hover': authoringTheme.actionHoverBackground || defaultTheme.actionHoverBackground || '',
-  '--ntk-cms-shell-bg': authoringTheme.shellBackground || defaultTheme.shellBackground || '',
-  '--ntk-cms-title-app': authoringTheme.titleAppColor || authoringTheme.itemActiveColor || defaultTheme.titleAppColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-title-text': authoringTheme.titleTextColor || authoringTheme.headerTextColor || defaultTheme.titleTextColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-title-separator': authoringTheme.titleSeparatorColor || authoringTheme.dividerColor || defaultTheme.titleSeparatorColor || defaultTheme.dividerColor || '',
-  '--ntk-cms-title-separator-size': authoringTheme.titleSeparatorSize || defaultTheme.titleSeparatorSize || 'calc(var(--ntk-cms-font-size-title-app) + var(--ntk-cms-space-xs))',
-  '--ntk-cms-toolbar-icon': authoringTheme.toolbarButtonColor || authoringTheme.headerTextColor || defaultTheme.toolbarButtonColor || defaultTheme.headerTextColor || '',
-  '--ntk-cms-brand-title': authoringTheme.brandTitleColor || authoringTheme.itemActiveColor || defaultTheme.brandTitleColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-brand-subtitle': authoringTheme.brandSubtitleColor || authoringTheme.drawerTextColor || defaultTheme.brandSubtitleColor || defaultTheme.drawerTextColor || '',
-  '--ntk-template-user-menu-avatar-bg': authoringTheme.itemActiveColor || defaultTheme.itemActiveColor || '#111111',
-  '--ntk-template-user-menu-avatar-border': '#ffffff',
-  '--ntk-template-user-menu-avatar-color': notificationBadgeTextColor.value,
-  '--ntk-template-user-menu-header-bg': 'rgba(0, 0, 0, 0.03)',
-  '--ntk-template-user-menu-profile-bg': '#ffffff',
-  '--ntk-cms-group-caption': authoringTheme.groupCaptionColor || authoringTheme.drawerTextColor || defaultTheme.groupCaptionColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-group-caption-mini-bg': authoringTheme.groupCaptionMiniBackground || authoringTheme.itemHoverBackground || defaultTheme.groupCaptionMiniBackground || defaultTheme.itemHoverBackground || '',
-  '--ntk-cms-item-text': authoringTheme.itemTextColor || authoringTheme.drawerTextColor || defaultTheme.itemTextColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-item-icon': authoringTheme.itemIconColor || authoringTheme.drawerTextColor || defaultTheme.itemIconColor || defaultTheme.drawerTextColor || '',
-  '--ntk-cms-item-hover-color': authoringTheme.itemHoverColor || authoringTheme.itemActiveColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-item-icon-hover': authoringTheme.itemIconHoverColor || authoringTheme.itemHoverColor || authoringTheme.itemActiveColor || defaultTheme.itemIconHoverColor || defaultTheme.itemHoverColor || defaultTheme.itemActiveColor || '',
-  '--ntk-cms-preview-search-width': authoringTheme.searchWidth || defaultTheme.searchWidth || '220px',
-  '--ntk-cms-preview-search-height': authoringTheme.searchControlHeight || defaultTheme.searchControlHeight || '36px',
-  '--ntk-cms-preview-user-avatar-size': authoringTheme.userAvatarSize || defaultTheme.userAvatarSize || 'calc(var(--ntk-cms-preview-search-height) - (var(--ntk-cms-space-xs) * 2))',
-  '--ntk-cms-preview-action-hover-translate-y': authoringTheme.actionHoverTranslateY || defaultTheme.actionHoverTranslateY || 'calc(var(--ntk-cms-space-xs) * -0.5)',
-  '--ntk-cms-preview-action-min-width': authoringTheme.menuSlotWidth || defaultTheme.menuSlotWidth || '30px',
-  '--ntk-cms-preview-action-min-height': authoringTheme.searchControlHeight || defaultTheme.searchControlHeight || '28px',
-  '--ntk-cms-preview-brand-logo-size': authoringTheme.brandLogoSize || defaultTheme.brandLogoSize || '40px',
-  '--ntk-cms-layout-breakpoint-lg': `${cmsLayoutBreakpointLgPx.value}px`,
-  '--ntk-cms-layout-breakpoint-md': `${cmsLayoutBreakpointMdPx.value}px`,
-  '--ntk-cms-layout-side-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 5))',
-  '--ntk-cms-layout-config-example-min-width': 'calc(var(--ntk-cms-preview-search-width) + (var(--ntk-cms-space-lg) * 3.5))',
-  '--ntk-cms-editor-min-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 8)))',
-  '--ntk-cms-editor-max-height': 'calc(100vh - (var(--ntk-shell-header-height) + (var(--ntk-cms-space-lg) * 8)))',
-  '--ntk-cms-preview-icon-size-lg': authoringTheme.itemIconSize || defaultTheme.itemIconSize || '22px',
-  '--ntk-cms-preview-icon-size-md': 'calc(var(--ntk-cms-preview-icon-size-lg) - var(--ntk-cms-space-xs))',
-  '--ntk-cms-preview-icon-size-sm': 'calc(var(--ntk-cms-preview-icon-size-md) - var(--ntk-cms-space-xs))',
-  '--ntk-cms-preview-icon-size-xs': 'calc(var(--ntk-cms-preview-icon-size-sm) - (var(--ntk-cms-space-xs) / 2))',
-  '--ntk-cms-preview-avatar-icon-size': 'var(--ntk-cms-preview-action-min-height)',
-  '--ntk-cms-preview-mini-caption-min-width': authoringTheme.groupCaptionMiniMinWidth || defaultTheme.groupCaptionMiniMinWidth || '34px',
-  '--ntk-cms-preview-mini-caption-height': authoringTheme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '18px',
-  '--ntk-cms-preview-badge-min-size': authoringTheme.groupCaptionMiniHeight || defaultTheme.groupCaptionMiniHeight || '16px',
-  '--ntk-cms-preview-badge-font-size': authoringTheme.fontSizeGroupCaptionMini || defaultTheme.fontSizeGroupCaptionMini || '0.62rem',
-  '--ntk-cms-preview-badge-letter-spacing': authoringTheme.letterSpacingGroupCaptionMini || defaultTheme.letterSpacingGroupCaptionMini || '0.06em',
-  '--ntk-cms-notification-success': notificationSuccessColor.value,
-  '--ntk-cms-notification-warning': notificationWarningColor.value,
-  '--ntk-cms-notification-error': notificationErrorColor.value,
-  '--ntk-cms-notification-info': notificationInfoColor.value,
-  '--ntk-cms-notification-badge-bg': notificationBadgeColor.value,
-  '--ntk-cms-notification-badge-text': notificationBadgeTextColor.value,
-  '--ntk-cms-notification-icon': notificationIconColor.value,
-  }
-})
-
-const bannerStyle = computed(() => ({
-  background: accentSoftBackground.value,
-  color: accentTextColor.value,
-  border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
+const cmsStyleVars = computed<Record<string, string>>(() => createCmsAuthoringStyleVars({
+  authoringTheme: cmsResolvedAuthoringTheme.value,
+  defaultTheme,
+  headerHeight: shellSnapshot.value.shellConfig.headerHeight ?? 60,
+  layoutBreakpointLgPx: cmsLayoutBreakpointLgPx.value,
+  layoutBreakpointMdPx: cmsLayoutBreakpointMdPx.value,
+  notificationSuccessColor: notificationSuccessColor.value,
+  notificationWarningColor: notificationWarningColor.value,
+  notificationErrorColor: notificationErrorColor.value,
+  notificationInfoColor: notificationInfoColor.value,
+  notificationBadgeColor: notificationBadgeColor.value,
+  notificationBadgeTextColor: notificationBadgeTextColor.value,
+  notificationIconColor: notificationIconColor.value,
+  notificationSuccessTextColor: notificationSuccessTextColor.value,
+  notificationWarningTextColor: notificationWarningTextColor.value,
+  notificationErrorTextColor: notificationErrorTextColor.value,
+  notificationInfoTextColor: notificationInfoTextColor.value,
 }))
 
-const statusChipStyle = computed(() => ({
-  background: accentSoftBackground.value,
-  color: accentTextColor.value,
-  border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
+const bannerStyle = computed(() => createCmsAccentSurfaceStyle({
+  accentColor: accentColor.value,
+  accentSoftBackground: accentSoftBackground.value,
+  accentTextColor: accentTextColor.value,
+  borderWidth: resolvedBorderWidth.value,
 }))
 
-const previewChipStyle = computed(() => ({
-  background: accentSoftBackground.value,
-  color: accentTextColor.value,
-  border: `${resolvedBorderWidth.value} solid ${accentColor.value}`,
+const statusChipStyle = computed(() => createCmsAccentSurfaceStyle({
+  accentColor: accentColor.value,
+  accentSoftBackground: accentSoftBackground.value,
+  accentTextColor: accentTextColor.value,
+  borderWidth: resolvedBorderWidth.value,
 }))
 
-const primaryActionStyle = computed(() => ({
-  background: accentColor.value,
-  color: notificationBadgeTextColor.value,
+const previewChipStyle = computed(() => createCmsAccentSurfaceStyle({
+  accentColor: accentColor.value,
+  accentSoftBackground: accentSoftBackground.value,
+  accentTextColor: accentTextColor.value,
+  borderWidth: resolvedBorderWidth.value,
 }))
 
-const warningActionStyle = computed(() => ({
-  color: notificationWarningColor.value,
+const primaryActionStyle = computed(() => createCmsPrimaryActionStyle({
+  accentColor: accentColor.value,
+  textColor: notificationBadgeTextColor.value,
 }))
 
-const dangerActionStyle = computed(() => ({
-  color: notificationErrorColor.value,
+const warningActionStyle = computed(() => createCmsTextActionStyle(notificationWarningColor.value))
+
+const dangerActionStyle = computed(() => createCmsTextActionStyle(notificationErrorColor.value))
+
+const notificationChipStyles = computed(() => createCmsNotificationChipStyles({
+  notificationSuccessColor: notificationSuccessColor.value,
+  notificationWarningColor: notificationWarningColor.value,
+  notificationErrorColor: notificationErrorColor.value,
+  notificationInfoColor: notificationInfoColor.value,
+  notificationBadgeColor: notificationBadgeColor.value,
+  notificationBadgeTextColor: notificationBadgeTextColor.value,
+  notificationIconColor: notificationIconColor.value,
+  notificationSuccessTextColor: notificationSuccessTextColor.value,
+  notificationWarningTextColor: notificationWarningTextColor.value,
+  notificationErrorTextColor: notificationErrorTextColor.value,
+  notificationInfoTextColor: notificationInfoTextColor.value,
 }))
 
-const notificationChipStyles = computed(() => ({
-  success: {
-    background: notificationSuccessColor.value,
-    color: notificationSuccessTextColor.value,
-  },
-  warning: {
-    background: notificationWarningColor.value,
-    color: notificationWarningTextColor.value,
-  },
-  error: {
-    background: notificationErrorColor.value,
-    color: notificationErrorTextColor.value,
-  },
-  info: {
-    background: notificationInfoColor.value,
-    color: notificationInfoTextColor.value,
-  },
-}))
-
-const notificationBellPreviewStyle = computed(() => ({
-  color: notificationIconColor.value,
-}))
+const notificationBellPreviewStyle = computed(() => createCmsTextActionStyle(notificationIconColor.value))
 
 /**
  * Resolves inline chip styles for diagnostics based on severity.
@@ -9732,122 +9617,17 @@ function getThemeFieldValue(field: ThemeField): string {
 }
 
 /**
- * Normalizes hex color.
- */
-function normalizeHexColor(value: string): string | null {
-  const normalized = value.trim().toLowerCase()
-  const shortHex = normalized.match(/^#([0-9a-f]{3})$/i)
-  if (shortHex) {
-    const [r, g, b] = shortHex[1].split('')
-    return `#${r}${r}${g}${g}${b}${b}`
-  }
-
-  if (/^#[0-9a-f]{6}$/i.test(normalized)) {
-    return normalized
-  }
-
-  return null
-}
-
-/**
- * Handles rgb string to hex.
- */
-function rgbStringToHex(value: string): string | null {
-  const match = value
-    .trim()
-    .match(/^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:[\s,/]+[\d.]+)?\s*\)$/i)
-
-  if (!match) {
-    return null
-  }
-
-  const clamp = (channel: string): number => Math.max(0, Math.min(255, Number.parseInt(channel, 10)))
-  const channels = [clamp(match[1]), clamp(match[2]), clamp(match[3])]
-  return `#${channels.map(channel => channel.toString(16).padStart(2, '0')).join('')}`
-}
-
-/**
- * Resolves color value to hex.
- */
-function resolveColorValueToHex(value: string): string | null {
-  const directHex = normalizeHexColor(value)
-  if (directHex) {
-    return directHex
-  }
-
-  const rgbHex = rgbStringToHex(value)
-  if (rgbHex) {
-    return rgbHex
-  }
-
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return null
-  }
-
-  const probe = document.createElement('span')
-  probe.style.color = ''
-  probe.style.color = value
-
-  if (!probe.style.color) {
-    return null
-  }
-
-  probe.style.display = 'none'
-  document.body.appendChild(probe)
-  const computedColor = window.getComputedStyle(probe).color
-  probe.remove()
-
-  return rgbStringToHex(computedColor) ?? normalizeHexColor(computedColor)
-}
-
-/**
  * Handles get theme field picker value.
  */
 function getThemeFieldPickerValue(field: ThemeField): string {
-  const explicitValue = getThemeFieldValue(field)
-  const explicitColor = resolveColorValueToHex(explicitValue)
-  if (explicitColor) {
-    return explicitColor
-  }
-
-  const placeholderColor = resolveColorValueToHex(field.placeholder ?? '')
-  if (placeholderColor) {
-    return placeholderColor
-  }
-
-  return resolveColorValueToHex(semanticColors.infoPrimary) ?? semanticColors.infoPrimary
+  return getCmsThemeFieldPickerValue(field, settings.value.theme, semanticColors.infoPrimary)
 }
 
 /**
  * Handles on theme field input.
  */
 function onThemeFieldInput(field: ThemeField, value: string | number | null): void {
-  const normalized = String(value ?? '')
-  settings.value.theme[field.key] = normalized
-
-  for (const alias of field.aliases ?? []) {
-    settings.value.theme[alias] = normalized
-  }
-
-  settings.value.themePresetId = selectedThemePreset.value
-  if (!isCmsThemeBasePresetId(selectedThemePreset.value)) {
-    return
-  }
-
-  const presetId: CmsThemeBasePresetId = selectedThemePreset.value
-  const presetOverrides: Partial<Record<ThemeFieldKey, string>> = {
-    ...(settings.value.themePresetOverrides[presetId] as Partial<Record<ThemeFieldKey, string>> | undefined),
-  }
-
-  presetOverrides[field.key] = normalized
-  for (const alias of field.aliases ?? []) {
-    presetOverrides[alias] = normalized
-  }
-
-  settings.value.themePresetOverrides = {
-    ...settings.value.themePresetOverrides,
-    [presetId]: presetOverrides,
-  }
+  applyCmsThemeFieldValue(settings.value, field, value, selectedThemePreset.value)
 }
 
 /**
@@ -9862,15 +9642,7 @@ function onThemeColorInput(field: ThemeField, event: Event): void {
  * Applies theme preset by id.
  */
 function applyThemePresetById(presetId: Exclude<CmsThemePresetId, 'custom'>): void {
-  const preset = themePresets.value.find(item => item.id === presetId)
-  if (!preset) {
-    return
-  }
-
-  settings.value.theme = {
-    ...settings.value.theme,
-    ...preset.theme,
-  }
+  applyCmsThemePreset(settings.value, themePresets.value, presetId)
 }
 
 /**
@@ -9893,7 +9665,7 @@ function onThemePresetChange(value: CmsThemePresetId | null): void {
  * Detects theme preset from current.
  */
 function detectThemePresetFromCurrent(): void {
-  const detectedPreset = detectCmsThemePresetId(settings.value.theme, themePresets.value, defaultTheme)
+  const detectedPreset = resolveCmsSelectedThemePresetId(settings.value, themePresets.value, defaultTheme)
   selectedThemePreset.value = detectedPreset
   settings.value.themePresetId = detectedPreset
 }
@@ -9902,9 +9674,7 @@ function detectThemePresetFromCurrent(): void {
  * Applies selected theme preset from settings.
  */
 function applySelectedThemePresetFromSettings(): void {
-  selectedThemePreset.value = isCmsThemePresetId(settings.value.themePresetId)
-    ? settings.value.themePresetId
-    : detectCmsThemePresetId(settings.value.theme, themePresets.value, defaultTheme)
+  selectedThemePreset.value = resolveCmsSelectedThemePresetId(settings.value, themePresets.value, defaultTheme)
   settings.value.themePresetId = selectedThemePreset.value
 }
 
@@ -11574,9 +11344,7 @@ function resetToDefaults(): void {
   settings.value = resetCmsWhiteLabelSettings()
   settings.value.governance = nextGovernance
   const resolvedThemePresets = getCurrentThemePresets()
-  selectedThemePreset.value = isCmsThemePresetId(settings.value.themePresetId)
-    ? settings.value.themePresetId
-    : detectCmsThemePresetId(settings.value.theme, resolvedThemePresets, defaultTheme)
+  selectedThemePreset.value = resolveCmsSelectedThemePresetId(settings.value, resolvedThemePresets, defaultTheme)
   settings.value.themePresetId = selectedThemePreset.value
   activeMenuId.value = settings.value.items[0]?.id ?? defaultMenuId
   searchQuery.value = ''

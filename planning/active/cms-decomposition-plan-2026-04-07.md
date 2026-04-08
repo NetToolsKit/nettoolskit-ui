@@ -61,6 +61,37 @@
 3. review `landing-page/**` for any other reusable system contracts that still belong in `src/**`
 4. normalize README and template docs once the remaining surface/export moves stabilize
 
+## Continuation Checkpoint - 2026-04-08 (Theme Runtime)
+
+### Scope Extension
+- extract reusable CMS theme editor/runtime behavior from `landing-page/CmsApp.vue`
+- move authoring shell CSS variable projection and shared tone styles into `src/modules/cms/white-label/authoring/**`
+- continue shrinking `CmsApp.vue` without changing CMS theme/preset behavior
+
+### Completed Tasks
+1. Completed: add `src/modules/cms/white-label/authoring/theme-runtime.ts` for theme field picker resolution, preset selection, preset application, and authoring style-variable projection.
+2. Completed: rewire `landing-page/CmsApp.vue` to use shared theme runtime helpers instead of local theme field mutation, preset detection, and large style-map blocks.
+3. Completed: export the new helper module through `src/modules/cms/white-label/authoring/index.ts`.
+4. Completed: re-run validation and record the results below.
+
+### Validation Evidence - 2026-04-08 (Theme Runtime)
+- `npm run type-check` passed after moving theme runtime helpers into `src/modules/cms/white-label/authoring/theme-runtime.ts`.
+- `npm run lint` passed with pre-existing Vue formatting warnings only and no errors.
+- `npm run build:landing` passed.
+- `npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts tests/unit/components/AllComponentsSmoke.spec.ts tests/unit/templates/ReferenceSystemTemplates.spec.ts tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/modules/cms/CmsRenderer.spec.ts tests/unit/modules/cms/LandingSchemaIntegration.spec.ts` passed with 6 files / 45 tests.
+
+### Implementation Outcome - 2026-04-08 (Theme Runtime)
+- theme field color-picker resolution and per-preset override writes no longer live inline in `landing-page/CmsApp.vue`.
+- preset application/detection now reuse shared authoring helpers instead of repeating detection logic inside the landing app.
+- the large authoring-shell CSS variable map now comes from a shared `src/**` helper, making the CMS design contract reusable for future editor surfaces.
+- `landing-page/CmsApp.vue` dropped further to `10250` lines.
+
+### Remaining Work After Theme Runtime
+1. extract the remaining large stateful workflows from `landing-page/CmsApp.vue` into `src/modules/cms/white-label/**` so the landing app becomes a thin runtime shell
+2. continue moving reusable preview/authoring logic from `landing-page/CmsApp.vue` into `src/templates/features/cms/authoring/modules/**`
+3. review `landing-page/**` for any other reusable system contracts that still belong in `src/**`
+4. normalize README and template docs once the remaining surface/export moves stabilize
+
 ## Recommended Specialist
 - primary: `dev-frontend-vue-quasar-engineer`
 - validation support: `test-engineer`
