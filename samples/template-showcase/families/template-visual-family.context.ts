@@ -1,14 +1,14 @@
 import { inject, provide } from 'vue'
 import type { InjectionKey } from 'vue'
 
-import type { TemplateVisualFamilyDefinition } from './template-visual-families.types'
+import type { TemplateVisualFamilyVariantDefinition } from './template-visual-families.types'
 
-const templateVisualFamilyContextKey: InjectionKey<TemplateVisualFamilyDefinition> = Symbol('templateVisualFamilyContext')
+const templateVisualFamilyContextKey: InjectionKey<TemplateVisualFamilyVariantDefinition> = Symbol('templateVisualFamilyContext')
 
-export function provideTemplateVisualFamilyContext(family: TemplateVisualFamilyDefinition): void {
-  provide(templateVisualFamilyContextKey, family)
+export function provideTemplateVisualThemeContext(variant: TemplateVisualFamilyVariantDefinition): void {
+  provide(templateVisualFamilyContextKey, variant)
 }
 
-export function useTemplateVisualFamilyContext(): TemplateVisualFamilyDefinition | null {
+export function useTemplateVisualThemeContext(): TemplateVisualFamilyVariantDefinition | null {
   return inject(templateVisualFamilyContextKey, null)
 }

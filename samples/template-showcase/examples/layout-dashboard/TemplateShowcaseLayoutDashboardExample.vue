@@ -96,11 +96,11 @@ import type { TemplateMenuChildItem, TemplateMenuItem } from '../../../../src/te
 import UserMenuTemplate from '../../../../src/templates/navigation/UserMenuTemplate.vue'
 import DashboardTemplate from '../../../../src/templates/pages/dashboard/DashboardTemplate.vue'
 import SampleActionStatus from '../../../shared/SampleActionStatus.vue'
-import { useTemplateVisualFamilyContext } from '../../families/template-visual-family.context'
+import { useTemplateVisualThemeContext } from '../../families/template-visual-family.context'
 import { templateShowcaseDashboardSample } from '../../template-showcase.sample-data'
 import TemplateShowcaseReferenceCharts from './TemplateShowcaseReferenceCharts.vue'
 
-const family = useTemplateVisualFamilyContext()
+const themeVariant = useTemplateVisualThemeContext()
 
 const menuItems: TemplateMenuItem[] = [
   {
@@ -130,11 +130,11 @@ const activeMenuId = ref('dashboard')
 const layoutActionMessage = ref('Comparando o dashboard aprovado com a configuracao visual selecionada.')
 
 const currentAppName = computed(() => {
-  return family?.preset.brand.name ?? 'SMB Conecta'
+  return themeVariant?.preset.brand.name ?? 'SMB Conecta'
 })
 
 const currentLogoUrl = computed(() => {
-  return family?.preset.brand.logoUrl ?? null
+  return themeVariant?.preset.brand.logoUrl ?? null
 })
 
 function handleMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): void {

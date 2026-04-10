@@ -3,25 +3,31 @@ import { describe, expect, it } from 'vitest'
 import { templateVisualFamilies } from '../../../samples/template-showcase/families/template-visual-families'
 
 describe('templateVisualFamilies', () => {
-  it('defines at least five distinct config-driven families', () => {
-    expect(templateVisualFamilies.length).toBeGreaterThanOrEqual(5)
-    expect(new Set(templateVisualFamilies.map(family => family.layout)).size).toBeGreaterThanOrEqual(5)
+  it('defines exactly five curated config-driven families', () => {
+    expect(templateVisualFamilies).toHaveLength(5)
+    expect(new Set(templateVisualFamilies.map(family => family.layout)).size).toBe(5)
   })
 
-  it('resolves whitelabel vars and reusable examples for every family', () => {
+  it('resolves whitelabel vars and one curated example for every family', () => {
     for (const family of templateVisualFamilies) {
-      expect(family.examples.length).toBeGreaterThan(0)
-      expect(family.styleVars).toHaveProperty('--ntk-primary')
-      expect(family.styleVars).toHaveProperty('--ntk-template-layout-drawer-bg')
-      expect(family.preset.brand.name.length).toBeGreaterThan(0)
+      expect(family.example.id.length).toBeGreaterThan(0)
+      expect(family.sectionStyleVars).toHaveProperty('--ntk-primary')
+      expect(family.sectionStyleVars).toHaveProperty('--ntk-template-layout-drawer-bg')
+      expect(family.variants).toHaveLength(2)
+
+      for (const variant of family.variants) {
+        expect(variant.styleVars).toHaveProperty('--ntk-primary')
+        expect(variant.styleVars).toHaveProperty('--ntk-template-layout-drawer-bg')
+        expect(variant.preset.brand.name.length).toBeGreaterThan(0)
+      }
     }
   })
 
-  it('keeps the approved dashboard baseline available across every family variation', () => {
+  it('keeps light and dark variants available for every curated family', () => {
     expect(templateVisualFamilies.some(family => family.id === 'approved-reference')).toBe(true)
 
     for (const family of templateVisualFamilies) {
-      expect(family.examples.some(example => example.id === 'layout-dashboard')).toBe(true)
+      expect(new Set(family.variants.map(variant => variant.tone))).toEqual(new Set(['light', 'dark']))
     }
   })
 })

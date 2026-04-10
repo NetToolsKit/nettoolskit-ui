@@ -6,10 +6,10 @@
           Initial navigation
         </p>
         <h2 class="ntk-samples-hub__title">
-          Choose a runtime, a visual family, or a specific template
+          Choose a runtime or jump into one of the five curated light and dark template packs
         </h2>
         <p class="ntk-samples-hub__description">
-          This is the starting point for browsing reusable systems. Every action below opens a live route backed by the same shared `src/**` components.
+          This is the starting point for browsing reusable systems. Every action below opens a live route backed by the same shared `src/**` components and whitelabel configuration.
         </p>
       </div>
 
@@ -68,9 +68,9 @@
       <div class="ntk-samples-hub__section-head">
         <div>
           <p class="ntk-samples-hub__section-label">
-            Visual families
+            Curated packs
           </p>
-          <h3>Select a pack and inspect its live composition</h3>
+          <h3>Select one example and compare its light and dark themes</h3>
         </div>
       </div>
 
@@ -79,21 +79,21 @@
           v-for="family in filteredFamilies"
           :key="family.id"
           class="ntk-samples-hub__family-card"
-          :style="family.styleVars"
+          :style="family.sectionStyleVars"
         >
           <p class="ntk-samples-hub__family-kicker">
             {{ family.kicker }}
           </p>
           <strong>{{ family.label }}</strong>
           <span class="ntk-samples-hub__family-meta">
-            {{ family.examples.length }} sample{{ family.examples.length > 1 ? 's' : '' }} · {{ family.preset.label }}
+            {{ family.variants.length }} theme variants · {{ family.example.surfaceTag }}
           </span>
           <p>{{ family.description }}</p>
           <q-btn
             no-caps
             outline
             color="primary"
-            label="Open family"
+            label="Open pack"
             @click="navigateTo(`/?templates=1&family=${family.id}`)"
           />
         </article>
@@ -106,7 +106,7 @@
           <p class="ntk-samples-hub__section-label">
             Template selection
           </p>
-          <h3>Jump straight to a specific reusable example</h3>
+          <h3>Jump straight to one curated example and its paired themes</h3>
         </div>
       </div>
 
@@ -126,6 +126,9 @@
           </div>
           <strong>{{ example.label }}</strong>
           <p>{{ example.summary }}</p>
+          <span class="ntk-samples-hub__example-area">
+            Light + dark variants
+          </span>
           <q-btn
             no-caps
             flat
@@ -144,7 +147,6 @@ import { computed, ref } from 'vue'
 
 import { referenceRuntimeLinks } from '../../src/templates/features/reference-system/reference-catalog.sample-data'
 import { templateVisualFamilies } from '../template-showcase/families/template-visual-families'
-import { templateShowcaseExampleRegistry } from '../template-showcase/template-showcase.examples'
 
 const searchValue = ref('')
 
@@ -182,14 +184,23 @@ const filteredRuntimeLinks = computed(() => {
 
 const filteredFamilies = computed(() => {
   return templateVisualFamilies.filter(family =>
-    includesSearch([family.label, family.kicker, family.description, family.preset.label])
+    includesSearch([
+      family.label,
+      family.kicker,
+      family.description,
+      family.example.label,
+      family.example.summary,
+      ...family.variants.map(variant => variant.preset.label),
+    ])
   )
 })
 
 const filteredExamples = computed(() => {
-  return templateShowcaseExampleRegistry.filter(example =>
-    includesSearch([example.label, example.summary, example.surfaceTag, example.templateAreas.join(' ')])
-  )
+  return templateVisualFamilies
+    .map(family => family.example)
+    .filter(example =>
+      includesSearch([example.label, example.summary, example.surfaceTag, example.templateAreas.join(' ')])
+    )
 })
 
 function navigateTo(href: string): void {

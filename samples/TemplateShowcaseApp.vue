@@ -20,12 +20,12 @@
 
           <div class="ntk-template-showcase__stats">
             <article class="ntk-template-showcase__stat">
-              <span>Visual families</span>
+              <span>Curated examples</span>
               <strong>{{ visibleFamilies.length }}</strong>
             </article>
             <article class="ntk-template-showcase__stat">
-              <span>Unique examples</span>
-              <strong>{{ templateShowcaseExampleRegistry.length }}</strong>
+              <span>Live previews</span>
+              <strong>{{ previewVariantCount }}</strong>
             </article>
             <article class="ntk-template-showcase__stat">
               <span>Ready templates</span>
@@ -81,7 +81,6 @@
             v-for="family in visibleFamilies"
             :key="family.id"
             :family="family"
-            :focused-example-id="focusedExampleId"
           />
         </section>
       </q-page>
@@ -116,10 +115,14 @@ const readyTemplateCount = computed(() => {
   return templateCatalogRegistry.filter(entry => entry.status === 'ready').length
 })
 
+const previewVariantCount = computed(() => {
+  return visibleFamilies.value.reduce((count, family) => count + family.variants.length, 0)
+})
+
 const visibleFamilies = computed(() => {
   return templateVisualFamilies.filter(family => {
     const matchesFamily = !focusedFamilyId || family.id === focusedFamilyId
-    const matchesExample = !focusedExampleId || family.examples.some(example => example.id === focusedExampleId)
+    const matchesExample = !focusedExampleId || family.example.id === focusedExampleId
     return matchesFamily && matchesExample
   })
 })
@@ -132,18 +135,18 @@ const showcaseSubtitle = computed(() => {
   if (focusedFamilyId) {
     const family = templateVisualFamilies.find(item => item.id === focusedFamilyId)
     return family
-      ? `Focused on the ${family.label} pack. The same shared templates are being rendered through that whitelabel configuration.`
-      : 'Family filter active. The showcase is focused on the selected visual pack.'
+      ? `Focused on the ${family.label} example pack. The same shared template is being rendered in both light and dark whitelabel variants.`
+      : 'Family filter active. The showcase is focused on the selected example pack.'
   }
 
   if (focusedExampleId) {
     const example = templateShowcaseExampleRegistry.find(item => item.id === focusedExampleId)
     return example
-      ? `Focused on the ${example.label} example. You are seeing only the families that reuse this template composition.`
+      ? `Focused on the ${example.label} example. You are seeing its curated light and dark whitelabel variants only.`
       : 'Example filter active. The showcase is focused on the selected reusable template.'
   }
 
-  return 'Five reusable families built on top of the same `src/**` templates, parameterized by whitelabel-style configuration instead of duplicated implementations.'
+  return 'Five curated reusable examples, each rendered twice through the same `src/**` templates with paired light and dark whitelabel configurations.'
 })
 
 function navigateTo(href: string): void {

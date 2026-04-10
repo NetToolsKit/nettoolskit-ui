@@ -18,6 +18,8 @@ export type TemplateVisualFamilyLayout =
   | 'contrast'
   | 'laboratory'
 
+export type TemplateVisualFamilyTone = 'light' | 'dark'
+
 export interface TemplateVisualFamilyMetric {
   id: string
   label: string
@@ -28,6 +30,20 @@ export interface TemplateVisualFamilyNote {
   id: string
   label: string
   value: string
+}
+
+export interface TemplateVisualFamilyVariantConfig {
+  id: string
+  label: string
+  tone: TemplateVisualFamilyTone
+  caption: string
+  basePresetId: string
+  presetOverrides?: ReferenceWhitelabelPresetOverrides
+}
+
+export interface TemplateVisualFamilyVariantDefinition extends TemplateVisualFamilyVariantConfig {
+  preset: ReferenceWhitelabelPreset
+  styleVars: CSSProperties
 }
 
 export interface ReferenceWhitelabelPresetOverrides {
@@ -47,15 +63,14 @@ export interface TemplateVisualFamilyConfig {
   kicker: string
   description: string
   layout: TemplateVisualFamilyLayout
-  basePresetId: string
-  presetOverrides?: ReferenceWhitelabelPresetOverrides
+  exampleId: TemplateShowcaseExampleId
   metrics: TemplateVisualFamilyMetric[]
   notes: TemplateVisualFamilyNote[]
-  featuredExampleIds: TemplateShowcaseExampleId[]
+  variants: [TemplateVisualFamilyVariantConfig, TemplateVisualFamilyVariantConfig]
 }
 
 export interface TemplateVisualFamilyDefinition extends TemplateVisualFamilyConfig {
-  preset: ReferenceWhitelabelPreset
-  styleVars: CSSProperties
-  examples: TemplateShowcaseExampleDefinition[]
+  example: TemplateShowcaseExampleDefinition
+  sectionStyleVars: CSSProperties
+  variants: [TemplateVisualFamilyVariantDefinition, TemplateVisualFamilyVariantDefinition]
 }

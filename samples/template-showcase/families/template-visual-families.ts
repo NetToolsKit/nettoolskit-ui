@@ -3,10 +3,11 @@ import {
   resolveReferenceWhitelabelPreset,
   type ReferenceWhitelabelPreset,
 } from '../../../src/whitelabel'
-import { resolveTemplateShowcaseExamples } from '../template-showcase.examples'
+import { findTemplateShowcaseExample } from '../template-showcase.examples'
 import { templateVisualFamilyConfigs } from './template-visual-families.config'
 import type {
   ReferenceWhitelabelPresetOverrides,
+  TemplateVisualFamilyVariantDefinition,
   TemplateVisualFamilyDefinition,
 } from './template-visual-families.types'
 
@@ -50,13 +51,21 @@ function mergeReferenceWhitelabelPreset(
 }
 
 export const templateVisualFamilies: TemplateVisualFamilyDefinition[] = templateVisualFamilyConfigs.map(config => {
-  const basePreset = resolveReferenceWhitelabelPreset(config.basePresetId)
-  const preset = mergeReferenceWhitelabelPreset(basePreset, config.presetOverrides)
+  const variants = config.variants.map(variantConfig => {
+    const basePreset = resolveReferenceWhitelabelPreset(variantConfig.basePresetId)
+    const preset = mergeReferenceWhitelabelPreset(basePreset, variantConfig.presetOverrides)
+
+    return {
+      ...variantConfig,
+      preset,
+      styleVars: createReferenceWhitelabelStyleVars(preset),
+    }
+  }) as [TemplateVisualFamilyVariantDefinition, TemplateVisualFamilyVariantDefinition]
 
   return {
     ...config,
-    preset,
-    styleVars: createReferenceWhitelabelStyleVars(preset),
-    examples: resolveTemplateShowcaseExamples(config.featuredExampleIds),
+    example: findTemplateShowcaseExample(config.exampleId),
+    sectionStyleVars: variants[0].styleVars,
+    variants,
   }
 })

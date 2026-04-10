@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import {
   ReferenceWorkspaceComposer,
@@ -58,23 +58,24 @@ import {
   referenceSampleDocumentTabs,
   referenceSampleManagerConfig,
   referenceSampleReportGroups,
-  useReferenceWorkspaceHost,
 } from '../../../../src/templates/features/reference-system'
+import { resolveReferenceWhitelabelPreset } from '../../../../src/whitelabel'
 import SampleActionStatus from '../../../shared/SampleActionStatus.vue'
+import { useTemplateVisualThemeContext } from '../../families/template-visual-family.context'
 
-const {
-  activeDocumentTabId: referenceShowcaseActiveDocumentTabId,
-  activeReportId: referenceShowcaseActiveReportId,
-  searchValue: referenceShowcaseSearchValue,
-  selectedPreset: referenceShowcasePreset,
-  whitelabelStyleVars: referenceShowcaseStyleVars,
-  zoomValue: referenceShowcaseZoomValue,
-} = useReferenceWorkspaceHost({
-  initialReportId: referenceSampleReportGroups[0]?.items[0]?.id ?? '',
-  initialDocumentTabId: referenceSampleDocumentTabs[0]?.id ?? 'layout',
-  initialZoomValue: referenceSampleDesignerConfig.zoomOptions[2] ?? 100,
-  initialPresetId: 'reference-night',
-  persistPreset: false,
+const themeVariant = useTemplateVisualThemeContext()
+const referenceShowcaseSearchValue = ref('')
+const referenceShowcaseActiveReportId = ref(referenceSampleReportGroups[0]?.items[0]?.id ?? '')
+const referenceShowcaseActiveDocumentTabId = ref(referenceSampleDocumentTabs[0]?.id ?? 'layout')
+const referenceShowcaseZoomValue = ref(referenceSampleDesignerConfig.zoomOptions[2] ?? 100)
+const fallbackPreset = resolveReferenceWhitelabelPreset('reference-night')
+
+const referenceShowcasePreset = computed(() => {
+  return themeVariant?.preset ?? fallbackPreset
+})
+
+const referenceShowcaseStyleVars = computed(() => {
+  return themeVariant?.styleVars ?? {}
 })
 
 const referenceMessage = ref('Use the manager or designer controls to inspect the reference workspace interactions.')
