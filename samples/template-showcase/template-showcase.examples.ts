@@ -33,8 +33,8 @@ export interface TemplateShowcaseExampleDefinition {
 export const templateShowcaseExampleRegistry: TemplateShowcaseExampleDefinition[] = [
   {
     id: 'layout-dashboard',
-    label: 'Layout and dashboard shell',
-    summary: 'Main layout plus dashboard composition for overview-heavy product home screens.',
+    label: 'Approved layout and dashboard shell',
+    summary: 'Faithful baseline for the approved reference shell, menu chrome, KPI cards, and operational dashboard rhythm.',
     surfaceTag: 'Layout + Dashboard',
     templateAreas: ['layouts', 'pages'],
     component: TemplateShowcaseLayoutDashboardExample,

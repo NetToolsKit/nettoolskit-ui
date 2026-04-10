@@ -86,12 +86,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { provideTemplateVisualFamilyContext } from '../families/template-visual-family.context'
 import type { TemplateVisualFamilyDefinition } from '../families/template-visual-families.types'
 
 const props = defineProps<{
   family: TemplateVisualFamilyDefinition
   focusedExampleId?: string | null
 }>()
+
+provideTemplateVisualFamilyContext(props.family)
 
 const visibleExamples = computed(() => {
   if (!props.focusedExampleId) {

@@ -1,12 +1,86 @@
 import type { TemplateVisualFamilyConfig } from './template-visual-families.types'
 
+const sharedComparisonExampleId = 'layout-dashboard' as const
+const approvedReferenceLogoUrl = new URL('../../assets/approved-reference-logo.png', import.meta.url).href
+
 export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
+  {
+    id: 'approved-reference',
+    label: 'Approved Reference',
+    kicker: 'baseline from local approved reference',
+    description:
+      'The closest visual baseline to the approved local project in `.temp/reference`, keeping the white header, slate navigation chrome, compact KPI cards, and light operational dashboard rhythm.',
+    layout: 'editorial',
+    basePresetId: 'reference-light',
+    presetOverrides: {
+      label: 'Approved Reference',
+      description: 'Faithful baseline for the approved shell and dashboard before applying whitelabel variations.',
+      brand: {
+        name: 'SMB Conecta',
+        subtitle: 'Approved baseline',
+        kicker: 'approved local reference',
+        description: 'Visual baseline mirrored from the approved local reference project before configuration-driven variations.',
+        logoText: 'SC',
+        logoUrl: approvedReferenceLogoUrl,
+      },
+      palette: {
+        primary: '#0f766e',
+        primaryDark: '#334155',
+        primaryLight: '#7dd3fc',
+        secondary: '#1e293b',
+        accent: '#0f766e',
+        background: '#f5f6f8',
+        backgroundMuted: '#eef2f5',
+        surface: '#ffffff',
+        surfaceAlt: '#f8fafc',
+        text: '#1e293b',
+        textMuted: '#64748b',
+        border: '#d5dde7',
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444',
+        info: '#3b82f6',
+      },
+      typography: {
+        display: 'Inter, "Segoe UI", system-ui, sans-serif',
+        body: 'Inter, "Segoe UI", system-ui, sans-serif',
+      },
+      radius: {
+        sm: '8px',
+        md: '12px',
+        lg: '16px',
+        xl: '24px',
+        pill: '999px',
+      },
+      shadow: {
+        soft: '0 1px 3px rgba(0, 0, 0, 0.05)',
+        medium: '0 4px 16px rgba(15, 23, 42, 0.08)',
+        strong: '0 18px 44px rgba(15, 23, 42, 0.14)',
+      },
+      gradients: {
+        hero: 'linear-gradient(180deg, #f5f6f8 0%, #eef2f5 100%)',
+        panel: 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 1) 100%)',
+        accent: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+      },
+    },
+    metrics: [
+      { id: 'approved-m1', label: 'Baseline source', value: '.temp/reference' },
+      { id: 'approved-m2', label: 'Shell rhythm', value: 'White header + slate drawer' },
+      { id: 'approved-m3', label: 'Tone', value: 'Light operational dashboard' },
+    ],
+    notes: [
+      { id: 'approved-n1', label: 'Header', value: 'White toolbar with compact chrome' },
+      { id: 'approved-n2', label: 'Navigation', value: 'Drawer and top menu mirrored from reference' },
+      { id: 'approved-n3', label: 'Comparison model', value: 'Approved dashboard baseline' },
+    ],
+    featuredExampleIds: [sharedComparisonExampleId, 'dashboard-workspace'],
+  },
   {
     id: 'signal-command',
     label: 'Signal Command',
     kicker: 'dark operations family',
     description:
-      'A dense command-center language with luminous emerald actions, strong rails, and compact status chrome for high-signal operational products.',
+      'A darker, high-signal variation of the approved baseline, keeping the same dashboard model while shifting the chrome toward command-center density.',
     layout: 'spotlight',
     basePresetId: 'reference-night',
     presetOverrides: {
@@ -52,16 +126,16 @@ export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
     notes: [
       { id: 'signal-n1', label: 'Menu posture', value: 'Lateral first, top chrome as utility rail' },
       { id: 'signal-n2', label: 'Surface shape', value: 'Tighter cards with glowing edges' },
-      { id: 'signal-n3', label: 'Examples', value: 'Reference workspace + enterprise center' },
+      { id: 'signal-n3', label: 'Variation source', value: 'Approved baseline under dark operations tokens' },
     ],
-    featuredExampleIds: ['reference-system', 'enterprise'],
+    featuredExampleIds: [sharedComparisonExampleId, 'reference-system', 'enterprise'],
   },
   {
     id: 'editorial-paper',
     label: 'Editorial Paper',
     kicker: 'light narrative family',
     description:
-      'An airy, story-led layout with paper surfaces, warmer highlights, and more generous rhythm for onboarding, docs, and knowledge-heavy journeys.',
+      'A softer editorial variation of the approved baseline, preserving the same dashboard comparison while relaxing the rhythm and warmth.',
     layout: 'editorial',
     basePresetId: 'reference-light',
     presetOverrides: {
@@ -116,16 +190,16 @@ export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
     notes: [
       { id: 'editorial-n1', label: 'Hero format', value: 'Intro block with reading rail' },
       { id: 'editorial-n2', label: 'Cards', value: 'Paper surfaces with subtle depth' },
-      { id: 'editorial-n3', label: 'Examples', value: 'Login entry + knowledge workspace' },
+      { id: 'editorial-n3', label: 'Variation source', value: 'Approved baseline with narrative tokens' },
     ],
-    featuredExampleIds: ['auth-login', 'knowledge'],
+    featuredExampleIds: [sharedComparisonExampleId, 'auth-login', 'knowledge'],
   },
   {
     id: 'product-mosaic',
     label: 'Product Mosaic',
     kicker: 'bright modular family',
     description:
-      'A modular grid language with clearer segmentation, brighter accents, and a product-marketing rhythm for dashboards and active workspaces.',
+      'A brighter modular variation of the approved baseline with stronger segmentation and product-led accents across the same comparison model.',
     layout: 'mosaic',
     basePresetId: 'reference-light',
     presetOverrides: {
@@ -180,16 +254,16 @@ export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
     notes: [
       { id: 'mosaic-n1', label: 'Navigation', value: 'Strong section cards over deep chrome' },
       { id: 'mosaic-n2', label: 'Spacing', value: 'Balanced tiles for multi-surface previews' },
-      { id: 'mosaic-n3', label: 'Examples', value: 'Dashboard home + workspace board' },
+      { id: 'mosaic-n3', label: 'Variation source', value: 'Approved baseline with modular product tokens' },
     ],
-    featuredExampleIds: ['layout-dashboard', 'dashboard-workspace'],
+    featuredExampleIds: [sharedComparisonExampleId, 'dashboard-workspace'],
   },
   {
     id: 'executive-contrast',
     label: 'Executive Contrast',
     kicker: 'monochrome premium family',
     description:
-      'A premium, monochrome system with pill interactions and sparse accents, designed for executive overviews and high-trust admin moments.',
+      'A monochrome premium variation of the approved baseline, retaining the same reference dashboard while compressing emphasis into fewer accents.',
     layout: 'contrast',
     basePresetId: 'reference-graphite',
     presetOverrides: {
@@ -245,16 +319,16 @@ export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
     notes: [
       { id: 'contrast-n1', label: 'Interaction', value: 'Monochrome shell with restrained emphasis' },
       { id: 'contrast-n2', label: 'Surface rhythm', value: 'Large rounded controls and dark staging' },
-      { id: 'contrast-n3', label: 'Examples', value: 'CRUD/profile + authoring station' },
+      { id: 'contrast-n3', label: 'Variation source', value: 'Approved baseline under executive tokens' },
     ],
-    featuredExampleIds: ['crud-profile-placeholder', 'cms-authoring'],
+    featuredExampleIds: [sharedComparisonExampleId, 'crud-profile-placeholder', 'cms-authoring'],
   },
   {
     id: 'studio-laboratory',
     label: 'Studio Laboratory',
     kicker: 'precision builder family',
     description:
-      'A tighter, instrument-panel family tuned for builders and authors who need a precise canvas, denser chrome, and technical feedback layers.',
+      'A builder-focused variation of the approved baseline, using the same comparison model with tighter radii and a more instrumented shell.',
     layout: 'laboratory',
     basePresetId: 'reference-graphite',
     presetOverrides: {
@@ -314,8 +388,8 @@ export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
     notes: [
       { id: 'lab-n1', label: 'Surface density', value: 'Compact chrome and smaller radii' },
       { id: 'lab-n2', label: 'Feedback', value: 'Technical rails and low-noise panels' },
-      { id: 'lab-n3', label: 'Example', value: 'Editor workbench at full stage width' },
+      { id: 'lab-n3', label: 'Variation source', value: 'Approved baseline tuned for builders' },
     ],
-    featuredExampleIds: ['editor-workbench'],
+    featuredExampleIds: [sharedComparisonExampleId, 'editor-workbench'],
   },
 ]

@@ -16,4 +16,12 @@ describe('templateVisualFamilies', () => {
       expect(family.preset.brand.name.length).toBeGreaterThan(0)
     }
   })
+
+  it('keeps the approved dashboard baseline available across every family variation', () => {
+    expect(templateVisualFamilies.some(family => family.id === 'approved-reference')).toBe(true)
+
+    for (const family of templateVisualFamilies) {
+      expect(family.examples.some(example => example.id === 'layout-dashboard')).toBe(true)
+    }
+  })
 })
