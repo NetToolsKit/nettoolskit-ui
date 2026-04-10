@@ -37,7 +37,13 @@ npm run dev:samples
   - report workspace sample host
 - `TemplateShowcaseApp.vue`
   - thin orchestrator for the template showcase
+- `template-showcase/families/**`
+  - config-driven visual families built from whitelabel overrides and example ids
+- `template-showcase/components/**`
+  - reusable showcase-only composition pieces such as the visual-family section renderer
 - `template-showcase/examples/**`
   - one subfolder per rendered showcase example
+- `template-showcase/template-showcase.examples.ts`
+  - registry that maps showcase example ids to reusable `src/**`-backed sample components
 - `template-showcase/template-showcase.sample-data.ts`
   - shared static sample content for the showcase

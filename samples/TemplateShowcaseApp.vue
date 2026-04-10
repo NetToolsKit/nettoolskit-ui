@@ -8,20 +8,24 @@
         >
           <div>
             <p class="ntk-template-showcase__kicker">
-              Template-first enterprise baseline
+              Config-driven visual families
             </p>
             <h1 class="ntk-template-showcase__title">
-              NetToolsKit Template Catalog Showcase
+              NetToolsKit Samples Visual Families
             </h1>
             <p class="ntk-template-showcase__subtitle">
-              Visual regression preview for reusable layouts, pages, features and integration scaffolds.
+              Five reusable families built on top of the same `src/**` templates, parameterized by whitelabel-style configuration instead of duplicated implementations.
             </p>
           </div>
 
           <div class="ntk-template-showcase__stats">
             <article class="ntk-template-showcase__stat">
-              <span>Total templates</span>
-              <strong>{{ templateCatalogRegistry.length }}</strong>
+              <span>Visual families</span>
+              <strong>{{ templateVisualFamilies.length }}</strong>
+            </article>
+            <article class="ntk-template-showcase__stat">
+              <span>Unique examples</span>
+              <strong>{{ templateShowcaseExampleRegistry.length }}</strong>
             </article>
             <article class="ntk-template-showcase__stat">
               <span>Ready templates</span>
@@ -41,15 +45,13 @@
           </article>
         </section>
 
-        <TemplateShowcaseLayoutDashboardExample />
-        <TemplateShowcaseAuthLoginExample />
-        <TemplateShowcaseDashboardWorkspaceExample />
-        <TemplateShowcaseCrudProfilePlaceholderExample />
-        <TemplateShowcaseEditorWorkbenchExample />
-        <TemplateShowcaseEnterpriseExample />
-        <TemplateShowcaseKnowledgeExample />
-        <TemplateShowcaseReferenceSystemExample />
-        <TemplateShowcaseCmsAuthoringExample />
+        <section class="ntk-template-showcase__family-list">
+          <TemplateVisualFamilySection
+            v-for="family in templateVisualFamilies"
+            :key="family.id"
+            :family="family"
+          />
+        </section>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -59,15 +61,9 @@
 import { computed } from 'vue'
 
 import { TEMPLATE_AREAS, getTemplateCatalogByArea, templateCatalogRegistry } from '../src/templates'
-import TemplateShowcaseAuthLoginExample from './template-showcase/examples/auth-login/TemplateShowcaseAuthLoginExample.vue'
-import TemplateShowcaseCmsAuthoringExample from './template-showcase/examples/cms-authoring/TemplateShowcaseCmsAuthoringExample.vue'
-import TemplateShowcaseCrudProfilePlaceholderExample from './template-showcase/examples/crud-profile-placeholder/TemplateShowcaseCrudProfilePlaceholderExample.vue'
-import TemplateShowcaseDashboardWorkspaceExample from './template-showcase/examples/dashboard-workspace/TemplateShowcaseDashboardWorkspaceExample.vue'
-import TemplateShowcaseEditorWorkbenchExample from './template-showcase/examples/editor-workbench/TemplateShowcaseEditorWorkbenchExample.vue'
-import TemplateShowcaseEnterpriseExample from './template-showcase/examples/enterprise/TemplateShowcaseEnterpriseExample.vue'
-import TemplateShowcaseKnowledgeExample from './template-showcase/examples/knowledge/TemplateShowcaseKnowledgeExample.vue'
-import TemplateShowcaseLayoutDashboardExample from './template-showcase/examples/layout-dashboard/TemplateShowcaseLayoutDashboardExample.vue'
-import TemplateShowcaseReferenceSystemExample from './template-showcase/examples/reference-system/TemplateShowcaseReferenceSystemExample.vue'
+import TemplateVisualFamilySection from './template-showcase/components/TemplateVisualFamilySection.vue'
+import { templateVisualFamilies } from './template-showcase/families/template-visual-families'
+import { templateShowcaseExampleRegistry } from './template-showcase/template-showcase.examples'
 import './template-showcase/template-showcase.css'
 
 const templatesByArea = computed(() => {
