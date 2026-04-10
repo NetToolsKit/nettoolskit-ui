@@ -202,6 +202,7 @@ function onCanvasObjectClick(objectId: string): void {
 
 .ntk-reference-designer__doc-eyebrow {
   margin: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -222,13 +223,13 @@ function onCanvasObjectClick(objectId: string): void {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
   font-size: 12px;
   white-space: nowrap;
 }
 
 .ntk-reference-designer__doc-date {
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 @media (max-width: 1180px) {

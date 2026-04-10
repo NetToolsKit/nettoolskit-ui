@@ -295,26 +295,27 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 <style lang="scss">
 .ntk-template-menu-link {
   transition: all 0.2s ease;
-  color: rgba(255, 255, 255, 0.82) !important;
+  color: var(--ntk-template-layout-nav-text, rgba(255, 255, 255, 0.82)) !important;
 
   .q-item__section,
   .q-item-section,
   .q-item__label {
-    color: rgba(255, 255, 255, 0.82) !important;
+    color: inherit !important;
   }
 }
 
 .ntk-template-menu-link__expansion-header {
-  color: rgba(255, 255, 255, 0.82) !important;
+  color: var(--ntk-template-layout-nav-text, rgba(255, 255, 255, 0.82)) !important;
 }
 
 .ntk-template-menu-link__expansion-header .q-expansion-item__toggle-icon {
-  color: rgba(255, 255, 255, 0.82) !important;
+  color: inherit !important;
 }
 
 .ntk-template-menu-link--active {
-  border-left: 4px solid rgba(255, 255, 255, 0.8);
-  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8));
+  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15));
+  color: var(--ntk-template-layout-nav-active-text, #ffffff) !important;
 }
 
 .ntk-template-menu-link--inactive {
@@ -323,32 +324,52 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__submenu {
   min-width: 220px;
+  padding: 6px;
+  border-radius: 18px;
+  border: 1px solid var(--ntk-template-layout-toolbar-border, rgba(148, 163, 184, 0.18));
+  background: var(--ntk-template-page-card-bg, #ffffff);
+  box-shadow: var(--ntk-shadow-md, 0 18px 48px rgba(15, 23, 42, 0.12));
+
+  .q-item {
+    border-left: 3px solid transparent;
+    border-radius: 12px;
+    color: var(--ntk-text-primary, #0f172a);
+
+    &:hover {
+      background: var(--ntk-template-layout-submenu-hover-bg, rgba(15, 23, 42, 0.05));
+    }
+  }
 
   .q-item.q-router-link--active,
   .q-item--active {
-    color: #111827 !important;
+    color: var(--ntk-primary, #10b981) !important;
+    border-left-color: var(--ntk-template-layout-submenu-active-border, var(--ntk-primary, #10b981));
+    background: var(--ntk-template-layout-submenu-active-bg, rgba(16, 185, 129, 0.12));
   }
 }
 
 .ntk-template-menu-link__expanded-list {
+  padding-block: 4px;
+
   .q-item.q-router-link--active,
   .q-item--active {
-    color: rgba(255, 255, 255, 0.82) !important;
+    color: var(--ntk-template-layout-nav-active-text, #ffffff) !important;
   }
 }
 
 .ntk-template-menu-link__child {
   border-left: 4px solid transparent;
+  border-radius: 0 12px 12px 0;
 }
 
 .ntk-template-menu-link__child--active {
-  border-left: 4px solid rgba(255, 255, 255, 0.8);
-  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8));
+  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15));
 }
 
 .ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid rgba(255, 255, 255, 0.8);
-  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8));
+  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15));
 }
 
 .ntk-template-menu-link--labels {
@@ -367,6 +388,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 .ntk-template-menu-link__label {
   width: 100%;
   padding: 0 2px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   line-height: 1.2;
   text-align: center;
@@ -376,53 +398,66 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link :deep(.q-item__label--caption) {
-  opacity: 0.86;
+  opacity: 0.72;
+  color: color-mix(in srgb, var(--ntk-template-layout-nav-text, #ffffff) 76%, transparent) !important;
 }
 
 .ntk-template-menu-link--visual-reference {
+  margin: 3px 10px 3px 0;
   border-left: 4px solid transparent !important;
+  border-radius: 0 16px 16px 0;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ntk-template-menu-link--visual-reference:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateX(2px);
+  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active {
-  border-left: 4px solid rgba(255, 255, 255, 0.8) !important;
-  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
+  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-nav-active-border, #ffffff) 16%, transparent);
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-icon,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item__label,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item__section,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item-section {
+  color: var(--ntk-template-layout-nav-active-text, #ffffff) !important;
   font-weight: 500;
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference {
+  margin: 3px 10px 3px 0;
   border-left: 4px solid transparent !important;
+  border-radius: 0 16px 16px 0;
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference.ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid rgba(255, 255, 255, 0.8) !important;
-  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
+  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
 }
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-reference,
 .ntk-template-menu-link--visual-reference .ntk-template-menu-link__child--active {
-  border-left: 4px solid rgba(255, 255, 255, 0.8) !important;
-  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
+  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
 }
 
 .ntk-template-menu-link--visual-vercel {
   position: relative;
   margin: 3px 8px 3px 10px;
   border-left-width: 3px;
-  border-radius: 10px;
+  border-radius: 14px;
   transition:
     transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
@@ -432,14 +467,15 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link--visual-vercel:hover {
   transform: translateX(3px);
+  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
 }
 
 .ntk-template-menu-link--visual-vercel.ntk-template-menu-link--active {
-  border-left-color: #38bdf8;
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0.06) 100%);
+  border-left-color: var(--ntk-template-layout-nav-active-border, #10b981);
+  background: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%));
   box-shadow:
-    0 0 0 1px rgba(56, 189, 248, 0.25),
-    0 10px 18px rgba(15, 23, 42, 0.12);
+    0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-nav-active-border, #10b981) 24%, transparent),
+    0 10px 18px rgba(15, 23, 42, 0.18);
   transform: translateX(4px);
 }
 
@@ -455,7 +491,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel {
   margin: 3px 8px 3px 10px;
-  border-radius: 10px;
+  border-radius: 14px;
   border-left: 3px solid transparent;
   transition:
     transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
@@ -465,18 +501,19 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel:hover {
   transform: translateX(3px);
+  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel.ntk-template-menu-link__expansion-header--active {
-  border-left-color: #38bdf8;
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0.06) 100%);
+  border-left-color: var(--ntk-template-layout-nav-active-border, #10b981);
+  background: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%));
   transform: translateX(4px);
 }
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-vercel,
 .ntk-template-menu-link--visual-vercel .ntk-template-menu-link__child--active {
-  border-left-color: #38bdf8;
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.17) 0%, rgba(56, 189, 248, 0.05) 100%);
+  border-left-color: var(--ntk-template-layout-nav-active-border, #10b981);
+  background: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, rgba(16, 185, 129, 0.17) 0%, rgba(16, 185, 129, 0.05) 100%));
 }
 
 @keyframes ntk-template-menu-link-select-in {

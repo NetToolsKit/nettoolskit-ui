@@ -50,9 +50,9 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .ntk-reference-catalog-surface-card {
   width: 100%;
-  border: 1px solid var(--ntk-border-color, #dbe4f0);
-  border-radius: 20px;
-  background: var(--ntk-bg-card, #ffffff);
+  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border-radius: 24px;
+  background: var(--ntk-reference-panel-bg, #ffffff);
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -68,8 +68,8 @@ const emit = defineEmits<{
 .ntk-reference-catalog-surface-card:hover,
 .ntk-reference-catalog-surface-card--active {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--ntk-primary, #2563eb) 42%, var(--ntk-border-color, #dbe4f0));
-  box-shadow: var(--ntk-shadow-soft, 0 12px 24px rgba(15, 23, 42, 0.08));
+  border-color: color-mix(in srgb, var(--ntk-reference-accent, #10b981) 54%, var(--ntk-reference-border, #dbe4f0));
+  box-shadow: var(--ntk-reference-shell-glow, 0 18px 36px rgba(15, 23, 42, 0.08));
 }
 
 .ntk-reference-catalog-surface-card__top,
@@ -88,18 +88,19 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .ntk-reference-catalog-surface-card__tag {
-  background: color-mix(in srgb, var(--ntk-primary, #2563eb) 10%, white);
-  color: var(--ntk-primary, #2563eb);
+  background: var(--ntk-reference-badge-bg, rgba(16, 185, 129, 0.12));
+  color: var(--ntk-reference-badge-text, #10b981);
 }
 
 .ntk-reference-catalog-surface-card__template {
-  background: var(--ntk-bg-secondary, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
   color: var(--ntk-text-secondary, #64748b);
 }
 
@@ -121,7 +122,7 @@ const emit = defineEmits<{
 }
 
 .ntk-reference-catalog-surface-card__footer {
-  color: var(--ntk-primary, #2563eb);
+  color: var(--ntk-reference-accent, #10b981);
   font-size: 13px;
   font-weight: 600;
 }

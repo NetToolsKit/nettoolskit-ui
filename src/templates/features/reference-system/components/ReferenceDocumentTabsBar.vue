@@ -75,14 +75,14 @@ const emit = defineEmits<{
 
 .ntk-reference-tabs-bar__tab span {
   display: block;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
   font-weight: 700;
 }
 
 .ntk-reference-tabs-bar__tab small {
   display: block;
   margin-top: 4px;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-tabs-bar__tab--active {
@@ -94,7 +94,7 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
   font-size: 13px;
 }
 
@@ -103,7 +103,8 @@ const emit = defineEmits<{
   border-radius: 999px;
   background: var(--ntk-reference-badge-bg, #eff6ff);
   color: var(--ntk-reference-badge-text, #1d4ed8);
-  font-weight: 700;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 500;
 }
 
 @media (max-width: 880px) {

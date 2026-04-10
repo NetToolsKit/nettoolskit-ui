@@ -118,19 +118,20 @@ const emit = defineEmits<{
 
 .ntk-reference-detail-card__label {
   margin: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-detail-card__header h2 {
   margin: 8px 0 0;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-detail-card__description {
-  color: #475569;
+  color: var(--ntk-text-secondary, #475569);
 }
 
 .ntk-reference-detail-card__meta {
@@ -144,12 +145,12 @@ const emit = defineEmits<{
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #94a3b8;
+  color: color-mix(in srgb, var(--ntk-text-secondary, #64748b) 76%, transparent);
 }
 
 .ntk-reference-detail-card__meta dd {
   margin: 6px 0 0;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
   font-weight: 600;
 }
 
@@ -188,13 +189,13 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-detail-card__action span {
   display: block;
   margin-top: 8px;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
   font-size: 13px;
 }
 

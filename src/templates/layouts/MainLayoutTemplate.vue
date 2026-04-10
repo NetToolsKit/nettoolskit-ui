@@ -94,7 +94,7 @@
       show-if-above
       side="left"
       bordered
-      :width="drawerWidth"
+      :width="resolvedDrawerWidth"
       :mini="miniMode && !showLabelsInMini"
       :mini-width="miniDrawerWidth"
       :class="[
@@ -204,12 +204,16 @@ const props = withDefaults(defineProps<{
   persistMode?: boolean
   storageKeyPrefix?: string
   drawerWidth?: number
+  miniLabelsDrawerWidth?: number
   miniDrawerWidth?: number
   pageContainerClass?: string
   expandMenuAriaLabel?: string
   collapseMenuAriaLabel?: string
   sideMenuVariant?: 'vercel' | 'reference'
   activeItemId?: string
+  defaultHorizontalMode?: boolean
+  defaultMiniMode?: boolean
+  defaultShowLabelsInMini?: boolean
 }>(), {
   appName: 'NetToolsKit',
   logoSrc: '',
@@ -223,12 +227,16 @@ const props = withDefaults(defineProps<{
   persistMode: true,
   storageKeyPrefix: 'ntk-template-layout',
   drawerWidth: 250,
+  miniLabelsDrawerWidth: 90,
   miniDrawerWidth: 56,
   pageContainerClass: '',
   expandMenuAriaLabel: 'Expand side menu',
   collapseMenuAriaLabel: 'Collapse side menu',
   sideMenuVariant: 'vercel',
   activeItemId: '',
+  defaultHorizontalMode: false,
+  defaultMiniMode: false,
+  defaultShowLabelsInMini: false,
 })
 
 const emit = defineEmits<{
@@ -237,13 +245,21 @@ const emit = defineEmits<{
   'menu-item-click': [item: TemplateMenuItem | TemplateMenuChildItem]
 }>()
 
-const horizontalMode = ref(false)
-const miniMode = ref(false)
-const showLabelsInMini = ref(false)
+const horizontalMode = ref(props.defaultHorizontalMode)
+const miniMode = ref(props.defaultMiniMode)
+const showLabelsInMini = ref(props.defaultShowLabelsInMini)
 const sideMenuVariant = ref<'vercel' | 'reference'>(props.sideMenuVariant)
 
 const isDrawerMiniMode = computed<boolean>(() => {
   return miniMode.value && !showLabelsInMini.value
+})
+
+const resolvedDrawerWidth = computed<number>(() => {
+  if (miniMode.value && showLabelsInMini.value) {
+    return props.miniLabelsDrawerWidth
+  }
+
+  return props.drawerWidth
 })
 
 const primaryMenuItems = computed<TemplateMenuItem[]>(() => {
@@ -290,14 +306,18 @@ function storageKey(suffix: string): string {
   return `${props.storageKeyPrefix}:${suffix}`
 }
 
-function readStoredFlag(key: string): boolean {
+function readStoredFlag(key: string, fallback = false): boolean {
   if (!props.persistMode) {
-    return false
+    return fallback
   }
   try {
-    return localStorage.getItem(storageKey(key)) === 'true'
+    const storedValue = localStorage.getItem(storageKey(key))
+    if (storedValue === null) {
+      return fallback
+    }
+    return storedValue === 'true'
   } catch {
-    return false
+    return fallback
   }
 }
 
@@ -362,9 +382,9 @@ function forwardMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): v
 }
 
 onMounted(() => {
-  horizontalMode.value = readStoredFlag('horizontal-mode')
-  miniMode.value = readStoredFlag('mini-mode')
-  showLabelsInMini.value = readStoredFlag('mini-labels')
+  horizontalMode.value = readStoredFlag('horizontal-mode', props.defaultHorizontalMode)
+  miniMode.value = readStoredFlag('mini-mode', props.defaultMiniMode)
+  showLabelsInMini.value = readStoredFlag('mini-labels', props.defaultShowLabelsInMini)
   sideMenuVariant.value = normalizeSideMenuVariant(readStoredValue('side-menu-variant') ?? props.sideMenuVariant)
 })
 
@@ -386,11 +406,27 @@ watch(sideMenuVariant, value => {
 </script>
 
 <style lang="scss">
+.ntk-template-main-layout {
+  background:
+    radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--ntk-accent, #10b981) 14%, transparent) 0%, transparent 28%),
+    radial-gradient(circle at 86% 8%, color-mix(in srgb, var(--ntk-primary-light, #5eead4) 10%, transparent) 0%, transparent 24%),
+    var(--ntk-template-layout-shell-bg, var(--ntk-template-layout-page-bg, #f8fafc));
+  color: var(--ntk-template-layout-page-text, var(--ntk-text-primary, #0f172a));
+}
+
 .ntk-template-main-layout__header {
   background: var(--ntk-template-layout-header-bg, #ffffff);
   color: var(--ntk-template-layout-header-text, #1f2937);
-  box-shadow: var(--ntk-template-layout-header-shadow, 0 2px 14px rgba(15, 23, 42, 0.08)) !important;
+  border-bottom: 1px solid var(--ntk-template-layout-header-border, rgba(148, 163, 184, 0.18));
+  box-shadow: var(--ntk-template-layout-header-shadow, 0 16px 40px rgba(2, 6, 23, 0.14)) !important;
+  backdrop-filter: blur(16px);
   z-index: 2100 !important;
+}
+
+.ntk-template-main-layout__header .q-toolbar {
+  min-height: 64px;
+  padding: 0 18px 0 12px;
+  gap: 12px;
 }
 
 .ntk-template-main-layout__brand {
@@ -405,8 +441,10 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__title {
+  font-family: var(--ntk-font-family-display, 'Space Grotesk', Inter, system-ui, sans-serif);
   font-size: 14px;
   font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--ntk-template-layout-title-color, inherit);
 }
 
@@ -424,6 +462,12 @@ watch(sideMenuVariant, value => {
   opacity: 0;
 }
 
+.ntk-template-main-layout__menu-btn :deep(.q-btn) {
+  background: color-mix(in srgb, var(--ntk-template-layout-toolbar-surface, #f1f5f9) 82%, transparent);
+  border: 1px solid var(--ntk-template-layout-toolbar-border, rgba(148, 163, 184, 0.2));
+  color: var(--ntk-template-layout-header-text, #1f2937);
+}
+
 .ntk-template-main-layout__horizontal-nav {
   min-height: 48px !important;
   background: var(
@@ -431,6 +475,7 @@ watch(sideMenuVariant, value => {
     linear-gradient(90deg, #1e293b 0%, #334155 100%)
   );
   color: var(--ntk-template-layout-horizontal-text, #ffffff);
+  border-top: 1px solid color-mix(in srgb, var(--ntk-template-layout-horizontal-text, #ffffff) 8%, transparent);
 }
 
 .ntk-template-main-layout__horizontal-nav-list {
@@ -445,6 +490,8 @@ watch(sideMenuVariant, value => {
     linear-gradient(180deg, #1e293b 0%, #334155 100%)
   ) !important;
   color: var(--ntk-template-layout-drawer-text, #ffffff) !important;
+  border-right: 1px solid var(--ntk-template-layout-drawer-border, rgba(148, 163, 184, 0.22));
+  box-shadow: 24px 0 64px rgba(2, 6, 23, 0.28);
   transition:
     width 0.24s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.24s cubic-bezier(0.4, 0, 0.2, 1);
@@ -452,17 +499,6 @@ watch(sideMenuVariant, value => {
 
 .ntk-template-main-layout__drawer--mini {
   box-shadow: inset -1px 0 0 rgba(148, 163, 184, 0.28);
-}
-
-.ntk-template-main-layout--side-vercel .ntk-template-main-layout__drawer {
-  background: linear-gradient(180deg, #111827 0%, #1f2937 100%) !important;
-}
-
-.ntk-template-main-layout--side-reference .ntk-template-main-layout__drawer {
-  background: var(
-    --ntk-template-layout-drawer-bg,
-    linear-gradient(180deg, #1e293b 0%, #334155 100%)
-  ) !important;
 }
 
 .ntk-template-main-layout__drawer-container {
@@ -481,11 +517,12 @@ watch(sideMenuVariant, value => {
 .ntk-template-main-layout__group-caption {
   min-height: 26px;
   padding: 8px 14px 4px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(203, 213, 225, 0.9);
+  color: var(--ntk-template-layout-nav-group-text, rgba(203, 213, 225, 0.88));
 }
 
 .ntk-template-main-layout__group-caption-text {
@@ -505,7 +542,7 @@ watch(sideMenuVariant, value => {
   height: 18px;
   padding: 0 6px;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.2);
+  background: var(--ntk-template-layout-nav-group-pill-bg, rgba(148, 163, 184, 0.18));
   font-size: 10px;
 }
 
@@ -514,7 +551,11 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__page-container {
-  background: var(--ntk-template-layout-page-bg, #f8fafc);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ntk-template-layout-page-bg, #f8fafc) 94%, #020617) 0%,
+    var(--ntk-template-layout-page-bg, #f8fafc) 100%
+  );
 }
 
 .ntk-template-main-layout__slide-down-enter-active,
@@ -548,7 +589,7 @@ watch(sideMenuVariant, value => {
 }
 
 .q-drawer--left.q-drawer--bordered {
-  border-right: 1px solid rgba(0, 0, 0, 0.21);
+  border-right: 1px solid var(--ntk-template-layout-drawer-border, rgba(148, 163, 184, 0.22));
 }
 
 @media (max-width: 768px) {

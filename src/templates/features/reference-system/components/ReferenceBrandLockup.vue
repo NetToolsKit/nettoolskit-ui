@@ -44,23 +44,31 @@ defineProps<{
   width: 38px;
   height: 38px;
   border-radius: 14px;
-  background: var(--ntk-primary, #2563eb);
+  background: var(--ntk-gradient-accent, linear-gradient(135deg, #10b981 0%, #2dd4bf 100%));
   color: var(--ntk-text-light, #ffffff);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
+  box-shadow: var(--ntk-reference-shell-glow, 0 16px 32px rgba(2, 6, 23, 0.16));
 }
 
 .ntk-reference-brand-lockup__name {
   display: block;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-template-layout-title-color, var(--ntk-text-primary, #0f172a));
+  font-family: var(--ntk-font-family-display, 'Space Grotesk', Inter, system-ui, sans-serif);
   font-weight: 700;
+  letter-spacing: 0.03em;
 }
 
 .ntk-reference-brand-lockup__subtitle {
   display: block;
-  color: var(--ntk-text-secondary, #64748b);
+  margin-top: 2px;
+  color: var(--ntk-template-layout-brand-subtitle, var(--ntk-text-secondary, #64748b));
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 </style>

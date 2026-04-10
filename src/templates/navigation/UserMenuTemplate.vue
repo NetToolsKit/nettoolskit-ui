@@ -67,7 +67,7 @@
       <q-list>
         <q-item-label
           header
-          class="text-grey-7"
+          class="ntk-template-user-menu__section-label"
         >
           {{ preferencesLabel }}
         </q-item-label>
@@ -76,7 +76,7 @@
           <q-item-section avatar>
             <q-icon
               :name="modelValue ? 'view_stream' : 'view_sidebar'"
-              color="grey-7"
+              class="ntk-template-user-menu__item-icon"
             />
           </q-item-section>
           <q-item-section>
@@ -98,7 +98,7 @@
           <q-item-section avatar>
             <q-icon
               :name="showLabelsInMini ? 'label' : 'label_off'"
-              color="grey-7"
+              class="ntk-template-user-menu__item-icon"
             />
           </q-item-section>
           <q-item-section>
@@ -124,7 +124,7 @@
           <q-item-section avatar>
             <q-icon
               :name="sideMenuVariant === 'vercel' ? 'auto_awesome' : 'tune'"
-              color="grey-7"
+              class="ntk-template-user-menu__item-icon"
             />
           </q-item-section>
           <q-item-section>
@@ -207,8 +207,12 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 <style lang="scss">
 .ntk-template-user-menu {
   min-width: 320px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--ntk-template-user-menu-border, rgba(148, 163, 184, 0.18));
+  border-radius: var(--ntk-template-user-menu-radius, 18px);
+  background: var(--ntk-template-page-card-bg, #ffffff);
+  box-shadow: var(--ntk-template-user-menu-shadow, 0 18px 48px rgba(15, 23, 42, 0.12));
+  overflow: hidden;
+  color: var(--ntk-template-user-menu-text, #0f172a);
 }
 
 .ntk-template-user-menu__avatar {
@@ -227,5 +231,29 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 
 .ntk-template-user-menu__profile {
   background: var(--ntk-template-user-menu-profile-bg, #ffffff);
+}
+
+.ntk-template-user-menu__section-label {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ntk-template-user-menu-muted, #64748b) !important;
+}
+
+.ntk-template-user-menu__item-icon {
+  color: var(--ntk-template-user-menu-muted, #64748b);
+}
+
+.ntk-template-user-menu :deep(.q-separator) {
+  background: var(--ntk-template-user-menu-border, rgba(148, 163, 184, 0.18));
+}
+
+.ntk-template-user-menu :deep(.q-item) {
+  color: var(--ntk-template-user-menu-text, #0f172a);
+}
+
+.ntk-template-user-menu :deep(.q-item__label--caption) {
+  color: var(--ntk-template-user-menu-muted, #64748b) !important;
 }
 </style>

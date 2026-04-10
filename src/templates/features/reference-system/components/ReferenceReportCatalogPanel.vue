@@ -160,15 +160,16 @@ function selectReport(reportId: string): void {
 .ntk-reference-catalog-panel__header h2 {
   margin: 4px 0 0;
   font-size: 18px;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-catalog-panel__eyebrow {
   margin: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-catalog-panel__count {
@@ -178,7 +179,8 @@ function selectReport(reportId: string): void {
   background: var(--ntk-reference-badge-bg, #eff6ff);
   color: var(--ntk-reference-badge-text, #1d4ed8);
   font-size: 12px;
-  font-weight: 700;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 500;
 }
 
 .ntk-reference-catalog-panel__search {
@@ -191,7 +193,7 @@ function selectReport(reportId: string): void {
   align-items: center;
   gap: 8px;
   padding: 0 12px;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-catalog-panel__search input {
@@ -200,7 +202,7 @@ function selectReport(reportId: string): void {
   outline: 0;
   background: transparent;
   font-size: 13px;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-catalog-panel__groups {
@@ -224,7 +226,7 @@ function selectReport(reportId: string): void {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: #475569;
+  color: var(--ntk-text-secondary, #475569);
   font-size: 12px;
 }
 
@@ -232,7 +234,7 @@ function selectReport(reportId: string): void {
   width: 100%;
   border: 1px solid var(--ntk-reference-border, #dbe4f0);
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--ntk-reference-panel-bg, #ffffff);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -249,7 +251,7 @@ function selectReport(reportId: string): void {
 .ntk-reference-catalog-panel__item:hover,
 .ntk-reference-catalog-panel__item--active {
   border-color: var(--ntk-reference-accent, #2563eb);
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.1);
+  box-shadow: var(--ntk-reference-shell-glow, 0 12px 24px rgba(37, 99, 235, 0.1));
   transform: translateY(-1px);
 }
 
@@ -259,13 +261,13 @@ function selectReport(reportId: string): void {
   gap: 6px;
   font-size: 13px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-catalog-panel__item-main small {
   display: block;
   margin-top: 3px;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
   font-size: 12px;
 }
 

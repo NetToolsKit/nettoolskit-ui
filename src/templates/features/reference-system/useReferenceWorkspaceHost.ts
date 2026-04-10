@@ -45,9 +45,9 @@ export function useReferenceWorkspaceHost(options: UseReferenceWorkspaceHostOpti
   const defaultPresetId =
     options.initialPresetId
     ?? storedPresetId
-    ?? availablePresets[1]?.id
     ?? availablePresets[0]?.id
-    ?? 'reference-light'
+    ?? availablePresets[1]?.id
+    ?? 'reference-night'
 
   const selectedPresetId = ref(defaultPresetId)
   const activeMenuId = ref<ReferenceWorkspaceMenuId>(options.initialMenuId ?? 'catalog')

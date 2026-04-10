@@ -68,9 +68,9 @@ export function useReferenceCatalogHost(options: UseReferenceCatalogHostOptions 
   const defaultPresetId =
     options.initialPresetId
     ?? storedPresetId
-    ?? availablePresets[1]?.id
     ?? availablePresets[0]?.id
-    ?? 'reference-light'
+    ?? availablePresets[1]?.id
+    ?? 'reference-night'
 
   const defaultSurfaceId = options.initialSurfaceId ?? referenceSampleSurfaces[0]?.id ?? 'dashboard'
 

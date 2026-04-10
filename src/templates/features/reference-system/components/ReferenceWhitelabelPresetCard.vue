@@ -69,19 +69,20 @@ const swatches = computed(() => {
 
 .ntk-reference-preset-card__label {
   margin: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-preset-card h3 {
   margin: 8px 0 0;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-preset-card p {
-  color: #475569;
+  color: var(--ntk-text-secondary, #475569);
 }
 
 .ntk-reference-preset-card__swatch-grid {
@@ -102,7 +103,7 @@ const swatches = computed(() => {
 }
 
 .ntk-reference-preset-card__swatch span {
-  color: #475569;
+  color: var(--ntk-text-secondary, #475569);
   font-size: 13px;
 }
 

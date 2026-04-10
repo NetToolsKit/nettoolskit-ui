@@ -251,6 +251,11 @@ const loginPassword = ref('demo-password')
   display: flex;
   flex-direction: column;
   gap: 18px;
+  padding: 22px;
+  border: 1px solid var(--ntk-reference-shell-chrome-border, rgba(148, 163, 184, 0.16));
+  border-radius: 28px;
+  background: var(--ntk-reference-shell-chrome-bg, rgba(255, 255, 255, 0.9));
+  box-shadow: var(--ntk-reference-shell-glow, 0 18px 48px rgba(15, 23, 42, 0.08));
 }
 
 .ntk-reference-catalog-preview__header {
@@ -262,6 +267,7 @@ const loginPassword = ref('demo-password')
 
 .ntk-reference-catalog-preview__eyebrow {
   margin: 0 0 8px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -291,23 +297,25 @@ const loginPassword = ref('demo-password')
   padding: 0 12px;
   display: inline-flex;
   align-items: center;
-  background: color-mix(in srgb, var(--ntk-primary, #2563eb) 12%, white);
-  color: var(--ntk-primary, #2563eb);
+  background: var(--ntk-reference-badge-bg, rgba(16, 185, 129, 0.12));
+  color: var(--ntk-reference-badge-text, #10b981);
   font-size: 12px;
-  font-weight: 600;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-weight: 500;
+  letter-spacing: 0.08em;
 }
 
 .ntk-reference-catalog-preview__badge--muted {
-  background: var(--ntk-bg-secondary, #eef2ff);
+  background: var(--ntk-reference-panel-muted-bg, #eef2ff);
   color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-catalog-preview__surface {
   min-height: 560px;
-  border: 1px solid var(--ntk-border-color, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border, #dbe4f0);
   border-radius: 24px;
   overflow: auto;
-  background: var(--ntk-bg-card, #ffffff);
+  background: var(--ntk-reference-panel-bg, #ffffff);
   box-shadow: var(--ntk-shadow-md, 0 24px 48px rgba(15, 23, 42, 0.12));
 }
 

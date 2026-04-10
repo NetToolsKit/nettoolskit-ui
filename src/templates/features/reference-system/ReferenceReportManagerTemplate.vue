@@ -133,30 +133,31 @@ const selectedReport = computed(() => {
 
 .ntk-reference-manager__eyebrow {
   margin: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-reference-manager__hero h1 {
   margin: 8px 0 0;
   font-size: clamp(28px, 4vw, 40px);
   line-height: 1.05;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-manager__subtitle {
   margin: 12px 0 0;
   max-width: 720px;
-  color: #475569;
+  color: var(--ntk-text-secondary, #475569);
 }
 
 .ntk-reference-manager__brand-card {
   min-width: 260px;
   border: 1px solid var(--ntk-reference-border, #dbe4f0);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.76);
+  background: color-mix(in srgb, var(--ntk-reference-panel-bg, #ffffff) 82%, transparent);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -179,12 +180,12 @@ const selectedReport = computed(() => {
 
 .ntk-reference-manager__brand-card strong {
   display: block;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-manager__brand-card p {
   margin: 4px 0 0;
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
   font-size: 13px;
 }
 
@@ -202,7 +203,7 @@ const selectedReport = computed(() => {
 }
 
 .ntk-reference-manager__stat span {
-  color: #64748b;
+  color: var(--ntk-text-secondary, #64748b);
   font-size: 12px;
 }
 
@@ -210,7 +211,7 @@ const selectedReport = computed(() => {
   display: block;
   margin-top: 10px;
   font-size: 28px;
-  color: #0f172a;
+  color: var(--ntk-text-primary, #0f172a);
 }
 
 .ntk-reference-manager__grid {

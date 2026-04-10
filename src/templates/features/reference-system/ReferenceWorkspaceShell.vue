@@ -13,6 +13,9 @@
       :active-item-id="activeItemId"
       :storage-key-prefix="storageKeyPrefix"
       :page-container-class="pageContainerClass"
+      :default-mini-mode="true"
+      :default-show-labels-in-mini="true"
+      :mini-labels-drawer-width="90"
       @menu-item-click="emit('menu-item-click', $event)"
     >
       <template #brand>
@@ -118,10 +121,14 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .ntk-reference-workspace-shell {
   min-height: 100vh;
-  background: var(--ntk-template-layout-page-bg, #f8fafc);
+  background:
+    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--ntk-reference-accent, #10b981) 18%, transparent) 0%, transparent 26%),
+    radial-gradient(circle at 84% 4%, color-mix(in srgb, var(--ntk-primary-light, #5eead4) 12%, transparent) 0%, transparent 24%),
+    var(--ntk-reference-page-bg, var(--ntk-template-layout-page-bg, #f8fafc));
 }
 
 .ntk-reference-workspace-shell :deep(.ntk-reference-workspace-shell__page-container) {
   min-height: calc(100vh - 56px);
+  position: relative;
 }
 </style>

@@ -5,7 +5,7 @@
         v-model="internalSearch"
         dense
         outlined
-        placeholder="Search reports…"
+        placeholder="Search screens, flows or tokens..."
         class="ntk-reference-topbar__search-input"
         @update:model-value="onSearchInput(String($event ?? ''))"
       >
@@ -41,9 +41,9 @@
       >
         <q-badge
           v-if="notificationCount > 0"
-          color="negative"
           floating
           rounded
+          class="ntk-reference-topbar__counter-badge"
         >
           {{ notificationCount }}
         </q-badge>
@@ -58,8 +58,8 @@
             <span class="ntk-reference-topbar__notifications-title">Notifications</span>
             <q-badge
               v-if="unreadCount > 0"
-              color="negative"
               rounded
+              class="ntk-reference-topbar__counter-badge ntk-reference-topbar__counter-badge--inline"
             >
               {{ unreadCount }}
             </q-badge>
@@ -139,7 +139,6 @@
         class="ntk-reference-topbar__preset-select"
         @update:model-value="emit('update:selectedPresetId', $event)"
       />
-
     </div>
   </div>
 </template>
@@ -205,28 +204,34 @@ onUnmounted(() => {
 .ntk-reference-topbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex: 1;
 }
 
 .ntk-reference-topbar__search {
   flex: 1;
-  max-width: 320px;
+  max-width: 360px;
 }
 
 .ntk-reference-topbar__search-input {
   :deep(.q-field__control) {
-    background: var(--ntk-bg-secondary, #f1f5f9);
-    border-radius: 8px;
+    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 88%, transparent);
+    border-radius: 14px;
+    color: var(--ntk-reference-topbar-control-text, #0f172a);
   }
 
   :deep(.q-field__outlined .q-field__control::before) {
-    border-color: var(--ntk-border-color, #e2e8f0);
+    border-color: var(--ntk-reference-topbar-control-border, #e2e8f0);
+  }
+
+  :deep(.q-field__native),
+  :deep(.q-field__input) {
+    color: var(--ntk-reference-topbar-control-text, #0f172a);
   }
 }
 
 .ntk-reference-topbar__search-icon {
-  color: var(--ntk-text-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
 }
 
 .ntk-reference-topbar__actions {
@@ -237,26 +242,51 @@ onUnmounted(() => {
 }
 
 .ntk-reference-topbar__action-btn {
-  color: var(--ntk-text-secondary, #64748b);
+  border: 1px solid var(--ntk-reference-topbar-control-border, rgba(148, 163, 184, 0.18));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 82%, transparent);
+  color: var(--ntk-reference-topbar-control-text, #64748b);
 }
 
 .ntk-reference-topbar__separator {
   height: 24px;
-  opacity: 0.3;
+  opacity: 0.18;
 }
 
 .ntk-reference-topbar__preset-select {
   min-width: 180px;
 
   :deep(.q-field__control) {
-    background: var(--ntk-bg-secondary, #f1f5f9);
+    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 88%, transparent);
+    border-radius: 14px;
+  }
+
+  :deep(.q-field__label),
+  :deep(.q-field__native),
+  :deep(.q-field__input),
+  :deep(.q-select__dropdown-icon) {
+    color: var(--ntk-reference-topbar-control-text, #0f172a) !important;
   }
 }
 
+.ntk-reference-topbar__counter-badge {
+  background: color-mix(in srgb, var(--ntk-accent, #10b981) 24%, transparent) !important;
+  color: var(--ntk-accent, #10b981) !important;
+  border: 1px solid color-mix(in srgb, var(--ntk-accent, #10b981) 28%, transparent);
+}
+
+.ntk-reference-topbar__counter-badge--inline {
+  position: static;
+}
 
 .ntk-reference-topbar__notifications-menu {
   min-width: 340px;
   max-width: 400px;
+  border: 1px solid var(--ntk-reference-topbar-border, rgba(148, 163, 184, 0.18));
+  border-radius: 18px;
+  background: var(--ntk-reference-topbar-surface, #ffffff);
+  box-shadow: var(--ntk-reference-shell-glow, 0 20px 48px rgba(15, 23, 42, 0.12));
+  overflow: hidden;
 }
 
 .ntk-reference-topbar__notifications-header {
@@ -264,6 +294,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 12px 16px 10px;
+  background: var(--ntk-reference-topbar-action-bg, #ffffff);
 }
 
 .ntk-reference-topbar__notifications-title {
@@ -276,12 +307,12 @@ onUnmounted(() => {
 .ntk-reference-topbar__notifications-empty {
   padding: 20px 16px;
   font-size: 13px;
-  color: var(--ntk-text-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
   text-align: center;
 }
 
 .ntk-reference-topbar__notif-item--unread {
-  background: var(--ntk-bg-secondary, #f1f5f9);
+  background: color-mix(in srgb, var(--ntk-accent, #10b981) 12%, var(--ntk-reference-topbar-surface, #ffffff));
 }
 
 .ntk-reference-topbar__notif-item-title {
@@ -291,14 +322,14 @@ onUnmounted(() => {
 
 .ntk-reference-topbar__notif-item-desc {
   font-size: 12px;
-  color: var(--ntk-text-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
   white-space: normal;
   line-height: 1.4;
 }
 
 .ntk-reference-topbar__notif-item-time {
   font-size: 11px;
-  color: var(--ntk-text-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
   white-space: nowrap;
 }
 </style>

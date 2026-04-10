@@ -367,7 +367,7 @@ const {
   initialReportId: referenceSampleReportGroups[0]?.items[0]?.id ?? '',
   initialDocumentTabId: referenceSampleDocumentTabs[0]?.id ?? 'layout',
   initialZoomValue: referenceSampleDesignerConfig.zoomOptions[2] ?? 100,
-  initialPresetId: 'reference-light',
+  initialPresetId: 'reference-night',
   persistPreset: false,
 })
 
