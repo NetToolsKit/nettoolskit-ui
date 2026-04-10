@@ -54,14 +54,16 @@ import { createTemplateRuntimeRouter } from '../src/templates/runtime'
 import '../src/styles/tokens.scss'
 import '../src/styles/global.scss'
 
-// Route-mode async loading keeps landing, CMS, samples, and template bundles split at runtime.
+// Route-mode async loading keeps catalog, landing, CMS, samples, and template bundles split at runtime.
 const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))
+const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))
 const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))
 const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))
 const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
 const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))
 
 const searchParams = new URLSearchParams(window.location.search)
+const isLandingMode = searchParams.get('landing') === '1'
 const isCmsMode = searchParams.get('cms') === '1'
 const isSamplesMode = searchParams.get('samples') === '1'
 const isTemplateMode = searchParams.get('templates') === '1'
@@ -73,9 +75,11 @@ const RootComponent = isCmsMode
     ? TemplateRuntimeApp
     : isSamplesMode
       ? ReferenceSamplesApp
-    : isTemplateMode
+      : isTemplateMode
       ? TemplateShowcaseApp
-      : LandingApp
+      : isLandingMode
+        ? LandingApp
+        : ReferenceCatalogApp
 
 const app = createApp(RootComponent)
 const templateRuntimeRouter = isTemplateRuntimeMode

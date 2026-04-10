@@ -74,3 +74,25 @@ export interface ReferenceManagerSampleConfig {
   stats: TemplateDashboardMetric[]
   quickActions: ReferenceSurfaceAction[]
 }
+
+export interface ReferenceCatalogStat {
+  id: string
+  label: string
+  value: string
+}
+
+export interface ReferenceCatalogArchitectureCard {
+  id: string
+  title: string
+  description: string
+  icon: string
+  bullets: string[]
+}
+
+export interface ReferenceCatalogRuntimeLink {
+  id: string
+  title: string
+  description: string
+  href: string
+  icon: string
+}

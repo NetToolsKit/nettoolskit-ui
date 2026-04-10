@@ -1,5 +1,11 @@
-import type { ReferenceSampleSurface } from '../src/whitelabel'
-import type { TemplateMenuItem } from '../src/templates/navigation/menu-template.types'
+import type { ReferenceSampleSurface } from '../../../whitelabel'
+import type { TemplateMenuItem } from '../../navigation/menu-template.types'
+
+import type {
+  ReferenceCatalogArchitectureCard,
+  ReferenceCatalogRuntimeLink,
+  ReferenceCatalogStat,
+} from './reference-system.types'
 
 export const referenceSampleSurfaces: ReferenceSampleSurface[] = [
   {
@@ -20,11 +26,19 @@ export const referenceSampleSurfaces: ReferenceSampleSurface[] = [
   },
   {
     id: 'cruds',
-    title: 'CRUD list and profile',
+    title: 'CRUD list',
     subtitle: 'Reusable collection screens',
     tag: 'pages',
-    description: 'Shared list and profile patterns for tenant, account and registry flows.',
+    description: 'Shared list patterns for tenant, account and registry flows.',
     template: 'cruds',
+  },
+  {
+    id: 'profile',
+    title: 'Profile page',
+    subtitle: 'Account and role details',
+    tag: 'pages',
+    description: 'Typed profile surface for account data, access metadata and owner context.',
+    template: 'profile',
   },
   {
     id: 'editor',
@@ -61,43 +75,113 @@ export const referenceSampleSurfaces: ReferenceSampleSurface[] = [
 ]
 
 export const referenceMenuItems: TemplateMenuItem[] = [
-  { id: 'overview', text: 'Overview', icon: 'dashboard', groupId: 'system', groupLabel: 'System' },
-  { id: 'samples', text: 'Samples', icon: 'view_quilt', groupId: 'system', groupLabel: 'System' },
-  { id: 'presets', text: 'Presets', icon: 'palette', groupId: 'system', groupLabel: 'System' },
-  { id: 'dashboard', text: 'Dashboard', icon: 'space_dashboard', groupId: 'screens', groupLabel: 'Screens' },
-  { id: 'workspace', text: 'Workspace', icon: 'work', groupId: 'screens', groupLabel: 'Screens' },
-  { id: 'profiles', text: 'Profiles', icon: 'badge', groupId: 'screens', groupLabel: 'Screens' },
-  { id: 'editor', text: 'Editor', icon: 'edit_square', groupId: 'screens', groupLabel: 'Screens' },
-  { id: 'enterprise', text: 'Enterprise', icon: 'monitoring', groupId: 'screens', groupLabel: 'Screens' },
-  { id: 'auth', text: 'Auth', icon: 'lock', groupId: 'screens', groupLabel: 'Screens' },
-  { id: 'knowledge', text: 'Knowledge', icon: 'menu_book', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'overview', text: 'Overview', caption: 'Approved system direction', icon: 'dashboard', groupId: 'system', groupLabel: 'System' },
+  { id: 'samples', text: 'Sample Catalog', caption: 'Systems and screens', icon: 'view_quilt', groupId: 'system', groupLabel: 'System' },
+  { id: 'presets', text: 'Whitelabel', caption: 'Parameterization architecture', icon: 'palette', groupId: 'system', groupLabel: 'System' },
+  { id: 'dashboard', text: 'Dashboard', caption: 'Hero, metrics and ranking', icon: 'space_dashboard', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'workspace', text: 'Workspace', caption: 'Filters, views and lanes', icon: 'work', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'cruds', text: 'CRUD List', caption: 'Collections and actions', icon: 'table_rows', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'profile', text: 'Profile', caption: 'Account detail surface', icon: 'badge', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'editor', text: 'Editor', caption: 'Canvas and command bars', icon: 'edit_square', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'enterprise', text: 'Command Center', caption: 'Alerts and health', icon: 'monitoring', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'auth', text: 'Auth', caption: 'Brand and sign-in shell', icon: 'lock', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'knowledge', text: 'Knowledge', caption: 'Docs and assistant', icon: 'menu_book', groupId: 'screens', groupLabel: 'Screens' },
+  { id: 'help', text: 'Template Showcase', caption: 'Shared template runtime', icon: 'dashboard_customize', stickyBottom: true },
+  { id: 'back-home', text: 'Legacy Landing', caption: 'Old marketing runtime', icon: 'home', stickyBottom: true },
 ]
 
 export const referencePresetCallouts = [
   {
     id: 'preset-night',
-    title: 'Night shell',
-    description: 'Deep, contrast-heavy presentation with modern blue signals.',
+    title: 'Reference Night',
+    description: 'High-contrast preview for operations-heavy demos and denser shell validation.',
     badge: 'recommended',
   },
   {
     id: 'preset-light',
-    title: 'Light shell',
-    description: 'Editorial, review-friendly surface for stakeholder demos.',
+    title: 'Reference Light',
+    description: 'Editorial review mode for approval rounds, screenshots and stakeholder walkthroughs.',
     badge: 'approved',
   },
   {
     id: 'preset-graphite',
-    title: 'Graphite shell',
-    description: 'Neutral enterprise variant for comparison and regression checks.',
+    title: 'Reference Graphite',
+    description: 'Neutral enterprise baseline for regression checks and tenant parameterization.',
     badge: 'baseline',
   },
 ]
 
-export const referenceHeroStats = [
-  { id: 'templates', label: 'Reusable templates', value: '8' },
+export const referenceHeroStats: ReferenceCatalogStat[] = [
+  { id: 'templates', label: 'Reusable surfaces', value: '8' },
   { id: 'presets', label: 'Whitelabel presets', value: '3' },
-  { id: 'screens', label: 'Reference screens', value: '7' },
+  { id: 'runtimes', label: 'Runtime modes', value: '4' },
+]
+
+export const referenceArchitectureCards: ReferenceCatalogArchitectureCard[] = [
+  {
+    id: 'templates',
+    title: 'Templates First',
+    description: 'Every approved screen is represented by a typed, reusable template under `src/templates/**`.',
+    icon: 'dashboard_customize',
+    bullets: [
+      'layout, page and feature contracts stay portable across demos',
+      'screen previews reuse the same production-facing template surfaces',
+      'catalog entries map directly to reusable implementation artifacts',
+    ],
+  },
+  {
+    id: 'components',
+    title: 'Composable Building Blocks',
+    description: 'Cards, selectors, workspace shells and preview frames stay isolated so hosts stay thin.',
+    icon: 'extension',
+    bullets: [
+      'catalog host state lives in composables instead of page-local glue',
+      'preview cards and live renderers stay independent from the landing host',
+      'the same shell can back the catalog, report workspace and future demos',
+    ],
+  },
+  {
+    id: 'whitelabel',
+    title: 'Whitelabel Runtime',
+    description: 'Presets do not fork screens; they swap brand, palette, radius and surface tokens.',
+    icon: 'tune',
+    bullets: [
+      'preset changes persist through the shared reference whitelabel runtime',
+      'samples prove token-driven reuse before product-specific adoption',
+      'legacy landing is no longer the canonical demo for theme validation',
+    ],
+  },
+]
+
+export const referenceRuntimeLinks: ReferenceCatalogRuntimeLink[] = [
+  {
+    id: 'report-workspace',
+    title: 'Open Report Workspace',
+    description: 'Jump into the report-manager and designer runtime backed by the shared reference shell.',
+    href: '/?samples=1',
+    icon: 'design_services',
+  },
+  {
+    id: 'template-showcase',
+    title: 'Open Template Showcase',
+    description: 'Inspect the catalog of shared layouts, pages and feature templates.',
+    href: '/?templates=1',
+    icon: 'widgets',
+  },
+  {
+    id: 'template-runtime',
+    title: 'Open Template Runtime',
+    description: 'Use the router-driven runtime that composes scaffolded template routes.',
+    href: '/?template-runtime=1',
+    icon: 'route',
+  },
+  {
+    id: 'legacy-landing',
+    title: 'Open Legacy Landing',
+    description: 'Keep the old marketing landing reachable while the samples-first runtime stabilizes.',
+    href: '/?landing=1',
+    icon: 'public',
+  },
 ]
 
 export const referenceDashboardChips = [
@@ -114,14 +198,14 @@ export const referenceDashboardMetrics = [
 
 export const referenceDashboardActivities = [
   { id: 'activity-1', label: 'Layout parity locked', value: '100%', icon: 'lock', iconTone: 'green' as const },
-  { id: 'activity-2', label: 'Reusable screens', value: '7', icon: 'dashboard', iconTone: 'blue' as const },
+  { id: 'activity-2', label: 'Reusable screens', value: '8', icon: 'dashboard', iconTone: 'blue' as const },
   { id: 'activity-3', label: 'Whitelabel tokens', value: 'parametric', icon: 'tune', iconTone: 'teal' as const },
 ]
 
 export const referenceDashboardTopItems = [
   { id: 'top-1', name: 'Reference shell', value: 'Stable', secondaryValue: 'Main layout', barPercent: 96 },
   { id: 'top-2', name: 'Template library', value: 'Ready', secondaryValue: '8 surfaces', barPercent: 84 },
-  { id: 'top-3', name: 'Samples runtime', value: 'Live', secondaryValue: '7 screens', barPercent: 72 },
+  { id: 'top-3', name: 'Samples runtime', value: 'Live', secondaryValue: '8 screens', barPercent: 72 },
 ]
 
 export const referenceWorkspaceActions = [
@@ -130,8 +214,8 @@ export const referenceWorkspaceActions = [
 ]
 
 export const referenceWorkspaceFilters = [
-  { id: 'all', label: 'All', count: 7 },
-  { id: 'approved', label: 'Approved', count: 3 },
+  { id: 'all', label: 'All', count: 8 },
+  { id: 'approved', label: 'Approved', count: 4 },
   { id: 'draft', label: 'Draft', count: 2 },
 ]
 
@@ -141,7 +225,7 @@ export const referenceWorkspaceViews = [
 ]
 
 export const referenceWorkspaceMetrics = [
-  { id: 'workspace-1', label: 'Open screens', value: 7, delta: '+2', icon: 'open_in_new', tone: 'info' as const },
+  { id: 'workspace-1', label: 'Open screens', value: 8, delta: '+2', icon: 'open_in_new', tone: 'info' as const },
   { id: 'workspace-2', label: 'Controls reused', value: 18, delta: '+5', icon: 'checklist', tone: 'success' as const },
   { id: 'workspace-3', label: 'Tokens exposed', value: 27, delta: 'stable', icon: 'token', tone: 'warning' as const },
 ]
@@ -149,7 +233,7 @@ export const referenceWorkspaceMetrics = [
 export const referenceWorkspacePanels = [
   { id: 'panel-brand', title: 'Brand presets', value: 3, description: 'Switch tokens without rewriting screens.', icon: 'palette', tone: 'info' as const },
   { id: 'panel-layout', title: 'Layout shells', value: 2, description: 'Same shell contract across samples.', icon: 'view_sidebar', tone: 'success' as const },
-  { id: 'panel-screens', title: 'Reference screens', value: 7, description: 'All reusable and demo-ready.', icon: 'view_quilt', tone: 'warning' as const },
+  { id: 'panel-screens', title: 'Reference screens', value: 8, description: 'All reusable and demo-ready.', icon: 'view_quilt', tone: 'warning' as const },
 ]
 
 export const referenceWorkspaceLanes = [
@@ -167,6 +251,7 @@ export const referenceWorkspaceLanes = [
     items: [
       { id: 'screen-workspace', title: 'Workspace lanes', subtitle: 'Filter and view controls', badge: 'New', assignee: 'System', filterKeys: ['draft', 'all'] },
       { id: 'screen-editor', title: 'Editor workbench', subtitle: 'Canvas and status bars', assignee: 'System', filterKeys: ['approved', 'all'] },
+      { id: 'screen-profile', title: 'Profile page', subtitle: 'Account detail surface', assignee: 'System', filterKeys: ['approved', 'all'] },
     ],
   },
   {

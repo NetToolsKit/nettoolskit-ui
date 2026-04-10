@@ -881,9 +881,12 @@ interface ThemeGradients {
 
 ### Template Runtime Preview
 
+- `/` renders the reference catalog with approved systems, live template previews, and whitelabel preset switching.
+- `/?samples=1` renders the report workspace runtime backed by the shared reference shell.
 - `/?templates=1` renders the enterprise template showcase used by the visual-regression gate.
 - `/?template-runtime=1` renders the router-enabled template runtime (layout/navigation/page/feature templates composed via scaffolded routes).
 - `/?cms=1` renders the CMS authoring runtime.
+- `/?landing=1` keeps the legacy marketing landing reachable while the samples-first runtime stabilizes.
 - Local preview command:
 
 ```bash
@@ -967,7 +970,7 @@ NetToolsKit UI Vue is intentionally layered so the project stays simple to consu
    - NetToolsKit does **not** replace Quasar and should not reimplement generic framework features without a product-specific reason.
 
 2. **NTK UI**
-   - Adds opinionated product-facing components, design tokens, branding, landing sections, and the shared app shell.
+   - Adds opinionated product-facing components, design tokens, branding, reference catalog surfaces, and the shared app shell.
    - This is the layer that standardizes how NetToolsKit applications look and behave on top of Quasar.
 
 3. **NTK CMS Engine**

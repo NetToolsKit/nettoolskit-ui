@@ -67,8 +67,8 @@ export const referenceSampleMenuItems: TemplateMenuItem[] = [
   },
   {
     id: 'back-home',
-    text: 'Back to landing',
-    caption: 'Public site',
+    text: 'Back to catalog',
+    caption: 'Reference samples home',
     icon: 'home',
     stickyBottom: true,
   },

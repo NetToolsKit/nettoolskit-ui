@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 
 import {
   ReferenceBrandLockup,
+  ReferenceCatalogSurfaceCard,
+  ReferenceCatalogTemplate,
   ReferenceDocumentTabsBar,
   ReferencePresetSelectorBar,
   ReferenceReportDesignerTemplate,
@@ -12,11 +14,16 @@ import {
   ReferenceWorkspaceComposer,
   ReferenceWorkspaceShell,
   ReferenceWhitelabelPresetCard,
+  referenceArchitectureCards,
   referenceSampleDesignerConfig,
   referenceSampleDocumentTabs,
   referenceSampleManagerConfig,
   referenceSampleMenuItems,
   referenceSampleReportGroups,
+  referenceSampleSurfaces,
+  referenceHeroStats,
+  referencePresetCallouts,
+  referenceRuntimeLinks,
 } from '../../../src/templates/features/reference-system'
 import { resolveReferenceWhitelabelPreset } from '../../../src/whitelabel'
 
@@ -211,5 +218,53 @@ describe('Reference system templates', () => {
     expect(shell.text()).toContain('workspace')
     expect(brand.text()).toContain('NetToolsKit Reference')
     expect(presetBar.emitted('primary-action-click')).toHaveLength(1)
+  })
+
+  it('renders the reference catalog template as a samples-first runtime surface', () => {
+    const wrapper = mount(ReferenceCatalogTemplate, {
+      ...globalMountOptions,
+      global: {
+        ...globalMountOptions.global,
+        stubs: {
+          ...globalMountOptions.global.stubs,
+          ReferenceCatalogPreviewSurface: {
+            props: ['surface'],
+            template: '<div class="catalog-preview-stub">{{ surface?.title }}</div>',
+          },
+        },
+      },
+      props: {
+        activeSectionMode: 'overview',
+        selectedPreset: preset,
+        selectedSurfaceId: referenceSampleSurfaces[0]?.id,
+        selectedSurface: referenceSampleSurfaces[0],
+        surfaces: referenceSampleSurfaces,
+        presets: [preset],
+        heroStats: referenceHeroStats,
+        presetCallouts: referencePresetCallouts,
+        architectureCards: referenceArchitectureCards,
+        runtimeLinks: referenceRuntimeLinks,
+      },
+    })
+
+    expect(wrapper.text()).toContain('NetToolsKit Reference')
+    expect(wrapper.text()).toContain('Open Template Showcase')
+    expect(wrapper.text()).toContain('Templates First')
+    expect(wrapper.text()).toContain('Dashboard shell')
+  })
+
+  it('renders catalog cards as reusable selectors for approved screens', async () => {
+    const wrapper = mount(ReferenceCatalogSurfaceCard, {
+      ...globalMountOptions,
+      props: {
+        surface: referenceSampleSurfaces[0]!,
+        active: true,
+      },
+    })
+
+    await wrapper.trigger('click')
+
+    expect(wrapper.text()).toContain('Dashboard shell')
+    expect(wrapper.emitted('select')?.at(0)).toEqual([referenceSampleSurfaces[0]?.id])
   })
 })
