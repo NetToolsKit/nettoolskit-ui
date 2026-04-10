@@ -1,5 +1,5 @@
 /**
- * Landing page/main module.
+ * Samples runtime/main module.
  */
 
 import { createApp, defineAsyncComponent } from 'vue'
@@ -54,11 +54,11 @@ import { createTemplateRuntimeRouter } from '../src/templates/runtime'
 import '../src/styles/tokens.scss'
 import '../src/styles/global.scss'
 
-// Route-mode async loading keeps catalog, landing, CMS, samples, and template bundles split at runtime.
-const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))
+// Route-mode async loading keeps the samples host, legacy landing, CMS, and template runtimes split at runtime.
+const LandingApp = defineAsyncComponent(() => import('../landing-page/LandingPublicApp'))
 const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))
 const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))
-const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))
+const CmsApp = defineAsyncComponent(() => import('../landing-page/CmsApp.vue'))
 const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
 const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))
 

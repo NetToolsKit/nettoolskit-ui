@@ -5,7 +5,7 @@ import { resolve } from 'path'
 const modernSassApiOption = { api: 'modern-compiler' } as Record<string, string>
 
 /**
- * Split strategy used by landing, CMS, samples, and template builds.
+ * Split strategy used by the samples host, legacy landing, CMS, and template builds.
  * Keeps framework/vendor code separated from feature-specific code
  * to reduce single-bundle size warnings and improve cacheability.
  */
@@ -13,7 +13,10 @@ function manualChunkByModule(id: string): string | undefined {
   const normalized = id.replace(/\\/g, '/')
 
   if (!normalized.includes('/node_modules/')) {
-    if (normalized.includes('/landing-page/ReferenceSamplesApp.vue')) {
+    if (normalized.includes('/samples/ReferenceCatalogApp.vue')) {
+      return 'reference-catalog'
+    }
+    if (normalized.includes('/samples/ReferenceSamplesApp.vue')) {
       return 'reference-samples'
     }
     if (normalized.includes('/landing-page/CmsApp.vue')) {
@@ -36,13 +39,12 @@ function manualChunkByModule(id: string): string | undefined {
       return 'cms-blocks'
     }
     if (
-      normalized.includes('/landing-page/reference-samples')
-      || normalized.includes('/src/whitelabel/')
+      normalized.includes('/src/whitelabel/')
     ) {
       return 'whitelabel-runtime'
     }
     if (
-      normalized.includes('/landing-page/TemplateShowcaseApp.vue')
+      normalized.includes('/samples/TemplateShowcaseApp.vue')
       || normalized.includes('/src/templates/')
     ) {
       return 'template-system'
@@ -62,15 +64,15 @@ function manualChunkByModule(id: string): string | undefined {
 
 export default defineConfig({
   plugins: [vue()],
-  root: './landing-page',
+  root: './samples',
   build: {
-    outDir: '../.build/landing',
+    outDir: '../.build/samples',
     emptyOutDir: true,
     // Quasar runtime is slightly above the default 500KB warning threshold.
     // Keep a strict limit while avoiding false positives for this known vendor chunk.
     chunkSizeWarningLimit: 520,
     rollupOptions: {
-      input: resolve(__dirname, './landing-page/index.html'),
+      input: resolve(__dirname, './samples/index.html'),
       output: {
         manualChunks: manualChunkByModule,
       },
@@ -87,10 +89,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@nettoolskit/ui-vue': resolve(__dirname, './src'),
-      '@': resolve(__dirname, './src')
-    }
+      '@': resolve(__dirname, './src'),
+    },
   },
   server: {
-    port: 3000
-  }
+    port: 3000,
+  },
 })

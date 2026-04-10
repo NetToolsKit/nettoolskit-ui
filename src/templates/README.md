@@ -40,7 +40,7 @@ This folder is the canonical source for new visual work. Direct one-off implemen
     - `cms/`
     - `reference-system/`
   - `cms/` owns the reusable authoring shell and module surfaces extracted from the CMS runtime
-  - `reference-system/` owns the reusable catalog/workspace shells, composition layers, and host controllers used by the reference samples runtime
+  - `reference-system/` owns the reusable catalog/workspace shells, composition layers, and host controllers consumed by the `samples/` runtime host
 - `styles/`
   - style/template bridge catalog and exports
 - `scaffolding/`

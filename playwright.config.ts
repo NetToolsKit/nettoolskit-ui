@@ -23,7 +23,7 @@ export default defineConfig({
     viewport: { width: 1600, height: 1000 },
   },
   webServer: {
-    command: 'npm run build:landing && npm exec vite preview -- --host 127.0.0.1 --port 4173 --strictPort',
+    command: 'npm run build:samples && npm exec vite preview -- --host 127.0.0.1 --port 4173 --strictPort',
     port: 4173,
     timeout: 240_000,
     reuseExistingServer: !process.env.CI,

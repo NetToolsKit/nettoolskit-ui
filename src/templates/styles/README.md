@@ -34,7 +34,7 @@ Centralize template-specific style mappings so visual surfaces stay consistent w
 ```bash
 npm run lint
 npm run type-check
-npm run build:landing
+npm run build:samples
 ```
 
 ## References

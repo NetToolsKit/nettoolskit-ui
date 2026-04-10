@@ -16,36 +16,44 @@ function readRepoFile(relativePath: string): string {
 }
 
 const landingAppSource = readRepoFile('../../../landing-page/App.vue')
-const landingMainSource = readRepoFile('../../../landing-page/main.ts')
+const landingLegacyHostSource = readRepoFile('../../../landing-page/LandingPublicApp.ts')
+const samplesMainSource = readRepoFile('../../../samples/main.ts')
+const samplesIndexSource = readRepoFile('../../../samples/index.html')
 const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
-const referenceCatalogSource = readRepoFile('../../../landing-page/ReferenceCatalogApp.vue')
-const referenceSamplesSource = readRepoFile('../../../landing-page/ReferenceSamplesApp.vue')
+const referenceCatalogSource = readRepoFile('../../../samples/ReferenceCatalogApp.vue')
+const referenceSamplesSource = readRepoFile('../../../samples/ReferenceSamplesApp.vue')
+const templateShowcaseSource = readRepoFile('../../../samples/TemplateShowcaseApp.vue')
 const packageJsonSource = readRepoFile('../../../package.json')
 const landingStylesSource = readRepoFile('../../../landing-page/styles/landing.css')
 const themeFieldCatalogSource = readRepoFile('../../../src/modules/cms/white-label/authoring/theme-field-catalog.ts')
 const specDirectory = dirname(fileURLToPath(import.meta.url))
 
-describe('Landing consolidation coverage', () => {
-  it('uses the reference catalog as the canonical public entry while keeping legacy landing, cms, samples, and template runtimes split', () => {
-    expect(landingMainSource).toContain("const LandingApp = defineAsyncComponent(() => import('./LandingPublicApp'))")
-    expect(landingMainSource).toContain("const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))")
-    expect(landingMainSource).toContain("searchParams.get('landing') === '1'")
-    expect(landingMainSource).toContain("searchParams.get('cms') === '1'")
-    expect(landingMainSource).toContain("const CmsApp = defineAsyncComponent(() => import('./CmsApp.vue'))")
-    expect(landingMainSource).toContain("searchParams.get('samples') === '1'")
-    expect(landingMainSource).toContain("const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))")
-    expect(landingMainSource).toContain("const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))")
+describe('Samples runtime consolidation coverage', () => {
+  it('uses the samples host as the canonical public entry while keeping legacy landing, cms, samples, and template runtimes split', () => {
+    expect(samplesMainSource).toContain("const LandingApp = defineAsyncComponent(() => import('../landing-page/LandingPublicApp'))")
+    expect(samplesMainSource).toContain("const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))")
+    expect(samplesMainSource).toContain("searchParams.get('landing') === '1'")
+    expect(samplesMainSource).toContain("searchParams.get('cms') === '1'")
+    expect(samplesMainSource).toContain("const CmsApp = defineAsyncComponent(() => import('../landing-page/CmsApp.vue'))")
+    expect(samplesMainSource).toContain("searchParams.get('samples') === '1'")
+    expect(samplesMainSource).toContain("const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))")
+    expect(samplesMainSource).toContain("const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))")
     expect(cmsAppSource).toContain('CmsSettingsModuleTemplate')
-    expect(landingMainSource).toContain(': ReferenceCatalogApp')
+    expect(samplesMainSource).toContain(': ReferenceCatalogApp')
   })
 
-  it('removes parallel landing-new build scripts after consolidation', () => {
+  it('promotes samples commands to the canonical runtime aliases after consolidation', () => {
     expect(packageJsonSource).not.toContain('build:landing-new')
     expect(packageJsonSource).not.toContain('dev:landing-new')
-    expect(packageJsonSource).toContain('"dev": "npm run dev:landing"')
+    expect(packageJsonSource).toContain('"build:samples": "vite build"')
+    expect(packageJsonSource).toContain('"build:landing": "npm run build:samples"')
+    expect(packageJsonSource).toContain('"dev": "npm run dev:samples"')
+    expect(packageJsonSource).toContain('"dev:landing": "npm run dev:samples"')
   })
 
-  it('keeps the legacy landing composition reachable while samples and cms shortcuts remain visible', () => {
+  it('keeps the legacy landing composition reachable while the samples host owns the entrypoint', () => {
+    expect(landingLegacyHostSource).toContain("import './styles/landing.css'")
+    expect(landingLegacyHostSource).toContain("export { default } from './App.vue'")
     expect(landingAppSource).toContain('LandingNewTopNav')
     expect(landingAppSource).toContain('LandingNewHeroSection')
     expect(landingAppSource).toContain('LandingNewVideoSection')
@@ -54,6 +62,12 @@ describe('Landing consolidation coverage', () => {
     expect(landingAppSource).toContain('href="/?samples=1"')
     expect(landingAppSource).not.toContain('LandingHeaderSection')
     expect(landingAppSource).not.toContain('LandingThemesSection')
+  })
+
+  it('keeps the samples html shell as the canonical app bootstrap document', () => {
+    expect(samplesIndexSource).toContain('<div id="app"></div>')
+    expect(samplesIndexSource).toContain('<script type="module" src="./main.ts"></script>')
+    expect(samplesIndexSource).toContain('href="/favicon.png"')
   })
 
   it('removes the dev-only legacy landing artifact from the canonical source tree', () => {
@@ -79,6 +93,12 @@ describe('Landing consolidation coverage', () => {
     expect(referenceSamplesSource).toContain('useReferenceWorkspaceHost')
     expect(referenceSamplesSource).toContain('ReferenceWorkspaceShell')
     expect(referenceSamplesSource).toContain('ReferenceWorkspaceComposer')
+  })
+
+  it('keeps the samples showcase host consuming shared template surfaces from src', () => {
+    expect(templateShowcaseSource).toContain("from '../src/templates'")
+    expect(templateShowcaseSource).toContain('ReferenceWorkspaceComposer')
+    expect(templateShowcaseSource).toContain('CmsAuthoringWorkbench')
   })
 
   it('keeps landing typography controls exposed in CMS for the shared authoring model', () => {

@@ -881,6 +881,7 @@ interface ThemeGradients {
 
 ### Template Runtime Preview
 
+- `samples/` is the canonical runtime host that consumes the reusable libraries in `src/**`.
 - `/` renders the reference catalog with approved systems, live template previews, and whitelabel preset switching.
 - `/?samples=1` renders the report workspace runtime backed by the shared reference shell.
 - `/?templates=1` renders the enterprise template showcase used by the visual-regression gate.
@@ -890,7 +891,7 @@ interface ThemeGradients {
 - Local preview command:
 
 ```bash
-npm run dev:landing
+npm run dev:samples
 ```
 
 ### Template-First Delivery

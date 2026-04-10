@@ -29,9 +29,11 @@
     "build": "npm run build:js && npm run build:dts",
     "build:js": "tsup",
     "build:dts": "vue-tsc --declaration --emitDeclarationOnly --outDir .build/dist",
-    "build:landing": "vite build",
-    "dev": "npm run dev:landing",
-    "dev:landing": "vite",
+    "build:samples": "vite build",
+    "build:landing": "npm run build:samples",
+    "dev": "npm run dev:samples",
+    "dev:samples": "vite",
+    "dev:landing": "npm run dev:samples",
     "dev:lib": "tsup --watch",
     "prepublishOnly": "npm run build",
     "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts",
@@ -40,7 +42,7 @@
     "test:ui": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --ui --config tests/vitest.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
-    "lint": "eslint src --ext .ts,.vue",
+    "lint": "eslint src samples --ext .ts,.vue",
     "type-check": "vue-tsc --noEmit"
   },
   "keywords": [

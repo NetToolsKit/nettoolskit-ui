@@ -19,6 +19,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["index.ts", "src/**/*", "landing-page/**/*", "vite.config.ts"],
+  "include": ["index.ts", "src/**/*", "landing-page/**/*", "samples/**/*", "vite.config.ts"],
   "exclude": ["node_modules", "dist", "tests", "**/*.spec.ts"]
 }
