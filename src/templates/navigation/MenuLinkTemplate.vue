@@ -182,8 +182,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, inject } from 'vue'
+import { routeLocationKey } from 'vue-router'
 
 import type { TemplateMenuChildItem, TemplateMenuItem } from './menu-template.types'
 
@@ -204,7 +204,7 @@ const emit = defineEmits<{
   'item-click': [item: TemplateMenuItem | TemplateMenuChildItem]
 }>()
 
-const route = useRoute()
+const route = inject(routeLocationKey, null)
 
 const visibleChildren = computed<TemplateMenuChildItem[]>(() => props.item.children ?? [])
 const hasChildren = computed<boolean>(() => visibleChildren.value.length > 0)
@@ -215,11 +215,11 @@ function isTargetActive(to?: string, routeName?: string): boolean {
     return false
   }
 
-  if (routeName && String(route.name ?? '') === routeName) {
+  if (routeName && String(route?.name ?? '') === routeName) {
     return true
   }
   if (to) {
-    return route.path === to || route.path.startsWith(`${to}/`)
+    return route?.path === to || Boolean(route?.path?.startsWith(`${to}/`))
   }
   return false
 }

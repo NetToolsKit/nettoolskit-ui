@@ -159,7 +159,8 @@
     </q-drawer>
 
     <q-page-container :class="['ntk-template-main-layout__page-container', pageContainerClass]">
-      <router-view
+      <component
+        :is="RouterView"
         v-if="useRouterView"
         v-slot="{ Component, route }"
       >
@@ -172,7 +173,7 @@
             :key="route.path"
           />
         </transition>
-      </router-view>
+      </component>
       <slot v-else />
     </q-page-container>
 
@@ -183,6 +184,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { RouterView } from 'vue-router'
 
 import AppBreadcrumbTemplate from '../navigation/AppBreadcrumbTemplate.vue'
 import HorizontalMenuLinkTemplate from '../navigation/HorizontalMenuLinkTemplate.vue'

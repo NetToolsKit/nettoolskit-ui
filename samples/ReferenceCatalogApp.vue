@@ -19,23 +19,26 @@
     @profile-click="onProfileClick"
     @back-home-click="onBackHomeClick"
   >
-    <ReferenceCatalogTemplate
-      :active-section-mode="activeSectionMode"
-      :selected-preset="selectedPreset"
-      :selected-surface-id="selectedSurfaceId"
-      :selected-surface="selectedSurface"
-      :surfaces="filteredSurfaces"
-      :presets="availablePresets"
-      :hero-stats="referenceHeroStats"
-      :preset-callouts="referencePresetCallouts"
-      :architecture-cards="referenceArchitectureCards"
-      :runtime-links="referenceRuntimeLinks"
-      :search-value="searchValue"
-      :whitelabel-style-vars="whitelabelStyleVars"
-      @update:search-value="searchValue = $event"
-      @select-surface="onSurfaceSelect"
-      @open-runtime="openRuntime"
-    />
+    <div class="ntk-reference-catalog-app">
+      <ReferenceCatalogTemplate
+        :active-section-mode="activeSectionMode"
+        :selected-preset="selectedPreset"
+        :selected-surface-id="selectedSurfaceId"
+        :selected-surface="selectedSurface"
+        :surfaces="filteredSurfaces"
+        :presets="availablePresets"
+        :hero-stats="referenceHeroStats"
+        :preset-callouts="referencePresetCallouts"
+        :architecture-cards="referenceArchitectureCards"
+        :runtime-links="referenceRuntimeLinks"
+        :search-value="searchValue"
+        :whitelabel-style-vars="whitelabelStyleVars"
+        @update:search-value="searchValue = $event"
+        @select-surface="onSurfaceSelect"
+        @open-runtime="openRuntime"
+      />
+      <SamplesNavigationHub />
+    </div>
   </ReferenceWorkspaceShell>
 </template>
 
@@ -50,6 +53,7 @@ import {
   referenceRuntimeLinks,
   useReferenceCatalogHost,
 } from '../src/templates/features/reference-system'
+import SamplesNavigationHub from './reference-hub/SamplesNavigationHub.vue'
 
 function navigateTo(href: string): void {
   if (typeof window !== 'undefined') {
@@ -96,3 +100,11 @@ const {
   onBackHome: () => onBackHomeClick(),
 })
 </script>
+
+<style scoped lang="scss">
+.ntk-reference-catalog-app {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+</style>

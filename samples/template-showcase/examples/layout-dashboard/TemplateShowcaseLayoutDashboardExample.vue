@@ -12,6 +12,8 @@
       :show-drawer="false"
       :show-breadcrumb="false"
       :persist-mode="false"
+      @account-click="layoutActionMessage = 'Opened the account menu from the layout shell.'"
+      @logout-click="layoutActionMessage = 'Triggered the layout sign-out action.'"
     >
       <DashboardTemplate
         title="Template operations dashboard"
@@ -22,11 +24,20 @@
         :top-items="templateShowcaseDashboardSample.topItems"
       />
     </MainLayoutTemplate>
+    <SampleActionStatus
+      title="Layout action"
+      :message="layoutActionMessage"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import MainLayoutTemplate from '../../../../src/templates/layouts/MainLayoutTemplate.vue'
 import DashboardTemplate from '../../../../src/templates/pages/dashboard/DashboardTemplate.vue'
+import SampleActionStatus from '../../../shared/SampleActionStatus.vue'
 import { templateShowcaseDashboardSample } from '../../template-showcase.sample-data'
+
+const layoutActionMessage = ref('Use the user menu controls in the layout shell to inspect live interactions.')
 </script>

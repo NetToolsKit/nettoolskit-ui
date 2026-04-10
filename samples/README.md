@@ -33,8 +33,12 @@ npm run dev:samples
 
 - `ReferenceCatalogApp.vue`
   - canonical catalog host for the approved reference system
+- `reference-hub/**`
+  - root navigation and template-selection surfaces for the samples runtime
 - `ReferenceSamplesApp.vue`
   - report workspace sample host
+- `shared/**`
+  - sample-only reusable helpers for interaction feedback and runtime glue
 - `TemplateShowcaseApp.vue`
   - thin orchestrator for the template showcase
 - `template-showcase/families/**`

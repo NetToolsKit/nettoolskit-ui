@@ -106,6 +106,20 @@
   gap: 18px;
 }
 
+.ntk-template-showcase__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ntk-template-showcase__empty {
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1px dashed rgba(15, 23, 42, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  color: #475569;
+}
+
 .ntk-template-family {
   position: relative;
   overflow: hidden;

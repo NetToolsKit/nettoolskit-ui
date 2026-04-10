@@ -54,7 +54,7 @@
 
     <div class="ntk-template-family__examples">
       <article
-        v-for="example in family.examples"
+        v-for="example in visibleExamples"
         :key="example.id"
         class="ntk-template-family__example"
       >
@@ -84,9 +84,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import type { TemplateVisualFamilyDefinition } from '../families/template-visual-families.types'
 
-defineProps<{
+const props = defineProps<{
   family: TemplateVisualFamilyDefinition
+  focusedExampleId?: string | null
 }>()
+
+const visibleExamples = computed(() => {
+  if (!props.focusedExampleId) {
+    return props.family.examples
+  }
+
+  return props.family.examples.filter(example => example.id === props.focusedExampleId)
+})
 </script>

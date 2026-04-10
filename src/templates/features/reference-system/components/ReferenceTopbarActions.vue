@@ -3,6 +3,7 @@
     <div class="ntk-reference-topbar__search">
       <q-input
         v-model="internalSearch"
+        name="reference-topbar-search"
         dense
         outlined
         placeholder="Search screens, flows or tokens..."
@@ -130,6 +131,7 @@
 
       <q-select
         :model-value="selectedPresetId"
+        name="reference-topbar-preset"
         dense
         outlined
         emit-value

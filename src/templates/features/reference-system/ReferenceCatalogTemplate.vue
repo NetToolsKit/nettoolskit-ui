@@ -16,6 +16,8 @@
             size="18px"
           />
           <input
+            id="reference-catalog-search"
+            name="reference-catalog-search"
             :value="searchValue"
             type="text"
             placeholder="Search systems, templates or surfaces..."

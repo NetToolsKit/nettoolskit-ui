@@ -30,15 +30,28 @@
         :zoom-value="referenceShowcaseZoomValue"
         @update:search-value="referenceShowcaseSearchValue = $event"
         @update:active-report-id="referenceShowcaseActiveReportId = $event"
-        @report-select="referenceShowcaseActiveReportId = $event"
+        @report-select="handleReferenceReportSelect"
+        @manager-action-click="handleReferenceAction"
         @update:active-document-tab-id="referenceShowcaseActiveDocumentTabId = $event"
+        @toolbar-action-click="handleReferenceAction"
+        @widget-click="handleReferenceAction"
+        @canvas-object-click="handleReferenceAction"
+        @rail-action-click="handleReferenceAction"
+        @status-click="handleReferenceAction"
         @update:zoom-value="referenceShowcaseZoomValue = $event"
       />
     </div>
+    <SampleActionStatus
+      title="Reference action"
+      :message="referenceMessage"
+      tone="success"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import {
   ReferenceWorkspaceComposer,
   referenceSampleDesignerConfig,
@@ -47,6 +60,7 @@ import {
   referenceSampleReportGroups,
   useReferenceWorkspaceHost,
 } from '../../../../src/templates/features/reference-system'
+import SampleActionStatus from '../../../shared/SampleActionStatus.vue'
 
 const {
   activeDocumentTabId: referenceShowcaseActiveDocumentTabId,
@@ -62,4 +76,15 @@ const {
   initialPresetId: 'reference-night',
   persistPreset: false,
 })
+
+const referenceMessage = ref('Use the manager or designer controls to inspect the reference workspace interactions.')
+
+function handleReferenceAction(actionId: string): void {
+  referenceMessage.value = `Reference workspace action executed: ${actionId}.`
+}
+
+function handleReferenceReportSelect(reportId: string): void {
+  referenceShowcaseActiveReportId.value = reportId
+  referenceMessage.value = `Reference report selected: ${reportId}.`
+}
 </script>

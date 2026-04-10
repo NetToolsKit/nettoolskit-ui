@@ -46,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, inject } from 'vue'
+import { routeLocationKey, routerKey } from 'vue-router'
 
 import type { TemplateBreadcrumbItem } from './menu-template.types'
 
@@ -61,14 +61,14 @@ const props = withDefaults(defineProps<{
   homePath: '/',
 })
 
-const route = useRoute()
-const router = useRouter()
+const route = inject(routeLocationKey, null)
+const router = inject(routerKey, null)
 
 const resolvedItems = computed<TemplateBreadcrumbItem[]>(() => {
   if (props.items && props.items.length > 0) {
     return props.items
   }
-  const fromMeta = (route.meta?.breadcrumb ?? []) as TemplateBreadcrumbItem[]
+  const fromMeta = (route?.meta?.breadcrumb ?? []) as TemplateBreadcrumbItem[]
   return fromMeta
 })
 
@@ -80,15 +80,22 @@ function capitalize(text: string): string {
 }
 
 function navigateTo(routeName?: string, path?: string): void {
+  if (!router) {
+    if (path && typeof window !== 'undefined') {
+      window.location.href = path
+    }
+    return
+  }
+
   if (routeName) {
-    if (String(route.name ?? '') === routeName) {
+    if (String(route?.name ?? '') === routeName) {
       return
     }
     void router.push({ name: routeName })
     return
   }
   if (path) {
-    if (route.path === path) {
+    if (route?.path === path) {
       return
     }
     void router.push(path)

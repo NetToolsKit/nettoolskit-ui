@@ -14,14 +14,14 @@
               NetToolsKit Samples Visual Families
             </h1>
             <p class="ntk-template-showcase__subtitle">
-              Five reusable families built on top of the same `src/**` templates, parameterized by whitelabel-style configuration instead of duplicated implementations.
+              {{ showcaseSubtitle }}
             </p>
           </div>
 
           <div class="ntk-template-showcase__stats">
             <article class="ntk-template-showcase__stat">
               <span>Visual families</span>
-              <strong>{{ templateVisualFamilies.length }}</strong>
+              <strong>{{ visibleFamilies.length }}</strong>
             </article>
             <article class="ntk-template-showcase__stat">
               <span>Unique examples</span>
@@ -33,6 +33,31 @@
             </article>
           </div>
         </header>
+
+        <section class="ntk-template-showcase__hero-actions">
+          <q-btn
+            no-caps
+            unelevated
+            color="primary"
+            label="Back to home"
+            @click="navigateTo('/')"
+          />
+          <q-btn
+            no-caps
+            flat
+            color="primary"
+            label="Open report workspace"
+            @click="navigateTo('/?samples=1')"
+          />
+          <q-btn
+            v-if="hasActiveFilter"
+            no-caps
+            outline
+            color="primary"
+            label="Clear selection"
+            @click="navigateTo('/?templates=1')"
+          />
+        </section>
 
         <section class="ntk-template-showcase__catalog-grid">
           <article
@@ -46,10 +71,17 @@
         </section>
 
         <section class="ntk-template-showcase__family-list">
+          <div
+            v-if="visibleFamilies.length === 0"
+            class="ntk-template-showcase__empty"
+          >
+            No visual families matched the current selection.
+          </div>
           <TemplateVisualFamilySection
-            v-for="family in templateVisualFamilies"
+            v-for="family in visibleFamilies"
             :key="family.id"
             :family="family"
+            :focused-example-id="focusedExampleId"
           />
         </section>
       </q-page>
@@ -66,6 +98,13 @@ import { templateVisualFamilies } from './template-showcase/families/template-vi
 import { templateShowcaseExampleRegistry } from './template-showcase/template-showcase.examples'
 import './template-showcase/template-showcase.css'
 
+const searchParams = typeof window === 'undefined'
+  ? new URLSearchParams()
+  : new URLSearchParams(window.location.search)
+
+const focusedFamilyId = searchParams.get('family')
+const focusedExampleId = searchParams.get('example')
+
 const templatesByArea = computed(() => {
   return TEMPLATE_AREAS.map(area => ({
     area,
@@ -76,4 +115,40 @@ const templatesByArea = computed(() => {
 const readyTemplateCount = computed(() => {
   return templateCatalogRegistry.filter(entry => entry.status === 'ready').length
 })
+
+const visibleFamilies = computed(() => {
+  return templateVisualFamilies.filter(family => {
+    const matchesFamily = !focusedFamilyId || family.id === focusedFamilyId
+    const matchesExample = !focusedExampleId || family.examples.some(example => example.id === focusedExampleId)
+    return matchesFamily && matchesExample
+  })
+})
+
+const hasActiveFilter = computed(() => {
+  return Boolean(focusedFamilyId || focusedExampleId)
+})
+
+const showcaseSubtitle = computed(() => {
+  if (focusedFamilyId) {
+    const family = templateVisualFamilies.find(item => item.id === focusedFamilyId)
+    return family
+      ? `Focused on the ${family.label} pack. The same shared templates are being rendered through that whitelabel configuration.`
+      : 'Family filter active. The showcase is focused on the selected visual pack.'
+  }
+
+  if (focusedExampleId) {
+    const example = templateShowcaseExampleRegistry.find(item => item.id === focusedExampleId)
+    return example
+      ? `Focused on the ${example.label} example. You are seeing only the families that reuse this template composition.`
+      : 'Example filter active. The showcase is focused on the selected reusable template.'
+  }
+
+  return 'Five reusable families built on top of the same `src/**` templates, parameterized by whitelabel-style configuration instead of duplicated implementations.'
+})
+
+function navigateTo(href: string): void {
+  if (typeof window !== 'undefined') {
+    window.location.href = href
+  }
+}
 </script>
