@@ -28,3 +28,16 @@ Runtime host for the approved samples catalog and showcase flows.
 ```bash
 npm run dev:samples
 ```
+
+## Structure
+
+- `ReferenceCatalogApp.vue`
+  - canonical catalog host for the approved reference system
+- `ReferenceSamplesApp.vue`
+  - report workspace sample host
+- `TemplateShowcaseApp.vue`
+  - thin orchestrator for the template showcase
+- `template-showcase/examples/**`
+  - one subfolder per rendered showcase example
+- `template-showcase/template-showcase.sample-data.ts`
+  - shared static sample content for the showcase

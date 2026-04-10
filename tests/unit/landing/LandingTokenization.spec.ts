@@ -23,6 +23,8 @@ const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
 const referenceCatalogSource = readRepoFile('../../../samples/ReferenceCatalogApp.vue')
 const referenceSamplesSource = readRepoFile('../../../samples/ReferenceSamplesApp.vue')
 const templateShowcaseSource = readRepoFile('../../../samples/TemplateShowcaseApp.vue')
+const templateShowcaseReferenceSystemSource = readRepoFile('../../../samples/template-showcase/examples/reference-system/TemplateShowcaseReferenceSystemExample.vue')
+const templateShowcaseCmsSource = readRepoFile('../../../samples/template-showcase/examples/cms-authoring/TemplateShowcaseCmsAuthoringExample.vue')
 const packageJsonSource = readRepoFile('../../../package.json')
 const landingStylesSource = readRepoFile('../../../landing-page/styles/landing.css')
 const themeFieldCatalogSource = readRepoFile('../../../src/modules/cms/white-label/authoring/theme-field-catalog.ts')
@@ -97,8 +99,10 @@ describe('Samples runtime consolidation coverage', () => {
 
   it('keeps the samples showcase host consuming shared template surfaces from src', () => {
     expect(templateShowcaseSource).toContain("from '../src/templates'")
-    expect(templateShowcaseSource).toContain('ReferenceWorkspaceComposer')
-    expect(templateShowcaseSource).toContain('CmsAuthoringWorkbench')
+    expect(templateShowcaseSource).toContain("from './template-showcase/examples/reference-system/TemplateShowcaseReferenceSystemExample.vue'")
+    expect(templateShowcaseSource).toContain("from './template-showcase/examples/cms-authoring/TemplateShowcaseCmsAuthoringExample.vue'")
+    expect(templateShowcaseReferenceSystemSource).toContain('ReferenceWorkspaceComposer')
+    expect(templateShowcaseCmsSource).toContain('CmsAuthoringWorkbench')
   })
 
   it('keeps landing typography controls exposed in CMS for the shared authoring model', () => {
