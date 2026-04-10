@@ -1,54 +1,58 @@
 <template>
-  <div class="ntk-template-showcase">
-    <header
-      class="ntk-template-showcase__hero"
-      data-template-surface="catalog"
-    >
-      <div>
-        <p class="ntk-template-showcase__kicker">
-          Template-first enterprise baseline
-        </p>
-        <h1 class="ntk-template-showcase__title">
-          NetToolsKit Template Catalog Showcase
-        </h1>
-        <p class="ntk-template-showcase__subtitle">
-          Visual regression preview for reusable layouts, pages, features and integration scaffolds.
-        </p>
-      </div>
+  <q-layout view="lHh Lpr lFf">
+    <q-page-container>
+      <q-page class="ntk-template-showcase">
+        <header
+          class="ntk-template-showcase__hero"
+          data-template-surface="catalog"
+        >
+          <div>
+            <p class="ntk-template-showcase__kicker">
+              Template-first enterprise baseline
+            </p>
+            <h1 class="ntk-template-showcase__title">
+              NetToolsKit Template Catalog Showcase
+            </h1>
+            <p class="ntk-template-showcase__subtitle">
+              Visual regression preview for reusable layouts, pages, features and integration scaffolds.
+            </p>
+          </div>
 
-      <div class="ntk-template-showcase__stats">
-        <article class="ntk-template-showcase__stat">
-          <span>Total templates</span>
-          <strong>{{ templateCatalogRegistry.length }}</strong>
-        </article>
-        <article class="ntk-template-showcase__stat">
-          <span>Ready templates</span>
-          <strong>{{ readyTemplateCount }}</strong>
-        </article>
-      </div>
-    </header>
+          <div class="ntk-template-showcase__stats">
+            <article class="ntk-template-showcase__stat">
+              <span>Total templates</span>
+              <strong>{{ templateCatalogRegistry.length }}</strong>
+            </article>
+            <article class="ntk-template-showcase__stat">
+              <span>Ready templates</span>
+              <strong>{{ readyTemplateCount }}</strong>
+            </article>
+          </div>
+        </header>
 
-    <section class="ntk-template-showcase__catalog-grid">
-      <article
-        v-for="item in templatesByArea"
-        :key="item.area"
-        class="ntk-template-showcase__catalog-card"
-      >
-        <strong>{{ item.area }}</strong>
-        <span>{{ item.count }} entries</span>
-      </article>
-    </section>
+        <section class="ntk-template-showcase__catalog-grid">
+          <article
+            v-for="item in templatesByArea"
+            :key="item.area"
+            class="ntk-template-showcase__catalog-card"
+          >
+            <strong>{{ item.area }}</strong>
+            <span>{{ item.count }} entries</span>
+          </article>
+        </section>
 
-    <TemplateShowcaseLayoutDashboardExample />
-    <TemplateShowcaseAuthLoginExample />
-    <TemplateShowcaseDashboardWorkspaceExample />
-    <TemplateShowcaseCrudProfilePlaceholderExample />
-    <TemplateShowcaseEditorWorkbenchExample />
-    <TemplateShowcaseEnterpriseExample />
-    <TemplateShowcaseKnowledgeExample />
-    <TemplateShowcaseReferenceSystemExample />
-    <TemplateShowcaseCmsAuthoringExample />
-  </div>
+        <TemplateShowcaseLayoutDashboardExample />
+        <TemplateShowcaseAuthLoginExample />
+        <TemplateShowcaseDashboardWorkspaceExample />
+        <TemplateShowcaseCrudProfilePlaceholderExample />
+        <TemplateShowcaseEditorWorkbenchExample />
+        <TemplateShowcaseEnterpriseExample />
+        <TemplateShowcaseKnowledgeExample />
+        <TemplateShowcaseReferenceSystemExample />
+        <TemplateShowcaseCmsAuthoringExample />
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">
