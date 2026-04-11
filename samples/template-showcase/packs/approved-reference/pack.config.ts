@@ -1,0 +1,135 @@
+import type { TemplateVisualFamilyConfig } from '../../families/template-visual-families.types'
+import { approvedReferenceLogoUrl, createPackVariant } from '../pack-helpers'
+
+export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
+  id: 'approved-reference',
+  label: 'Approved Reference',
+  kicker: 'baseline from approved local reference',
+  description:
+    'The closest match to the approved local layout in `.temp/reference`, kept as the canonical comparison model before the remaining whitelabel variations.',
+  layout: 'editorial',
+  exampleId: 'layout-dashboard',
+  metrics: [
+    { id: 'approved-m1', label: 'Baseline source', value: '.temp/reference' },
+    { id: 'approved-m2', label: 'Theme variants', value: 'Light and dark' },
+    { id: 'approved-m3', label: 'Focus', value: 'Header, drawer, KPI rhythm' },
+  ],
+  notes: [
+    { id: 'approved-n1', label: 'Shell', value: 'White toolbar, slate drawer, compact actions' },
+    { id: 'approved-n2', label: 'Usage', value: 'Primary comparison point for all approvals' },
+    { id: 'approved-n3', label: 'Approach', value: 'Shared templates plus whitelabel tokens only' },
+  ],
+  variants: [
+    createPackVariant(
+      'approved-reference-light',
+      'Light Theme',
+      'light',
+      'reference-light',
+      'Closest screenshot-ready version of the approved shell and dashboard.',
+      {
+        label: 'Approved Reference Light',
+        description: 'Faithful light variant for the approved shell and dashboard review flow.',
+        brand: {
+          name: 'SMB Conecta',
+          subtitle: 'Approved light variant',
+          kicker: 'approved local reference',
+          description: 'Faithful light interpretation of the approved local reference.',
+          logoText: 'SC',
+          logoUrl: approvedReferenceLogoUrl,
+        },
+        palette: {
+          primary: '#0f766e',
+          primaryDark: '#334155',
+          primaryLight: '#7dd3fc',
+          secondary: '#1e293b',
+          accent: '#0f766e',
+          background: '#f5f6f8',
+          backgroundMuted: '#eef2f5',
+          surface: '#ffffff',
+          surfaceAlt: '#f8fafc',
+          text: '#1e293b',
+          textMuted: '#64748b',
+          border: '#d5dde7',
+          success: '#10b981',
+          warning: '#f59e0b',
+          error: '#ef4444',
+          info: '#3b82f6',
+        },
+        typography: {
+          display: 'Inter, "Segoe UI", system-ui, sans-serif',
+          body: 'Inter, "Segoe UI", system-ui, sans-serif',
+        },
+        radius: {
+          sm: '8px',
+          md: '12px',
+          lg: '16px',
+          xl: '24px',
+          pill: '999px',
+        },
+        shadow: {
+          soft: '0 1px 3px rgba(0, 0, 0, 0.05)',
+          medium: '0 4px 16px rgba(15, 23, 42, 0.08)',
+          strong: '0 18px 44px rgba(15, 23, 42, 0.14)',
+        },
+        gradients: {
+          hero: 'linear-gradient(180deg, #f5f6f8 0%, #eef2f5 100%)',
+          panel: 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 1) 100%)',
+          accent: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+        },
+      }
+    ),
+    createPackVariant(
+      'approved-reference-dark',
+      'Dark Theme',
+      'dark',
+      'reference-night',
+      'Dark counterpart of the approved shell, preserving hierarchy while switching to a denser review mode.',
+      {
+        label: 'Approved Reference Dark',
+        description: 'Approved shell translated into a dark review-oriented whitelabel preset.',
+        brand: {
+          name: 'SMB Conecta',
+          subtitle: 'Approved dark variant',
+          kicker: 'approved local reference',
+          description: 'Dark interpretation of the approved local reference with the same layout hierarchy.',
+          logoText: 'SC',
+          logoUrl: approvedReferenceLogoUrl,
+        },
+        palette: {
+          primary: '#2dd4bf',
+          primaryDark: '#0f172a',
+          primaryLight: '#99f6e4',
+          secondary: '#020617',
+          accent: '#22d3ee',
+          background: '#030712',
+          backgroundMuted: '#081321',
+          surface: '#0b1220',
+          surfaceAlt: '#111c2d',
+          text: '#e2edf5',
+          textMuted: '#8ba1b6',
+          border: '#1f3146',
+          success: '#34d399',
+          warning: '#fbbf24',
+          error: '#fb7185',
+          info: '#38bdf8',
+        },
+        typography: {
+          display: 'Inter, "Segoe UI", system-ui, sans-serif',
+          body: 'Inter, "Segoe UI", system-ui, sans-serif',
+        },
+        radius: {
+          sm: '8px',
+          md: '12px',
+          lg: '16px',
+          xl: '24px',
+          pill: '999px',
+        },
+        gradients: {
+          hero: 'radial-gradient(circle at 14% 16%, rgba(45, 212, 191, 0.18), transparent 34%), radial-gradient(circle at 84% 10%, rgba(56, 189, 248, 0.16), transparent 28%), linear-gradient(180deg, #030712 0%, #081321 100%)',
+          panel: 'linear-gradient(180deg, rgba(11, 18, 32, 0.98) 0%, rgba(17, 28, 45, 1) 100%)',
+          accent: 'linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%)',
+        },
+      }
+    ),
+  ],
+}

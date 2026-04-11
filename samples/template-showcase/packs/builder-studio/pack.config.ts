@@ -1,0 +1,133 @@
+import type { TemplateVisualFamilyConfig } from '../../families/template-visual-families.types'
+import { createPackVariant } from '../pack-helpers'
+
+export const builderStudioPackConfig: TemplateVisualFamilyConfig = {
+  id: 'builder-studio',
+  label: 'Builder Studio',
+  kicker: 'precision editing and instrumentation',
+  description:
+    'A curated editor workbench sample that keeps the same creation workflow while swapping between an airy builder review mode and a dark precision studio mode.',
+  layout: 'laboratory',
+  exampleId: 'editor-workbench',
+  metrics: [
+    { id: 'builder-m1', label: 'Surface', value: 'Workbench and inspector rails' },
+    { id: 'builder-m2', label: 'Theme variants', value: 'Light and dark' },
+    { id: 'builder-m3', label: 'Interaction', value: 'Widgets, zoom, canvas, status rails' },
+  ],
+  notes: [
+    { id: 'builder-n1', label: 'Light mode', value: 'Builder review with clearer panels and airy chrome' },
+    { id: 'builder-n2', label: 'Dark mode', value: 'Technical studio with compact precision surfaces' },
+    { id: 'builder-n3', label: 'Reuse', value: 'Same editor component with whitelabel-only changes' },
+  ],
+  variants: [
+    createPackVariant(
+      'builder-studio-light',
+      'Light Theme',
+      'light',
+      'reference-light',
+      'Airy builder mode for design review, onboarding, and training walkthroughs.',
+      {
+        label: 'Builder Studio Light',
+        description: 'Light builder shell with airy panels and clearer authoring hierarchy.',
+        brand: {
+          name: 'Builder Studio',
+          subtitle: 'Light builder variant',
+          kicker: 'precision workspace',
+          description: 'Light builder preset for review, training, and collaborative composition.',
+          logoText: 'BS',
+        },
+        palette: {
+          primary: '#0284c7',
+          primaryDark: '#075985',
+          primaryLight: '#7dd3fc',
+          secondary: '#0f172a',
+          accent: '#8b5cf6',
+          background: '#eff6ff',
+          backgroundMuted: '#dbeafe',
+          surface: '#ffffff',
+          surfaceAlt: '#f6faff',
+          text: '#0f172a',
+          textMuted: '#52627a',
+          border: '#c8d7f0',
+          success: '#16a34a',
+          warning: '#d97706',
+          error: '#dc2626',
+          info: '#0284c7',
+        },
+        typography: {
+          display: '"IBM Plex Sans", "Space Grotesk", sans-serif',
+          body: '"IBM Plex Sans", "Inter", sans-serif',
+        },
+        radius: {
+          sm: '10px',
+          md: '14px',
+          lg: '20px',
+          xl: '28px',
+          pill: '999px',
+        },
+        gradients: {
+          hero: 'radial-gradient(circle at 10% 14%, rgba(2, 132, 199, 0.16), transparent 30%), radial-gradient(circle at 84% 12%, rgba(139, 92, 246, 0.14), transparent 26%), linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%)',
+          panel: 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 250, 255, 1) 100%)',
+          accent: 'linear-gradient(135deg, #0284c7 0%, #8b5cf6 100%)',
+        },
+      }
+    ),
+    createPackVariant(
+      'builder-studio-dark',
+      'Dark Theme',
+      'dark',
+      'reference-graphite',
+      'Precision studio mode tuned for dense authoring, inspector work, and low-noise execution.',
+      {
+        label: 'Builder Studio Dark',
+        description: 'Precision-focused dark shell for editors, builders, and configuration tools.',
+        brand: {
+          name: 'Builder Studio',
+          subtitle: 'Dark builder variant',
+          kicker: 'precision workspace',
+          description: 'Dark builder preset optimized for dense authoring and low-noise execution.',
+          logoText: 'BS',
+        },
+        palette: {
+          primary: '#38bdf8',
+          primaryDark: '#0f3f57',
+          primaryLight: '#bae6fd',
+          secondary: '#06121a',
+          accent: '#a78bfa',
+          background: '#071019',
+          backgroundMuted: '#101b29',
+          surface: '#0c1724',
+          surfaceAlt: '#152235',
+          text: '#e2edf7',
+          textMuted: '#93a8bc',
+          border: '#24374d',
+          success: '#4ade80',
+          warning: '#fbbf24',
+          error: '#f87171',
+          info: '#38bdf8',
+        },
+        typography: {
+          display: '"IBM Plex Sans", "Space Grotesk", sans-serif',
+          body: '"IBM Plex Sans", "Inter", sans-serif',
+        },
+        radius: {
+          sm: '8px',
+          md: '12px',
+          lg: '18px',
+          xl: '24px',
+          pill: '999px',
+        },
+        shadow: {
+          soft: '0 10px 26px rgba(3, 7, 18, 0.4)',
+          medium: '0 22px 50px rgba(3, 7, 18, 0.54)',
+          strong: '0 34px 78px rgba(3, 7, 18, 0.64)',
+        },
+        gradients: {
+          hero: 'radial-gradient(circle at 10% 14%, rgba(56, 189, 248, 0.18), transparent 30%), radial-gradient(circle at 82% 12%, rgba(167, 139, 250, 0.18), transparent 26%), linear-gradient(180deg, #071019 0%, #101b29 100%)',
+          panel: 'linear-gradient(180deg, rgba(12, 23, 36, 0.98) 0%, rgba(21, 34, 53, 1) 100%)',
+          accent: 'linear-gradient(135deg, #38bdf8 0%, #60a5fa 52%, #a78bfa 100%)',
+        },
+      }
+    ),
+  ],
+}

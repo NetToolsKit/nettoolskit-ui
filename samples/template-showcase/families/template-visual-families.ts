@@ -3,8 +3,8 @@ import {
   resolveReferenceWhitelabelPreset,
   type ReferenceWhitelabelPreset,
 } from '../../../src/whitelabel'
+import { templateVisualFamilyConfigs } from '../packs'
 import { findTemplateShowcaseExample } from '../template-showcase.examples'
-import { templateVisualFamilyConfigs } from './template-visual-families.config'
 import type {
   ReferenceWhitelabelPresetOverrides,
   TemplateVisualFamilyVariantDefinition,
