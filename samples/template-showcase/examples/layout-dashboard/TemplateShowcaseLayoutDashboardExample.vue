@@ -6,7 +6,7 @@
     <h2>Approved Reference Dashboard</h2>
     <MainLayoutTemplate
       :menu-items="menuItems"
-      :app-name="currentAppName"
+      :app-name="approvedReferenceBrand.name"
       user-name="Guilherme Ferreira"
       user-initials="GF"
       :show-breadcrumb="false"
@@ -23,17 +23,22 @@
       <template #brand>
         <div class="ntk-template-showcase__approved-brand">
           <img
-            v-if="currentLogoUrl"
-            :src="currentLogoUrl"
-            :alt="currentAppName"
+            v-if="approvedReferenceBrand.logoUrl"
+            :src="approvedReferenceBrand.logoUrl"
+            :alt="approvedReferenceBrand.name"
             class="ntk-template-showcase__approved-brand-image"
           >
-          <span
+          <div
             v-else
-            class="ntk-template-showcase__approved-brand-text"
+            class="ntk-template-showcase__approved-brand-fallback"
           >
-            {{ currentAppName }}
-          </span>
+            <span class="ntk-template-showcase__approved-brand-badge">
+              {{ approvedReferenceBrand.badge }}
+            </span>
+            <span class="ntk-template-showcase__approved-brand-text">
+              {{ approvedReferenceBrand.name }}
+            </span>
+          </div>
         </div>
       </template>
 
@@ -42,7 +47,7 @@
           :model-value="layoutControls.horizontalMode"
           :show-labels-in-mini="layoutControls.showLabelsInMini"
           :side-menu-variant="layoutControls.sideMenuVariant"
-          :app-name="currentAppName"
+          :app-name="approvedReferenceBrand.name"
           profile-name="Guilherme Ferreira"
           profile-initials="GF"
           sign-out-label="Sair"
@@ -89,18 +94,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 import MainLayoutTemplate from '../../../../src/templates/layouts/MainLayoutTemplate.vue'
 import type { TemplateMenuChildItem, TemplateMenuItem } from '../../../../src/templates/navigation/menu-template.types'
 import UserMenuTemplate from '../../../../src/templates/navigation/UserMenuTemplate.vue'
 import DashboardTemplate from '../../../../src/templates/pages/dashboard/DashboardTemplate.vue'
 import SampleActionStatus from '../../../shared/SampleActionStatus.vue'
-import { useTemplateVisualThemeContext } from '../../families/template-visual-family.context'
+import { approvedReferenceLogoUrl } from '../../packs/pack-helpers'
 import { templateShowcaseDashboardSample } from '../../template-showcase.sample-data'
 import TemplateShowcaseReferenceCharts from './TemplateShowcaseReferenceCharts.vue'
-
-const themeVariant = useTemplateVisualThemeContext()
 
 const menuItems: TemplateMenuItem[] = [
   {
@@ -128,14 +131,11 @@ const menuItems: TemplateMenuItem[] = [
 
 const activeMenuId = ref('dashboard')
 const layoutActionMessage = ref('Comparando o dashboard aprovado com a configuracao visual selecionada.')
-
-const currentAppName = computed(() => {
-  return themeVariant?.preset.brand.name ?? 'SMB Conecta'
-})
-
-const currentLogoUrl = computed(() => {
-  return themeVariant?.preset.brand.logoUrl ?? null
-})
+const approvedReferenceBrand = {
+  name: 'SMB Conecta',
+  badge: 'SC',
+  logoUrl: approvedReferenceLogoUrl,
+} as const
 
 function handleMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): void {
   activeMenuId.value = item.id ?? activeMenuId.value
@@ -149,6 +149,26 @@ function handleMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): vo
   align-items: center;
 }
 
+.ntk-template-showcase__approved-brand-fallback {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ntk-template-showcase__approved-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
 .ntk-template-showcase__approved-brand-image {
   width: 120px;
   height: auto;
@@ -156,11 +176,10 @@ function handleMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): vo
 }
 
 .ntk-template-showcase__approved-brand-text {
-  font-size: 30px;
+  font-size: 20px;
   line-height: 1;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #dc2626;
-  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0f172a;
 }
 </style>
