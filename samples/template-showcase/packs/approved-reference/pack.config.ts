@@ -3,10 +3,12 @@ import { approvedReferenceLogoUrl, createPackVariant } from '../pack-helpers'
 
 export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
   id: 'approved-reference',
-  label: 'Approved Reference',
-  kicker: 'baseline from approved local reference',
+  label: 'Original Reference',
+  kicker: 'original approved local reference',
   description:
-    'The closest match to the approved local layout in `.temp/reference`, kept as the canonical comparison model before the remaining whitelabel variations.',
+    'The canonical sample based directly on `.temp/reference`, kept as the original comparison point before the remaining whitelabel variations.',
+  kind: 'original',
+  sortOrder: 0,
   layout: 'editorial',
   exampleId: 'layout-dashboard',
   metrics: [
@@ -27,8 +29,8 @@ export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
       'reference-light',
       'Closest screenshot-ready version of the approved shell and dashboard.',
       {
-        label: 'Approved Reference Light',
-        description: 'Faithful light variant for the approved shell and dashboard review flow.',
+        label: 'Original Reference Light',
+        description: 'Faithful light variant for the original approved shell and dashboard review flow.',
         brand: {
           name: 'SMB Conecta',
           subtitle: 'Approved light variant',
@@ -85,8 +87,8 @@ export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
       'reference-night',
       'Dark counterpart of the approved shell, preserving hierarchy while switching to a denser review mode.',
       {
-        label: 'Approved Reference Dark',
-        description: 'Approved shell translated into a dark review-oriented whitelabel preset.',
+        label: 'Original Reference Dark',
+        description: 'Original approved shell translated into a dark review-oriented whitelabel preset.',
         brand: {
           name: 'SMB Conecta',
           subtitle: 'Approved dark variant',

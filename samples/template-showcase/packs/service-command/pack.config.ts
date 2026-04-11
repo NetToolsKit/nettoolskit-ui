@@ -1,0 +1,130 @@
+import type { TemplateVisualFamilyConfig } from '../../families/template-visual-families.types'
+import { createPackVariant } from '../pack-helpers'
+
+export const serviceCommandPackConfig: TemplateVisualFamilyConfig = {
+  id: 'service-command',
+  label: 'Service Command',
+  kicker: 'alerts, approvals and audit flows',
+  description:
+    'A curated command-center sample for platform oversight, keeping alerts, approvals, and audit interactions live while the shell shifts between light review and dark execution modes.',
+  kind: 'variation',
+  sortOrder: 5,
+  layout: 'spotlight',
+  exampleId: 'enterprise',
+  metrics: [
+    { id: 'service-command-m1', label: 'Surface', value: 'Command center and approval flow' },
+    { id: 'service-command-m2', label: 'Theme variants', value: 'Light and dark' },
+    { id: 'service-command-m3', label: 'Interaction', value: 'Alerts, approvals, audit events' },
+  ],
+  notes: [
+    { id: 'service-command-n1', label: 'Light mode', value: 'Audit-friendly control surface with clearer governance contrast' },
+    { id: 'service-command-n2', label: 'Dark mode', value: 'Dense operator shell for continuous platform monitoring' },
+    { id: 'service-command-n3', label: 'Reuse', value: 'Enterprise feature templates with whitelabel-only changes' },
+  ],
+  variants: [
+    createPackVariant(
+      'service-command-light',
+      'Light Theme',
+      'light',
+      'reference-light',
+      'Light command surface for audits, service review, and approval walkthroughs.',
+      {
+        label: 'Service Command Light',
+        description: 'Light governance shell for service health, approvals, and audit review.',
+        brand: {
+          name: 'Service Command',
+          subtitle: 'Light governance variant',
+          kicker: 'platform command',
+          description: 'Light command preset tuned for service review, audit traceability, and approval visibility.',
+          logoText: 'SC',
+        },
+        palette: {
+          primary: '#1d4ed8',
+          primaryDark: '#1e3a8a',
+          primaryLight: '#93c5fd',
+          secondary: '#0f172a',
+          accent: '#f97316',
+          background: '#eff5ff',
+          backgroundMuted: '#dbe9ff',
+          surface: '#ffffff',
+          surfaceAlt: '#f7faff',
+          text: '#0f172a',
+          textMuted: '#51627c',
+          border: '#cdd9ef',
+          success: '#16a34a',
+          warning: '#ea580c',
+          error: '#dc2626',
+          info: '#2563eb',
+        },
+        typography: {
+          display: '"Space Grotesk", "Avenir Next", sans-serif',
+          body: '"Inter", "Segoe UI", sans-serif',
+        },
+        radius: {
+          sm: '12px',
+          md: '18px',
+          lg: '24px',
+          xl: '34px',
+          pill: '999px',
+        },
+        gradients: {
+          hero: 'radial-gradient(circle at 12% 16%, rgba(29, 78, 216, 0.16), transparent 32%), radial-gradient(circle at 84% 10%, rgba(249, 115, 22, 0.14), transparent 24%), linear-gradient(180deg, #eff5ff 0%, #dbe9ff 100%)',
+          panel: 'linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 1) 100%)',
+          accent: 'linear-gradient(135deg, #1d4ed8 0%, #f97316 100%)',
+        },
+      }
+    ),
+    createPackVariant(
+      'service-command-dark',
+      'Dark Theme',
+      'dark',
+      'reference-graphite',
+      'Dark command surface for continuous monitoring, incident triage, and operator handoffs.',
+      {
+        label: 'Service Command Dark',
+        description: 'Dark command shell for platform operators tracking alerts, approvals, and audit evidence.',
+        brand: {
+          name: 'Service Command',
+          subtitle: 'Dark governance variant',
+          kicker: 'platform command',
+          description: 'Dark command preset built for 24/7 monitoring, approvals, and audit events.',
+          logoText: 'SC',
+        },
+        palette: {
+          primary: '#38bdf8',
+          primaryDark: '#0c4a6e',
+          primaryLight: '#7dd3fc',
+          secondary: '#020617',
+          accent: '#f59e0b',
+          background: '#020711',
+          backgroundMuted: '#071120',
+          surface: '#09111d',
+          surfaceAlt: '#111c2a',
+          text: '#e5eefb',
+          textMuted: '#8ca0b8',
+          border: '#1f3044',
+          success: '#22c55e',
+          warning: '#f59e0b',
+          error: '#f87171',
+          info: '#38bdf8',
+        },
+        typography: {
+          display: '"Space Grotesk", "Avenir Next", sans-serif',
+          body: '"Inter", "Segoe UI", sans-serif',
+        },
+        radius: {
+          sm: '12px',
+          md: '18px',
+          lg: '24px',
+          xl: '34px',
+          pill: '999px',
+        },
+        gradients: {
+          hero: 'radial-gradient(circle at 12% 16%, rgba(56, 189, 248, 0.2), transparent 32%), radial-gradient(circle at 84% 10%, rgba(245, 158, 11, 0.18), transparent 24%), linear-gradient(180deg, #020711 0%, #071120 100%)',
+          panel: 'linear-gradient(180deg, rgba(9, 17, 29, 0.98) 0%, rgba(17, 28, 42, 1) 100%)',
+          accent: 'linear-gradient(135deg, #38bdf8 0%, #f59e0b 100%)',
+        },
+      }
+    ),
+  ],
+}

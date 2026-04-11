@@ -20,7 +20,7 @@
 
           <div class="ntk-template-showcase__stats">
             <article class="ntk-template-showcase__stat">
-              <span>Curated examples</span>
+              <span>Sample packs</span>
               <strong>{{ visibleFamilies.length }}</strong>
             </article>
             <article class="ntk-template-showcase__stat">
@@ -59,6 +59,14 @@
           />
         </section>
 
+        <TemplateSampleSelector
+          :families="templateVisualFamilies"
+          :selected-family-id="focusedFamilyId"
+          :show-all-action="hasActiveFilter"
+          @select-family="navigateTo(`/?templates=1&family=${$event}`)"
+          @show-all="navigateTo('/?templates=1')"
+        />
+
         <section class="ntk-template-showcase__catalog-grid">
           <article
             v-for="item in templatesByArea"
@@ -93,6 +101,7 @@ import { computed } from 'vue'
 
 import { TEMPLATE_AREAS, getTemplateCatalogByArea, templateCatalogRegistry } from '../src/templates'
 import TemplateVisualFamilySection from './template-showcase/components/TemplateVisualFamilySection.vue'
+import TemplateSampleSelector from './template-showcase/components/TemplateSampleSelector.vue'
 import { templateVisualFamilies } from './template-showcase/families/template-visual-families'
 import { templateShowcaseExampleRegistry } from './template-showcase/template-showcase.examples'
 import './template-showcase/template-showcase.css'
@@ -135,7 +144,7 @@ const showcaseSubtitle = computed(() => {
   if (focusedFamilyId) {
     const family = templateVisualFamilies.find(item => item.id === focusedFamilyId)
     return family
-      ? `Focused on the ${family.label} example pack. The same shared template is being rendered in both light and dark whitelabel variants.`
+      ? `Focused on the ${family.label} sample pack. The same shared template is being rendered in both light and dark whitelabel variants.`
       : 'Family filter active. The showcase is focused on the selected example pack.'
   }
 
@@ -146,7 +155,7 @@ const showcaseSubtitle = computed(() => {
       : 'Example filter active. The showcase is focused on the selected reusable template.'
   }
 
-  return 'Five curated reusable examples, each rendered twice through the same `src/**` templates with paired light and dark whitelabel configurations.'
+  return 'One original reference sample plus five whitelabel variations, each rendered twice through the same `src/**` templates with paired light and dark configurations.'
 })
 
 function navigateTo(href: string): void {

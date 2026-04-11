@@ -19,6 +19,7 @@ export type TemplateVisualFamilyLayout =
   | 'laboratory'
 
 export type TemplateVisualFamilyTone = 'light' | 'dark'
+export type TemplateVisualFamilyKind = 'original' | 'variation'
 
 export interface TemplateVisualFamilyMetric {
   id: string
@@ -62,6 +63,8 @@ export interface TemplateVisualFamilyConfig {
   label: string
   kicker: string
   description: string
+  kind: TemplateVisualFamilyKind
+  sortOrder: number
   layout: TemplateVisualFamilyLayout
   exampleId: TemplateShowcaseExampleId
   metrics: TemplateVisualFamilyMetric[]

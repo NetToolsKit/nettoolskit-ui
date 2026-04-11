@@ -50,22 +50,24 @@ function mergeReferenceWhitelabelPreset(
   }
 }
 
-export const templateVisualFamilies: TemplateVisualFamilyDefinition[] = templateVisualFamilyConfigs.map(config => {
-  const variants = config.variants.map(variantConfig => {
-    const basePreset = resolveReferenceWhitelabelPreset(variantConfig.basePresetId)
-    const preset = mergeReferenceWhitelabelPreset(basePreset, variantConfig.presetOverrides)
+export const templateVisualFamilies: TemplateVisualFamilyDefinition[] = templateVisualFamilyConfigs
+  .map(config => {
+    const variants = config.variants.map(variantConfig => {
+      const basePreset = resolveReferenceWhitelabelPreset(variantConfig.basePresetId)
+      const preset = mergeReferenceWhitelabelPreset(basePreset, variantConfig.presetOverrides)
+
+      return {
+        ...variantConfig,
+        preset,
+        styleVars: createReferenceWhitelabelStyleVars(preset),
+      }
+    }) as [TemplateVisualFamilyVariantDefinition, TemplateVisualFamilyVariantDefinition]
 
     return {
-      ...variantConfig,
-      preset,
-      styleVars: createReferenceWhitelabelStyleVars(preset),
+      ...config,
+      example: findTemplateShowcaseExample(config.exampleId),
+      sectionStyleVars: variants[0].styleVars,
+      variants,
     }
-  }) as [TemplateVisualFamilyVariantDefinition, TemplateVisualFamilyVariantDefinition]
-
-  return {
-    ...config,
-    example: findTemplateShowcaseExample(config.exampleId),
-    sectionStyleVars: variants[0].styleVars,
-    variants,
-  }
-})
+  })
+  .sort((left, right) => left.sortOrder - right.sortOrder)

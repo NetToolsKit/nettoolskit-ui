@@ -7,6 +7,8 @@ export const operationsWorkspacePackConfig: TemplateVisualFamilyConfig = {
   kicker: 'search, filters and lane actions',
   description:
     'A curated workspace sample focused on active operations, rendered once in a lighter product-led pack and once in a darker command-center pack.',
+  kind: 'variation',
+  sortOrder: 1,
   layout: 'spotlight',
   exampleId: 'dashboard-workspace',
   metrics: [

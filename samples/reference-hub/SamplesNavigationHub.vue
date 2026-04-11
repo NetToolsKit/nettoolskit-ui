@@ -6,7 +6,7 @@
           Initial navigation
         </p>
         <h2 class="ntk-samples-hub__title">
-          Choose a runtime or jump into one of the five curated light and dark template packs
+          Choose a runtime or jump into the original reference plus five curated whitelabel variations
         </h2>
         <p class="ntk-samples-hub__description">
           This is the starting point for browsing reusable systems. Every action below opens a live route backed by the same shared `src/**` components and whitelabel configuration.
@@ -28,6 +28,11 @@
         >
       </div>
     </header>
+
+    <TemplateSampleSelector
+      :families="templateVisualFamilies"
+      @select-family="navigateTo(`/?templates=1&family=${$event}`)"
+    />
 
     <section class="ntk-samples-hub__section">
       <div class="ntk-samples-hub__section-head">
@@ -70,7 +75,7 @@
           <p class="ntk-samples-hub__section-label">
             Curated packs
           </p>
-          <h3>Select one example and compare its light and dark themes</h3>
+          <h3>Select the original baseline or one of the five variations</h3>
         </div>
       </div>
 
@@ -146,6 +151,7 @@
 import { computed, ref } from 'vue'
 
 import { referenceRuntimeLinks } from '../../src/templates/features/reference-system/reference-catalog.sample-data'
+import TemplateSampleSelector from '../template-showcase/components/TemplateSampleSelector.vue'
 import { templateVisualFamilies } from '../template-showcase/families/template-visual-families'
 
 const searchValue = ref('')
@@ -196,8 +202,9 @@ const filteredFamilies = computed(() => {
 })
 
 const filteredExamples = computed(() => {
-  return templateVisualFamilies
+  return Array.from(new Map(templateVisualFamilies
     .map(family => family.example)
+    .map(example => [example.id, example])).values())
     .filter(example =>
       includesSearch([example.label, example.summary, example.surfaceTag, example.templateAreas.join(' ')])
     )

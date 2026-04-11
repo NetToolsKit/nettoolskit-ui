@@ -7,6 +7,8 @@ export const builderStudioPackConfig: TemplateVisualFamilyConfig = {
   kicker: 'precision editing and instrumentation',
   description:
     'A curated editor workbench sample that keeps the same creation workflow while swapping between an airy builder review mode and a dark precision studio mode.',
+  kind: 'variation',
+  sortOrder: 3,
   layout: 'laboratory',
   exampleId: 'editor-workbench',
   metrics: [

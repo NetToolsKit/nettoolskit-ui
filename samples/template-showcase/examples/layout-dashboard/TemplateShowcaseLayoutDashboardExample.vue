@@ -3,7 +3,7 @@
     class="ntk-template-showcase__surface"
     data-template-surface="layout-dashboard"
   >
-    <h2>Approved Reference Dashboard</h2>
+    <h2>Original Reference Dashboard</h2>
     <MainLayoutTemplate
       :menu-items="menuItems"
       :app-name="approvedReferenceBrand.name"
@@ -11,7 +11,7 @@
       user-initials="GF"
       :show-breadcrumb="false"
       :persist-mode="false"
-      storage-key-prefix="ntk-showcase-approved-reference"
+      storage-key-prefix="ntk-showcase-original-reference"
       :drawer-width="250"
       :mini-drawer-width="56"
       :mini-labels-drawer-width="90"

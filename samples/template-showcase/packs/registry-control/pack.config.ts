@@ -7,6 +7,8 @@ export const registryControlPackConfig: TemplateVisualFamilyConfig = {
   kicker: 'records, account flows and empty states',
   description:
     'A curated operational registry sample that keeps CRUD, profile, and placeholder actions live while switching between a clean light admin pack and a premium dark control pack.',
+  kind: 'variation',
+  sortOrder: 4,
   layout: 'contrast',
   exampleId: 'crud-profile-placeholder',
   metrics: [

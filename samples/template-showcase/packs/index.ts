@@ -5,6 +5,7 @@ import { builderStudioPackConfig } from './builder-studio/pack.config'
 import { operationsWorkspacePackConfig } from './operations-workspace/pack.config'
 import { referenceOrchestratorPackConfig } from './reference-orchestrator/pack.config'
 import { registryControlPackConfig } from './registry-control/pack.config'
+import { serviceCommandPackConfig } from './service-command/pack.config'
 
 export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
   approvedReferencePackConfig,
@@ -12,4 +13,5 @@ export const templateVisualFamilyConfigs: TemplateVisualFamilyConfig[] = [
   referenceOrchestratorPackConfig,
   builderStudioPackConfig,
   registryControlPackConfig,
+  serviceCommandPackConfig,
 ]

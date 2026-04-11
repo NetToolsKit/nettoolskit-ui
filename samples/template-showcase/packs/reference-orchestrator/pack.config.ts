@@ -7,6 +7,8 @@ export const referenceOrchestratorPackConfig: TemplateVisualFamilyConfig = {
   kicker: 'manager and designer in one flow',
   description:
     'The approved report manager and designer flow presented as one reusable system, with a light review pack and a dark execution pack.',
+  kind: 'variation',
+  sortOrder: 2,
   layout: 'mosaic',
   exampleId: 'reference-system',
   metrics: [
