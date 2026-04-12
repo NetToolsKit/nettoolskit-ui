@@ -208,9 +208,9 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 .ntk-template-user-menu {
   min-width: 320px;
   border: 1px solid var(--ntk-template-user-menu-border, rgba(148, 163, 184, 0.18));
-  border-radius: var(--ntk-template-user-menu-radius, 18px);
+  border-radius: var(--ntk-template-user-menu-radius, 8px);
   background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: var(--ntk-template-user-menu-shadow, 0 18px 48px rgba(15, 23, 42, 0.12));
+  box-shadow: var(--ntk-template-user-menu-shadow, 0 4px 20px rgba(0, 0, 0, 0.15));
   overflow: hidden;
   color: var(--ntk-template-user-menu-text, #0f172a);
 }
@@ -234,7 +234,6 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 }
 
 .ntk-template-user-menu__section-label {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;

@@ -3,7 +3,7 @@
     class="ntk-template-showcase__surface"
     data-template-surface="layout-dashboard"
   >
-    <h2>Original Reference Dashboard</h2>
+    <h2>Core Reference Dashboard</h2>
     <MainLayoutTemplate
       :menu-items="menuItems"
       :app-name="approvedReferenceBrand.name"
@@ -132,8 +132,8 @@ const menuItems: TemplateMenuItem[] = [
 const activeMenuId = ref('dashboard')
 const layoutActionMessage = ref('Comparando o dashboard aprovado com a configuracao visual selecionada.')
 const approvedReferenceBrand = {
-  name: 'SMB Conecta',
-  badge: 'SC',
+  name: 'Atlas Flow',
+  badge: 'AF',
   logoUrl: approvedReferenceLogoUrl,
 } as const
 

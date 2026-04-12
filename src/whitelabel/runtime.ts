@@ -20,12 +20,10 @@ export function resolveReferenceWhitelabelPreset(presetId?: string | null): Refe
 export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPreset): CSSProperties {
   const { palette, typography, radius, shadow, gradients, brand } = preset
   const isDarkShell = preset.id !== 'reference-light'
-  const shellHeaderBackground = isDarkShell
-    ? `linear-gradient(180deg, ${palette.surface} 0%, ${palette.surfaceAlt} 100%)`
-    : `linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, ${palette.surfaceAlt} 100%)`
+  const shellHeaderBackground = palette.surface
   const shellHeaderShadow = isDarkShell
-    ? '0 18px 52px rgba(2, 6, 23, 0.46)'
-    : '0 18px 42px rgba(15, 23, 42, 0.08)'
+    ? '0 4px 16px rgba(2, 6, 23, 0.24)'
+    : '0 1px 3px rgba(15, 23, 42, 0.04)'
   const shellDrawerBackground = `linear-gradient(180deg, ${palette.secondary} 0%, ${palette.primaryDark} 100%)`
   const shellNavText = isDarkShell
     ? 'rgba(226, 247, 236, 0.84)'
@@ -41,22 +39,20 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
   const shellGroupPill = `color-mix(in srgb, ${palette.accent} 18%, transparent)`
   const shellSubmenuHover = `color-mix(in srgb, ${palette.accent} 8%, ${palette.surfaceAlt})`
   const shellSubmenuActive = `color-mix(in srgb, ${palette.accent} 14%, ${palette.surfaceAlt})`
-  const shellChromeBackground = isDarkShell
-    ? 'linear-gradient(180deg, rgba(2, 6, 23, 0.88) 0%, rgba(10, 15, 24, 0.94) 100%)'
-    : 'linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(243, 247, 245, 0.96) 100%)'
+  const shellChromeBackground = palette.surface
   const shellChromeBorder = isDarkShell
     ? 'rgba(148, 163, 184, 0.14)'
     : 'rgba(15, 23, 42, 0.08)'
   const referencePanelBackground = isDarkShell
-    ? `linear-gradient(180deg, ${palette.surface} 0%, ${palette.surfaceAlt} 100%)`
-    : gradients.panel
+    ? palette.surface
+    : palette.surface
   const referencePanelMutedBackground = isDarkShell
-    ? `linear-gradient(180deg, ${palette.surfaceAlt} 0%, ${palette.backgroundMuted} 100%)`
+    ? palette.surfaceAlt
     : palette.surfaceAlt
   const referenceBadgeBackground = `color-mix(in srgb, ${palette.accent} 16%, ${isDarkShell ? palette.surfaceAlt : '#ffffff'})`
   const referenceHeroBackground = isDarkShell
-    ? `radial-gradient(circle at 14% 18%, color-mix(in srgb, ${palette.accent} 24%, transparent) 0%, transparent 34%), linear-gradient(180deg, ${palette.background} 0%, ${palette.backgroundMuted} 100%)`
-    : gradients.hero
+    ? palette.background
+    : palette.background
 
   return {
     '--ntk-primary': palette.primary,
@@ -198,7 +194,9 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-reference-hero-bg': referenceHeroBackground,
     '--ntk-reference-shell-chrome-bg': shellChromeBackground,
     '--ntk-reference-shell-chrome-border': shellChromeBorder,
-    '--ntk-reference-shell-glow': `0 0 0 1px ${shellChromeBorder}, 0 24px 64px rgba(2, 6, 23, ${isDarkShell ? '0.34' : '0.1'})`,
+    '--ntk-reference-shell-glow': isDarkShell
+      ? '0 10px 24px rgba(2, 6, 23, 0.24)'
+      : '0 1px 3px rgba(0, 0, 0, 0.05)',
     '--ntk-template-horizontal-link-color': shellNavText,
     '--ntk-template-horizontal-link-hover-color': '#ffffff',
     '--ntk-template-horizontal-link-hover-bg': shellNavHoverBackground,

@@ -3,10 +3,10 @@ import { approvedReferenceLogoUrl, createPackVariant } from '../pack-helpers'
 
 export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
   id: 'approved-reference',
-  label: 'Original Reference',
-  kicker: 'original approved local reference',
+  label: 'Core Reference',
+  kicker: 'faithful baseline from the approved local shell',
   description:
-    'The canonical sample based directly on `.temp/reference`, kept as the original comparison point before the remaining whitelabel variations.',
+    'The canonical sample based directly on `.temp/reference`, preserved as the approval baseline with neutral naming and controlled branding.',
   kind: 'original',
   sortOrder: 0,
   layout: 'editorial',
@@ -18,7 +18,7 @@ export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
   ],
   notes: [
     { id: 'approved-n1', label: 'Shell', value: 'White toolbar, slate drawer, compact actions' },
-    { id: 'approved-n2', label: 'Usage', value: 'Primary comparison point for all approvals' },
+    { id: 'approved-n2', label: 'Naming', value: 'Neutral brand copy only, no reference product names' },
     { id: 'approved-n3', label: 'Approach', value: 'Shared templates plus whitelabel tokens only' },
   ],
   variants: [
@@ -29,14 +29,14 @@ export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
       'reference-light',
       'Closest screenshot-ready version of the approved shell and dashboard.',
       {
-        label: 'Original Reference Light',
+        label: 'Core Reference Light',
         description: 'Faithful light variant for the original approved shell and dashboard review flow.',
         brand: {
-          name: 'SMB Conecta',
-          subtitle: 'Approved light variant',
-          kicker: 'approved local reference',
-          description: 'Faithful light interpretation of the approved local reference.',
-          logoText: 'SC',
+          name: 'Atlas Flow',
+          subtitle: 'Reference baseline',
+          kicker: 'approved local shell',
+          description: 'Faithful light interpretation of the approved local reference with neutral naming.',
+          logoText: 'AF',
           logoUrl: approvedReferenceLogoUrl,
         },
         palette: {
@@ -87,14 +87,14 @@ export const approvedReferencePackConfig: TemplateVisualFamilyConfig = {
       'reference-night',
       'Dark counterpart of the approved shell, preserving hierarchy while switching to a denser review mode.',
       {
-        label: 'Original Reference Dark',
+        label: 'Core Reference Dark',
         description: 'Original approved shell translated into a dark review-oriented whitelabel preset.',
         brand: {
-          name: 'SMB Conecta',
-          subtitle: 'Approved dark variant',
-          kicker: 'approved local reference',
-          description: 'Dark interpretation of the approved local reference with the same layout hierarchy.',
-          logoText: 'SC',
+          name: 'Atlas Flow',
+          subtitle: 'Reference baseline',
+          kicker: 'approved local shell',
+          description: 'Dark interpretation of the approved local reference with the same layout hierarchy and neutral naming.',
+          logoText: 'AF',
           logoUrl: approvedReferenceLogoUrl,
         },
         palette: {

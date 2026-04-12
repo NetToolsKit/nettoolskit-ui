@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import TemplateShowcaseLayoutDashboardExample from '../../../samples/template-showcase/examples/layout-dashboard/TemplateShowcaseLayoutDashboardExample.vue'
 
 describe('TemplateShowcase approved reference example', () => {
-  it('keeps the approved sample brand locked to SMB Conecta', () => {
+  it('keeps the approved sample brand locked to Atlas Flow', () => {
     const wrapper = mount(TemplateShowcaseLayoutDashboardExample, {
       global: {
         renderStubDefaultSlot: true,
@@ -47,8 +47,8 @@ describe('TemplateShowcase approved reference example', () => {
       },
     })
 
-    expect(wrapper.text()).toContain('SMB Conecta')
-    expect(wrapper.find('.main-layout-stub__app-name').text()).toBe('SMB Conecta')
-    expect(wrapper.find('img').attributes('alt')).toBe('SMB Conecta')
+    expect(wrapper.text()).toContain('Atlas Flow')
+    expect(wrapper.find('.main-layout-stub__app-name').text()).toBe('Atlas Flow')
+    expect(wrapper.find('img').attributes('alt')).toBe('Atlas Flow')
   })
 })

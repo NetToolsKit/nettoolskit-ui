@@ -325,10 +325,10 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 .ntk-template-menu-link__submenu {
   min-width: 220px;
   padding: 6px;
-  border-radius: 18px;
+  border-radius: 8px;
   border: 1px solid var(--ntk-template-layout-toolbar-border, rgba(148, 163, 184, 0.18));
   background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: var(--ntk-shadow-md, 0 18px 48px rgba(15, 23, 42, 0.12));
+  box-shadow: var(--ntk-shadow-soft, 0 4px 16px rgba(15, 23, 42, 0.08));
 
   .q-item {
     border-left: 3px solid transparent;
@@ -359,7 +359,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__child {
   border-left: 4px solid transparent;
-  border-radius: 0 12px 12px 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .ntk-template-menu-link__child--active {
@@ -388,7 +388,6 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 .ntk-template-menu-link__label {
   width: 100%;
   padding: 0 2px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
   line-height: 1.2;
   text-align: center;
@@ -405,23 +404,17 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 .ntk-template-menu-link--visual-reference {
   margin: 3px 10px 3px 0;
   border-left: 4px solid transparent !important;
-  border-radius: 0 16px 16px 0;
-  transition:
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: 0 8px 8px 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .ntk-template-menu-link--visual-reference:hover {
-  transform: translateX(2px);
   background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active {
   border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
   background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-nav-active-border, #ffffff) 16%, transparent);
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-icon,
@@ -435,7 +428,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference {
   margin: 3px 10px 3px 0;
   border-left: 4px solid transparent !important;
-  border-radius: 0 16px 16px 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {

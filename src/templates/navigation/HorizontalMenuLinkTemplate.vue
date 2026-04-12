@@ -104,11 +104,11 @@ function resolveRouteTo(to?: string, routeName?: string): string | { name: strin
 <style lang="scss">
 .ntk-template-horizontal-link {
   color: var(--ntk-template-horizontal-link-color, rgba(255, 255, 255, 0.8)) !important;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12px;
+  font-family: var(--ntk-font-family, Inter, system-ui, sans-serif);
+  font-size: 13px;
   font-weight: 400;
   border-bottom: 2px solid transparent;
-  border-radius: 12px 12px 0 0;
+  border-radius: 0;
   padding: 8px 16px;
   transition: all 0.2s ease;
 
@@ -123,21 +123,20 @@ function resolveRouteTo(to?: string, routeName?: string): string | { name: strin
   font-weight: 500;
   border-bottom: 2px solid var(--ntk-template-horizontal-link-active-border, #ffffff) !important;
   background-color: var(--ntk-template-horizontal-link-active-bg, rgba(255, 255, 255, 0.12));
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-horizontal-link-active-border, #ffffff) 16%, transparent);
 }
 
 .ntk-template-horizontal-link__submenu {
   min-width: 220px;
   padding: 6px;
-  border-radius: 18px;
+  border-radius: 8px;
   border: 1px solid var(--ntk-template-layout-toolbar-border, rgba(148, 163, 184, 0.18));
   background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: var(--ntk-shadow-md, 0 18px 48px rgba(15, 23, 42, 0.12));
+  box-shadow: var(--ntk-shadow-soft, 0 4px 16px rgba(15, 23, 42, 0.08));
 }
 
 .ntk-template-horizontal-link__submenu-item {
   border-left: 3px solid transparent;
-  border-radius: 12px;
+  border-radius: 8px;
   transition: all 0.2s ease;
   color: var(--ntk-text-primary, #0f172a);
 

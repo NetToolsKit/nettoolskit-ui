@@ -91,10 +91,10 @@ describe('Samples runtime consolidation coverage', () => {
   })
 
   it('adds a dedicated reference catalog runtime with reusable template surfaces and whitelabel host state', () => {
-    expect(referenceCatalogSource).toContain('useReferenceCatalogHost')
-    expect(referenceCatalogSource).toContain('ReferenceCatalogTemplate')
+    expect(referenceCatalogSource).toContain('useSamplesShellState')
     expect(referenceCatalogSource).toContain('ReferenceWorkspaceShell')
     expect(referenceCatalogSource).toContain('SamplesNavigationHub')
+    expect(referenceCatalogSource).toContain(':search-value="searchValue"')
     expect(samplesNavigationHubSource).toContain("navigateTo(`/?templates=1&family=${family.id}`)")
     expect(samplesNavigationHubSource).toContain("navigateTo(`/?templates=1&example=${example.id}`)")
   })
@@ -131,7 +131,7 @@ describe('Samples runtime consolidation coverage', () => {
     expect(existsSync(builderStudioPackPath)).toBe(true)
     expect(existsSync(registryControlPackPath)).toBe(true)
     expect(existsSync(serviceCommandPackPath)).toBe(true)
-    expect(templateSampleSelectorSource).toContain('Original reference plus five whitelabel variations')
+    expect(templateSampleSelectorSource).toContain('Baseline fiel mais cinco familias de whitelabel')
     expect(templateSampleSelectorSource).toContain("family.kind === 'original'")
     expect(templateVisualFamilySectionSource).toContain('<TemplateVisualVariantCard')
     expect(templateVisualVariantCardSource).toContain('<component :is="example.component"')

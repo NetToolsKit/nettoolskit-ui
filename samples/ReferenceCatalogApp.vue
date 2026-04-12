@@ -4,56 +4,42 @@
     :selected-preset="selectedPreset"
     :selected-preset-id="selectedPresetId"
     :preset-options="presetOptions"
-    :menu-items="referenceMenuItems"
+    :menu-items="menuItems"
     :active-item-id="activeMenuId"
     :search-value="searchValue"
-    user-name="Reference Catalog"
-    user-initials="RC"
-    storage-key-prefix="ntk-reference-catalog-layout"
-    account-label="Open report workspace"
-    sign-out-label="Open legacy landing"
+    user-name="Samples Review"
+    user-initials="SR"
+    storage-key-prefix="ntk-samples-home-layout"
+    account-label="Abrir workspace"
+    sign-out-label="Abrir packs"
     @update:search-value="searchValue = $event"
-    @update:selected-preset-id="onPresetChange"
+    @update:selected-preset-id="selectedPresetId = String($event ?? 'reference-light')"
     @menu-item-click="onMenuItemClick"
-    @help-click="onHelpClick"
-    @profile-click="onProfileClick"
-    @back-home-click="onBackHomeClick"
+    @help-click="navigateTo('/?templates=1')"
+    @profile-click="navigateTo('/?samples=1')"
+    @back-home-click="navigateTo('/?templates=1&family=approved-reference')"
   >
-    <div class="ntk-reference-catalog-app">
-      <ReferenceCatalogTemplate
-        :active-section-mode="activeSectionMode"
-        :selected-preset="selectedPreset"
-        :selected-surface-id="selectedSurfaceId"
-        :selected-surface="selectedSurface"
-        :surfaces="filteredSurfaces"
-        :presets="availablePresets"
-        :hero-stats="referenceHeroStats"
-        :preset-callouts="referencePresetCallouts"
-        :architecture-cards="referenceArchitectureCards"
-        :runtime-links="referenceRuntimeLinks"
-        :search-value="searchValue"
-        :whitelabel-style-vars="whitelabelStyleVars"
-        @update:search-value="searchValue = $event"
-        @select-surface="onSurfaceSelect"
-        @open-runtime="openRuntime"
-      />
-      <SamplesNavigationHub />
-    </div>
+    <q-page class="ntk-samples-home-page">
+      <SamplesNavigationHub :search-value="searchValue" />
+    </q-page>
   </ReferenceWorkspaceShell>
 </template>
 
 <script setup lang="ts">
-import {
-  ReferenceCatalogTemplate,
-  ReferenceWorkspaceShell,
-  type ReferenceCatalogRuntimeLink,
-  referenceArchitectureCards,
-  referenceHeroStats,
-  referencePresetCallouts,
-  referenceRuntimeLinks,
-  useReferenceCatalogHost,
-} from '../src/templates/features/reference-system'
 import SamplesNavigationHub from './reference-hub/SamplesNavigationHub.vue'
+import { useSamplesShellState } from './shared/useSamplesShellState'
+import { ReferenceWorkspaceShell } from '../src/templates/features/reference-system'
+import type { TemplateMenuChildItem, TemplateMenuItem } from '../src/templates/navigation/menu-template.types'
+
+const {
+  activeMenuId,
+  menuItems,
+  presetOptions,
+  searchValue,
+  selectedPreset,
+  selectedPresetId,
+  whitelabelStyleVars,
+} = useSamplesShellState('home')
 
 function navigateTo(href: string): void {
   if (typeof window !== 'undefined') {
@@ -61,50 +47,25 @@ function navigateTo(href: string): void {
   }
 }
 
-function onHelpClick(): void {
-  navigateTo('/?templates=1')
-}
+function onMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): void {
+  activeMenuId.value = item.id ?? 'home'
 
-function onBackHomeClick(): void {
-  navigateTo('/?landing=1')
-}
+  if (item.id === 'templates' || item.id === 'presets') {
+    navigateTo(item.id === 'presets' ? '/?templates=1&family=approved-reference' : '/?templates=1')
+    return
+  }
 
-function onProfileClick(): void {
-  navigateTo('/?samples=1')
-}
+  if (item.id === 'workspace') {
+    navigateTo('/?samples=1')
+    return
+  }
 
-function openRuntime(runtimeLink: ReferenceCatalogRuntimeLink): void {
-  navigateTo(runtimeLink.href)
+  navigateTo('/')
 }
-
-const {
-  activeMenuId,
-  activeSectionMode,
-  availablePresets,
-  filteredSurfaces,
-  onMenuItemClick,
-  onPresetChange,
-  onSurfaceSelect,
-  presetOptions,
-  referenceMenuItems,
-  searchValue,
-  selectedPreset,
-  selectedPresetId,
-  selectedSurface,
-  selectedSurfaceId,
-  whitelabelStyleVars,
-} = useReferenceCatalogHost({
-  initialMenuId: 'overview',
-  initialSurfaceId: 'dashboard',
-  onHelp: onHelpClick,
-  onBackHome: () => onBackHomeClick(),
-})
 </script>
 
 <style scoped lang="scss">
-.ntk-reference-catalog-app {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.ntk-samples-home-page {
+  min-height: calc(100vh - 56px);
 }
 </style>

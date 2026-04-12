@@ -6,7 +6,7 @@
           Sample selector
         </p>
         <h2 class="ntk-template-selector__title">
-          Original reference plus five whitelabel variations
+          Baseline fiel mais cinco familias de whitelabel
         </h2>
       </div>
 
@@ -98,12 +98,8 @@ const variationFamilies = computed(() => {
 .ntk-template-selector {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
+  gap: 12px;
+  padding: 16px 18px;
 }
 
 .ntk-template-selector__header {
@@ -119,14 +115,14 @@ const variationFamilies = computed(() => {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #0f766e;
+  color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-template-selector__title {
   margin: 6px 0 0;
-  font-size: clamp(22px, 3vw, 30px);
-  line-height: 1.1;
-  color: #0f172a;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--ntk-text-primary, #1e293b);
 }
 
 .ntk-template-selector__all-action,
@@ -137,10 +133,10 @@ const variationFamilies = computed(() => {
 }
 
 .ntk-template-selector__all-action {
-  min-height: 42px;
-  padding: 0 16px;
+  min-height: 34px;
+  padding: 0 14px;
   border-radius: 999px;
-  background: #0f172a;
+  background: var(--ntk-primary, #0f766e);
   color: #ffffff;
   font-weight: 600;
 }
@@ -162,33 +158,33 @@ const variationFamilies = computed(() => {
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
-  min-height: 124px;
-  padding: 16px;
-  border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--ntk-border-color, #cbd5e1) 82%, transparent);
-  background: color-mix(in srgb, var(--ntk-bg-card, #ffffff) 88%, transparent);
+  min-height: 110px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--ntk-border-color, #cbd5e1) 88%, transparent);
+  background: color-mix(in srgb, var(--ntk-bg-card, #ffffff) 96%, transparent);
   color: var(--ntk-text-primary, #0f172a);
   text-align: left;
   transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
-  box-shadow: var(--ntk-shadow-soft, 0 10px 24px rgba(15, 23, 42, 0.08));
+  box-shadow: var(--ntk-shadow-soft, 0 1px 3px rgba(0, 0, 0, 0.05));
 }
 
 .ntk-template-selector__card:hover,
 .ntk-template-selector__card--active {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--ntk-accent, #10b981) 72%, transparent);
-  box-shadow: var(--ntk-shadow-md, 0 18px 42px rgba(15, 23, 42, 0.12));
+  box-shadow: var(--ntk-shadow-md, 0 4px 16px rgba(15, 23, 42, 0.08));
 }
 
 .ntk-template-selector__card--original {
-  min-height: 142px;
+  min-height: 126px;
 }
 
 .ntk-template-selector__card-kind {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
+  min-height: 24px;
+  padding: 0 9px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--ntk-accent, #10b981) 14%, transparent);
   color: var(--ntk-text-secondary, #475569);
@@ -199,8 +195,8 @@ const variationFamilies = computed(() => {
 }
 
 .ntk-template-selector__card strong {
-  font-size: 18px;
-  line-height: 1.15;
+  font-size: 16px;
+  line-height: 1.2;
 }
 
 .ntk-template-selector__card span:last-child {

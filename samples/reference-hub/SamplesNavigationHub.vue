@@ -1,36 +1,36 @@
 <template>
   <section class="ntk-samples-hub">
     <header class="ntk-samples-hub__header">
-      <div>
+      <div class="ntk-samples-hub__header-copy">
         <p class="ntk-samples-hub__eyebrow">
-          Initial navigation
+          Samples home
         </p>
-        <h2 class="ntk-samples-hub__title">
-          Choose a runtime or jump into the original reference plus five curated whitelabel variations
-        </h2>
+        <h1 class="ntk-samples-hub__title">
+          Escolha o baseline aprovado ou uma das cinco familias visuais
+        </h1>
         <p class="ntk-samples-hub__description">
-          This is the starting point for browsing reusable systems. Every action below opens a live route backed by the same shared `src/**` components and whitelabel configuration.
+          O host continua consumindo apenas componentes compartilhados de <code>src/**</code>. Aqui voce navega entre o baseline fiel da referencia local, os cinco packs inspirados no VoltAgent e os runtimes vivos do projeto.
         </p>
       </div>
 
-      <div class="ntk-samples-hub__search">
-        <q-icon
-          name="search"
-          size="18px"
-        />
-        <input
-          id="samples-navigation-filter"
-          v-model="searchValue"
-          name="samples-navigation-filter"
-          type="text"
-          placeholder="Filter runtimes, families or templates..."
-          class="ntk-samples-hub__search-input"
-        >
+      <div class="ntk-samples-hub__stats">
+        <article class="ntk-samples-hub__stat">
+          <span>Pacotes</span>
+          <strong>{{ templateVisualFamilies.length }}</strong>
+        </article>
+        <article class="ntk-samples-hub__stat">
+          <span>Previews</span>
+          <strong>{{ templateVisualFamilies.length * 2 }}</strong>
+        </article>
+        <article class="ntk-samples-hub__stat">
+          <span>Busca</span>
+          <strong>{{ searchValue ? 'Ativa' : 'Livre' }}</strong>
+        </article>
       </div>
     </header>
 
     <TemplateSampleSelector
-      :families="templateVisualFamilies"
+      :families="filteredFamilies"
       @select-family="navigateTo(`/?templates=1&family=${$event}`)"
     />
 
@@ -40,7 +40,7 @@
           <p class="ntk-samples-hub__section-label">
             Runtime modes
           </p>
-          <h3>Open the live samples</h3>
+          <h2>Abrir os ambientes vivos</h2>
         </div>
       </div>
 
@@ -62,7 +62,7 @@
             no-caps
             unelevated
             color="primary"
-            :label="runtime.id === 'catalog-home' ? 'Open home' : 'Open runtime'"
+            :label="runtime.id === 'catalog-home' ? 'Abrir inicio' : 'Abrir runtime'"
             @click="navigateTo(runtime.href)"
           />
         </article>
@@ -75,7 +75,7 @@
           <p class="ntk-samples-hub__section-label">
             Curated packs
           </p>
-          <h3>Select the original baseline or one of the five variations</h3>
+          <h2>Original fiel mais cinco variacoes de whitelabel</h2>
         </div>
       </div>
 
@@ -84,21 +84,25 @@
           v-for="family in filteredFamilies"
           :key="family.id"
           class="ntk-samples-hub__family-card"
-          :style="family.sectionStyleVars"
         >
-          <p class="ntk-samples-hub__family-kicker">
-            {{ family.kicker }}
-          </p>
+          <div class="ntk-samples-hub__family-top">
+            <span class="ntk-samples-hub__family-kind">
+              {{ family.kind === 'original' ? 'Original' : 'Variacao' }}
+            </span>
+            <span class="ntk-samples-hub__family-meta">
+              {{ family.variants.length }} temas
+            </span>
+          </div>
           <strong>{{ family.label }}</strong>
-          <span class="ntk-samples-hub__family-meta">
-            {{ family.variants.length }} theme variants · {{ family.example.surfaceTag }}
-          </span>
           <p>{{ family.description }}</p>
+          <span class="ntk-samples-hub__family-surface">
+            {{ family.example.surfaceTag }}
+          </span>
           <q-btn
             no-caps
             outline
             color="primary"
-            label="Open pack"
+            label="Abrir pack"
             @click="navigateTo(`/?templates=1&family=${family.id}`)"
           />
         </article>
@@ -109,9 +113,9 @@
       <div class="ntk-samples-hub__section-head">
         <div>
           <p class="ntk-samples-hub__section-label">
-            Template selection
+            Example selection
           </p>
-          <h3>Jump straight to one curated example and its paired themes</h3>
+          <h2>Abrir um exemplo especifico e comparar as duas variantes</h2>
         </div>
       </div>
 
@@ -131,14 +135,11 @@
           </div>
           <strong>{{ example.label }}</strong>
           <p>{{ example.summary }}</p>
-          <span class="ntk-samples-hub__example-area">
-            Light + dark variants
-          </span>
           <q-btn
             no-caps
             flat
             color="primary"
-            label="Open example"
+            label="Abrir exemplo"
             @click="navigateTo(`/?templates=1&example=${example.id}`)"
           />
         </article>
@@ -148,26 +149,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 import { referenceRuntimeLinks } from '../../src/templates/features/reference-system/reference-catalog.sample-data'
 import TemplateSampleSelector from '../template-showcase/components/TemplateSampleSelector.vue'
 import { templateVisualFamilies } from '../template-showcase/families/template-visual-families'
 
-const searchValue = ref('')
+const props = withDefaults(defineProps<{
+  searchValue?: string
+}>(), {
+  searchValue: '',
+})
 
 const runtimeLinks = [
   {
     id: 'catalog-home',
     title: 'Samples home',
-    description: 'Return to the main navigation and selection page for runtimes, families and templates.',
+    description: 'Retorna para a tela inicial de selecao dos runtimes e dos packs.',
     href: '/',
     icon: 'home',
   },
   ...referenceRuntimeLinks,
 ]
 
-const normalizedSearch = computed(() => searchValue.value.trim().toLowerCase())
+const normalizedSearch = computed(() => props.searchValue.trim().toLowerCase())
 
 function includesSearch(chunks: Array<string | undefined>): boolean {
   const search = normalizedSearch.value
@@ -183,9 +188,7 @@ function includesSearch(chunks: Array<string | undefined>): boolean {
 }
 
 const filteredRuntimeLinks = computed(() => {
-  return runtimeLinks.filter(runtime =>
-    includesSearch([runtime.title, runtime.description])
-  )
+  return runtimeLinks.filter(runtime => includesSearch([runtime.title, runtime.description]))
 })
 
 const filteredFamilies = computed(() => {
@@ -196,7 +199,8 @@ const filteredFamilies = computed(() => {
       family.description,
       family.example.label,
       family.example.summary,
-      ...family.variants.map(variant => variant.preset.label),
+      ...family.notes.map(note => note.value),
+      ...family.metrics.map(metric => metric.value),
     ])
   )
 })
@@ -221,73 +225,89 @@ function navigateTo(href: string): void {
 .ntk-samples-hub {
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding: 0 24px 32px;
+  gap: 16px;
+  padding: 12px;
 }
 
 .ntk-samples-hub__header,
 .ntk-samples-hub__section {
-  border: 1px solid var(--ntk-reference-shell-chrome-border, rgba(148, 163, 184, 0.16));
-  border-radius: 28px;
-  background: var(--ntk-reference-shell-chrome-bg, #ffffff);
-  box-shadow: var(--ntk-reference-shell-glow, 0 18px 36px rgba(15, 23, 42, 0.08));
+  border: 1px solid var(--ntk-reference-border, #e2e8f0);
+  border-radius: 12px;
+  background: var(--ntk-reference-panel-bg, #ffffff);
+  box-shadow: var(--ntk-shadow-soft, 0 1px 3px rgba(0, 0, 0, 0.05));
 }
 
 .ntk-samples-hub__header {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
-  gap: 18px;
-  padding: 24px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.7fr);
+  gap: 16px;
+  padding: 18px 20px;
 }
 
 .ntk-samples-hub__eyebrow,
 .ntk-samples-hub__section-label {
   margin: 0 0 8px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ntk-text-secondary, #64748b);
 }
 
 .ntk-samples-hub__title,
-.ntk-samples-hub__section-head h3 {
+.ntk-samples-hub__section-head h2 {
   margin: 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, #1e293b);
+  font-size: 22px;
+  line-height: 1.2;
 }
 
 .ntk-samples-hub__description {
-  margin: 12px 0 0;
-  max-width: 720px;
+  margin: 10px 0 0;
+  max-width: 760px;
   color: var(--ntk-text-secondary, #64748b);
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
-.ntk-samples-hub__search {
-  min-height: 52px;
-  align-self: center;
-  display: flex;
-  align-items: center;
+.ntk-samples-hub__description code {
+  font-family: inherit;
+  color: var(--ntk-text-primary, #1e293b);
+  background: rgba(148, 163, 184, 0.12);
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.ntk-samples-hub__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  padding: 0 16px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--ntk-reference-panel-muted-bg, #f8fbff) 84%, transparent);
 }
 
-.ntk-samples-hub__search-input {
-  width: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--ntk-text-primary, #0f172a);
+.ntk-samples-hub__stat {
+  padding: 14px;
+  border: 1px solid var(--ntk-reference-border, #e2e8f0);
+  border-radius: 12px;
+  background: var(--ntk-reference-panel-muted-bg, #f8fafc);
+}
+
+.ntk-samples-hub__stat span {
+  display: block;
+  font-size: 12px;
+  color: var(--ntk-text-secondary, #64748b);
+}
+
+.ntk-samples-hub__stat strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 22px;
+  color: var(--ntk-text-primary, #1e293b);
 }
 
 .ntk-samples-hub__section {
-  padding: 24px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .ntk-samples-hub__runtime-grid,
@@ -295,7 +315,7 @@ function navigateTo(href: string): void {
 .ntk-samples-hub__example-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .ntk-samples-hub__runtime-card,
@@ -305,17 +325,17 @@ function navigateTo(href: string): void {
   flex-direction: column;
   gap: 10px;
   min-height: 100%;
-  padding: 18px;
-  border-radius: 22px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
-  background: color-mix(in srgb, var(--ntk-reference-panel-bg, #ffffff) 88%, transparent);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--ntk-reference-border, #e2e8f0);
+  background: var(--ntk-template-page-card-bg, #ffffff);
 }
 
 .ntk-samples-hub__runtime-card strong,
 .ntk-samples-hub__family-card strong,
 .ntk-samples-hub__example-card strong {
-  color: var(--ntk-text-primary, #0f172a);
-  font-size: 18px;
+  color: var(--ntk-text-primary, #1e293b);
+  font-size: 17px;
 }
 
 .ntk-samples-hub__runtime-card p,
@@ -323,40 +343,47 @@ function navigateTo(href: string): void {
 .ntk-samples-hub__example-card p {
   margin: 0;
   color: var(--ntk-text-secondary, #64748b);
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 .ntk-samples-hub__runtime-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--ntk-accent, #10b981) 16%, transparent);
-  color: var(--ntk-accent, #10b981);
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--ntk-primary, #0f766e);
 }
 
-.ntk-samples-hub__family-kicker,
-.ntk-samples-hub__example-tag {
-  margin: 0;
+.ntk-samples-hub__family-top,
+.ntk-samples-hub__example-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ntk-samples-hub__family-kind,
+.ntk-samples-hub__family-meta,
+.ntk-samples-hub__family-surface,
+.ntk-samples-hub__example-tag,
+.ntk-samples-hub__example-area {
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ntk-primary-light, #5eead4);
+}
+
+.ntk-samples-hub__family-kind,
+.ntk-samples-hub__example-tag {
+  color: var(--ntk-primary, #0f766e);
 }
 
 .ntk-samples-hub__family-meta,
+.ntk-samples-hub__family-surface,
 .ntk-samples-hub__example-area {
-  font-size: 12px;
   color: var(--ntk-text-secondary, #64748b);
-}
-
-.ntk-samples-hub__example-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: center;
 }
 
 @media (max-width: 1100px) {
@@ -367,14 +394,19 @@ function navigateTo(href: string): void {
 
 @media (max-width: 768px) {
   .ntk-samples-hub {
-    padding: 0 16px 24px;
+    padding: 8px;
   }
 
-  .ntk-samples-hub__section,
-  .ntk-samples-hub__header {
-    padding: 18px;
+  .ntk-samples-hub__header,
+  .ntk-samples-hub__section {
+    padding: 16px;
   }
 
+  .ntk-samples-hub__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .ntk-samples-hub__family-top,
   .ntk-samples-hub__example-top {
     flex-direction: column;
     align-items: flex-start;

@@ -212,13 +212,13 @@ onUnmounted(() => {
 
 .ntk-reference-topbar__search {
   flex: 1;
-  max-width: 360px;
+  max-width: 320px;
 }
 
 .ntk-reference-topbar__search-input {
   :deep(.q-field__control) {
-    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 88%, transparent);
-    border-radius: 14px;
+    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 92%, transparent);
+    border-radius: 10px;
     color: var(--ntk-reference-topbar-control-text, #0f172a);
   }
 
@@ -245,8 +245,8 @@ onUnmounted(() => {
 
 .ntk-reference-topbar__action-btn {
   border: 1px solid var(--ntk-reference-topbar-control-border, rgba(148, 163, 184, 0.18));
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 82%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 92%, transparent);
   color: var(--ntk-reference-topbar-control-text, #64748b);
 }
 
@@ -259,8 +259,8 @@ onUnmounted(() => {
   min-width: 180px;
 
   :deep(.q-field__control) {
-    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 88%, transparent);
-    border-radius: 14px;
+    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 92%, transparent);
+    border-radius: 10px;
   }
 
   :deep(.q-field__label),
@@ -285,9 +285,9 @@ onUnmounted(() => {
   min-width: 340px;
   max-width: 400px;
   border: 1px solid var(--ntk-reference-topbar-border, rgba(148, 163, 184, 0.18));
-  border-radius: 18px;
+  border-radius: 12px;
   background: var(--ntk-reference-topbar-surface, #ffffff);
-  box-shadow: var(--ntk-reference-shell-glow, 0 20px 48px rgba(15, 23, 42, 0.12));
+  box-shadow: var(--ntk-reference-shell-glow, 0 4px 16px rgba(15, 23, 42, 0.08));
   overflow: hidden;
 }
 

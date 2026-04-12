@@ -4,7 +4,7 @@ import type {
   TemplateVisualFamilyVariantConfig,
 } from '../families/template-visual-families.types'
 
-export const approvedReferenceLogoUrl = new URL('../../assets/approved-reference-logo.png', import.meta.url).href
+export const approvedReferenceLogoUrl = new URL('../../assets/core-reference-logo.svg', import.meta.url).href
 
 export function createPackVariant(
   id: string,

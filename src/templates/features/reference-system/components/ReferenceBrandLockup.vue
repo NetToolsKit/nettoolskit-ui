@@ -33,9 +33,8 @@ defineProps<{
 }
 
 .ntk-reference-brand-lockup__logo-img {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 120px;
+  height: auto;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -43,7 +42,7 @@ defineProps<{
 .ntk-reference-brand-lockup__mark {
   width: 38px;
   height: 38px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--ntk-gradient-accent, linear-gradient(135deg, #10b981 0%, #2dd4bf 100%));
   color: var(--ntk-text-light, #ffffff);
   display: inline-flex;
@@ -57,18 +56,18 @@ defineProps<{
 .ntk-reference-brand-lockup__name {
   display: block;
   color: var(--ntk-template-layout-title-color, var(--ntk-text-primary, #0f172a));
-  font-family: var(--ntk-font-family-display, 'Space Grotesk', Inter, system-ui, sans-serif);
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-family: var(--ntk-font-family-display, Inter, system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .ntk-reference-brand-lockup__subtitle {
   display: block;
   margin-top: 2px;
   color: var(--ntk-template-layout-brand-subtitle, var(--ntk-text-secondary, #64748b));
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 </style>

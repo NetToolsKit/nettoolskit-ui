@@ -97,7 +97,7 @@ function navigateTo(href: string): void {
 const workspaceActionMessage = ref('The reference workspace is ready for interaction.')
 
 function onHelpClick(): void {
-  navigateTo('/?templates=1&family=signal-command')
+  navigateTo('/?templates=1&family=approved-reference')
 }
 
 function onBackHomeClick(): void {
@@ -175,7 +175,7 @@ const activePlaceholder = computed<PlaceholderState>(() => {
       description: 'Use the builder-oriented pack to inspect the denser asset and editor composition.',
       statusLabel: 'Ready',
       hints: [
-        { id: 'assets-hint-1', text: 'Studio Laboratory showcases the denser builder language.', icon: 'science' },
+        { id: 'assets-hint-1', text: 'Urban Mono showcases the denser builder language.', icon: 'science' },
         { id: 'assets-hint-2', text: 'The same tokens feed editor, workspace and shell surfaces.', icon: 'palette' },
       ],
       primaryAction: { id: 'open-assets-family', label: 'Open builder family', icon: 'science' },
@@ -202,7 +202,7 @@ const activePlaceholder = computed<PlaceholderState>(() => {
         { id: 'permissions-hint-1', text: 'CRUD and profile surfaces are already available in the showcase.', icon: 'badge' },
         { id: 'permissions-hint-2', text: 'Admin interactions should remain deterministic in the demos.', icon: 'verified_user' },
       ],
-      primaryAction: { id: 'open-permissions-family', label: 'Open admin family', icon: 'admin_panel_settings' },
+      primaryAction: { id: 'open-permissions-family', label: 'Open registry family', icon: 'admin_panel_settings' },
       secondaryAction: { id: 'open-home', label: 'Back to samples home', icon: 'home', outline: true, unelevated: false },
     },
   }
@@ -253,12 +253,12 @@ function handlePlaceholderAction(actionId: string): void {
   }
 
   if (actionId === 'open-assets-family') {
-    navigateTo('/?templates=1&family=studio-laboratory')
+    navigateTo('/?templates=1&family=builder-studio')
     return
   }
 
   if (actionId === 'open-permissions-family') {
-    navigateTo('/?templates=1&family=executive-contrast')
+    navigateTo('/?templates=1&family=registry-control')
   }
 }
 </script>
