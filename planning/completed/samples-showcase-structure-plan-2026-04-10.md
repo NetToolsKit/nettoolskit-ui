@@ -7,9 +7,9 @@
 
 ## Ordered Tasks
 1. Completed: map the current showcase file and identify stable extraction boundaries for each example section.
-2. In progress: move showcase data, styles, and example implementations into `samples/template-showcase/**`.
-3. Pending: update tests and docs that assume the old flat showcase layout.
-4. Pending: validate the restructured showcase and create a commit checkpoint.
+2. Completed: move showcase data, styles, and example implementations into `samples/template-showcase/**`.
+3. Completed: update tests and docs that assume the old flat showcase layout.
+4. Completed: validate the restructured showcase and create a commit checkpoint.
 
 ## Validation Checklist
 - `npm run type-check`
@@ -21,3 +21,9 @@
 - keep `samples/TemplateShowcaseApp.vue` small and orchestration-only
 - each showcase example must live in its own subfolder with local state close to the rendered sample
 - avoid moving shared implementation out of `src/**`; only the host/sample composition belongs in `samples/**`
+
+## Validation Notes
+- `npm run type-check`
+- `npm run test -- tests/unit/landing/LandingTokenization.spec.ts tests/unit/templates/ReferenceSystemTemplates.spec.ts`
+- `npx eslint samples/TemplateShowcaseApp.vue samples/template-showcase tests/unit/landing/LandingTokenization.spec.ts --ext .ts,.vue`
+- `npm run build:samples`

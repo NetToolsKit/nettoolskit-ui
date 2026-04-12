@@ -13,9 +13,9 @@
 
 ## Ordered Tasks
 1. Completed: adapt template-layout defaults so the reference shell can boot with the intended lateral/horizontal behavior and mini-menu defaults, including the `90px` mini-with-labels drawer state.
-2. In progress: reshape reference whitelabel presets and runtime token mapping to the darker emerald-driven visual language.
-3. In progress: restyle the reference shell, topbar, menu links, workspace cards, and catalog surfaces to match the new navigation hierarchy and visual tone.
-4. Pending: update focused tests/docs, validate, and commit the design-alignment checkpoint.
+2. Completed: reshape reference whitelabel presets and runtime token mapping to the approved reference-first baseline plus later whitelabel family variants.
+3. Completed: restyle the reference shell, topbar, menu links, workspace cards, and catalog surfaces to match the approved navigation hierarchy and visual tone.
+4. Completed: update focused tests/docs, validate, and commit the design-alignment checkpoint.
 
 ## Validation Checklist
 - `npm run type-check`
@@ -32,3 +32,9 @@
 - keep `samples/` as a host only; reusable UI logic stays under `src/**`
 - keep whitelabel presetting as the parameterization layer instead of hardcoding a single demo skin
 - preserve legacy landing/CMS compatibility routes while the samples runtime becomes the approved visual baseline
+
+## Validation Notes
+- `npm run type-check`
+- `npm run test -- tests/unit/utils/whitelabel.spec.ts tests/unit/composables/useReferenceWorkspaceHost.spec.ts tests/unit/templates/ReferenceSystemTemplates.spec.ts tests/unit/landing/LandingTokenization.spec.ts`
+- `npm run build:samples`
+- browser smoke on `http://127.0.0.1:4173/` and `http://127.0.0.1:4173/?templates=1`

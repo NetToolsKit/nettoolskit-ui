@@ -14,8 +14,13 @@ Unify the reference-system baseline with the CMS/landing-components workstream w
 - [x] Create isolated integration worktree from the reference-base branch.
 - [x] Reconcile entrypoints, exports, catalogs, and runtime chunking so `landing`, `cms`, `samples`, `templates`, and `template-runtime` coexist.
 - [x] Validate the unified runtime and resolve remaining documentation/test parity gaps.
-- [ ] Commit the integration checkpoint with detailed English closeout notes.
-- [ ] Continue remaining planning workstreams on top of the unified branch, committing each stable phase.
+- [x] Commit the integration checkpoint with detailed English closeout notes.
+- [x] Continue remaining planning workstreams on top of the unified branch, committing each stable phase.
+
+## Closure Status
+- Closed on `2026-04-12`.
+- The unification checkpoint became the effective baseline for the subsequent `samples/`, reference-shell, and whitelabel workstreams on `feat/remove-cms-whitelabel-reference-2026-04-01`.
+- No additional integration work remains active under this plan.
 
 ## Execution Notes
 - Keep `feat/remove-cms-whitelabel-reference-2026-04-01` semantics as the baseline for shared layout/template/reference-system contracts.

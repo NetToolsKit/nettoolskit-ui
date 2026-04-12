@@ -58,6 +58,11 @@
 ### Remaining Work
 1. extract the remaining large stateful workflows from `landing-page/CmsApp.vue` into `src/modules/cms/white-label/**` so the landing app becomes a thin runtime shell
 2. continue moving reusable preview/authoring logic from `landing-page/CmsApp.vue` into `src/templates/features/cms/authoring/modules/**`
+
+## Closure Status - 2026-04-12
+- Closed as superseded.
+- The active product direction moved away from keeping CMS as a first-class `samples/` runtime, and the current workstream now prioritizes the reference baseline plus whitelabel sample families.
+- The decomposition work completed so far remains preserved in history, but the remaining CMS-specific extraction tasks are no longer tracked as active execution.
 3. review `landing-page/**` for any other reusable system contracts that still belong in `src/**`
 4. normalize README and template docs once the remaining surface/export moves stabilize
 
