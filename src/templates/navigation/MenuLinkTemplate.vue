@@ -402,19 +402,29 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link--visual-reference {
-  margin: 3px 10px 3px 0;
+  margin: var(--ntk-template-layout-reference-nav-item-margin, 0);
   border-left: 4px solid transparent !important;
-  border-radius: 0 8px 8px 0;
+  border-radius: var(--ntk-template-layout-reference-nav-item-radius, 0);
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
+  background: var(
+    --ntk-template-layout-reference-nav-hover-bg,
+    var(--ntk-template-layout-nav-hover-bg, rgba(0, 0, 0, 0.05))
+  );
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active {
-  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
-  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  border-left: 4px solid
+    var(
+      --ntk-template-layout-reference-nav-active-border,
+      var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8))
+    ) !important;
+  background: var(
+    --ntk-template-layout-reference-nav-active-bg,
+    var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15))
+  ) !important;
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-icon,
@@ -426,24 +436,46 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference {
-  margin: 3px 10px 3px 0;
+  margin: var(--ntk-template-layout-reference-nav-item-margin, 0);
   border-left: 4px solid transparent !important;
-  border-radius: 0 8px 8px 0;
+  border-radius: var(--ntk-template-layout-reference-nav-item-radius, 0);
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
+  background: var(
+    --ntk-template-layout-reference-nav-hover-bg,
+    var(--ntk-template-layout-nav-hover-bg, rgba(0, 0, 0, 0.05))
+  );
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference.ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
-  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  border-left: 4px solid
+    var(
+      --ntk-template-layout-reference-nav-active-border,
+      var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8))
+    ) !important;
+  background: var(
+    --ntk-template-layout-reference-nav-active-bg,
+    var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15))
+  ) !important;
+}
+
+.ntk-template-menu-link__child.ntk-template-menu-link--visual-reference,
+.ntk-template-menu-link__child-row.ntk-template-menu-link--visual-reference {
+  border-radius: var(--ntk-template-layout-reference-nav-item-radius, 0);
 }
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-reference,
 .ntk-template-menu-link--visual-reference .ntk-template-menu-link__child--active {
-  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
-  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  border-left: 4px solid
+    var(
+      --ntk-template-layout-reference-nav-active-border,
+      var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8))
+    ) !important;
+  background: var(
+    --ntk-template-layout-reference-nav-active-bg,
+    var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15))
+  ) !important;
 }
 
 .ntk-template-menu-link--visual-vercel {

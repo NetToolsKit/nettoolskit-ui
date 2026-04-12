@@ -38,7 +38,7 @@
       <div class="ntk-template-user-menu__profile q-pa-md">
         <div class="row no-wrap q-gutter-md">
           <q-avatar
-            size="56px"
+            :size="largeAvatarSize"
             class="ntk-template-user-menu__avatar ntk-template-user-menu__avatar--large"
           >
             {{ profile.initials }}
@@ -159,6 +159,7 @@ const props = withDefaults(defineProps<{
   appName?: string
   profileName?: string
   profileInitials?: string
+  largeAvatarSize?: string
   signOutLabel?: string
   accountLabel?: string
   preferencesLabel?: string
@@ -173,6 +174,7 @@ const props = withDefaults(defineProps<{
   appName: 'NetToolsKit',
   profileName: 'User',
   profileInitials: 'U',
+  largeAvatarSize: '56px',
   signOutLabel: 'Sign out',
   accountLabel: 'View account',
   preferencesLabel: 'Preferences',
@@ -226,7 +228,7 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 }
 
 .ntk-template-user-menu__header {
-  background: var(--ntk-template-user-menu-header-bg, rgba(0, 0, 0, 0.03));
+  background: var(--ntk-template-user-menu-header-bg, rgba(0, 0, 0, 0.02));
 }
 
 .ntk-template-user-menu__profile {

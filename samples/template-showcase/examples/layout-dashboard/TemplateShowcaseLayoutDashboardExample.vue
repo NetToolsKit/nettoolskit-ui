@@ -5,6 +5,7 @@
   >
     <h2>Core Reference Dashboard</h2>
     <MainLayoutTemplate
+      layout-view="lHh lpR fFf"
       :menu-items="menuItems"
       :app-name="approvedReferenceBrand.name"
       user-name="Guilherme Ferreira"
@@ -50,6 +51,7 @@
           :app-name="approvedReferenceBrand.name"
           profile-name="Guilherme Ferreira"
           profile-initials="GF"
+          large-avatar-size="64px"
           sign-out-label="Sair"
           account-label="Ver conta"
           preferences-label="Preferencias"
@@ -144,6 +146,24 @@ function handleMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): vo
 </script>
 
 <style scoped lang="scss">
+.ntk-template-showcase__surface[data-template-surface='layout-dashboard'] {
+  --ntk-template-layout-shell-bg: #e8e8e8;
+  --ntk-template-layout-page-bg: #e8e8e8;
+  --ntk-template-layout-header-height: 50px;
+  --ntk-template-layout-header-padding: 0 16px 0 12px;
+  --ntk-template-layout-header-shadow: none;
+  --ntk-template-layout-header-border: rgba(0, 0, 0, 0.12);
+  --ntk-template-layout-drawer-border: rgba(0, 0, 0, 0.21);
+  --ntk-template-layout-reference-nav-item-margin: 0;
+  --ntk-template-layout-reference-nav-item-radius: 0;
+  --ntk-template-layout-reference-nav-hover-bg: rgba(0, 0, 0, 0.05);
+  --ntk-template-layout-reference-nav-active-bg: rgba(255, 255, 255, 0.15);
+  --ntk-template-layout-reference-nav-active-border: rgba(255, 255, 255, 0.8);
+  --ntk-template-user-menu-header-bg: rgba(0, 0, 0, 0.02);
+  --ntk-template-user-menu-radius: 8px;
+  --ntk-template-user-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
 .ntk-template-showcase__approved-brand {
   display: flex;
   align-items: center;

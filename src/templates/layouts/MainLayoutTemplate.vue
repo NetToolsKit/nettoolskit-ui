@@ -1,6 +1,6 @@
 <template>
   <q-layout
-    view="hHh lpR fFf"
+    :view="layoutView"
     :class="[
       'ntk-template-main-layout',
       sideMenuVariant === 'vercel'
@@ -205,6 +205,7 @@ const props = withDefaults(defineProps<{
   useRouterView?: boolean
   persistMode?: boolean
   storageKeyPrefix?: string
+  layoutView?: string
   drawerWidth?: number
   miniLabelsDrawerWidth?: number
   miniDrawerWidth?: number
@@ -228,6 +229,7 @@ const props = withDefaults(defineProps<{
   useRouterView: false,
   persistMode: true,
   storageKeyPrefix: 'ntk-template-layout',
+  layoutView: 'hHh lpR fFf',
   drawerWidth: 250,
   miniLabelsDrawerWidth: 90,
   miniDrawerWidth: 56,
@@ -422,8 +424,8 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__header .q-toolbar {
-  min-height: 56px;
-  padding: 0 16px 0 12px;
+  min-height: var(--ntk-template-layout-header-height, 56px);
+  padding: var(--ntk-template-layout-header-padding, 0 16px 0 12px);
   gap: 12px;
 }
 
