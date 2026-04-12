@@ -37,6 +37,7 @@
         <input
           v-model="searchModel"
           type="text"
+          name="approval-queue-search"
           :placeholder="searchPlaceholder"
           :aria-label="searchAriaLabel"
         >
@@ -101,6 +102,7 @@
           <label class="ntk-template-approval-queue__selection">
             <input
               type="checkbox"
+              :name="`approval-queue-select-${item.id}`"
               :checked="selectedSet.has(item.id)"
               @change="handleCheckboxChange(item.id, $event)"
             >

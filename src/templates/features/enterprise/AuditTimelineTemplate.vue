@@ -37,6 +37,7 @@
         <input
           v-model="searchModel"
           type="text"
+          name="audit-timeline-search"
           :placeholder="searchPlaceholder"
           :aria-label="searchAriaLabel"
         >

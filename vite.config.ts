@@ -13,12 +13,6 @@ function manualChunkByModule(id: string): string | undefined {
   const normalized = id.replace(/\\/g, '/')
 
   if (!normalized.includes('/node_modules/')) {
-    if (normalized.includes('/samples/ReferenceCatalogApp.vue')) {
-      return 'reference-catalog'
-    }
-    if (normalized.includes('/samples/ReferenceSamplesApp.vue')) {
-      return 'reference-samples'
-    }
     if (normalized.includes('/landing-page/CmsApp.vue')) {
       return 'cms-app'
     }

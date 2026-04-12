@@ -21,6 +21,7 @@
       <input
         :value="searchValue"
         type="text"
+        name="reference-report-catalog-search"
         :placeholder="searchPlaceholder"
         :aria-label="searchAriaLabel"
         @input="onSearchInput"

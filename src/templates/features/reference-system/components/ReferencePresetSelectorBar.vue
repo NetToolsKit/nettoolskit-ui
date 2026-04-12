@@ -6,6 +6,7 @@
       outlined
       emit-value
       map-options
+      name="reference-preset-selector"
       :options="options"
       :label="label"
       class="ntk-reference-preset-selector-bar__select"

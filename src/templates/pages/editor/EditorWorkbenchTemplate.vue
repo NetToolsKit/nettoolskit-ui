@@ -97,6 +97,7 @@
           <select
             class="ntk-template-editor-workbench__zoom-select"
             :value="resolvedZoomValue"
+            name="editor-workbench-zoom"
             :aria-label="zoomSelectAriaLabel"
             @change="onZoomChange"
           >
@@ -151,6 +152,7 @@
               v-model="widgetSearchModel"
               class="ntk-template-editor-workbench__widget-search-input"
               type="text"
+              name="editor-workbench-widget-search"
               :placeholder="widgetSearchPlaceholder"
               :aria-label="widgetSearchAriaLabel"
             >

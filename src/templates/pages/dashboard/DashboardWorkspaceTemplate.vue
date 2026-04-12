@@ -64,6 +64,7 @@
         <input
           v-model="searchModel"
           type="text"
+          name="dashboard-workspace-search"
           :placeholder="searchPlaceholder"
           :aria-label="searchAriaLabel"
           class="ntk-template-dashboard-workspace__search-input"

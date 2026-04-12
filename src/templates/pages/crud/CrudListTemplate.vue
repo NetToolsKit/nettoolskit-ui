@@ -42,6 +42,7 @@
         <input
           v-model="searchModel"
           type="text"
+          name="crud-list-search"
           :placeholder="searchPlaceholder"
           :aria-label="searchAriaLabel"
           class="ntk-template-crud-list__search-input"
@@ -177,6 +178,7 @@
               >
                 <q-checkbox
                   :model-value="allVisibleSelected"
+                  name="crud-list-select-all-visible"
                   dense
                   @update:model-value="toggleVisibleSelection(Boolean($event))"
                 />
@@ -214,6 +216,7 @@
               >
                 <q-checkbox
                   :model-value="isSelected(record.id)"
+                  :name="`crud-list-select-${record.id}`"
                   dense
                   @update:model-value="toggleRecord(record.id, Boolean($event))"
                 />

@@ -37,6 +37,7 @@
         <input
           v-model="searchModel"
           type="text"
+          name="enterprise-command-search"
           :placeholder="searchPlaceholder"
           :aria-label="searchAriaLabel"
         >
