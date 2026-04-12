@@ -15,12 +15,12 @@
    - Uber
    - Notion
    - Airbnb
-4. In progress: simplify the `samples/` host so `/` and `/?templates=1` both sit inside the approved shell language instead of standalone promotional layouts.
-5. In progress: replace stale approved-reference branding assets with a neutral baseline identity and keep the original pack free of forbidden names.
-6. Pending: tune the reusable layout/navigation components so the baseline shell matches the local reference more closely.
-7. Pending: rewrite the five pack configurations so each family documents its GitHub design source and uses source-aligned tokens for both light and dark themes.
-8. Pending: fix any stale sample links and keep all navigation buttons/actions functional.
-9. Pending: run focused validation, browser smoke, and leave a clean checkpoint ready for review.
+4. Completed: simplified the `samples/` host so `/` and `/?templates=1` both sit inside the approved shell language instead of standalone promotional layouts.
+5. Completed: replaced stale approved-reference branding assets with a neutral baseline identity and kept the original pack free of forbidden names.
+6. Completed: tuned the reusable layout/navigation components so the baseline shell matches the local reference more closely.
+7. Completed: rewrote the five pack configurations so each family documents its GitHub design source and uses source-aligned tokens for both light and dark themes.
+8. Completed: fixed stale sample links and kept all navigation buttons/actions functional.
+9. Completed: ran focused validation, browser smoke, and left a clean checkpoint ready for review.
 
 ## Validation Checklist
 - `npm run type-check`
