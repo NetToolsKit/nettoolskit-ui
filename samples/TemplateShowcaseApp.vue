@@ -46,8 +46,8 @@
             <strong>{{ previewVariantCount }}</strong>
           </article>
           <article class="ntk-template-showcase__stat">
-            <span>Templates</span>
-            <strong>{{ readyTemplateCount }}</strong>
+            <span>Exemplos</span>
+            <strong>{{ visibleExampleCount }}</strong>
           </article>
         </div>
       </header>
@@ -116,7 +116,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { TEMPLATE_AREAS, getTemplateCatalogByArea, templateCatalogRegistry } from '../src/templates'
+import { TEMPLATE_AREAS, getTemplateCatalogByArea } from '../src/templates'
 import { ReferenceWorkspaceShell } from '../src/templates/features/reference-system'
 import type { TemplateMenuChildItem, TemplateMenuItem } from '../src/templates/navigation/menu-template.types'
 import { useSamplesShellState } from './shared/useSamplesShellState'
@@ -150,8 +150,8 @@ const templatesByArea = computed(() => {
   }))
 })
 
-const readyTemplateCount = computed(() => {
-  return templateCatalogRegistry.filter(entry => entry.status === 'ready').length
+const visibleExampleCount = computed(() => {
+  return new Set(visibleFamilies.value.map(family => family.example.id)).size
 })
 
 function matchesSearch(family: (typeof templateVisualFamilies)[number]): boolean {

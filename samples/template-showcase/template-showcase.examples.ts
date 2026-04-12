@@ -1,23 +1,17 @@
 import type { Component } from 'vue'
 
-import TemplateShowcaseAuthLoginExample from './examples/auth-login/TemplateShowcaseAuthLoginExample.vue'
-import TemplateShowcaseCmsAuthoringExample from './examples/cms-authoring/TemplateShowcaseCmsAuthoringExample.vue'
 import TemplateShowcaseCrudProfilePlaceholderExample from './examples/crud-profile-placeholder/TemplateShowcaseCrudProfilePlaceholderExample.vue'
 import TemplateShowcaseDashboardWorkspaceExample from './examples/dashboard-workspace/TemplateShowcaseDashboardWorkspaceExample.vue'
 import TemplateShowcaseEditorWorkbenchExample from './examples/editor-workbench/TemplateShowcaseEditorWorkbenchExample.vue'
 import TemplateShowcaseEnterpriseExample from './examples/enterprise/TemplateShowcaseEnterpriseExample.vue'
-import TemplateShowcaseKnowledgeExample from './examples/knowledge/TemplateShowcaseKnowledgeExample.vue'
 import TemplateShowcaseLayoutDashboardExample from './examples/layout-dashboard/TemplateShowcaseLayoutDashboardExample.vue'
 import TemplateShowcaseReferenceSystemExample from './examples/reference-system/TemplateShowcaseReferenceSystemExample.vue'
 
 export type TemplateShowcaseExampleId =
-  | 'auth-login'
-  | 'cms-authoring'
   | 'crud-profile-placeholder'
   | 'dashboard-workspace'
   | 'editor-workbench'
   | 'enterprise'
-  | 'knowledge'
   | 'layout-dashboard'
   | 'reference-system'
 
@@ -38,14 +32,6 @@ export const templateShowcaseExampleRegistry: TemplateShowcaseExampleDefinition[
     surfaceTag: 'Layout + Dashboard',
     templateAreas: ['layouts', 'pages'],
     component: TemplateShowcaseLayoutDashboardExample,
-  },
-  {
-    id: 'auth-login',
-    label: 'Authentication entry',
-    summary: 'Split login flow for welcome, SSO entry, and release-aware access states.',
-    surfaceTag: 'Auth + Entry',
-    templateAreas: ['auth', 'pages'],
-    component: TemplateShowcaseAuthLoginExample,
   },
   {
     id: 'dashboard-workspace',
@@ -80,28 +66,12 @@ export const templateShowcaseExampleRegistry: TemplateShowcaseExampleDefinition[
     component: TemplateShowcaseEnterpriseExample,
   },
   {
-    id: 'knowledge',
-    label: 'Knowledge workspace',
-    summary: 'Document navigation and chat-assisted discovery for runbooks and governance knowledge.',
-    surfaceTag: 'Knowledge',
-    templateAreas: ['features'],
-    component: TemplateShowcaseKnowledgeExample,
-  },
-  {
     id: 'reference-system',
     label: 'Reference workspace',
     summary: 'Approved report manager and designer flow powered by the shared reference runtime.',
     surfaceTag: 'Reference System',
     templateAreas: ['features', 'samples'],
     component: TemplateShowcaseReferenceSystemExample,
-  },
-  {
-    id: 'cms-authoring',
-    label: 'CMS authoring workbench',
-    summary: 'Legacy authoring workstation preserved as a reusable surface inside the new samples host.',
-    surfaceTag: 'Authoring',
-    templateAreas: ['cms', 'features'],
-    component: TemplateShowcaseCmsAuthoringExample,
   },
 ]
 
@@ -113,10 +83,4 @@ export function findTemplateShowcaseExample(exampleId: TemplateShowcaseExampleId
   }
 
   return example
-}
-
-export function resolveTemplateShowcaseExamples(
-  exampleIds: TemplateShowcaseExampleId[]
-): TemplateShowcaseExampleDefinition[] {
-  return exampleIds.map(findTemplateShowcaseExample)
 }

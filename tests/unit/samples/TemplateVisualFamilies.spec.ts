@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
 import { templateVisualFamilies } from '../../../samples/template-showcase/families/template-visual-families'
+import { templateShowcaseExampleRegistry } from '../../../samples/template-showcase/template-showcase.examples'
 
 describe('templateVisualFamilies', () => {
   it('defines the original reference plus five curated config-driven variations', () => {
     expect(templateVisualFamilies).toHaveLength(6)
     expect(templateVisualFamilies.filter(family => family.kind === 'original')).toHaveLength(1)
     expect(templateVisualFamilies.filter(family => family.kind === 'variation')).toHaveLength(5)
+    expect(templateShowcaseExampleRegistry).toHaveLength(6)
   })
 
   it('resolves whitelabel vars and one curated example for every family', () => {

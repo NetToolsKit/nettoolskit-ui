@@ -18,8 +18,6 @@ Runtime host for the approved samples catalog and showcase flows.
   - template showcase
 - `/?template-runtime=1`
   - router-enabled template runtime
-- `/?cms=1`
-  - legacy CMS runtime mounted from `landing-page/`
 - `/?landing=1`
   - legacy marketing landing mounted from `landing-page/`
 

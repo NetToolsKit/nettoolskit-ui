@@ -353,7 +353,7 @@ export const templateShowcaseEnterpriseSample = {
     { id: 'ev-2', title: 'Incident triage complete', description: 'On-call team archived resolved alert.', owner: 'SRE team', timeLabel: '08:47', filterKeys: ['critical'] },
   ],
   services: [
-    { id: 'service-1', name: 'Reference + CMS API', uptime: '99.97%', sla: '99.90%', owner: 'Platform', filterKeys: ['all'] },
+    { id: 'service-1', name: 'Reference Runtime API', uptime: '99.97%', sla: '99.90%', owner: 'Platform', filterKeys: ['all'] },
     { id: 'service-2', name: 'Workflow Engine', uptime: '99.89%', sla: '99.90%', owner: 'Operations', filterKeys: ['warning'] },
     { id: 'service-3', name: 'Notification Bus', uptime: '99.99%', sla: '99.90%', owner: 'Messaging', filterKeys: ['critical'] },
   ],
