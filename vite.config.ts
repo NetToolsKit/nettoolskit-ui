@@ -5,7 +5,7 @@ import { resolve } from 'path'
 const modernSassApiOption = { api: 'modern-compiler' } as Record<string, string>
 
 /**
- * Split strategy used by the samples host, legacy landing, CMS, and template builds.
+ * Split strategy used by the public samples host, internal CMS runtime, and template builds.
  * Keeps framework/vendor code separated from feature-specific code
  * to reduce single-bundle size warnings and improve cacheability.
  */
@@ -72,7 +72,10 @@ export default defineConfig({
     // Keep a strict limit while avoiding false positives for this known vendor chunk.
     chunkSizeWarningLimit: 520,
     rollupOptions: {
-      input: resolve(__dirname, './samples/index.html'),
+      input: {
+        index: resolve(__dirname, './samples/index.html'),
+        'internal-cms': resolve(__dirname, './samples/internal-cms.html'),
+      },
       output: {
         manualChunks: manualChunkByModule,
       },

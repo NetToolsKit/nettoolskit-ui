@@ -144,13 +144,6 @@
       >
         Abrir Samples
       </a>
-      <a
-        href="/?cms=1"
-        class="cms-mode-btn"
-        aria-label="Abrir CMS"
-      >
-        Abrir CMS
-      </a>
     </div>
   </div>
 </template>

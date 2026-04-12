@@ -18,7 +18,9 @@ function readRepoFile(relativePath: string): string {
 const landingAppSource = readRepoFile('../../../landing-page/App.vue')
 const landingLegacyHostSource = readRepoFile('../../../landing-page/LandingPublicApp.ts')
 const samplesMainSource = readRepoFile('../../../samples/main.ts')
+const samplesCmsMainSource = readRepoFile('../../../samples/cms-main.ts')
 const samplesIndexSource = readRepoFile('../../../samples/index.html')
+const samplesInternalCmsIndexSource = readRepoFile('../../../samples/internal-cms.html')
 const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
 const referenceCatalogSource = readRepoFile('../../../samples/ReferenceCatalogApp.vue')
 const samplesNavigationHubSource = readRepoFile('../../../samples/reference-hub/SamplesNavigationHub.vue')
@@ -36,15 +38,18 @@ const themeFieldCatalogSource = readRepoFile('../../../src/modules/cms/white-lab
 const specDirectory = dirname(fileURLToPath(import.meta.url))
 
 describe('Samples runtime consolidation coverage', () => {
-  it('uses the samples host as the canonical public entry while keeping legacy landing, cms, samples, and template runtimes split', () => {
+  it('uses the samples host as the canonical public entry while keeping legacy landing, internal cms, samples, and template runtimes split', () => {
     expect(samplesMainSource).toContain("const LandingApp = defineAsyncComponent(() => import('../landing-page/LandingPublicApp'))")
     expect(samplesMainSource).toContain("const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))")
     expect(samplesMainSource).toContain("searchParams.get('landing') === '1'")
-    expect(samplesMainSource).toContain("searchParams.get('cms') === '1'")
-    expect(samplesMainSource).toContain("const CmsApp = defineAsyncComponent(() => import('../landing-page/CmsApp.vue'))")
+    expect(samplesMainSource).not.toContain("searchParams.get('cms') === '1'")
+    expect(samplesMainSource).not.toContain("const CmsApp = defineAsyncComponent(() => import('../landing-page/CmsApp.vue'))")
     expect(samplesMainSource).toContain("searchParams.get('samples') === '1'")
     expect(samplesMainSource).toContain("const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))")
     expect(samplesMainSource).toContain("const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))")
+    expect(samplesCmsMainSource).toContain("import CmsApp from '../landing-page/CmsApp.vue'")
+    expect(samplesCmsMainSource).toContain('mountSamplesHost(CmsApp)')
+    expect(samplesInternalCmsIndexSource).toContain('<script type="module" src="./cms-main.ts"></script>')
     expect(cmsAppSource).toContain('CmsSettingsModuleTemplate')
     expect(samplesMainSource).toContain(': ReferenceCatalogApp')
   })
@@ -65,7 +70,7 @@ describe('Samples runtime consolidation coverage', () => {
     expect(landingAppSource).toContain('LandingNewHeroSection')
     expect(landingAppSource).toContain('LandingNewVideoSection')
     expect(landingAppSource).toContain('LandingNewFooterSection')
-    expect(landingAppSource).toContain('href="/?cms=1"')
+    expect(landingAppSource).not.toContain('href="/?cms=1"')
     expect(landingAppSource).toContain('href="/?samples=1"')
     expect(landingAppSource).not.toContain('LandingHeaderSection')
     expect(landingAppSource).not.toContain('LandingThemesSection')
@@ -87,7 +92,7 @@ describe('Samples runtime consolidation coverage', () => {
     expect(landingStylesSource).toContain('.hero')
     expect(landingStylesSource).toContain('.runtime-mode-shortcuts')
     expect(landingStylesSource).toContain('.samples-mode-btn')
-    expect(landingStylesSource).toContain('.cms-mode-btn')
+    expect(landingStylesSource).not.toContain('.cms-mode-btn')
   })
 
   it('adds a dedicated reference catalog runtime with reusable template surfaces and whitelabel host state', () => {

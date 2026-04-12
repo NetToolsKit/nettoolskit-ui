@@ -21,6 +21,11 @@ Runtime host for the approved samples catalog and showcase flows.
 - `/?landing=1`
   - legacy marketing landing mounted from `landing-page/`
 
+## Internal Compatibility Entry
+
+- `/internal-cms.html`
+  - internal CMS compatibility runtime kept outside the public samples host navigation
+
 ## Local Preview
 
 ```bash

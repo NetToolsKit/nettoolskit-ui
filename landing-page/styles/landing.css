@@ -1033,7 +1033,6 @@ ol {
   gap: 12px;
 }
 
-.cms-mode-btn,
 .samples-mode-btn {
   position: static;
   display: inline-flex;
@@ -1052,7 +1051,6 @@ ol {
   transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
-.cms-mode-btn:hover,
 .samples-mode-btn:hover {
   background: rgba(255, 255, 255, 0.16);
   border-color: rgba(255, 255, 255, 0.32);

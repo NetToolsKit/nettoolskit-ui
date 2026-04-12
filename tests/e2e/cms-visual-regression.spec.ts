@@ -9,7 +9,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 import { createDefaultWhiteLabelSettings } from '../../src/modules/cms/white-label/config'
 import { buildCmsThemePresets } from '../../src/modules/cms/white-label/theme-presets'
 
-const CMS_URL = '/?cms=1'
+const CMS_URL = '/internal-cms.html'
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
 const CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
 const CMS_DRAFT_RECOVERY_STORAGE_KEY = 'ntk.cms.whiteLabel.recovery.v1'

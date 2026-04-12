@@ -9,6 +9,7 @@ import { buildCmsThemePresets } from '../../src/modules/cms/white-label/theme-pr
 const CMS_TENANT_PROFILES_STORAGE_KEY = 'ntk.cms.whiteLabel.profiles.v1'
 const CMS_WHITE_LABEL_SETTINGS_STORAGE_KEY = 'ntk.cms.whiteLabel.settings.v1'
 const CMS_DRAFT_RECOVERY_STORAGE_KEY = 'ntk.cms.whiteLabel.recovery.v1'
+const CMS_URL = '/internal-cms.html'
 const CMS_THEME_PRESETS = buildCmsThemePresets(createDefaultWhiteLabelSettings().theme)
 const DEFAULT_TENANT_NAME = 'Default Tenant'
 const BLUE_TENANT_NAME = 'Blue Tenant'
@@ -736,7 +737,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('renders the designer shell chrome across Settings, Pages and Blocks', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
 
     const settingsShell = page.locator('.cms-designer-card--settings').first()
@@ -817,7 +818,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('exposes accessible controls for settings toolbar and tabs', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
 
     await expect(page.locator('.cms-toolbar-card__saved-at[role="status"][aria-live="polite"], .cms-settings__saved-at[role="status"][aria-live="polite"]')).toBeVisible()
@@ -839,7 +840,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('keeps the authoring shell readable after applying the dark preset', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /colors/i)
     await selectThemePreset(page, DARK_PRESET_NAME)
@@ -861,7 +862,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('opens Pages preview in the workspace tab from the designer toolbar', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
     await page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-group--preview .q-btn').first().click()
@@ -876,7 +877,7 @@ test.describe('CMS settings white-label flow', () => {
       footerLinkTitleLetterSpacing: '0.18em',
     }
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /colors/i)
     await enableAdvancedThemeOverrides(page)
@@ -925,13 +926,14 @@ test.describe('CMS settings white-label flow', () => {
     expect(persistedLayoutTokens?.landingLayoutCtaSubtitleLineHeight).toBe(tokenValues.ctaSubtitleLineHeight)
     expect(persistedLayoutTokens?.landingLayoutFooterLinkTitleLetterSpacing).toBe(tokenValues.footerLinkTitleLetterSpacing)
 
-    await page.goto('/')
+    await page.goto('/?landing=1')
     await expect(page.locator('body')).toBeVisible()
-    await expect(page.locator('.cms-mode-btn')).toBeVisible()
+    await expect(page.locator('.samples-mode-btn')).toBeVisible()
+    await expect(page.locator('.cms-mode-btn')).toHaveCount(0)
   })
 
   test('edits, saves, reloads and preserves notification tokens by tenant', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
 
     await openSettingsTab(page, /branding/i)
@@ -1026,7 +1028,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('imports and exports domain snapshots independently', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
 
     const readStoredSettings = async (): Promise<Record<string, unknown> | null> => {
@@ -1260,7 +1262,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('restores the latest autosave after a destructive reset', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
 
     const activeProfileId = await page.evaluate((profilesKey: string) => {
@@ -1300,7 +1302,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('navigates from pages to blocks and keeps block props editors in sync', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -1370,7 +1372,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('imports and exports schema packages independently from authored page content', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -1465,7 +1467,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('supports content models and section presets in pages builder', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -1482,7 +1484,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('saves reusable sections and reinserts them in pages builder', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -1507,7 +1509,7 @@ test.describe('CMS settings white-label flow', () => {
   test('supports linked reusable sections with explicit detach flow and linked block readonly authoring', async ({ page }) => {
     const reusableBlockName = 'Linked Hero Block QA'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -1565,7 +1567,7 @@ test.describe('CMS settings white-label flow', () => {
   test('branches linked reusable sections and blocks into variant library entries', async ({ page }) => {
     const reusableBlockName = 'Variant Hero Block QA'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
 
     const heroSectionRow = page
@@ -1609,7 +1611,7 @@ test.describe('CMS settings white-label flow', () => {
     const reusableBlockName = 'Protected Hero Block'
     const presetName = 'Protected Hero Preset'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -1678,7 +1680,7 @@ test.describe('CMS settings white-label flow', () => {
   test('archives reusable entities and authored presets without breaking restore flows', async ({ page }) => {
     const presetName = 'Archived Hero Preset QA'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -1733,7 +1735,7 @@ test.describe('CMS settings white-label flow', () => {
     const localizedPageTitle = 'Landing Principal QA'
     const localizedHeroTitle = 'Construa interfaces QA'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
 
@@ -1835,7 +1837,7 @@ test.describe('CMS settings white-label flow', () => {
     const repeatableFieldGroup = 'Content'
 
     await page.setViewportSize({ width: 1600, height: 2200 })
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -2196,7 +2198,7 @@ test.describe('CMS settings white-label flow', () => {
     ], null, 2)
 
     await page.setViewportSize({ width: 1600, height: 1900 })
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -2391,7 +2393,7 @@ test.describe('CMS settings white-label flow', () => {
     const localizedFieldPlaceholder = 'Digite o titulo da campanha'
 
     await page.setViewportSize({ width: 1600, height: 1900 })
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -2490,7 +2492,7 @@ test.describe('CMS settings white-label flow', () => {
   test('authors section-level custom fields in Blocks builder and preserves them after Pages edits', async ({ page }) => {
     const anchorIdValue = 'hero-anchor-qa'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
 
@@ -2561,7 +2563,7 @@ test.describe('CMS settings white-label flow', () => {
     const fieldDefaultValue = 'CMP-001'
 
     await page.setViewportSize({ width: 1600, height: 1800 })
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -2633,7 +2635,7 @@ test.describe('CMS settings white-label flow', () => {
     const replacementFieldLabel = 'Campaign code v2'
 
     await page.setViewportSize({ width: 1600, height: 1800 })
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -2708,7 +2710,7 @@ test.describe('CMS settings white-label flow', () => {
     const legacyReusableBlockName = 'Legacy Swap Block'
     const replacementReusableBlockName = 'Replacement Swap Block'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
 
@@ -2758,7 +2760,7 @@ test.describe('CMS settings white-label flow', () => {
     const contentModelName = 'Conditional schema QA'
 
     await page.setViewportSize({ width: 1600, height: 1900 })
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
 
@@ -2819,7 +2821,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('seeds localized block presets in the builder and keeps English base content intact', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
     await openSettingsTab(page, /^(Content|Conteudo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
@@ -2850,7 +2852,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('offers guided page quick-start workflows in Pages builder', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
     const quickStarts = page.locator('.cms-pages__rail .cms-pages__sidebar-section', {
@@ -2881,7 +2883,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('installs starter-kit bundles and opens Blocks with seeded reusable libraries', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
     const initialSettings = await page.evaluate((storageKey: string) => {
@@ -2942,7 +2944,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces starter-kit impact analysis and archive restore flows for seeded reusable blocks', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
     const starterKits = page.locator('.cms-pages__starter-kits').first()
@@ -2985,7 +2987,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('uses shared builder search and quick commands across Pages and Blocks', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
 
     await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Marketing funnel')
@@ -3028,7 +3030,7 @@ test.describe('CMS settings white-label flow', () => {
     const authoredPresetDescriptionPt = 'Preset authored localizado'
     const localizedHeroTitle = 'Hero authored em portugues'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
 
@@ -3093,7 +3095,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('shows starter preset variants in Pages and seeds sections from the selected variant', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^(Pages|Paginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
 
@@ -3133,7 +3135,7 @@ test.describe('CMS settings white-label flow', () => {
     const diagnosticsPageTitle = 'Content Diagnostics Page'
     const diagnosticsCode = 'pages.sections.label.required'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -3171,7 +3173,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('supports drag-and-drop for page sections and block rows', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
@@ -3215,7 +3217,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('supports authoring undo redo plus block duplication and bulk cleanup', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openSettingsModule(page)
 
     const productNameInput = cmsInputByLabel(page, 'Product name')
@@ -3245,7 +3247,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('manages media library assets and applies branding bindings', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Media$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Media')
 
@@ -3274,7 +3276,7 @@ test.describe('CMS settings white-label flow', () => {
   test('binds media-library assets into block schemas and resolves them in preview', async ({ page }) => {
     const assetUrl = 'https://example.com/assets/hero-image-reference.png'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Media$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Media')
 
@@ -3309,7 +3311,7 @@ test.describe('CMS settings white-label flow', () => {
   test('surfaces diagnostics when a block references a deleted media asset', async ({ page }) => {
     const assetUrl = 'https://example.com/assets/deleted-reference.png'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Media$/)
     await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
     await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Deleted Hero Asset')
@@ -3340,7 +3342,7 @@ test.describe('CMS settings white-label flow', () => {
     const originalAssetUrl = 'https://example.com/assets/original-managed-hero.png'
     const replacementAssetUrl = 'https://example.com/assets/replacement-managed-hero.png'
 
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Media$/)
 
     await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
@@ -3391,7 +3393,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('executes release orchestration flow: draft, validate, publish and rollback', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Releases')
 
@@ -3416,7 +3418,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces a release candidate checklist and updates it after validation', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Releases')
 
@@ -3438,7 +3440,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('navigates from release checklist findings to authoring surfaces and shortcuts validation', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
@@ -3471,7 +3473,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces accessibility and content QA findings in the release checklist', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
 
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
@@ -3498,7 +3500,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces a unified release review hub in Releases', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
@@ -3536,7 +3538,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces governance workflow and audit signals in Releases', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
 
     const saveButton = page.getByRole('button', { name: /^(Save tenant settings|Salvar configuracoes do tenant)$/ }).first()
     await saveButton.click()
@@ -3561,7 +3563,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('supports draft vs published preview with viewport and locale controls', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
 
@@ -3645,7 +3647,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces draft vs published review summaries in Pages and Blocks preview', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
@@ -3686,7 +3688,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('exports a draft comparison review package from Releases', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
@@ -3752,7 +3754,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('records release review acknowledgements in Releases', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
@@ -3777,7 +3779,7 @@ test.describe('CMS settings white-label flow', () => {
   })
 
   test('surfaces locale coverage matrix in Pages and Blocks preview', async ({ page }) => {
-    await page.goto('/?cms=1')
+    await page.goto(CMS_URL)
 
     await openDrawerModule(page, /^Pages$/)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
@@ -3808,3 +3810,4 @@ test.describe('CMS settings white-label flow', () => {
     await expect(blocksLocaleCoverage).toContainText('Reusable content')
   })
 })
+

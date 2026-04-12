@@ -2,146 +2,39 @@
  * Samples runtime/main module.
  */
 
-import { createApp, defineAsyncComponent } from 'vue'
-import {
-  ClosePopup,
-  QAvatar,
-  QBadge,
-  QBanner,
-  QBtn,
-  QCard,
-  QCardActions,
-  QCardSection,
-  QCheckbox,
-  QChip,
-  QDate,
-  QDrawer,
-  QExpansionItem,
-  QForm,
-  QHeader,
-  QIcon,
-  QInput,
-  QItem,
-  QItemLabel,
-  QItemSection,
-  QLayout,
-  QList,
-  QMenu,
-  QPage,
-  QPageContainer,
-  QPopupProxy,
-  QScrollArea,
-  QSelect,
-  QSeparator,
-  QSkeleton,
-  QSpinner,
-  QSpinnerDots,
-  QSpace,
-  QTab,
-  QTabPanel,
-  QTabPanels,
-  QTabs,
-  QTime,
-  QToggle,
-  QToolbar,
-  QToolbarTitle,
-  QTooltip,
-  Quasar,
-  Ripple,
-} from 'quasar'
-import '@quasar/extras/material-icons/material-icons.css'
-import 'quasar/dist/quasar.css'
+import { defineAsyncComponent } from 'vue'
 import { createTemplateRuntimeRouter } from '../src/templates/runtime'
+import { mountSamplesHost } from './shared/mountSamplesHost'
 
-// NetToolsKit style tokens
-import '../src/styles/tokens.scss'
-import '../src/styles/global.scss'
-
-// Route-mode async loading keeps the samples host, compatibility runtimes, and template runtimes split at runtime.
+// Route-mode async loading keeps the public samples host, legacy landing, and template runtime split at runtime.
 const LandingApp = defineAsyncComponent(() => import('../landing-page/LandingPublicApp'))
 const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))
 const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))
-const CmsApp = defineAsyncComponent(() => import('../landing-page/CmsApp.vue'))
 const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))
 const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))
 
 const searchParams = new URLSearchParams(window.location.search)
 const isLandingMode = searchParams.get('landing') === '1'
-const isCmsMode = searchParams.get('cms') === '1'
 const isSamplesMode = searchParams.get('samples') === '1'
 const isTemplateMode = searchParams.get('templates') === '1'
 const isTemplateRuntimeMode = searchParams.get('template-runtime') === '1'
 
-const RootComponent = isCmsMode
-  ? CmsApp
-  : isTemplateRuntimeMode
-    ? TemplateRuntimeApp
-    : isSamplesMode
-      ? ReferenceSamplesApp
-      : isTemplateMode
+const RootComponent = isTemplateRuntimeMode
+  ? TemplateRuntimeApp
+  : isSamplesMode
+    ? ReferenceSamplesApp
+    : isTemplateMode
       ? TemplateShowcaseApp
       : isLandingMode
         ? LandingApp
         : ReferenceCatalogApp
 
-const app = createApp(RootComponent)
 const templateRuntimeRouter = isTemplateRuntimeMode
   ? createTemplateRuntimeRouter()
   : null
 
-app.use(Quasar, {
-  plugins: {},
-  components: {
-    QAvatar,
-    QBadge,
-    QBanner,
-    QBtn,
-    QCard,
-    QCardActions,
-    QCardSection,
-    QCheckbox,
-    QChip,
-    QDate,
-    QDrawer,
-    QExpansionItem,
-    QForm,
-    QHeader,
-    QIcon,
-    QInput,
-    QItem,
-    QItemLabel,
-    QItemSection,
-    QLayout,
-    QList,
-    QMenu,
-    QPage,
-    QPageContainer,
-    QPopupProxy,
-    QScrollArea,
-    QSelect,
-    QSeparator,
-    QSkeleton,
-    QSpinner,
-    QSpinnerDots,
-    QSpace,
-    QTab,
-    QTabPanel,
-    QTabPanels,
-    QTabs,
-    QTime,
-    QToggle,
-    QToolbar,
-    QToolbarTitle,
-    QTooltip,
-  },
-  directives: {
-    Ripple,
-    ClosePopup,
-  },
+mountSamplesHost(RootComponent, app => {
+  if (templateRuntimeRouter) {
+    app.use(templateRuntimeRouter)
+  }
 })
-
-if (templateRuntimeRouter) {
-  app.use(templateRuntimeRouter)
-}
-
-app.mount('#app')
