@@ -83,6 +83,8 @@
               v-for="item in menuItems"
               :key="item.id"
               :item="item"
+              :active-item-id="activeItemId"
+              @item-click="forwardMenuItemClick"
             />
           </nav>
         </q-toolbar>

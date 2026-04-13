@@ -18,13 +18,11 @@
       @menu-item-click="handleMenuItemClick"
     >
       <template #brand>
-        <div class="ntk-original-reference__brand">
-          <img
-            :src="originalReferenceMarkUrl"
-            alt="Atlas Flow"
-            class="ntk-original-reference__brand-image"
-          >
-        </div>
+        <img
+          :src="referenceHeaderLogoUrl"
+          alt="Atlas Flow"
+          class="ntk-original-reference__brand-logo"
+        >
       </template>
 
       <template #header-actions="{ layoutControls }">
@@ -154,7 +152,7 @@ import type { TemplatePageAction, TemplatePageHint } from '../../src/templates/p
 import OriginalReferenceCharts from './OriginalReferenceCharts.vue'
 import { originalReferenceDashboardSample } from './original-reference.sample-data'
 
-const originalReferenceMarkUrl = new URL('../assets/original-reference-mark.svg', import.meta.url).href
+const referenceHeaderLogoUrl = new URL('../assets/reference-header-logo.png', import.meta.url).href
 
 type OriginalReferenceSectionId = 'dashboard' | 'clients' | 'orders' | 'configurations'
 type AssistantActionId = 'dashboard' | 'configurations' | 'landing'
@@ -361,13 +359,7 @@ onBeforeUnmount(() => {
   min-height: 100vh;
 }
 
-.ntk-original-reference__brand {
-  display: flex;
-  align-items: center;
-  margin-left: 8px;
-}
-
-.ntk-original-reference__brand-image {
+.ntk-original-reference__brand-logo {
   width: 120px;
   height: auto;
   object-fit: contain;
@@ -411,10 +403,6 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 768px) {
-  .ntk-original-reference__brand-image {
-    width: 42px;
-  }
-
   .ntk-original-reference__floating-action {
     bottom: 16px;
     right: 16px;

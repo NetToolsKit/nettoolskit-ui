@@ -317,6 +317,7 @@ config.global.directives = {
 vi.mock('vue-router', () => ({
   useRoute: () => ({ path: '/' }),
   useRouter: () => ({ back: vi.fn(), push: vi.fn(), replace: vi.fn() }),
+  routeLocationKey: Symbol('routeLocationKey'),
 }))
 
 // Mock useBranding composable

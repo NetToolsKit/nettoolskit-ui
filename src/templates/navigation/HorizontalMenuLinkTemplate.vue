@@ -25,6 +25,7 @@
         :disable="child.disabled"
         :to="resolveRouteTo(child.to, child.routeName)"
         :class="['ntk-template-horizontal-link__submenu-item', childClass(child)]"
+        @click="emitChildClick(child)"
       >
         <q-item-section avatar>
           <q-icon
@@ -45,6 +46,7 @@
     :class="{ 'ntk-template-horizontal-link--active': isCurrentItemActive }"
     :disable="item.disabled"
     :to="resolveRouteTo(item.to, item.routeName)"
+    @click="emitItemClick(item)"
   >
     <q-icon
       :name="item.icon"
@@ -63,14 +65,23 @@ import type { TemplateMenuChildItem, TemplateMenuItem } from './menu-template.ty
 
 const props = defineProps<{
   item: TemplateMenuItem
+  activeItemId?: string
+}>()
+
+const emit = defineEmits<{
+  'item-click': [item: TemplateMenuItem | TemplateMenuChildItem]
 }>()
 
 const route = inject(routeLocationKey, null)
 
 const visibleChildren = computed<TemplateMenuChildItem[]>(() => props.item.children ?? [])
 const hasChildren = computed<boolean>(() => visibleChildren.value.length > 0)
+const isManualActiveMode = computed<boolean>(() => Boolean(props.activeItemId))
 
 function isTargetActive(to?: string, routeName?: string): boolean {
+  if (isManualActiveMode.value) {
+    return false
+  }
   if (routeName && String(route?.name ?? '') === routeName) {
     return true
   }
@@ -81,6 +92,14 @@ function isTargetActive(to?: string, routeName?: string): boolean {
 }
 
 const isCurrentItemActive = computed<boolean>(() => {
+  if (isManualActiveMode.value) {
+    if (props.item.id === props.activeItemId) {
+      return true
+    }
+
+    return visibleChildren.value.some(child => child.id === props.activeItemId)
+  }
+
   if (isTargetActive(props.item.to, props.item.routeName)) {
     return true
   }
@@ -88,6 +107,12 @@ const isCurrentItemActive = computed<boolean>(() => {
 })
 
 function childClass(child: TemplateMenuChildItem): string {
+  if (isManualActiveMode.value) {
+    return child.id === props.activeItemId
+      ? 'ntk-template-horizontal-link__submenu-item--active'
+      : ''
+  }
+
   return isTargetActive(child.to, child.routeName)
     ? 'ntk-template-horizontal-link__submenu-item--active'
     : ''
@@ -99,12 +124,27 @@ function resolveRouteTo(to?: string, routeName?: string): string | { name: strin
   }
   return to
 }
+
+function emitItemClick(item: TemplateMenuItem): void {
+  if (item.disabled) {
+    return
+  }
+
+  emit('item-click', item)
+}
+
+function emitChildClick(child: TemplateMenuChildItem): void {
+  if (child.disabled) {
+    return
+  }
+
+  emit('item-click', child)
+}
 </script>
 
 <style lang="scss">
 .ntk-template-horizontal-link {
-  color: var(--ntk-template-horizontal-link-color, rgba(255, 255, 255, 0.8)) !important;
-  font-family: var(--ntk-font-family, Inter, system-ui, sans-serif);
+  color: var(--ntk-template-horizontal-link-color, rgba(255, 255, 255, 0.75)) !important;
   font-size: 13px;
   font-weight: 400;
   border-bottom: 2px solid transparent;
@@ -122,21 +162,16 @@ function resolveRouteTo(to?: string, routeName?: string): string | { name: strin
   color: var(--ntk-template-horizontal-link-active-color, #ffffff) !important;
   font-weight: 500;
   border-bottom: 2px solid var(--ntk-template-horizontal-link-active-border, #ffffff) !important;
-  background-color: var(--ntk-template-horizontal-link-active-bg, rgba(255, 255, 255, 0.12));
+  background-color: var(--ntk-template-horizontal-link-active-bg, rgba(255, 255, 255, 0.1));
 }
 
 .ntk-template-horizontal-link__submenu {
   min-width: 220px;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid var(--ntk-template-layout-toolbar-border, rgba(148, 163, 184, 0.18));
   background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: var(--ntk-shadow-soft, 0 4px 16px rgba(15, 23, 42, 0.08));
 }
 
 .ntk-template-horizontal-link__submenu-item {
   border-left: 3px solid transparent;
-  border-radius: 8px;
   transition: all 0.2s ease;
   color: var(--ntk-text-primary, #0f172a);
 
