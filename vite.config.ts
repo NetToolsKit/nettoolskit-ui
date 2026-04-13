@@ -32,15 +32,7 @@ function manualChunkByModule(id: string): string | undefined {
     ) {
       return 'cms-blocks'
     }
-    if (
-      normalized.includes('/src/whitelabel/')
-    ) {
-      return 'whitelabel-runtime'
-    }
-    if (
-      normalized.includes('/samples/TemplateShowcaseApp.vue')
-      || normalized.includes('/src/templates/')
-    ) {
+    if (normalized.includes('/src/templates/')) {
       return 'template-system'
     }
     return undefined

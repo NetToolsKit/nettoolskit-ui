@@ -882,11 +882,9 @@ interface ThemeGradients {
 ### Template Runtime Preview
 
 - `samples/` is the canonical runtime host that consumes the reusable libraries in `src/**`.
-- `/` renders the reference catalog with approved systems, live template previews, and whitelabel preset switching.
-- `/?samples=1` renders the report workspace runtime backed by the shared reference shell.
-- `/?templates=1` renders the enterprise template showcase used by the visual-regression gate.
+- `/` renders the single public sample derived from the approved reference in `.temp/reference`.
 - `/?template-runtime=1` renders the router-enabled template runtime (layout/navigation/page/feature templates composed via scaffolded routes).
-- `/?cms=1` renders the CMS authoring runtime.
+- `/internal-cms.html` renders the internal CMS authoring runtime outside the public sample flow.
 - `/?landing=1` keeps the legacy marketing landing reachable while the samples-first runtime stabilizes.
 - Local preview command:
 

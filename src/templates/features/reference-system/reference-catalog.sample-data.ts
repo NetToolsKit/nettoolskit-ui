@@ -157,23 +157,9 @@ export const referenceRuntimeLinks: ReferenceCatalogRuntimeLink[] = [
   {
     id: 'original-reference',
     title: 'Open Original Reference',
-    description: 'Open the original baseline directly in the approved shell without the showcase wrapper.',
-    href: '/?original=1',
+    description: 'Open the single public baseline directly in the approved shell.',
+    href: '/',
     icon: 'dashboard',
-  },
-  {
-    id: 'report-workspace',
-    title: 'Open Report Workspace',
-    description: 'Jump into the report-manager and designer runtime backed by the shared reference shell.',
-    href: '/?samples=1',
-    icon: 'design_services',
-  },
-  {
-    id: 'template-showcase',
-    title: 'Open Template Showcase',
-    description: 'Inspect the catalog of shared layouts, pages and feature templates.',
-    href: '/?templates=1',
-    icon: 'widgets',
   },
   {
     id: 'template-runtime',

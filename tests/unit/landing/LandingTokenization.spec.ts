@@ -7,9 +7,6 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
-/**
- * Reads a repository file relative to this spec.
- */
 function readRepoFile(relativePath: string): string {
   const absolutePath = fileURLToPath(new URL(relativePath, import.meta.url))
   return readFileSync(absolutePath, 'utf8')
@@ -20,141 +17,88 @@ const landingLegacyHostSource = readRepoFile('../../../landing-page/LandingPubli
 const samplesMainSource = readRepoFile('../../../samples/main.ts')
 const samplesCmsMainSource = readRepoFile('../../../samples/cms-main.ts')
 const samplesIndexSource = readRepoFile('../../../samples/index.html')
+const samplesReadmeSource = readRepoFile('../../../samples/README.md')
 const samplesInternalCmsIndexSource = readRepoFile('../../../samples/internal-cms.html')
 const originalReferenceSource = readRepoFile('../../../samples/original-reference/OriginalReferenceApp.vue')
-const cmsAppSource = readRepoFile('../../../landing-page/CmsApp.vue')
-const referenceCatalogSource = readRepoFile('../../../samples/ReferenceCatalogApp.vue')
-const samplesNavigationHubSource = readRepoFile('../../../samples/reference-hub/SamplesNavigationHub.vue')
-const referenceSamplesSource = readRepoFile('../../../samples/ReferenceSamplesApp.vue')
-const templateShowcaseSource = readRepoFile('../../../samples/TemplateShowcaseApp.vue')
-const templateShowcaseExamplesSource = readRepoFile('../../../samples/template-showcase/template-showcase.examples.ts')
-const templateVisualFamilyPacksSource = readRepoFile('../../../samples/template-showcase/packs/index.ts')
-const templateVisualFamilySectionSource = readRepoFile('../../../samples/template-showcase/components/TemplateVisualFamilySection.vue')
-const templateSampleSelectorSource = readRepoFile('../../../samples/template-showcase/components/TemplateSampleSelector.vue')
-const templateVisualVariantCardSource = readRepoFile('../../../samples/template-showcase/components/TemplateVisualVariantCard.vue')
-const templateShowcaseReferenceSystemSource = readRepoFile('../../../samples/template-showcase/examples/reference-system/TemplateShowcaseReferenceSystemExample.vue')
+const originalReferenceDataSource = readRepoFile('../../../samples/original-reference/original-reference.sample-data.ts')
+const originalReferenceChartsSource = readRepoFile('../../../samples/original-reference/OriginalReferenceCharts.vue')
 const packageJsonSource = readRepoFile('../../../package.json')
-const landingStylesSource = readRepoFile('../../../landing-page/styles/landing.css')
-const themeFieldCatalogSource = readRepoFile('../../../src/modules/cms/white-label/authoring/theme-field-catalog.ts')
 const specDirectory = dirname(fileURLToPath(import.meta.url))
 
-describe('Samples runtime consolidation coverage', () => {
-  it('uses the samples host as the canonical public entry while keeping legacy landing, internal cms, samples, and template runtimes split', () => {
+describe('Samples single reference runtime coverage', () => {
+  it('uses the samples host as a single public runtime rooted in the original reference sample', () => {
     expect(samplesMainSource).toContain("const LandingApp = defineAsyncComponent(() => import('../landing-page/LandingPublicApp'))")
-    expect(samplesMainSource).toContain("const ReferenceCatalogApp = defineAsyncComponent(() => import('./ReferenceCatalogApp.vue'))")
     expect(samplesMainSource).toContain("const OriginalReferenceApp = defineAsyncComponent(() => import('./original-reference/OriginalReferenceApp.vue'))")
+    expect(samplesMainSource).toContain("const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))")
     expect(samplesMainSource).toContain("searchParams.get('landing') === '1'")
-    expect(samplesMainSource).toContain("searchParams.get('original') === '1'")
-    expect(samplesMainSource).not.toContain("searchParams.get('cms') === '1'")
-    expect(samplesMainSource).not.toContain("const CmsApp = defineAsyncComponent(() => import('../landing-page/CmsApp.vue'))")
-    expect(samplesMainSource).toContain("searchParams.get('samples') === '1'")
-    expect(samplesMainSource).toContain("const ReferenceSamplesApp = defineAsyncComponent(() => import('./ReferenceSamplesApp.vue'))")
-    expect(samplesMainSource).toContain("const TemplateShowcaseApp = defineAsyncComponent(() => import('./TemplateShowcaseApp.vue'))")
-    expect(originalReferenceSource).toContain('<MainLayoutTemplate')
-    expect(originalReferenceSource).toContain("navigateTo('/?templates=1')")
-    expect(originalReferenceSource).toContain("navigateTo('/')")
-    expect(samplesCmsMainSource).toContain("import CmsApp from '../landing-page/CmsApp.vue'")
-    expect(samplesCmsMainSource).toContain('mountSamplesHost(CmsApp)')
-    expect(samplesInternalCmsIndexSource).toContain('<script type="module" src="./cms-main.ts"></script>')
-    expect(cmsAppSource).toContain('CmsSettingsModuleTemplate')
-    expect(samplesMainSource).toContain(': ReferenceCatalogApp')
+    expect(samplesMainSource).toContain("searchParams.get('template-runtime') === '1'")
+    expect(samplesMainSource).not.toContain('ReferenceCatalogApp')
+    expect(samplesMainSource).not.toContain('ReferenceSamplesApp')
+    expect(samplesMainSource).not.toContain('TemplateShowcaseApp')
+    expect(samplesMainSource).not.toContain("searchParams.get('samples') === '1'")
+    expect(samplesMainSource).not.toContain("searchParams.get('templates') === '1'")
   })
 
-  it('promotes samples commands to the canonical runtime aliases after consolidation', () => {
-    expect(packageJsonSource).not.toContain('build:landing-new')
-    expect(packageJsonSource).not.toContain('dev:landing-new')
+  it('keeps samples commands as the canonical runtime aliases', () => {
     expect(packageJsonSource).toContain('"build:samples": "vite build"')
     expect(packageJsonSource).toContain('"build:landing": "npm run build:samples"')
     expect(packageJsonSource).toContain('"dev": "npm run dev:samples"')
     expect(packageJsonSource).toContain('"dev:landing": "npm run dev:samples"')
   })
 
-  it('keeps the legacy landing composition reachable while the samples host owns the entrypoint', () => {
-    expect(landingLegacyHostSource).toContain("import './styles/landing.css'")
+  it('keeps the legacy landing reachable while pointing its shortcut to the single public sample', () => {
     expect(landingLegacyHostSource).toContain("export { default } from './App.vue'")
-    expect(landingAppSource).toContain('LandingNewTopNav')
-    expect(landingAppSource).toContain('LandingNewHeroSection')
-    expect(landingAppSource).toContain('LandingNewVideoSection')
-    expect(landingAppSource).toContain('LandingNewFooterSection')
-    expect(landingAppSource).not.toContain('href="/?cms=1"')
-    expect(landingAppSource).toContain('href="/?samples=1"')
-    expect(landingAppSource).not.toContain('LandingHeaderSection')
-    expect(landingAppSource).not.toContain('LandingThemesSection')
+    expect(landingAppSource).toContain('href="/"')
+    expect(landingAppSource).not.toContain('href="/?samples=1"')
   })
 
   it('keeps the samples html shell as the canonical app bootstrap document', () => {
     expect(samplesIndexSource).toContain('<div id="app"></div>')
     expect(samplesIndexSource).toContain('<script type="module" src="./main.ts"></script>')
-    expect(samplesIndexSource).toContain('href="/favicon.png"')
+    expect(samplesIndexSource).toContain('Original Reference')
   })
 
-  it('removes the dev-only legacy landing artifact from the canonical source tree', () => {
-    const legacyDevAppPath = resolve(specDirectory, '../../../landing-page/App-Dev.vue')
-    expect(existsSync(legacyDevAppPath)).toBe(false)
+  it('keeps the internal CMS compatibility entry mounted outside the public runtime', () => {
+    expect(samplesCmsMainSource).toContain("import CmsApp from '../landing-page/CmsApp.vue'")
+    expect(samplesCmsMainSource).toContain('mountSamplesHost(CmsApp)')
+    expect(samplesInternalCmsIndexSource).toContain('<script type="module" src="./cms-main.ts"></script>')
   })
 
-  it('keeps the legacy landing styles available in the merged landing-page root', () => {
-    expect(landingStylesSource).toContain('.nav-wrapper')
-    expect(landingStylesSource).toContain('.hero')
-    expect(landingStylesSource).toContain('.runtime-mode-shortcuts')
-    expect(landingStylesSource).toContain('.samples-mode-btn')
-    expect(landingStylesSource).not.toContain('.cms-mode-btn')
+  it('makes the original sample self-contained instead of depending on showcase files', () => {
+    expect(originalReferenceSource).toContain("from './original-reference.sample-data'")
+    expect(originalReferenceSource).toContain("from './OriginalReferenceCharts.vue'")
+    expect(originalReferenceSource).toContain('Abrir assistente')
+    expect(originalReferenceSource).toContain("navigateTo('/?landing=1')")
+    expect(originalReferenceSource).not.toContain('Abrir packs')
+    expect(originalReferenceSource).not.toContain('/?templates=1')
+    expect(originalReferenceSource).not.toContain('/?samples=1')
+    expect(originalReferenceDataSource).toContain("title: 'Bom dia, Guilherme Ferreira'")
+    expect(originalReferenceChartsSource).toContain('Pedidos por Status')
+    expect(originalReferenceChartsSource).toContain('Vendas por Categoria')
   })
 
-  it('adds a dedicated reference catalog runtime with reusable template surfaces and whitelabel host state', () => {
-    expect(referenceCatalogSource).toContain('useSamplesShellState')
-    expect(referenceCatalogSource).toContain('ReferenceWorkspaceShell')
-    expect(referenceCatalogSource).toContain('SamplesNavigationHub')
-    expect(referenceCatalogSource).toContain(':search-value="searchValue"')
-    expect(samplesNavigationHubSource).toContain("navigateTo('/?original=1')")
-    expect(samplesNavigationHubSource).toContain("navigateTo(`/?templates=1&example=${example.id}`)")
+  it('documents the single-sample public runtime in samples/README.md', () => {
+    expect(samplesReadmeSource).toContain('single approved sample')
+    expect(samplesReadmeSource).toContain('- `/`')
+    expect(samplesReadmeSource).not.toContain('showcase')
+    expect(samplesReadmeSource).not.toContain('/?templates=1')
+    expect(samplesReadmeSource).not.toContain('/?samples=1')
   })
 
-  it('adds a dedicated reference samples runtime with reusable template surfaces', () => {
-    expect(referenceSamplesSource).toContain('useReferenceWorkspaceHost')
-    expect(referenceSamplesSource).toContain('ReferenceWorkspaceShell')
-    expect(referenceSamplesSource).toContain('ReferenceWorkspaceComposer')
-  })
+  it('removes the public showcase and multi-pack host files from the source tree', () => {
+    const removedPaths = [
+      '../../../samples/ReferenceCatalogApp.vue',
+      '../../../samples/ReferenceSamplesApp.vue',
+      '../../../samples/TemplateShowcaseApp.vue',
+      '../../../samples/reference-hub/SamplesNavigationHub.vue',
+      '../../../samples/template-showcase',
+      '../../../tests/unit/samples/TemplateShowcaseApprovedReference.spec.ts',
+      '../../../tests/unit/samples/TemplateVisualFamilies.spec.ts',
+      '../../../tests/e2e/template-visual-regression.spec.ts',
+    ]
 
-  it('keeps the samples showcase host consuming shared template surfaces from src', () => {
-    const approvedReferencePackPath = resolve(specDirectory, '../../../samples/template-showcase/packs/approved-reference/pack.config.ts')
-    const operationsWorkspacePackPath = resolve(specDirectory, '../../../samples/template-showcase/packs/operations-workspace/pack.config.ts')
-    const referenceOrchestratorPackPath = resolve(specDirectory, '../../../samples/template-showcase/packs/reference-orchestrator/pack.config.ts')
-    const builderStudioPackPath = resolve(specDirectory, '../../../samples/template-showcase/packs/builder-studio/pack.config.ts')
-    const registryControlPackPath = resolve(specDirectory, '../../../samples/template-showcase/packs/registry-control/pack.config.ts')
-    const serviceCommandPackPath = resolve(specDirectory, '../../../samples/template-showcase/packs/service-command/pack.config.ts')
-
-    expect(templateShowcaseSource).toContain("from '../src/templates'")
-    expect(templateShowcaseSource).toContain("from './template-showcase/components/TemplateVisualFamilySection.vue'")
-    expect(templateShowcaseSource).toContain("from './template-showcase/components/TemplateSampleSelector.vue'")
-    expect(templateShowcaseSource).toContain("from './template-showcase/families/template-visual-families'")
-    expect(templateShowcaseSource).toContain("searchParams.get('family')")
-    expect(templateShowcaseSource).toContain("searchParams.get('example')")
-    expect(templateVisualFamilyPacksSource).toContain("from './approved-reference/pack.config'")
-    expect(templateVisualFamilyPacksSource).toContain("from './operations-workspace/pack.config'")
-    expect(templateVisualFamilyPacksSource).toContain("from './reference-orchestrator/pack.config'")
-    expect(templateVisualFamilyPacksSource).toContain("from './builder-studio/pack.config'")
-    expect(templateVisualFamilyPacksSource).toContain("from './registry-control/pack.config'")
-    expect(templateVisualFamilyPacksSource).toContain("from './service-command/pack.config'")
-    expect(existsSync(approvedReferencePackPath)).toBe(true)
-    expect(existsSync(operationsWorkspacePackPath)).toBe(true)
-    expect(existsSync(referenceOrchestratorPackPath)).toBe(true)
-    expect(existsSync(builderStudioPackPath)).toBe(true)
-    expect(existsSync(registryControlPackPath)).toBe(true)
-    expect(existsSync(serviceCommandPackPath)).toBe(true)
-    expect(templateShowcaseExamplesSource).not.toContain('cms-authoring')
-    expect(templateShowcaseExamplesSource).not.toContain('auth-login')
-    expect(templateShowcaseExamplesSource).not.toContain('knowledge')
-    expect(templateSampleSelectorSource).toContain('Baseline fiel mais cinco familias de whitelabel')
-    expect(templateSampleSelectorSource).toContain("family.kind === 'original'")
-    expect(templateVisualFamilySectionSource).toContain('<TemplateVisualVariantCard')
-    expect(templateVisualVariantCardSource).toContain('<component :is="example.component"')
-    expect(templateShowcaseReferenceSystemSource).toContain('ReferenceWorkspaceComposer')
-  })
-
-  it('keeps landing typography controls exposed in CMS for the shared authoring model', () => {
-    expect(themeFieldCatalogSource).toContain('Section badge letter spacing')
-    expect(themeFieldCatalogSource).toContain('CTA subtitle line height')
-    expect(themeFieldCatalogSource).toContain('Footer link title letter spacing')
+    for (const relativePath of removedPaths) {
+      expect(existsSync(resolve(specDirectory, relativePath))).toBe(false)
+    }
   })
 })

@@ -138,11 +138,11 @@
 
     <div class="runtime-mode-shortcuts">
       <a
-        href="/?samples=1"
+        href="/"
         class="samples-mode-btn"
         aria-label="Abrir samples"
       >
-        Abrir Samples
+        Abrir Sample
       </a>
     </div>
   </div>

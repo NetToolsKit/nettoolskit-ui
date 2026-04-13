@@ -1,32 +1,26 @@
 # Samples Runtime
 
-Runtime host for the approved samples catalog and showcase flows.
+Runtime host for a single approved sample derived from `.temp/reference`.
 
 ## Purpose
 
-- keep `samples/` as the canonical app shell that renders demos, catalogs, and showcase routes
-- consume reusable libraries, templates, composables, and styles from `src/**`
-- keep `landing-page/` limited to the legacy marketing landing assets and compatibility-only runtime pieces
+- keep `samples/` as the canonical public runtime for the approved reference-derived sample
+- consume reusable layouts, pages, navigation, and styles from `src/**`
+- keep the public host focused on one clean implementation instead of a multi-gallery flow
 
 ## Entry Modes
 
 - `/`
-  - reference catalog
-- `/?original=1`
-  - direct original baseline runtime derived from the approved reference shell
-- `/?samples=1`
-  - reference workspace sample
-- `/?templates=1`
-  - template showcase
-- `/?template-runtime=1`
-  - router-enabled template runtime
+  - original reference-derived sample
 - `/?landing=1`
   - legacy marketing landing mounted from `landing-page/`
+- `/?template-runtime=1`
+  - router-enabled template runtime for internal composition checks
 
 ## Internal Compatibility Entry
 
 - `/internal-cms.html`
-  - internal CMS compatibility runtime kept outside the public samples host navigation
+  - internal CMS compatibility runtime kept outside the public sample flow
 
 ## Local Preview
 
@@ -36,25 +30,9 @@ npm run dev:samples
 
 ## Structure
 
-- `ReferenceCatalogApp.vue`
-  - canonical catalog host for the approved reference system
+- `main.ts`
+  - chooses between the single public sample, the legacy landing, and the internal template runtime
 - `original-reference/**`
-  - direct original baseline runtime that opens the approved shell without the showcase wrapper
-- `reference-hub/**`
-  - root navigation and template-selection surfaces for the samples runtime
-- `ReferenceSamplesApp.vue`
-  - report workspace sample host
-- `shared/**`
-  - sample-only reusable helpers for interaction feedback and runtime glue
-- `TemplateShowcaseApp.vue`
-  - thin orchestrator for the template showcase
-- `template-showcase/families/**`
-  - config-driven visual families built from whitelabel overrides and example ids
-- `template-showcase/components/**`
-  - reusable showcase-only composition pieces such as the visual-family section renderer
-- `template-showcase/examples/**`
-  - one subfolder per rendered showcase example
-- `template-showcase/template-showcase.examples.ts`
-  - registry that maps showcase example ids to reusable `src/**`-backed sample components
-- `template-showcase/template-showcase.sample-data.ts`
-  - shared static sample content for the showcase
+  - self-contained original sample, sample data, and chart composition derived from the approved reference
+- `shared/mountSamplesHost.ts`
+  - sample host bootstrap helper

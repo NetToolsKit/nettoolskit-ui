@@ -1,1 +1,0 @@
-export { templateVisualFamilyConfigs } from '../packs'

@@ -36,8 +36,8 @@
           profile-name="Guilherme Ferreira"
           profile-initials="GF"
           large-avatar-size="64px"
-          sign-out-label="Abrir packs"
-          account-label="Abrir inicio"
+          sign-out-label="Abrir landing"
+          account-label="Voltar ao dashboard"
           preferences-label="Preferencias"
           horizontal-menu-label="Menu horizontal"
           horizontal-menu-caption="Alterna entre menu lateral e horizontal"
@@ -47,29 +47,29 @@
           @update:model-value="layoutControls.setHorizontalMode($event)"
           @update:show-labels-in-mini="layoutControls.setShowLabelsInMini($event)"
           @update:side-menu-variant="layoutControls.setSideMenuVariant($event)"
-          @account-click="navigateTo('/')"
-          @logout-click="navigateTo('/?templates=1')"
+          @account-click="setActiveSection('dashboard')"
+          @logout-click="navigateTo('/?landing=1')"
         />
       </template>
 
       <DashboardTemplate
         v-if="activeSectionId === 'dashboard'"
-        :title="templateShowcaseDashboardSample.title"
-        :subtitle="templateShowcaseDashboardSample.subtitle"
-        :greeting-icon="templateShowcaseDashboardSample.greetingIcon"
+        :title="originalReferenceDashboardSample.title"
+        :subtitle="originalReferenceDashboardSample.subtitle"
+        :greeting-icon="originalReferenceDashboardSample.greetingIcon"
         activity-title="ATIVIDADE"
         top-items-title="TOP CLIENTES"
         activity-title-icon="insights"
         top-items-title-icon="star"
-        :chips="templateShowcaseDashboardSample.chips"
-        :metrics="templateShowcaseDashboardSample.metrics"
-        :activities="templateShowcaseDashboardSample.activities"
-        :top-items="templateShowcaseDashboardSample.topItems"
+        :chips="originalReferenceDashboardSample.chips"
+        :metrics="originalReferenceDashboardSample.metrics"
+        :activities="originalReferenceDashboardSample.activities"
+        :top-items="originalReferenceDashboardSample.topItems"
       >
         <template #charts>
-          <TemplateShowcaseReferenceCharts
-            :status-segments="templateShowcaseDashboardSample.statusSegments"
-            :category-series="templateShowcaseDashboardSample.categorySeries"
+          <OriginalReferenceCharts
+            :status-segments="originalReferenceDashboardSample.statusSegments"
+            :category-series="originalReferenceDashboardSample.categorySeries"
           />
         </template>
       </DashboardTemplate>
@@ -92,15 +92,51 @@
           icon="smart_toy"
           color="teal-8"
           class="ntk-original-reference__floating-action"
-          @click="navigateTo('/?templates=1')"
+          @click="assistantDialogOpen = true"
         >
           <q-tooltip
             anchor="top middle"
             self="bottom middle"
           >
-            Abrir packs
+            Abrir assistente
           </q-tooltip>
         </q-btn>
+
+        <q-dialog v-model="assistantDialogOpen">
+          <q-card class="ntk-original-reference__assistant-dialog">
+            <q-card-section>
+              <div class="ntk-original-reference__assistant-title">
+                Assistente do sample
+              </div>
+              <p class="ntk-original-reference__assistant-copy">
+                Acesse rapidamente o dashboard principal, abra configuracoes ou volte para a landing sem sair do shell aprovado.
+              </p>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn
+                flat
+                no-caps
+                color="primary"
+                label="Dashboard"
+                @click="openAssistantAction('dashboard')"
+              />
+              <q-btn
+                flat
+                no-caps
+                color="primary"
+                label="Configuracoes"
+                @click="openAssistantAction('configurations')"
+              />
+              <q-btn
+                unelevated
+                no-caps
+                color="primary"
+                label="Landing"
+                @click="openAssistantAction('landing')"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </template>
     </MainLayoutTemplate>
   </div>
@@ -115,12 +151,13 @@ import UserMenuTemplate from '../../src/templates/navigation/UserMenuTemplate.vu
 import DashboardTemplate from '../../src/templates/pages/dashboard/DashboardTemplate.vue'
 import PlaceholderTemplate from '../../src/templates/pages/system/PlaceholderTemplate.vue'
 import type { TemplatePageAction, TemplatePageHint } from '../../src/templates/pages/page-template.types'
-import { templateShowcaseDashboardSample } from '../template-showcase/template-showcase.sample-data'
-import TemplateShowcaseReferenceCharts from '../template-showcase/examples/layout-dashboard/TemplateShowcaseReferenceCharts.vue'
+import OriginalReferenceCharts from './OriginalReferenceCharts.vue'
+import { originalReferenceDashboardSample } from './original-reference.sample-data'
 
 const originalReferenceMarkUrl = new URL('../assets/original-reference-mark.svg', import.meta.url).href
 
 type OriginalReferenceSectionId = 'dashboard' | 'clients' | 'orders' | 'configurations'
+type AssistantActionId = 'dashboard' | 'configurations' | 'landing'
 
 const menuItems: TemplateMenuItem[] = [
   {
@@ -154,6 +191,7 @@ const validSectionIds = new Set<OriginalReferenceSectionId>([
 ])
 
 const activeSectionId = ref<OriginalReferenceSectionId>(resolveSectionFromLocation())
+const assistantDialogOpen = ref(false)
 
 interface PlaceholderState {
   title: string
@@ -169,39 +207,39 @@ const activePlaceholder = computed<PlaceholderState>(() => {
   const bySection: Record<Exclude<OriginalReferenceSectionId, 'dashboard'>, PlaceholderState> = {
     clients: {
       title: 'Clientes em preparacao',
-      subtitle: 'A area de clientes continua conectada ao shell original aprovado.',
-      description: 'Este placeholder reutiliza o mesmo runtime enquanto a tela final de clientes evolui a partir dos templates compartilhados.',
+      subtitle: 'A area de clientes permanece conectada ao shell aprovado da referencia.',
+      description: 'Este placeholder existe apenas para manter a navegacao funcional enquanto a tela definitiva e acoplada aos mesmos componentes reutilizaveis do dashboard base.',
       statusLabel: 'Conectado',
       hints: [
-        { id: 'clients-hint-1', text: 'A navegacao ja esta funcional no shell base.', icon: 'check_circle' },
-        { id: 'clients-hint-2', text: 'Use o showcase para revisar variacoes de CRUD e perfil.', icon: 'widgets' },
+        { id: 'clients-hint-1', text: 'A navegacao lateral segue o layout aprovado.', icon: 'check_circle' },
+        { id: 'clients-hint-2', text: 'O dashboard continua como base visual canonica do sample.', icon: 'dashboard' },
       ],
-      primaryAction: { id: 'open-packs', label: 'Abrir packs', icon: 'widgets' },
-      secondaryAction: { id: 'open-home', label: 'Voltar ao inicio', icon: 'home', outline: true, unelevated: false },
+      primaryAction: { id: 'open-dashboard', label: 'Voltar ao dashboard', icon: 'dashboard' },
+      secondaryAction: { id: 'open-landing', label: 'Abrir landing', icon: 'home', outline: true, unelevated: false },
     },
     orders: {
       title: 'Pedidos em preparacao',
-      subtitle: 'O fluxo de pedidos segue o mesmo shell e sera derivado da biblioteca compartilhada.',
-      description: 'O baseline aprovado permanece no dashboard; os modulos derivados continuam sendo parametrizados sem forks visuais.',
+      subtitle: 'O fluxo de pedidos continua dentro do mesmo shell e da mesma linguagem do baseline aprovado.',
+      description: 'A navegacao ja esta funcional e a tela final de pedidos sera derivada a partir deste mesmo runtime, sem depender de um showcase separado.',
       statusLabel: 'Conectado',
       hints: [
-        { id: 'orders-hint-1', text: 'O shell principal ja segue a referencia local.', icon: 'dashboard' },
-        { id: 'orders-hint-2', text: 'Os packs continuam disponiveis para comparacao visual.', icon: 'palette' },
+        { id: 'orders-hint-1', text: 'O menu superior horizontal continua disponivel via preferencia do usuario.', icon: 'view_stream' },
+        { id: 'orders-hint-2', text: 'O dashboard principal permanece como referencia do produto.', icon: 'insights' },
       ],
-      primaryAction: { id: 'open-workspace', label: 'Abrir workspace', icon: 'view_kanban' },
-      secondaryAction: { id: 'open-home', label: 'Voltar ao inicio', icon: 'home', outline: true, unelevated: false },
+      primaryAction: { id: 'open-dashboard', label: 'Voltar ao dashboard', icon: 'dashboard' },
+      secondaryAction: { id: 'open-landing', label: 'Abrir landing', icon: 'home', outline: true, unelevated: false },
     },
     configurations: {
       title: 'Configuracoes em preparacao',
-      subtitle: 'A parametrizacao continua sendo a arquitetura de whitelabel do sistema.',
-      description: 'A tela final de configuracoes sera conectada a partir dos mesmos componentes reutilizaveis vistos no catalogo e no showcase.',
+      subtitle: 'A parametrizacao continua ligada ao mesmo shell unico do sample aprovado.',
+      description: 'A tela final de configuracoes sera conectada em cima da mesma arquitetura reutilizavel, sem catalogo paralelo de familias visuais no runtime publico.',
       statusLabel: 'Ativo',
       hints: [
-        { id: 'config-hint-1', text: 'A base visual segue a referencia local antes das variacoes.', icon: 'task_alt' },
-        { id: 'config-hint-2', text: 'O original agora abre como runtime proprio.', icon: 'open_in_new' },
+        { id: 'config-hint-1', text: 'O sample publico agora foi reduzido a uma unica base aprovada.', icon: 'task_alt' },
+        { id: 'config-hint-2', text: 'A referencia local continua sendo a comparacao principal.', icon: 'open_in_new' },
       ],
-      primaryAction: { id: 'open-packs', label: 'Abrir packs', icon: 'widgets' },
-      secondaryAction: { id: 'open-home', label: 'Voltar ao inicio', icon: 'home', outline: true, unelevated: false },
+      primaryAction: { id: 'open-dashboard', label: 'Voltar ao dashboard', icon: 'dashboard' },
+      secondaryAction: { id: 'open-landing', label: 'Abrir landing', icon: 'home', outline: true, unelevated: false },
     },
   }
 
@@ -232,7 +270,8 @@ function updateLocationForSection(sectionId: OriginalReferenceSectionId): void {
   }
 
   const url = new URL(window.location.href)
-  url.searchParams.set('original', '1')
+  url.searchParams.delete('landing')
+  url.searchParams.delete('template-runtime')
   if (sectionId === 'dashboard') {
     url.searchParams.delete('section')
   } else {
@@ -260,17 +299,25 @@ function handleMenuItemClick(item: TemplateMenuItem | TemplateMenuChildItem): vo
 }
 
 function handlePlaceholderAction(actionId: string): void {
-  if (actionId === 'open-home') {
-    navigateTo('/')
+  if (actionId === 'open-dashboard') {
+    setActiveSection('dashboard')
     return
   }
 
-  if (actionId === 'open-workspace') {
-    navigateTo('/?samples=1')
+  if (actionId === 'open-landing') {
+    navigateTo('/?landing=1')
+  }
+}
+
+function openAssistantAction(actionId: AssistantActionId): void {
+  assistantDialogOpen.value = false
+
+  if (actionId === 'landing') {
+    navigateTo('/?landing=1')
     return
   }
 
-  navigateTo('/?templates=1')
+  setActiveSection(actionId)
 }
 
 onMounted(() => {
@@ -299,6 +346,7 @@ onBeforeUnmount(() => {
   --ntk-template-layout-header-shadow: none;
   --ntk-template-layout-header-border: rgba(0, 0, 0, 0.12);
   --ntk-template-layout-drawer-border: rgba(0, 0, 0, 0.21);
+  --ntk-template-layout-horizontal-bg: linear-gradient(90deg, #1e293b 0%, #334155 100%);
   --ntk-template-layout-reference-nav-item-margin: 0;
   --ntk-template-layout-reference-nav-item-radius: 0;
   --ntk-template-layout-reference-nav-hover-bg: rgba(0, 0, 0, 0.05);
@@ -336,6 +384,22 @@ onBeforeUnmount(() => {
 
 .ntk-original-reference__floating-action:hover {
   box-shadow: 0 6px 24px rgba(15, 118, 110, 0.4);
+}
+
+.ntk-original-reference__assistant-dialog {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.ntk-original-reference__assistant-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.ntk-original-reference__assistant-copy {
+  margin: 8px 0 0;
+  color: #64748b;
+  line-height: 1.5;
 }
 
 .ntk-original-reference :deep(.ntk-template-main-layout__menu-btn .q-btn) {

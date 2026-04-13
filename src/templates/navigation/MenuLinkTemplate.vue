@@ -403,9 +403,17 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link--visual-reference {
   margin: var(--ntk-template-layout-reference-nav-item-margin, 0);
+  box-sizing: border-box;
   border-left: 4px solid transparent !important;
   border-radius: var(--ntk-template-layout-reference-nav-item-radius, 0);
+  overflow: hidden;
   transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.ntk-template-menu-link--visual-reference .q-item__section--avatar,
+.ntk-template-menu-link__child-row.ntk-template-menu-link--visual-reference .q-item__section--avatar {
+  min-width: 40px;
+  padding-right: 16px;
 }
 
 .ntk-template-menu-link--visual-reference:hover {
@@ -437,8 +445,10 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference {
   margin: var(--ntk-template-layout-reference-nav-item-margin, 0);
+  box-sizing: border-box;
   border-left: 4px solid transparent !important;
   border-radius: var(--ntk-template-layout-reference-nav-item-radius, 0);
+  overflow: hidden;
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {
@@ -462,7 +472,9 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__child.ntk-template-menu-link--visual-reference,
 .ntk-template-menu-link__child-row.ntk-template-menu-link--visual-reference {
+  box-sizing: border-box;
   border-radius: var(--ntk-template-layout-reference-nav-item-radius, 0);
+  overflow: hidden;
 }
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-reference,
