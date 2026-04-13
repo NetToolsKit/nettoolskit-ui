@@ -79,7 +79,13 @@
       >
         <q-card-section>
           <div class="ntk-template-dashboard__section-title">
-            {{ activityTitle }}
+            <q-icon
+              v-if="activityTitleIcon"
+              :name="activityTitleIcon"
+              size="16px"
+              aria-hidden="true"
+            />
+            <span>{{ activityTitle }}</span>
           </div>
           <div class="ntk-template-dashboard__activity-list">
             <div
@@ -112,7 +118,13 @@
       >
         <q-card-section>
           <div class="ntk-template-dashboard__section-title">
-            {{ topItemsTitle }}
+            <q-icon
+              v-if="topItemsTitleIcon"
+              :name="topItemsTitleIcon"
+              size="16px"
+              aria-hidden="true"
+            />
+            <span>{{ topItemsTitle }}</span>
           </div>
           <div class="ntk-template-dashboard__top-list">
             <div
@@ -140,13 +152,29 @@
                   />
                 </div>
               </div>
-              <span class="ntk-template-dashboard__top-value">{{ item.value }}</span>
-              <span
-                v-if="item.secondaryValue !== undefined"
-                class="ntk-template-dashboard__top-secondary"
-              >
-                {{ item.secondaryValue }}
-              </span>
+              <div class="ntk-template-dashboard__top-stats">
+                <span class="ntk-template-dashboard__top-stat">
+                  <span class="ntk-template-dashboard__top-value">{{ item.value }}</span>
+                  <span
+                    v-if="item.valueCaption"
+                    class="ntk-template-dashboard__top-stat-label"
+                  >
+                    {{ item.valueCaption }}
+                  </span>
+                </span>
+                <span
+                  v-if="item.secondaryValue !== undefined"
+                  class="ntk-template-dashboard__top-stat ntk-template-dashboard__top-stat--secondary"
+                >
+                  <span class="ntk-template-dashboard__top-secondary">{{ item.secondaryValue }}</span>
+                  <span
+                    v-if="item.secondaryCaption"
+                    class="ntk-template-dashboard__top-stat-label"
+                  >
+                    {{ item.secondaryCaption }}
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </q-card-section>
@@ -175,6 +203,8 @@ const props = withDefaults(
     greetingIcon?: string
     activityTitle?: string
     topItemsTitle?: string
+    activityTitleIcon?: string
+    topItemsTitleIcon?: string
     pageAriaLabel?: string
     metricsAriaLabel?: string
     chartsAriaLabel?: string
@@ -190,6 +220,8 @@ const props = withDefaults(
     subtitle: 'Overview of your key metrics and recent activity.',
     activityTitle: 'Activity',
     topItemsTitle: 'Top items',
+    activityTitleIcon: '',
+    topItemsTitleIcon: '',
     pageAriaLabel: 'Dashboard page',
     metricsAriaLabel: 'Dashboard metrics',
     chartsAriaLabel: 'Dashboard charts',
@@ -350,12 +382,16 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 }
 
 .ntk-template-dashboard__section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--ntk-template-page-subtitle, #64748b);
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  padding-left: 2px;
 }
 
 .ntk-template-dashboard__activity-list,
@@ -370,10 +406,16 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   display: grid;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
-  padding: 8px 10px;
+  min-height: 40px;
+  padding: 10px 8px;
   border-radius: 8px;
   background: var(--ntk-template-page-row-bg, #f8fafc);
+  transition: background 0.15s ease;
+}
+
+.ntk-template-dashboard__activity-row:hover,
+.ntk-template-dashboard__top-row:hover {
+  background: var(--ntk-template-page-row-hover-bg, #f8fafc);
 }
 
 .ntk-template-dashboard__activity-row {
@@ -410,12 +452,12 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 .ntk-template-dashboard__activity-icon--pink { background: #fce7f3; color: #be185d; }
 
 .ntk-template-dashboard__top-row {
-  grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
   align-items: center;
 }
 
 .ntk-template-dashboard__top-row:has(.ntk-template-dashboard__top-avatar) {
-  grid-template-columns: 28px 30px minmax(0, 1fr) auto auto;
+  grid-template-columns: 28px 30px minmax(0, 1fr) auto;
 }
 
 .ntk-template-dashboard__top-avatar {
@@ -476,13 +518,41 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 }
 
 .ntk-template-dashboard__top-value {
+  display: block;
   font-weight: 700;
   color: var(--ntk-template-page-title, #1e293b);
 }
 
+.ntk-template-dashboard__top-stats {
+  display: flex;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.ntk-template-dashboard__top-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.ntk-template-dashboard__top-stat--secondary .ntk-template-dashboard__top-secondary {
+  color: var(--ntk-template-page-accent-value, #10b981);
+}
+
+.ntk-template-dashboard__top-stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ntk-template-page-subtitle-soft, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 .ntk-template-dashboard__top-secondary {
+  display: block;
   color: var(--ntk-template-page-subtitle, #64748b);
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {

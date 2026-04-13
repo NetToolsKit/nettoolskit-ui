@@ -20,7 +20,7 @@
       <template #brand>
         <div class="ntk-original-reference__brand">
           <img
-            :src="approvedReferenceLogoUrl"
+            :src="originalReferenceMarkUrl"
             alt="Atlas Flow"
             class="ntk-original-reference__brand-image"
           >
@@ -59,6 +59,8 @@
         :greeting-icon="templateShowcaseDashboardSample.greetingIcon"
         activity-title="ATIVIDADE"
         top-items-title="TOP CLIENTES"
+        activity-title-icon="insights"
+        top-items-title-icon="star"
         :chips="templateShowcaseDashboardSample.chips"
         :metrics="templateShowcaseDashboardSample.metrics"
         :activities="templateShowcaseDashboardSample.activities"
@@ -87,7 +89,7 @@
       <template #floating>
         <q-btn
           fab
-          icon="widgets"
+          icon="smart_toy"
           color="teal-8"
           class="ntk-original-reference__floating-action"
           @click="navigateTo('/?templates=1')"
@@ -113,9 +115,10 @@ import UserMenuTemplate from '../../src/templates/navigation/UserMenuTemplate.vu
 import DashboardTemplate from '../../src/templates/pages/dashboard/DashboardTemplate.vue'
 import PlaceholderTemplate from '../../src/templates/pages/system/PlaceholderTemplate.vue'
 import type { TemplatePageAction, TemplatePageHint } from '../../src/templates/pages/page-template.types'
-import { approvedReferenceLogoUrl } from '../template-showcase/packs/pack-helpers'
 import { templateShowcaseDashboardSample } from '../template-showcase/template-showcase.sample-data'
 import TemplateShowcaseReferenceCharts from '../template-showcase/examples/layout-dashboard/TemplateShowcaseReferenceCharts.vue'
+
+const originalReferenceMarkUrl = new URL('../assets/original-reference-mark.svg', import.meta.url).href
 
 type OriginalReferenceSectionId = 'dashboard' | 'clients' | 'orders' | 'configurations'
 
@@ -289,7 +292,7 @@ onBeforeUnmount(() => {
   --ntk-template-layout-shell-bg: #e8e8e8;
   --ntk-template-layout-page-bg: #e8e8e8;
   --ntk-template-layout-header-bg: #ffffff;
-  --ntk-template-layout-header-text: #1f2937;
+  --ntk-template-layout-header-text: #0f766e;
   --ntk-template-layout-title-color: #1f2937;
   --ntk-template-layout-header-height: 50px;
   --ntk-template-layout-header-padding: 0 16px 0 12px;
@@ -304,18 +307,23 @@ onBeforeUnmount(() => {
   --ntk-template-user-menu-header-bg: rgba(0, 0, 0, 0.02);
   --ntk-template-user-menu-radius: 8px;
   --ntk-template-user-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --ntk-template-user-menu-avatar-bg: #14b8a6;
+  --ntk-template-user-menu-avatar-border: #ffffff;
+  --ntk-template-user-menu-avatar-color: #ffffff;
   min-height: 100vh;
 }
 
 .ntk-original-reference__brand {
   display: flex;
   align-items: center;
+  margin-left: 8px;
 }
 
 .ntk-original-reference__brand-image {
   width: 120px;
   height: auto;
   object-fit: contain;
+  display: block;
 }
 
 .ntk-original-reference__floating-action {
@@ -330,7 +338,19 @@ onBeforeUnmount(() => {
   box-shadow: 0 6px 24px rgba(15, 118, 110, 0.4);
 }
 
+.ntk-original-reference :deep(.ntk-template-main-layout__menu-btn .q-btn) {
+  color: #0f766e;
+}
+
+.ntk-original-reference :deep(.ntk-template-user-menu__avatar) {
+  box-shadow: none;
+}
+
 @media (max-width: 768px) {
+  .ntk-original-reference__brand-image {
+    width: 42px;
+  }
+
   .ntk-original-reference__floating-action {
     bottom: 16px;
     right: 16px;

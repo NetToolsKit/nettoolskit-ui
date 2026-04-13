@@ -42,7 +42,9 @@ export interface TemplateDashboardTopItem {
   id: string
   name: string
   value: string | number
+  valueCaption?: string
   secondaryValue?: string | number
+  secondaryCaption?: string
   /** When set, renders an avatar circle with initials before the name */
   avatar?: string
   /** 0–100 — when set, renders a progress bar under the name */

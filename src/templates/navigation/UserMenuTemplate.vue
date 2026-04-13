@@ -218,13 +218,29 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 }
 
 .ntk-template-user-menu__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid var(--ntk-template-user-menu-avatar-border, #ffffff);
   background: var(--ntk-template-user-menu-avatar-bg, var(--q-secondary));
   color: var(--ntk-template-user-menu-avatar-color, #ffffff);
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
 }
 
 .ntk-template-user-menu__avatar--large {
   border-width: 2px;
+}
+
+.ntk-template-user-menu__avatar :deep(.q-avatar__content) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  text-align: center;
 }
 
 .ntk-template-user-menu__header {

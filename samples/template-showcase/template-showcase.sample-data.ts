@@ -1,7 +1,7 @@
 export const templateShowcaseDashboardSample = {
-  greetingIcon: '🌤️',
-  title: 'Boa tarde, Guilherme Ferreira',
-  subtitle: 'Sexta-Feira, 10 De Abril',
+  greetingIcon: '☀️',
+  title: 'Bom dia, Guilherme Ferreira',
+  subtitle: 'Segunda-Feira, 13 De Abril',
   chips: [
     { id: 'chip-clients', text: '247 clientes', icon: 'people' },
     { id: 'chip-orders', text: '18 pedidos hoje', icon: 'shopping_cart' },
@@ -38,7 +38,9 @@ export const templateShowcaseDashboardSample = {
       name: 'Distribuidora Alfa Ltda',
       avatar: 'DL',
       value: 45,
+      valueCaption: 'pedidos',
       secondaryValue: 'R$ 32.500',
+      secondaryCaption: 'fatur.',
       barPercent: 100,
     },
     {
@@ -46,7 +48,9 @@ export const templateShowcaseDashboardSample = {
       name: 'Comercio Beta Sa',
       avatar: 'CS',
       value: 38,
+      valueCaption: 'pedidos',
       secondaryValue: 'R$ 28.900',
+      secondaryCaption: 'fatur.',
       barPercent: 84,
     },
     {
@@ -54,7 +58,9 @@ export const templateShowcaseDashboardSample = {
       name: 'Industria Gamma Me',
       avatar: 'IM',
       value: 32,
+      valueCaption: 'pedidos',
       secondaryValue: 'R$ 24.100',
+      secondaryCaption: 'fatur.',
       barPercent: 71,
     },
     {
@@ -62,7 +68,9 @@ export const templateShowcaseDashboardSample = {
       name: 'Atacado Delta Eireli',
       avatar: 'AE',
       value: 27,
+      valueCaption: 'pedidos',
       secondaryValue: 'R$ 19.800',
+      secondaryCaption: 'fatur.',
       barPercent: 60,
     },
     {
@@ -70,7 +78,9 @@ export const templateShowcaseDashboardSample = {
       name: 'Varejo Epsilon Ltda',
       avatar: 'VL',
       value: 21,
+      valueCaption: 'pedidos',
       secondaryValue: 'R$ 15.600',
+      secondaryCaption: 'fatur.',
       barPercent: 47,
     },
   ],

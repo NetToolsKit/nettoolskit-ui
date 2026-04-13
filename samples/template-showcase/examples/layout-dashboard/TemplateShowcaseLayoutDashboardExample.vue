@@ -74,6 +74,8 @@
         :greeting-icon="templateShowcaseDashboardSample.greetingIcon"
         activity-title="ATIVIDADE"
         top-items-title="TOP CLIENTES"
+        activity-title-icon="insights"
+        top-items-title-icon="star"
         :chips="templateShowcaseDashboardSample.chips"
         :metrics="templateShowcaseDashboardSample.metrics"
         :activities="templateShowcaseDashboardSample.activities"

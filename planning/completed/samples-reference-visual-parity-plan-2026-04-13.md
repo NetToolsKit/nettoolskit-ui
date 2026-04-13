@@ -24,8 +24,8 @@
 ## Ordered Tasks
 1. Completed: created a dedicated runtime entry for the original reference-derived sample at `/?original=1` so it opens directly in the approved shell instead of inside the showcase wrapper.
 2. Completed: kept the existing showcase route for catalog/review, but made the direct original-runtime route the preferred destination for baseline navigation from the home/runtime links.
-3. In progress: align the original sample header, drawer, page gutter, and hero spacing even more tightly to `.temp/reference` in desktop mode.
-4. In progress: align mobile behavior so the original sample prioritizes the dashboard canvas and reference shell over selector chrome.
+3. Completed: aligned the original sample header, drawer, page gutter, hero spacing, charts, and dashboard lower cards more tightly to `.temp/reference` in desktop mode.
+4. Completed: aligned the original mobile behavior so the original sample prioritizes the dashboard canvas and reference shell over selector chrome.
 5. Completed: preserved the five whitelabel variation packs as derived examples while separating the original baseline route from the showcase flow.
 6. Completed: reran browser comparison in desktop and mobile after the direct original-runtime route landed.
 
@@ -52,7 +52,8 @@
 
 ## Progress Note
 - the original baseline now opens directly at `http://127.0.0.1:4173/?original=1`
-- the current slice already removed the showcase wrapper from the original path, updated the public runtime links, and fixed the shared header override so the original route uses a white header again
+- the current workstream removed the showcase wrapper from the original path, updated the public runtime links, fixed the shared header override so the original route uses a white header again, and tightened dashboard parity with reference-like charts, titles, top-client stats, and a neutral product mark
+- the shared user-menu avatar alignment was also corrected so initials render centered in both the top-right trigger and the dropdown profile block
 - current validation completed:
   - `npm run type-check`
   - `npm run test -- tests/unit/landing/LandingTokenization.spec.ts tests/unit/samples/TemplateVisualFamilies.spec.ts tests/unit/samples/TemplateShowcaseApprovedReference.spec.ts`
@@ -61,4 +62,8 @@
     - `http://127.0.0.1:4173/?original=1`
     - `http://127.0.0.1:4173/`
     - `http://127.0.0.1:4173/?templates=1`
-- remaining parity work is now concentrated on tighter shell spacing, brand lockup fidelity, and mobile drawer behavior compared with `.temp/reference`
+- comparison artifacts captured:
+  - `.temp/logs/reference-pipeline-desktop-current.png`
+  - `.temp/logs/original-reference-desktop-parity-pass-5.png`
+  - `.temp/logs/original-reference-mobile-parity-pass-2.png`
+- accepted residual differences are now limited to neutral branding geometry and non-blocking chart micro-positioning; the reference remains the base for the original sample runtime and the plan can be closed
