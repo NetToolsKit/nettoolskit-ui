@@ -114,7 +114,7 @@ export const referencePresetCallouts = [
 export const referenceHeroStats: ReferenceCatalogStat[] = [
   { id: 'templates', label: 'Reusable surfaces', value: '8' },
   { id: 'presets', label: 'Whitelabel presets', value: '3' },
-  { id: 'runtimes', label: 'Runtime modes', value: '4' },
+  { id: 'runtimes', label: 'Runtime modes', value: '5' },
 ]
 
 export const referenceArchitectureCards: ReferenceCatalogArchitectureCard[] = [
@@ -154,6 +154,13 @@ export const referenceArchitectureCards: ReferenceCatalogArchitectureCard[] = [
 ]
 
 export const referenceRuntimeLinks: ReferenceCatalogRuntimeLink[] = [
+  {
+    id: 'original-reference',
+    title: 'Open Original Reference',
+    description: 'Open the original baseline directly in the approved shell without the showcase wrapper.',
+    href: '/?original=1',
+    icon: 'dashboard',
+  },
   {
     id: 'report-workspace',
     title: 'Open Report Workspace',

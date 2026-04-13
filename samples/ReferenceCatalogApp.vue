@@ -11,13 +11,13 @@
     user-initials="SR"
     storage-key-prefix="ntk-samples-home-layout"
     account-label="Abrir workspace"
-    sign-out-label="Abrir packs"
+    sign-out-label="Abrir original"
     @update:search-value="searchValue = $event"
     @update:selected-preset-id="selectedPresetId = String($event ?? 'reference-light')"
     @menu-item-click="onMenuItemClick"
     @help-click="navigateTo('/?templates=1')"
     @profile-click="navigateTo('/?samples=1')"
-    @back-home-click="navigateTo('/?templates=1&family=approved-reference')"
+    @back-home-click="navigateTo('/?original=1')"
   >
     <q-page class="ntk-samples-home-page">
       <SamplesNavigationHub :search-value="searchValue" />

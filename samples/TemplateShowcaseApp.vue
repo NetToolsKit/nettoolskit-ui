@@ -17,7 +17,7 @@
     @menu-item-click="onMenuItemClick"
     @help-click="navigateTo('/')"
     @profile-click="navigateTo('/?samples=1')"
-    @back-home-click="navigateTo('/?templates=1&family=approved-reference')"
+    @back-home-click="navigateTo('/?original=1')"
   >
     <q-page class="ntk-template-showcase">
       <header
@@ -81,7 +81,7 @@
         :families="templateVisualFamilies"
         :selected-family-id="focusedFamilyId"
         :show-all-action="hasActiveFilter"
-        @select-family="navigateTo(`/?templates=1&family=${$event}`)"
+    @select-family="navigateTo(`/?templates=1&family=${$event}`)"
         @show-all="navigateTo('/?templates=1')"
       />
 

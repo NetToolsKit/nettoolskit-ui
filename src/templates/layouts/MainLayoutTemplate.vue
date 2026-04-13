@@ -416,8 +416,8 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__header {
-  background: var(--ntk-template-layout-header-bg, #ffffff);
-  color: var(--ntk-template-layout-header-text, #1f2937);
+  background: var(--ntk-template-layout-header-bg, #ffffff) !important;
+  color: var(--ntk-template-layout-header-text, #1f2937) !important;
   border-bottom: 1px solid var(--ntk-template-layout-header-border, rgba(148, 163, 184, 0.18));
   box-shadow: var(--ntk-template-layout-header-shadow, 0 1px 3px rgba(15, 23, 42, 0.04)) !important;
   z-index: 2100 !important;

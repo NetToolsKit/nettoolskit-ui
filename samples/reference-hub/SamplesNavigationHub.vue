@@ -31,7 +31,7 @@
 
     <TemplateSampleSelector
       :families="filteredFamilies"
-      @select-family="navigateTo(`/?templates=1&family=${$event}`)"
+      @select-family="openFamily($event)"
     />
 
     <section class="ntk-samples-hub__section">
@@ -103,7 +103,7 @@
             outline
             color="primary"
             label="Abrir pack"
-            @click="navigateTo(`/?templates=1&family=${family.id}`)"
+            @click="openFamily(family.id)"
           />
         </article>
       </div>
@@ -218,6 +218,15 @@ function navigateTo(href: string): void {
   if (typeof window !== 'undefined') {
     window.location.href = href
   }
+}
+
+function openFamily(familyId: string): void {
+  if (familyId === 'approved-reference') {
+    navigateTo('/?original=1')
+    return
+  }
+
+  navigateTo(`/?templates=1&family=${familyId}`)
 }
 </script>
 

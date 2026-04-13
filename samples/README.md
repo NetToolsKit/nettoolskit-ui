@@ -12,6 +12,8 @@ Runtime host for the approved samples catalog and showcase flows.
 
 - `/`
   - reference catalog
+- `/?original=1`
+  - direct original baseline runtime derived from the approved reference shell
 - `/?samples=1`
   - reference workspace sample
 - `/?templates=1`
@@ -36,6 +38,8 @@ npm run dev:samples
 
 - `ReferenceCatalogApp.vue`
   - canonical catalog host for the approved reference system
+- `original-reference/**`
+  - direct original baseline runtime that opens the approved shell without the showcase wrapper
 - `reference-hub/**`
   - root navigation and template-selection surfaces for the samples runtime
 - `ReferenceSamplesApp.vue`
