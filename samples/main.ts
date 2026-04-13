@@ -3,7 +3,7 @@
  */
 
 import { defineAsyncComponent } from 'vue'
-import { createTemplateRuntimeRouter } from '../src/templates/runtime'
+import { createTemplateRuntimeRouter, bootRuntimeAuth } from '../src/templates/runtime'
 import { mountSamplesHost } from './shared/mountSamplesHost'
 
 // Route-mode async loading keeps the public original sample, legacy landing, and template runtime split.
@@ -27,6 +27,7 @@ const templateRuntimeRouter = isTemplateRuntimeMode
 
 mountSamplesHost(RootComponent, app => {
   if (templateRuntimeRouter) {
+    bootRuntimeAuth()
     app.use(templateRuntimeRouter)
   }
 })

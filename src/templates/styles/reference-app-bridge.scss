@@ -197,18 +197,53 @@
 
 .q-notification.bg-positive {
   border-left-color: var(--ntk-template-notification-positive) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-positive) !important;
+  }
 }
 
 .q-notification.bg-negative {
   border-left-color: var(--ntk-template-notification-negative) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-negative) !important;
+  }
 }
 
 .q-notification.bg-warning {
   border-left-color: var(--ntk-template-notification-warning) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-warning) !important;
+  }
 }
 
 .q-notification.bg-info {
   border-left-color: var(--ntk-template-notification-info) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-info) !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reference-parity global Quasar overrides                           */
+/* ------------------------------------------------------------------ */
+
+[class*='ntk-template-'] .q-spinner {
+  animation-duration: 0.3s;
+}
+
+[class*='ntk-template-'] input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 /* ------------------------------------------------------------------ */
