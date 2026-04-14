@@ -6,7 +6,7 @@
  * Menu items, fake data and auth flow mirror the approved reference project.
  */
 
-import { computed, defineComponent, h, ref } from 'vue'
+import { computed, defineComponent, h, ref, resolveComponent } from 'vue'
 import {
   RouterView,
   createRouter,
@@ -549,7 +549,13 @@ const TemplateRuntimeAuthLayoutShell = defineComponent({
 const TemplateRuntimeBlankLayoutShell = defineComponent({
   name: 'TemplateRuntimeBlankLayoutShell',
   setup() {
-    return () => h(RouterView)
+    return () => {
+      const QLayout = resolveComponent('QLayout')
+      const QPageContainer = resolveComponent('QPageContainer')
+      return h(QLayout as any, { view: 'hHh lpr fFf' }, () =>
+        h(QPageContainer as any, null, () => h(RouterView)),
+      )
+    }
   },
 })
 
