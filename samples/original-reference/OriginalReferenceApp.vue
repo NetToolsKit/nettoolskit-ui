@@ -360,8 +360,8 @@ onBeforeUnmount(() => {
 }
 
 .ntk-original-reference__brand-logo {
-  width: 120px;
-  height: auto;
+  height: 32px;
+  width: auto;
   object-fit: contain;
   display: block;
 }
