@@ -1,6 +1,6 @@
-<template>
+﻿<template>
   <CmsShellCard
-    :title="t('Pages preview', 'Preview de paginas')"
+    :title="t('Pages preview', 'Preview de páginas')"
     body-class="cms-pages__preview"
   >
     <template #header-actions>
@@ -44,7 +44,7 @@
         class="cms-review-summary"
       >
         <CmsSectionHeaderSummary
-          :title="t('Draft vs published review', 'Revisao rascunho vs publicado')"
+          :title="t('Draft vs published review', 'Revisão rascunho vs publicado')"
           container-class="cms-review-summary__header"
           summary-class="cms-page-preview__chips"
         >
@@ -63,8 +63,8 @@
             >
               {{
                 draftPublishedDiff.hasChanges
-                  ? t('Changes detected', 'Mudancas detectadas')
-                  : t('No changes against published', 'Sem mudancas contra o publicado')
+                  ? t('Changes detected', 'Mudanças detectadas')
+                  : t('No changes against published', 'Sem mudanças contra o publicado')
               }}
             </q-chip>
           </template>
@@ -72,11 +72,11 @@
 
         <div class="cms-blocks-summary-grid">
           <div class="cms-blocks-summary-card">
-            <span>{{ t('Pages changed', 'Paginas alteradas') }}</span>
+            <span>{{ t('Pages changed', 'Páginas alteradas') }}</span>
             <strong>{{ getPreviewDiffChangeCount(draftPublishedDiff.pageSummary) }}</strong>
           </div>
           <div class="cms-blocks-summary-card">
-            <span>{{ t('Sections changed', 'Secoes alteradas') }}</span>
+            <span>{{ t('Sections changed', 'Seções alteradas') }}</span>
             <strong>{{ getPreviewDiffChangeCount(draftPublishedDiff.sectionSummary) }}</strong>
           </div>
           <div class="cms-blocks-summary-card">
@@ -109,7 +109,7 @@
                 {{
                   t(
                     `${pageDiff.sectionSummary.added} sections added · ${pageDiff.sectionSummary.removed} removed · ${pageDiff.sectionSummary.changed} changed · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} block changes`,
-                    `${pageDiff.sectionSummary.added} secoes adicionadas · ${pageDiff.sectionSummary.removed} removidas · ${pageDiff.sectionSummary.changed} alteradas · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} mudancas em blocos`
+                    `${pageDiff.sectionSummary.added} seções adicionadas · ${pageDiff.sectionSummary.removed} removidas · ${pageDiff.sectionSummary.changed} alteradas · ${pageDiff.blockSummary.changed + pageDiff.blockSummary.added + pageDiff.blockSummary.removed} mudanças em blocos`
                   )
                 }}
               </small>
@@ -173,7 +173,7 @@
         </div>
 
         <small class="cms-page-preview__path">{{ page.path }}</small>
-        <p>{{ getPageDescriptionValue(page) || t('No description provided.', 'Nenhuma descricao informada.') }}</p>
+        <p>{{ getPageDescriptionValue(page) || t('No description provided.', 'Nenhuma descrição informada.') }}</p>
 
         <div class="cms-runtime-preview">
           <div
@@ -189,7 +189,7 @@
         </div>
 
         <CmsDiagnosticsListSection
-          :title="t('Content diagnostics', 'Diagnosticos de conteudo')"
+          :title="t('Content diagnostics', 'Diagnósticos de conteúdo')"
           :items="toDiagnosticsListItems(getPreviewPageDiagnostics(page.id, pageIndex))"
           :count-style="statusChipStyle"
         />

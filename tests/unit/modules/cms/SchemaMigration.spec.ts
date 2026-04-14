@@ -140,7 +140,7 @@ describe('schema-migration', () => {
       localization: {
         fields: {
           'pt-BR': {
-            campaignheadline: 'Titulo do lancamento',
+            campaignheadline: 'Título do lançamento',
           },
         },
       },
@@ -166,7 +166,7 @@ describe('schema-migration', () => {
       campaigneyebrow: 'New',
     })
     expect(upgradedPage.localization?.fields?.['pt-BR']).toMatchObject({
-      campaignheadline: 'Titulo do lancamento',
+      campaignheadline: 'Título do lançamento',
       campaigneyebrow: 'New',
     })
   })

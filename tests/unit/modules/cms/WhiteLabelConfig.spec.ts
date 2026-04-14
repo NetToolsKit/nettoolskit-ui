@@ -41,7 +41,7 @@ describe('white-label.config', () => {
     expect(firstPage?.title).toBe('Main Landing')
     expect(firstPage?.localization?.title?.['pt-BR']).toBe('Landing Principal')
     expect(firstSection?.label).toBe('Header')
-    expect(firstSection?.localization?.label?.['pt-BR']).toBe('Cabecalho')
+    expect(firstSection?.localization?.label?.['pt-BR']).toBe('Cabeçalho')
     expect(firstBlock?.type).toContain('landing.')
     expect(firstBlock?.presetId).toBe('landing-header-product')
     expect(firstBlock?.props).toMatchObject({
@@ -171,7 +171,7 @@ describe('white-label.config', () => {
 
     expect(english.content.locale).toBe('en')
     expect(portuguese.content.locale).toBe('pt-BR')
-    expect(portuguese.layout.searchPlaceholder).toBe('Buscar modulo')
-    expect(portuguese.items.find(item => item.id === 'settings')?.label).toBe('Configuracoes')
+    expect(portuguese.layout.searchPlaceholder).toBe('Buscar módulo')
+    expect(portuguese.items.find(item => item.id === 'settings')?.label).toBe('Configurações')
   })
 })

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="cms-shell-page__grid cms-blocks-shell">
     <CmsWorkspaceTabs
       :model-value="cmsBlocksWorkspaceTabValue"
@@ -45,7 +45,7 @@
           <aside class="cms-designer-card__sidebar cms-blocks__sidebar">
             <CmsAuthoringPanelHeader
               :title="tr('Block designer', 'Designer de blocos')"
-              :description="tr('Keep focus on page, section and block context while authoring reusable pieces.', 'Mantenha foco em pagina, secao e bloco enquanto voce cria pecas reutilizaveis.')"
+              :description="tr('Keep focus on page, section and block context while authoring reusable pieces.', 'Mantenha foco em página, seção e bloco enquanto você cria peças reutilizáveis.')"
             />
             <CmsAuthoringMetricsList :items="cmsBlocksSidebarMetrics" />
           </aside>
@@ -86,7 +86,7 @@
                 emit-value
                 map-options
                 :options="blocksPageOptions"
-                :label="tr('Target page', 'Pagina alvo')"
+                :label="tr('Target page', 'Página alvo')"
                 @update:model-value="emit('update:activeBlocksPageId', String($event ?? ''))"
               />
               <q-select
@@ -96,7 +96,7 @@
                 emit-value
                 map-options
                 :options="blocksSectionOptions"
-                :label="tr('Target section', 'Secao alvo')"
+                :label="tr('Target section', 'Seção alvo')"
                 @update:model-value="emit('update:activeBlocksSectionId', String($event ?? ''))"
               />
               <q-select
@@ -149,7 +149,7 @@
               class="cms-page-item__custom-fields cms-blocks-section-fields"
             >
               <div class="cms-page-item__custom-fields-header">
-                <strong>{{ tr('Section schema fields', 'Campos de schema da secao') }}</strong>
+                <strong>{{ tr('Section schema fields', 'Campos de schema da seção') }}</strong>
                 <small>
                   {{
                     activeBlocksSectionIsLinked
@@ -408,7 +408,7 @@
                 :model-value="reusableBlockNameDraft"
                 outlined
                 dense
-                :label="tr('Reusable block name', 'Nome do bloco reutilizavel')"
+                :label="tr('Reusable block name', 'Nome do bloco reutilizável')"
                 :placeholder="activeBlocksSelectedBlockRecord ? resolveCmsBlockDisplayName(activeBlocksSelectedBlockRecord.type) : tr('Select a block first', 'Selecione um bloco primeiro')"
                 @update:model-value="emit('update:reusableBlockNameDraft', String($event ?? ''))"
               />
@@ -416,8 +416,8 @@
                 :model-value="reusableBlockDescriptionDraft"
                 outlined
                 dense
-                :label="tr('Reusable description', 'Descricao reutilizavel')"
-                :placeholder="tr('Optional description for your library item', 'Descricao opcional para o item da biblioteca')"
+                :label="tr('Reusable description', 'Descrição reutilizável')"
+                :placeholder="tr('Optional description for your library item', 'Descrição opcional para o item da biblioteca')"
                 @update:model-value="emit('update:reusableBlockDescriptionDraft', String($event ?? ''))"
               />
               <q-select
@@ -427,7 +427,7 @@
                 emit-value
                 map-options
                 :options="cmsReusableBlockOptions"
-                :label="tr('Reusable library', 'Biblioteca reutilizavel')"
+                :label="tr('Reusable library', 'Biblioteca reutilizável')"
                 @update:model-value="emit('update:selectedReusableBlockId', String($event ?? ''))"
               />
               <q-btn
@@ -435,7 +435,7 @@
                 dense
                 no-caps
                 icon="library_add"
-                :label="tr('Save selection', 'Salvar selecao')"
+                :label="tr('Save selection', 'Salvar seleção')"
                 :disable="!activeBlocksSelectedBlockRecord"
                 @click="saveSelectedBlockAsReusable()"
               />
@@ -465,15 +465,15 @@
                 outlined
                 dense
                 :label="tr('Preset name', 'Nome do preset')"
-                :placeholder="tr('Use the selected block or reusable item as source', 'Use o bloco selecionado ou item reutilizavel como origem')"
+                :placeholder="tr('Use the selected block or reusable item as source', 'Use o bloco selecionado ou item reutilizável como origem')"
                 @update:model-value="emit('update:authoredBlockPresetNameDraft', String($event ?? ''))"
               />
               <q-input
                 :model-value="authoredBlockPresetDescriptionDraft"
                 outlined
                 dense
-                :label="tr('Preset description', 'Descricao do preset')"
-                :placeholder="tr('Optional preset description', 'Descricao opcional do preset')"
+                :label="tr('Preset description', 'Descrição do preset')"
+                :placeholder="tr('Optional preset description', 'Descrição opcional do preset')"
                 @update:model-value="emit('update:authoredBlockPresetDescriptionDraft', String($event ?? ''))"
               />
               <q-select
@@ -495,7 +495,7 @@
                 multiple
                 use-chips
                 :options="cmsPresetStarterSectionOptions"
-                :label="tr('Starter sections', 'Secoes iniciais')"
+                :label="tr('Starter sections', 'Seções iniciais')"
                 @update:model-value="emit('update:authoredPresetStarterSectionSelections', $event as CmsSectionPresetId[])"
               />
               <q-btn
@@ -529,7 +529,7 @@
 
             <div class="cms-blocks-library">
               <div class="cms-blocks-library__header">
-                <strong>{{ tr('Reusable block library', 'Biblioteca de blocos reutilizaveis') }}</strong>
+                <strong>{{ tr('Reusable block library', 'Biblioteca de blocos reutilizáveis') }}</strong>
                 <div class="cms-blocks-library__header-actions">
                   <q-toggle
                     :model-value="showArchivedReusableBlocks"
@@ -544,14 +544,14 @@
               </div>
 
               <div v-if="filteredCmsReusableBlockLibrary.length === 0" class="cms-block-item__empty">
-                <strong>{{ tr('No reusable blocks saved yet.', 'Nenhum bloco reutilizavel salvo ainda.') }}</strong>
+                <strong>{{ tr('No reusable blocks saved yet.', 'Nenhum bloco reutilizável salvo ainda.') }}</strong>
                 <small>
                   {{
                     hasCmsBuilderSearch
-                      ? tr('No reusable block matched the current search.', 'Nenhum bloco reutilizavel corresponde a busca atual.')
+                      ? tr('No reusable block matched the current search.', 'Nenhum bloco reutilizável corresponde à busca atual.')
                       : tr(
                         'Select one authored block and use "Save selection" to build your first reusable library item.',
-                        'Selecione um bloco authored e use "Salvar selecao" para criar o primeiro item reutilizavel da biblioteca.'
+                        'Selecione um bloco authored e use "Salvar seleção" para criar o primeiro item reutilizável da biblioteca.'
                       )
                   }}
                 </small>
@@ -662,7 +662,7 @@
                     round
                     dense
                     icon="travel_explore"
-                    :aria-label="tr('Inspect reusable block usage', 'Inspecionar uso do bloco reutilizavel')"
+                    :aria-label="tr('Inspect reusable block usage', 'Inspecionar uso do bloco reutilizável')"
                     @click="openCmsUsageDrawer('reusable-block', reusableBlock.id, reusableBlock.name, reusableBlock.description ?? '')"
                   />
                   <q-btn
@@ -710,7 +710,7 @@
                         ? tr('No preset matched the current search.', 'Nenhum preset corresponde a busca atual.')
                         : tr(
                           'Start from a selected block or reusable item, then save it as a preset for repeatable authoring.',
-                          'Comece por um bloco selecionado ou item reutilizavel e depois salve como preset para autoria repetivel.'
+                          'Começe por um bloco selecionado ou item reutilizável e depois salve como preset para autoria repetível.'
                         )
                     }}
                   </small>
@@ -841,21 +841,21 @@
               </div>
 
               <div v-if="activeBlocksSections.length === 0" class="cms-block-item__empty cms-block-item__empty--card">
-                <strong>{{ tr('This page does not have sections yet.', 'Esta pagina ainda nao possui secoes.') }}</strong>
+                <strong>{{ tr('This page does not have sections yet.', 'Esta página ainda não possui seções.') }}</strong>
                 <small>
                   {{
                     tr(
                       'Open Pages and apply the content-model scaffold or add your first section before editing blocks.',
-                      'Abra Paginas e aplique o scaffold do modelo de conteudo ou adicione a primeira secao antes de editar blocos.'
+                      'Abra Páginas e aplique o scaffold do modelo de conteúdo ou adicione a primeira seção antes de editar blocos.'
                     )
                   }}
                 </small>
                 <div class="cms-empty-state__actions">
-                  <q-btn flat dense no-caps icon="web_asset" :label="tr('Open pages', 'Abrir paginas')" @click="openPagesModule()" />
+                  <q-btn flat dense no-caps icon="web_asset" :label="tr('Open pages', 'Abrir páginas')" @click="openPagesModule()" />
                 </div>
               </div>
               <div v-else-if="hasCmsBuilderSearch && filteredActiveBlocksSections.length === 0" class="cms-block-item__empty cms-block-item__empty--card">
-                <strong>{{ tr('No sections matched the current search.', 'Nenhuma secao corresponde a busca atual.') }}</strong>
+                <strong>{{ tr('No sections matched the current search.', 'Nenhuma seção corresponde à busca atual.') }}</strong>
                 <small>
                   {{
                     tr(
@@ -879,17 +879,17 @@
                     <strong>{{ section.label }}</strong>
                     <small>{{ tr(`${section.blocks.length} blocks`, `${section.blocks.length} blocos`) }}</small>
                     <small v-if="section.reusableMode === 'linked'">
-                      {{ tr('Linked section - detach in Pages to edit blocks.', 'Secao vinculada - desvincule em Paginas para editar blocos.') }}
+                      {{ tr('Linked section - detach in Pages to edit blocks.', 'Seção vinculada - desvincule em Páginas para editar blocos.') }}
                     </small>
                   </div>
 
                   <div v-if="section.blocks.length === 0" class="cms-block-item__empty">
-                    <strong>{{ tr('No blocks in this section yet.', 'Ainda nao existem blocos nesta secao.') }}</strong>
+                    <strong>{{ tr('No blocks in this section yet.', 'Ainda não existem blocos nesta seção.') }}</strong>
                     <small>
                       {{
                         tr(
                           'Focus this section, choose a compatible palette block and add it, or insert one reusable block.',
-                          'Foque esta secao, escolha um bloco compativel da paleta e adicione-o, ou insira um bloco reutilizavel.'
+                          'Foque esta seção, escolha um bloco compatível da paleta e adicione-o, ou insira um bloco reutilizável.'
                         )
                       }}
                     </small>
@@ -899,7 +899,7 @@
                         dense
                         no-caps
                         icon="ads_click"
-                        :label="tr('Focus section', 'Focar secao')"
+                        :label="tr('Focus section', 'Focar seção')"
                         @click="setActiveBlocksSelection(section.id)"
                       />
                       <q-btn
@@ -1023,8 +1023,8 @@
             <aside class="cms-designer-card__rail cms-blocks__rail">
               <div class="cms-designer-card__rail-card">
                 <CmsAuthoringPanelHeader
-                  :title="tr('Selection rail', 'Rail da selecao')"
-                  :description="tr('Bulk operations stay attached to the current section contract without repeating top-bar actions.', 'Operacoes em lote ficam anexadas ao contrato da secao atual sem repetir as acoes da barra superior.')"
+                  :title="tr('Selection rail', 'Rail da seleção')"
+                  :description="tr('Bulk operations stay attached to the current section contract without repeating top-bar actions.', 'Operações em lote ficam anexadas ao contrato da seção atual sem repetir as ações da barra superior.')"
                 />
                 <CmsAuthoringMetricsList :items="cmsBlocksRailMetrics" />
               </div>
@@ -1080,15 +1080,15 @@
 
       <div class="cms-blocks-summary-grid">
         <div class="cms-blocks-summary-card">
-          <span>{{ tr('Total pages', 'Total de paginas') }}</span>
+          <span>{{ tr('Total pages', 'Total de páginas') }}</span>
           <strong>{{ cmsPreviewPages.length }}</strong>
         </div>
         <div class="cms-blocks-summary-card">
-          <span>{{ tr('Published pages', 'Paginas publicadas') }}</span>
+          <span>{{ tr('Published pages', 'Páginas publicadas') }}</span>
           <strong>{{ cmsPreviewPublishedPagesCount }}</strong>
         </div>
         <div class="cms-blocks-summary-card">
-          <span>{{ tr('Enabled sections', 'Secoes ativadas') }}</span>
+          <span>{{ tr('Enabled sections', 'Seções ativadas') }}</span>
           <strong>{{ cmsPreviewEnabledSectionsCount }}</strong>
         </div>
         <div class="cms-blocks-summary-card">
@@ -1099,7 +1099,7 @@
 
       <div v-if="cmsPreviewDraftPublishedDiff" class="cms-review-summary">
         <CmsSectionHeaderSummary
-          :title="tr('Draft vs published review', 'Revisao rascunho vs publicado')"
+          :title="tr('Draft vs published review', 'Revisão rascunho vs publicado')"
           container-class="cms-review-summary__header"
           summary-class="cms-page-preview__chips"
         >
@@ -1111,19 +1111,19 @@
             >
               {{
                 cmsPreviewDraftPublishedDiff.hasChanges
-                  ? tr('Changes detected', 'Mudancas detectadas')
-                  : tr('No changes against published', 'Sem mudancas contra o publicado')
+                  ? tr('Changes detected', 'Mudanças detectadas')
+                  : tr('No changes against published', 'Sem mudanças contra o publicado')
               }}
             </q-chip>
           </template>
         </CmsSectionHeaderSummary>
         <div class="cms-blocks-summary-grid">
           <div class="cms-blocks-summary-card">
-            <span>{{ tr('Page changes', 'Mudancas na pagina') }}</span>
+            <span>{{ tr('Page changes', 'Mudanças na página') }}</span>
             <strong>{{ activeBlocksPageDiff ? getCmsPreviewDiffChangeCount(activeBlocksPageDiff.sectionSummary) + getCmsPreviewDiffChangeCount(activeBlocksPageDiff.blockSummary) + (activeBlocksPageDiff.status === 'changed' || activeBlocksPageDiff.status === 'added' || activeBlocksPageDiff.status === 'removed' ? 1 : 0) : 0 }}</strong>
           </div>
           <div class="cms-blocks-summary-card">
-            <span>{{ tr('Section changes', 'Mudancas na secao') }}</span>
+            <span>{{ tr('Section changes', 'Mudanças na seção') }}</span>
             <strong>{{ activeBlocksSectionDiff ? getCmsPreviewDiffChangeCount(activeBlocksSectionDiff.blockSummary) + (activeBlocksSectionDiff.status === 'changed' || activeBlocksSectionDiff.status === 'added' || activeBlocksSectionDiff.status === 'removed' ? 1 : 0) : 0 }}</strong>
           </div>
           <div class="cms-blocks-summary-card">
@@ -1143,7 +1143,7 @@
                 {{
                   tr(
                     `${activeBlocksPageDiff.sectionSummary.added} sections added · ${activeBlocksPageDiff.sectionSummary.removed} removed · ${activeBlocksPageDiff.sectionSummary.changed} changed`,
-                    `${activeBlocksPageDiff.sectionSummary.added} secoes adicionadas · ${activeBlocksPageDiff.sectionSummary.removed} removidas · ${activeBlocksPageDiff.sectionSummary.changed} alteradas`
+                    `${activeBlocksPageDiff.sectionSummary.added} seções adicionadas · ${activeBlocksPageDiff.sectionSummary.removed} removidas · ${activeBlocksPageDiff.sectionSummary.changed} alteradas`
                   )
                 }}
               </small>
@@ -1209,7 +1209,7 @@
       </q-banner>
 
       <CmsDiagnosticsListSection
-        :title="tr('Content diagnostics', 'Diagnosticos de conteudo')"
+        :title="tr('Content diagnostics', 'Diagnósticos de conteúdo')"
         :items="toCmsDiagnosticsListItems(activeBlocksContentDiagnostics)"
         :count-style="statusChipStyle"
       />
@@ -1236,8 +1236,8 @@
         >
           {{
             activeBlocksSectionIsLinked
-              ? tr('This section is linked to the reusable library. Detach the section in Pages before editing its blocks.', 'Esta secao esta vinculada a biblioteca reutilizavel. Desvincule a secao em Paginas antes de editar seus blocos.')
-              : tr('This block is linked to the reusable library. Detach it before editing props.', 'Este bloco esta vinculado a biblioteca reutilizavel. Desvincule-o antes de editar props.')
+              ? tr('This section is linked to the reusable library. Detach the section in Pages before editing its blocks.', 'Esta seção está vinculada à biblioteca reutilizável. Desvincule a seção em Páginas antes de editar seus blocos.')
+              : tr('This block is linked to the reusable library. Detach it before editing props.', 'Este bloco está vinculado à biblioteca reutilizável. Desvincule-o antes de editar props.')
           }}
         </q-banner>
         <div
@@ -1389,7 +1389,7 @@
             />
           </div>
         </div>
-        <p v-else>{{ tr('No page selected for preview.', 'Nenhuma pagina selecionada para preview.') }}</p>
+        <p v-else>{{ tr('No page selected for preview.', 'Nenhuma página selecionada para preview.') }}</p>
       </div>
     </CmsShellCard>
   </div>

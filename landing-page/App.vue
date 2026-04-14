@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="landing-new-app">
     <LandingNewTopNav
       :is-scrolled="isScrolled"
@@ -21,12 +21,12 @@
       class="search-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label="Pesquisar secoes"
+      aria-label="Pesquisar seções"
       @click.self="closeSearch"
     >
       <div class="search-modal">
         <div class="search-header">
-          <h3>Pesquisar secoes</h3>
+          <h3>Pesquisar seções</h3>
           <button
             class="search-close"
             aria-label="Fechar pesquisa"
@@ -73,7 +73,7 @@
 
     <nav
       class="section-progress"
-      aria-label="Marcador de secoes"
+      aria-label="Marcador de seções"
     >
       <a
         v-for="item in navigationItems"
@@ -89,8 +89,8 @@
     <LandingNewVideoSection
       id="servicos"
       eyebrow="Biblioteca de componentes"
-      title="Componentes Vue 3 + Quasar prontos para producao"
-      body="O NetToolsKit UI Vue entrega componentes reutilizaveis para formularios, layouts e interfaces complexas com padrao visual consistente. Tudo com foco em acessibilidade, manutencao e velocidade de entrega."
+      title="Componentes Vue 3 + Quasar prontos para produção"
+      body="O NetToolsKit UI Vue entrega componentes reutilizáveis para formulários, layouts e interfaces complexas com padrão visual consistente. Tudo com foco em acessibilidade, manutenção e velocidade de entrega."
       cta-text="Ver componentes"
       cta-href="#processo"
       :images="[
@@ -99,7 +99,7 @@
         './assets/hero-visual.png',
       ]"
       :image-alts="[
-        'Composables reutilizaveis',
+        'Composables reutilizáveis',
         'Preview de temas',
         'Arquitetura visual do sistema',
       ]"
@@ -109,7 +109,7 @@
       id="expo"
       eyebrow="Composables e branding"
       title="Logica reutilizavel e sistema de identidade centralizado"
-      body="Com os composables do NetToolsKit, voce padroniza estados, regras e comportamento entre telas. O branding centralizado permite white-label e personalizacao por cliente sem duplicar codigo."
+      body="Com os composables do NetToolsKit, você padroniza estados, regras e comportamento entre telas. O branding centralizado permite white-label e personalização por cliente sem duplicar código."
       cta-text="Abrir no NPM"
       cta-href="https://www.npmjs.com/package/@nettoolskit/ui-vue"
       :images="[]"
@@ -195,8 +195,8 @@ const navigationItems: NavigationItem[] = [
   { id: 'servicos', number: '02', label: 'Componentes' },
   { id: 'expo', number: '03', label: 'Composables' },
   { id: 'independencia', number: '04', label: 'White-label' },
-  { id: 'inovacao', number: '05', label: 'Arquitetura' },
-  { id: 'processo', number: '06', label: 'Integracao' },
+  { id: 'inovação', number: '05', label: 'Arquitetura' },
+  { id: 'processo', number: '06', label: 'Integração' },
   { id: 'contato', number: '07', label: 'Contato' },
 ]
 
@@ -205,35 +205,35 @@ const splitSections: SplitSection[] = [
     id: 'independencia',
     reverse: false,
     eyebrow: 'White-label',
-    title: 'Personalizacao por cliente sem perder consistencia',
-    body: 'A biblioteca foi desenhada para ambientes multi-tenant e white-label. Voce define identidade, temas e configuracoes por marca enquanto preserva governanca, padrao de UX e produtividade do time.',
+    title: 'Personalização por cliente sem perder consistência',
+    body: 'A biblioteca foi desenhada para ambientes multi-tenant e white-label. Você define identidade, temas e configurações por marca enquanto preserva governança, padrão de UX e produtividade do time.',
     images: [
       './assets/theme-preview.png',
       './assets/form-components.png',
     ],
-    imageAlts: ['Sistema de temas', 'Componentes reutilizaveis'],
+    imageAlts: ['Sistema de temas', 'Componentes reutilizáveis'],
     links: [
       {
-        text: 'Guia de customizacao',
+        text: 'Guia de customização',
         href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/blob/main/docs/CUSTOMIZATION.md',
         external: true,
       },
     ],
   },
   {
-    id: 'inovacao',
+    id: 'inovação',
     reverse: true,
     softEdges: true,
     eyebrow: 'Arquitetura limpa',
-    title: 'Separacao por modulos, escalabilidade e manutencao simplificada',
-    body: 'O NetToolsKit UI Vue adota padroes de Clean Architecture e organizacao modular. Isso reduz acoplamento, melhora testes e permite evolucao continua sem reescrever os mesmos blocos de UI em cada projeto.',
+    title: 'Separação por módulos, escalabilidade e manutenção simplificada',
+    body: 'O NetToolsKit UI Vue adota padrões de Clean Architecture e organização modular. Isso reduz acoplamento, melhora testes e permite evolução contínua sem reescrever os mesmos blocos de UI em cada projeto.',
     images: [
       './assets/hero-visual.png',
       './assets/composables-visual.png',
     ],
     imageAlts: ['Arquitetura de componentes', 'Camada de composables'],
     links: [
-      { text: 'Ver repositorio', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue', external: true },
+      { text: 'Ver repositório', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue', external: true },
       { text: 'Explorar composables', href: '#expo' },
     ],
   },
@@ -241,7 +241,7 @@ const splitSections: SplitSection[] = [
     id: 'processo',
     reverse: false,
     softEdges: true,
-    eyebrow: 'Integracao',
+    eyebrow: 'Integração',
     title: 'Como aplicar no seu produto em poucos passos',
     body: 'Instale pelo NPM, configure Quasar e tema global, e comece a consumir componentes e composables no mesmo dia. O pacote entrega tipagem completa, build CJS/ESM e estilos preparados para projetos enterprise.',
     images: [
@@ -263,15 +263,15 @@ const splitSections: SplitSection[] = [
     softEdges: true,
     eyebrow: 'Contato e comunidade',
     title: 'Vamos construir uma base de UI consistente para os seus produtos',
-    body: 'Use o repositorio para acompanhar evolucoes, abrir issues e contribuir com novos componentes. O foco do NetToolsKit e acelerar entrega sem comprometer padrao visual, acessibilidade e qualidade tecnica.',
+    body: 'Use o repositório para acompanhar evoluções, abrir issues e contribuir com novos componentes. O foco do NetToolsKit é acelerar entrega sem comprometer padrão visual, acessibilidade e qualidade técnica.',
     images: [
       './assets/composables-visual.png',
       './assets/hero-visual.png',
     ],
-    imageAlts: ['Documentacao e suporte', 'Ecossistema de distribuicao'],
+    imageAlts: ['Documentação e suporte', 'Ecossistema de distribuição'],
     links: [
       {
-        text: 'Abrir repositorio no GitHub',
+        text: 'Abrir repositório no GitHub',
         href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue',
         external: true,
       },
@@ -298,17 +298,17 @@ const searchEntries: SearchEntry[] = [
   {
     id: 'independencia',
     title: 'White-label',
-    keywords: ['white-label', 'tema', 'tenant', 'customizacao'],
+    keywords: ['white-label', 'tema', 'tenant', 'customização'],
   },
   {
-    id: 'inovacao',
+    id: 'inovação',
     title: 'Arquitetura',
     keywords: ['arquitetura', 'clean architecture', 'modulos'],
   },
   {
     id: 'processo',
-    title: 'Integracao',
-    keywords: ['integracao', 'quick start', 'npm'],
+    title: 'Integração',
+    keywords: ['integração', 'quick start', 'npm'],
   },
   {
     id: 'contato',

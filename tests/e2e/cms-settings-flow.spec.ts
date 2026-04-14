@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Tests/e2e/cms settings flow spec module.
  */
 
@@ -556,14 +556,14 @@ async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
 }
 
 async function openSettingsModule(page: Page): Promise<void> {
-  await openDrawerModule(page, /^(Settings|Configuracoes)$/)
-  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Settings|Configuracoes)$/)
+  await openDrawerModule(page, /^(Settings|Configura\u00e7\u00f5es)$/)
+  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Settings|Configura\u00e7\u00f5es)$/)
 }
 
 async function openSettingsTab(page: Page, tabName: RegExp): Promise<void> {
   const source = tabName.source.toLowerCase()
   const normalizedTabName = source.includes('content') || source.includes('conteu')
-    ? /content|conteudo/i
+    ? /content|conteúdo/i
     : source.includes('color') || source.includes('cor')
       ? /colors|cores/i
       : source.includes('brand')
@@ -785,21 +785,21 @@ test.describe('CMS settings white-label flow', () => {
       /(Designer rail|Rail do designer)/i
     )
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
     await expectDesignerShellStatus(page, '.cms-designer-card--pages')
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-row--actions').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-row--info').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-header').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--pages .cms-designer-card__ruler').first()).toBeVisible()
     await expect(page.locator('.cms-pages__sidebar .cms-designer-card__metrics').first()).toContainText(
-      /(Template|Pages in tenant|Paginas no tenant)/i
+      /(Template|Pages in tenant|Páginas no tenant)/i
     )
     await expect(page.locator('.cms-pages__sidebar .cms-pages__sidebar-section').first()).toContainText(
       /(Workspace actions|Acoes do workspace)/i
     )
     await expect(page.locator('.cms-pages__rail .cms-designer-card__rail-card').first()).toContainText(
-      /(Reusable content rail|Rail de conteudo reutilizavel)/i
+      /(Reusable content rail|Rail de conteúdo reutilizável)/i
     )
 
     await openDrawerModule(page, /^(Blocks|Blocos)$/)
@@ -810,7 +810,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__toolbar-header').first()).toBeVisible()
     await expect(page.locator('.cms-designer-card--blocks .cms-designer-card__ruler').first()).toBeVisible()
     await expect(page.locator('.cms-blocks__sidebar .cms-designer-card__metrics').first()).toContainText(
-      /(Page|Pagina)/i
+      /(Page|Página)/i
     )
     await expect(page.locator('.cms-blocks__rail .cms-designer-card__rail-card').last()).toContainText(
       /(Selection rail|Rail da selecao)/i
@@ -863,7 +863,7 @@ test.describe('CMS settings white-label flow', () => {
 
   test('opens Pages preview in the workspace tab from the designer toolbar', async ({ page }) => {
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
     await page.locator('.cms-designer-card--pages .cms-designer-card__toolbar-group--preview .q-btn').first().click()
     await expect(page.getByRole('tab', { name: /^(Preview)$/i }).first()).toHaveAttribute('aria-selected', 'true')
@@ -1294,7 +1294,7 @@ test.describe('CMS settings white-label flow', () => {
       profileId: String(activeProfileId),
     })).toBe(recoveredName)
 
-    await page.getByRole('button', { name: /^(Reset tenant settings to defaults|Resetar configuracoes do tenant para o padrao)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Reset tenant settings to defaults|Resetar configura\u00e7\u00f5es do tenant para o padr\u00e3o)$/ }).first().click()
     await expect(productNameInput).not.toHaveValue(recoveredName)
 
     await page.getByRole('button', { name: /^(Restore auto-save|Restaurar auto-save)$/ }).first().click()
@@ -1322,7 +1322,7 @@ test.describe('CMS settings white-label flow', () => {
     }
 
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
     const blockSelectButton = page
       .locator('.cms-block-row .q-btn', { hasText: 'Select' })
@@ -1374,7 +1374,7 @@ test.describe('CMS settings white-label flow', () => {
   test('imports and exports schema packages independently from authored page content', async ({ page }) => {
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
     const initialSettings = await page.evaluate((storageKey: string) => {
       const raw = window.localStorage.getItem(storageKey)
@@ -1442,7 +1442,7 @@ test.describe('CMS settings white-label flow', () => {
       })
 
     await expect(
-      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteudo)$/ }) })
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteúdo)$/ }) })
     ).toContainText('Imported schema package')
 
     await expect.poll(async () => {
@@ -1627,10 +1627,10 @@ test.describe('CMS settings white-label flow', () => {
 
     await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
     await expect(reusableSectionRow).toContainText('1 uses')
-    await expect(reusableSectionRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(reusableSectionRow).toContainText(/1 page refs|1 refs em páginas/i)
     await expect(reusableSectionRow.getByRole('button', { name: /^(Delete|Excluir)$/ })).toHaveCount(0)
     await expect(reusableSectionRow.getByRole('button', { name: /^(Archive|Arquivar)$/ })).toBeEnabled()
-    await reusableSectionRow.getByRole('button', { name: /^(Inspect reusable section usage|Inspecionar uso da secao reutilizavel)$/ }).click()
+    await reusableSectionRow.getByRole('button', { name: /^(Inspect reusable section usage|Inspecionar uso da seção reutilizável)$/ }).click()
     await expect(page.locator('.cms-usage-drawer')).toBeVisible()
     await expect(page.locator('.cms-usage-drawer')).toContainText('Main Landing · Hero')
     await expect(page.locator('.cms-usage-drawer__reference')).toContainText(/Main Landing -> Hero|page:landing-main/i)
@@ -1639,7 +1639,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await heroSectionRow.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
 
     await fillTextInput(cmsInputByLabel(page, 'Preset name'), presetName)
@@ -1652,7 +1652,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(presetRow).toBeVisible()
     await page.locator('.cms-form-grid.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Apply preset' }).first().click()
     await expect(presetRow).toContainText('1 uses')
-    await expect(presetRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(presetRow).toContainText(/1 page refs|1 refs em páginas/i)
     await expect(presetRow.getByRole('button', { name: /^(Delete|Excluir)$/ })).toHaveCount(0)
     await expect(presetRow.getByRole('button', { name: /^(Archive|Arquivar)$/ })).toBeEnabled()
 
@@ -1668,10 +1668,10 @@ test.describe('CMS settings white-label flow', () => {
     await page.getByRole('button', { name: /^(Insert linked|Inserir vinculado)$/ }).first().click()
 
     await expect(reusableBlockRow).toContainText('1 uses')
-    await expect(reusableBlockRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(reusableBlockRow).toContainText(/1 page refs|1 refs em páginas/i)
     await expect(reusableBlockRow.getByRole('button', { name: /^(Delete|Excluir)$/ })).toHaveCount(0)
     await expect(reusableBlockRow.getByRole('button', { name: /^(Archive|Arquivar)$/ })).toBeEnabled()
-    await reusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
+    await reusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizável)$/ }).click()
     await expect(page.locator('.cms-usage-drawer')).toBeVisible()
     await expect(page.locator('.cms-usage-drawer')).toContainText(reusableBlockName)
     await expect(page.locator('.cms-usage-drawer__reference')).toContainText(/page:landing-main|Main Landing/i)
@@ -1708,7 +1708,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await heroSectionRow.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
 
     await fillTextInput(cmsInputByLabel(page, 'Preset name'), presetName)
@@ -1736,12 +1736,12 @@ test.describe('CMS settings white-label flow', () => {
     const localizedHeroTitle = 'Construa interfaces QA'
 
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
 
     const firstPage = page.locator('.cms-page-item').first()
     const pageTitleInput = firstPage
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -1749,20 +1749,20 @@ test.describe('CMS settings white-label flow', () => {
 
     await firstPage.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
     const heroTitleInput = await resolveBlocksEditableTextInput(page)
     const baseHeroTitle = await heroTitleInput.inputValue()
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     const localizedPageTitleInput = page
       .locator('.cms-page-item')
       .first()
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -1772,49 +1772,49 @@ test.describe('CMS settings white-label flow', () => {
     await openCmsWorkspaceTab(page, /^(Editor)$/i)
 
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
     const localizedHeroTitleInput = await resolveBlocksEditableTextInput(page)
     await fillTextInput(localizedHeroTitleInput, localizedHeroTitle)
     await expect(localizedHeroTitleInput).toHaveValue(localizedHeroTitle)
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Idioma', 'English')
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await expect(
       page
         .locator('.cms-page-item')
         .first()
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first()
     ).toHaveValue(basePageTitle)
 
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
     await expect(await resolveBlocksEditableTextInput(page)).toHaveValue(baseHeroTitle)
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await expect(
       page
         .locator('.cms-page-item')
         .first()
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first()
     ).toHaveValue(localizedPageTitle)
 
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Target block|Bloco alvo)$/, 'Landing Hero')
     await expect(await resolveBlocksEditableTextInput(page)).toHaveValue(localizedHeroTitle)
   })
@@ -1839,9 +1839,9 @@ test.describe('CMS settings white-label flow', () => {
     await page.setViewportSize({ width: 1600, height: 2200 })
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
-    await expect(page.getByRole('button', { name: /^(New content model|Novo modelo de conteudo)$/ }).first()).toBeVisible()
+    await expect(page.getByRole('button', { name: /^(New content model|Novo modelo de conteúdo)$/ }).first()).toBeVisible()
     const contentModelNameInput = cmsInputByLabel(page, 'Content model name')
     const contentModelDescriptionInput = cmsInputByLabel(page, 'Content model description')
     await expect(contentModelNameInput).toBeVisible()
@@ -1926,7 +1926,7 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInputDirect(cmsInputByLabel(page, 'Hero max instances'), '1')
     const starterScaffoldField = page
       .locator('.q-field', {
-        has: page.locator('.q-field__label', { hasText: /^(Starter page scaffold|Scaffold inicial da pagina)$/ }),
+        has: page.locator('.q-field__label', { hasText: /^(Starter page scaffold|Scaffold inicial da página)$/ }),
       })
       .first()
     await starterScaffoldField.click()
@@ -1946,10 +1946,10 @@ test.describe('CMS settings white-label flow', () => {
     }
     await commitFocusedSelect(page)
 
-    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteúdo)$/ }).first().click()
     const contentModelPreviewCard = page
       .locator('.cms-config-section', {
-        has: page.getByText(/^(Content model example|Exemplo de modelo de conteudo)$/),
+        has: page.getByText(/^(Content model example|Exemplo de modelo de conteúdo)$/),
       })
       .locator('.cms-preview-card--content')
       .first()
@@ -1977,12 +1977,12 @@ test.describe('CMS settings white-label flow', () => {
     await expect(contentModelPreviewCard).toContainText('Preset limits')
     await expect(contentModelPreviewCard).toContainText('Hero x1')
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
 
     await selectOptionByFieldLabel(page, 'Content model', authoredModelName)
     await expect(
-      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Content model|Modelo de conteudo)$/ }) }).first()
+      page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Content model|Modelo de conteúdo)$/ }) }).first()
     ).toContainText(authoredModelName)
     await page.getByRole('button', { name: /^(Apply model scaffold|Aplicar scaffold do modelo)$/ }).first().click()
     await page.getByRole('button', { name: /^(Apply model defaults|Aplicar defaults do modelo)$/ }).first().click()
@@ -1990,7 +1990,7 @@ test.describe('CMS settings white-label flow', () => {
     const firstPage = page.locator('.cms-page-item').first()
     await expect(
       firstPage
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first()
@@ -2028,7 +2028,7 @@ test.describe('CMS settings white-label flow', () => {
 
     const sectionPresetField = page
       .locator('.cms-page-item__sections-actions .q-field', {
-        has: page.locator('.q-field__label', { hasText: /^(Section preset|Preset de secao)$/ }),
+        has: page.locator('.q-field__label', { hasText: /^(Section preset|Preset de seção)$/ }),
       })
       .first()
     await sectionPresetField.click()
@@ -2049,7 +2049,7 @@ test.describe('CMS settings white-label flow', () => {
       .locator('.cms-page-item')
       .first()
       .locator('.cms-page-section-row .q-field', {
-        has: page.locator('.q-field__label', { hasText: /^(Section ID|ID da secao)$/ }),
+        has: page.locator('.q-field__label', { hasText: /^(Section ID|ID da seção)$/ }),
       })
       .locator('input, textarea')
       .evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value))
@@ -2061,7 +2061,7 @@ test.describe('CMS settings white-label flow', () => {
       expect(pageSectionIds).toEqual(expect.arrayContaining(['hero']))
     }
 
-    const addSectionButton = page.getByRole('button', { name: /^(Add section|Adicionar secao)$/ }).first()
+    const addSectionButton = page.getByRole('button', { name: /^(Add section|Adicionar seção)$/ }).first()
     await expect(addSectionButton).toBeVisible()
 
     await selectOptionByFieldLabel(page, 'Section preset', 'Hero')
@@ -2083,7 +2083,7 @@ test.describe('CMS settings white-label flow', () => {
     )
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await fillTextInputDirect(cmsInputByLabel(page, 'Migration notes'), updatedMigrationNotes)
     await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
     await fillTextInputDirect(
@@ -2102,14 +2102,14 @@ test.describe('CMS settings white-label flow', () => {
       page.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Default value' }) }).last().locator('input, textarea').first(),
       'New'
     )
-    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteúdo)$/ }).first().click()
     await expect(contentModelPreviewCard).toContainText('Schema version')
     await expect(contentModelPreviewCard).toContainText('2')
     await expect(contentModelPreviewCard).toContainText(updatedMigrationNotes)
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     const schemaMigrationSummary = page.locator('.cms-page-migration-summary').first()
-    await expect(schemaMigrationSummary).toContainText(/Schema migration review|Revisao de migracao de schema/)
+    await expect(schemaMigrationSummary).toContainText(/Schema migration review|Revisão de migração de schema/)
     await expect(schemaMigrationSummary).toContainText(/Pending: 1|Pendentes: 1/)
     const schemaUpgradeReport = firstPage.locator('.cms-page-item__schema-migration').first()
     await expect(schemaUpgradeReport).toContainText(/Schema upgrade report|Relatorio de upgrade do schema/)
@@ -2117,7 +2117,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(schemaUpgradeReport).toContainText('Campaign eyebrow')
     await expect(schemaUpgradeReport).toContainText('customFields.campaigneyebrow')
     await expect(schemaUpgradeReport).toContainText('Next: New')
-    await page.getByRole('button', { name: /^(Sync schema version|Sincronizar versao do schema)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Sync schema version|Sincronizar versão do schema)$/ }).first().click()
     if (await schemaMigrationSummary.count() > 0) {
       await expect(schemaMigrationSummary).toContainText(/Pending: 0|Pendentes: 0/)
     }
@@ -2125,7 +2125,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await firstPage.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Footer (1)')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Footer (1)')
 
     const paletteBlockField = page
       .locator('.q-field', {
@@ -2200,7 +2200,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.setViewportSize({ width: 1600, height: 1900 })
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
     await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
     await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Schema with URL, date and media asset fields')
@@ -2327,9 +2327,9 @@ test.describe('CMS settings white-label flow', () => {
       groupDefaultJson
     )
 
-    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteúdo)$/ }).first().click()
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await selectOptionByFieldLabel(page, 'Content model', contentModelName)
 
     const customFieldsCard = page.locator('.cms-page-item__custom-fields').first()
@@ -2387,15 +2387,15 @@ test.describe('CMS settings white-label flow', () => {
     const baseFieldDescription = 'Primary campaign headline'
     const baseFieldPlaceholder = 'Type the campaign headline'
     const baseFieldDefaultValue = 'Launch campaign'
-    const localizedFieldLabel = 'Titulo da campanha'
+    const localizedFieldLabel = 'Título da campanha'
     const localizedFieldGroup = 'Campanha'
-    const localizedFieldDescription = 'Titulo principal da pagina'
-    const localizedFieldPlaceholder = 'Digite o titulo da campanha'
+    const localizedFieldDescription = 'Título principal da página'
+    const localizedFieldPlaceholder = 'Digite o título da campanha'
 
     await page.setViewportSize({ width: 1600, height: 1900 })
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
     await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
     await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Localized schema metadata smoke test')
@@ -2450,10 +2450,10 @@ test.describe('CMS settings white-label flow', () => {
       localizedFieldPlaceholder
     )
 
-    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteúdo)$/ }).first().click()
     await page.reload()
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Content model library', contentModelName)
 
     const reloadedFieldRow = page.locator('.cms-content-model-fields__item').first()
@@ -2464,7 +2464,7 @@ test.describe('CMS settings white-label flow', () => {
       reloadedFieldRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'PT-BR label' }) }).first().locator('input, textarea').first()
     ).toHaveValue(localizedFieldLabel)
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await selectOptionByFieldLabel(page, 'Content model', contentModelName)
 
     const customFieldsCard = page.locator('.cms-page-item__custom-fields').first()
@@ -2476,9 +2476,9 @@ test.describe('CMS settings white-label flow', () => {
     ).toBeVisible()
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
     const localizedCustomFieldsCard = page.locator('.cms-page-item__custom-fields').first()
     await expect(
@@ -2493,11 +2493,11 @@ test.describe('CMS settings white-label flow', () => {
     const anchorIdValue = 'hero-anchor-qa'
 
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
 
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await expect(page.locator('.cms-blocks-section-fields')).toBeVisible()
 
     const anchorIdInput = page
@@ -2508,11 +2508,11 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(anchorIdInput, anchorIdValue)
     await selectOptionByFieldLabel(page, 'Theme variant', 'Contrast')
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     const pageTitleInput = page
       .locator('.cms-page-item')
       .first()
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -2520,7 +2520,7 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(pageTitleInput, `${pageTitleValue} QA`)
 
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
 
     await expect(
       page
@@ -2565,7 +2565,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.setViewportSize({ width: 1600, height: 1800 })
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
     await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
     await fillTextInputDirect(
@@ -2599,7 +2599,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(fieldPresetLibrary).toContainText(fieldLabel)
     await expect(fieldPresetLibrary).toContainText(fieldDescription)
 
-    await page.getByRole('button', { name: /^(New content model|Novo modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(New content model|Novo modelo de conteúdo)$/ }).first().click()
     await expect(page.locator('.cms-content-model-fields__item')).toHaveCount(0)
 
     await page.getByRole('button', { name: /^(Insert preset|Inserir preset)$/ }).first().click()
@@ -2637,7 +2637,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.setViewportSize({ width: 1600, height: 1800 })
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
     await page.getByRole('button', { name: /^(Add field|Adicionar campo)$/ }).first().click()
     const authoredFieldRow = page.locator('.cms-content-model-fields__item').last()
@@ -2683,7 +2683,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(legacyPresetRow.getByRole('button', { name: /^(Use|Usar)$/ })).toBeDisabled()
     await expect(legacyPresetRow.getByRole('button', { name: /^(Use replacement|Usar substituto)$/ })).toBeVisible()
 
-    await page.getByRole('button', { name: /^(New content model|Novo modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(New content model|Novo modelo de conteúdo)$/ }).first().click()
     await expect(page.locator('.cms-content-model-fields__item')).toHaveCount(0)
 
     await legacyPresetRow.getByRole('button', { name: /^(Use replacement|Usar substituto)$/ }).click()
@@ -2712,7 +2712,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await page.goto(CMS_URL)
     await openDrawerModule(page, /^Pages$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
 
     const heroSectionRow = page
       .locator('.cms-page-section-row', { has: page.locator('input[value="hero"]') })
@@ -2727,7 +2727,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Save selection' }).first().click()
 
     const reusableBlockLibrary = page
-      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizáveis)$/) })
       .first()
     const legacyReusableBlockRow = reusableBlockLibrary
       .locator('.cms-reusable-block-row')
@@ -2748,12 +2748,12 @@ test.describe('CMS settings white-label flow', () => {
     await legacyReusableBlockRow.getByRole('button', { name: /^(Deprecate|Descontinuar)$/ }).click()
     await selectOptionByFieldLabelPattern(page, /^(Replacement block|Bloco substituto)$/, replacementReusableBlockName)
 
-    await expect(legacyReusableBlockRow).toContainText(/Will update 1 page refs|Vai atualizar 1 refs em paginas/i)
+    await expect(legacyReusableBlockRow).toContainText(/Will update 1 page refs|Vai atualizar 1 refs em páginas/i)
     await legacyReusableBlockRow.getByRole('button', { name: /^(Apply replacement|Aplicar substituto)$/ }).click()
 
     await expect(legacyReusableBlockRow).toContainText(/No engine usage detected|Nenhum uso no engine detectado/i)
     await expect(replacementReusableBlockRow).toContainText('1 uses')
-    await expect(replacementReusableBlockRow).toContainText(/1 page refs|1 refs em paginas/i)
+    await expect(replacementReusableBlockRow).toContainText(/1 page refs|1 refs em páginas/i)
   })
 
   test('shows conditional page schema fields only when their visibility rule matches', async ({ page }) => {
@@ -2762,7 +2762,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.setViewportSize({ width: 1600, height: 1900 })
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
     await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
     await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Shows promo fields only when the layout mode is promo')
@@ -2803,9 +2803,9 @@ test.describe('CMS settings white-label flow', () => {
     await page.getByRole('option', { name: 'Layout mode', exact: true }).first().click()
     await promoBadgeRow.locator('.q-field', { has: page.locator('.q-field__label', { hasText: 'Expected value' }) }).first().locator('input, textarea').first().fill('promo')
 
-    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteúdo)$/ }).first().click()
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await selectOptionByFieldLabel(page, 'Content model', contentModelName)
 
     const customFieldsCard = page.locator('.cms-page-item__custom-fields').first()
@@ -2823,37 +2823,37 @@ test.describe('CMS settings white-label flow', () => {
   test('seeds localized block presets in the builder and keeps English base content intact', async ({ page }) => {
     await page.goto(CMS_URL)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
 
     await openDrawerModule(page, /^(Blocks|Blocos)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
 
     const initialBlockCount = await page.locator('.cms-block-row').count()
-    await selectOptionByFieldLabelPattern(page, /^(Target section|Secao alvo)$/, 'Hero')
+    await selectOptionByFieldLabelPattern(page, /^(Target section|Seção alvo)$/, 'Hero')
     await selectOptionByFieldLabelPattern(page, /^(Palette block|Bloco da paleta)$/, 'Landing Hero (layout)')
     await selectOptionByFieldLabelPattern(page, /^(Block preset|Preset de bloco)$/, 'Hero · Showcase em video')
     await commitFocusedSelect(page)
     await page.getByRole('button', { name: /^(Add block|Adicionar bloco)$/ }).first().click()
     await expect(page.locator('.cms-block-row')).toHaveCount(initialBlockCount + 1)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
-    const localizedTitleInput = await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Titulo)$/)
+    const localizedTitleInput = await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Título)$/)
     await expect(localizedTitleInput).toHaveValue('Mostre o produto em movimento')
     await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Showcase em video')
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Idioma', 'English')
 
     await openDrawerModule(page, /^(Blocks|Blocos)$/)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
-    await expect(await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Titulo)$/)).toHaveValue('Show the product in motion')
+    await expect(await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Título)$/)).toHaveValue('Show the product in motion')
     await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Video showcase')
   })
 
   test('offers guided page quick-start workflows in Pages builder', async ({ page }) => {
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
     const quickStarts = page.locator('.cms-pages__rail .cms-pages__sidebar-section', {
       has: page.locator('.cms-pages__quick-starts-header strong', { hasText: /^(Quick-start workflows|Fluxos de quick-start)$/ }),
@@ -2864,9 +2864,9 @@ test.describe('CMS settings white-label flow', () => {
     )
 
     const initialPageCount = await page.locator('.cms-page-item').count()
-    const blankQuickStart = quickStarts.locator('.cms-page-quick-start-card', { hasText: /(Blank page|Pagina em branco)/ }).first()
+    const blankQuickStart = quickStarts.locator('.cms-page-quick-start-card', { hasText: /(Blank page|Página em branco)/ }).first()
     await expect(blankQuickStart).toContainText('Minimal scaffold')
-    await blankQuickStart.getByRole('button', { name: /^(Create page|Criar pagina)$/ }).click()
+    await blankQuickStart.getByRole('button', { name: /^(Create page|Criar página)$/ }).click()
     await expect(page.locator('.cms-page-item')).toHaveCount(initialPageCount + 1)
 
     const marketingQuickStart = quickStarts.locator('.cms-page-quick-start-card', { hasText: /(Marketing funnel|Funil de marketing)/ }).first()
@@ -2874,17 +2874,17 @@ test.describe('CMS settings white-label flow', () => {
 
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     const targetPageField = page.locator('.q-field', {
-      has: page.locator('.q-field__label', { hasText: /^(Target page|Pagina alvo)$/ }),
+      has: page.locator('.q-field__label', { hasText: /^(Target page|Página alvo)$/ }),
     }).first()
     await expect(targetPageField).toContainText('Marketing Page (/marketing)')
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await expect(page.locator('.cms-page-item')).toHaveCount(initialPageCount + 2)
   })
 
   test('installs starter-kit bundles and opens Blocks with seeded reusable libraries', async ({ page }) => {
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
     const initialSettings = await page.evaluate((storageKey: string) => {
       const raw = window.localStorage.getItem(storageKey)
@@ -2903,7 +2903,7 @@ test.describe('CMS settings white-label flow', () => {
     )
 
     const productLaunchKit = starterKits.locator('.cms-page-quick-start-card', {
-      hasText: /(Starter kit · Product launch|Starter kit · Lancamento de produto)/,
+      hasText: /(Starter kit · Product launch|Starter kit · Lançamento de produto)/,
     }).first()
 
     await expect(productLaunchKit).toContainText(/Landing \((default|padrao)\)/)
@@ -2912,7 +2912,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     const targetPageField = page.locator('.q-field', {
-      has: page.locator('.q-field__label', { hasText: /^(Target page|Pagina alvo)$/ }),
+      has: page.locator('.q-field__label', { hasText: /^(Target page|Página alvo)$/ }),
     }).first()
     await expect(targetPageField).toContainText(/Landing Page/)
 
@@ -2945,37 +2945,37 @@ test.describe('CMS settings white-label flow', () => {
 
   test('surfaces starter-kit impact analysis and archive restore flows for seeded reusable blocks', async ({ page }) => {
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
     const starterKits = page.locator('.cms-pages__starter-kits').first()
     const productLaunchKit = starterKits.locator('.cms-page-quick-start-card', {
-      hasText: /(Starter kit · Product launch|Starter kit · Lancamento de produto)/,
+      hasText: /(Starter kit · Product launch|Starter kit · Lançamento de produto)/,
     }).first()
 
     await productLaunchKit.getByRole('button', { name: /^(Install \+ open blocks|Instalar \+ abrir blocos)$/ }).click()
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
 
     const reusableBlockLibrary = page
-      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizáveis)$/) })
       .first()
     const starterReusableBlockRow = reusableBlockLibrary
-      .locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lancamento)/ })
+      .locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lançamento)/ })
       .first()
 
     await expect(starterReusableBlockRow).toBeVisible()
     await expect(starterReusableBlockRow).toContainText(/uses|usos/i)
 
-    await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
+    await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizável)$/ }).click()
     const usageDrawer = page.locator('.cms-usage-drawer')
     const usageDialog = page.locator('.q-dialog', { has: page.locator('.cms-usage-drawer') })
     await expect(usageDrawer).toBeVisible()
-    await expect(usageDrawer).toContainText(/(Launch hero block|Bloco hero de lancamento)/)
-    await expect(usageDrawer).toContainText(/(No usage references found|Nenhuma referencia de uso encontrada)/)
+    await expect(usageDrawer).toContainText(/(Launch hero block|Bloco hero de lançamento)/)
+    await expect(usageDrawer).toContainText(/(No usage references found|Nenhuma referência de uso encontrada)/)
     await usageDrawer.locator('.cms-usage-drawer__close').click()
     await expect(usageDialog).toBeHidden()
 
     await starterReusableBlockRow.getByRole('button', { name: /^(Archive|Arquivar)$/ }).click()
-    await expect(reusableBlockLibrary.locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lancamento)/ })).toHaveCount(0)
+    await expect(reusableBlockLibrary.locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lançamento)/ })).toHaveCount(0)
 
     await reusableBlockLibrary.getByLabel(/^(Show archived|Mostrar arquivados)$/).click()
     await expect(starterReusableBlockRow).toBeVisible()
@@ -2988,9 +2988,9 @@ test.describe('CMS settings white-label flow', () => {
 
   test('uses shared builder search and quick commands across Pages and Blocks', async ({ page }) => {
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
-    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Marketing funnel')
+    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de página)$/, 'Marketing funnel')
     await fillTextInput(page.getByPlaceholder('Search module').first(), 'funnel')
 
     const quickStartSection = page
@@ -3006,7 +3006,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     const targetPageField = page.locator('.q-field', {
-      has: page.locator('.q-field__label', { hasText: /^(Target page|Pagina alvo)$/ }),
+      has: page.locator('.q-field__label', { hasText: /^(Target page|Página alvo)$/ }),
     }).first()
     await expect(targetPageField).toContainText('Marketing Page (/marketing)')
 
@@ -3018,7 +3018,7 @@ test.describe('CMS settings white-label flow', () => {
     await page.getByRole('button', { name: /^(Run|Executar)$/ }).first().click()
 
     const targetSectionField = page.locator('.q-field', {
-      has: page.locator('.q-field__label', { hasText: /^(Target section|Secao alvo)$/ }),
+      has: page.locator('.q-field__label', { hasText: /^(Target section|Seção alvo)$/ }),
     }).first()
     await expect(targetSectionField).toContainText('Hero')
   })
@@ -3028,11 +3028,11 @@ test.describe('CMS settings white-label flow', () => {
     const authoredPresetNamePt = 'Hero Authored PT'
     const authoredPresetDescriptionEn = 'Authored preset from hero block'
     const authoredPresetDescriptionPt = 'Preset authored localizado'
-    const localizedHeroTitle = 'Hero authored em portugues'
+    const localizedHeroTitle = 'Hero authored em português'
 
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
 
     await page.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
@@ -3043,27 +3043,27 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: authoredPresetNameEn }).first()).toBeVisible()
 
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
 
     await openDrawerModule(page, /^(Blocks|Blocos)$/)
     const localizedHeroTitleInput = await resolveBlocksEditableTextInput(page)
     await fillTextInput(localizedHeroTitleInput, localizedHeroTitle)
     await fillTextInput(cmsInputByLabel(page, 'Nome do preset'), authoredPresetNamePt)
-    await fillTextInput(cmsInputByLabel(page, 'Descricao do preset'), authoredPresetDescriptionPt)
+    await fillTextInput(cmsInputByLabel(page, 'Descrição do preset'), authoredPresetDescriptionPt)
     await page.locator('.cms-blocks-reusable-toolbar .q-btn', { hasText: 'Atualizar preset' }).first().click()
     await expect(page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: authoredPresetNamePt }).first()).toBeVisible()
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
-    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Pagina em branco')
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
+    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de página)$/, 'Página em branco')
     await commitFocusedSelect(page)
-    await page.getByRole('button', { name: /^(Add page|Adicionar pagina)$/ }).first().click({ force: true })
+    await page.getByRole('button', { name: /^(Add page|Adicionar página)$/ }).first().click({ force: true })
 
     const authoredPage = page.locator('.cms-pages__editor .cms-page-item').last()
     await fillTextInput(
       authoredPage
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first(),
@@ -3079,7 +3079,7 @@ test.describe('CMS settings white-label flow', () => {
       await commitFocusedSelect(page)
     }
 
-    await authoredPage.getByRole('button', { name: /^(Add section|Adicionar secao)$/ }).first().click({ force: true })
+    await authoredPage.getByRole('button', { name: /^(Add section|Adicionar seção)$/ }).first().click({ force: true })
 
     const authoredSectionRow = authoredPage.locator('.cms-page-section-row').last()
     await expect(authoredSectionRow).toBeVisible()
@@ -3088,25 +3088,25 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(page.locator('.cms-blocks-props__header small').first()).toContainText(
-      /Hero Authored PT|Hero Authored EN|Hero · Lancamento de produto/
+      /Hero Authored PT|Hero Authored EN|Hero · Lançamento de produto/
     )
-    const localizedStarterTitle = await (await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Titulo)$/)).inputValue()
-    expect([localizedHeroTitle, 'Monte paginas mais rapido']).toContain(localizedStarterTitle)
+    const localizedStarterTitle = await (await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Título)$/)).inputValue()
+    expect([localizedHeroTitle, 'Monte páginas mais rápido']).toContain(localizedStarterTitle)
   })
 
   test('shows starter preset variants in Pages and seeds sections from the selected variant', async ({ page }) => {
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
-    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
+    await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Pages|Páginas)$/)
 
-    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de pagina)$/, 'Blank page')
+    await selectOptionByFieldLabelPattern(page, /^(Page template|Template de página)$/, 'Blank page')
     await commitFocusedSelect(page)
-    await page.getByRole('button', { name: /^(Add page|Adicionar pagina)$/ }).first().click({ force: true })
+    await page.getByRole('button', { name: /^(Add page|Adicionar página)$/ }).first().click({ force: true })
 
     const variantPage = page.locator('.cms-pages__editor .cms-page-item').last()
     await fillTextInput(
       variantPage
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first(),
@@ -3120,7 +3120,7 @@ test.describe('CMS settings white-label flow', () => {
     await videoVariantCard.click()
     await expect(videoVariantCard).toHaveClass(/cms-page-item__starter-card--active/)
 
-    await variantPage.getByRole('button', { name: /^(Add section|Adicionar secao)$/ }).first().click({ force: true })
+    await variantPage.getByRole('button', { name: /^(Add section|Adicionar seção)$/ }).first().click({ force: true })
 
     const variantSectionRow = variantPage.locator('.cms-page-section-row').last()
     await variantSectionRow.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
@@ -3128,7 +3128,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(page.locator('.cms-blocks-props__header small').first()).toContainText('Hero · Video showcase')
-    await expect(await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Titulo)$/)).toHaveValue('Show the product in motion')
+    await expect(await resolveBlocksFieldInputByLabelPattern(page, /^(Title|Título)$/)).toHaveValue('Show the product in motion')
   })
 
   test('surfaces shared content diagnostics in pages and blocks modules', async ({ page }) => {
@@ -3139,12 +3139,12 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Pages$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
 
-    await page.getByRole('button', { name: /^(Add page|Adicionar pagina)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Add page|Adicionar página)$/ }).first().click()
     const secondPage = page.locator('.cms-page-item').nth(1)
     await expect(secondPage).toBeVisible()
 
     const pageTitleInput = secondPage
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3152,7 +3152,7 @@ test.describe('CMS settings white-label flow', () => {
 
     const firstSectionRow = secondPage.locator('.cms-page-section-row').first()
     const firstSectionLabelInput = firstSectionRow
-      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Section label|Label da secao)$/ }) })
+      .locator('.q-field', { has: page.locator('.q-field__label', { hasText: /^(Section label|Label da seção)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3165,7 +3165,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^Blocks$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Blocks')
-    await selectOptionByFieldLabelPattern(page, /^(Target page|Pagina alvo)$/i, diagnosticsPageTitle)
+    await selectOptionByFieldLabelPattern(page, /^(Target page|Página alvo)$/i, diagnosticsPageTitle)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(
       page.locator('.cms-blocks__preview .cms-diagnostics-item', { hasText: diagnosticsCode }).first()
@@ -3457,7 +3457,7 @@ test.describe('CMS settings white-label flow', () => {
     const pageTitleInput = page
       .locator('.cms-page-item')
       .first()
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3478,7 +3478,7 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
     const pageDescriptionInput = firstPage
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Description|Descricao)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Description|Descri\u00e7\u00e3o)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3493,8 +3493,8 @@ test.describe('CMS settings white-label flow', () => {
     const contentQaItem = checklist.locator('[data-cms-checklist-item="content_qa"]').first()
 
     await expect(contentQaItem).toHaveAttribute('data-cms-checklist-status', 'warning')
-    await expect(contentQaItem).toContainText(/Accessibility and content QA|Acessibilidade e QA de conteudo/)
-    await expect(contentQaItem).toContainText(/missing a description|descricao/)
+    await expect(contentQaItem).toContainText(/Accessibility and content QA|Acessibilidade e QA de conteúdo/)
+    await expect(contentQaItem).toContainText(/missing a description|descri\u00e7\u00e3o/)
     await contentQaItem.getByRole('button', { name: /^(Open Pages|Abrir paginas)/ }).first().click()
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Pages')
   })
@@ -3512,7 +3512,7 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
     const pageTitleInput = firstPage
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3540,7 +3540,7 @@ test.describe('CMS settings white-label flow', () => {
   test('surfaces governance workflow and audit signals in Releases', async ({ page }) => {
     await page.goto(CMS_URL)
 
-    const saveButton = page.getByRole('button', { name: /^(Save tenant settings|Salvar configuracoes do tenant)$/ }).first()
+    const saveButton = page.getByRole('button', { name: /^(Save tenant settings|Salvar configura\u00e7\u00f5es do tenant)$/ }).first()
     await saveButton.click()
 
     await openDrawerModule(page, /^Releases$/)
@@ -3659,7 +3659,7 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
     const pageTitleInput = firstPage
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3700,7 +3700,7 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
     const pageTitleInput = firstPage
-      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -3709,7 +3709,7 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Releases$/)
     await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
     await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    const exportReviewButton = page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisao)$/ }).first()
+    const exportReviewButton = page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisão)$/ }).first()
     await expect(exportReviewButton).toBeVisible()
     await exportReviewButton.click()
 
@@ -3810,4 +3810,3 @@ test.describe('CMS settings white-label flow', () => {
     await expect(blocksLocaleCoverage).toContainText('Reusable content')
   })
 })
-

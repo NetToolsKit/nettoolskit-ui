@@ -11,10 +11,10 @@ import {
 describe('starter-kits', () => {
   it('lists localized starter-kit options with seeded counts', () => {
     const english = listCmsStarterKitOptions('en')
-    const portuguese = listCmsStarterKitOptions('pt-BR')
+    const portuguêse = listCmsStarterKitOptions('pt-BR')
 
     const launchEn = english.find(option => option.value === 'starter-product-launch')
-    const launchPt = portuguese.find(option => option.value === 'starter-product-launch')
+    const launchPt = portuguêse.find(option => option.value === 'starter-product-launch')
 
     expect(english).toHaveLength(3)
     expect(launchEn).toBeDefined()
@@ -26,7 +26,7 @@ describe('starter-kits', () => {
     expect(launchEn?.fieldPresetCount).toBeGreaterThan(0)
 
     expect(launchPt).toBeDefined()
-    expect(launchPt?.label).toBe('Starter kit · Lancamento de produto')
+    expect(launchPt?.label).toBe('Starter kit · Lançamento de produto')
     expect(launchPt?.description).toContain('landing')
   })
 
@@ -58,11 +58,11 @@ describe('starter-kits', () => {
     expect(bundle.reusableBlocks.length).toBeGreaterThan(0)
     expect(bundle.authoredBlockPresets.length).toBeGreaterThan(0)
     expect(bundle.authoredContentModelFieldPresets.length).toBeGreaterThan(0)
-    expect(bundle.reusableSections.some(section => section.name === 'Secao hero de lancamento')).toBe(true)
-    expect(bundle.reusableBlocks.some(block => block.name === 'Bloco hero de lancamento')).toBe(true)
-    expect(bundle.authoredBlockPresets.some(preset => preset.localization?.name?.['pt-BR'] === 'Preset · Hero de lancamento de produto')).toBe(true)
+    expect(bundle.reusableSections.some(section => section.name === 'Seção hero de lançamento')).toBe(true)
+    expect(bundle.reusableBlocks.some(block => block.name === 'Bloco hero de lançamento')).toBe(true)
+    expect(bundle.authoredBlockPresets.some(preset => preset.localization?.name?.['pt-BR'] === 'Preset · Hero de lançamento de produto')).toBe(true)
     expect(bundle.authoredContentModelFieldPresets[0]?.name).toBe('Launch date')
-    expect(bundle.authoredContentModelFieldPresets[0]?.localization?.name?.['pt-BR']).toBe('Data de lancamento')
+    expect(bundle.authoredContentModelFieldPresets[0]?.localization?.name?.['pt-BR']).toBe('Data de lançamento')
   })
 
   it('seeds starter-kit entities as active records ready for immediate authoring reuse', () => {

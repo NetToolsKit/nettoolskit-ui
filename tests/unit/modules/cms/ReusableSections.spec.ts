@@ -55,7 +55,7 @@ describe('reusable-sections', () => {
           localization: {
             props: {
               'pt-BR': {
-                title: 'Hero reutilizavel',
+                title: 'Hero reutilizável',
               },
             },
           },
@@ -70,7 +70,7 @@ describe('reusable-sections', () => {
     expect(reusableSection.localization?.label?.['pt-BR']).toBe('Hero PT')
     expect(reusableSection.blocks[0]?.presetId).toBe('landing-hero-product-launch')
     expect(reusableSection.blocks[0]?.props).toEqual({ title: 'Reusable hero' })
-    expect(reusableSection.blocks[0]?.localization?.props?.['pt-BR']).toEqual({ title: 'Hero reutilizavel' })
+    expect(reusableSection.blocks[0]?.localization?.props?.['pt-BR']).toEqual({ title: 'Hero reutilizável' })
 
     const clonedSection = cloneCmsReusableSectionIntoPageSection({
       reusableSection,
@@ -94,7 +94,7 @@ describe('reusable-sections', () => {
     expect(clonedSection.blocks[0]?.presetId).toBe('landing-hero-product-launch')
     expect(clonedSection.blocks[0]?.props).toEqual({ title: 'Reusable hero' })
     expect(clonedSection.localization?.label?.['pt-BR']).toBe('Hero PT')
-    expect(clonedSection.blocks[0]?.localization?.props?.['pt-BR']).toEqual({ title: 'Hero reutilizavel' })
+    expect(clonedSection.blocks[0]?.localization?.props?.['pt-BR']).toEqual({ title: 'Hero reutilizável' })
     expect(clonedSection.blocks[0]?.props).not.toBe(reusableSection.blocks[0]?.props)
   })
 

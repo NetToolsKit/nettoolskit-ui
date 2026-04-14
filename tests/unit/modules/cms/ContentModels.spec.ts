@@ -77,7 +77,7 @@ describe('content-models', () => {
       themevariant: 'default',
     })
     expect(firstSection.blocks[0]?.localization?.props?.['pt-BR']).toMatchObject({
-      title: 'Monte paginas mais rapido',
+      title: 'Monte páginas mais rápido',
     })
     expect(secondSection.id).toBe('hero-2')
     expect(secondSection.blocks[0]?.id).toBe('hero-2-block-1')
@@ -87,8 +87,8 @@ describe('content-models', () => {
     const fields = getCmsSectionPresetFieldDefinitions('pt-BR', 'hero')
 
     expect(fields.map(field => `${field.group}:${field.id}`)).toEqual([
-      'Configuracoes da secao:anchorid',
-      'Configuracoes da secao:themevariant',
+      'Configurações da seção:anchorid',
+      'Configurações da seção:themevariant',
     ])
     expect(fields[1]?.options.map(option => option.value)).toEqual(['default', 'muted', 'contrast'])
   })
@@ -501,7 +501,7 @@ describe('content-models', () => {
       localeInput: 'pt-BR',
       name: 'Campanha versionada',
       description: 'Metadados da campanha',
-      migrationNotes: 'Lancamento inicial',
+      migrationNotes: 'Lançamento inicial',
       allowedPresets: ['hero', 'footer'],
       requiredPresets: ['hero'],
       starterPresets: ['hero', 'footer'],
@@ -510,7 +510,7 @@ describe('content-models', () => {
 
     expect(getCmsContentModelSchemaVersion(localizedModel.id, [localizedModel])).toBe(1)
     expect(getCmsContentModelMigrationNotes('en', localizedModel.id, [localizedModel])).toBe('Initial rollout')
-    expect(getCmsContentModelMigrationNotes('pt-BR', localizedModel.id, [localizedModel])).toBe('Lancamento inicial')
+    expect(getCmsContentModelMigrationNotes('pt-BR', localizedModel.id, [localizedModel])).toBe('Lançamento inicial')
     expect(getCmsContentModelLastSchemaChangeAt(localizedModel.id, [localizedModel])).toMatch(/^\d{4}-\d{2}-\d{2}T/)
   })
 
@@ -889,7 +889,7 @@ describe('content-models', () => {
           id: 'bulletPoints',
           type: 'text',
           label: 'Pontos principais',
-          description: 'Beneficios chave',
+          description: 'Benefícios chave',
           placeholder: 'Um ponto por linha',
           required: true,
           repeatable: true,
@@ -913,7 +913,7 @@ describe('content-models', () => {
     })
 
     const englishFields = getCmsContentModelFieldDefinitions('en', localizedModel.id, [localizedModel])
-    const portugueseFields = getCmsContentModelFieldDefinitions('pt-BR', localizedModel.id, [localizedModel])
+    const portuguêseFields = getCmsContentModelFieldDefinitions('pt-BR', localizedModel.id, [localizedModel])
     const defaults = createCmsPageCustomFieldsFromContentModel(localizedModel.id, 'pt-BR', [localizedModel])
     const normalized = normalizeCmsPageCustomFieldsForContentModel({
       bulletpoints: ['Fast', 'Flexible', 'Accessible'],
@@ -931,10 +931,10 @@ describe('content-models', () => {
       max: 4,
       defaultValue: ['Fast', 'Flexible'],
     }))
-    expect(portugueseFields[0]).toEqual(expect.objectContaining({
+    expect(portuguêseFields[0]).toEqual(expect.objectContaining({
       id: 'bulletpoints',
       label: 'Pontos principais',
-      description: 'Beneficios chave',
+      description: 'Benefícios chave',
       placeholder: 'Um ponto por linha',
       repeatable: true,
       min: 2,
@@ -949,8 +949,8 @@ describe('content-models', () => {
       bulletpoints: ['Fast', 'Flexible', 'Accessible'],
       score: 11,
     })
-    expect(coerceCmsContentModelFieldValue(portugueseFields[0]!, 'Single value')).toEqual(['Single value'])
-    expect(coerceCmsContentModelFieldValue(portugueseFields[0]!, ['Fast', '', 'Flexible'])).toEqual(['Fast', 'Flexible'])
+    expect(coerceCmsContentModelFieldValue(portuguêseFields[0]!, 'Single value')).toEqual(['Single value'])
+    expect(coerceCmsContentModelFieldValue(portuguêseFields[0]!, ['Fast', '', 'Flexible'])).toEqual(['Fast', 'Flexible'])
   })
 
   it('keeps authored starter preset localized props when seeding sections for another locale', () => {
@@ -967,8 +967,8 @@ describe('content-models', () => {
         localization: {
           props: {
             'pt-BR': {
-              title: 'Titulo authored',
-              subtitle: 'Subtitulo authored',
+              title: 'Título authored',
+              subtitle: 'Subtítulo authored',
             },
           },
         },
@@ -994,8 +994,8 @@ describe('content-models', () => {
       subtitle: 'Authored Hero Subtitle',
     })
     expect(authoredSection.blocks[0]?.localization?.props?.['pt-BR']).toMatchObject({
-      title: 'Titulo authored',
-      subtitle: 'Subtitulo authored',
+      title: 'Título authored',
+      subtitle: 'Subtítulo authored',
     })
   })
 })

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="cms-shell-page__grid">
     <CmsShellCard
       :title="releaseOrchestrationTitle"
@@ -40,7 +40,7 @@
           outlined
           dense
           type="datetime-local"
-          :label="t('Schedule publish at', 'Agendar publicacao para')"
+          :label="t('Schedule publish at', 'Agendar publicação para')"
           @update:model-value="emit('update:releaseScheduleAt', normalizeSelectValue($event))"
         />
         <q-select
@@ -134,7 +134,7 @@
           dense
           no-caps
           icon="download"
-          :label="t('Export review package', 'Exportar pacote de revisao')"
+          :label="t('Export review package', 'Exportar pacote de revisão')"
           :disable="!canExportReviewPackage"
           @click="emit('exportReviewPackage')"
         />
@@ -159,8 +159,8 @@
         data-cms-release-review-hub
       >
         <CmsSectionHeaderSummary
-          :title="t('Unified release review', 'Revisao unificada da release')"
-          :description="t('Review changes, locale readiness and publish checklist in one place.', 'Revise mudancas, cobertura de locale e checklist de publicacao em um unico lugar.')"
+          :title="t('Unified release review', 'Revisão unificada da release')"
+          :description="t('Review changes, locale readiness and publish checklist in one place.', 'Revise mudanças, cobertura de locale e checklist de publicação em um único lugar.')"
           container-class="cms-release-review-hub__header"
           copy-class="cms-release-review-hub__copy"
           summary-class="cms-release-review-hub__summary"
@@ -179,7 +179,7 @@
               :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.diff.status)"
             >
               {{ selectedReleaseReviewHub.diff.changedPages + selectedReleaseReviewHub.diff.changedSections + selectedReleaseReviewHub.diff.changedBlocks }}
-              {{ t('change signals', 'sinais de mudanca') }}
+              {{ t('change signals', 'sinais de mudança') }}
             </q-chip>
             <q-chip
               dense
@@ -211,8 +211,8 @@
         data-cms-release-history
       >
         <CmsSectionHeaderSummary
-          :title="t('Review package history', 'Historico de pacotes de revisao')"
-          :description="t('Recent review exports for this environment, with quick recall metadata.', 'Exportacoes recentes de revisao deste ambiente, com metadados para consulta rapida.')"
+          :title="t('Review package history', 'Histórico de pacotes de revisão')"
+          :description="t('Recent review exports for this environment, with quick recall metadata.', 'Exportações recentes de revisão deste ambiente, com metadados para consulta rápida.')"
           container-class="cms-release-history__header"
           copy-class="cms-release-history__copy"
         >
@@ -260,8 +260,8 @@
             </div>
 
             <div class="cms-release-history__metrics">
-              <span class="cms-release-history__metric"><strong>{{ entry.changedPages }}</strong><small>{{ t('Pages', 'Paginas') }}</small></span>
-              <span class="cms-release-history__metric"><strong>{{ entry.changedSections }}</strong><small>{{ t('Sections', 'Secoes') }}</small></span>
+              <span class="cms-release-history__metric"><strong>{{ entry.changedPages }}</strong><small>{{ t('Pages', 'Páginas') }}</small></span>
+              <span class="cms-release-history__metric"><strong>{{ entry.changedSections }}</strong><small>{{ t('Sections', 'Seções') }}</small></span>
               <span class="cms-release-history__metric"><strong>{{ entry.changedBlocks }}</strong><small>{{ t('Blocks', 'Blocos') }}</small></span>
               <span class="cms-release-history__metric"><strong>{{ entry.localeCoverage.reduce((sum, locale) => sum + locale.missing, 0) }}</strong><small>{{ t('Locale gaps', 'Lacunas de locale') }}</small></span>
             </div>
@@ -294,7 +294,7 @@
               :style="bannerStyle"
             >
               v{{ cmsGovernanceHubSummary.workflow.version }}
-              {{ t('draft version', 'versao draft') }}
+              {{ t('draft version', 'versão draft') }}
             </q-chip>
             <q-chip
               dense
@@ -334,7 +334,7 @@
           />
           <CmsPanelListSection
             :title="t('Recent audit entries', 'Entradas recentes de auditoria')"
-            :summary-label="`${cmsGovernanceHubSummary.audit.topActions.length} ${t('top actions', 'acoes principais')}`"
+            :summary-label="`${cmsGovernanceHubSummary.audit.topActions.length} ${t('top actions', 'ações principais')}`"
             :items="cmsGovernanceAuditPanelItems"
             :chip-style="bannerStyle"
             section-class="cms-governance-hub__list"
@@ -365,8 +365,8 @@
         data-cms-release-acks
       >
         <CmsSectionHeaderSummary
-          :title="t('Review acknowledgements', 'Reconhecimentos de revisao')"
-          :description="t('Capture lightweight sign-off notes for the current release candidate without requiring backend workflow execution.', 'Capture notas leves de aprovacao para o candidato atual sem exigir execucao de workflow no backend.')"
+          :title="t('Review acknowledgements', 'Reconhecimentos de revisão')"
+          :description="t('Capture lightweight sign-off notes for the current release candidate without requiring backend workflow execution.', 'Capture notas leves de aprovação para o candidato atual sem exigir execução de workflow no backend.')"
           container-class="cms-release-acknowledgements__header"
           copy-class="cms-release-acknowledgements__copy"
           summary-class="cms-release-acknowledgements__summary"
@@ -391,7 +391,7 @@
               square
               :style="getReleaseAcknowledgementDecisionStyle('changes_requested')"
             >
-              {{ selectedReleaseAcknowledgementSummary.changesRequestedCount }} {{ t('changes requested', 'mudancas solicitadas') }}
+              {{ selectedReleaseAcknowledgementSummary.changesRequestedCount }} {{ t('changes requested', 'mudanças solicitadas') }}
             </q-chip>
           </template>
         </CmsSectionHeaderSummary>
@@ -404,8 +404,8 @@
             emit-value
             map-options
             :options="releaseAcknowledgementDecisionOptions"
-            :label="t('Decision', 'Decisao')"
-            :aria-label="t('Review acknowledgement decision', 'Decisao do reconhecimento de revisao')"
+            :label="t('Decision', 'Decisão')"
+            :aria-label="t('Review acknowledgement decision', 'Decisão do reconhecimento de revisão')"
             @update:model-value="emit('update:releaseAcknowledgementDecision', normalizeDecision($event))"
           />
           <q-input
@@ -415,8 +415,8 @@
             autogrow
             type="textarea"
             :label="t('Acknowledgement note', 'Nota do reconhecimento')"
-            :aria-label="t('Review acknowledgement note', 'Nota do reconhecimento de revisao')"
-            :placeholder="t('Optional context for the review decision.', 'Contexto opcional para a decisao de revisao.')"
+            :aria-label="t('Review acknowledgement note', 'Nota do reconhecimento de revisão')"
+            :placeholder="t('Optional context for the review decision.', 'Contexto opcional para a decisão de revisão.')"
             @update:model-value="emit('update:releaseAcknowledgementNote', normalizeSelectValue($event))"
           />
           <q-btn

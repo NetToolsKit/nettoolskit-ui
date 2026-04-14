@@ -22,7 +22,7 @@
           emit-value
           map-options
           :options="mediaAssetOptions"
-          :label="t('Media library asset', 'Asset da biblioteca de midia')"
+          :label="t('Media library asset', 'Asset da biblioteca de mídia')"
           :hint="t('Select an asset to edit it or start a blank draft.', 'Selecione um asset para editar ou inicie um rascunho em branco.')"
           @update:model-value="emit('update:selectedMediaAssetId', String($event ?? ''))"
         />
@@ -99,8 +99,8 @@
           map-options
           clearable
           :options="mediaReplacementOptions"
-          :label="t('Replace target asset', 'Asset alvo da substituicao')"
-          :hint="t('Optional. Use with Replace references to swap runtime bindings safely.', 'Opcional. Use com Substituir referencias para trocar vinculos de runtime com seguranca.')"
+          :label="t('Replace target asset', 'Asset alvo da substituição')"
+          :hint="t('Optional. Use with Replace references to swap runtime bindings safely.', 'Opcional. Use com Substituir referências para trocar vínculos de runtime com segurança.')"
           @update:model-value="updateDraft({ replaceTargetAssetId: String($event ?? '') })"
         />
         <q-input
@@ -109,7 +109,7 @@
           dense
           type="textarea"
           autogrow
-          :label="t('Asset description', 'Descricao do asset')"
+          :label="t('Asset description', 'Descrição do asset')"
           @update:model-value="updateDraft({ description: String($event ?? '') })"
         />
       </div>
@@ -143,7 +143,7 @@
           flat
           no-caps
           icon="swap_horiz"
-          :label="t('Replace references', 'Substituir referencias')"
+          :label="t('Replace references', 'Substituir referências')"
           :disable="!selectedMediaAssetId || !mediaAssetDraft.replaceTargetAssetId"
           @click="emit('replace-selected-asset-references')"
         />
@@ -183,12 +183,12 @@
         class="cms-banner"
         :style="bannerStyle"
       >
-        {{ t('Media references are tenant-scoped and remain backend-agnostic. Apply any saved asset to branding slots immediately.', 'Referencias de midia sao por tenant e continuam desacopladas de backend. Aplique qualquer asset salvo nos slots de branding imediatamente.') }}
+        {{ t('Media references are tenant-scoped and remain backend-agnostic. Apply any saved asset to branding slots immediately.', 'Referências de mídia são por tenant e continuam desacopladas de backend. Aplique qualquer asset salvo nos slots de branding imediatamente.') }}
       </q-banner>
     </CmsShellCard>
 
     <CmsShellCard
-      :title="t('Media preview', 'Preview de midia')"
+      :title="t('Media preview', 'Preview de mídia')"
       body-class="cms-media__preview"
     >
       <template #header-actions>

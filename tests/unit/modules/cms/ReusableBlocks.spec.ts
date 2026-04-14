@@ -19,7 +19,7 @@ describe('reusable-blocks', () => {
     const portuguese = createDefaultCmsReusableBlocks('pt-BR')
 
     expect(english.some(block => block.name === 'Hero · Product launch')).toBe(true)
-    expect(portuguese.some(block => block.name === 'Hero · Lancamento de produto')).toBe(true)
+    expect(portuguese.some(block => block.name === 'Hero · Lançamento de produto')).toBe(true)
     expect(english[0]?.presetId).toBe('landing-hero-product-launch')
   })
 

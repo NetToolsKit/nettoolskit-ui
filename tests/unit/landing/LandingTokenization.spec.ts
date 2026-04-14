@@ -73,7 +73,7 @@ describe('Samples single reference runtime coverage', () => {
     expect(originalReferenceSource).not.toContain('/?templates=1')
     expect(originalReferenceSource).not.toContain('/?samples=1')
     expect(originalReferenceDataSource).toContain('getGreetingText()}')
-    expect(originalReferenceDataSource).toContain(', Guilherme')
+    expect(originalReferenceDataSource).toContain(', Admin')
     expect(originalReferenceChartsSource).toContain('Pedidos por Status')
     expect(originalReferenceChartsSource).toContain('Vendas por Categoria')
   })

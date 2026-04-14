@@ -1,17 +1,17 @@
-<template>
+﻿<template>
   <div class="cms-pages">
     <CmsWorkspaceTabs
       :model-value="cmsPagesWorkspaceTabValue"
-      v-bind="{ ariaLabel: tr('Pages workspace tabs', 'Abas do workspace de paginas') }"
+      v-bind="{ ariaLabel: tr('Pages workspace tabs', 'Abas do workspace de páginas') }"
       :tabs="cmsWorkspaceTabOptions"
       @update:model-value="emit('update:cmsPagesWorkspaceTabValue', normalizeString($event))"
     />
     <CmsAuthoringWorkbench
       v-show="cmsPagesWorkspaceView === 'editor' && !cmsDesignerPreviewMode"
       class="cms-designer-card--pages"
-      :page-aria-label="tr('Pages workbench', 'Workbench de paginas')"
-      :canvas-aria-label="tr('Pages authoring workspace', 'Workspace de autoria de paginas')"
-      :status-bar-aria-label="tr('Pages status bar', 'Barra de status de paginas')"
+      :page-aria-label="tr('Pages workbench', 'Workbench de páginas')"
+      :canvas-aria-label="tr('Pages authoring workspace', 'Workspace de autoria de páginas')"
+      :status-bar-aria-label="tr('Pages status bar', 'Barra de status de páginas')"
     >
       <template #header>
         <CmsAuthoringToolbar :info-items="cmsPagesToolbarInfoItems">
@@ -23,7 +23,7 @@
               icon="folder_open"
               class="cms-designer-card__toolbar-action"
               :label="tr('Open', 'Abrir')"
-              :aria-label="tr('Open pages workspace', 'Abrir workspace de paginas')"
+              :aria-label="tr('Open pages workspace', 'Abrir workspace de páginas')"
               @click="focusWorkbench()"
             />
             <q-btn
@@ -84,7 +84,7 @@
       <template #ruler>
         <CmsAuthoringRulerBar
           :marks="cmsDesignerRulerMarks"
-          :focus-aria-label="tr('Focus page workbench', 'Focar workbench de paginas')"
+          :focus-aria-label="tr('Focus page workbench', 'Focar workbench de páginas')"
           :mode-label="showCmsDesignerStageGrid ? tr('Grid', 'Grade') : tr('Plain', 'Livre')"
           @focus="focusWorkbench()"
           @toggle-mode="toggleCmsDesignerStageGrid()"
@@ -104,12 +104,12 @@
         <div class="cms-designer-card__workbench cms-designer-card__workbench--pages">
           <aside class="cms-designer-card__sidebar cms-pages__sidebar">
             <CmsAuthoringPanelHeader
-              :title="tr('Page setup', 'Setup da pagina')"
-              :description="tr('Template, quick actions and starter flows stay together on the left while the center stays focused on editing.', 'Template, acoes rapidas e fluxos iniciais ficam juntos na esquerda enquanto o centro fica focado na edicao.')"
+              :title="tr('Page setup', 'Setup da página')"
+              :description="tr('Template, quick actions and starter flows stay together on the left while the center stays focused on editing.', 'Template, ações rápidas e fluxos iniciais ficam juntos na esquerda enquanto o centro fica focado na edição.')"
             />
             <CmsAuthoringMetricsList :items="cmsPagesSidebarMetrics" />
             <div class="cms-pages__sidebar-section">
-              <strong>{{ tr('Workspace actions', 'Acoes do workspace') }}</strong>
+              <strong>{{ tr('Workspace actions', 'Ações do workspace') }}</strong>
               <div class="cms-form-grid cms-pages__stage-toolbar">
                 <q-select
                   v-model="selectedPageTemplateIdModel"
@@ -118,7 +118,7 @@
                   emit-value
                   map-options
                   :options="cmsPageTemplateOptions"
-                  :label="tr('Page template', 'Template de pagina')"
+                  :label="tr('Page template', 'Template de página')"
                   class="cms-pages__template-select"
                 />
                 <q-select
@@ -165,7 +165,7 @@
               class="cms-page-migration-summary"
             >
               <CmsSectionHeaderSummary
-                :title="tr('Schema migration review', 'Revisao de migracao de schema')"
+                :title="tr('Schema migration review', 'Revisão de migração de schema')"
                 container-class="cms-review-summary__header"
                 summary-class="cms-page-migration-summary__chips"
               >
@@ -213,7 +213,7 @@
                   v-model="page.id"
                   outlined
                   dense
-                  :label="tr('Page ID', 'ID da pagina')"
+                  :label="tr('Page ID', 'ID da página')"
                   @blur="normalizeCmsPageId(pageIndex)"
                 />
                 <q-select
@@ -223,14 +223,14 @@
                   emit-value
                   map-options
                   :options="cmsContentModelOptions"
-                  :label="tr('Content model', 'Modelo de conteudo')"
+                  :label="tr('Content model', 'Modelo de conteúdo')"
                   @update:model-value="updateCmsPageContentModel(pageIndex, $event)"
                 />
                 <q-input
                   :model-value="getCmsPageTitleValue(page)"
                   outlined
                   dense
-                  :label="tr('Title', 'Titulo')"
+                  :label="tr('Title', 'Título')"
                   @update:model-value="updateCmsPageTitleValue(page, $event)"
                 />
                 <q-input
@@ -255,7 +255,7 @@
                   dense
                   type="textarea"
                   autogrow
-                  :label="tr('Description', 'Descricao')"
+                  :label="tr('Description', 'Descrição')"
                   class="cms-page-item__description"
                   @update:model-value="updateCmsPageDescriptionValue(page, $event)"
                 />
@@ -271,7 +271,7 @@
                     {{
                       tr(
                         'Page-level values driven by the selected content model.',
-                        'Valores em nivel de pagina guiados pelo modelo de conteudo selecionado.'
+                        'Valores em nível de página guiados pelo modelo de conteúdo selecionado.'
                       )
                     }}
                   </small>
@@ -474,7 +474,7 @@
 
               <div class="cms-page-item__sections">
                 <div class="cms-page-item__sections-header">
-                  <strong>{{ tr('Sections', 'Secoes') }}</strong>
+                  <strong>{{ tr('Sections', 'Seções') }}</strong>
                   <div class="cms-page-item__sections-actions">
                     <q-select
                       :model-value="getSelectedSectionPresetForPage(pageIndex)"
@@ -483,7 +483,7 @@
                       emit-value
                       map-options
                       :options="getCmsSectionPresetOptions(page)"
-                      :label="tr('Section preset', 'Preset de secao')"
+                      :label="tr('Section preset', 'Preset de seção')"
                       class="cms-page-item__section-preset-select"
                       @update:model-value="setSelectedSectionPresetForPage(pageIndex, $event)"
                     />
@@ -503,7 +503,7 @@
                       dense
                       no-caps
                       icon="add"
-                      :label="tr('Add section', 'Adicionar secao')"
+                      :label="tr('Add section', 'Adicionar seção')"
                       :disable="isCmsPageSectionAddBlocked(pageIndex)"
                       @click="addCmsPageSection(pageIndex)"
                     />
@@ -528,7 +528,7 @@
                       dense
                       no-caps
                       icon="sync"
-                      :label="tr('Sync schema version', 'Sincronizar versao do schema')"
+                      :label="tr('Sync schema version', 'Sincronizar versão do schema')"
                       :disable="!getCmsPageSchemaMigrationReport(page.id)?.canApply"
                       @click="syncCmsPageContentModelVersion(pageIndex)"
                     />
@@ -539,7 +539,7 @@
                       emit-value
                       map-options
                       :options="getCmsReusableSectionOptions(page)"
-                      :label="tr('Reusable section', 'Secao reutilizavel')"
+                      :label="tr('Reusable section', 'Seção reutilizável')"
                       class="cms-page-item__section-preset-select"
                       @update:model-value="setSelectedReusableSectionForPage(pageIndex, $event)"
                     />
@@ -669,7 +669,7 @@
                     outlined
                     dense
                     :disable="isCmsPageSectionLinked(section)"
-                    :label="tr('Section ID', 'ID da secao')"
+                    :label="tr('Section ID', 'ID da seção')"
                   />
                   <q-input
                     :model-value="getCmsSectionPresetLabel(resolveCmsPageSectionForAuthoring(section).presetId)"
@@ -683,7 +683,7 @@
                     outlined
                     dense
                     :disable="isCmsPageSectionLinked(section)"
-                    :label="tr('Section label', 'Label da secao')"
+                    :label="tr('Section label', 'Label da seção')"
                     @update:model-value="updateCmsSectionLabelValue(section, $event)"
                   />
                   <q-toggle
@@ -718,7 +718,7 @@
                       dense
                       no-caps
                       icon="bookmark_add"
-                      :label="tr('Save reusable', 'Salvar reutilizavel')"
+                      :label="tr('Save reusable', 'Salvar reutilizável')"
                       @click.stop="saveCmsPageSectionAsReusable(pageIndex, sectionIndex)"
                     />
                     <q-btn
@@ -777,7 +777,7 @@
                   dense
                   no-caps
                   icon="delete"
-                  :label="tr('Delete page', 'Excluir pagina')"
+                  :label="tr('Delete page', 'Excluir página')"
                   :style="dangerActionStyle"
                   :disable="settings.pages.length <= 1"
                   @click="removeCmsPage(pageIndex)"
@@ -789,7 +789,7 @@
               v-if="hasCmsBuilderSearch && filteredCmsPageRows.length === 0"
               class="cms-block-item__empty cms-block-item__empty--card"
             >
-              <strong>{{ tr('No pages matched the current search.', 'Nenhuma pagina corresponde a busca atual.') }}</strong>
+              <strong>{{ tr('No pages matched the current search.', 'Nenhuma página corresponde à busca atual.') }}</strong>
               <small>
                 {{
                   tr(
@@ -803,14 +803,14 @@
           <aside class="cms-designer-card__rail cms-pages__rail">
             <div class="cms-designer-card__rail-card">
               <CmsAuthoringPanelHeader
-                :title="tr('Reusable content rail', 'Rail de conteudo reutilizavel')"
-                :description="tr('Keep reusable sections and launch flows on the right so the center stays focused on live page editing.', 'Mantenha secoes reutilizaveis e fluxos de lancamento na direita para o centro ficar focado na edicao real da pagina.')"
+                :title="tr('Reusable content rail', 'Rail de conteúdo reutilizável')"
+                :description="tr('Keep reusable sections and launch flows on the right so the center stays focused on live page editing.', 'Mantenha seções reutilizáveis e fluxos de lançamento na direita para o centro ficar focado na edição real da página.')"
               />
               <CmsAuthoringMetricsList :items="cmsPagesRailMetrics" />
             </div>
             <div class="cms-pages__reusable-library">
               <CmsSectionHeaderSummary
-                :title="tr('Reusable sections library', 'Biblioteca de secoes reutilizaveis')"
+                :title="tr('Reusable sections library', 'Biblioteca de seções reutilizáveis')"
                 container-class="cms-shell-card__header"
                 summary-class="cms-blocks-library__header-actions"
               >
@@ -837,8 +837,8 @@
                 >
                   {{
                     hasCmsBuilderSearch
-                      ? tr('No reusable section matched the current search.', 'Nenhuma secao reutilizavel corresponde a busca atual.')
-                      : tr('No reusable sections saved yet.', 'Nenhuma secao reutilizavel salva ainda.')
+                      ? tr('No reusable section matched the current search.', 'Nenhuma seção reutilizável corresponde à busca atual.')
+                      : tr('No reusable sections saved yet.', 'Nenhuma seção reutilizável salva ainda.')
                   }}
                 </div>
                 <article
@@ -872,7 +872,7 @@
                             settings.reusableSections,
                             getCmsReusableSectionName
                           )}`
-                          : tr('Deprecated for new page composition', 'Descontinuado para nova composicao de paginas')
+                          : tr('Deprecated for new page composition', 'Descontinuado para nova composição de páginas')
                       }}
                     </small>
                     <small v-if="isCmsDeprecatedEntity(reusableSection) && reusableSection.deprecationNote">{{ reusableSection.deprecationNote }}</small>
@@ -895,7 +895,7 @@
                       emit-value
                       map-options
                       :options="getCmsReusableSectionReplacementOptions(reusableSection)"
-                      :label="tr('Replacement section', 'Secao substituta')"
+                      :label="tr('Replacement section', 'Seção substituta')"
                       @update:model-value="updateReusableSectionReplacement(reusableSection.id, $event)"
                     />
                     <q-input
@@ -903,7 +903,7 @@
                       :model-value="reusableSection.deprecationNote ?? ''"
                       outlined
                       dense
-                      :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                      :label="tr('Deprecation note', 'Nota de descontinuação')"
                       @update:model-value="updateReusableSectionDeprecationNote(reusableSection.id, $event)"
                     />
                   </div>
@@ -932,7 +932,7 @@
                       round
                       dense
                       icon="travel_explore"
-                      :aria-label="tr('Inspect reusable section usage', 'Inspecionar uso da secao reutilizavel')"
+                      :aria-label="tr('Inspect reusable section usage', 'Inspecionar uso da seção reutilizável')"
                       @click="openCmsUsageDrawer('reusable-section', reusableSection.id, reusableSection.name, reusableSection.description ?? '')"
                     />
                     <q-btn
@@ -965,7 +965,7 @@
                     {{
                       tr(
                         'Seed a landing page together with reusable sections, blocks and schema presets for one common use case.',
-                        'Semeie uma landing junto com secoes reutilizaveis, blocos e presets de schema para um caso de uso comum.'
+                        'Semeie uma landing junto com seções reutilizáveis, blocos e presets de schema para um caso de uso comum.'
                       )
                     }}
                   </small>
@@ -1001,15 +1001,15 @@
                       <strong>{{ starterKit.templateLabel }}</strong>
                     </span>
                     <span>
-                      {{ tr('Content model', 'Modelo de conteudo') }}:
+                      {{ tr('Content model', 'Modelo de conteúdo') }}:
                       <strong>{{ starterKit.contentModelLabel }}</strong>
                     </span>
                     <span>
-                      {{ tr('Reusable sections', 'Secoes reutilizaveis') }}:
+                      {{ tr('Reusable sections', 'Seções reutilizáveis') }}:
                       <strong>{{ starterKit.reusableSectionCount }}</strong>
                     </span>
                     <span>
-                      {{ tr('Reusable blocks', 'Blocos reutilizaveis') }}:
+                      {{ tr('Reusable blocks', 'Blocos reutilizáveis') }}:
                       <strong>{{ starterKit.reusableBlockCount }}</strong>
                     </span>
                     <span>
@@ -1056,7 +1056,7 @@
                     {{
                       tr(
                         'Create a ready-to-edit page in one click, then optionally jump straight into Blocks.',
-                        'Crie uma pagina pronta para edicao em um clique e, se quiser, abra Blocos em seguida.'
+                        'Crie uma página pronta para edição em um clique e, se quiser, abra Blocos em seguida.'
                       )
                     }}
                   </small>
@@ -1088,11 +1088,11 @@
                   <small class="cms-page-quick-start-card__description">{{ quickStart.description }}</small>
                   <div class="cms-page-quick-start-card__meta">
                     <span>
-                      {{ tr('Content model', 'Modelo de conteudo') }}:
+                      {{ tr('Content model', 'Modelo de conteúdo') }}:
                       <strong>{{ quickStart.contentModelLabel }}</strong>
                     </span>
                     <span>
-                      {{ tr('Sections', 'Secoes') }}:
+                      {{ tr('Sections', 'Seções') }}:
                       <strong>{{ quickStart.sectionLabels.join(', ') }}</strong>
                     </span>
                   </div>
@@ -1101,7 +1101,7 @@
                       no-caps
                       unelevated
                       icon="note_add"
-                      :label="tr('Create page', 'Criar pagina')"
+                      :label="tr('Create page', 'Criar página')"
                       :style="primaryActionStyle"
                       @click="runCmsPageQuickStart(quickStart.value)"
                     />

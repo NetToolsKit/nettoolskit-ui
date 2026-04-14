@@ -27,7 +27,7 @@ function getFormattedDate(): string {
 
 export const originalReferenceDashboardSample = {
   greetingIcon: getGreetingIcon(),
-  title: `${getGreetingText()}, Guilherme`,
+  title: `${getGreetingText()}, Admin`,
   subtitle: getFormattedDate(),
   chips: [
     { id: 'chip-clients', text: '247 clientes', icon: 'people' },

@@ -183,10 +183,10 @@ function createCommonSectionPresetFields(): CmsContentModelFieldSettings[] {
       required: false,
       defaultValue: '',
       localization: {
-        label: { 'pt-BR': 'ID da ancora' },
-        description: { 'pt-BR': 'Ancora opcional usada para navegacao interna e links profundos.' },
+        label: { 'pt-BR': 'ID da âncora' },
+        description: { 'pt-BR': 'Âncora opcional usada para navegação interna e links profundos.' },
         placeholder: { 'pt-BR': 'hero' },
-        group: { 'pt-BR': 'Configuracoes da secao' },
+        group: { 'pt-BR': 'Configurações da seção' },
       },
     },
     {
@@ -206,8 +206,8 @@ function createCommonSectionPresetFields(): CmsContentModelFieldSettings[] {
       ],
       localization: {
         label: { 'pt-BR': 'Variante do tema' },
-        description: { 'pt-BR': 'Tom visual aplicado ao container da secao.' },
-        group: { 'pt-BR': 'Configuracoes da secao' },
+        description: { 'pt-BR': 'Tom visual aplicado ao container da seção.' },
+        group: { 'pt-BR': 'Configurações da seção' },
       },
     },
   ]
@@ -216,10 +216,10 @@ function createCommonSectionPresetFields(): CmsContentModelFieldSettings[] {
 const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPresetDefinition>> = {
   header: {
     id: 'header',
-    label: { en: 'Header', 'pt-BR': 'Cabecalho' },
-    description: { en: 'Top navigation and brand bar.', 'pt-BR': 'Barra de marca e navegacao superior.' },
+    label: { en: 'Header', 'pt-BR': 'Cabeçalho' },
+    description: { en: 'Top navigation and brand bar.', 'pt-BR': 'Barra de marca e navegação superior.' },
     defaultSectionId: 'header',
-    defaultLabel: { en: 'Header', 'pt-BR': 'Cabecalho' },
+    defaultLabel: { en: 'Header', 'pt-BR': 'Cabeçalho' },
     defaultEnabled: true,
     blockType: 'landing.header',
     blockPresetId: 'landing-header-product',
@@ -231,7 +231,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   hero: {
     id: 'hero',
     label: { en: 'Hero', 'pt-BR': 'Hero' },
-    description: { en: 'Primary opening section with message and media.', 'pt-BR': 'Secao principal de abertura com mensagem e midia.' },
+    description: { en: 'Primary opening section with message and media.', 'pt-BR': 'Seção principal de abertura com mensagem e mídia.' },
     defaultSectionId: 'hero',
     defaultLabel: { en: 'Hero', 'pt-BR': 'Hero' },
     defaultEnabled: true,
@@ -244,10 +244,10 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   },
   stats: {
     id: 'stats',
-    label: { en: 'Stats', 'pt-BR': 'Estatisticas' },
-    description: { en: 'Highlights product metrics and trust signals.', 'pt-BR': 'Destaca metricas do produto e sinais de confianca.' },
+    label: { en: 'Stats', 'pt-BR': 'Estatísticas' },
+    description: { en: 'Highlights product metrics and trust signals.', 'pt-BR': 'Destaca métricas do produto e sinais de confiança.' },
     defaultSectionId: 'stats',
-    defaultLabel: { en: 'Stats', 'pt-BR': 'Estatisticas' },
+    defaultLabel: { en: 'Stats', 'pt-BR': 'Estatísticas' },
     defaultEnabled: true,
     blockType: 'landing.stats',
     blockPresetId: 'landing-stats-proof-strip',
@@ -258,10 +258,10 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   },
   metrics: {
     id: 'metrics',
-    label: { en: 'Metrics', 'pt-BR': 'Metricas' },
-    description: { en: 'Campaign KPIs and measurable outcomes.', 'pt-BR': 'KPIs de campanha e resultados mensuraveis.' },
+    label: { en: 'Metrics', 'pt-BR': 'Métricas' },
+    description: { en: 'Campaign KPIs and measurable outcomes.', 'pt-BR': 'KPIs de campanha e resultados mensuráveis.' },
     defaultSectionId: 'metrics',
-    defaultLabel: { en: 'Metrics', 'pt-BR': 'Metricas' },
+    defaultLabel: { en: 'Metrics', 'pt-BR': 'Métricas' },
     defaultEnabled: true,
     blockType: 'landing.stats',
     blockPresetId: 'landing-stats-dashboard-kpis',
@@ -286,10 +286,10 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   },
   benefits: {
     id: 'benefits',
-    label: { en: 'Benefits', 'pt-BR': 'Beneficios' },
-    description: { en: 'Value-driven section for marketing funnels.', 'pt-BR': 'Secao orientada a valor para funis de marketing.' },
+    label: { en: 'Benefits', 'pt-BR': 'Benefícios' },
+    description: { en: 'Value-driven section for marketing funnels.', 'pt-BR': 'Seção orientada a valor para funis de marketing.' },
     defaultSectionId: 'benefits',
-    defaultLabel: { en: 'Benefits', 'pt-BR': 'Beneficios' },
+    defaultLabel: { en: 'Benefits', 'pt-BR': 'Benefícios' },
     defaultEnabled: true,
     blockType: 'landing.features',
     blockPresetId: 'landing-features-enterprise-readiness',
@@ -300,10 +300,10 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   },
   installation: {
     id: 'installation',
-    label: { en: 'Installation', 'pt-BR': 'Instalacao' },
-    description: { en: 'Activation section for setup or onboarding.', 'pt-BR': 'Secao de ativacao para setup ou onboarding.' },
+    label: { en: 'Installation', 'pt-BR': 'Instalação' },
+    description: { en: 'Activation section for setup or onboarding.', 'pt-BR': 'Seção de ativação para setup ou onboarding.' },
     defaultSectionId: 'installation',
-    defaultLabel: { en: 'Installation', 'pt-BR': 'Instalacao' },
+    defaultLabel: { en: 'Installation', 'pt-BR': 'Instalação' },
     defaultEnabled: true,
     blockType: 'landing.cta',
     blockPresetId: 'landing-cta-installation-guide',
@@ -315,7 +315,7 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   cta: {
     id: 'cta',
     label: { en: 'CTA', 'pt-BR': 'CTA' },
-    description: { en: 'Focused conversion or final action block.', 'pt-BR': 'Bloco focado em conversao ou acao final.' },
+    description: { en: 'Focused conversion or final action block.', 'pt-BR': 'Bloco focado em conversão ou ação final.' },
     defaultSectionId: 'cta',
     defaultLabel: { en: 'CTA', 'pt-BR': 'CTA' },
     defaultEnabled: true,
@@ -328,10 +328,10 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   },
   footer: {
     id: 'footer',
-    label: { en: 'Footer', 'pt-BR': 'Rodape' },
-    description: { en: 'Closing section with navigation and brand links.', 'pt-BR': 'Secao final com navegacao e links da marca.' },
+    label: { en: 'Footer', 'pt-BR': 'Rodapé' },
+    description: { en: 'Closing section with navigation and brand links.', 'pt-BR': 'Seção final com navegação e links da marca.' },
     defaultSectionId: 'footer',
-    defaultLabel: { en: 'Footer', 'pt-BR': 'Rodape' },
+    defaultLabel: { en: 'Footer', 'pt-BR': 'Rodapé' },
     defaultEnabled: true,
     blockType: 'landing.footer',
     blockPresetId: 'landing-footer-docs',
@@ -342,10 +342,10 @@ const sectionPresetCatalog: Readonly<Record<CmsSectionPresetId, CmsSectionPreset
   },
   custom: {
     id: 'custom',
-    label: { en: 'Custom section', 'pt-BR': 'Secao customizada' },
-    description: { en: 'Generic starter section for custom composition.', 'pt-BR': 'Secao inicial generica para composicao customizada.' },
+    label: { en: 'Custom section', 'pt-BR': 'Seção customizada' },
+    description: { en: 'Generic starter section for custom composition.', 'pt-BR': 'Seção inicial genérica para composição customizada.' },
     defaultSectionId: 'section',
-    defaultLabel: { en: 'Custom section', 'pt-BR': 'Secao customizada' },
+    defaultLabel: { en: 'Custom section', 'pt-BR': 'Seção customizada' },
     defaultEnabled: true,
     blockType: 'landing.hero',
     blockPresetId: 'custom',
@@ -368,10 +368,10 @@ const ALL_SECTION_PRESET_IDS = Object.keys(sectionPresetCatalog) as CmsSectionPr
 const builtinContentModelCatalog: ReadonlyArray<CmsBuiltinContentModelDefinition> = [
   {
     id: 'landing-page',
-    label: { en: 'Landing page', 'pt-BR': 'Pagina de landing' },
-    description: { en: 'Public-facing product page with balanced narrative flow.', 'pt-BR': 'Pagina publica do produto com narrativa equilibrada.' },
-    defaultPageTitle: { en: 'Landing Page', 'pt-BR': 'Pagina de Landing' },
-    defaultPageDescription: { en: 'Primary public landing page.', 'pt-BR': 'Pagina principal publica de landing.' },
+    label: { en: 'Landing page', 'pt-BR': 'Página de landing' },
+    description: { en: 'Public-facing product page with balanced narrative flow.', 'pt-BR': 'Página pública do produto com narrativa equilibrada.' },
+    defaultPageTitle: { en: 'Landing Page', 'pt-BR': 'Página de Landing' },
+    defaultPageDescription: { en: 'Primary public landing page.', 'pt-BR': 'Página principal pública de landing.' },
     defaultPagePathPrefix: '/landing',
     schemaVersion: 1,
     migrationNotes: { en: '', 'pt-BR': '' },
@@ -391,10 +391,10 @@ const builtinContentModelCatalog: ReadonlyArray<CmsBuiltinContentModelDefinition
   },
   {
     id: 'marketing-page',
-    label: { en: 'Marketing page', 'pt-BR': 'Pagina de marketing' },
-    description: { en: 'Campaign-oriented page with metrics, benefits and conversion blocks.', 'pt-BR': 'Pagina orientada a campanha com metricas, beneficios e conversao.' },
-    defaultPageTitle: { en: 'Marketing Page', 'pt-BR': 'Pagina de Marketing' },
-    defaultPageDescription: { en: 'Campaign-oriented page focused on conversion.', 'pt-BR': 'Pagina orientada a campanha com foco em conversao.' },
+    label: { en: 'Marketing page', 'pt-BR': 'Página de marketing' },
+    description: { en: 'Campaign-oriented page with metrics, benefits and conversion blocks.', 'pt-BR': 'Página orientada a campanha com métricas, benefícios e conversão.' },
+    defaultPageTitle: { en: 'Marketing Page', 'pt-BR': 'Página de Marketing' },
+    defaultPageDescription: { en: 'Campaign-oriented page focused on conversion.', 'pt-BR': 'Página orientada a campanha com foco em conversão.' },
     defaultPagePathPrefix: '/marketing',
     schemaVersion: 1,
     migrationNotes: { en: '', 'pt-BR': '' },
@@ -415,9 +415,9 @@ const builtinContentModelCatalog: ReadonlyArray<CmsBuiltinContentModelDefinition
   {
     id: 'blank-page',
     label: { en: 'Blank canvas', 'pt-BR': 'Canvas em branco' },
-    description: { en: 'Minimal starting point for custom composition.', 'pt-BR': 'Ponto de partida minimo para composicao customizada.' },
-    defaultPageTitle: { en: 'Blank Page', 'pt-BR': 'Pagina em Branco' },
-    defaultPageDescription: { en: 'Start from scratch and compose your own sections.', 'pt-BR': 'Comece do zero e componha suas proprias secoes.' },
+    description: { en: 'Minimal starting point for custom composition.', 'pt-BR': 'Ponto de partida mínimo para composição customizada.' },
+    defaultPageTitle: { en: 'Blank Page', 'pt-BR': 'Página em Branco' },
+    defaultPageDescription: { en: 'Start from scratch and compose your own sections.', 'pt-BR': 'Comece do zero e componha suas próprias seções.' },
     defaultPagePathPrefix: '/blank',
     schemaVersion: 1,
     migrationNotes: { en: '', 'pt-BR': '' },
@@ -531,7 +531,7 @@ function resolveSectionSlotDescription(
   _sectionPreset: CmsSectionPresetDefinition
 ): string {
   return locale === 'pt-BR'
-    ? 'Slot principal que controla os blocos permitidos nesta secao.'
+    ? 'Slot principal que controla os blocos permitidos nesta seção.'
     : 'Primary slot that controls the blocks allowed in this section.'
 }
 
@@ -1887,7 +1887,7 @@ export function createCmsAuthoredContentModel(input: {
     input.existingModels.map(model => String(model.id ?? '').trim()).filter(Boolean)
   )
   const normalizedName = String(input.name ?? '').trim()
-  const fallbackName = locale === 'pt-BR' ? 'Modelo de conteudo' : 'Content model'
+  const fallbackName = locale === 'pt-BR' ? 'Modelo de conteúdo' : 'Content model'
   const fallbackPageTitle = normalizedName || fallbackName
   const id = createUniqueValue(
     `${AUTHORED_CONTENT_MODEL_ID_PREFIX}${normalizeSegment(normalizedName || fallbackName, 'content-model')}`,
@@ -2511,7 +2511,7 @@ export function listCmsSectionStarterPresetOptions(
       value: 'custom',
       label: locale === 'pt-BR' ? 'Customizado' : 'Custom',
       description: locale === 'pt-BR'
-        ? 'Secao inicializada sem preset de bloco.'
+        ? 'Seção inicializada sem preset de bloco.'
         : 'Section starts without a block preset.',
       source: 'custom',
       category: 'custom',

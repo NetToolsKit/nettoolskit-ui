@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <MainLayoutTemplate
     :app-name="settings.branding.appName || 'NetToolsKit'"
     :logo-src="settings.branding.brandLogo || ''"
@@ -96,9 +96,9 @@
           :account-label="tr('View account', 'Ver conta')"
           :preferences-label="tr('Preferences', 'Preferencias')"
           :horizontal-menu-label="tr('Horizontal menu', 'Menu horizontal')"
-          :horizontal-menu-caption="tr('Toggle between side and top navigation', 'Alterna entre navegacao lateral e superior')"
+          :horizontal-menu-caption="tr('Toggle between side and top navigation', 'Alterna entre navegação lateral e superior')"
           :mini-labels-label="tr('Labels in mini menu', 'Labels no mini menu')"
-          :mini-labels-caption="tr('Show labels below icons in compact mode', 'Exibe texto abaixo dos icones no modo compacto')"
+          :mini-labels-caption="tr('Show labels below icons in compact mode', 'Exibe texto abaixo dos ícones no modo compacto')"
           :show-side-menu-style-toggle="false"
           @update:model-value="slotProps.layoutControls.setHorizontalMode"
           @update:show-labels-in-mini="slotProps.layoutControls.setShowLabelsInMini"
@@ -919,7 +919,7 @@ function getCmsMediaKindLabel(kind: CmsMediaAssetKind): string {
     case 'video':
       return tr('Video', 'Video')
     case 'icon':
-      return tr('Icon', 'Icone')
+      return tr('Icon', 'Ícone')
     case 'document':
       return tr('Document', 'Documento')
     default:
@@ -1223,13 +1223,13 @@ const cmsSettingsWorkbenchTabs = computed<Array<{ id: CmsSettingsWorkbenchTabId,
     id: 'menu',
     icon: 'menu',
     label: settings.value.content.tabMenuLabel,
-    description: tr('Sidebar navigation behavior', 'Comportamento da navegacao lateral'),
+    description: tr('Sidebar navigation behavior', 'Comportamento da navegação lateral'),
   },
   {
     id: 'topbar',
     icon: 'web_asset',
     label: settings.value.content.tabTopbarLabel,
-    description: tr('Top toolbar actions and labels', 'Acoes e labels da barra superior'),
+    description: tr('Top toolbar actions and labels', 'Ações e labels da barra superior'),
   },
   {
     id: 'content',
@@ -1394,7 +1394,7 @@ const cmsContentModelFieldTypeOptions = computed(() => ([
   { label: tr('Textarea', 'Textarea'), value: 'textarea' as const },
   { label: tr('Number', 'Numero'), value: 'number' as const },
   { label: tr('Toggle', 'Alternancia'), value: 'toggle' as const },
-  { label: tr('Select', 'Selecao'), value: 'select' as const },
+  { label: tr('Select', 'Seleção'), value: 'select' as const },
   { label: tr('URL', 'URL'), value: 'url' as const },
   { label: tr('Date', 'Data'), value: 'date' as const },
   { label: tr('Media asset', 'Asset de midia'), value: 'media-asset' as const },
@@ -1413,11 +1413,11 @@ const cmsReferenceKindOptions = computed(() => ([
   { label: tr('Content model', 'Modelo de conteudo'), value: 'content-model' as const },
   { label: tr('Block preset', 'Preset de bloco'), value: 'block-preset' as const },
   { label: tr('Reusable block', 'Bloco reutilizavel'), value: 'reusable-block' as const },
-  { label: tr('Reusable section', 'Secao reutilizavel'), value: 'reusable-section' as const },
+  { label: tr('Reusable section', 'Seção reutilizável'), value: 'reusable-section' as const },
 ]))
 const cmsContentModelFieldVisibilitySourceOptions = computed(() => ([
   { label: tr('Another field', 'Outro campo'), value: 'field' as const },
-  { label: tr('Page status', 'Status da pagina'), value: 'page-status' as const },
+  { label: tr('Page status', 'Status da página'), value: 'page-status' as const },
 ]))
 const cmsContentModelFieldVisibilityOperatorOptions = computed(() => ([
   { label: tr('Equals', 'Igual a'), value: 'equals' as const },
@@ -1500,7 +1500,7 @@ const cmsWorkspaceTabOptions = computed<CmsWorkspaceTabOption[]>(() => ([
 const cmsSettingsToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => ([
   {
     id: 'tenant',
-    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrão'),
     emphasis: true,
   },
   {
@@ -1515,7 +1515,7 @@ const cmsSettingsToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() =
 const cmsPagesToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => ([
   {
     id: 'tenant',
-    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrão'),
     emphasis: true,
   },
   {
@@ -1530,7 +1530,7 @@ const cmsPagesToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => (
 const cmsBlocksToolbarInfoItems = computed<CmsAuthoringToolbarInfoItem[]>(() => ([
   {
     id: 'tenant',
-    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrão'),
     emphasis: true,
   },
   {
@@ -1567,12 +1567,12 @@ const cmsPagesSidebarMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
   },
   {
     id: 'tenant-pages',
-    label: tr('Pages in tenant', 'Paginas no tenant'),
+    label: tr('Pages in tenant', 'Páginas no tenant'),
     value: settings.value.pages.length,
   },
   {
     id: 'reusable-sections',
-    label: tr('Reusable sections', 'Secoes reutilizaveis'),
+    label: tr('Reusable sections', 'Seções reutilizáveis'),
     value: settings.value.reusableSections.length,
   },
   {
@@ -1584,7 +1584,7 @@ const cmsPagesSidebarMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
 const cmsPagesRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
   {
     id: 'visible-sections',
-    label: tr('Visible sections', 'Secoes visiveis'),
+    label: tr('Visible sections', 'Seções visíveis'),
     value: filteredCmsReusableSectionLibrary.value.length,
   },
   {
@@ -1601,12 +1601,12 @@ const cmsPagesRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
 const cmsBlocksSidebarMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
   {
     id: 'page',
-    label: tr('Page', 'Pagina'),
+    label: tr('Page', 'Página'),
     value: activeBlocksPage.value?.title || tr('None selected', 'Nenhuma selecionada'),
   },
   {
     id: 'section',
-    label: tr('Section', 'Secao'),
+    label: tr('Section', 'Seção'),
     value: activeBlocksSection.value?.label || tr('None selected', 'Nenhuma selecionada'),
   },
   {
@@ -1616,14 +1616,14 @@ const cmsBlocksSidebarMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
   },
   {
     id: 'visible-sections',
-    label: tr('Visible sections', 'Secoes visiveis'),
+    label: tr('Visible sections', 'Seções visíveis'),
     value: filteredActiveBlocksSections.value.length,
   },
 ]))
 const cmsBlocksRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
   {
     id: 'blocks-in-focus-section',
-    label: tr('Blocks in focus section', 'Blocos na secao em foco'),
+    label: tr('Blocks in focus section', 'Blocos na seção em foco'),
     value: cmsSectionBlocks.value.length,
   },
   {
@@ -1633,14 +1633,14 @@ const cmsBlocksRailMetrics = computed<CmsAuthoringMetricItem[]>(() => ([
   },
   {
     id: 'linked-section',
-    label: tr('Linked section', 'Secao vinculada'),
+    label: tr('Linked section', 'Seção vinculada'),
     value: activeBlocksSectionIsLinked.value ? tr('Yes', 'Sim') : tr('No', 'Nao'),
   },
 ]))
 const cmsSettingsStatusItems = computed<CmsAuthoringStatusItem[]>(() => ([
   {
     id: 'tenant',
-    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrao'),
+    label: activeTenantProfileName.value || tr('Default tenant', 'Tenant padrão'),
     emphasis: true,
   },
   {
@@ -1656,7 +1656,7 @@ const cmsPagesStatusItems = computed<CmsAuthoringStatusItem[]>(() => ([
   {
     id: 'pages',
     kind: 'chip',
-    label: `${tr('Pages', 'Paginas')}: ${settings.value.pages.length}`,
+    label: `${tr('Pages', 'Páginas')}: ${settings.value.pages.length}`,
     style: statusChipStyle.value,
   },
   {
@@ -1680,7 +1680,7 @@ const cmsBlocksStatusItems = computed<CmsAuthoringStatusItem[]>(() => ([
   {
     id: 'sections',
     kind: 'chip',
-    label: `${tr('Sections', 'Secoes')}: ${filteredActiveBlocksSections.value.length}`,
+    label: `${tr('Sections', 'Seções')}: ${filteredActiveBlocksSections.value.length}`,
     style: statusChipStyle.value,
   },
   {
@@ -2278,7 +2278,7 @@ const cmsLocaleCoverageCategories: CmsLocaleCoverageCategory[] = ['pages', 'fiel
 const cmsMediaAssetKindOptions = computed(() => ([
   { label: tr('Image', 'Imagem'), value: 'image' },
   { label: tr('Video', 'Video'), value: 'video' },
-  { label: tr('Icon', 'Icone'), value: 'icon' },
+  { label: tr('Icon', 'Ícone'), value: 'icon' },
   { label: tr('Document', 'Documento'), value: 'document' },
   { label: tr('Other', 'Outro'), value: 'other' },
 ]))
@@ -2412,7 +2412,7 @@ const activeShellItem = computed(() => {
     ?? {
       id: defaultMenuId,
       group: '',
-      label: tr('Settings', 'Configuracoes'),
+      label: tr('Settings', 'Configurações'),
       icon: 'settings',
       caption: '',
       description: settings.value.content.moduleFallbackDescription,
@@ -2736,7 +2736,7 @@ function getCmsLocaleCoverageStatusLabel(status: CmsLocaleCoverageStatus): strin
 
 function getCmsLocaleCoverageCategoryLabel(category: CmsLocaleCoverageCategory): string {
   if (category === 'pages') {
-    return tr('Pages', 'Paginas')
+    return tr('Pages', 'Páginas')
   }
 
   if (category === 'fields') {
@@ -2861,7 +2861,7 @@ const toolbarPreviewActions = computed(() => {
     {
       id: 'preview-action',
       icon: 'bolt',
-      label: tr('Action', 'Acao'),
+      label: tr('Action', 'Ação'),
       showLabel: true,
     },
   ]
@@ -3044,11 +3044,11 @@ function getReleaseChecklistItemLabel(itemId: CmsReleaseCandidateChecklistItemId
     case 'candidate_state':
       return tr('Candidate state', 'Estado do candidato')
     case 'validation':
-      return tr('Validation report', 'Relatorio de validacao')
+      return tr('Validation report', 'Relatório de validação')
     case 'workflow':
       return tr('Workflow readiness', 'Prontidao do workflow')
     case 'permissions':
-      return tr('Publish permissions', 'Permissoes de publicacao')
+      return tr('Publish permissions', 'Permissões de publicação')
     case 'content_integrity':
       return tr('Content integrity', 'Integridade do conteudo')
     case 'content_qa':
@@ -3069,7 +3069,7 @@ function getReleaseChecklistItemDescription(item: CmsReleaseCandidateChecklistIt
       if (item.releaseStatus === 'published') {
         return tr(
           'This release is already published. Review remains available for comparison only.',
-          'Este release ja esta publicado. A revisao permanece apenas para comparacao.'
+          'Este release já está publicado. A revisão permanece apenas para comparação.'
         )
       }
       if (item.releaseStatus === 'scheduled') {
@@ -3081,12 +3081,12 @@ function getReleaseChecklistItemDescription(item: CmsReleaseCandidateChecklistIt
       if (item.releaseStatus === 'rolled_back' || item.releaseStatus === 'canceled') {
         return tr(
           'Create a new draft before attempting another publish.',
-          'Crie um novo rascunho antes de tentar outra publicacao.'
+          'Crie um novo rascunho antes de tentar outra publicação.'
         )
       }
       return tr(
         'The selected release can continue through validation, scheduling and publish checks.',
-        'O release selecionado pode seguir pelas etapas de validacao, agendamento e publicacao.'
+        'O release selecionado pode seguir pelas etapas de validação, agendamento e publicação.'
       )
     case 'validation':
       if (item.status === 'blocking' && item.issueCount === 1 && item.issues[0]?.code === 'release.validation.required') {
@@ -3098,42 +3098,42 @@ function getReleaseChecklistItemDescription(item: CmsReleaseCandidateChecklistIt
       if (item.status === 'warning') {
         return tr(
           'The latest validation passed with warnings that should be reviewed.',
-          'A ultima validacao passou com avisos que devem ser revisados.'
+          'A última validação passou com avisos que devem ser revisados.'
         )
       }
       return tr(
         'Snapshot validation tracks schema, content and media consistency for this release.',
-        'A validacao do snapshot acompanha consistencia de schema, conteudo e midia deste release.'
+        'A validação do snapshot acompanha consistência de schema, conteúdo e mídia deste release.'
       )
     case 'workflow':
       return tr(
         'Workflow status should be approved, scheduled or published before production publish.',
-        'O status do workflow deve estar aprovado, agendado ou publicado antes da publicacao em producao.'
+        'O status do workflow deve estar aprovado, agendado ou publicado antes da publicação em produção.'
       )
     case 'permissions':
       return tr(
         'Environment policies and runtime roles are checked against the acting author before publish.',
-        'Politicas do ambiente e papeis de runtime sao verificados contra o autor em acao antes da publicacao.'
+        'Políticas do ambiente e papéis de runtime são verificados contra o autor em ação antes da publicação.'
       )
     case 'content_integrity':
       return tr(
         'Aggregates page, section, block, schema and reference diagnostics from the release snapshot.',
-        'Agrupa diagnosticos de paginas, secoes, blocos, schema e referencias do snapshot do release.'
+        'Agrupa diagnósticos de páginas, seções, blocos, schema e referências do snapshot do release.'
       )
     case 'content_qa':
       return tr(
         'Highlights editorial and accessibility gaps such as missing page summaries and image alt text.',
-        'Destaca lacunas editoriais e de acessibilidade, como resumos de pagina ausentes e texto alternativo de imagem.'
+        'Destaca lacunas editoriais e de acessibilidade, como resumos de página ausentes e texto alternativo de imagem.'
       )
     case 'brand_assets':
       return item.environment === 'production'
         ? tr(
           'Production releases require brand logo and favicon bindings to be present.',
-          'Releases de producao exigem logo e favicon da marca configurados.'
+          'Releases de produção exigem logo e favicon da marca configurados.'
         )
         : tr(
           'Brand assets are enforced only for production releases.',
-          'Assets da marca sao obrigatorios apenas para releases de producao.'
+          'Assets da marca são obrigatórios apenas para releases de produção.'
         )
     default:
       return ''
@@ -3239,10 +3239,10 @@ function getReleaseChecklistDrilldownLabel(action: CmsReleaseChecklistDrilldownA
   }
 
   if (page) {
-    return tr(`Open Pages: ${page.title}`, `Abrir paginas: ${page.title}`)
+    return tr(`Open Pages: ${page.title}`, `Abrir páginas: ${page.title}`)
   }
 
-  return tr('Open Pages', 'Abrir paginas')
+  return tr('Open Pages', 'Abrir páginas')
 }
 
 /**
@@ -3329,11 +3329,11 @@ function getReleaseReviewHubMetricLabel(
 ): string {
   if (cardId === 'changes') {
     if (metricId === 'pages') {
-      return tr('Pages', 'Paginas')
+      return tr('Pages', 'Páginas')
     }
 
     if (metricId === 'sections') {
-      return tr('Sections', 'Secoes')
+      return tr('Sections', 'Seções')
     }
 
     return tr('Blocks', 'Blocos')
@@ -3413,7 +3413,7 @@ function getGovernanceActionLabel(action: CmsWhiteLabelWorkflowAction): string {
     case 'request_changes':
       return tr('Request changes', 'Solicitar mudancas')
     case 'schedule_publish':
-      return tr('Schedule publish', 'Agendar publicacao')
+      return tr('Schedule publish', 'Agendar publicação')
     case 'publish':
       return tr('Publish', 'Publicar')
     case 'rollback':
@@ -3422,7 +3422,7 @@ function getGovernanceActionLabel(action: CmsWhiteLabelWorkflowAction): string {
       return tr('Reset defaults', 'Restaurar padroes')
     case 'import_settings':
     default:
-      return tr('Import settings', 'Importar configuracoes')
+      return tr('Import settings', 'Importar configurações')
   }
 }
 
@@ -3483,7 +3483,7 @@ function getGovernanceHubCardDescription(card: CmsGovernanceHubCard): string {
   }
 
   const policies = cmsGovernanceHubSummary.value.roles
-  return `${policies.publishCapableCount} ${tr('publish-capable', 'com publicacao')} · ${policies.reviewCapableCount} ${tr('review-capable', 'com revisao')}`
+  return `${policies.publishCapableCount} ${tr('publish-capable', 'com publicação')} · ${policies.reviewCapableCount} ${tr('review-capable', 'com revisão')}`
 }
 
 /**
@@ -3520,7 +3520,7 @@ function getGovernanceHubMetricLabel(cardId: CmsGovernanceHubCard['id'], metricI
     }
 
     if (metricId === 'actions') {
-      return tr('Actions', 'Acoes')
+      return tr('Actions', 'Ações')
     }
 
     return tr('Recent', 'Recentes')
@@ -4798,7 +4798,7 @@ const cmsBuilderCommandOptions = computed<CmsBuilderCommandOption[]>(() => {
 
   if (isBlocksModule.value) {
     options.push({
-      label: tr('Open Pages module', 'Abrir modulo de Paginas'),
+      label: tr('Open Pages module', 'Abrir módulo de Páginas'),
       value: 'blocks:open-pages',
       description: tr('Switch back to page authoring.', 'Voltar para a autoria de paginas.'),
     })
@@ -5419,7 +5419,7 @@ function getCmsUsageReferenceSourceLabel(reference: CmsEntityUsageReference): st
     case 'page':
       return tr('Page', 'Pagina')
     case 'reusable-section':
-      return tr('Reusable section', 'Secao reutilizavel')
+      return tr('Reusable section', 'Seção reutilizável')
     case 'reusable-block':
       return tr('Reusable block', 'Bloco reutilizavel')
     case 'authored-block-preset':
@@ -5553,7 +5553,7 @@ function applyCmsDeprecatedReplacement(
     selectedAuthoredBlockPresetId.value = preview.replacementEntityId as CmsBlockPresetId
   }
 
-  savedAtLabel.value = `${tr('Replacement applied at', 'Substituicao aplicada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Replacement applied at', 'Substituição aplicada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -6116,7 +6116,7 @@ function getCmsContentModelFieldMinConstraintLabel(field: CmsContentModelFieldDr
     return tr('Minimum length', 'Comprimento minimo')
   }
 
-  return tr('Minimum constraint (unused)', 'Restricao minima (nao usada)')
+  return tr('Minimum constraint (unused)', 'Restrição mínima (não usada)')
 }
 
 /**
@@ -6139,7 +6139,7 @@ function getCmsContentModelFieldMaxConstraintLabel(field: CmsContentModelFieldDr
     return tr('Maximum length', 'Comprimento maximo')
   }
 
-  return tr('Maximum constraint (unused)', 'Restricao maxima (nao usada)')
+  return tr('Maximum constraint (unused)', 'Restrição máxima (não usada)')
 }
 
 /**
@@ -6167,7 +6167,7 @@ function getCmsReferenceKindLabel(kind: CmsSchemaReferenceKind): string {
     case 'reusable-block':
       return tr('Reusable block', 'Bloco reutilizavel')
     case 'reusable-section':
-      return tr('Reusable section', 'Secao reutilizavel')
+      return tr('Reusable section', 'Seção reutilizável')
     default:
       return kind
   }
@@ -7499,7 +7499,7 @@ function executeSelectedBuilderCommand(): void {
         return
       }
       setActiveBlocksSelection(section.id, section.blocks[0]?.id ?? '')
-      savedAtLabel.value = `${tr('Section focused at', 'Secao focada as')} ${new Date().toLocaleTimeString()}`
+      savedAtLabel.value = `${tr('Section focused at', 'Seção focada às')} ${new Date().toLocaleTimeString()}`
       return
     }
     if (action === 'block') {
@@ -8261,10 +8261,10 @@ function getCmsPresetAuthoringSource(): {
  */
 function getCmsAuthoredPresetStarterSectionsLabel(preset: CmsAuthoredBlockPresetSettings): string {
   if (preset.starterSectionPresets.length === 0) {
-    return tr('Starter sections: none', 'Secoes iniciais: nenhuma')
+    return tr('Starter sections: none', 'Seções iniciais: nenhuma')
   }
 
-  return `${tr('Starter sections', 'Secoes iniciais')}: ${preset.starterSectionPresets.map(getCmsSectionPresetLabel).join(', ')}`
+  return `${tr('Starter sections', 'Seções iniciais')}: ${preset.starterSectionPresets.map(getCmsSectionPresetLabel).join(', ')}`
 }
 
 /**
@@ -10818,7 +10818,7 @@ function saveCmsPageSectionAsReusable(pageIndex: number, sectionIndex: number): 
     ...pageReusableSectionSelections.value,
     [pageIndex]: reusableSection.id,
   }
-  savedAtLabel.value = `${tr('Reusable section saved at', 'Secao reutilizavel salva as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section saved at', 'Seção reutilizável salva às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -10899,7 +10899,7 @@ function branchCmsPageSectionToVariant(pageIndex: number, sectionIndex: number):
         : block.enabled,
     })),
   })
-  savedAtLabel.value = `${tr('Reusable section branched at', 'Secao reutilizavel ramificada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section branched at', 'Seção reutilizável ramificada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -10923,7 +10923,7 @@ function insertSelectedReusableSection(pageIndex: number): void {
     existingSections: page.sections,
     mode: 'detached',
   }))
-  savedAtLabel.value = `${tr('Reusable section inserted at', 'Secao reutilizavel inserida as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section inserted at', 'Seção reutilizável inserida às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -10947,7 +10947,7 @@ function insertSelectedLinkedReusableSection(pageIndex: number): void {
     existingSections: page.sections,
     mode: 'linked',
   }))
-  savedAtLabel.value = `${tr('Linked reusable section inserted at', 'Secao reutilizavel vinculada inserida as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Linked reusable section inserted at', 'Seção reutilizável vinculada inserida às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11001,7 +11001,7 @@ function archiveReusableSection(reusableSectionId: string): void {
       ? archiveCmsEntity(reusableSection)
       : reusableSection
   ))
-  savedAtLabel.value = `${tr('Reusable section archived at', 'Secao reutilizavel arquivada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section archived at', 'Seção reutilizável arquivada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11013,7 +11013,7 @@ function unarchiveReusableSection(reusableSectionId: string): void {
       ? unarchiveCmsEntity(reusableSection)
       : reusableSection
   ))
-  savedAtLabel.value = `${tr('Reusable section restored at', 'Secao reutilizavel restaurada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section restored at', 'Seção reutilizável restaurada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11025,7 +11025,7 @@ function deprecateReusableSection(reusableSectionId: string): void {
       ? deprecateCmsEntity(reusableSection)
       : reusableSection
   ))
-  savedAtLabel.value = `${tr('Reusable section deprecated at', 'Secao reutilizavel descontinuada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section deprecated at', 'Seção reutilizável descontinuada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11037,7 +11037,7 @@ function undeprecateReusableSection(reusableSectionId: string): void {
       ? undeprecateCmsEntity(reusableSection)
       : reusableSection
   ))
-  savedAtLabel.value = `${tr('Reusable section reinstated at', 'Secao reutilizavel reativada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section reinstated at', 'Seção reutilizável reativada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11077,7 +11077,7 @@ function detachCmsPageSection(pageIndex: number, sectionIndex: number): void {
     reusableSections: settings.value.reusableSections,
     reusableBlocks: settings.value.reusableBlocks,
   }))
-  savedAtLabel.value = `${tr('Reusable section detached at', 'Secao reutilizavel desvinculada as')} ${new Date().toLocaleTimeString()}`
+  savedAtLabel.value = `${tr('Reusable section detached at', 'Seção reutilizável desvinculada às')} ${new Date().toLocaleTimeString()}`
 }
 
 /**
@@ -11283,8 +11283,8 @@ function addToolbarAction(): void {
   settings.value.toolbarActions.push({
     id: `action-${Math.random().toString(36).slice(2, 7)}`,
     icon: 'bolt',
-    label: tr('Action', 'Acao'),
-    tooltip: tr('Custom action', 'Acao customizada'),
+    label: tr('Action', 'Ação'),
+    tooltip: tr('Custom action', 'Ação customizada'),
     flat: true,
     dense: true,
     round: false,

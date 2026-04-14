@@ -62,9 +62,9 @@ describe('cms.locale-coverage', () => {
     const localizedModel = updateCmsAuthoredContentModel({
       model: englishModel,
       localeInput: 'pt-BR',
-      name: 'Pagina de campanha',
+      name: 'Página de campanha',
       description: 'Modelo de landing para campanha',
-      defaultPageTitle: 'Pagina de campanha',
+      defaultPageTitle: 'Página de campanha',
       defaultPageDescription: '',
       defaultPagePathPrefix: '/campanha',
       allowedPresets: ['hero', 'footer'],
@@ -73,9 +73,9 @@ describe('cms.locale-coverage', () => {
         {
           id: 'campaignHeadline',
           type: 'text',
-          label: 'Titulo da campanha',
-          description: 'Titulo principal da campanha',
-          placeholder: 'Digite o titulo da campanha',
+          label: 'Título da campanha',
+          description: 'Título principal da campanha',
+          placeholder: 'Digite o título da campanha',
           group: 'Campanha',
           order: 1,
           required: true,
@@ -124,11 +124,11 @@ describe('cms.locale-coverage', () => {
       },
       localization: {
         title: {
-          'pt-BR': 'Pagina de campanha',
+          'pt-BR': 'Página de campanha',
         },
         fields: {
           'pt-BR': {
-            campaignheadline: 'Lancamento de primavera',
+            campaignheadline: 'Lançamento de primavera',
           },
         },
       },
@@ -206,7 +206,7 @@ describe('cms.locale-coverage', () => {
     }
     reusableSection.localization = {
       label: {
-        'pt-BR': 'Secao hero reutilizavel',
+        'pt-BR': 'Seção hero reutilizável',
       },
     }
 
@@ -222,19 +222,19 @@ describe('cms.locale-coverage', () => {
     expect(matrix).toHaveLength(2)
 
     const englishCoverage = matrix.find(entry => entry.locale === 'en')
-    const portugueseCoverage = matrix.find(entry => entry.locale === 'pt-BR')
+    const portuguêseCoverage = matrix.find(entry => entry.locale === 'pt-BR')
 
     expect(englishCoverage).toEqual(expect.objectContaining({
       status: 'complete',
       missing: 0,
     }))
 
-    expect(portugueseCoverage).toBeDefined()
-    expect(portugueseCoverage?.status).toBe('partial')
-    expect(portugueseCoverage?.categories.pages.missing).toBeGreaterThan(0)
-    expect(portugueseCoverage?.categories.fields.missing).toBeGreaterThan(0)
-    expect(portugueseCoverage?.categories['reusable-content'].missing).toBeGreaterThan(0)
-    expect(portugueseCoverage?.missingEntries).toEqual(expect.arrayContaining([
+    expect(portuguêseCoverage).toBeDefined()
+    expect(portuguêseCoverage?.status).toBe('partial')
+    expect(portuguêseCoverage?.categories.pages.missing).toBeGreaterThan(0)
+    expect(portuguêseCoverage?.categories.fields.missing).toBeGreaterThan(0)
+    expect(portuguêseCoverage?.categories['reusable-content'].missing).toBeGreaterThan(0)
+    expect(portuguêseCoverage?.missingEntries).toEqual(expect.arrayContaining([
       expect.objectContaining({
         label: 'Campaign page',
         fieldLabel: 'Description',

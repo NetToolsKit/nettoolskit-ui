@@ -102,8 +102,8 @@ describe('authored-content-models', () => {
         features: 2,
         footer: 1,
       },
-      defaultPageTitle: 'Pagina comercial',
-      defaultPageDescription: 'Narrativa comercial em portugues.',
+      defaultPageTitle: 'Página comercial',
+      defaultPageDescription: 'Narrativa comercial em português.',
       defaultPagePathPrefix: '/campanha-comercial',
     })
 
@@ -113,8 +113,8 @@ describe('authored-content-models', () => {
     expect(getCmsContentModelDescription('pt-BR', localizedModel.id, [localizedModel])).toBe('Focada em hero, features e rodape')
     expect(getCmsContentModelDefaultPageTitle('en', localizedModel.id, [localizedModel])).toBe('Commerce Landing Page')
     expect(getCmsContentModelDefaultPageDescription('en', localizedModel.id, [localizedModel])).toBe('English commerce narrative.')
-    expect(getCmsContentModelDefaultPageTitle('pt-BR', localizedModel.id, [localizedModel])).toBe('Pagina comercial')
-    expect(getCmsContentModelDefaultPageDescription('pt-BR', localizedModel.id, [localizedModel])).toBe('Narrativa comercial em portugues.')
+    expect(getCmsContentModelDefaultPageTitle('pt-BR', localizedModel.id, [localizedModel])).toBe('Página comercial')
+    expect(getCmsContentModelDefaultPageDescription('pt-BR', localizedModel.id, [localizedModel])).toBe('Narrativa comercial em português.')
     expect(getCmsContentModelDefaultPagePathPrefix(localizedModel.id, [localizedModel])).toBe('/campanha-comercial')
     expect(getCmsRequiredSectionPresetIds(localizedModel.id, [localizedModel])).toEqual(['features', 'footer'])
     expect(getCmsStarterSectionPresetIds(localizedModel.id, [localizedModel])).toEqual(['features', 'footer'])
@@ -164,9 +164,9 @@ describe('authored-content-models', () => {
         {
           id: 'campaignHeadline',
           type: 'text',
-          label: 'Titulo da campanha',
-          description: 'Titulo principal da pagina',
-          placeholder: 'Digite o titulo da campanha',
+          label: 'Título da campanha',
+          description: 'Título principal da página',
+          placeholder: 'Digite o título da campanha',
           group: 'Campanha',
           order: 2,
           required: true,
@@ -194,9 +194,9 @@ describe('authored-content-models', () => {
     expect(getCmsContentModelFieldDefinitions('pt-BR', localizedModel.id, [localizedModel])).toEqual([
       expect.objectContaining({
         id: 'campaignheadline',
-        label: 'Titulo da campanha',
-        description: 'Titulo principal da pagina',
-        placeholder: 'Digite o titulo da campanha',
+        label: 'Título da campanha',
+        description: 'Título principal da página',
+        placeholder: 'Digite o título da campanha',
         group: 'Campanha',
         order: 2,
         repeatable: false,
@@ -266,21 +266,21 @@ describe('authored-content-models', () => {
       localeInput: 'pt-BR',
       name: 'Schema versionado',
       description: 'Atualizacao de copia',
-      migrationNotes: 'Notas da migracao em portugues',
+      migrationNotes: 'Notas da migração em português',
       allowedPresets: ['hero', 'footer'],
       requiredPresets: ['hero'],
       starterPresets: ['hero', 'footer'],
       recommendedPresets: ['hero'],
-      defaultPageTitle: 'Pagina versionada',
-      defaultPageDescription: 'Descricao em portugues',
+      defaultPageTitle: 'Página versionada',
+      defaultPageDescription: 'Descricao em português',
       defaultPagePathPrefix: '/versioned',
       fields: [
         {
           id: 'campaignHeadline',
           type: 'text',
-          label: 'Titulo da campanha',
-          description: 'Titulo principal',
-          placeholder: 'Digite o titulo',
+          label: 'Título da campanha',
+          description: 'Título principal',
+          placeholder: 'Digite o título',
           required: true,
           defaultValue: 'Launch campaign',
         },
@@ -289,7 +289,7 @@ describe('authored-content-models', () => {
 
     expect(getCmsContentModelSchemaVersion(localizedCopyUpdate.id, [localizedCopyUpdate])).toBe(1)
     expect(getCmsContentModelMigrationNotes('pt-BR', localizedCopyUpdate.id, [localizedCopyUpdate])).toBe(
-      'Notas da migracao em portugues'
+      'Notas da migração em português'
     )
     expect(getCmsContentModelMigrationNotes('en', localizedCopyUpdate.id, [localizedCopyUpdate])).toBe(
       'Clarified copy only'

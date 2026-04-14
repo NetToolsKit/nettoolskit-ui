@@ -16,7 +16,7 @@ describe('page-templates', () => {
     const portuguese = listCmsPageTemplateOptions('pt-BR')
 
     expect(english.some(option => option.label === 'Landing (default)')).toBe(true)
-    expect(portuguese.some(option => option.label === 'Landing (padrao)')).toBe(true)
+    expect(portuguese.some(option => option.label === 'Landing (padrão)')).toBe(true)
   })
 
   it('builds quick-start options with content model and section metadata', () => {
@@ -68,14 +68,14 @@ describe('page-templates', () => {
     })
 
     expect(page.title).toBe('Marketing Page')
-    expect(page.localization?.title?.['pt-BR']).toBe('Pagina de Marketing')
+    expect(page.localization?.title?.['pt-BR']).toBe('Página de Marketing')
     expect(page.contentModelId).toBe('marketing-page')
     expect(page.description).toBe('Campaign-oriented page focused on conversion.')
-    expect(page.localization?.description?.['pt-BR']).toBe('Pagina orientada a campanha com foco em conversao.')
+    expect(page.localization?.description?.['pt-BR']).toBe('Página orientada a campanha com foco em conversão.')
     expect(page.sections.some(section => section.id === 'metrics')).toBe(true)
     expect(page.sections.some(section => section.presetId === 'metrics')).toBe(true)
     expect(page.sections.some(section => section.id === 'cta')).toBe(true)
-    expect(page.sections.some(section => section.localization?.label?.['pt-BR'] === 'Metricas')).toBe(true)
+    expect(page.sections.some(section => section.localization?.label?.['pt-BR'] === 'Métricas')).toBe(true)
     expect(page.sections.every(section => section.blocks.length === 1)).toBe(true)
   })
 })

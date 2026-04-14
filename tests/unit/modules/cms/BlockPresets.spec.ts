@@ -21,7 +21,7 @@ describe('block-presets', () => {
 
     expect(englishOptions[0]?.value).toBe('landing-hero-product-launch')
     expect(englishOptions.some(option => option.label === 'Hero · Product launch')).toBe(true)
-    expect(portugueseOptions.some(option => option.label === 'Hero · Lancamento de produto')).toBe(true)
+    expect(portugueseOptions.some(option => option.label === 'Hero · Lançamento de produto')).toBe(true)
     expect(englishOptions.at(-1)?.value).toBe('custom')
   })
 
@@ -40,7 +40,7 @@ describe('block-presets', () => {
       title: 'Ship your next frontend faster',
     })
     expect(block.localization?.props?.['pt-BR']).toMatchObject({
-      title: 'Entregue seu proximo frontend mais rapido',
+      title: 'Entregue seu próximo frontend mais rápido',
     })
   })
 
@@ -67,7 +67,7 @@ describe('block-presets', () => {
         localization: {
           props: {
             'pt-BR': {
-              title: 'Monte paginas mais rapido',
+              title: 'Monte páginas mais rápido',
               subtitle: 'Legenda localizada',
             },
           },
@@ -87,7 +87,7 @@ describe('block-presets', () => {
     expect(authoredPreset.localization?.name?.['pt-BR']).toBe('Hero QA PT')
     expect(authoredPreset.localization?.description?.['pt-BR']).toBe('Preset localizado')
     expect(authoredPreset.localization?.props?.['pt-BR']).toMatchObject({
-      title: 'Monte paginas mais rapido',
+      title: 'Monte páginas mais rápido',
       subtitle: 'Legenda localizada',
     })
     expect(authoredPreset.starterSectionPresets).toEqual(['hero', 'cta'])

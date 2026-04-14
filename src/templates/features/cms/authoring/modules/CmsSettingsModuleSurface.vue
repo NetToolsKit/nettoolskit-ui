@@ -1,23 +1,23 @@
-<!-- eslint-disable vue/no-mutating-props -->
+﻿<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="cms-settings">
     <CmsWorkspaceTabs
       :model-value="cmsSettingsWorkspaceTabValue"
-      :ariaLabel="tr('Settings workspace tabs', 'Abas do workspace de configuracoes')"
+      :ariaLabel="tr('Settings workspace tabs', 'Abas do workspace de configurações')"
       :tabs="cmsWorkspaceTabOptions"
       @update:model-value="emit('update:cmsSettingsWorkspaceTabValue', String($event ?? ''))"
     />
     <CmsAuthoringWorkbench
       v-show="cmsSettingsWorkspaceView === 'editor' && !cmsDesignerPreviewMode"
       class="cms-designer-card--settings"
-      :page-aria-label="tr('Settings workbench', 'Workbench de configuracoes')"
-      :canvas-aria-label="tr('Settings authoring workspace', 'Workspace de autoria de configuracoes')"
-      :status-bar-aria-label="tr('Settings status bar', 'Barra de status de configuracoes')"
+      :page-aria-label="tr('Settings workbench', 'Workbench de configurações')"
+      :canvas-aria-label="tr('Settings authoring workspace', 'Workspace de autoria de configurações')"
+      :status-bar-aria-label="tr('Settings status bar', 'Barra de status de configurações')"
     >
       <template #header>
         <CmsAuthoringToolbar :info-items="cmsSettingsToolbarInfoItems">
           <template #actions>
-            <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open settings workspace', 'Abrir workspace de configuracoes')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
+            <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open settings workspace', 'Abrir workspace de configurações')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
             <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt()" />
             <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow()" />
             <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange()" />
@@ -44,7 +44,7 @@
           <aside class="cms-designer-card__sidebar cms-settings__sidebar">
             <CmsAuthoringPanelHeader
               :title="tr('Workbench', 'Workbench')"
-              :description="tr('White-label surfaces and CMS authoring contracts in one editing shell.', 'Superficies white-label e contratos de autoria CMS em um unico shell de edicao.')"
+              :description="tr('White-label surfaces and CMS authoring contracts in one editing shell.', 'Superfícies white-label e contratos de autoria CMS em um único shell de edição.')"
             />
             <div class="cms-designer-card__nav-list">
               <button
@@ -179,7 +179,7 @@
                     {{
                       tr(
                         'Primary actions stay in the top editor bar so the workspace keeps one clear command row.',
-                        'As acoes primarias ficam na barra superior para o workspace manter uma linha clara de comando.'
+                        'As ações primárias ficam na barra superior para o workspace manter uma linha clara de comando.'
                       )
                     }}
                   </p>
@@ -232,14 +232,14 @@
                     <div class="cms-config-section__form">
                       <div class="cms-form-grid">
                         <q-input v-model="settings.branding.appName" outlined dense :label="tr('Product name', 'Nome do produto')" />
-                        <q-input v-model="settings.branding.appSubtitle" outlined dense :label="tr('Product subtitle', 'Subtitulo do produto')" />
+                        <q-input v-model="settings.branding.appSubtitle" outlined dense :label="tr('Product subtitle', 'Subtítulo do produto')" />
                         <q-input v-model="settings.branding.brandLogo" outlined dense :label="tr('Logo URL', 'URL do logo')" />
                         <q-input v-model="settings.branding.brandLogoAlt" outlined dense :label="tr('Logo alt text', 'Texto alternativo do logo')" />
                         <q-input v-model="settings.branding.faviconUrl" outlined dense :label="tr('Favicon URL', 'URL do favicon')" />
                         <q-input v-model="settings.branding.userAvatar" outlined dense :label="tr('User avatar URL', 'URL do avatar do usuario')" />
                         <q-input v-model="settings.branding.userTooltip" outlined dense :label="tr('User tooltip', 'Tooltip do usuario')" />
-                        <q-input v-model="settings.branding.notificationsTooltip" outlined dense :label="tr('Notifications tooltip', 'Tooltip de notificacoes')" />
-                        <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" :label="tr('Notification count', 'Quantidade de notificacoes')" />
+                        <q-input v-model="settings.branding.notificationsTooltip" outlined dense :label="tr('Notifications tooltip', 'Tooltip de notificações')" />
+                        <q-input v-model.number="settings.branding.notificationCount" outlined dense type="number" min="0" :label="tr('Notification count', 'Quantidade de notificações')" />
                       </div>
 
                       <q-banner rounded class="cms-banner" :style="bannerStyle">
@@ -326,7 +326,7 @@
                           </div>
                           <div class="cms-preview-card cms-preview-card--typography">
                             <div class="cms-preview-typography__headline">{{ settings.branding.appName }}</div>
-                            <div class="cms-preview-typography__title">{{ tr('Shell heading and context text', 'Titulo do shell e texto de contexto') }}</div>
+                            <div class="cms-preview-typography__title">{{ tr('Shell heading and context text', 'Título do shell e texto de contexto') }}</div>
                             <p class="cms-preview-typography__body">
                               This paragraph uses base family/style. Adjust fonts and sizes to match each tenant brand.
                             </p>
@@ -377,7 +377,7 @@
                         <div class="cms-example-section cms-example-section--inline">
                           <div class="cms-example-section__header">
                             <strong>{{ tr('Layout and motion example', 'Exemplo de layout e movimento') }}</strong>
-                            <small>{{ tr('Spacing, radius and transition tokens on shell widgets.', 'Tokens de espaco, borda e transicao em widgets do shell.') }}</small>
+                            <small>{{ tr('Spacing, radius and transition tokens on shell widgets.', 'Tokens de espaço, borda e transição em widgets do shell.') }}</small>
                           </div>
                           <div class="cms-preview-card cms-preview-card--layout">
                             <div class="cms-preview-layout__row">
@@ -388,7 +388,7 @@
                               <q-icon name="tune" class="cms-icon cms-icon--sm" />
                               <span>{{ tr('Hover-ready item spacing', 'Espacamento de item para hover') }}</span>
                             </div>
-                            <small class="cms-preview-layout__hint">{{ tr('Move mouse over cards/items to validate transition token.', 'Passe o mouse sobre os cards/itens para validar o token de transicao.') }}</small>
+                            <small class="cms-preview-layout__hint">{{ tr('Move mouse over cards/items to validate transition token.', 'Passe o mouse sobre os cards/itens para validar o token de transição.') }}</small>
                           </div>
                         </div>
                       </div>
@@ -441,7 +441,7 @@
                           </div>
                           <div class="cms-theme-token">
                             <span class="cms-theme-token__dot" :style="{ background: settings.theme.pageBackground || defaultTheme.pageBackground }" />
-                            <span>{{ tr('Page', 'Pagina') }}: <code>{{ settings.theme.pageBackground || defaultTheme.pageBackground }}</code></span>
+                            <span>{{ tr('Page', 'Página') }}: <code>{{ settings.theme.pageBackground || defaultTheme.pageBackground }}</code></span>
                           </div>
                         </div>
                       </div>
@@ -493,15 +493,15 @@
                                   </div>
                                   <div class="cms-preview-card cms-preview-card--foundation">
                                     <strong>{{ tr('Editable shell foundation', 'Base editavel do shell') }}</strong>
-                                    <p>{{ tr('This card uses the same base tokens as the shell page and CMS cards.', 'Este card usa os mesmos tokens base da pagina shell e dos cards CMS.') }}</p>
+                                    <p>{{ tr('This card uses the same base tokens as the shell page and CMS cards.', 'Este card usa os mesmos tokens base da página shell e dos cards CMS.') }}</p>
                                     <q-chip dense square class="cms-preview-chip">{{ settings.content.statusChipLabel }}</q-chip>
                                   </div>
                                 </template>
 
                                 <template v-else-if="group.id === 'navigation'">
                                   <div class="cms-example-section__header">
-                                    <strong>{{ tr('Navigation example', 'Exemplo de navegacao') }}</strong>
-                                    <small>{{ tr('Sidebar text, icon, caption and active states.', 'Texto, icone, legenda e estados ativos da barra lateral.') }}</small>
+                                    <strong>{{ tr('Navigation example', 'Exemplo de navegação') }}</strong>
+                                    <small>{{ tr('Sidebar text, icon, caption and active states.', 'Texto, ícone, legenda e estados ativos da barra lateral.') }}</small>
                                   </div>
                                   <div class="cms-preview-card cms-preview-card--navigation">
                                     <div class="cms-preview-nav-caption">{{ tr('Core', 'Core') }}</div>
@@ -515,7 +515,7 @@
                                     </div>
                                     <div class="cms-preview-nav-item cms-preview-nav-item--active">
                                       <q-icon name="settings" class="cms-icon cms-icon--sm cms-preview-nav-item__icon" />
-                                      <span>{{ tr('Settings', 'Configuracoes') }}</span>
+                                      <span>{{ tr('Settings', 'Configurações') }}</span>
                                     </div>
                                     <div class="cms-preview-nav-mini-caption">CO</div>
                                   </div>
@@ -523,8 +523,8 @@
 
                                 <template v-else-if="group.id === 'header'">
                                   <div class="cms-example-section__header">
-                                    <strong>{{ tr('Header and search example', 'Exemplo de cabecalho e busca') }}</strong>
-                                    <small>{{ tr('Topbar title, search, icon colors and notification badge.', 'Titulo da topbar, busca, cores de icones e badge de notificacao.') }}</small>
+                                    <strong>{{ tr('Header and search example', 'Exemplo de cabeçalho e busca') }}</strong>
+                                    <small>{{ tr('Topbar title, search, icon colors and notification badge.', 'Título da topbar, busca, cores de ícones e badge de notificação.') }}</small>
                                   </div>
                                   <div class="cms-preview-card cms-preview-card--header">
                                     <div class="cms-preview-header">
@@ -532,21 +532,21 @@
                                         <q-icon :name="settings.layout.menuIcon" class="cms-icon cms-icon--md cms-preview-header__menu-icon" />
                                         <strong class="cms-preview-header__title-app">{{ settings.branding.appName }}</strong>
                                         <q-icon name="chevron_right" class="cms-icon cms-icon--sm cms-preview-header__separator" />
-                                        <span class="cms-preview-header__title-text">{{ tr('Settings', 'Configuracoes') }}</span>
+                                        <span class="cms-preview-header__title-text">{{ tr('Settings', 'Configurações') }}</span>
                                       </div>
                                       <div class="cms-preview-header__search">
                                         <q-icon name="search" class="cms-icon cms-icon--sm cms-preview-header__search-icon" />
                                         <span>{{ settings.layout.searchPlaceholder }}</span>
                                       </div>
                                       <div class="cms-preview-header__actions">
-                                        <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action" :aria-label="tr('Notifications action preview', 'Preview da acao de notificacoes')">
+                                        <button v-if="settings.layout.showNotifications" type="button" class="cms-preview-header__action" :aria-label="tr('Notifications action preview', 'Preview da ação de notificações')">
                                           <q-icon name="notifications" class="cms-icon cms-icon--sm" />
                                           <span class="cms-preview-header__badge">{{ settings.branding.notificationCount || 2 }}</span>
                                         </button>
-                                        <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action" :aria-label="tr('Account action preview', 'Preview da acao de conta')">
+                                        <button v-if="settings.layout.showUserAvatar" type="button" class="cms-preview-header__action" :aria-label="tr('Account action preview', 'Preview da ação de conta')">
                                           <q-icon name="account_circle" class="cms-icon cms-icon--sm" />
                                         </button>
-                                        <button type="button" class="cms-preview-header__action" :aria-label="tr('Home action preview', 'Preview da acao home')">
+                                        <button type="button" class="cms-preview-header__action" :aria-label="tr('Home action preview', 'Preview da ação home')">
                                           <q-icon name="home" class="cms-icon cms-icon--sm" />
                                         </button>
                                       </div>
@@ -566,7 +566,7 @@
 
                                 <template v-else-if="group.id === 'notifications'">
                                   <div class="cms-example-section__header">
-                                    <strong>{{ tr('Notifications example', 'Exemplo de notificacoes') }}</strong>
+                                    <strong>{{ tr('Notifications example', 'Exemplo de notificações') }}</strong>
                                     <small>{{ tr('Success, warning, error and info chips in real time.', 'Chips de sucesso, aviso, erro e info em tempo real.') }}</small>
                                   </div>
                                   <div class="cms-notification-preview">
@@ -598,7 +598,7 @@
                                 <template v-else-if="group.id === 'landing'">
                                   <div class="cms-example-section__header">
                                     <strong>{{ tr('Landing palette example', 'Exemplo da paleta da landing') }}</strong>
-                                    <small>{{ tr('Primary/secondary sections, dark shell and syntax colors used on public landing.', 'Secoes primaria/secundaria, shell escuro e cores de sintaxe usadas na landing publica.') }}</small>
+                                    <small>{{ tr('Primary/secondary sections, dark shell and syntax colors used on public landing.', 'Seções primária/secundária, shell escuro e cores de sintaxe usadas na landing pública.') }}</small>
                                   </div>
                                   <div class="cms-preview-card cms-preview-card--landing">
                                     <div class="cms-preview-landing__swatches">
@@ -606,19 +606,19 @@
                                         class="cms-preview-landing__swatch"
                                         :style="{ background: resolveThemeTokenValue('landingSectionBgPrimary') }"
                                       >
-                                        {{ tr('Section primary', 'Secao primaria') }}
+                                        {{ tr('Section primary', 'Seção primária') }}
                                       </span>
                                       <span
                                         class="cms-preview-landing__swatch"
                                         :style="{ background: resolveThemeTokenValue('landingSectionBgSecondary') }"
                                       >
-                                        {{ tr('Section secondary', 'Secao secundaria') }}
+                                        {{ tr('Section secondary', 'Seção secundária') }}
                                       </span>
                                       <span
                                         class="cms-preview-landing__swatch cms-preview-landing__swatch--dark"
                                         :style="{ background: resolveThemeTokenValue('landingSectionBgDark'), color: resolveThemeTokenValue('landingSharedDarkText') }"
                                       >
-                                        {{ tr('Section dark', 'Secao escura') }}
+                                        {{ tr('Section dark', 'Seção escura') }}
                                       </span>
                                     </div>
                                     <div
@@ -678,7 +678,7 @@
                         <div v-for="(item, index) in settings.items" :key="item.id" class="cms-list-item cms-list-item--menu">
                           <q-input v-model="item.id" outlined dense :label="tr('Item ID', 'ID do item')" />
                           <q-input v-model="item.label" outlined dense :label="tr('Label', 'Label')" />
-                          <q-input v-model="item.icon" outlined dense :label="tr('Icon', 'Icone')" />
+                          <q-input v-model="item.icon" outlined dense :label="tr('Icon', 'Ícone')" />
                           <q-select
                             v-model="item.group"
                             outlined
@@ -689,7 +689,7 @@
                             :label="tr('Group', 'Grupo')"
                           />
                           <q-input v-model="item.caption" outlined dense :label="tr('Caption', 'Legenda')" />
-                          <q-input v-model="item.description" outlined dense :label="tr('Description', 'Descricao')" />
+                          <q-input v-model="item.description" outlined dense :label="tr('Description', 'Descrição')" />
                           <q-input v-model="item.badge" outlined dense :label="tr('Badge', 'Badge')" />
                           <q-input v-model="item.badgeColor" outlined dense :label="tr('Badge color', 'Cor do badge')" />
                           <q-input v-model="item.badgeTextColor" outlined dense :label="tr('Badge text color', 'Cor do texto do badge')" />
@@ -739,7 +739,7 @@
                   <div class="cms-config-section">
                     <div class="cms-config-section__form">
                       <div class="cms-form-grid">
-                        <q-input v-model="settings.layout.menuIcon" outlined dense :label="tr('Menu icon', 'Icone do menu')" />
+                        <q-input v-model="settings.layout.menuIcon" outlined dense :label="tr('Menu icon', 'Ícone do menu')" />
                         <q-input v-model="settings.layout.menuAriaLabel" outlined dense :label="tr('Menu aria-label', 'Aria-label do menu')" />
                         <q-input v-model="settings.layout.searchPlaceholder" outlined dense :label="tr('Search placeholder', 'Placeholder da busca')" />
                         <q-input v-model="settings.layout.collapseLabel" outlined dense :label="tr('Collapse label', 'Label de comprimir')" />
@@ -752,24 +752,24 @@
 
                       <div class="cms-toggle-row">
                         <q-toggle v-model="settings.layout.showSearch" :label="tr('Show search', 'Mostrar busca')" />
-                        <q-toggle v-model="settings.layout.showNotifications" :label="tr('Show notifications', 'Mostrar notificacoes')" />
-                        <q-toggle v-model="settings.layout.showUserAvatar" :label="tr('Show account action', 'Mostrar acao de conta')" />
+                        <q-toggle v-model="settings.layout.showNotifications" :label="tr('Show notifications', 'Mostrar notificações')" />
+                        <q-toggle v-model="settings.layout.showUserAvatar" :label="tr('Show account action', 'Mostrar ação de conta')" />
                         <q-toggle v-model="settings.layout.showGroupCaptions" :label="tr('Show group captions', 'Mostrar legendas de grupo')" />
                         <q-toggle v-model="settings.layout.collapsible" :label="tr('Allow sidebar collapse', 'Permitir comprimir menu lateral')" />
-                        <q-toggle v-model="settings.layout.defaultDrawerOpen" :label="tr('Drawer open by default', 'Menu lateral aberto por padrao')" />
-                        <q-toggle v-model="settings.layout.defaultMini" :label="tr('Mini mode by default', 'Modo mini por padrao')" />
+                        <q-toggle v-model="settings.layout.defaultDrawerOpen" :label="tr('Drawer open by default', 'Menu lateral aberto por padrão')" />
+                        <q-toggle v-model="settings.layout.defaultMini" :label="tr('Mini mode by default', 'Modo mini por padrão')" />
                       </div>
 
                       <q-separator class="q-my-md" />
 
                       <div class="cms-section-header">
-                        <strong>{{ tr('Topbar actions', 'Acoes da topbar') }}</strong>
-                        <q-btn flat dense no-caps icon="add" :label="tr('Add action', 'Adicionar acao')" @click="addToolbarAction()" />
+                        <strong>{{ tr('Topbar actions', 'Ações da topbar') }}</strong>
+                        <q-btn flat dense no-caps icon="add" :label="tr('Add action', 'Adicionar ação')" @click="addToolbarAction()" />
                       </div>
                       <div class="cms-list">
                         <div v-for="(action, index) in settings.toolbarActions" :key="action.id" class="cms-list-item cms-list-item--toolbar">
-                          <q-input v-model="action.id" outlined dense :label="tr('Action ID', 'ID da acao')" />
-                          <q-input v-model="action.icon" outlined dense :label="tr('Icon', 'Icone')" />
+                          <q-input v-model="action.id" outlined dense :label="tr('Action ID', 'ID da ação')" />
+                          <q-input v-model="action.icon" outlined dense :label="tr('Icon', 'Ícone')" />
                           <q-input v-model="action.label" outlined dense :label="tr('Label', 'Label')" />
                           <q-input v-model="action.tooltip" outlined dense :label="tr('Tooltip', 'Tooltip')" />
                           <q-input v-model="action.href" outlined dense :label="tr('Href', 'Href')" />
@@ -784,7 +784,7 @@
                           <q-toggle v-model="action.flat" :label="tr('Flat', 'Flat')" />
                           <q-toggle v-model="action.dense" :label="tr('Dense', 'Dense')" />
                           <q-toggle v-model="action.round" :label="tr('Round', 'Round')" />
-                          <q-toggle v-model="action.unelevated" :label="tr('Unelevated', 'Sem elevacao')" />
+                          <q-toggle v-model="action.unelevated" :label="tr('Unelevated', 'Sem elevação')" />
                           <q-toggle v-model="action.outline" :label="tr('Outline', 'Contorno')" />
                           <q-toggle v-model="action.noCaps" :label="tr('No caps', 'Sem maiusculas')" />
                           <q-btn flat round dense icon="delete" :style="dangerActionStyle" @click="removeToolbarAction(index)" />
@@ -796,7 +796,7 @@
                       <div class="cms-example-section cms-example-section--inline">
                         <div class="cms-example-section__header">
                           <strong>{{ tr('Topbar example', 'Exemplo de topbar') }}</strong>
-                          <small>{{ tr('Header height, search visibility and actions rendered together.', 'Altura do cabecalho, visibilidade da busca e acoes renderizadas em conjunto.') }}</small>
+                          <small>{{ tr('Header height, search visibility and actions rendered together.', 'Altura do cabeçalho, visibilidade da busca e ações renderizadas em conjunto.') }}</small>
                         </div>
                         <div class="cms-preview-card cms-preview-card--topbar">
                           <div class="cms-preview-topbar">
@@ -856,18 +856,18 @@
                           :label="tr('Apply locale preset', 'Aplicar preset de idioma')"
                           @click="onCmsLocaleChange(settings.content.locale)"
                         />
-                        <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow :label="tr('Module fallback description', 'Descricao fallback do modulo')" />
+                        <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow :label="tr('Module fallback description', 'Descrição fallback do módulo')" />
                         <q-input v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow :label="tr('Branding banner text', 'Texto do banner de branding')" />
                         <q-input v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow :label="tr('Colors banner text', 'Texto do banner de cores')" />
-                        <q-input v-model="settings.content.statusTitle" outlined dense :label="tr('Status card title', 'Titulo do card de status')" />
+                        <q-input v-model="settings.content.statusTitle" outlined dense :label="tr('Status card title', 'Título do card de status')" />
                         <q-input v-model="settings.content.statusChipLabel" outlined dense :label="tr('Status chip label', 'Label do chip de status')" />
                         <q-input v-model="settings.content.statusThemeText" outlined dense :label="tr('Status: theme line', 'Status: linha de tema')" />
                         <q-input v-model="settings.content.statusBrandingText" outlined dense :label="tr('Status: branding line', 'Status: linha de branding')" />
                         <q-input v-model="settings.content.statusMenuText" outlined dense :label="tr('Status: menu line', 'Status: linha de menu')" />
                         <q-input v-model="settings.content.statusTopbarText" outlined dense :label="tr('Status: topbar line', 'Status: linha de topbar')" />
-                        <q-input v-model="settings.content.howToTitle" outlined dense :label="tr('How-to title', 'Titulo de como usar')" />
+                        <q-input v-model="settings.content.howToTitle" outlined dense :label="tr('How-to title', 'Título de como usar')" />
                         <q-input v-model="settings.content.howToBody" outlined dense type="textarea" autogrow :label="tr('How-to body', 'Texto de como usar')" />
-                        <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow :label="tr('How-to next step', 'Proximo passo de como usar')" />
+                        <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow :label="tr('How-to next step', 'Próximo passo de como usar')" />
                         <q-input v-model="settings.content.previewSuccessLabel" outlined dense :label="tr('Preview success label', 'Label de preview de sucesso')" />
                         <q-input v-model="settings.content.previewWarningLabel" outlined dense :label="tr('Preview warning label', 'Label de preview de aviso')" />
                         <q-input v-model="settings.content.previewErrorLabel" outlined dense :label="tr('Preview error label', 'Label de preview de erro')" />
@@ -878,7 +878,7 @@
                         <q-input v-model="settings.content.tabColorsLabel" outlined dense :label="tr('Tab: colors label', 'Aba: label de cores')" />
                         <q-input v-model="settings.content.tabMenuLabel" outlined dense :label="tr('Tab: menu label', 'Aba: label de menu')" />
                         <q-input v-model="settings.content.tabTopbarLabel" outlined dense :label="tr('Tab: topbar label', 'Aba: label de topbar')" />
-                        <q-input v-model="settings.content.tabContentLabel" outlined dense :label="tr('Tab: content label', 'Aba: label de conteudo')" />
+                        <q-input v-model="settings.content.tabContentLabel" outlined dense :label="tr('Tab: content label', 'Aba: label de conteúdo')" />
                       </div>
                     </div>
 
@@ -923,13 +923,13 @@
                           emit-value
                           map-options
                           :options="cmsAuthoredContentModelOptions"
-                          :label="tr('Content model library', 'Biblioteca de modelos de conteudo')"
+                          :label="tr('Content model library', 'Biblioteca de modelos de conteúdo')"
                         />
                         <q-btn
                           flat
                           no-caps
                           icon="add_box"
-                          :label="tr('New content model', 'Novo modelo de conteudo')"
+                          :label="tr('New content model', 'Novo modelo de conteúdo')"
                           @click="createNewAuthoredContentModelDraft()"
                         />
                         <q-btn
@@ -950,7 +950,7 @@
                           :model-value="authoredContentModelNameDraft"
                           outlined
                           dense
-                          :label="tr('Content model name', 'Nome do modelo de conteudo')"
+                          :label="tr('Content model name', 'Nome do modelo de conteúdo')"
                           @update:model-value="emit('update:authoredContentModelNameDraft', String($event ?? ''))"
                         />
                         <q-input
@@ -959,14 +959,14 @@
                           dense
                           type="textarea"
                           autogrow
-                          :label="tr('Content model description', 'Descricao do modelo de conteudo')"
+                          :label="tr('Content model description', 'Descrição do modelo de conteúdo')"
                           @update:model-value="emit('update:authoredContentModelDescriptionDraft', String($event ?? ''))"
                         />
                         <q-input
                           :model-value="authoredContentModelDefaultPageTitleDraft"
                           outlined
                           dense
-                          :label="tr('Default page title', 'Titulo padrao da pagina')"
+                          :label="tr('Default page title', 'Título padrão da página')"
                           @update:model-value="emit('update:authoredContentModelDefaultPageTitleDraft', String($event ?? ''))"
                         />
                         <q-input
@@ -975,14 +975,14 @@
                           dense
                           type="textarea"
                           autogrow
-                          :label="tr('Default page description', 'Descricao padrao da pagina')"
+                          :label="tr('Default page description', 'Descrição padrão da página')"
                           @update:model-value="emit('update:authoredContentModelDefaultPageDescriptionDraft', String($event ?? ''))"
                         />
                         <q-input
                           :model-value="authoredContentModelDefaultPagePathPrefixDraft"
                           outlined
                           dense
-                          :label="tr('Default page path prefix', 'Prefixo padrao do caminho da pagina')"
+                          :label="tr('Default page path prefix', 'Prefixo padrão do caminho da página')"
                           :hint="tr('Example: /campaign', 'Exemplo: /campanha')"
                           @update:model-value="emit('update:authoredContentModelDefaultPagePathPrefixDraft', String($event ?? ''))"
                         />
@@ -992,8 +992,8 @@
                           dense
                           type="textarea"
                           autogrow
-                          :label="tr('Migration notes', 'Notas de migracao')"
-                          :hint="tr('Explain what changed when the schema version advances.', 'Explique o que mudou quando a versao do schema avanca.')"
+                          :label="tr('Migration notes', 'Notas de migração')"
+                          :hint="tr('Explain what changed when the schema version advances.', 'Explique o que mudou quando a versão do schema avança.')"
                           @update:model-value="emit('update:authoredContentModelMigrationNotesDraft', String($event ?? ''))"
                         />
                         <div class="cms-form-grid__full cms-content-model-fields">
@@ -1034,7 +1034,7 @@
                             {{
                               tr(
                                 'Define page-level structured fields rendered in the Pages builder.',
-                                'Defina campos estruturados em nivel de pagina que serao renderizados no builder de Pages.'
+                                'Defina campos estruturados em nível de página que serão renderizados no builder de Pages.'
                               )
                             }}
                           </p>
@@ -1042,7 +1042,7 @@
                             v-if="authoredContentModelFieldDrafts.length === 0"
                             class="cms-content-model-fields__empty"
                           >
-                            {{ tr('No schema fields yet.', 'Ainda nao ha campos de schema.') }}
+                            {{ tr('No schema fields yet.', 'Ainda não há campos de schema.') }}
                           </div>
                           <div
                             v-for="(field, fieldIndex) in authoredContentModelFieldDrafts"
@@ -1109,7 +1109,7 @@
                                 v-model="field.description"
                                 outlined
                                 dense
-                                :label="tr('Field description', 'Descricao do campo')"
+                                :label="tr('Field description', 'Descrição do campo')"
                               />
                               <q-input
                                 v-model="field.placeholder"
@@ -1125,7 +1125,7 @@
                                 dense
                                 type="textarea"
                                 autogrow
-                                :label="tr('Default JSON value', 'Valor JSON padrao')"
+                                :label="tr('Default JSON value', 'Valor JSON padrão')"
                                 :hint="field.type === 'group'
                                   ? tr('Use a JSON array of objects for repeatable groups.', 'Use um array JSON de objetos para grupos repetiveis.')
                                   : tr('Use a JSON object for nested values.', 'Use um objeto JSON para valores aninhados.')"
@@ -1140,14 +1140,14 @@
                                   : getCmsContentModelFieldHtmlInputType(field.type)"
                                 :autogrow="field.repeatable"
                                 :disable="field.type === 'toggle' && !field.repeatable"
-                                :label="field.repeatable ? tr('Default values (one per line)', 'Valores padrao (um por linha)') : tr('Default value', 'Valor padrao')"
+                                :label="field.repeatable ? tr('Default values (one per line)', 'Valores padrão (um por linha)') : tr('Default value', 'Valor padrão')"
                               />
                               <CmsMediaAssetPicker
                                 v-else-if="field.type === 'media-asset'"
                                 :model-value="field.repeatable ? parseCmsRepeatableFieldValue(field.defaultValue) : field.defaultValue"
                                 :multiple="field.repeatable"
                                 :options="getCmsContentModelFieldDraftMediaOptions(field)"
-                                :label="field.repeatable ? tr('Default assets', 'Assets padrao') : tr('Default asset', 'Asset padrao')"
+                                :label="field.repeatable ? tr('Default assets', 'Assets padrão') : tr('Default asset', 'Asset padrão')"
                                 :allowed-kind-labels="getCmsMediaAllowedKindLabels(field.mediaKinds)"
                                 :any-kind-label="cmsMediaPickerUiText.anyKindLabel"
                                 :selected-preview-label="field.repeatable ? cmsMediaPickerUiText.selectedAssetsLabel : cmsMediaPickerUiText.selectedAssetLabel"
@@ -1166,7 +1166,7 @@
                                 map-options
                                 use-chips
                                 :options="getCmsContentModelFieldDraftReferenceOptions(field)"
-                                :label="field.repeatable ? tr('Default references', 'Referencias padrao') : tr('Default reference', 'Referencia padrao')"
+                                :label="field.repeatable ? tr('Default references', 'Referências padrão') : tr('Default reference', 'Referência padrão')"
                                 @update:model-value="field.defaultValue = Array.isArray($event) ? $event.join('\n') : String($event ?? '')"
                               />
                               <q-toggle
@@ -1193,8 +1193,8 @@
                                 v-model="field.descriptionPtBr"
                                 outlined
                                 dense
-                                :label="tr('PT-BR description', 'Descricao PT-BR')"
-                                :hint="tr('Leave blank to inherit the EN/base description.', 'Deixe em branco para herdar a descricao EN/base.')"
+                                :label="tr('PT-BR description', 'Descrição PT-BR')"
+                                :hint="tr('Leave blank to inherit the EN/base description.', 'Deixe em branco para herdar a descrição EN/base.')"
                               />
                               <q-input
                                 v-model="field.placeholderPtBr"
@@ -1266,7 +1266,7 @@
                                 map-options
                                 use-chips
                                 :options="cmsReferenceKindOptions"
-                                :label="tr('Allowed reference kinds', 'Tipos de referencia permitidos')"
+                                :label="tr('Allowed reference kinds', 'Tipos de referência permitidos')"
                               />
                               <q-toggle
                                 v-model="field.visibilityEnabled"
@@ -1303,7 +1303,7 @@
                                 emit-value
                                 map-options
                                 :options="getCmsContentModelFieldVisibilityOperatorOptions(field.visibilitySource)"
-                                :label="tr('Condition', 'Condicao')"
+                                :label="tr('Condition', 'Condição')"
                                 @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
                               />
                               <q-select
@@ -1331,12 +1331,12 @@
                                 outlined
                                 dense
                                 readonly
-                                :label="tr('Default toggle value', 'Valor padrao do toggle')"
+                                :label="tr('Default toggle value', 'Valor padrão do toggle')"
                               />
                               <q-toggle
                                 v-if="field.type === 'toggle' && !field.repeatable"
                                 :model-value="field.defaultValue === 'true'"
-                                :label="tr('Enabled by default', 'Habilitado por padrao')"
+                                :label="tr('Enabled by default', 'Habilitado por padrão')"
                                 @update:model-value="field.defaultValue = $event ? 'true' : 'false'"
                               />
                               <q-input
@@ -1347,7 +1347,7 @@
                                 type="textarea"
                                 autogrow
                                 class="cms-content-model-fields__options"
-                                :label="tr('Options (one per line)', 'Opcoes (uma por linha)')"
+                                :label="tr('Options (one per line)', 'Opções (uma por linha)')"
                               />
                             </div>
                           </div>
@@ -1371,7 +1371,7 @@
                                 {{
                                   tr(
                                     'Save one schema field as a preset to reuse the same contract across content models.',
-                                    'Salve um campo do schema como preset para reutilizar o mesmo contrato em outros modelos de conteudo.'
+                                    'Salve um campo do schema como preset para reutilizar o mesmo contrato em outros modelos de conteúdo.'
                                   )
                                 }}
                               </small>
@@ -1388,7 +1388,7 @@
                                 <small>{{ preset.field.type }} · {{ preset.category || tr('General', 'Geral') }}</small>
                                 <small>
                                   {{
-                                    `${preset.field.id} · ${preset.field.repeatable ? tr('Repeatable', 'Multiplo') : tr('Single value', 'Valor unico')}`
+                                    `${preset.field.id} · ${preset.field.repeatable ? tr('Repeatable', 'Múltiplo') : tr('Single value', 'Valor único')}`
                                   }}
                                 </small>
                                 <small v-if="isCmsArchivedEntity(preset)">{{ tr('Archived', 'Arquivado') }}</small>
@@ -1428,7 +1428,7 @@
                                   :model-value="preset.deprecationNote ?? ''"
                                   outlined
                                   dense
-                                  :label="tr('Deprecation note', 'Nota de descontinuacao')"
+                                  :label="tr('Deprecation note', 'Nota de descontinuação')"
                                   @update:model-value="updateCmsAuthoredContentModelFieldPresetDeprecationNote(preset.id, $event)"
                                 />
                               </div>
@@ -1481,7 +1481,7 @@
                             multiple
                             use-chips
                             :options="cmsContentModelPresetOptions"
-                            :label="tr('Allowed section presets', 'Presets de secao permitidos')"
+                            :label="tr('Allowed section presets', 'Presets de seção permitidos')"
                             @update:model-value="emit('update:authoredContentModelAllowedSectionSelections', $event)"
                           />
                         </div>
@@ -1496,7 +1496,7 @@
             <div class="cms-designer-card__rail-card">
               <CmsAuthoringPanelHeader
                 :title="tr('Designer rail', 'Rail do designer')"
-                :description="tr('Context and recovery stay pinned while you edit without duplicating the top action bar.', 'Contexto e recovery ficam fixos durante a edicao sem duplicar a barra superior.')"
+                :description="tr('Context and recovery stay pinned while you edit without duplicating the top action bar.', 'Contexto e recovery ficam fixos durante a edição sem duplicar a barra superior.')"
               />
               <CmsAuthoringMetricsList :items="cmsSettingsRailMetrics" />
             </div>
@@ -1517,12 +1517,12 @@
     </CmsAuthoringWorkbench>
     <CmsShellCard
       v-if="cmsSettingsWorkspaceView === 'preview' || cmsDesignerPreviewMode"
-      :title="tr('Settings preview', 'Preview de configuracoes')"
+      :title="tr('Settings preview', 'Preview de configurações')"
       body-class="cms-settings__preview"
     >
       <template #header-actions>
         <div class="cms-preview-toolbar__chips">
-          <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrao') }}</q-chip>
+          <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrão') }}</q-chip>
           <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTabLabel }}</q-chip>
           <q-chip dense square :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</q-chip>
         </div>
@@ -1598,7 +1598,7 @@
         <section class="cms-example-section">
           <div class="cms-example-section__header">
             <strong>{{ tr('Topbar example', 'Exemplo de topbar') }}</strong>
-            <small>{{ tr('Header height, search visibility and actions rendered together.', 'Altura do cabecalho, visibilidade da busca e acoes renderizadas em conjunto.') }}</small>
+            <small>{{ tr('Header height, search visibility and actions rendered together.', 'Altura do cabeçalho, visibilidade da busca e ações renderizadas em conjunto.') }}</small>
           </div>
           <div class="cms-preview-card cms-preview-card--topbar">
             <div class="cms-preview-topbar">
@@ -1636,7 +1636,7 @@
 
         <section class="cms-example-section">
           <div class="cms-example-section__header">
-            <strong>{{ tr('Content copy example', 'Exemplo de copy de conteudo') }}</strong>
+            <strong>{{ tr('Content copy example', 'Exemplo de copy de conteúdo') }}</strong>
             <small>{{ tr('Preview of tab labels, banners and instructional text.', 'Preview de labels de abas, banners e texto instrucional.') }}</small>
           </div>
           <div class="cms-preview-card cms-preview-card--content">

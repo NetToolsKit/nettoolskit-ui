@@ -8,8 +8,8 @@ import type { TemplateScaffoldAuthUser } from './auth-store.template'
 
 const FAKE_USER: TemplateScaffoldAuthUser = {
   id: '1',
-  name: 'Guilherme Ferreira',
-  email: 'guilherme@nettoolskit.com',
+  name: 'Admin NetToolsKit',
+  email: 'admin@nettoolskit.com',
   role: 'Admin',
 }
 

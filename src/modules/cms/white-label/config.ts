@@ -163,7 +163,7 @@ function createDefaultPagesSettings(): CmsPageSettings[] {
         },
         description: {
           en: 'Primary public landing page.',
-          'pt-BR': 'Pagina publica principal de landing.',
+          'pt-BR': 'Página pública principal de landing.',
         },
       },
       sections,

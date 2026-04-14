@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Visual regression coverage for the CMS engine.
  *
  * The suite is intentionally maintained on Windows because the existing
@@ -52,8 +52,8 @@ async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
  * Opens the settings module and waits until the hero title is ready.
  */
 async function openSettingsModule(page: Page): Promise<void> {
-  await openDrawerModule(page, /^(Settings|Configuracoes)$/)
-  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Settings|Configuracoes)$/)
+  await openDrawerModule(page, /^(Settings|Configura\u00e7\u00f5es)$/)
+  await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Settings|Configura\u00e7\u00f5es)$/)
 }
 
 /**
@@ -62,7 +62,7 @@ async function openSettingsModule(page: Page): Promise<void> {
 async function openSettingsTab(page: Page, tabName: RegExp): Promise<void> {
   const source = tabName.source.toLowerCase()
   const normalizedTabName = source.includes('content') || source.includes('conteu')
-    ? /content|conteudo/i
+    ? /content|conteúdo/i
     : source.includes('color') || source.includes('cor')
       ? /colors|cores/i
       : source.includes('brand')
@@ -378,7 +378,7 @@ async function fillTextInputDirect(input: ReturnType<typeof cmsInputByLabel>, va
  */
 async function authorPhase4VisualContentModel(page: Page, contentModelName: string): Promise<void> {
   await openSettingsModule(page)
-  await openSettingsTab(page, /^(Content|Conteudo)$/)
+  await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
   await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
   await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Phase 4 schema authoring regression')
@@ -449,7 +449,7 @@ async function authorPhase4VisualContentModel(page: Page, contentModelName: stri
   await page.getByRole('option', { name: 'Content model', exact: true }).first().click()
   await page.keyboard.press('Escape')
 
-  await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteudo)$/ }).first().click()
+  await page.getByRole('button', { name: /^(Save content model|Salvar modelo de conteúdo)$/ }).first().click()
 }
 
 /**
@@ -536,12 +536,12 @@ async function expectVisualSnapshot(page: Page, snapshotName: string): Promise<v
  * Installs the product-launch starter kit and opens Blocks.
  */
 async function installProductLaunchStarterKit(page: Page): Promise<void> {
-  await openDrawerModule(page, /^(Pages|Paginas)$/)
+  await openDrawerModule(page, /^(Pages|Páginas)$/)
   await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
 
   const starterKits = page.locator('.cms-pages__starter-kits').first()
   const productLaunchKit = starterKits.locator('.cms-page-quick-start-card', {
-    hasText: /(Starter kit · Product launch|Starter kit · Lancamento de produto)/,
+    hasText: /(Starter kit · Product launch|Starter kit · Lançamento de produto)/,
   }).first()
 
   await productLaunchKit.getByRole('button', { name: /^(Install \+ open blocks|Instalar \+ abrir blocos)$/ }).click()
@@ -581,7 +581,7 @@ test.describe('CMS engine visual regression', () => {
   test('captures pages preview in published tablet pt-BR mode', async ({ page }) => {
     await page.goto(CMS_URL)
     await publishRelease(page)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await selectOptionByFieldLabel(page, 'Preview source', 'Published')
@@ -650,7 +650,7 @@ test.describe('CMS engine visual regression', () => {
     await stabilizeVisualState(page)
     await expect(
       page.locator('.cms-config-section', {
-        has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteudo)$/ }),
+        has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteúdo)$/ }),
       }).first()
     ).toHaveScreenshot('cms-engine-phase3-content-model-authoring.png', { caret: 'hide' })
   })
@@ -658,7 +658,7 @@ test.describe('CMS engine visual regression', () => {
   test('captures phase 3 pages quick-start and command surface', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1200 })
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
 
     await selectOptionByFieldLabel(page, 'Quick command', 'Create and open blocks')
@@ -678,7 +678,7 @@ test.describe('CMS engine visual regression', () => {
     await fillTextInputDirect(cmsInputByLabel(page, 'Product name'), recoveredName)
     await expectDraftRecoverySnapshot(page, recoveredName)
 
-    await page.getByRole('button', { name: /^(Reset tenant settings to defaults|Resetar configuracoes do tenant para o padrao)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Reset tenant settings to defaults|Resetar configura\u00e7\u00f5es do tenant para o padr\u00e3o)$/ }).first().click()
     await expect(page.getByRole('button', { name: /^(Restore auto-save|Restaurar auto-save)$/ }).first()).toBeEnabled()
 
     await stabilizeVisualState(page)
@@ -698,7 +698,7 @@ test.describe('CMS engine visual regression', () => {
     await stabilizeVisualState(page)
     await expect(
       page.locator('.cms-config-section', {
-        has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteudo)$/ }),
+        has: page.locator('.q-field__label', { hasText: /^(Content model library|Biblioteca de modelos de conteúdo)$/ }),
       }).first()
     ).toHaveScreenshot('cms-engine-phase4-content-schema-authoring.png', { caret: 'hide' })
   })
@@ -709,12 +709,12 @@ test.describe('CMS engine visual regression', () => {
     await page.setViewportSize({ width: 1600, height: 1400 })
     await page.goto(CMS_URL)
     await authorPhase4VisualContentModel(page, contentModelName)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await selectOptionByFieldLabel(page, 'Content model', contentModelName)
     await openSettingsModule(page)
-    await openSettingsTab(page, /^(Content|Conteudo)$/)
+    await openSettingsTab(page, /^(Content|Conteúdo)$/)
     await selectOptionByFieldLabel(page, 'Language', 'Portuguese (Brazil)')
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
 
     await stabilizeVisualState(page)
     await expect(page.locator('.cms-page-item__custom-fields').first()).toHaveScreenshot(
@@ -726,7 +726,7 @@ test.describe('CMS engine visual regression', () => {
   test('captures phase 4 blocks section field surface', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1200 })
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^(Blocks|Blocos)$/)
     await selectOptionByFieldLabel(page, 'Target section', 'Hero (1)')
@@ -744,7 +744,7 @@ test.describe('CMS engine visual regression', () => {
   test('captures phase 5 starter-kit bundles surface', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 1400 })
     await page.goto(CMS_URL)
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     await stabilizeVisualState(page)
     await expect(page.locator('.cms-pages__starter-kits').first()).toHaveScreenshot(
       'cms-engine-phase5-pages-starter-kits.png',
@@ -758,13 +758,13 @@ test.describe('CMS engine visual regression', () => {
     await installProductLaunchStarterKit(page)
 
     const reusableBlockLibrary = page
-      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizaveis)$/) })
+      .locator('.cms-blocks-library', { has: page.getByText(/^(Reusable block library|Biblioteca de blocos reutilizáveis)$/) })
       .first()
     const starterReusableBlockRow = reusableBlockLibrary
-      .locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lancamento)/ })
+      .locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lançamento)/ })
       .first()
 
-    await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizavel)$/ }).click()
+    await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizável)$/ }).click()
     await stabilizeVisualState(page)
     await expect(page.locator('.cms-usage-drawer').first()).toHaveScreenshot(
       'cms-engine-phase5-reusable-block-impact-drawer.png',
@@ -781,7 +781,7 @@ test.describe('CMS engine visual regression', () => {
       .locator('.cms-blocks-library', { has: page.getByText(/^(Authored preset library|Biblioteca de presets authored)$/) })
       .first()
     const starterPresetRow = presetLibrary
-      .locator('.cms-reusable-block-row', { hasText: /(Preset · Product launch hero|Preset · Hero de lancamento de produto)/ })
+      .locator('.cms-reusable-block-row', { hasText: /(Preset · Product launch hero|Preset · Hero de lançamento de produto)/ })
       .first()
 
     await starterPresetRow.getByRole('button', { name: /^(Archive|Arquivar)$/ }).click()
@@ -798,11 +798,11 @@ test.describe('CMS engine visual regression', () => {
     await page.goto(CMS_URL)
     await publishRelease(page)
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     const firstPage = page.locator('.cms-page-item').first()
     await fillTextInputDirect(
       firstPage
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first(),
@@ -826,11 +826,11 @@ test.describe('CMS engine visual regression', () => {
     await page.goto(CMS_URL)
     await publishRelease(page)
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     const firstPage = page.locator('.cms-page-item').first()
     await fillTextInputDirect(
       firstPage
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first(),
@@ -854,7 +854,7 @@ test.describe('CMS engine visual regression', () => {
     const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
     await heroRow.locator('.q-btn', { hasText: 'Select' }).first().click()
     const blocksTitleInput = page
-      .locator('.cms-blocks-fields .q-field:visible', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+      .locator('.cms-blocks-fields .q-field:visible', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
       .first()
       .locator('input, textarea')
       .first()
@@ -895,11 +895,11 @@ test.describe('CMS engine visual regression', () => {
     await page.goto(CMS_URL)
     await publishRelease(page)
 
-    await openDrawerModule(page, /^(Pages|Paginas)$/)
+    await openDrawerModule(page, /^(Pages|Páginas)$/)
     const firstPage = page.locator('.cms-page-item').first()
     await fillTextInputDirect(
       firstPage
-        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Titulo)$/ }) })
+        .locator('.cms-page-item__grid .q-field', { has: page.locator('.q-field__label', { hasText: /^(Title|Título)$/ }) })
         .first()
         .locator('input, textarea')
         .first(),
@@ -910,7 +910,7 @@ test.describe('CMS engine visual regression', () => {
     const releasesEditor = page.locator('.cms-releases__editor').first()
     await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
     await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisao)$/ }).first().click()
+    await page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisão)$/ }).first().click()
 
     await stabilizeVisualState(page)
     await expect(page.locator('[data-cms-release-history]').first()).toHaveScreenshot(

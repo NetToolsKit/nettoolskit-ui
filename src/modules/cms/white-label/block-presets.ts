@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Block preset catalog for the CMS engine.
  * Presets provide localized starter content without coupling the builder to a backend.
  */
@@ -62,11 +62,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'layout',
     name: {
       en: 'Header · Documentation',
-      'pt-BR': 'Cabecalho · Documentacao',
+      'pt-BR': 'Cabeçalho · Documentação',
     },
     description: {
       en: 'Header starter tuned for docs and developer navigation.',
-      'pt-BR': 'Starter de cabecalho ajustado para docs e navegacao de desenvolvedor.',
+      'pt-BR': 'Starter de cabeçalho ajustado para docs e navegação de desenvolvedor.',
     },
     props: {
       logoText: 'NTK',
@@ -87,7 +87,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
         navItems: [
           { label: 'Features', href: '#features', external: false },
           { label: 'Componentes', href: '#components', external: false },
-          { label: 'Instalacao', href: '#installation', external: false },
+          { label: 'Instalação', href: '#installation', external: false },
         ],
       },
     },
@@ -98,11 +98,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'layout',
     name: {
       en: 'Header · Product navigation',
-      'pt-BR': 'Cabecalho · Navegacao de produto',
+      'pt-BR': 'Cabeçalho · Navegação de produto',
     },
     description: {
       en: 'Header starter with a stronger product CTA and broader navigation.',
-      'pt-BR': 'Starter de cabecalho com CTA principal de produto e navegacao mais ampla.',
+      'pt-BR': 'Starter de cabeçalho com CTA principal de produto e navegação mais ampla.',
     },
     props: {
       logoText: 'NTK',
@@ -123,7 +123,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
         navItems: [
           { label: 'Features', href: '#features', external: false },
           { label: 'Temas', href: '#themes', external: false },
-          { label: 'Instalacao', href: '#installation', external: false },
+          { label: 'Instalação', href: '#installation', external: false },
         ],
       },
     },
@@ -134,11 +134,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'layout',
     name: {
       en: 'Hero · Product launch',
-      'pt-BR': 'Hero · Lancamento de produto',
+      'pt-BR': 'Hero · Lançamento de produto',
     },
     description: {
       en: 'Hero starter for product launches with dual CTA and media.',
-      'pt-BR': 'Starter de hero para lancamentos com duas CTAs e midia.',
+      'pt-BR': 'Starter de hero para lançamentos com duas CTAs e mídia.',
     },
     props: {
       badge: 'CMS ENGINE',
@@ -153,9 +153,9 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     localizedProps: {
       'pt-BR': {
         badge: 'MOTOR CMS',
-        title: 'Monte paginas mais rapido',
-        subtitle: 'Componha secoes com templates reutilizaveis e tokens prontos para publicar.',
-        primaryAction: { label: 'Comecar edicao', href: '#installation', external: false },
+        title: 'Monte páginas mais rápido',
+        subtitle: 'Componha seções com templates reutilizáveis e tokens prontos para publicar.',
+        primaryAction: { label: 'Começar edição', href: '#installation', external: false },
         secondaryAction: { label: 'Ver GitHub', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue', external: true },
       },
     },
@@ -166,11 +166,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'layout',
     name: {
       en: 'Hero · Video showcase',
-      'pt-BR': 'Hero · Showcase em video',
+      'pt-BR': 'Hero · Showcase em vídeo',
     },
     description: {
       en: 'Hero starter focused on motion, media and cinematic reveal.',
-      'pt-BR': 'Starter de hero focado em movimento, midia e reveal cinematico.',
+      'pt-BR': 'Starter de hero focado em movimento, mídia e reveal cinemático.',
     },
     props: {
       badge: 'LIVE PREVIEW',
@@ -194,7 +194,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
       'pt-BR': {
         badge: 'PREVIEW AO VIVO',
         title: 'Mostre o produto em movimento',
-        subtitle: 'Use video, parallax e reveal mask para uma primeira impressao premium.',
+        subtitle: 'Use vídeo, parallax e reveal mask para uma primeira impressão premium.',
         primaryAction: { label: 'Ver preview', href: '#components', external: false },
         secondaryAction: { label: 'Abrir CMS', href: '?cms=1', external: false },
       },
@@ -206,11 +206,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'content',
     name: {
       en: 'Stats · Proof strip',
-      'pt-BR': 'Metricas · Prova social',
+      'pt-BR': 'Métricas · Prova social',
     },
     description: {
       en: 'Compact KPI block for trust signals and adoption metrics.',
-      'pt-BR': 'Bloco compacto de KPIs para sinais de confianca e adocao.',
+      'pt-BR': 'Bloco compacto de KPIs para sinais de confiança e adoção.',
     },
     props: {
       title: 'Trusted in production',
@@ -226,8 +226,8 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     },
     localizedProps: {
       'pt-BR': {
-        title: 'Confiavel em producao',
-        subtitle: 'Mostre as metricas que ajudam a pagina a converter.',
+        title: 'Confiável em produção',
+        subtitle: 'Mostre as métricas que ajudam a página a converter.',
         items: [
           { id: 'components', label: 'Componentes', value: '22+' },
           { id: 'composables', label: 'Composables', value: '11' },
@@ -242,11 +242,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'content',
     name: {
       en: 'Stats · Dashboard KPIs',
-      'pt-BR': 'Metricas · KPIs de dashboard',
+      'pt-BR': 'Métricas · KPIs de dashboard',
     },
     description: {
       en: 'Metric strip focused on business and operational KPIs.',
-      'pt-BR': 'Faixa de metricas focada em KPIs operacionais e de negocio.',
+      'pt-BR': 'Faixa de métricas focada em KPIs operacionais e de negócio.',
     },
     props: {
       title: 'Track what moves the funnel',
@@ -263,10 +263,10 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     localizedProps: {
       'pt-BR': {
         title: 'Acompanhe o que move o funil',
-        subtitle: 'Conecte atividade, receita e ativacao em uma unica faixa de KPIs.',
+        subtitle: 'Conecte atividade, receita e ativação em uma única faixa de KPIs.',
         items: [
           { id: 'pipeline', label: 'Pipeline', value: '$128k' },
-          { id: 'activation', label: 'Ativacao', value: '67%' },
+          { id: 'activation', label: 'Ativação', value: '67%' },
           { id: 'velocity', label: 'Velocidade', value: '14d' },
         ],
       },
@@ -303,12 +303,12 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     },
     localizedProps: {
       'pt-BR': {
-        title: 'Blocos de UI reutilizaveis',
-        subtitle: 'Componentes, composables e primitives de shell organizados para times de producao.',
+        title: 'Blocos de UI reutilizáveis',
+        subtitle: 'Componentes, composables e primitives de shell organizados para times de produção.',
         items: [
-          { id: 'components', title: 'Componentes composables', description: 'Blocos compartilhados prontos para varios produtos.', icon: 'widgets' },
-          { id: 'tokens', title: 'Tematizacao por tokens', description: 'Branding e layout continuam configuraveis.', icon: 'palette' },
-          { id: 'cms', title: 'Motor CMS pronto', description: 'Autor paginas com secoes estruturadas e blocos reutilizaveis.', icon: 'view_quilt' },
+          { id: 'components', title: 'Componentes composables', description: 'Blocos compartilhados prontos para vários produtos.', icon: 'widgets' },
+          { id: 'tokens', title: 'Tematização por tokens', description: 'Branding e layout continuam configuráveis.', icon: 'palette' },
+          { id: 'cms', title: 'Motor CMS pronto', description: 'Autor páginas com seções estruturadas e blocos reutilizáveis.', icon: 'view_quilt' },
         ],
       },
     },
@@ -323,7 +323,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     },
     description: {
       en: 'Feature grid focused on governance, releases and operational rigor.',
-      'pt-BR': 'Grid de features focado em governanca, releases e rigor operacional.',
+      'pt-BR': 'Grid de features focado em governança, releases e rigor operacional.',
     },
     props: {
       title: 'Engineered for enterprise delivery',
@@ -341,11 +341,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     localizedProps: {
       'pt-BR': {
         title: 'Projetado para entrega enterprise',
-        subtitle: 'Governanca, releases e validacoes ficam dentro do motor de autoria.',
+        subtitle: 'Governança, releases e validações ficam dentro do motor de autoria.',
         items: [
-          { id: 'workflow', title: 'Ciente de workflow', description: 'Papeis, estagios e auditoria permanecem explicitos.', icon: 'rule' },
-          { id: 'releases', title: 'Orquestracao de release', description: 'Rascunhe, valide, agende e publique sem lock-in de backend.', icon: 'rocket_launch' },
-          { id: 'validation', title: 'Validacao compartilhada', description: 'Autoria e gates de release usam o mesmo motor de integridade.', icon: 'verified' },
+          { id: 'workflow', title: 'Ciente de workflow', description: 'Papéis, estágios e auditoria permanecem explícitos.', icon: 'rule' },
+          { id: 'releases', title: 'Orquestração de release', description: 'Rascunhe, valide, agende e publique sem lock-in de backend.', icon: 'rocket_launch' },
+          { id: 'validation', title: 'Validação compartilhada', description: 'Autoria e gates de release usam o mesmo motor de integridade.', icon: 'verified' },
         ],
       },
     },
@@ -356,7 +356,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'conversion',
     name: {
       en: 'CTA · Installation guide',
-      'pt-BR': 'CTA · Guia de instalacao',
+      'pt-BR': 'CTA · Guia de instalação',
     },
     description: {
       en: 'CTA starter for setup, trial or onboarding actions.',
@@ -374,8 +374,8 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     },
     localizedProps: {
       'pt-BR': {
-        title: 'Va da instalacao a primeira pagina rapidamente',
-        subtitle: 'Use o motor CMS, presets reutilizaveis e tokens desde o primeiro dia.',
+        title: 'Vá da instalação à primeira página rapidamente',
+        subtitle: 'Use o motor CMS, presets reutilizáveis e tokens desde o primeiro dia.',
         primaryCTA: { text: 'Instalar agora', link: '#installation' },
         secondaryCTA: { text: 'Abrir CMS', link: '?cms=1' },
       },
@@ -391,7 +391,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     },
     description: {
       en: 'CTA starter ready for final conversion at the end of the page.',
-      'pt-BR': 'Starter de CTA pronto para conversao final no fim da pagina.',
+      'pt-BR': 'Starter de CTA pronto para conversão final no fim da página.',
     },
     props: {
       title: 'Ship your next frontend faster',
@@ -405,8 +405,8 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     },
     localizedProps: {
       'pt-BR': {
-        title: 'Entregue seu proximo frontend mais rapido',
-        subtitle: 'Use paginas orientadas por schema, blocos reutilizaveis e tokens white-label desde o primeiro dia.',
+        title: 'Entregue seu próximo frontend mais rápido',
+        subtitle: 'Use páginas orientadas por schema, blocos reutilizáveis e tokens white-label desde o primeiro dia.',
         primaryCTA: { text: 'Testar CMS', link: '?cms=1' },
         secondaryCTA: { text: 'Ler docs', link: '#resources' },
       },
@@ -418,11 +418,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'layout',
     name: {
       en: 'Footer · Documentation hub',
-      'pt-BR': 'Rodape · Hub de documentacao',
+      'pt-BR': 'Rodapé · Hub de documentação',
     },
     description: {
       en: 'Footer starter centered on docs, components and ecosystem links.',
-      'pt-BR': 'Starter de rodape centrado em docs, componentes e links do ecossistema.',
+      'pt-BR': 'Starter de rodapé centrado em docs, componentes e links do ecossistema.',
     },
     props: {
       variant: 'dark',
@@ -454,12 +454,12 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
       'pt-BR': {
         socialTitle: 'Acompanhe',
         brandDescription: 'Uma biblioteca completa de componentes Vue 3 + Quasar com tema, composables e design tokens.',
-        copyrightText: 'Construido com Vue 3 + Quasar.',
+        copyrightText: 'Construído com Vue 3 + Quasar.',
         linkSections: [
           {
             title: 'Recursos',
             links: [
-              { label: 'Documentacao', href: '#resources' },
+              { label: 'Documentação', href: '#resources' },
               { label: 'Demo Page', href: '#hero' },
             ],
           },
@@ -479,11 +479,11 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
     category: 'layout',
     name: {
       en: 'Footer · Product links',
-      'pt-BR': 'Rodape · Links de produto',
+      'pt-BR': 'Rodapé · Links de produto',
     },
     description: {
       en: 'Footer starter for product positioning, support and navigation.',
-      'pt-BR': 'Starter de rodape para posicionamento de produto, suporte e navegacao.',
+      'pt-BR': 'Starter de rodapé para posicionamento de produto, suporte e navegação.',
     },
     props: {
       variant: 'dark',
@@ -527,7 +527,7 @@ const blockPresetCatalog: Readonly<Record<CmsBuiltinBlockPresetId, CmsBlockPrese
           {
             title: 'Suporte',
             links: [
-              { label: 'Instalacao', href: '#installation' },
+              { label: 'Instalação', href: '#installation' },
               { label: 'GitHub', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue' },
             ],
           },

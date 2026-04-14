@@ -60,28 +60,28 @@ const pageTemplates: ReadonlyArray<CmsPageTemplateDefinition> = [
     contentModelId: 'landing-page',
     label: {
       en: 'Landing (default)',
-      'pt-BR': 'Landing (padrao)',
+      'pt-BR': 'Landing (padrão)',
     },
     description: {
       en: 'Balanced public page with header, hero, features and CTA flow.',
-      'pt-BR': 'Pagina publica equilibrada com header, hero, features e fluxo de CTA.',
+      'pt-BR': 'Página pública equilibrada com header, hero, features e fluxo de CTA.',
     },
     baseId: 'landing-page',
     basePath: '/landing',
     title: {
       en: 'Landing Page',
-      'pt-BR': 'Pagina de Landing',
+      'pt-BR': 'Página de Landing',
     },
     pageDescription: {
       en: 'Primary public landing page.',
-      'pt-BR': 'Pagina principal publica de landing.',
+      'pt-BR': 'Página principal pública de landing.',
     },
     sectionPresets: [
-      { id: 'header', label: { en: 'Header', 'pt-BR': 'Cabecalho' }, enabled: true, blockType: 'landing.header' },
+      { id: 'header', label: { en: 'Header', 'pt-BR': 'Cabeçalho' }, enabled: true, blockType: 'landing.header' },
       { id: 'hero', label: { en: 'Hero', 'pt-BR': 'Hero' }, enabled: true, blockType: 'landing.hero' },
       { id: 'features', label: { en: 'Features', 'pt-BR': 'Features' }, enabled: true, blockType: 'landing.features' },
-      { id: 'installation', label: { en: 'Installation', 'pt-BR': 'Instalacao' }, enabled: true, blockType: 'landing.cta' },
-      { id: 'footer', label: { en: 'Footer', 'pt-BR': 'Rodape' }, enabled: true, blockType: 'landing.footer' },
+      { id: 'installation', label: { en: 'Installation', 'pt-BR': 'Instalação' }, enabled: true, blockType: 'landing.cta' },
+      { id: 'footer', label: { en: 'Footer', 'pt-BR': 'Rodapé' }, enabled: true, blockType: 'landing.footer' },
     ],
   },
   {
@@ -93,25 +93,25 @@ const pageTemplates: ReadonlyArray<CmsPageTemplateDefinition> = [
     },
     description: {
       en: 'Marketing page with metrics section and conversion CTA.',
-      'pt-BR': 'Pagina de marketing com metricas e CTA de conversao.',
+      'pt-BR': 'Página de marketing com métricas e CTA de conversão.',
     },
     baseId: 'marketing-page',
     basePath: '/marketing',
     title: {
       en: 'Marketing Page',
-      'pt-BR': 'Pagina de Marketing',
+      'pt-BR': 'Página de Marketing',
     },
     pageDescription: {
       en: 'Campaign-oriented page focused on conversion.',
-      'pt-BR': 'Pagina orientada a campanha com foco em conversao.',
+      'pt-BR': 'Página orientada a campanha com foco em conversão.',
     },
     sectionPresets: [
-      { id: 'header', label: { en: 'Header', 'pt-BR': 'Cabecalho' }, enabled: true, blockType: 'landing.header' },
+      { id: 'header', label: { en: 'Header', 'pt-BR': 'Cabeçalho' }, enabled: true, blockType: 'landing.header' },
       { id: 'hero', label: { en: 'Hero', 'pt-BR': 'Hero' }, enabled: true, blockType: 'landing.hero' },
-      { id: 'metrics', label: { en: 'Metrics', 'pt-BR': 'Metricas' }, enabled: true, blockType: 'landing.stats' },
-      { id: 'features', label: { en: 'Benefits', 'pt-BR': 'Beneficios' }, enabled: true, blockType: 'landing.features' },
+      { id: 'metrics', label: { en: 'Metrics', 'pt-BR': 'Métricas' }, enabled: true, blockType: 'landing.stats' },
+      { id: 'features', label: { en: 'Benefits', 'pt-BR': 'Benefícios' }, enabled: true, blockType: 'landing.features' },
       { id: 'cta', label: { en: 'CTA', 'pt-BR': 'CTA' }, enabled: true, blockType: 'landing.cta' },
-      { id: 'footer', label: { en: 'Footer', 'pt-BR': 'Rodape' }, enabled: true, blockType: 'landing.footer' },
+      { id: 'footer', label: { en: 'Footer', 'pt-BR': 'Rodapé' }, enabled: true, blockType: 'landing.footer' },
     ],
   },
   {
@@ -119,25 +119,25 @@ const pageTemplates: ReadonlyArray<CmsPageTemplateDefinition> = [
     contentModelId: 'blank-page',
     label: {
       en: 'Blank page',
-      'pt-BR': 'Pagina em branco',
+      'pt-BR': 'Página em branco',
     },
     description: {
       en: 'Minimal scaffold to compose sections from scratch.',
-      'pt-BR': 'Estrutura minima para montar secoes do zero.',
+      'pt-BR': 'Estrutura mínima para montar seções do zero.',
     },
     baseId: 'blank-page',
     basePath: '/blank',
     title: {
       en: 'Blank Page',
-      'pt-BR': 'Pagina em Branco',
+      'pt-BR': 'Página em Branco',
     },
     pageDescription: {
       en: 'Start from scratch and compose your own sections.',
-      'pt-BR': 'Comece do zero e componha suas proprias secoes.',
+      'pt-BR': 'Comece do zero e componha suas próprias seções.',
     },
     sectionPresets: [
       { id: 'hero', label: { en: 'Hero', 'pt-BR': 'Hero' }, enabled: true, blockType: 'landing.hero' },
-      { id: 'footer', label: { en: 'Footer', 'pt-BR': 'Rodape' }, enabled: true, blockType: 'landing.footer' },
+      { id: 'footer', label: { en: 'Footer', 'pt-BR': 'Rodapé' }, enabled: true, blockType: 'landing.footer' },
     ],
   },
 ]

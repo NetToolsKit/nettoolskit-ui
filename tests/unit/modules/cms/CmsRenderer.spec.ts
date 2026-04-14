@@ -217,7 +217,7 @@ describe('CmsRenderer', () => {
                 props: {
                   'pt-BR': {
                     title: 'Monte mais rapido',
-                    subtitle: 'Use templates reutilizaveis.',
+                    subtitle: 'Use templates reutilizáveis.',
                   },
                 },
               },
@@ -238,7 +238,7 @@ describe('CmsRenderer', () => {
     })
 
     expect(wrapper.find('.hero-block').text()).toContain('Monte mais rapido')
-    expect(wrapper.find('.hero-block').text()).toContain('Use templates reutilizaveis.')
+    expect(wrapper.find('.hero-block').text()).toContain('Use templates reutilizáveis.')
   })
 
   it('should render nested children when block accepts children', () => {
