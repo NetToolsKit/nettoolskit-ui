@@ -157,11 +157,29 @@ Suggested commit checkpoint:
 
 ## Validation Checklist
 
-- `npm run type-check`
-- `npm run test -- tests/unit/samples/OriginalReferenceApp.spec.ts tests/unit/templates/HorizontalMenuLinkTemplate.spec.ts`
-- `npm run build:samples`
-- Desktop comparison against `http://127.0.0.1:9002/pipeline`
-- Mobile comparison against `http://127.0.0.1:9002/pipeline`
+- [x] `npm run type-check`
+- [x] `npm run test -- tests/unit/samples/OriginalReferenceApp.spec.ts tests/unit/templates/HorizontalMenuLinkTemplate.spec.ts`
+- [x] `npm run build:samples`
+- [x] Desktop comparison (1440px) — dashboard, drawer, mini mode, horizontal mode, labels-in-mini, section navigation
+- [x] Mobile comparison (375px) — responsive stacked layout, no drawer overlay, compact top clients
+
+## Audit Results
+
+### Task Completion Summary
+
+| Task | Status | Commit | Notes |
+|------|--------|--------|-------|
+| 1 — Global baseline | ✅ | `129e4e3` | Title "Atlas Flow", dynamic greeting, accent fixes |
+| 2 — Header/brand | ✅ | `3764beb` | Logo height: 32px (was width: 120px) |
+| 3 — Menu/navigation | ✅ | (no code changes needed) | All behaviors verified: mini, horizontal, labels, sticky bottom, active states |
+| 4 — Runtime copy/data | ✅ | `129e4e3` | Combined with Task 1: avatar initials, accented text |
+| 5 — Final audit | ✅ | this commit | Desktop + mobile parity confirmed |
+
+### Remaining Intentional Differences
+
+- OriginalReferenceApp uses query-param navigation (`?section=X`) instead of Vue Router — intentional for non-router sample
+- Reference has additional routes (wiki, reports, profile) not present in sample — intentional scope reduction
+- Sample uses `MainLayoutTemplate` (reusable library) vs reference custom layout — architecture difference by design
 
 ## Risks
 
@@ -171,7 +189,9 @@ Suggested commit checkpoint:
 
 ## Closeout Expectations
 
-- Update plan and spec statuses before closing the workstream
-- Keep the public sample as a single runtime at `/`
-- Do not reintroduce extra sample families or showcase routes
-- Prefer one or two intentional commits per completed slice
+- [x] Update plan and spec statuses before closing the workstream
+- [x] Keep the public sample as a single runtime at `/`
+- [x] Do not reintroduce extra sample families or showcase routes
+- [x] Prefer one or two intentional commits per completed slice
+
+## Status: COMPLETED
