@@ -26,6 +26,18 @@
       </template>
 
       <template #header-actions="{ layoutControls }">
+        <div class="ntk-original-reference__theme-dots">
+          <button
+            v-for="theme in themeOptions"
+            :key="theme.id"
+            class="ntk-original-reference__theme-dot"
+            :class="{ 'ntk-original-reference__theme-dot--active': activeTheme === theme.id }"
+            :style="{ background: theme.color }"
+            :title="theme.label"
+            @click="setTheme(theme.id)"
+          />
+        </div>
+
         <UserMenuTemplate
           :model-value="layoutControls.horizontalMode"
           :show-labels-in-mini="layoutControls.showLabelsInMini"
@@ -88,7 +100,6 @@
         <q-btn
           fab
           icon="smart_toy"
-          color="teal-8"
           class="ntk-original-reference__floating-action"
           @click="assistantDialogOpen = true"
         >
@@ -114,22 +125,22 @@
               <q-btn
                 flat
                 no-caps
-                color="primary"
                 label="Dashboard"
+                class="ntk-original-reference__accent-btn"
                 @click="openAssistantAction('dashboard')"
               />
               <q-btn
                 flat
                 no-caps
-                color="primary"
                 label="Configurações"
+                class="ntk-original-reference__accent-btn"
                 @click="openAssistantAction('configurations')"
               />
               <q-btn
                 unelevated
                 no-caps
-                color="primary"
                 label="Landing"
+                class="ntk-original-reference__accent-btn--filled"
                 @click="openAssistantAction('landing')"
               />
             </q-card-actions>
@@ -151,6 +162,9 @@ import PlaceholderTemplate from '../../src/templates/pages/system/PlaceholderTem
 import type { TemplatePageAction, TemplatePageHint } from '../../src/templates/pages/page-template.types'
 import OriginalReferenceCharts from './OriginalReferenceCharts.vue'
 import { originalReferenceDashboardSample } from './original-reference.sample-data'
+import { useThemeSwitcher } from '../../src/composables/useThemeSwitcher'
+
+const { activeTheme, themeOptions, setTheme } = useThemeSwitcher()
 
 const referenceHeaderLogoUrl = new URL('../assets/reference-header-logo.png', import.meta.url).href
 
@@ -334,28 +348,28 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .ntk-original-reference {
-  --ntk-template-layout-shell-bg: #e8e8e8;
-  --ntk-template-layout-page-bg: #e8e8e8;
-  --ntk-template-layout-header-bg: #ffffff;
-  --ntk-template-layout-header-text: #0f766e;
-  --ntk-template-layout-title-color: #1f2937;
+  --ntk-template-layout-shell-bg: var(--ntk-shell-bg, #f1f5f9);
+  --ntk-template-layout-page-bg: var(--ntk-shell-bg, #f1f5f9);
+  --ntk-template-layout-header-bg: var(--ntk-header-bg, #ffffff);
+  --ntk-template-layout-header-text: var(--ntk-accent, #0f766e);
+  --ntk-template-layout-title-color: var(--ntk-text-heading, #1f2937);
   --ntk-template-layout-header-height: 50px;
   --ntk-template-layout-header-padding: 0 16px 0 12px;
   --ntk-template-layout-header-shadow: none;
-  --ntk-template-layout-header-border: rgba(0, 0, 0, 0.12);
-  --ntk-template-layout-drawer-border: rgba(0, 0, 0, 0.21);
+  --ntk-template-layout-header-border: var(--ntk-border, rgba(0, 0, 0, 0.12));
+  --ntk-template-layout-drawer-border: var(--ntk-border-strong, rgba(0, 0, 0, 0.21));
   --ntk-template-layout-horizontal-bg: linear-gradient(90deg, #1e293b 0%, #334155 100%);
   --ntk-template-layout-reference-nav-item-margin: 0;
   --ntk-template-layout-reference-nav-item-radius: 0;
-  --ntk-template-layout-reference-nav-hover-bg: rgba(0, 0, 0, 0.05);
-  --ntk-template-layout-reference-nav-active-bg: rgba(255, 255, 255, 0.15);
-  --ntk-template-layout-reference-nav-active-border: rgba(255, 255, 255, 0.8);
+  --ntk-template-layout-reference-nav-hover-bg: var(--ntk-nav-hover-bg, rgba(0, 0, 0, 0.05));
+  --ntk-template-layout-reference-nav-active-bg: var(--ntk-nav-active-bg, rgba(255, 255, 255, 0.15));
+  --ntk-template-layout-reference-nav-active-border: var(--ntk-nav-active-border, rgba(255, 255, 255, 0.8));
   --ntk-template-user-menu-header-bg: rgba(0, 0, 0, 0.02);
   --ntk-template-user-menu-radius: 8px;
   --ntk-template-user-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  --ntk-template-user-menu-avatar-bg: #14b8a6;
-  --ntk-template-user-menu-avatar-border: #ffffff;
-  --ntk-template-user-menu-avatar-color: #ffffff;
+  --ntk-template-user-menu-avatar-bg: var(--ntk-avatar-bg, #0f766e);
+  --ntk-template-user-menu-avatar-border: var(--ntk-avatar-border, #ffffff);
+  --ntk-template-user-menu-avatar-color: var(--ntk-avatar-color, #ffffff);
   min-height: 100vh;
 }
 
@@ -366,16 +380,45 @@ onBeforeUnmount(() => {
   display: block;
 }
 
+.ntk-original-reference__theme-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+}
+
+.ntk-original-reference__theme-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  padding: 0;
+  outline: none;
+}
+
+.ntk-original-reference__theme-dot:hover {
+  transform: scale(1.2);
+}
+
+.ntk-original-reference__theme-dot--active {
+  border-color: var(--ntk-text-heading, #0f172a);
+  transform: scale(1.15);
+}
+
 .ntk-original-reference__floating-action {
   position: fixed !important;
   bottom: 24px;
   right: 24px;
   z-index: 1999;
-  box-shadow: 0 4px 16px rgba(15, 118, 110, 0.3);
+  background: var(--ntk-accent, #0f766e) !important;
+  color: var(--ntk-text-on-accent, #ffffff) !important;
+  box-shadow: 0 4px 16px var(--ntk-fab-shadow, rgba(15, 118, 110, 0.3));
 }
 
 .ntk-original-reference__floating-action:hover {
-  box-shadow: 0 6px 24px rgba(15, 118, 110, 0.4);
+  box-shadow: 0 6px 24px var(--ntk-fab-shadow-hover, rgba(15, 118, 110, 0.4));
 }
 
 .ntk-original-reference__assistant-dialog {
@@ -385,21 +428,36 @@ onBeforeUnmount(() => {
 .ntk-original-reference__assistant-title {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--ntk-text-heading, #1e293b);
 }
 
 .ntk-original-reference__assistant-copy {
   margin: 8px 0 0;
-  color: #64748b;
+  color: var(--ntk-text-muted, #64748b);
   line-height: 1.5;
 }
 
+/* Accent buttons — replace Quasar color="primary" */
+.ntk-original-reference__accent-btn {
+  color: var(--ntk-accent, #0f766e) !important;
+}
+
+.ntk-original-reference__accent-btn--filled {
+  background: var(--ntk-accent, #0f766e) !important;
+  color: var(--ntk-text-on-accent, #ffffff) !important;
+}
+
 .ntk-original-reference :deep(.ntk-template-main-layout__menu-btn .q-btn) {
-  color: #0f766e;
+  color: var(--ntk-accent, #0f766e);
 }
 
 .ntk-original-reference :deep(.ntk-template-user-menu__avatar) {
   box-shadow: none;
+}
+
+/* Override Quasar toggle colors inside user menu */
+.ntk-original-reference :deep(.q-toggle__inner--truthy) {
+  color: var(--ntk-accent, #0f766e) !important;
 }
 
 @media (max-width: 768px) {

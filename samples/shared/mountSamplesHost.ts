@@ -50,6 +50,7 @@ import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
 
 import '../../src/styles/tokens.scss'
+import '../../src/styles/themes.css'
 import '../../src/styles/global.scss'
 
 /**

@@ -222,7 +222,7 @@ const profile = computed<TemplateUserMenuProfile>(() => {
   align-items: center;
   justify-content: center;
   border: 2px solid var(--ntk-template-user-menu-avatar-border, #ffffff);
-  background: var(--ntk-template-user-menu-avatar-bg, var(--q-secondary));
+  background: var(--ntk-template-user-menu-avatar-bg, var(--ntk-avatar-bg, #64748b));
   color: var(--ntk-template-user-menu-avatar-color, #ffffff);
   font-weight: 600;
   line-height: 1;
@@ -262,5 +262,15 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 
 .ntk-template-user-menu :deep(.q-item__label--caption) {
   color: var(--ntk-template-user-menu-muted, #64748b) !important;
+}
+
+/* Override Quasar color="primary" to use theme accent */
+.ntk-template-user-menu :deep(.q-btn.text-primary),
+.ntk-template-user-menu :deep(.q-btn .text-primary) {
+  color: var(--ntk-accent, var(--q-primary)) !important;
+}
+
+.ntk-template-user-menu :deep(.q-toggle__inner--truthy) {
+  color: var(--ntk-accent, var(--q-primary)) !important;
 }
 </style>

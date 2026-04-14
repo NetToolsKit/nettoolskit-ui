@@ -1,0 +1,272 @@
+/**
+ * NetToolsKit Theme System
+ * ========================
+ * Paletas de cores switcháveis via [data-theme] no root.
+ *
+ * USO:
+ *   document.documentElement.dataset.theme = 'revolut' | 'claude' | 'warp' | 'resend' | 'superhuman' | 'kraken'
+ *
+ * Toda variável aqui é consumida por tokens.scss, reference-app-bridge.scss
+ * e diretamente por componentes via --ntk-accent, --ntk-avatar-bg etc.
+ */
+
+/* ============================================================
+ * DEFAULT / REVOLUT  (teal fintech)
+ * ============================================================ */
+:root,
+[data-theme='revolut'] {
+  --ntk-accent: #0f766e;
+  --ntk-accent-hover: #115e59;
+  --ntk-accent-soft: rgba(15, 118, 110, 0.08);
+  --ntk-accent-rgb: 15, 118, 110;
+
+  --ntk-shell-bg: #f1f5f9;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+
+  --ntk-text-heading: #0f172a;
+  --ntk-text-body: #334155;
+  --ntk-text-muted: #64748b;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #e2e8f0;
+  --ntk-border-strong: #cbd5e1;
+
+  --ntk-avatar-bg: #0f766e;
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(15, 118, 110, 0.3);
+  --ntk-fab-shadow-hover: rgba(15, 118, 110, 0.4);
+
+  --ntk-row-bg: #f8fafc;
+  --ntk-row-hover-bg: #f1f5f9;
+
+  --ntk-bar-fill: #0f766e;
+  --ntk-accent-value: #10b981;
+
+  /* Drawer / nav (reference mode — light sidebar) */
+  --ntk-drawer-text: #334155;
+  --ntk-nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --ntk-nav-active-bg: rgba(15, 118, 110, 0.08);
+  --ntk-nav-active-border: #0f766e;
+
+  /* Dark scheme flag — light themes = 0, dark themes = 1 */
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * CLAUDE  (warm terracotta)
+ * ============================================================ */
+[data-theme='claude'] {
+  --ntk-accent: #c96442;
+  --ntk-accent-hover: #b5593a;
+  --ntk-accent-soft: rgba(201, 100, 66, 0.08);
+  --ntk-accent-rgb: 201, 100, 66;
+
+  --ntk-shell-bg: #faf9f5;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+
+  --ntk-text-heading: #141413;
+  --ntk-text-body: #4d4c48;
+  --ntk-text-muted: #5e5d59;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #e8e6dc;
+  --ntk-border-strong: #d1cfc5;
+
+  --ntk-avatar-bg: #c96442;
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(201, 100, 66, 0.3);
+  --ntk-fab-shadow-hover: rgba(201, 100, 66, 0.4);
+
+  --ntk-row-bg: #faf9f5;
+  --ntk-row-hover-bg: #f5f4ed;
+
+  --ntk-bar-fill: #c96442;
+  --ntk-accent-value: #c96442;
+
+  --ntk-drawer-text: #4d4c48;
+  --ntk-nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --ntk-nav-active-bg: rgba(201, 100, 66, 0.08);
+  --ntk-nav-active-border: #c96442;
+
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * WARP  (dark minimal)
+ * ============================================================ */
+[data-theme='warp'] {
+  --ntk-accent: #e2e2e2;
+  --ntk-accent-hover: #ffffff;
+  --ntk-accent-soft: rgba(255, 255, 255, 0.06);
+  --ntk-accent-rgb: 226, 226, 226;
+
+  --ntk-shell-bg: #0e0e0d;
+  --ntk-card-bg: #1a1a19;
+  --ntk-header-bg: #141413;
+  --ntk-drawer-bg: #141413;
+
+  --ntk-text-heading: #faf9f6;
+  --ntk-text-body: #c8c8c4;
+  --ntk-text-muted: #8a8a86;
+  --ntk-text-on-accent: #0e0e0d;
+
+  --ntk-border: rgba(226, 226, 226, 0.12);
+  --ntk-border-strong: rgba(226, 226, 226, 0.22);
+
+  --ntk-avatar-bg: #353534;
+  --ntk-avatar-color: #faf9f6;
+  --ntk-avatar-border: rgba(255, 255, 255, 0.16);
+
+  --ntk-fab-shadow: rgba(255, 255, 255, 0.08);
+  --ntk-fab-shadow-hover: rgba(255, 255, 255, 0.14);
+
+  --ntk-row-bg: rgba(255, 255, 255, 0.03);
+  --ntk-row-hover-bg: rgba(255, 255, 255, 0.06);
+
+  --ntk-bar-fill: #e2e2e2;
+  --ntk-accent-value: #e2e2e2;
+
+  --ntk-drawer-text: #c8c8c4;
+  --ntk-nav-hover-bg: rgba(255, 255, 255, 0.06);
+  --ntk-nav-active-bg: rgba(255, 255, 255, 0.1);
+  --ntk-nav-active-border: #e2e2e2;
+
+  --ntk-dark-scheme: 1;
+}
+
+/* ============================================================
+ * RESEND  (dark vibrant)
+ * ============================================================ */
+[data-theme='resend'] {
+  --ntk-accent: #ffffff;
+  --ntk-accent-hover: rgba(255, 255, 255, 0.85);
+  --ntk-accent-soft: rgba(255, 255, 255, 0.06);
+  --ntk-accent-rgb: 255, 255, 255;
+
+  --ntk-shell-bg: #000000;
+  --ntk-card-bg: #0a0a0a;
+  --ntk-header-bg: #000000;
+  --ntk-drawer-bg: #000000;
+
+  --ntk-text-heading: #f0f0f0;
+  --ntk-text-body: #b0b0b0;
+  --ntk-text-muted: #a1a1a1;
+  --ntk-text-on-accent: #000000;
+
+  --ntk-border: rgba(214, 235, 253, 0.12);
+  --ntk-border-strong: rgba(214, 235, 253, 0.22);
+
+  --ntk-avatar-bg: #262626;
+  --ntk-avatar-color: #f0f0f0;
+  --ntk-avatar-border: rgba(255, 255, 255, 0.16);
+
+  --ntk-fab-shadow: rgba(255, 255, 255, 0.06);
+  --ntk-fab-shadow-hover: rgba(255, 255, 255, 0.12);
+
+  --ntk-row-bg: rgba(255, 255, 255, 0.03);
+  --ntk-row-hover-bg: rgba(255, 255, 255, 0.06);
+
+  --ntk-bar-fill: #ffffff;
+  --ntk-accent-value: #ffffff;
+
+  --ntk-drawer-text: #b0b0b0;
+  --ntk-nav-hover-bg: rgba(255, 255, 255, 0.06);
+  --ntk-nav-active-bg: rgba(255, 255, 255, 0.1);
+  --ntk-nav-active-border: #ffffff;
+
+  --ntk-dark-scheme: 1;
+}
+
+/* ============================================================
+ * SUPERHUMAN  (purple glow)
+ * ============================================================ */
+[data-theme='superhuman'] {
+  --ntk-accent: #714cb6;
+  --ntk-accent-hover: #5f3fa0;
+  --ntk-accent-soft: rgba(113, 76, 182, 0.08);
+  --ntk-accent-rgb: 113, 76, 182;
+
+  --ntk-shell-bg: #f5f3f0;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+
+  --ntk-text-heading: #1b1938;
+  --ntk-text-body: #3d3b54;
+  --ntk-text-muted: #6b6b80;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #dcd7d3;
+  --ntk-border-strong: #c5c0bc;
+
+  --ntk-avatar-bg: #714cb6;
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(113, 76, 182, 0.3);
+  --ntk-fab-shadow-hover: rgba(113, 76, 182, 0.4);
+
+  --ntk-row-bg: #f5f3f0;
+  --ntk-row-hover-bg: #edeae6;
+
+  --ntk-bar-fill: #714cb6;
+  --ntk-accent-value: #714cb6;
+
+  --ntk-drawer-text: #3d3b54;
+  --ntk-nav-hover-bg: rgba(113, 76, 182, 0.05);
+  --ntk-nav-active-bg: rgba(113, 76, 182, 0.08);
+  --ntk-nav-active-border: #714cb6;
+
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * KRAKEN  (deep purple)
+ * ============================================================ */
+[data-theme='kraken'] {
+  --ntk-accent: #7132f5;
+  --ntk-accent-hover: #5b1ecf;
+  --ntk-accent-soft: rgba(113, 50, 245, 0.08);
+  --ntk-accent-rgb: 113, 50, 245;
+
+  --ntk-shell-bg: #f8f8fc;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+
+  --ntk-text-heading: #101114;
+  --ntk-text-body: #3a3c4e;
+  --ntk-text-muted: #686b82;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #e0e0ea;
+  --ntk-border-strong: #c8c8d6;
+
+  --ntk-avatar-bg: #7132f5;
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(113, 50, 245, 0.3);
+  --ntk-fab-shadow-hover: rgba(113, 50, 245, 0.4);
+
+  --ntk-row-bg: #f8f8fc;
+  --ntk-row-hover-bg: #f0f0f8;
+
+  --ntk-bar-fill: #7132f5;
+  --ntk-accent-value: #7132f5;
+
+  --ntk-drawer-text: #3a3c4e;
+  --ntk-nav-hover-bg: rgba(113, 50, 245, 0.05);
+  --ntk-nav-active-bg: rgba(113, 50, 245, 0.08);
+  --ntk-nav-active-border: #7132f5;
+
+  --ntk-dark-scheme: 0;
+}
