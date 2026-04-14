@@ -521,6 +521,20 @@ export function createThemeFields(
     advanced: true,
   },
   {
+    key: 'layoutBreakpointLg',
+    group: 'layout',
+    label: 'Layout breakpoint LG',
+    placeholder: themePlaceholder('layoutBreakpointLg'),
+    advanced: true,
+  },
+  {
+    key: 'layoutBreakpointMd',
+    group: 'layout',
+    label: 'Layout breakpoint MD',
+    placeholder: themePlaceholder('layoutBreakpointMd'),
+    advanced: true,
+  },
+  {
     key: 'cmsLayoutBreakpointLg',
     group: 'layout',
     label: 'CMS layout breakpoint LG',

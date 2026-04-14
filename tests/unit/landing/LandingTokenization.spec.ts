@@ -55,7 +55,7 @@ describe('Samples single reference runtime coverage', () => {
   it('keeps the samples html shell as the canonical app bootstrap document', () => {
     expect(samplesIndexSource).toContain('<div id="app"></div>')
     expect(samplesIndexSource).toContain('<script type="module" src="./main.ts"></script>')
-    expect(samplesIndexSource).toContain('Original Reference')
+    expect(samplesIndexSource).toContain('Atlas Flow')
   })
 
   it('keeps the internal CMS compatibility entry mounted outside the public runtime', () => {
@@ -72,7 +72,8 @@ describe('Samples single reference runtime coverage', () => {
     expect(originalReferenceSource).not.toContain('Abrir packs')
     expect(originalReferenceSource).not.toContain('/?templates=1')
     expect(originalReferenceSource).not.toContain('/?samples=1')
-    expect(originalReferenceDataSource).toContain("title: 'Bom dia, Guilherme Ferreira'")
+    expect(originalReferenceDataSource).toContain('getGreetingText()}')
+    expect(originalReferenceDataSource).toContain(', Guilherme')
     expect(originalReferenceChartsSource).toContain('Pedidos por Status')
     expect(originalReferenceChartsSource).toContain('Vendas por Categoria')
   })

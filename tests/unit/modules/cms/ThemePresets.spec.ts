@@ -30,8 +30,8 @@ describe('theme-presets', () => {
     const presets = buildCmsThemePresets(APP_SHELL_DEFAULT_THEME)
     const detected = detectCmsThemePresetId(APP_SHELL_DEFAULT_THEME, presets, APP_SHELL_DEFAULT_THEME)
 
-    expect(presets).toHaveLength(4)
-    expect(presets.map(preset => preset.id)).toEqual(['default', 'dark', 'darkLanding', 'monochrome'])
+    expect(presets).toHaveLength(5)
+    expect(presets.map(preset => preset.id)).toEqual(['default', 'dark', 'darkLanding', 'enterpriseMinimal', 'monochrome'])
     expect(presets.find(preset => preset.id === 'default')?.label).toBe('Light')
     expect(detected).toBe('default')
   })

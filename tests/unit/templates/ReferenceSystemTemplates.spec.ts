@@ -248,7 +248,7 @@ describe('Reference system templates', () => {
     })
 
     expect(wrapper.text()).toContain('NetToolsKit Reference')
-    expect(wrapper.text()).toContain('Open Template Showcase')
+    expect(wrapper.text()).toContain('Open the connected demos')
     expect(wrapper.text()).toContain('Templates First')
     expect(wrapper.text()).toContain('Dashboard shell')
   })
