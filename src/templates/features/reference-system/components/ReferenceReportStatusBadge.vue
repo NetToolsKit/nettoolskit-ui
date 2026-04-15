@@ -32,17 +32,17 @@ const displayLabel = computed(() => {
 }
 
 .ntk-reference-status-badge--draft {
-  background: #fff7ed;
-  color: #c2410c;
+  background: var(--semantic-warning-bg, var(--semantic-warning-light));
+  color: var(--semantic-warning-text, var(--semantic-warning));
 }
 
 .ntk-reference-status-badge--review {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--semantic-info-bg, var(--semantic-info-light));
+  color: var(--semantic-info-text, var(--semantic-info));
 }
 
 .ntk-reference-status-badge--published {
-  background: #ecfdf5;
-  color: #047857;
+  background: var(--semantic-success-bg, var(--semantic-success-light));
+  color: var(--semantic-success-text, var(--semantic-success));
 }
 </style>

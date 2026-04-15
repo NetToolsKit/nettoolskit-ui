@@ -48,44 +48,44 @@
   --ntk-template-page-chip-bg: var(--ntk-row-bg, var(--ntk-bg-tertiary));
   --ntk-template-page-chip-border: var(--ntk-border, var(--ntk-border-color));
   --ntk-template-page-chip-text: var(--ntk-text-muted, var(--ntk-text-secondary));
-  --ntk-template-page-bar-fill: var(--ntk-bar-fill, #0f766e);
-  --ntk-template-page-accent-value: var(--ntk-accent-value, #10b981);
-  --ntk-template-page-avatar-bg: var(--ntk-avatar-bg, #1e293b);
-  --ntk-template-page-row-hover-bg: var(--ntk-row-hover-bg, #f1f5f9);
+  --ntk-template-page-bar-fill: var(--ntk-bar-fill, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-page-accent-value: var(--ntk-accent-value, var(--semantic-success-primary, var(--ntk-success)));
+  --ntk-template-page-avatar-bg: var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-page-row-hover-bg: var(--ntk-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
 
   --ntk-template-layout-header-bg: var(--ntk-header-bg, var(--ntk-bg-card));
   --ntk-template-layout-header-text: var(--ntk-accent, var(--ntk-text-primary));
   --ntk-template-layout-title-color: var(--ntk-text-heading, var(--ntk-text-primary));
-  --ntk-template-layout-horizontal-bg: linear-gradient(90deg, #1f2937 0%, #334155 100%);
-  --ntk-template-layout-horizontal-text: #ffffff;
-  --ntk-template-layout-drawer-bg: var(--ntk-drawer-bg, linear-gradient(180deg, #1f2937 0%, #334155 100%));
-  --ntk-template-layout-drawer-text: var(--ntk-drawer-text, #ffffff);
+  --ntk-template-layout-horizontal-bg: var(--ntk-layout-horizontal-bg, var(--ntk-primary-gradient, var(--ntk-drawer-bg, var(--ntk-bg-card))));
+  --ntk-template-layout-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-layout-drawer-bg: var(--ntk-layout-drawer-bg, var(--ntk-drawer-bg, var(--ntk-bg-card)));
+  --ntk-template-layout-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-text-primary)));
   --ntk-template-layout-page-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
   --ntk-template-layout-shell-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
   --ntk-template-auth-layout-bg: var(--ntk-template-page-bg);
 
-  --ntk-template-menu-link-color: var(--ntk-drawer-text, rgba(255, 255, 255, 0.88));
-  --ntk-template-menu-link-hover-bg: var(--ntk-nav-hover-bg, rgba(255, 255, 255, 0.08));
-  --ntk-template-menu-link-active-border: var(--ntk-nav-active-border, rgba(255, 255, 255, 0.94));
-  --ntk-template-menu-link-active-bg: var(--ntk-nav-active-bg, rgba(255, 255, 255, 0.16));
-  --ntk-template-menu-link-child-active-bg: rgba(59, 130, 246, 0.2);
+  --ntk-template-menu-link-color: var(--ntk-drawer-text, var(--ntk-text-primary));
+  --ntk-template-menu-link-hover-bg: var(--ntk-nav-hover-bg, color-mix(in srgb, var(--ntk-accent) 10%, transparent));
+  --ntk-template-menu-link-active-border: var(--ntk-nav-active-border, var(--ntk-accent));
+  --ntk-template-menu-link-active-bg: var(--ntk-nav-active-bg, color-mix(in srgb, var(--ntk-accent) 16%, transparent));
+  --ntk-template-menu-link-child-active-bg: var(--ntk-nav-child-active-bg, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, transparent));
 
-  --ntk-template-horizontal-link-color: rgba(255, 255, 255, 0.84);
-  --ntk-template-horizontal-link-hover-color: #ffffff;
-  --ntk-template-horizontal-link-hover-bg: rgba(255, 255, 255, 0.08);
-  --ntk-template-horizontal-link-active-color: #ffffff;
-  --ntk-template-horizontal-link-active-border: #ffffff;
-  --ntk-template-horizontal-link-active-bg: rgba(255, 255, 255, 0.12);
-  --ntk-template-horizontal-link-submenu-hover-bg: rgba(15, 23, 42, 0.05);
-  --ntk-template-horizontal-link-submenu-active-border: var(--semantic-info-primary);
-  --ntk-template-horizontal-link-submenu-active-bg: rgba(59, 130, 246, 0.12);
-  --ntk-template-horizontal-link-submenu-active-color: var(--semantic-info-primary);
+  --ntk-template-horizontal-link-color: var(--ntk-layout-horizontal-link-color, color-mix(in srgb, var(--ntk-template-layout-horizontal-text) 84%, transparent));
+  --ntk-template-horizontal-link-hover-color: var(--ntk-layout-horizontal-link-hover-color, var(--ntk-template-layout-horizontal-text));
+  --ntk-template-horizontal-link-hover-bg: var(--ntk-layout-horizontal-link-hover-bg, color-mix(in srgb, var(--ntk-template-layout-horizontal-text) 8%, transparent));
+  --ntk-template-horizontal-link-active-color: var(--ntk-layout-horizontal-link-active-color, var(--ntk-template-layout-horizontal-text));
+  --ntk-template-horizontal-link-active-border: var(--ntk-layout-horizontal-link-active-border, var(--ntk-template-layout-horizontal-text));
+  --ntk-template-horizontal-link-active-bg: var(--ntk-layout-horizontal-link-active-bg, color-mix(in srgb, var(--ntk-template-layout-horizontal-text) 12%, transparent));
+  --ntk-template-horizontal-link-submenu-hover-bg: var(--ntk-layout-horizontal-submenu-hover-bg, color-mix(in srgb, var(--ntk-accent) 8%, transparent));
+  --ntk-template-horizontal-link-submenu-active-border: var(--ntk-layout-horizontal-submenu-active-border, var(--semantic-info-primary, var(--ntk-info)));
+  --ntk-template-horizontal-link-submenu-active-bg: var(--ntk-layout-horizontal-submenu-active-bg, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 12%, transparent));
+  --ntk-template-horizontal-link-submenu-active-color: var(--ntk-layout-horizontal-submenu-active-color, var(--semantic-info-primary, var(--ntk-info)));
 
-  --ntk-template-user-menu-avatar-border: var(--ntk-avatar-border, rgba(255, 255, 255, 0.88));
-  --ntk-template-user-menu-avatar-bg: var(--ntk-avatar-bg, var(--ntk-secondary));
-  --ntk-template-user-menu-avatar-color: var(--ntk-avatar-color, #ffffff);
-  --ntk-template-user-menu-header-bg: rgba(15, 23, 42, 0.04);
-  --ntk-template-user-menu-profile-bg: var(--ntk-card-bg, #ffffff);
+  --ntk-template-user-menu-avatar-border: var(--ntk-avatar-border, color-mix(in srgb, var(--ntk-text-on-accent, var(--ntk-text-primary)) 88%, transparent));
+  --ntk-template-user-menu-avatar-bg: var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-user-menu-avatar-color: var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-user-menu-header-bg: var(--ntk-user-menu-header-bg, color-mix(in srgb, var(--ntk-text-primary) 4%, transparent));
+  --ntk-template-user-menu-profile-bg: var(--ntk-user-menu-profile-bg, var(--ntk-card-bg, var(--ntk-bg-card)));
 
   --ntk-template-breadcrumb-bg: var(--ntk-bg-tertiary);
   --ntk-template-breadcrumb-link-color: var(--ntk-text-secondary);
@@ -94,42 +94,42 @@
   --ntk-template-breadcrumb-sep-color: var(--ntk-border-dark);
 
   --ntk-template-login-page-bg: var(--ntk-bg-secondary);
-  --ntk-template-login-brand-bg: linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #164e63 100%);
-  --ntk-template-login-brand-text: #ffffff;
-  --ntk-template-login-brand-subtitle: rgba(255, 255, 255, 0.78);
-  --ntk-template-login-brand-feature-text: rgba(255, 255, 255, 0.92);
-  --ntk-template-login-brand-feature-bg: rgba(20, 184, 166, 0.2);
-  --ntk-template-login-brand-footer: rgba(255, 255, 255, 0.6);
-  --ntk-template-login-form-bg: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  --ntk-template-login-brand-bg: var(--ntk-login-brand-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-login-brand-text: var(--ntk-login-brand-text, var(--ntk-text-on-accent, #ffffff));
+  --ntk-template-login-brand-subtitle: var(--ntk-login-brand-subtitle, color-mix(in srgb, var(--ntk-template-login-brand-text) 78%, transparent));
+  --ntk-template-login-brand-feature-text: var(--ntk-login-brand-feature-text, color-mix(in srgb, var(--ntk-template-login-brand-text) 92%, transparent));
+  --ntk-template-login-brand-feature-bg: var(--ntk-login-brand-feature-bg, color-mix(in srgb, var(--ntk-accent) 20%, transparent));
+  --ntk-template-login-brand-footer: var(--ntk-login-brand-footer, color-mix(in srgb, var(--ntk-template-login-brand-text) 60%, transparent));
+  --ntk-template-login-form-bg: var(--ntk-login-form-bg, linear-gradient(180deg, var(--ntk-shell-bg, var(--ntk-bg-secondary)) 0%, var(--ntk-card-bg, var(--ntk-bg-card)) 100%));
   --ntk-template-login-form-border: var(--ntk-border-color);
   --ntk-template-login-form-card-bg: var(--ntk-bg-card);
-  --ntk-template-login-form-shadow: rgba(15, 23, 42, 0.06);
+  --ntk-template-login-form-shadow: var(--ntk-login-form-shadow, color-mix(in srgb, var(--ntk-text-primary) 6%, transparent));
   --ntk-template-login-form-title: var(--ntk-text-primary);
   --ntk-template-login-form-subtitle: var(--ntk-text-secondary);
   --ntk-template-login-version: var(--ntk-text-muted);
 
   --ntk-template-wiki-bg: var(--ntk-bg-secondary);
-  --ntk-template-wiki-icon-bg: var(--ntk-accent, #0f766e);
-  --ntk-template-wiki-icon-text: var(--ntk-text-on-accent, #ffffff);
+  --ntk-template-wiki-icon-bg: var(--ntk-wiki-icon-bg, var(--ntk-accent));
+  --ntk-template-wiki-icon-text: var(--ntk-wiki-icon-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
   --ntk-template-wiki-chat-bg: var(--ntk-bg-secondary);
 
-  --ntk-template-placeholder-bg: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-  --ntk-template-placeholder-shadow: rgba(15, 23, 42, 0.08);
+  --ntk-template-placeholder-bg: var(--ntk-placeholder-bg, linear-gradient(180deg, var(--ntk-bg-secondary) 0%, color-mix(in srgb, var(--ntk-accent) 8%, var(--ntk-bg-secondary)) 100%));
+  --ntk-template-placeholder-shadow: var(--ntk-placeholder-shadow, color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
   --ntk-template-placeholder-icon-color: var(--semantic-info-primary);
-  --ntk-template-placeholder-icon-bg: rgba(37, 99, 235, 0.12);
+  --ntk-template-placeholder-icon-bg: var(--ntk-placeholder-icon-bg, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 12%, transparent));
 
-  --ntk-template-profile-hero-bg: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-  --ntk-template-profile-avatar-bg: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-  --ntk-template-profile-avatar-border: #ffffff;
-  --ntk-template-profile-avatar-shadow: rgba(30, 41, 59, 0.2);
+  --ntk-template-profile-hero-bg: var(--ntk-profile-hero-bg, linear-gradient(135deg, var(--ntk-shell-bg, var(--ntk-bg-secondary)) 0%, var(--ntk-card-bg, var(--ntk-bg-card)) 100%));
+  --ntk-template-profile-avatar-bg: var(--ntk-profile-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent))));
+  --ntk-template-profile-avatar-border: var(--ntk-profile-avatar-border, var(--ntk-avatar-border, var(--ntk-card-bg, var(--ntk-bg-card))));
+  --ntk-template-profile-avatar-shadow: var(--ntk-profile-avatar-shadow, color-mix(in srgb, var(--ntk-text-primary) 20%, transparent));
 
-  --ntk-template-not-found-bg: radial-gradient(circle at top, #0f172a 0%, #1e3a8a 45%, #172554 100%);
-  --ntk-template-not-found-text: #ffffff;
-  --ntk-template-not-found-card-bg: rgba(15, 23, 42, 0.6);
-  --ntk-template-not-found-border: rgba(148, 163, 184, 0.35);
-  --ntk-template-not-found-code-color: #93c5fd;
-  --ntk-template-not-found-code-shadow: rgba(15, 23, 42, 0.35);
-  --ntk-template-not-found-subtitle: #e2e8f0;
+  --ntk-template-not-found-bg: var(--ntk-not-found-bg, radial-gradient(circle at top, var(--ntk-primary-gradient-start, var(--ntk-accent)) 0%, var(--ntk-primary-gradient-end, var(--ntk-accent-hover, var(--ntk-accent))) 100%));
+  --ntk-template-not-found-text: var(--ntk-not-found-text, var(--ntk-text-on-accent, #ffffff));
+  --ntk-template-not-found-card-bg: var(--ntk-not-found-card-bg, color-mix(in srgb, var(--ntk-text-primary) 60%, transparent));
+  --ntk-template-not-found-border: var(--ntk-not-found-border, color-mix(in srgb, var(--ntk-border-color) 35%, transparent));
+  --ntk-template-not-found-code-color: var(--ntk-not-found-code-color, var(--semantic-info-primary, var(--ntk-info)));
+  --ntk-template-not-found-code-shadow: var(--ntk-not-found-code-shadow, color-mix(in srgb, var(--ntk-text-primary) 35%, transparent));
+  --ntk-template-not-found-subtitle: var(--ntk-not-found-subtitle, color-mix(in srgb, var(--ntk-template-not-found-text) 82%, transparent));
 }
 
 .dark,
@@ -140,7 +140,7 @@
   --ntk-template-page-card-bg: var(--ntk-bg-secondary);
   --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
   --ntk-template-notification-bg: var(--ntk-bg-secondary);
-  --ntk-template-login-form-bg: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+  --ntk-template-login-form-bg: var(--ntk-login-form-bg-dark, linear-gradient(180deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-primary) 100%));
 }
 
 [class*='ntk-template-'] .q-card {
@@ -264,8 +264,8 @@
   height: 48px;
   border-radius: 50%;
   border: none;
-  background: var(--ntk-accent, linear-gradient(135deg, #0f766e 0%, #14b8a6 100%));
-  box-shadow: 0 4px 14px var(--ntk-fab-shadow, rgba(15, 118, 110, 0.35));
+  background: var(--ntk-accent, var(--ntk-primary-gradient, var(--ntk-primary)));
+  box-shadow: 0 4px 14px var(--ntk-fab-shadow, color-mix(in srgb, var(--ntk-accent) 35%, transparent));
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -274,7 +274,7 @@
 
   &:hover {
     transform: scale(1.08);
-    box-shadow: 0 6px 20px var(--ntk-fab-shadow-hover, rgba(15, 118, 110, 0.45));
+    box-shadow: 0 6px 20px var(--ntk-fab-shadow-hover, color-mix(in srgb, var(--ntk-accent) 45%, transparent));
   }
 
   &:active {
@@ -294,7 +294,7 @@
 
 [data-theme] .bg-primary {
   background: var(--ntk-accent) !important;
-  color: var(--ntk-text-on-accent, #ffffff) !important;
+  color: var(--ntk-text-on-accent, var(--ntk-text-primary)) !important;
 }
 
 [data-theme] .q-toggle__inner--truthy {

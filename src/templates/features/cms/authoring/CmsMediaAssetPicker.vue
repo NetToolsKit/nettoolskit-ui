@@ -38,10 +38,15 @@
           </q-item-section>
           <q-item-section side>
             <div class="cms-media-asset-picker__option-badges">
-              <q-chip dense square>
+              <q-chip dense square class="cms-media-asset-picker__chip">
                 {{ scope.opt.kindLabel }}
               </q-chip>
-              <q-chip v-if="scope.opt.incompatible" dense square color="negative" text-color="white">
+              <q-chip
+                v-if="scope.opt.incompatible"
+                dense
+                square
+                class="cms-media-asset-picker__chip cms-media-asset-picker__chip--incompatible"
+              >
                 {{ incompatibleLabel }}
               </q-chip>
             </div>
@@ -51,7 +56,7 @@
 
       <template #no-option>
         <q-item>
-          <q-item-section class="text-grey-7">
+          <q-item-section class="cms-media-asset-picker__no-option">
             {{ noOptionLabel }}
           </q-item-section>
         </q-item>
@@ -197,12 +202,25 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
 .cms-media-asset-picker {
   display: grid;
   gap: 0.75rem;
+  --cms-media-muted: var(--ntk-template-cms-media-muted, var(--ntk-text-muted, var(--ntk-text-secondary, currentColor)));
+  --cms-media-border: var(--ntk-template-cms-media-border, var(--ntk-template-page-border, var(--ntk-border-color, currentColor)));
+  --cms-media-surface: var(--ntk-template-cms-media-surface, var(--ntk-template-page-card-bg, var(--ntk-bg-card, transparent)));
+  --cms-media-surface-soft: var(--ntk-template-cms-media-surface-soft, color-mix(in srgb, var(--cms-media-border) 12%, transparent));
+  --cms-media-chip-bg: var(--ntk-template-cms-media-chip-bg, color-mix(in srgb, var(--ntk-accent, var(--q-primary)) 12%, var(--cms-media-surface)));
+  --cms-media-chip-text: var(--ntk-template-cms-media-chip-text, var(--ntk-text-primary, var(--ntk-text-heading, currentColor)));
+  --cms-media-chip-incompatible-bg: var(--ntk-template-cms-media-chip-incompatible-bg, color-mix(in srgb, var(--ntk-error, var(--ntk-negative, currentColor)) 14%, var(--cms-media-surface)));
+  --cms-media-chip-incompatible-text: var(--ntk-template-cms-media-chip-incompatible-text, var(--ntk-error, var(--ntk-negative, currentColor)));
+  --cms-media-selection-url-bg: var(--ntk-template-cms-media-selection-url-bg, color-mix(in srgb, var(--cms-media-border) 18%, transparent));
 }
 
 .cms-media-asset-picker__meta,
 .cms-media-asset-picker__empty {
-  color: #6b7280;
+  color: var(--cms-media-muted);
   font-size: 0.82rem;
+}
+
+.cms-media-asset-picker__no-option {
+  color: var(--cms-media-muted);
 }
 
 .cms-media-asset-picker__option {
@@ -214,8 +232,8 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 0.85rem;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--cms-media-border);
+  background: var(--cms-media-surface-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,6 +254,16 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
   justify-content: flex-end;
 }
 
+.cms-media-asset-picker__chip {
+  background: var(--cms-media-chip-bg);
+  color: var(--cms-media-chip-text);
+}
+
+.cms-media-asset-picker__chip--incompatible {
+  background: var(--cms-media-chip-incompatible-bg);
+  color: var(--cms-media-chip-incompatible-text);
+}
+
 .cms-media-asset-picker__selections {
   display: grid;
   gap: 0.5rem;
@@ -253,8 +281,8 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
   gap: 0.75rem;
   padding: 0.85rem 0.95rem;
   border-radius: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid var(--cms-media-border);
+  background: var(--cms-media-surface-soft);
 }
 
 .cms-media-asset-picker__selection-body {
@@ -264,7 +292,7 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
 }
 
 .cms-media-asset-picker__selection-body small {
-  color: #6b7280;
+  color: var(--cms-media-muted);
 }
 
 .cms-media-asset-picker__selection-url {
@@ -272,7 +300,7 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
   overflow-wrap: anywhere;
   padding: 0.35rem 0.5rem;
   border-radius: 0.65rem;
-  background: rgba(15, 23, 42, 0.06);
+  background: var(--cms-media-selection-url-bg);
   font-size: 0.74rem;
 }
 </style>

@@ -1,18 +1,20 @@
 /**
- * Template runtime router module — reference-parity edition.
+ * Template runtime router module.
  *
  * Provides route-level adoption for template layouts, navigation, pages and
  * feature templates using the scaffolding contracts.
- * Menu items, fake data and auth flow mirror the approved reference project.
+ * The runtime is backed by local persisted data so the template stays usable
+ * without a backend while still exercising real flows.
  */
 
-import { computed, defineComponent, h, ref, resolveComponent } from 'vue'
+import { computed, defineComponent, h, onMounted, ref, resolveComponent } from 'vue'
 import {
   RouterView,
   createRouter,
   createWebHashHistory,
   type RouteRecordRaw,
   type Router,
+  useRouter,
 } from 'vue-router'
 
 import {
@@ -21,14 +23,20 @@ import {
   WikiChatTemplate,
   WikiTemplate,
 } from '../features'
+import { templateWikiChatService } from '../features/wiki/wiki-chat-service.template'
+import { createTemplateWikiChatStore } from '../features/wiki/wiki-chat-store.template'
 import { AuthLayoutTemplate, MainLayoutTemplate } from '../layouts'
 import {
+  CrudListTemplate,
   DashboardTemplate,
   ErrorNotFoundTemplate,
-  PlaceholderTemplate,
   ProfileTemplate,
 } from '../pages'
 import ReferenceDashboardCharts from '../pages/dashboard/ReferenceDashboardCharts.vue'
+import type {
+  TemplateCrudViewMode,
+  TemplateProfileGroup,
+} from '../pages/page-template.types'
 import ThemeDotsSwitcher from '../navigation/ThemeDotsSwitcher.vue'
 import UserMenuTemplate from '../navigation/UserMenuTemplate.vue'
 import {
@@ -39,12 +47,12 @@ import {
 } from '../scaffolding'
 import { createTemplateAuthStore } from '../scaffolding/auth-store.template'
 import { templateAuthService } from '../scaffolding/auth-service.template'
-import type {
-  TemplateDashboardActivityItem,
-  TemplateDashboardChip,
-  TemplateDashboardMetric,
-  TemplateDashboardTopItem,
-} from '../pages/page-template.types'
+import { themeOptions, useThemeSwitcher } from '../../composables/useThemeSwitcher'
+import RuntimeSettingsSurface from './RuntimeSettingsSurface.vue'
+import {
+  templateRuntimeData,
+  type TemplateRuntimeSettings,
+} from './runtime-data.template'
 
 /* ------------------------------------------------------------------ */
 /*  Auth store — shared across all runtime components                 */
@@ -56,6 +64,15 @@ const runtimeAuthStore = createTemplateAuthStore({
   read: <T>(key: string): T | null => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) as T : null } catch { return null } },
   tokenKey: 'ntk_runtime_token',
   userKey: 'ntk_runtime_user',
+})
+
+const runtimeWikiChatStore = createTemplateWikiChatStore({
+  ask: (question) => templateWikiChatService.ask({ question }),
+  continueConversation: (conversationId, question) =>
+    templateWikiChatService.continueConversation(conversationId, { question }),
+  listConversations: () => templateWikiChatService.listConversations(),
+  getConversation: (conversationId) => templateWikiChatService.getConversation(conversationId),
+  deleteConversation: (conversationId) => templateWikiChatService.deleteConversation(conversationId),
 })
 
 /* ------------------------------------------------------------------ */
@@ -83,66 +100,64 @@ function getFirstName(): string {
   return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase()
 }
 
-/* ------------------------------------------------------------------ */
-/*  Fake reference data                                               */
-/* ------------------------------------------------------------------ */
-
-const fakeDashboard = {
-  totalClients: 247,
-  ordersToday: 18,
-  ordersWeek: 87,
-  ordersMonth: 342,
-  revenueMonth: 156780,
-  newClientsMonth: 23,
-  totalOrders: 1847,
-  pendingOrders: 34,
-  inProgressOrders: 52,
-  completedOrders: 1680,
-  cancelledOrders: 81,
+function getDefaultCrudViewMode(): TemplateCrudViewMode {
+  return templateRuntimeData.state.settings.compactTables ? 'table' : 'cards'
 }
 
-const fakeTopClients: TemplateDashboardTopItem[] = [
-  { id: 'c1', name: 'Distribuidora Alfa Ltda', avatar: 'DA', value: 45, valueCaption: 'pedidos', secondaryValue: 'R$ 32.500', secondaryCaption: 'fatur.', barPercent: 100 },
-  { id: 'c2', name: 'Comércio Beta SA', avatar: 'CB', value: 38, valueCaption: 'pedidos', secondaryValue: 'R$ 28.900', secondaryCaption: 'fatur.', barPercent: 84 },
-  { id: 'c3', name: 'Indústria Gamma ME', avatar: 'IG', value: 32, valueCaption: 'pedidos', secondaryValue: 'R$ 24.100', secondaryCaption: 'fatur.', barPercent: 71 },
-  { id: 'c4', name: 'Atacado Delta Eireli', avatar: 'AD', value: 27, valueCaption: 'pedidos', secondaryValue: 'R$ 19.800', secondaryCaption: 'fatur.', barPercent: 60 },
-  { id: 'c5', name: 'Varejo Epsilon Ltda', avatar: 'VE', value: 21, valueCaption: 'pedidos', secondaryValue: 'R$ 15.600', secondaryCaption: 'fatur.', barPercent: 47 },
-]
+function ensureRuntimeConversationsLoaded(): void {
+  if (runtimeWikiChatStore.state.loading || runtimeWikiChatStore.state.conversations.length > 0) {
+    return
+  }
 
-const fakeMetrics: TemplateDashboardMetric[] = [
-  { id: 'm1', label: 'Total Pedidos', value: fakeDashboard.totalOrders, icon: 'shopping_cart', tone: 'neutral' },
-  { id: 'm2', label: 'Pendentes', value: fakeDashboard.pendingOrders, icon: 'inbox', tone: 'info' },
-  { id: 'm3', label: 'Em Progresso', value: fakeDashboard.inProgressOrders, icon: 'pending_actions', tone: 'warning' },
-  { id: 'm4', label: 'Concluídos', value: fakeDashboard.completedOrders, icon: 'task_alt', tone: 'success' },
-  { id: 'm5', label: 'Cancelados', value: fakeDashboard.cancelledOrders, icon: 'cancel', tone: 'danger' },
-]
+  void runtimeWikiChatStore.loadConversations()
+}
 
-const fakeChips: TemplateDashboardChip[] = [
-  { id: 'chip-clients', text: `${fakeDashboard.totalClients} clientes`, icon: 'people' },
-  { id: 'chip-orders', text: `${fakeDashboard.ordersToday} pedidos hoje`, icon: 'shopping_cart' },
-]
+function buildRuntimeDocumentBody(documentName: string, documentDescription: string): string {
+  return [
+    `Documento: ${documentName}`,
+    '',
+    documentDescription,
+    '',
+    `Workspace: ${templateRuntimeData.state.settings.workspaceName}`,
+    `Operador: ${templateRuntimeData.state.settings.operatorName}`,
+  ].join('\n')
+}
 
-const fakeActivities: TemplateDashboardActivityItem[] = [
-  { id: 'a1', label: 'Pedidos hoje', value: fakeDashboard.ordersToday, icon: 'today', iconTone: 'blue' },
-  { id: 'a2', label: 'Pedidos na semana', value: fakeDashboard.ordersWeek, icon: 'date_range', iconTone: 'indigo' },
-  { id: 'a3', label: 'Pedidos no mês', value: fakeDashboard.ordersMonth, icon: 'calendar_month', iconTone: 'violet' },
-  { id: 'a4', label: 'Faturamento do mês', value: `R$ ${fakeDashboard.revenueMonth.toLocaleString('pt-BR')}`, icon: 'attach_money', iconTone: 'green' },
-  { id: 'a5', label: 'Novos clientes no mês', value: fakeDashboard.newClientsMonth, icon: 'person_add', iconTone: 'amber' },
-]
+function previewRuntimeTextDocument(content: string): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return
+  }
 
-const fakeStatusSegments = [
-  { id: 'status-pending', label: 'Pendentes', value: fakeDashboard.pendingOrders, color: 'var(--ntk-info)' },
-  { id: 'status-progress', label: 'Em Progresso', value: fakeDashboard.inProgressOrders, color: 'var(--ntk-warning)' },
-  { id: 'status-completed', label: 'Concluídos', value: fakeDashboard.completedOrders, color: 'var(--ntk-success)' },
-  { id: 'status-cancelled', label: 'Cancelados', value: fakeDashboard.cancelledOrders, color: 'var(--ntk-text-muted)' },
-]
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  window.open(url, '_blank', 'noopener,noreferrer')
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url)
+  }, 1000)
+}
 
-const fakeCategorySeries = [
-  { id: 'category-electronics', label: 'Eletrônicos', value: 523, color: 'var(--ntk-info)' },
-  { id: 'category-food', label: 'Alimentos', value: 412, color: 'var(--ntk-accent)' },
-  { id: 'category-fashion', label: 'Vestuário', value: 287, color: 'var(--ntk-warning)' },
-  { id: 'category-hygiene', label: 'Higiene', value: 198, color: 'var(--ntk-success)' },
-]
+function downloadRuntimeTextDocument(fileName: string, content: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = fileName
+  link.click()
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url)
+  }, 1000)
+}
+
+function getRuntimeChatMessages() {
+  return runtimeWikiChatStore.state.messages.map(message => ({
+    ...message,
+    sources: message.sources?.map(source => ({ ...source })),
+  }))
+}
 
 /* ------------------------------------------------------------------ */
 /*  Runtime page components                                           */
@@ -151,6 +166,7 @@ const fakeCategorySeries = [
 const RuntimeDashboardPage = defineComponent({
   name: 'TemplateRuntimeDashboardPage',
   setup() {
+    const dashboardSnapshot = computed(() => templateRuntimeData.dashboardSnapshot.value)
     const title = computed(() => `${getGreetingText()}, ${getFirstName()}`)
     const subtitle = computed(() => {
       const d = new Date()
@@ -163,18 +179,18 @@ const RuntimeDashboardPage = defineComponent({
       title: title.value,
       subtitle: subtitle.value,
       greetingIcon: icon.value,
-      chips: fakeChips,
-      metrics: fakeMetrics,
-      activities: fakeActivities,
-      topItems: fakeTopClients,
+      chips: dashboardSnapshot.value.chips,
+      metrics: dashboardSnapshot.value.metrics,
+      activities: dashboardSnapshot.value.activities,
+      topItems: dashboardSnapshot.value.topItems,
       activityTitle: 'Atividade',
       activityTitleIcon: 'insights',
       topItemsTitle: 'Top Clientes',
       topItemsTitleIcon: 'star',
     }, {
       charts: () => h(ReferenceDashboardCharts, {
-        statusSegments: fakeStatusSegments,
-        categorySeries: fakeCategorySeries,
+        statusSegments: dashboardSnapshot.value.statusSegments,
+        categorySeries: dashboardSnapshot.value.categorySeries,
       }),
     })
   },
@@ -183,11 +199,71 @@ const RuntimeDashboardPage = defineComponent({
 const RuntimeClientsPage = defineComponent({
   name: 'TemplateRuntimeClientsPage',
   setup() {
-    return () => h(PlaceholderTemplate, {
+    const searchValue = ref('')
+    const activeFilterId = ref('all')
+    const viewMode = ref<TemplateCrudViewMode>(getDefaultCrudViewMode())
+
+    return () => h(CrudListTemplate, {
       title: 'Clientes',
-      subtitle: 'Gestão de clientes e contatos comerciais.',
-      icon: 'people',
-      statusLabel: 'Em breve',
+      subtitle: 'Carteira ativa, onboarding e reativação com persistência local.',
+      columns: templateRuntimeData.clientColumns,
+      records: templateRuntimeData.clientRecords.value,
+      filters: templateRuntimeData.clientFilters.value,
+      metrics: templateRuntimeData.clientMetrics.value,
+      actions: [
+        {
+          id: 'create-client',
+          label: 'Novo cliente',
+          icon: 'person_add',
+        },
+      ],
+      rowActions: [
+        {
+          id: 'duplicate-client',
+          icon: 'content_copy',
+          label: 'Duplicar cliente',
+          ariaLabel: 'Duplicar cliente',
+        },
+        {
+          id: 'cycle-client-status',
+          icon: 'sync_alt',
+          label: 'Atualizar status',
+          ariaLabel: 'Atualizar status do cliente',
+        },
+      ],
+      searchValue: searchValue.value,
+      activeFilterId: activeFilterId.value,
+      viewMode: viewMode.value,
+      selectable: false,
+      showBulkActions: false,
+      searchPlaceholder: 'Buscar cliente, segmento ou cidade...',
+      searchAriaLabel: 'Buscar clientes',
+      tableAriaLabel: 'Tabela de clientes',
+      cardsAriaLabel: 'Cards de clientes',
+      metricsAriaLabel: 'Indicadores de clientes',
+      tableViewAriaLabel: 'Alternar para tabela de clientes',
+      cardsViewAriaLabel: 'Alternar para cards de clientes',
+      tableStatusLabel: 'Status',
+      tableActionsLabel: 'Atalhos',
+      emptyTitle: 'Nenhum cliente encontrado',
+      emptySubtitle: 'Ajuste os filtros ou crie um novo cliente local.',
+      emptyIcon: 'people',
+      'onUpdate:searchValue': (value: string) => { searchValue.value = value },
+      'onUpdate:activeFilterId': (value: string) => { activeFilterId.value = value },
+      'onUpdate:viewMode': (value: TemplateCrudViewMode) => { viewMode.value = value },
+      onActionClick: (actionId: string) => {
+        if (actionId === 'create-client') {
+          templateRuntimeData.createClient()
+        }
+      },
+      onRowActionClick: (payload: { actionId: string; recordId: string }) => {
+        if (payload.actionId === 'duplicate-client') {
+          templateRuntimeData.duplicateClient(payload.recordId)
+        }
+        if (payload.actionId === 'cycle-client-status') {
+          templateRuntimeData.cycleClientStatus(payload.recordId)
+        }
+      },
     })
   },
 })
@@ -195,11 +271,113 @@ const RuntimeClientsPage = defineComponent({
 const RuntimeOrdersPage = defineComponent({
   name: 'TemplateRuntimeOrdersPage',
   setup() {
-    return () => h(PlaceholderTemplate, {
+    const searchValue = ref('')
+    const activeFilterId = ref('all')
+    const viewMode = ref<TemplateCrudViewMode>(getDefaultCrudViewMode())
+    const selectedIds = ref<string[]>([])
+
+    return () => h(CrudListTemplate, {
       title: 'Pedidos',
-      subtitle: 'Acompanhamento de pedidos e entregas.',
-      icon: 'shopping_cart',
-      statusLabel: 'Em breve',
+      subtitle: 'Pipeline operacional com mudanças de status e ações em lote persistidas.',
+      columns: templateRuntimeData.orderColumns,
+      records: templateRuntimeData.orderRecords.value,
+      filters: templateRuntimeData.orderFilters.value,
+      metrics: templateRuntimeData.orderMetrics.value,
+      actions: [
+        {
+          id: 'create-order',
+          label: 'Novo pedido',
+          icon: 'add_shopping_cart',
+        },
+      ],
+      rowActions: [
+        {
+          id: 'advance-order',
+          icon: 'arrow_forward',
+          label: 'Avançar pedido',
+          ariaLabel: 'Avançar status do pedido',
+        },
+        {
+          id: 'cancel-order',
+          icon: 'block',
+          label: 'Cancelar pedido',
+          ariaLabel: 'Cancelar pedido',
+        },
+      ],
+      bulkActions: [
+        {
+          id: 'bulk-progress',
+          label: 'Em progresso',
+          icon: 'pending_actions',
+          outline: true,
+        },
+        {
+          id: 'bulk-complete',
+          label: 'Concluir',
+          icon: 'task_alt',
+          outline: true,
+        },
+        {
+          id: 'bulk-cancel',
+          label: 'Cancelar',
+          icon: 'cancel',
+          outline: true,
+        },
+      ],
+      searchValue: searchValue.value,
+      activeFilterId: activeFilterId.value,
+      viewMode: viewMode.value,
+      selectedIds: selectedIds.value,
+      selectable: true,
+      showBulkActions: true,
+      searchPlaceholder: 'Buscar pedido, cliente ou categoria...',
+      searchAriaLabel: 'Buscar pedidos',
+      tableAriaLabel: 'Tabela de pedidos',
+      cardsAriaLabel: 'Cards de pedidos',
+      metricsAriaLabel: 'Indicadores de pedidos',
+      bulkAriaLabel: 'Ações em lote para pedidos',
+      tableViewAriaLabel: 'Alternar para tabela de pedidos',
+      cardsViewAriaLabel: 'Alternar para cards de pedidos',
+      tableStatusLabel: 'Status',
+      tableActionsLabel: 'Atalhos',
+      selectedCountLabel: '{count} pedidos selecionados',
+      emptyTitle: 'Nenhum pedido encontrado',
+      emptySubtitle: 'Ajuste a busca ou gere um novo pedido local.',
+      emptyIcon: 'shopping_cart',
+      'onUpdate:searchValue': (value: string) => { searchValue.value = value },
+      'onUpdate:activeFilterId': (value: string) => { activeFilterId.value = value },
+      'onUpdate:viewMode': (value: TemplateCrudViewMode) => { viewMode.value = value },
+      'onUpdate:selectedIds': (value: string[]) => { selectedIds.value = value },
+      onActionClick: (actionId: string) => {
+        if (actionId === 'create-order') {
+          templateRuntimeData.createOrder()
+        }
+      },
+      onRowActionClick: (payload: { actionId: string; recordId: string }) => {
+        if (payload.actionId === 'advance-order') {
+          templateRuntimeData.advanceOrderStatus(payload.recordId)
+        }
+        if (payload.actionId === 'cancel-order') {
+          templateRuntimeData.cancelOrder(payload.recordId)
+        }
+      },
+      onBulkActionClick: (payload: { actionId: string; selectedIds: string[] }) => {
+        if (payload.selectedIds.length === 0) {
+          return
+        }
+
+        if (payload.actionId === 'bulk-progress') {
+          templateRuntimeData.bulkUpdateOrderStatus(payload.selectedIds, 'in_progress')
+        }
+        if (payload.actionId === 'bulk-complete') {
+          templateRuntimeData.bulkUpdateOrderStatus(payload.selectedIds, 'completed')
+        }
+        if (payload.actionId === 'bulk-cancel') {
+          templateRuntimeData.bulkUpdateOrderStatus(payload.selectedIds, 'cancelled')
+        }
+
+        selectedIds.value = []
+      },
     })
   },
 })
@@ -207,9 +385,44 @@ const RuntimeOrdersPage = defineComponent({
 const RuntimeWikiPage = defineComponent({
   name: 'TemplateRuntimeWikiPage',
   setup() {
+    const router = useRouter()
+
+    ensureRuntimeConversationsLoaded()
+
     return () => h(WikiTemplate, {
       title: 'Base de conhecimento',
-      subtitle: 'Documentação, procedimentos e referências de suporte.',
+      subtitle: 'Documentação local, playbooks e materiais operacionais persistidos no runtime.',
+      categories: templateRuntimeData.wikiCategories.value,
+      documents: templateRuntimeData.wikiDocuments.value,
+      onAskDocument: (documentItem: { name: string; description?: string }) => {
+        runtimeWikiChatStore.openDrawer(documentItem.name)
+      },
+      onViewDocument: (documentItem: { name: string; description?: string }) => {
+        previewRuntimeTextDocument(
+          buildRuntimeDocumentBody(documentItem.name, documentItem.description ?? 'Sem descrição adicional.')
+        )
+      },
+      onDownloadDocument: (documentItem: { name: string; description?: string }) => {
+        downloadRuntimeTextDocument(
+          `${documentItem.name.replace(/[^\w.-]+/g, '_')}.txt`,
+          buildRuntimeDocumentBody(documentItem.name, documentItem.description ?? 'Sem descrição adicional.')
+        )
+      },
+      onBulkDownload: (documents: Array<{ name: string; description?: string }>) => {
+        const content = documents.length > 0
+          ? documents
+              .map(documentItem => buildRuntimeDocumentBody(
+                documentItem.name,
+                documentItem.description ?? 'Sem descrição adicional.'
+              ))
+              .join('\n\n---\n\n')
+          : 'Nenhum documento selecionado.'
+
+        downloadRuntimeTextDocument('atlas-flow-knowledge-bundle.txt', content)
+      },
+      onExportClick: () => {
+        void router.push({ name: 'TemplateRuntimeKnowledgeChat' })
+      },
     })
   },
 })
@@ -217,9 +430,31 @@ const RuntimeWikiPage = defineComponent({
 const RuntimeWikiChatPage = defineComponent({
   name: 'TemplateRuntimeWikiChatPage',
   setup() {
+    onMounted(() => {
+      ensureRuntimeConversationsLoaded()
+    })
+
     return () => h(WikiChatTemplate, {
       title: 'Assistente de conhecimento',
-      subtitle: 'Chat com IA para dúvidas e suporte operacional.',
+      subtitle: 'Converse com a base local para acelerar suporte, playbooks e atendimento.',
+      conversations: runtimeWikiChatStore.sortedConversations.value,
+      messages: getRuntimeChatMessages(),
+      activeConversationId: runtimeWikiChatStore.state.activeConversationId,
+      suggestions: templateRuntimeData.wikiSuggestions.value,
+      loading: runtimeWikiChatStore.state.loading,
+      sending: runtimeWikiChatStore.state.sending,
+      onStartNewConversation: () => {
+        runtimeWikiChatStore.startNewConversation()
+      },
+      onSelectConversation: (conversationId: string) => {
+        void runtimeWikiChatStore.loadConversation(conversationId)
+      },
+      onDeleteConversation: (conversationId: string) => {
+        void runtimeWikiChatStore.deleteConversation(conversationId)
+      },
+      onSendQuestion: (question: string) => {
+        void runtimeWikiChatStore.sendMessage(question)
+      },
     })
   },
 })
@@ -227,11 +462,24 @@ const RuntimeWikiChatPage = defineComponent({
 const RuntimeSettingsPage = defineComponent({
   name: 'TemplateRuntimeSettingsPage',
   setup() {
-    return () => h(PlaceholderTemplate, {
-      title: 'Configurações',
-      subtitle: 'Preferências do sistema e parâmetros gerais.',
-      icon: 'settings',
-      statusLabel: 'Em breve',
+    const { activeTheme } = useThemeSwitcher()
+    const activeThemeLabel = computed(() => {
+      return themeOptions.find(option => option.id === activeTheme.value)?.label ?? activeTheme.value
+    })
+
+    return () => h(RuntimeSettingsSurface, {
+      settings: { ...templateRuntimeData.state.settings },
+      clientCount: templateRuntimeData.state.clients.length,
+      orderCount: templateRuntimeData.state.orders.length,
+      activeThemeLabel: activeThemeLabel.value,
+      onSave: (settings: TemplateRuntimeSettings) => {
+        const updatedSettings = templateRuntimeData.updateSettings(settings)
+        runtimeAuthStore.updateUserName(updatedSettings.operatorName)
+      },
+      onResetRuntimeData: () => {
+        templateRuntimeData.reset()
+        runtimeAuthStore.updateUserName(templateRuntimeData.state.settings.operatorName)
+      },
     })
   },
 })
@@ -239,20 +487,66 @@ const RuntimeSettingsPage = defineComponent({
 const RuntimeProfilePage = defineComponent({
   name: 'TemplateRuntimeProfilePage',
   setup() {
+    const router = useRouter()
     const profile = computed(() => ({
-      name: runtimeAuthStore.state.user?.name ?? 'Usuário',
-      email: runtimeAuthStore.state.user?.email ?? '',
-      role: runtimeAuthStore.state.user?.role ?? 'Usuário',
+      name: runtimeAuthStore.state.user?.name ?? templateRuntimeData.state.settings.operatorName,
+      email: runtimeAuthStore.state.user?.email ?? templateRuntimeData.state.settings.supportEmail,
+      role: runtimeAuthStore.state.user?.role ?? 'Operações',
       initials: runtimeAuthStore.userInitials.value,
     }))
+    const groups = computed<TemplateProfileGroup[]>(() => [
+      {
+        id: 'workspace',
+        title: 'Workspace',
+        fields: [
+          {
+            id: 'workspace-name',
+            label: 'Nome do workspace',
+            value: templateRuntimeData.state.settings.workspaceName,
+          },
+          {
+            id: 'operator-name',
+            label: 'Operador padrão',
+            value: templateRuntimeData.state.settings.operatorName,
+          },
+          {
+            id: 'support-email',
+            label: 'Contato de suporte',
+            value: templateRuntimeData.state.settings.supportEmail,
+          },
+        ],
+      },
+      {
+        id: 'preferences',
+        title: 'Preferências locais',
+        fields: [
+          {
+            id: 'locale',
+            label: 'Locale',
+            value: templateRuntimeData.state.settings.locale,
+          },
+          {
+            id: 'timezone',
+            label: 'Timezone',
+            value: templateRuntimeData.state.settings.timezone,
+          },
+          {
+            id: 'notifications',
+            label: 'Notificações',
+            value: templateRuntimeData.state.settings.notificationsEnabled ? 'Habilitadas' : 'Desabilitadas',
+          },
+        ],
+      },
+    ])
 
     return () => h(ProfileTemplate, {
       profile: profile.value,
+      groups: groups.value,
       sectionTitle: 'Perfil e preferências',
       showLogoutAction: true,
       onLogoutClick: () => {
         runtimeAuthStore.logout()
-        window.location.hash = '#/login'
+        void router.push({ name: 'TemplateRuntimeLogin' })
       },
     })
   },
@@ -261,6 +555,7 @@ const RuntimeProfilePage = defineComponent({
 const RuntimeLoginPage = defineComponent({
   name: 'TemplateRuntimeLoginPage',
   setup() {
+    const router = useRouter()
     const email = ref('')
     const password = ref('')
     const loading = ref(false)
@@ -274,8 +569,8 @@ const RuntimeLoginPage = defineComponent({
       submitLabel: 'Continuar',
       emailLabel: 'E-mail',
       passwordLabel: 'Senha',
-      brandTitle: 'Bem-vindo ao seu workspace',
-      brandSubtitle: 'Acesse suas operações, dashboards e ferramentas de colaboração em um portal seguro.',
+      brandTitle: `Bem-vindo ao ${templateRuntimeData.workspaceName.value}`,
+      brandSubtitle: 'Acesse operações, dashboards e conhecimento local com persistência no navegador.',
       emailRequiredMessage: 'E-mail é obrigatório.',
       emailInvalidMessage: 'E-mail inválido.',
       passwordRequiredMessage: 'Senha é obrigatória.',
@@ -285,8 +580,14 @@ const RuntimeLoginPage = defineComponent({
         loading.value = true
         try {
           const result = await templateAuthService.login(payload.email, payload.password)
-          runtimeAuthStore.setAuth(result.user, result.token)
-          window.location.hash = '#/'
+          runtimeAuthStore.setAuth(
+            {
+              ...result.user,
+              name: templateRuntimeData.state.settings.operatorName,
+            },
+            result.token,
+          )
+          await router.push({ name: 'TemplateRuntimeDashboard' })
         } finally {
           loading.value = false
         }
@@ -421,22 +722,22 @@ export const templateRuntimeMenuItems = createTemplateMenuFromScaffoldRoutes(tem
 })
 
 /* ------------------------------------------------------------------ */
-/*  Chat drawer state (shared)                                        */
-/* ------------------------------------------------------------------ */
-
-const chatDrawerOpen = ref(false)
-
-/* ------------------------------------------------------------------ */
 /*  Layout shells                                                     */
 /* ------------------------------------------------------------------ */
 
 const TemplateRuntimeMainLayoutShell = defineComponent({
   name: 'TemplateRuntimeMainLayoutShell',
   setup() {
+    const router = useRouter()
+
+    onMounted(() => {
+      ensureRuntimeConversationsLoaded()
+    })
+
     return () => h(
       MainLayoutTemplate,
       {
-        appName: 'Atlas Flow',
+        appName: templateRuntimeData.workspaceName.value,
         userName: runtimeAuthStore.userName.value,
         userInitials: runtimeAuthStore.userInitials.value,
         menuItems: templateRuntimeMenuItems,
@@ -463,7 +764,7 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
             modelValue: layoutControls.horizontalMode,
             showLabelsInMini: layoutControls.showLabelsInMini,
             sideMenuVariant: layoutControls.sideMenuVariant,
-            appName: 'Atlas Flow',
+            appName: templateRuntimeData.workspaceName.value,
             profileName: runtimeAuthStore.userName.value,
             profileInitials: runtimeAuthStore.userInitials.value,
             signOutLabel: 'Sign out',
@@ -477,10 +778,10 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
             'onUpdate:modelValue': (value: boolean) => { layoutControls.setHorizontalMode(value) },
             'onUpdate:showLabelsInMini': (value: boolean) => { layoutControls.setShowLabelsInMini(value) },
             'onUpdate:sideMenuVariant': (value: 'vercel' | 'reference') => { layoutControls.setSideMenuVariant(value) },
-            onAccountClick: () => { window.location.hash = '#/profile' },
+            onAccountClick: () => { void router.push({ name: 'TemplateRuntimeProfile' }) },
             onLogoutClick: () => {
               runtimeAuthStore.logout()
-              window.location.hash = '#/login'
+              void router.push({ name: 'TemplateRuntimeLogin' })
             },
           }),
         ],
@@ -488,16 +789,36 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
           h('button', {
             class: 'ntk-runtime-chat-fab',
             'aria-label': 'Abrir assistente',
-            onClick: () => { chatDrawerOpen.value = !chatDrawerOpen.value },
+            onClick: () => { runtimeWikiChatStore.toggleDrawer() },
           }, [
-            h('span', { class: 'material-icons', style: 'font-size:22px;color:#fff' }, chatDrawerOpen.value ? 'close' : 'smart_toy'),
+            h('span', { class: 'material-icons', style: 'font-size:22px;color:var(--ntk-template-runtime-chat-fab-icon, var(--ntk-text-on-primary, currentColor))' }, runtimeWikiChatStore.state.drawerOpen ? 'close' : 'smart_toy'),
           ]),
           h(WikiChatDrawerTemplate, {
-            modelValue: chatDrawerOpen.value,
+            modelValue: runtimeWikiChatStore.state.drawerOpen,
             title: 'Assistente',
-            contextHint: 'Base de conhecimento',
-            'onUpdate:modelValue': (v: boolean) => { chatDrawerOpen.value = v },
-            onOpenFullscreen: () => { window.location.hash = '#/knowledge/chat' },
+            contextHint: runtimeWikiChatStore.state.contextHint || 'Base de conhecimento',
+            messages: getRuntimeChatMessages(),
+            suggestions: templateRuntimeData.wikiSuggestions.value,
+            sending: runtimeWikiChatStore.state.sending,
+            hasActiveConversation: runtimeWikiChatStore.hasActiveConversation.value,
+            'onUpdate:modelValue': (value: boolean) => {
+              if (value) {
+                runtimeWikiChatStore.openDrawer(runtimeWikiChatStore.state.contextHint ?? undefined)
+                return
+              }
+
+              runtimeWikiChatStore.closeDrawer()
+            },
+            onSendQuestion: (question: string) => {
+              void runtimeWikiChatStore.sendMessage(question)
+            },
+            onStartNewConversation: () => {
+              runtimeWikiChatStore.startNewConversation()
+            },
+            onOpenFullscreen: () => {
+              runtimeWikiChatStore.closeDrawer()
+              void router.push({ name: 'TemplateRuntimeKnowledgeChat' })
+            },
           }),
         ],
       },

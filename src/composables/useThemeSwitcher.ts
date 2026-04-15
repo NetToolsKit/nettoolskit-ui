@@ -8,13 +8,22 @@ export interface ThemeOption {
   color: string
 }
 
+const themePreviewVars: Record<ThemeId, string> = {
+  revolut: '--ntk-theme-preview-revolut',
+  claude: '--ntk-theme-preview-claude',
+  warp: '--ntk-theme-preview-warp',
+  resend: '--ntk-theme-preview-resend',
+  superhuman: '--ntk-theme-preview-superhuman',
+  kraken: '--ntk-theme-preview-kraken',
+}
+
 export const themeOptions: ThemeOption[] = [
-  { id: 'revolut', label: 'Revolut', color: '#0f766e' },
-  { id: 'claude', label: 'Claude', color: '#c96442' },
-  { id: 'warp', label: 'Warp', color: '#353534' },
-  { id: 'resend', label: 'Resend', color: '#000000' },
-  { id: 'superhuman', label: 'Superhuman', color: '#714cb6' },
-  { id: 'kraken', label: 'Kraken', color: '#7132f5' },
+  { id: 'revolut', label: 'Revolut', color: 'var(--ntk-theme-preview-revolut)' },
+  { id: 'claude', label: 'Claude', color: 'var(--ntk-theme-preview-claude)' },
+  { id: 'warp', label: 'Warp', color: 'var(--ntk-theme-preview-warp)' },
+  { id: 'resend', label: 'Resend', color: 'var(--ntk-theme-preview-resend)' },
+  { id: 'superhuman', label: 'Superhuman', color: 'var(--ntk-theme-preview-superhuman)' },
+  { id: 'kraken', label: 'Kraken', color: 'var(--ntk-theme-preview-kraken)' },
 ]
 
 const STORAGE_KEY = 'ntk-theme'
@@ -39,19 +48,42 @@ function readThemeVariable(name: string, fallback: string): string {
   return value || fallback
 }
 
+function syncThemePreviewSwatches(): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const root = document.documentElement
+  const activeTheme = root.dataset.theme
+
+  try {
+    for (const theme of themeOptions) {
+      root.dataset.theme = theme.id
+      const swatch = readThemeVariable('--ntk-accent', readThemeVariable('--ntk-primary', 'currentColor'))
+      root.style.setProperty(themePreviewVars[theme.id], swatch)
+    }
+  } finally {
+    if (activeTheme) {
+      root.dataset.theme = activeTheme
+    } else {
+      delete root.dataset.theme
+    }
+  }
+}
+
 function syncQuasarColorPalette(): void {
   if (typeof document === 'undefined') {
     return
   }
 
   const root = document.documentElement
-  root.style.setProperty('--q-primary', readThemeVariable('--ntk-accent', '#0f766e'))
-  root.style.setProperty('--q-secondary', readThemeVariable('--ntk-secondary', '#334155'))
-  root.style.setProperty('--q-accent', readThemeVariable('--ntk-accent-hover', '#115e59'))
-  root.style.setProperty('--q-positive', readThemeVariable('--ntk-success', '#10b981'))
-  root.style.setProperty('--q-warning', readThemeVariable('--ntk-warning', '#f59e0b'))
-  root.style.setProperty('--q-negative', readThemeVariable('--ntk-error', '#ef4444'))
-  root.style.setProperty('--q-info', readThemeVariable('--ntk-info', '#14b8a6'))
+  root.style.setProperty('--q-primary', readThemeVariable('--ntk-accent', 'var(--ntk-primary, currentColor)'))
+  root.style.setProperty('--q-secondary', readThemeVariable('--ntk-secondary', 'var(--ntk-text-muted, currentColor)'))
+  root.style.setProperty('--q-accent', readThemeVariable('--ntk-accent-hover', 'var(--ntk-accent, currentColor)'))
+  root.style.setProperty('--q-positive', readThemeVariable('--ntk-success', 'var(--ntk-positive, currentColor)'))
+  root.style.setProperty('--q-warning', readThemeVariable('--ntk-warning', 'var(--ntk-warning, currentColor)'))
+  root.style.setProperty('--q-negative', readThemeVariable('--ntk-error', 'var(--ntk-negative, currentColor)'))
+  root.style.setProperty('--q-info', readThemeVariable('--ntk-info', 'var(--ntk-info, currentColor)'))
 
   const darkScheme = readThemeVariable('--ntk-dark-scheme', '0')
   root.style.colorScheme = darkScheme === '1' ? 'dark' : 'light'
@@ -61,10 +93,12 @@ function applyThemeToDOM(themeId: ThemeId): void {
   if (typeof document === 'undefined') return
 
   document.documentElement.dataset.theme = themeId
+  syncThemePreviewSwatches()
   syncQuasarColorPalette()
 
   if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
     window.requestAnimationFrame(() => {
+      syncThemePreviewSwatches()
       syncQuasarColorPalette()
     })
   }

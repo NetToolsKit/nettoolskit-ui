@@ -246,11 +246,11 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
   border-radius: 50%;
   flex-shrink: 0;
 
-  &--positive { background: #10b981; }
-  &--warning { background: #f59e0b; }
-  &--negative { background: #ef4444; }
-  &--info { background: #3b82f6; }
-  &--neutral { background: #94a3b8; }
+  &--positive { background: var(--semantic-success-primary, var(--semantic-success)); }
+  &--warning { background: var(--semantic-warning-primary, var(--semantic-warning)); }
+  &--negative { background: var(--semantic-error-primary, var(--semantic-error)); }
+  &--info { background: var(--semantic-info-primary, var(--semantic-info)); }
+  &--neutral { background: var(--semantic-neutral, var(--ntk-template-editor-canvas-text)); }
 }
 
 .ntk-reference-context-rail__empty {
