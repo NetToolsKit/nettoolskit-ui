@@ -15,6 +15,14 @@
  * ============================================================ */
 :root,
 [data-theme='revolut'] {
+  --ntk-primary: #0f766e;
+  --ntk-primary-dark: #115e59;
+  --ntk-primary-light: #2dd4bf;
+  --ntk-primary-rgb: 15, 118, 110;
+  --ntk-primary-gradient-start: #134e4a;
+  --ntk-primary-gradient-end: #14b8a6;
+  --ntk-primary-gradient: linear-gradient(135deg, #134e4a 0%, #14b8a6 100%);
+
   --ntk-accent: #0f766e;
   --ntk-accent-hover: #115e59;
   --ntk-accent-soft: rgba(15, 118, 110, 0.08);
@@ -33,7 +41,12 @@
   --ntk-border: #e2e8f0;
   --ntk-border-strong: #cbd5e1;
 
-  --ntk-avatar-bg: #0f766e;
+  --ntk-success: #10b981;
+  --ntk-warning: #f59e0b;
+  --ntk-error: #ef4444;
+  --ntk-info: #14b8a6;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #134e4a 0%, #0f766e 58%, #115e59 100%);
   --ntk-avatar-color: #ffffff;
   --ntk-avatar-border: #ffffff;
 
@@ -43,7 +56,7 @@
   --ntk-row-bg: #f8fafc;
   --ntk-row-hover-bg: #f1f5f9;
 
-  --ntk-bar-fill: #0f766e;
+  --ntk-bar-fill: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
   --ntk-accent-value: #10b981;
 
   /* Drawer / nav (reference mode — light sidebar) */
@@ -60,6 +73,14 @@
  * CLAUDE  (warm terracotta)
  * ============================================================ */
 [data-theme='claude'] {
+  --ntk-primary: #c96442;
+  --ntk-primary-dark: #b5593a;
+  --ntk-primary-light: #e39e7c;
+  --ntk-primary-rgb: 201, 100, 66;
+  --ntk-primary-gradient-start: #8a513c;
+  --ntk-primary-gradient-end: #c96442;
+  --ntk-primary-gradient: linear-gradient(135deg, #8a513c 0%, #c96442 100%);
+
   --ntk-accent: #c96442;
   --ntk-accent-hover: #b5593a;
   --ntk-accent-soft: rgba(201, 100, 66, 0.08);
@@ -78,7 +99,12 @@
   --ntk-border: #e8e6dc;
   --ntk-border-strong: #d1cfc5;
 
-  --ntk-avatar-bg: #c96442;
+  --ntk-success: #8f8b57;
+  --ntk-warning: #d69b4b;
+  --ntk-error: #ad5546;
+  --ntk-info: #c96442;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #7a4b39 0%, #c96442 100%);
   --ntk-avatar-color: #ffffff;
   --ntk-avatar-border: #ffffff;
 
@@ -88,7 +114,7 @@
   --ntk-row-bg: #faf9f5;
   --ntk-row-hover-bg: #f5f4ed;
 
-  --ntk-bar-fill: #c96442;
+  --ntk-bar-fill: linear-gradient(90deg, #8a513c 0%, #c96442 100%);
   --ntk-accent-value: #c96442;
 
   --ntk-drawer-text: #4d4c48;
@@ -103,6 +129,14 @@
  * WARP  (dark minimal)
  * ============================================================ */
 [data-theme='warp'] {
+  --ntk-primary: #e2e2e2;
+  --ntk-primary-dark: #c8c8c4;
+  --ntk-primary-light: #ffffff;
+  --ntk-primary-rgb: 226, 226, 226;
+  --ntk-primary-gradient-start: #353534;
+  --ntk-primary-gradient-end: #e2e2e2;
+  --ntk-primary-gradient: linear-gradient(135deg, #353534 0%, #e2e2e2 100%);
+
   --ntk-accent: #e2e2e2;
   --ntk-accent-hover: #ffffff;
   --ntk-accent-soft: rgba(255, 255, 255, 0.06);
@@ -121,7 +155,12 @@
   --ntk-border: rgba(226, 226, 226, 0.12);
   --ntk-border-strong: rgba(226, 226, 226, 0.22);
 
-  --ntk-avatar-bg: #353534;
+  --ntk-success: #7fd0b6;
+  --ntk-warning: #d6b46c;
+  --ntk-error: #d58b8b;
+  --ntk-info: #e2e2e2;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #2c2c2b 0%, #434341 100%);
   --ntk-avatar-color: #faf9f6;
   --ntk-avatar-border: rgba(255, 255, 255, 0.16);
 
@@ -131,7 +170,7 @@
   --ntk-row-bg: rgba(255, 255, 255, 0.03);
   --ntk-row-hover-bg: rgba(255, 255, 255, 0.06);
 
-  --ntk-bar-fill: #e2e2e2;
+  --ntk-bar-fill: linear-gradient(90deg, #747472 0%, #e2e2e2 100%);
   --ntk-accent-value: #e2e2e2;
 
   --ntk-drawer-text: #c8c8c4;
@@ -146,6 +185,14 @@
  * RESEND  (dark vibrant)
  * ============================================================ */
 [data-theme='resend'] {
+  --ntk-primary: #ffffff;
+  --ntk-primary-dark: #cfcfcf;
+  --ntk-primary-light: #ffffff;
+  --ntk-primary-rgb: 255, 255, 255;
+  --ntk-primary-gradient-start: #1b1b1b;
+  --ntk-primary-gradient-end: #ffffff;
+  --ntk-primary-gradient: linear-gradient(135deg, #1b1b1b 0%, #ffffff 100%);
+
   --ntk-accent: #ffffff;
   --ntk-accent-hover: rgba(255, 255, 255, 0.85);
   --ntk-accent-soft: rgba(255, 255, 255, 0.06);
@@ -164,7 +211,12 @@
   --ntk-border: rgba(214, 235, 253, 0.12);
   --ntk-border-strong: rgba(214, 235, 253, 0.22);
 
-  --ntk-avatar-bg: #262626;
+  --ntk-success: #78d0b6;
+  --ntk-warning: #d0b06c;
+  --ntk-error: #d68989;
+  --ntk-info: #ffffff;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #171717 0%, #2a2a2a 100%);
   --ntk-avatar-color: #f0f0f0;
   --ntk-avatar-border: rgba(255, 255, 255, 0.16);
 
@@ -174,7 +226,7 @@
   --ntk-row-bg: rgba(255, 255, 255, 0.03);
   --ntk-row-hover-bg: rgba(255, 255, 255, 0.06);
 
-  --ntk-bar-fill: #ffffff;
+  --ntk-bar-fill: linear-gradient(90deg, #6d6d6d 0%, #ffffff 100%);
   --ntk-accent-value: #ffffff;
 
   --ntk-drawer-text: #b0b0b0;
@@ -189,6 +241,14 @@
  * SUPERHUMAN  (purple glow)
  * ============================================================ */
 [data-theme='superhuman'] {
+  --ntk-primary: #714cb6;
+  --ntk-primary-dark: #5f3fa0;
+  --ntk-primary-light: #9a7be0;
+  --ntk-primary-rgb: 113, 76, 182;
+  --ntk-primary-gradient-start: #4d2f87;
+  --ntk-primary-gradient-end: #8c68d3;
+  --ntk-primary-gradient: linear-gradient(135deg, #4d2f87 0%, #8c68d3 100%);
+
   --ntk-accent: #714cb6;
   --ntk-accent-hover: #5f3fa0;
   --ntk-accent-soft: rgba(113, 76, 182, 0.08);
@@ -207,7 +267,12 @@
   --ntk-border: #dcd7d3;
   --ntk-border-strong: #c5c0bc;
 
-  --ntk-avatar-bg: #714cb6;
+  --ntk-success: #8a67d8;
+  --ntk-warning: #c68b55;
+  --ntk-error: #c05285;
+  --ntk-info: #714cb6;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #4d2f87 0%, #714cb6 100%);
   --ntk-avatar-color: #ffffff;
   --ntk-avatar-border: #ffffff;
 
@@ -217,7 +282,7 @@
   --ntk-row-bg: #f5f3f0;
   --ntk-row-hover-bg: #edeae6;
 
-  --ntk-bar-fill: #714cb6;
+  --ntk-bar-fill: linear-gradient(90deg, #5f3fa0 0%, #8c68d3 100%);
   --ntk-accent-value: #714cb6;
 
   --ntk-drawer-text: #3d3b54;
@@ -232,6 +297,14 @@
  * KRAKEN  (deep purple)
  * ============================================================ */
 [data-theme='kraken'] {
+  --ntk-primary: #7132f5;
+  --ntk-primary-dark: #5b1ecf;
+  --ntk-primary-light: #996cff;
+  --ntk-primary-rgb: 113, 50, 245;
+  --ntk-primary-gradient-start: #4e1bbb;
+  --ntk-primary-gradient-end: #8c66ff;
+  --ntk-primary-gradient: linear-gradient(135deg, #4e1bbb 0%, #8c66ff 100%);
+
   --ntk-accent: #7132f5;
   --ntk-accent-hover: #5b1ecf;
   --ntk-accent-soft: rgba(113, 50, 245, 0.08);
@@ -250,7 +323,12 @@
   --ntk-border: #e0e0ea;
   --ntk-border-strong: #c8c8d6;
 
-  --ntk-avatar-bg: #7132f5;
+  --ntk-success: #8e6cff;
+  --ntk-warning: #c8904c;
+  --ntk-error: #c85692;
+  --ntk-info: #7132f5;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #4e1bbb 0%, #7132f5 100%);
   --ntk-avatar-color: #ffffff;
   --ntk-avatar-border: #ffffff;
 
@@ -260,7 +338,7 @@
   --ntk-row-bg: #f8f8fc;
   --ntk-row-hover-bg: #f0f0f8;
 
-  --ntk-bar-fill: #7132f5;
+  --ntk-bar-fill: linear-gradient(90deg, #5b1ecf 0%, #996cff 100%);
   --ntk-accent-value: #7132f5;
 
   --ntk-drawer-text: #3a3c4e;

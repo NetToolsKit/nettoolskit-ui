@@ -28,6 +28,9 @@ import {
   PlaceholderTemplate,
   ProfileTemplate,
 } from '../pages'
+import ReferenceDashboardCharts from '../pages/dashboard/ReferenceDashboardCharts.vue'
+import ThemeDotsSwitcher from '../navigation/ThemeDotsSwitcher.vue'
+import UserMenuTemplate from '../navigation/UserMenuTemplate.vue'
 import {
   createDefaultTemplateLayoutShells,
   createTemplateMenuFromScaffoldRoutes,
@@ -127,94 +130,23 @@ const fakeActivities: TemplateDashboardActivityItem[] = [
   { id: 'a5', label: 'Novos clientes no mês', value: fakeDashboard.newClientsMonth, icon: 'person_add', iconTone: 'amber' },
 ]
 
+const fakeStatusSegments = [
+  { id: 'status-pending', label: 'Pendentes', value: fakeDashboard.pendingOrders, color: 'var(--ntk-info)' },
+  { id: 'status-progress', label: 'Em Progresso', value: fakeDashboard.inProgressOrders, color: 'var(--ntk-warning)' },
+  { id: 'status-completed', label: 'Concluídos', value: fakeDashboard.completedOrders, color: 'var(--ntk-success)' },
+  { id: 'status-cancelled', label: 'Cancelados', value: fakeDashboard.cancelledOrders, color: 'var(--ntk-text-muted)' },
+]
+
+const fakeCategorySeries = [
+  { id: 'category-electronics', label: 'Eletrônicos', value: 523, color: 'var(--ntk-info)' },
+  { id: 'category-food', label: 'Alimentos', value: 412, color: 'var(--ntk-accent)' },
+  { id: 'category-fashion', label: 'Vestuário', value: 287, color: 'var(--ntk-warning)' },
+  { id: 'category-hygiene', label: 'Higiene', value: 198, color: 'var(--ntk-success)' },
+]
+
 /* ------------------------------------------------------------------ */
 /*  Runtime page components                                           */
 /* ------------------------------------------------------------------ */
-
-/* ------------------------------------------------------------------ */
-/*  Chart placeholder components (SVG — no Highcharts dependency)      */
-/* ------------------------------------------------------------------ */
-
-const chartCardStyle = 'background:#fff;border-radius:12px;border:1px solid #f1f5f9;box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden;display:flex;flex-direction:column'
-const chartHeaderStyle = 'padding:16px 20px 0;font-size:13px;font-weight:600;color:#334155;margin:0'
-const chartBodyStyle = 'flex:1;display:flex;align-items:center;justify-content:center;padding:16px 20px 20px;min-height:240px'
-
-const DonutChartPlaceholder = defineComponent({
-  name: 'DonutChartPlaceholder',
-  setup() {
-    const segments = [
-      { pct: 34, color: '#3b82f6', label: 'Pendentes' },
-      { pct: 52, color: '#f59e0b', label: 'Em Progresso' },
-      { pct: 1680, color: '#10b981', label: 'Concluídos' },
-      { pct: 81, color: '#64748b', label: 'Cancelados' },
-    ]
-    const total = segments.reduce((s, x) => s + x.pct, 0)
-    let cumulative = 0
-    const arcs = segments.map(seg => {
-      const start = (cumulative / total) * 360
-      cumulative += seg.pct
-      const end = (cumulative / total) * 360
-      return { ...seg, start, end }
-    })
-
-    function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
-      const rad = ((angleDeg - 90) * Math.PI) / 180
-      return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }
-    }
-
-    function arcPath(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
-      const s = polarToCartesian(cx, cy, r, endAngle)
-      const e = polarToCartesian(cx, cy, r, startAngle)
-      const large = endAngle - startAngle > 180 ? 1 : 0
-      return `M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 0 ${e.x} ${e.y}`
-    }
-
-    return () => h('div', { style: chartCardStyle }, [
-      h('h3', { style: chartHeaderStyle }, 'Pedidos por Status'),
-      h('div', { style: chartBodyStyle }, [
-        h('svg', { viewBox: '0 0 200 200', width: '200', height: '200' }, [
-          ...arcs.map(a =>
-            h('path', {
-              d: arcPath(100, 100, 70, a.start, a.end - 0.5),
-              fill: 'none',
-              stroke: a.color,
-              'stroke-width': '28',
-              'stroke-linecap': 'butt',
-            }),
-          ),
-          h('text', { x: '100', y: '105', 'text-anchor': 'middle', 'font-size': '18', 'font-weight': '700', fill: '#1e293b' }, total.toString()),
-          h('text', { x: '100', y: '120', 'text-anchor': 'middle', 'font-size': '10', fill: '#94a3b8' }, 'pedidos'),
-        ]),
-      ]),
-    ])
-  },
-})
-
-const BarChartPlaceholder = defineComponent({
-  name: 'BarChartPlaceholder',
-  setup() {
-    const bars = [
-      { label: 'Eletrônicos', value: 523, color: '#3b82f6' },
-      { label: 'Alimentos', value: 412, color: '#f97316' },
-      { label: 'Vestuário', value: 287, color: '#eab308' },
-      { label: 'Higiene', value: 198, color: '#22c55e' },
-    ]
-    const maxVal = Math.max(...bars.map(b => b.value))
-
-    return () => h('div', { style: chartCardStyle }, [
-      h('h3', { style: chartHeaderStyle }, 'Vendas por Categoria'),
-      h('div', { style: `${chartBodyStyle};flex-direction:column;gap:12px;align-items:stretch` }, [
-        ...bars.map(b => h('div', { style: 'display:flex;align-items:center;gap:10px' }, [
-          h('span', { style: 'width:80px;font-size:12px;font-weight:500;color:#334155;text-align:right;flex-shrink:0' }, b.label),
-          h('div', { style: 'flex:1;height:22px;background:#f1f5f9;border-radius:4px;overflow:hidden' }, [
-            h('div', { style: `height:100%;width:${(b.value / maxVal) * 100}%;background:${b.color};border-radius:4px;transition:width .6s ease` }),
-          ]),
-          h('span', { style: 'width:36px;font-size:12px;font-weight:600;color:#1e293b;text-align:right' }, b.value.toString()),
-        ])),
-      ]),
-    ])
-  },
-})
 
 const RuntimeDashboardPage = defineComponent({
   name: 'TemplateRuntimeDashboardPage',
@@ -240,10 +172,10 @@ const RuntimeDashboardPage = defineComponent({
       topItemsTitle: 'Top Clientes',
       topItemsTitleIcon: 'star',
     }, {
-      charts: () => [
-        h(DonutChartPlaceholder),
-        h(BarChartPlaceholder),
-      ],
+      charts: () => h(ReferenceDashboardCharts, {
+        statusSegments: fakeStatusSegments,
+        categorySeries: fakeCategorySeries,
+      }),
     })
   },
 })
@@ -504,7 +436,7 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
     return () => h(
       MainLayoutTemplate,
       {
-        appName: 'Template Runtime',
+        appName: 'Atlas Flow',
         userName: runtimeAuthStore.userName.value,
         userInitials: runtimeAuthStore.userInitials.value,
         menuItems: templateRuntimeMenuItems,
@@ -516,6 +448,42 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
         showDrawer: true,
       },
       {
+        'header-actions': ({ layoutControls }: {
+          layoutControls: {
+            horizontalMode: boolean
+            setHorizontalMode: (value: boolean) => void
+            showLabelsInMini: boolean
+            setShowLabelsInMini: (value: boolean) => void
+            sideMenuVariant: 'vercel' | 'reference'
+            setSideMenuVariant: (value: 'vercel' | 'reference') => void
+          }
+        }) => [
+          h(ThemeDotsSwitcher),
+          h(UserMenuTemplate, {
+            modelValue: layoutControls.horizontalMode,
+            showLabelsInMini: layoutControls.showLabelsInMini,
+            sideMenuVariant: layoutControls.sideMenuVariant,
+            appName: 'Atlas Flow',
+            profileName: runtimeAuthStore.userName.value,
+            profileInitials: runtimeAuthStore.userInitials.value,
+            signOutLabel: 'Sign out',
+            accountLabel: 'View account',
+            preferencesLabel: 'Preferences',
+            horizontalMenuLabel: 'Horizontal menu',
+            horizontalMenuCaption: 'Toggle between side and top navigation',
+            miniLabelsLabel: 'Labels in mini menu',
+            miniLabelsCaption: 'Show labels below icons in compact mode',
+            showSideMenuStyleToggle: false,
+            'onUpdate:modelValue': (value: boolean) => { layoutControls.setHorizontalMode(value) },
+            'onUpdate:showLabelsInMini': (value: boolean) => { layoutControls.setShowLabelsInMini(value) },
+            'onUpdate:sideMenuVariant': (value: 'vercel' | 'reference') => { layoutControls.setSideMenuVariant(value) },
+            onAccountClick: () => { window.location.hash = '#/profile' },
+            onLogoutClick: () => {
+              runtimeAuthStore.logout()
+              window.location.hash = '#/login'
+            },
+          }),
+        ],
         floating: () => [
           h('button', {
             class: 'ntk-runtime-chat-fab',

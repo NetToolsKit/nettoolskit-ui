@@ -27,7 +27,7 @@ const tsRules = {
 
 export default [
   {
-    ignores: ['.build/**', 'dist/**', 'coverage/**', 'node_modules/**'],
+    ignores: ['.build/**', '.temp/**', 'dist/**', 'node_modules/**'],
   },
 
   js.configs.recommended,

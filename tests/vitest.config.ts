@@ -8,6 +8,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  cacheDir: resolve(__dirname, '../.build/vitest/cache'),
   css: {
     preprocessorOptions: {
       scss: {
@@ -28,6 +29,7 @@ export default defineConfig({
       provider: 'v8',
       reportsDirectory: '../.build/coverage',
       reporter: ['text', 'json', 'html'],
+      clean: true,
       include: ['../src/**/*.ts', '../src/**/*.vue'],
       exclude: [
         '../src/**/*.d.ts',

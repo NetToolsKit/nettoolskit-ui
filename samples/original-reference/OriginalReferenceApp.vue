@@ -26,17 +26,7 @@
       </template>
 
       <template #header-actions="{ layoutControls }">
-        <div class="ntk-original-reference__theme-dots">
-          <button
-            v-for="theme in themeOptions"
-            :key="theme.id"
-            class="ntk-original-reference__theme-dot"
-            :class="{ 'ntk-original-reference__theme-dot--active': activeTheme === theme.id }"
-            :style="{ background: theme.color }"
-            :title="theme.label"
-            @click="setTheme(theme.id)"
-          />
-        </div>
+        <ThemeDotsSwitcher />
 
         <UserMenuTemplate
           :model-value="layoutControls.horizontalMode"
@@ -160,11 +150,9 @@ import UserMenuTemplate from '../../src/templates/navigation/UserMenuTemplate.vu
 import DashboardTemplate from '../../src/templates/pages/dashboard/DashboardTemplate.vue'
 import PlaceholderTemplate from '../../src/templates/pages/system/PlaceholderTemplate.vue'
 import type { TemplatePageAction, TemplatePageHint } from '../../src/templates/pages/page-template.types'
+import ThemeDotsSwitcher from '../../src/templates/navigation/ThemeDotsSwitcher.vue'
 import OriginalReferenceCharts from './OriginalReferenceCharts.vue'
 import { originalReferenceDashboardSample } from './original-reference.sample-data'
-import { useThemeSwitcher } from '../../src/composables/useThemeSwitcher'
-
-const { activeTheme, themeOptions, setTheme } = useThemeSwitcher()
 
 const referenceHeaderLogoUrl = new URL('../assets/reference-header-logo.png', import.meta.url).href
 
@@ -378,33 +366,6 @@ onBeforeUnmount(() => {
   width: auto;
   object-fit: contain;
   display: block;
-}
-
-.ntk-original-reference__theme-dots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-right: 8px;
-}
-
-.ntk-original-reference__theme-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: border-color 0.2s, transform 0.15s;
-  padding: 0;
-  outline: none;
-}
-
-.ntk-original-reference__theme-dot:hover {
-  transform: scale(1.2);
-}
-
-.ntk-original-reference__theme-dot--active {
-  border-color: var(--ntk-text-heading, #0f172a);
-  transform: scale(1.15);
 }
 
 .ntk-original-reference__floating-action {

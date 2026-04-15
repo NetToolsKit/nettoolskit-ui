@@ -30,9 +30,44 @@ function readStoredTheme(): ThemeId {
 
 const activeTheme = ref<ThemeId>(readStoredTheme())
 
+function readThemeVariable(name: string, fallback: string): string {
+  if (typeof document === 'undefined') {
+    return fallback
+  }
+
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return value || fallback
+}
+
+function syncQuasarColorPalette(): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const root = document.documentElement
+  root.style.setProperty('--q-primary', readThemeVariable('--ntk-accent', '#0f766e'))
+  root.style.setProperty('--q-secondary', readThemeVariable('--ntk-secondary', '#334155'))
+  root.style.setProperty('--q-accent', readThemeVariable('--ntk-accent-hover', '#115e59'))
+  root.style.setProperty('--q-positive', readThemeVariable('--ntk-success', '#10b981'))
+  root.style.setProperty('--q-warning', readThemeVariable('--ntk-warning', '#f59e0b'))
+  root.style.setProperty('--q-negative', readThemeVariable('--ntk-error', '#ef4444'))
+  root.style.setProperty('--q-info', readThemeVariable('--ntk-info', '#14b8a6'))
+
+  const darkScheme = readThemeVariable('--ntk-dark-scheme', '0')
+  root.style.colorScheme = darkScheme === '1' ? 'dark' : 'light'
+}
+
 function applyThemeToDOM(themeId: ThemeId): void {
   if (typeof document === 'undefined') return
+
   document.documentElement.dataset.theme = themeId
+  syncQuasarColorPalette()
+
+  if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+    window.requestAnimationFrame(() => {
+      syncQuasarColorPalette()
+    })
+  }
 }
 
 // Apply stored theme on module load

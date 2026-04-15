@@ -148,8 +148,8 @@ jobs:
         with:
           name: playwright-e2e-artifacts
           path: |
-            test-results/
-            playwright-report/
+            .build/test-results/
+            .build/playwright-report/
           if-no-files-found: ignore
           retention-days: 14
 
@@ -185,7 +185,7 @@ jobs:
         with:
           name: playwright-visual-regression-artifacts
           path: |
-            test-results/
-            playwright-report/
+            .build/test-results/
+            .build/playwright-report/
           if-no-files-found: ignore
           retention-days: 14
