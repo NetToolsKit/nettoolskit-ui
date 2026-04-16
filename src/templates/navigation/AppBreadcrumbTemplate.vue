@@ -105,22 +105,23 @@ function navigateTo(routeName?: string, path?: string): void {
 
 <style scoped lang="scss">
 .ntk-template-breadcrumb {
-  --ntk-template-breadcrumb-surface: var(--ntk-template-layout-header-breadcrumb-bg, var(--ntk-template-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent)));
-  --ntk-template-breadcrumb-border-color: var(--ntk-template-layout-header-breadcrumb-border, var(--ntk-template-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent)));
-  --ntk-template-breadcrumb-link-text: var(--ntk-template-layout-header-breadcrumb-link, var(--ntk-template-breadcrumb-link-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent)));
-  --ntk-template-breadcrumb-link-hover-text: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-breadcrumb-link-hover-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
-  --ntk-template-breadcrumb-current-text: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-breadcrumb-current-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
-  --ntk-template-breadcrumb-separator-text: var(--ntk-template-layout-header-breadcrumb-sep, var(--ntk-template-breadcrumb-sep-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent)));
-  --ntk-template-breadcrumb-link-hover-bg: var(--ntk-template-layout-header-breadcrumb-hover-bg, color-mix(in srgb, var(--ntk-template-breadcrumb-current-text) 8%, transparent));
-  --ntk-template-breadcrumb-focus-ring: var(--ntk-template-layout-header-breadcrumb-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));
+  --ntk-template-breadcrumb-surface-resolved: var(--ntk-template-layout-header-breadcrumb-bg, var(--ntk-template-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent)));
+  --ntk-template-breadcrumb-border-color-resolved: var(--ntk-template-layout-header-breadcrumb-border, var(--ntk-template-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent)));
+  --ntk-template-breadcrumb-link-text-resolved: var(--ntk-template-layout-header-breadcrumb-link, var(--ntk-template-breadcrumb-link-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent)));
+  --ntk-template-breadcrumb-link-hover-text-resolved: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-breadcrumb-link-hover-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
+  --ntk-template-breadcrumb-current-text-resolved: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-breadcrumb-current-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
+  --ntk-template-breadcrumb-separator-text-resolved: var(--ntk-template-layout-header-breadcrumb-sep, var(--ntk-template-breadcrumb-sep-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent)));
+  --ntk-template-breadcrumb-link-hover-bg-resolved: var(--ntk-template-layout-header-breadcrumb-hover-bg, var(--ntk-template-breadcrumb-hover-bg, color-mix(in srgb, var(--ntk-template-breadcrumb-current-text-resolved) 8%, transparent)));
+  --ntk-template-breadcrumb-focus-ring-resolved: var(--ntk-template-layout-header-breadcrumb-focus-ring, var(--ntk-template-breadcrumb-focus-ring, var(--ntk-border-focus, var(--ntk-accent))));
+  --ntk-template-breadcrumb-radius-resolved: var(--ntk-template-layout-header-breadcrumb-radius, var(--ntk-template-breadcrumb-radius, 20px));
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 20px;
+  border-radius: var(--ntk-template-breadcrumb-radius-resolved);
   font-size: 13px;
-  border: 1px solid var(--ntk-template-breadcrumb-border-color);
-  background: var(--ntk-template-breadcrumb-surface);
+  border: 1px solid var(--ntk-template-breadcrumb-border-color-resolved);
+  background: var(--ntk-template-breadcrumb-surface-resolved);
 }
 
 .ntk-template-breadcrumb__link {
@@ -131,19 +132,19 @@ function navigateTo(routeName?: string, path?: string): void {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: var(--ntk-template-breadcrumb-link-text);
+  color: var(--ntk-template-breadcrumb-link-text-resolved);
   cursor: pointer;
   transition:
     color 0.15s ease,
     background-color 0.15s ease;
 
   &:hover {
-    color: var(--ntk-template-breadcrumb-link-hover-text);
-    background: var(--ntk-template-breadcrumb-link-hover-bg);
+    color: var(--ntk-template-breadcrumb-link-hover-text-resolved);
+    background: var(--ntk-template-breadcrumb-link-hover-bg-resolved);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--ntk-template-breadcrumb-focus-ring);
+    outline: 2px solid var(--ntk-template-breadcrumb-focus-ring-resolved);
     outline-offset: 2px;
   }
 }
@@ -155,12 +156,12 @@ function navigateTo(routeName?: string, path?: string): void {
 
 .ntk-template-breadcrumb__current {
   padding: 2px 4px;
-  color: var(--ntk-template-breadcrumb-current-text);
+  color: var(--ntk-template-breadcrumb-current-text-resolved);
   font-weight: 600;
 }
 
 .ntk-template-breadcrumb__sep {
-  color: var(--ntk-template-breadcrumb-separator-text);
+  color: var(--ntk-template-breadcrumb-separator-text-resolved);
   font-weight: 400;
 }
 </style>

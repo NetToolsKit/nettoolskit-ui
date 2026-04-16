@@ -145,21 +145,22 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 <style lang="scss">
 .ntk-template-horizontal-link {
-  --ntk-template-horizontal-link-color: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 75%, transparent);
-  --ntk-template-horizontal-link-hover-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-hover-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 8%, transparent);
-  --ntk-template-horizontal-link-active-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-active-border: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-active-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 10%, transparent);
-  --ntk-template-horizontal-link-submenu-bg: var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)))));
-  --ntk-template-horizontal-link-submenu-border: var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent)));
-  --ntk-template-horizontal-link-submenu-text: var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
-  --ntk-template-horizontal-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent)));
-  --ntk-template-horizontal-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, transparent)));
-  --ntk-template-horizontal-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-template-horizontal-link-submenu-active-color: var(--ntk-template-layout-submenu-active-text, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-horizontal-link-color-resolved: var(--ntk-template-horizontal-link-color, color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 75%, transparent));
+  --ntk-template-horizontal-link-hover-color-resolved: var(--ntk-template-horizontal-link-hover-color, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))));
+  --ntk-template-horizontal-link-hover-bg-resolved: var(--ntk-template-horizontal-link-hover-bg, color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 8%, transparent));
+  --ntk-template-horizontal-link-active-color-resolved: var(--ntk-template-horizontal-link-active-color, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))));
+  --ntk-template-horizontal-link-active-border-resolved: var(--ntk-template-horizontal-link-active-border, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))));
+  --ntk-template-horizontal-link-active-bg-resolved: var(--ntk-template-horizontal-link-active-bg, color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 10%, transparent));
+  --ntk-template-horizontal-link-submenu-bg-resolved: var(--ntk-template-horizontal-link-submenu-bg, var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary))))));
+  --ntk-template-horizontal-link-submenu-border-resolved: var(--ntk-template-horizontal-link-submenu-border, var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent))));
+  --ntk-template-horizontal-link-submenu-text-resolved: var(--ntk-template-horizontal-link-submenu-text, var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary))))));
+  --ntk-template-horizontal-link-submenu-hover-bg-resolved: var(--ntk-template-horizontal-link-submenu-hover-bg, var(--ntk-template-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent))));
+  --ntk-template-horizontal-link-submenu-active-bg-resolved: var(--ntk-template-horizontal-link-submenu-active-bg, var(--ntk-template-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, transparent))));
+  --ntk-template-horizontal-link-submenu-active-border-resolved: var(--ntk-template-horizontal-link-submenu-active-border, var(--ntk-template-layout-submenu-active-border, var(--ntk-primary, var(--ntk-accent))));
+  --ntk-template-horizontal-link-submenu-active-color-resolved: var(--ntk-template-horizontal-link-submenu-active-color, var(--ntk-template-layout-submenu-active-text, var(--ntk-primary, var(--ntk-accent))));
+  --ntk-template-horizontal-link-submenu-shadow-resolved: var(--ntk-template-horizontal-link-submenu-shadow, var(--ntk-template-layout-submenu-shadow, var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft))));
 
-  color: var(--ntk-template-horizontal-link-color) !important;
+  color: var(--ntk-template-horizontal-link-color-resolved) !important;
   font-size: 13px;
   font-weight: 400;
   border-bottom: 2px solid transparent;
@@ -168,16 +169,16 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   transition: all 0.2s ease;
 
   &:hover {
-    color: var(--ntk-template-horizontal-link-hover-color) !important;
-    background-color: var(--ntk-template-horizontal-link-hover-bg);
+    color: var(--ntk-template-horizontal-link-hover-color-resolved) !important;
+    background-color: var(--ntk-template-horizontal-link-hover-bg-resolved);
   }
 }
 
 .ntk-template-horizontal-link--active {
-  color: var(--ntk-template-horizontal-link-active-color) !important;
+  color: var(--ntk-template-horizontal-link-active-color-resolved) !important;
   font-weight: 500;
-  border-bottom: 2px solid var(--ntk-template-horizontal-link-active-border) !important;
-  background-color: var(--ntk-template-horizontal-link-active-bg);
+  border-bottom: 2px solid var(--ntk-template-horizontal-link-active-border-resolved) !important;
+  background-color: var(--ntk-template-horizontal-link-active-bg-resolved);
 }
 
 .ntk-template-horizontal-link__submenu {
@@ -187,24 +188,25 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 .ntk-template-horizontal-link__submenu-item {
   border-left: 3px solid transparent;
   transition: all 0.2s ease;
-  color: var(--ntk-template-horizontal-link-submenu-text);
+  color: var(--ntk-template-horizontal-link-submenu-text-resolved);
 
   &:hover {
-    background-color: var(--ntk-template-horizontal-link-submenu-hover-bg);
+    background-color: var(--ntk-template-horizontal-link-submenu-hover-bg-resolved);
   }
 }
 
 .ntk-template-horizontal-link__submenu-item--active {
-  border-left: 3px solid var(--ntk-template-horizontal-link-submenu-active-border) !important;
-  background-color: var(--ntk-template-horizontal-link-submenu-active-bg);
-  color: var(--ntk-template-horizontal-link-submenu-active-color);
+  border-left: 3px solid var(--ntk-template-horizontal-link-submenu-active-border-resolved) !important;
+  background-color: var(--ntk-template-horizontal-link-submenu-active-bg-resolved);
+  color: var(--ntk-template-horizontal-link-submenu-active-color-resolved);
 }
 
 .ntk-template-horizontal-link__submenu-popup {
-  --ntk-template-overlay-bg: var(--ntk-template-horizontal-link-submenu-bg);
-  --ntk-template-overlay-border: var(--ntk-template-horizontal-link-submenu-border);
-  --ntk-template-overlay-text: var(--ntk-template-horizontal-link-submenu-text);
-  --ntk-template-overlay-hover-bg: var(--ntk-template-horizontal-link-submenu-hover-bg);
-  --ntk-template-overlay-active-bg: var(--ntk-template-horizontal-link-submenu-active-bg);
+  --ntk-template-overlay-bg: var(--ntk-template-horizontal-link-submenu-bg-resolved);
+  --ntk-template-overlay-border: var(--ntk-template-horizontal-link-submenu-border-resolved);
+  --ntk-template-overlay-text: var(--ntk-template-horizontal-link-submenu-text-resolved);
+  --ntk-template-overlay-shadow: var(--ntk-template-horizontal-link-submenu-shadow-resolved);
+  --ntk-template-overlay-hover-bg: var(--ntk-template-horizontal-link-submenu-hover-bg-resolved);
+  --ntk-template-overlay-active-bg: var(--ntk-template-horizontal-link-submenu-active-bg-resolved);
 }
 </style>

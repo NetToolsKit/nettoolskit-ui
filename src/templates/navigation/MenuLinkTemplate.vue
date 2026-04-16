@@ -300,22 +300,28 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 <style lang="scss">
 .ntk-template-menu-link {
-  --ntk-template-menu-link-text: var(--ntk-template-layout-nav-text, var(--ntk-template-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary)))));
-  --ntk-template-menu-link-active-border: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-template-menu-link-active-bg: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 20%, transparent) 0%, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 6%, transparent) 100%));
-  --ntk-template-menu-link-active-text: var(--ntk-template-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-title, var(--ntk-text-primary)))));
-  --ntk-template-menu-link-submenu-bg: var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)))));
-  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border, var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent))));
-  --ntk-template-menu-link-submenu-text: var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
-  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent)));
-  --ntk-template-menu-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 12%, transparent)));
-  --ntk-template-menu-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-template-menu-link-active-border));
-  --ntk-template-menu-link-submenu-active-text: var(--ntk-template-layout-submenu-active-text, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-template-menu-link-submenu-radius: var(--ntk-template-overlay-radius, 8px);
-  --ntk-template-menu-link-shadow: var(--ntk-template-layout-submenu-shadow, var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 8%, transparent))));
+  --ntk-template-menu-link-text-resolved: var(--ntk-template-menu-link-color, var(--ntk-template-layout-nav-text, var(--ntk-template-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))))));
+  --ntk-template-menu-link-hover-bg-resolved: var(--ntk-template-menu-link-hover-bg, var(--ntk-template-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 8%, transparent)));
+  --ntk-template-menu-link-active-border-resolved: var(--ntk-template-menu-link-active-border, var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent))));
+  --ntk-template-menu-link-active-bg-resolved: var(--ntk-template-menu-link-active-bg, var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, color-mix(in srgb, var(--ntk-template-menu-link-active-border-resolved) 20%, transparent) 0%, color-mix(in srgb, var(--ntk-template-menu-link-active-border-resolved) 6%, transparent) 100%)));
+  --ntk-template-menu-link-active-text-resolved: var(--ntk-template-menu-link-active-text, var(--ntk-template-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-title, var(--ntk-text-primary))))));
+  --ntk-template-menu-link-caption-resolved: var(--ntk-template-menu-link-caption, color-mix(in srgb, var(--ntk-template-menu-link-text-resolved) 76%, transparent));
+  --ntk-template-menu-link-submenu-bg-resolved: var(--ntk-template-menu-link-submenu-bg, var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary))))));
+  --ntk-template-menu-link-submenu-border-resolved: var(--ntk-template-menu-link-submenu-border, var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border, var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent)))));
+  --ntk-template-menu-link-submenu-text-resolved: var(--ntk-template-menu-link-submenu-text, var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary))))));
+  --ntk-template-menu-link-submenu-hover-bg-resolved: var(--ntk-template-menu-link-submenu-hover-bg, var(--ntk-template-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent))));
+  --ntk-template-menu-link-submenu-active-border-resolved: var(--ntk-template-menu-link-submenu-active-border, var(--ntk-template-layout-submenu-active-border, var(--ntk-template-menu-link-active-border-resolved)));
+  --ntk-template-menu-link-submenu-active-bg-resolved: var(--ntk-template-menu-link-submenu-active-bg, var(--ntk-template-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-template-menu-link-active-border-resolved) 12%, transparent))));
+  --ntk-template-menu-link-submenu-active-text-resolved: var(--ntk-template-menu-link-submenu-active-text, var(--ntk-template-layout-submenu-active-text, var(--ntk-template-menu-link-active-text-resolved)));
+  --ntk-template-menu-link-child-active-bg-resolved: var(--ntk-template-menu-link-child-active-bg, var(--ntk-template-menu-link-active-bg-resolved));
+  --ntk-template-menu-link-submenu-radius-resolved: var(--ntk-template-menu-link-submenu-radius, var(--ntk-template-overlay-radius, 8px));
+  --ntk-template-menu-link-shadow-resolved: var(--ntk-template-menu-link-shadow, var(--ntk-template-layout-submenu-shadow, var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 8%, transparent)))));
+  --ntk-template-menu-link-reference-hover-bg-resolved: var(--ntk-template-menu-link-reference-hover-bg, var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 5%, transparent)));
+  --ntk-template-menu-link-active-shadow-resolved: var(--ntk-template-menu-link-active-shadow, 0 0 0 1px color-mix(in srgb, var(--ntk-template-menu-link-active-border-resolved) 24%, transparent), 0 10px 18px color-mix(in srgb, var(--ntk-template-layout-page-text) 18%, transparent));
+  --ntk-template-menu-link-active-inset-resolved: var(--ntk-template-menu-link-active-inset, inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-drawer-text) 14%, transparent));
 
   transition: all 0.2s ease;
-  color: var(--ntk-template-menu-link-text) !important;
+  color: var(--ntk-template-menu-link-text-resolved) !important;
 
   .q-item__section,
   .q-item-section,
@@ -325,7 +331,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__expansion-header {
-  color: var(--ntk-template-menu-link-text) !important;
+  color: var(--ntk-template-menu-link-text-resolved) !important;
 }
 
 .ntk-template-menu-link__expansion-header .q-expansion-item__toggle-icon {
@@ -333,9 +339,9 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link--active {
-  border-left: 4px solid var(--ntk-template-menu-link-active-border);
-  background: var(--ntk-template-menu-link-active-bg);
-  color: var(--ntk-template-menu-link-active-text) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border-resolved);
+  background: var(--ntk-template-menu-link-active-bg-resolved);
+  color: var(--ntk-template-menu-link-active-text-resolved) !important;
 }
 
 .ntk-template-menu-link--inactive {
@@ -349,29 +355,29 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   .q-item {
     border-left: 3px solid transparent;
     border-radius: 12px;
-    color: var(--ntk-template-menu-link-submenu-text);
+    color: var(--ntk-template-menu-link-submenu-text-resolved);
 
     &:hover {
-      background: var(--ntk-template-menu-link-submenu-hover-bg);
+      background: var(--ntk-template-menu-link-submenu-hover-bg-resolved);
     }
   }
 
   .q-item.q-router-link--active,
   .q-item--active {
-    color: var(--ntk-template-menu-link-submenu-active-text) !important;
-    border-left-color: var(--ntk-template-menu-link-submenu-active-border);
-    background: var(--ntk-template-menu-link-submenu-active-bg);
+    color: var(--ntk-template-menu-link-submenu-active-text-resolved) !important;
+    border-left-color: var(--ntk-template-menu-link-submenu-active-border-resolved);
+    background: var(--ntk-template-menu-link-submenu-active-bg-resolved);
   }
 }
 
 .ntk-template-menu-link__submenu-popup {
-  --ntk-template-overlay-bg: var(--ntk-template-menu-link-submenu-bg);
-  --ntk-template-overlay-border: var(--ntk-template-menu-link-submenu-border);
-  --ntk-template-overlay-text: var(--ntk-template-menu-link-submenu-text);
-  --ntk-template-overlay-shadow: var(--ntk-template-menu-link-shadow);
-  --ntk-template-overlay-hover-bg: var(--ntk-template-menu-link-submenu-hover-bg);
-  --ntk-template-overlay-active-bg: var(--ntk-template-menu-link-submenu-active-bg);
-  --ntk-template-overlay-radius: var(--ntk-template-menu-link-submenu-radius);
+  --ntk-template-overlay-bg: var(--ntk-template-menu-link-submenu-bg-resolved);
+  --ntk-template-overlay-border: var(--ntk-template-menu-link-submenu-border-resolved);
+  --ntk-template-overlay-text: var(--ntk-template-menu-link-submenu-text-resolved);
+  --ntk-template-overlay-shadow: var(--ntk-template-menu-link-shadow-resolved);
+  --ntk-template-overlay-hover-bg: var(--ntk-template-menu-link-submenu-hover-bg-resolved);
+  --ntk-template-overlay-active-bg: var(--ntk-template-menu-link-submenu-active-bg-resolved);
+  --ntk-template-overlay-radius: var(--ntk-template-menu-link-submenu-radius-resolved);
 }
 
 .ntk-template-menu-link__expanded-list {
@@ -379,7 +385,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
   .q-item.q-router-link--active,
   .q-item--active {
-    color: var(--ntk-template-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-title, var(--ntk-text-primary))))) !important;
+    color: var(--ntk-template-menu-link-active-text-resolved) !important;
   }
 }
 
@@ -389,13 +395,13 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__child--active {
-  border-left: 4px solid var(--ntk-template-menu-link-active-border);
-  background: var(--ntk-template-menu-link-active-bg);
+  border-left: 4px solid var(--ntk-template-menu-link-active-border-resolved);
+  background: var(--ntk-template-menu-link-child-active-bg-resolved);
 }
 
 .ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid var(--ntk-template-menu-link-active-border);
-  background: var(--ntk-template-menu-link-active-bg);
+  border-left: 4px solid var(--ntk-template-menu-link-active-border-resolved);
+  background: var(--ntk-template-menu-link-active-bg-resolved);
 }
 
 .ntk-template-menu-link--labels {
@@ -424,7 +430,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link :deep(.q-item__label--caption) {
   opacity: 0.72;
-  color: color-mix(in srgb, var(--ntk-template-menu-link-text) 76%, transparent) !important;
+  color: var(--ntk-template-menu-link-caption-resolved) !important;
 }
 
 .ntk-template-menu-link--visual-reference {
@@ -435,19 +441,19 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 5%, transparent));
+  background: var(--ntk-template-menu-link-reference-hover-bg-resolved);
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active {
-  border-left: 4px solid var(--ntk-template-menu-link-active-border) !important;
-  background: var(--ntk-template-menu-link-active-bg) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border-resolved) !important;
+  background: var(--ntk-template-menu-link-active-bg-resolved) !important;
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-icon,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item__label,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item__section,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item-section {
-  color: var(--ntk-template-menu-link-active-text) !important;
+  color: var(--ntk-template-menu-link-active-text-resolved) !important;
   font-weight: 500;
 }
 
@@ -458,12 +464,12 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 5%, transparent));
+  background: var(--ntk-template-menu-link-reference-hover-bg-resolved);
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference.ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid var(--ntk-template-menu-link-active-border) !important;
-  background: var(--ntk-template-menu-link-active-bg) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border-resolved) !important;
+  background: var(--ntk-template-menu-link-active-bg-resolved) !important;
 }
 
 .ntk-template-menu-link__child.ntk-template-menu-link--visual-reference,
@@ -475,8 +481,8 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-reference,
 .ntk-template-menu-link--visual-reference .ntk-template-menu-link__child--active {
-  border-left: 4px solid var(--ntk-template-menu-link-active-border) !important;
-  background: var(--ntk-template-menu-link-active-bg) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border-resolved) !important;
+  background: var(--ntk-template-menu-link-child-active-bg-resolved) !important;
 }
 
 .ntk-template-menu-link--visual-vercel {
@@ -493,15 +499,13 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link--visual-vercel:hover {
   transform: translateX(3px);
-  background: var(--ntk-template-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent));
+  background: var(--ntk-template-menu-link-hover-bg-resolved);
 }
 
 .ntk-template-menu-link--visual-vercel.ntk-template-menu-link--active {
-  border-left-color: var(--ntk-template-menu-link-active-border);
-  background: var(--ntk-template-menu-link-active-bg);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--ntk-template-menu-link-active-border) 24%, transparent),
-    0 10px 18px color-mix(in srgb, var(--ntk-template-layout-page-text) 18%, transparent);
+  border-left-color: var(--ntk-template-menu-link-active-border-resolved);
+  background: var(--ntk-template-menu-link-active-bg-resolved);
+  box-shadow: var(--ntk-template-menu-link-active-shadow-resolved);
   transform: translateX(4px);
 }
 
@@ -511,7 +515,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-drawer-text) 14%, transparent);
+  box-shadow: var(--ntk-template-menu-link-active-inset-resolved);
   animation: ntk-template-menu-link-select-in 0.24s ease-out;
 }
 
@@ -527,19 +531,19 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel:hover {
   transform: translateX(3px);
-  background: var(--ntk-template-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent));
+  background: var(--ntk-template-menu-link-hover-bg-resolved);
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel.ntk-template-menu-link__expansion-header--active {
-  border-left-color: var(--ntk-template-menu-link-active-border);
-  background: var(--ntk-template-menu-link-active-bg);
+  border-left-color: var(--ntk-template-menu-link-active-border-resolved);
+  background: var(--ntk-template-menu-link-active-bg-resolved);
   transform: translateX(4px);
 }
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-vercel,
 .ntk-template-menu-link--visual-vercel .ntk-template-menu-link__child--active {
-  border-left-color: var(--ntk-template-menu-link-active-border);
-  background: var(--ntk-template-menu-link-active-bg);
+  border-left-color: var(--ntk-template-menu-link-active-border-resolved);
+  background: var(--ntk-template-menu-link-child-active-bg-resolved);
 }
 
 .ntk-template-menu-link__badge {

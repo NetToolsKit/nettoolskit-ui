@@ -208,32 +208,32 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 
 <style lang="scss">
 .ntk-template-user-menu {
-  --ntk-template-user-menu-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-user-menu-surface-resolved: var(--ntk-template-user-menu-surface, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
   --ntk-template-user-menu-border-color: var(--ntk-template-user-menu-border, var(--ntk-border-color));
-  --ntk-template-user-menu-shadow-color: color-mix(in srgb, var(--ntk-text-primary) 14%, transparent);
+  --ntk-template-user-menu-shadow-resolved: var(--ntk-template-user-menu-shadow, 0 4px 20px color-mix(in srgb, var(--ntk-template-user-menu-text, var(--ntk-text-primary)) 14%, transparent));
   --ntk-template-user-menu-text-color: var(--ntk-template-user-menu-text, var(--ntk-text-primary));
   --ntk-template-user-menu-muted-color: var(--ntk-template-user-menu-muted, var(--ntk-text-secondary));
-  --ntk-template-user-menu-avatar-border-color: var(--ntk-template-user-menu-avatar-border, var(--ntk-template-user-menu-surface));
+  --ntk-template-user-menu-avatar-border-color: var(--ntk-template-user-menu-avatar-border, var(--ntk-template-user-menu-surface-resolved));
   --ntk-template-user-menu-avatar-bg-color: var(--ntk-template-user-menu-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary)));
   --ntk-template-user-menu-avatar-text-color: var(--ntk-template-user-menu-avatar-color, var(--ntk-text-on-primary, var(--ntk-text-inverse)));
-  --ntk-template-user-menu-header-surface: var(--ntk-template-user-menu-header-bg, color-mix(in srgb, var(--ntk-template-user-menu-text-color) 2%, var(--ntk-template-user-menu-surface)));
-  --ntk-template-user-menu-profile-surface: var(--ntk-template-user-menu-profile-bg, var(--ntk-template-user-menu-surface));
+  --ntk-template-user-menu-header-surface: var(--ntk-template-user-menu-header-bg, color-mix(in srgb, var(--ntk-template-user-menu-text-color) 2%, var(--ntk-template-user-menu-surface-resolved)));
+  --ntk-template-user-menu-profile-surface: var(--ntk-template-user-menu-profile-bg, var(--ntk-template-user-menu-surface-resolved));
   --ntk-template-user-menu-accent: var(--ntk-template-user-menu-accent-color, var(--ntk-accent, var(--ntk-primary)));
 
   min-width: 320px;
   border: 1px solid var(--ntk-template-user-menu-border-color);
   border-radius: var(--ntk-template-user-menu-radius, 8px);
-  background: var(--ntk-template-user-menu-surface);
-  box-shadow: var(--ntk-template-user-menu-shadow, 0 4px 20px var(--ntk-template-user-menu-shadow-color));
+  background: var(--ntk-template-user-menu-surface-resolved);
+  box-shadow: var(--ntk-template-user-menu-shadow-resolved);
   overflow: hidden;
   color: var(--ntk-template-user-menu-text-color);
 }
 
 .ntk-template-user-menu__trigger {
-  --ntk-template-user-menu-trigger-color: var(--ntk-template-layout-header-action-text, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));
-  --ntk-template-user-menu-trigger-hover-bg: var(--ntk-template-layout-header-action-hover-bg, color-mix(in srgb, var(--ntk-template-user-menu-trigger-color) 10%, transparent));
-  --ntk-template-user-menu-trigger-focus-ring: var(--ntk-template-layout-header-action-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));
-  --ntk-template-user-menu-trigger-radius: var(--ntk-template-layout-header-action-radius, 999px);
+  --ntk-template-user-menu-trigger-color: var(--ntk-template-layout-header-action-text, var(--ntk-template-shell-header-action-text, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
+  --ntk-template-user-menu-trigger-hover-bg: var(--ntk-template-layout-header-action-hover-bg, var(--ntk-template-shell-header-action-hover-bg, color-mix(in srgb, var(--ntk-template-user-menu-trigger-color) 10%, transparent)));
+  --ntk-template-user-menu-trigger-focus-ring: var(--ntk-template-layout-header-action-focus-ring, var(--ntk-template-shell-header-action-focus-ring, var(--ntk-border-focus, var(--ntk-accent))));
+  --ntk-template-user-menu-trigger-radius: var(--ntk-template-layout-header-action-radius, var(--ntk-template-shell-header-action-radius, 999px));
 
   color: var(--ntk-template-user-menu-trigger-color) !important;
   border-radius: var(--ntk-template-user-menu-trigger-radius);
