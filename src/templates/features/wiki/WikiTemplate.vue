@@ -742,20 +742,25 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   --ntk-template-wiki-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   --ntk-template-wiki-chip-surface: var(--ntk-template-page-chip-bg, var(--ntk-bg-tertiary));
   --ntk-template-wiki-chip-text: var(--ntk-template-page-chip-text, var(--ntk-text-secondary));
-  --ntk-template-wiki-chip-info-text: var(--ntk-info, var(--ntk-primary));
-  --ntk-template-wiki-chip-info-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-info-text) 12%, transparent);
-  --ntk-template-wiki-chip-success-text: var(--ntk-success, var(--ntk-primary));
-  --ntk-template-wiki-chip-success-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-success-text) 12%, transparent);
-  --ntk-template-wiki-chip-warning-text: var(--ntk-warning, var(--ntk-primary));
-  --ntk-template-wiki-chip-warning-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-warning-text) 14%, transparent);
-  --ntk-template-wiki-chip-danger-text: var(--ntk-error, var(--ntk-primary));
-  --ntk-template-wiki-chip-danger-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-danger-text) 14%, transparent);
+  --ntk-template-wiki-chip-border: color-mix(in srgb, var(--ntk-template-wiki-border) 92%, var(--ntk-template-wiki-card-bg));
+  --ntk-template-wiki-chip-info-text: var(--semantic-info-text, var(--semantic-info-primary, var(--ntk-info, var(--ntk-primary))));
+  --ntk-template-wiki-chip-info-bg: var(--semantic-info-bg, color-mix(in srgb, var(--ntk-template-wiki-chip-info-text) 24%, var(--ntk-template-wiki-card-bg)));
+  --ntk-template-wiki-chip-info-border: color-mix(in srgb, var(--ntk-template-wiki-chip-info-text) 36%, var(--ntk-template-wiki-border));
+  --ntk-template-wiki-chip-success-text: var(--semantic-success-text, var(--semantic-success-primary, var(--ntk-success, var(--ntk-primary))));
+  --ntk-template-wiki-chip-success-bg: var(--semantic-success-bg, color-mix(in srgb, var(--ntk-template-wiki-chip-success-text) 24%, var(--ntk-template-wiki-card-bg)));
+  --ntk-template-wiki-chip-success-border: color-mix(in srgb, var(--ntk-template-wiki-chip-success-text) 36%, var(--ntk-template-wiki-border));
+  --ntk-template-wiki-chip-warning-text: var(--semantic-warning-text, var(--semantic-warning-primary, var(--ntk-warning, var(--ntk-primary))));
+  --ntk-template-wiki-chip-warning-bg: var(--semantic-warning-bg, color-mix(in srgb, var(--ntk-template-wiki-chip-warning-text) 26%, var(--ntk-template-wiki-card-bg)));
+  --ntk-template-wiki-chip-warning-border: color-mix(in srgb, var(--ntk-template-wiki-chip-warning-text) 38%, var(--ntk-template-wiki-border));
+  --ntk-template-wiki-chip-danger-text: var(--semantic-error-text, var(--semantic-error-primary, var(--ntk-error, var(--ntk-primary))));
+  --ntk-template-wiki-chip-danger-bg: var(--semantic-error-bg, color-mix(in srgb, var(--ntk-template-wiki-chip-danger-text) 24%, var(--ntk-template-wiki-card-bg)));
+  --ntk-template-wiki-chip-danger-border: color-mix(in srgb, var(--ntk-template-wiki-chip-danger-text) 36%, var(--ntk-template-wiki-border));
   --ntk-template-wiki-sidebar-search-border: var(--ntk-template-wiki-border);
   --ntk-template-wiki-sidebar-search-bg: var(--ntk-template-wiki-card-bg);
   --ntk-template-wiki-sidebar-search-text: var(--ntk-template-wiki-muted);
   --ntk-template-wiki-tree-hover-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
-  --ntk-template-wiki-tree-active-bg: color-mix(in srgb, var(--ntk-template-wiki-icon-bg, var(--ntk-accent)) 10%, transparent);
-  --ntk-template-wiki-tree-active-text: var(--ntk-template-wiki-icon-bg, var(--ntk-accent));
+  --ntk-template-wiki-tree-active-bg: var(--ntk-template-wiki-filter-active-bg);
+  --ntk-template-wiki-tree-active-text: var(--ntk-template-wiki-filter-active-text);
   --ntk-template-wiki-folder-color: var(--ntk-warning, var(--ntk-accent));
   --ntk-template-wiki-filter-border: var(--ntk-template-wiki-border);
   --ntk-template-wiki-filter-active-bg: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
@@ -763,10 +768,10 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   --ntk-template-wiki-view-active-bg: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
   --ntk-template-wiki-view-active-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
   --ntk-template-wiki-table-border: var(--ntk-template-wiki-border);
-  --ntk-template-wiki-file-bg: color-mix(in srgb, var(--ntk-template-wiki-icon-bg, var(--ntk-accent)) 12%, transparent);
-  --ntk-template-wiki-file-text: var(--ntk-template-wiki-icon-bg, var(--ntk-accent));
-  --ntk-template-wiki-tag-bg: color-mix(in srgb, var(--ntk-template-wiki-file-text) 12%, transparent);
-  --ntk-template-wiki-tag-text: var(--ntk-template-wiki-file-text);
+  --ntk-template-wiki-file-bg: var(--ntk-template-wiki-filter-active-bg);
+  --ntk-template-wiki-file-text: var(--ntk-template-wiki-filter-active-text);
+  --ntk-template-wiki-tag-bg: var(--ntk-template-wiki-chip-surface);
+  --ntk-template-wiki-tag-text: var(--ntk-template-wiki-chip-text);
   --ntk-template-wiki-status-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   --ntk-template-wiki-action-hover-bg: var(--ntk-template-page-border, var(--ntk-border-color));
   --ntk-template-wiki-summary-border: var(--ntk-template-page-border, var(--ntk-border-color));
@@ -828,6 +833,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  border: 1px solid var(--ntk-template-wiki-chip-border);
   border-radius: 14px;
   padding: 4px 10px;
   font-size: 11px;
@@ -838,21 +844,25 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__chip--info {
   color: var(--ntk-template-wiki-chip-info-text);
   background: var(--ntk-template-wiki-chip-info-bg);
+  border-color: var(--ntk-template-wiki-chip-info-border);
 }
 
 .ntk-template-wiki__chip--success {
   color: var(--ntk-template-wiki-chip-success-text);
   background: var(--ntk-template-wiki-chip-success-bg);
+  border-color: var(--ntk-template-wiki-chip-success-border);
 }
 
 .ntk-template-wiki__chip--warning {
   color: var(--ntk-template-wiki-chip-warning-text);
   background: var(--ntk-template-wiki-chip-warning-bg);
+  border-color: var(--ntk-template-wiki-chip-warning-border);
 }
 
 .ntk-template-wiki__chip--danger {
   color: var(--ntk-template-wiki-chip-danger-text);
   background: var(--ntk-template-wiki-chip-danger-bg);
+  border-color: var(--ntk-template-wiki-chip-danger-border);
 }
 
 .ntk-template-wiki__hero-action {
@@ -1187,6 +1197,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 }
 
 .ntk-template-wiki__tag {
+  border: 1px solid var(--ntk-template-wiki-chip-border);
   padding: 2px 7px;
   border-radius: 4px;
   font-size: 10px;

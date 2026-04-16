@@ -385,17 +385,23 @@ function sendQuestion(text?: string): void {
   --ntk-template-wiki-chat-text-color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
   --ntk-template-wiki-chat-row-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   --ntk-template-wiki-chat-row-hover-bg: var(--ntk-template-page-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
-  --ntk-template-wiki-chat-source-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-row-bg) 84%, var(--ntk-template-wiki-chat-surface-bg));
-  --ntk-template-wiki-chat-input-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-row-bg) 82%, var(--ntk-template-wiki-chat-surface-bg));
+  --ntk-template-wiki-chat-source-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-row-bg) 88%, var(--ntk-template-wiki-chat-surface-bg));
+  --ntk-template-wiki-chat-input-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-row-bg) 86%, var(--ntk-template-wiki-chat-surface-bg));
   --ntk-template-wiki-chat-focus: var(--ntk-border-focus, var(--ntk-accent));
   --ntk-template-wiki-chat-accent-bg: var(--ntk-accent, var(--ntk-primary));
   --ntk-template-wiki-chat-accent-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
-  --ntk-template-wiki-chat-accent-soft: color-mix(in srgb, var(--ntk-template-wiki-chat-accent-bg) 12%, transparent);
+  --ntk-template-wiki-chat-accent-soft: color-mix(in srgb, var(--ntk-template-wiki-chat-accent-bg) 22%, var(--ntk-template-wiki-chat-surface-bg));
   --ntk-template-wiki-chat-danger: var(--semantic-error-primary, var(--ntk-error));
-  --ntk-template-wiki-chat-danger-soft: color-mix(in srgb, var(--ntk-template-wiki-chat-danger) 14%, transparent);
+  --ntk-template-wiki-chat-danger-text: var(--semantic-error-text, var(--ntk-template-wiki-chat-danger));
+  --ntk-template-wiki-chat-danger-soft: var(--semantic-error-bg, color-mix(in srgb, var(--ntk-template-wiki-chat-danger) 24%, var(--ntk-template-wiki-chat-surface-bg)));
+  --ntk-template-wiki-chat-empty-icon-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-accent-bg) 24%, var(--ntk-template-wiki-chat-surface-bg));
+  --ntk-template-wiki-chat-empty-icon-color: var(--ntk-template-wiki-chat-title-color);
   --ntk-template-wiki-chat-header-divider: color-mix(in srgb, var(--ntk-template-wiki-chat-surface-border) 72%, transparent);
   --ntk-template-wiki-chat-sidebar-shadow: color-mix(in srgb, var(--ntk-text-primary) 6%, transparent);
   --ntk-template-wiki-chat-placeholder-color: var(--ntk-template-page-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  --ntk-template-wiki-chat-send-disabled-bg: var(--ntk-template-wiki-chat-row-bg);
+  --ntk-template-wiki-chat-send-disabled-border: color-mix(in srgb, var(--ntk-template-wiki-chat-surface-border) 84%, transparent);
+  --ntk-template-wiki-chat-send-disabled-text: var(--ntk-template-wiki-chat-subtitle-color);
 
   background: var(--ntk-template-wiki-chat-bg, var(--ntk-bg-secondary));
   padding: 12px;
@@ -551,7 +557,7 @@ function sendQuestion(text?: string): void {
 }
 
 .ntk-template-wiki-chat__conversation-delete:hover {
-  color: var(--ntk-template-wiki-chat-danger);
+  color: var(--ntk-template-wiki-chat-danger-text);
   background: var(--ntk-template-wiki-chat-danger-soft);
 }
 
@@ -623,8 +629,8 @@ function sendQuestion(text?: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ntk-template-wiki-chat-accent-bg);
-  background: var(--ntk-template-wiki-chat-accent-soft);
+  color: var(--ntk-template-wiki-chat-empty-icon-color);
+  background: var(--ntk-template-wiki-chat-empty-icon-bg);
 }
 
 .ntk-template-wiki-chat__empty-title {
@@ -797,8 +803,9 @@ function sendQuestion(text?: string): void {
 
 .ntk-template-wiki-chat__send:disabled {
   opacity: 1;
-  background: color-mix(in srgb, var(--ntk-template-wiki-chat-surface-border) 90%, var(--ntk-template-wiki-chat-surface-bg));
-  color: color-mix(in srgb, var(--ntk-template-wiki-chat-subtitle-color) 88%, transparent);
+  background: var(--ntk-template-wiki-chat-send-disabled-bg);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-wiki-chat-send-disabled-border);
+  color: var(--ntk-template-wiki-chat-send-disabled-text);
   cursor: not-allowed;
 }
 

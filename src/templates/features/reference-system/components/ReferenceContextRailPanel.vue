@@ -151,6 +151,11 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
   --ntk-reference-context-rail-text: var(--ntk-template-editor-canvas-text, var(--ntk-text-primary));
   --ntk-reference-context-rail-muted: var(--ntk-template-editor-canvas-text-muted, var(--ntk-text-lighter));
   --ntk-reference-context-rail-accent: var(--ntk-primary, var(--ntk-accent));
+  --ntk-reference-context-rail-tone-positive: var(--semantic-success-text, var(--semantic-success-primary, var(--semantic-success)));
+  --ntk-reference-context-rail-tone-warning: var(--semantic-warning-text, var(--semantic-warning-primary, var(--semantic-warning)));
+  --ntk-reference-context-rail-tone-negative: var(--semantic-error-text, var(--semantic-error-primary, var(--semantic-error)));
+  --ntk-reference-context-rail-tone-info: var(--semantic-info-text, var(--semantic-info-primary, var(--semantic-info)));
+  --ntk-reference-context-rail-tone-neutral: var(--ntk-reference-context-rail-text);
 
   display: flex;
   flex-direction: column;
@@ -252,11 +257,11 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
   border-radius: 50%;
   flex-shrink: 0;
 
-  &--positive { background: var(--semantic-success-primary, var(--semantic-success)); }
-  &--warning { background: var(--semantic-warning-primary, var(--semantic-warning)); }
-  &--negative { background: var(--semantic-error-primary, var(--semantic-error)); }
-  &--info { background: var(--semantic-info-primary, var(--semantic-info)); }
-  &--neutral { background: var(--semantic-neutral, var(--ntk-template-editor-canvas-text)); }
+  &--positive { background: var(--ntk-reference-context-rail-tone-positive); }
+  &--warning { background: var(--ntk-reference-context-rail-tone-warning); }
+  &--negative { background: var(--ntk-reference-context-rail-tone-negative); }
+  &--info { background: var(--ntk-reference-context-rail-tone-info); }
+  &--neutral { background: var(--ntk-reference-context-rail-tone-neutral); }
 }
 
 .ntk-reference-context-rail__empty {

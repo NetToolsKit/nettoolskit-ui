@@ -62,6 +62,7 @@ const emit = defineEmits<{
   --ntk-reference-preset-selector-bar-accent: var(--ntk-primary, var(--ntk-accent));
   --ntk-reference-preset-selector-bar-accent-contrast: var(--ntk-text-on-accent, var(--ntk-text-primary));
   --ntk-reference-preset-selector-bar-focus: var(--ntk-border-focus, var(--ntk-reference-preset-selector-bar-accent));
+  --ntk-reference-preset-selector-bar-popup-hover-bg: color-mix(in srgb, var(--ntk-reference-preset-selector-bar-accent) 12%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -117,7 +118,7 @@ const emit = defineEmits<{
 
 :global(.ntk-reference-preset-selector-bar__popup .q-item.q-manual-focusable--focused),
 :global(.ntk-reference-preset-selector-bar__popup .q-item:hover) {
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
+  background: var(--ntk-reference-preset-selector-bar-popup-hover-bg);
 }
 
 @media (max-width: 880px) {

@@ -146,9 +146,11 @@ function selectReport(reportId: string): void {
   --ntk-reference-catalog-panel-text: var(--ntk-text-primary);
   --ntk-reference-catalog-panel-text-muted: var(--ntk-text-secondary);
   --ntk-reference-catalog-panel-accent: var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-reference-catalog-panel-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 12%, var(--ntk-reference-catalog-panel-surface));
+  --ntk-reference-catalog-panel-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 18%, var(--ntk-reference-catalog-panel-surface-muted));
   --ntk-reference-catalog-panel-accent-strong-bg: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 24%, transparent);
   --ntk-reference-catalog-panel-accent-strong-border: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 28%, transparent);
+  --ntk-reference-catalog-panel-accent-soft-border: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 34%, var(--ntk-reference-catalog-panel-border));
+  --ntk-reference-catalog-panel-accent-soft-text: var(--ntk-reference-catalog-panel-text);
   --ntk-reference-catalog-panel-shadow: 0 18px 40px color-mix(in srgb, var(--ntk-text-primary) 6%, transparent);
   display: flex;
   flex-direction: column;
@@ -186,9 +188,10 @@ function selectReport(reportId: string): void {
 .ntk-reference-catalog-panel__count {
   align-self: flex-start;
   padding: 6px 10px;
+  border: 1px solid var(--ntk-reference-catalog-panel-accent-soft-border);
   border-radius: 999px;
   background: var(--ntk-reference-catalog-panel-accent-soft-bg);
-  color: var(--ntk-reference-catalog-panel-accent);
+  color: var(--ntk-reference-catalog-panel-accent-soft-text);
   font-size: 12px;
   font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-weight: 500;

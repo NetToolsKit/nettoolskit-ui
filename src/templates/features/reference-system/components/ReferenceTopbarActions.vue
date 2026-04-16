@@ -212,8 +212,12 @@ onUnmounted(() => {
   --ntk-reference-topbar-text-muted: var(--ntk-text-secondary);
   --ntk-reference-topbar-icon-muted: color-mix(in srgb, var(--ntk-reference-topbar-text-muted) 72%, transparent);
   --ntk-reference-topbar-accent: var(--ntk-primary, var(--ntk-accent));
-  --ntk-reference-topbar-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 24%, transparent);
-  --ntk-reference-topbar-accent-soft-border: color-mix(in srgb, var(--ntk-reference-topbar-accent) 28%, transparent);
+  --ntk-reference-topbar-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 24%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
+  --ntk-reference-topbar-accent-soft-border: color-mix(in srgb, var(--ntk-reference-topbar-accent) 32%, var(--ntk-template-popup-border, var(--ntk-reference-topbar-border)));
+  --ntk-reference-topbar-popup-hover-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 12%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
+  --ntk-reference-topbar-popup-accent-text: var(--ntk-template-popup-text, var(--ntk-reference-topbar-text));
+  --ntk-reference-topbar-popup-unread-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 18%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
+  --ntk-reference-topbar-popup-unread-border: color-mix(in srgb, var(--ntk-reference-topbar-accent) 30%, var(--ntk-template-popup-border, var(--ntk-reference-topbar-border)));
   display: flex;
   align-items: center;
   gap: 12px;
@@ -292,13 +296,13 @@ onUnmounted(() => {
 
 :global(.ntk-reference-topbar__preset-popup .q-item.q-manual-focusable--focused),
 :global(.ntk-reference-topbar__preset-popup .q-item:hover) {
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
+  background: var(--ntk-reference-topbar-popup-hover-bg);
 }
 
 .ntk-reference-topbar__counter-badge {
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 24%, transparent) !important;
-  color: var(--ntk-primary, var(--ntk-accent)) !important;
-  border: 1px solid color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 28%, transparent);
+  background: var(--ntk-reference-topbar-accent-soft-bg) !important;
+  color: var(--ntk-reference-topbar-popup-accent-text) !important;
+  border: 1px solid var(--ntk-reference-topbar-accent-soft-border);
 }
 
 .ntk-reference-topbar__counter-badge--inline {
@@ -334,7 +338,8 @@ onUnmounted(() => {
 }
 
 :global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-item--unread) {
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 12%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
+  background: var(--ntk-reference-topbar-popup-unread-bg);
+  box-shadow: inset 0 0 0 1px var(--ntk-reference-topbar-popup-unread-border);
 }
 
 :global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-icon--muted) {
@@ -342,7 +347,7 @@ onUnmounted(() => {
 }
 
 :global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-icon--accent) {
-  color: var(--ntk-primary, var(--ntk-accent));
+  color: var(--ntk-reference-topbar-popup-accent-text);
 }
 
 :global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-item-title) {

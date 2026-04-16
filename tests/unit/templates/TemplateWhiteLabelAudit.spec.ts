@@ -881,6 +881,42 @@ describe('template white-label audit', () => {
     expect(cmsStylesSource).toContain('.cms-usage-drawer-dialog :deep(.q-dialog__inner)')
   })
 
+  it('keeps wiki and reference dark-contrast fixes routed through stable tokens', () => {
+    const wikiSource = readRepoFile('../../../src/templates/features/wiki/WikiTemplate.vue')
+    const wikiChatSource = readRepoFile('../../../src/templates/features/wiki/WikiChatTemplate.vue')
+    const wikiChatDrawerSource = readRepoFile('../../../src/templates/features/wiki/WikiChatDrawerTemplate.vue')
+    const topbarSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferenceTopbarActions.vue')
+    const catalogPanelSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferenceReportCatalogPanel.vue')
+    const presetSelectorSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferencePresetSelectorBar.vue')
+    const contextRailSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferenceContextRailPanel.vue')
+
+    expect(wikiSource).toContain('--ntk-template-wiki-chip-info-bg: var(--semantic-info-bg')
+    expect(wikiSource).toContain('--ntk-template-wiki-chip-danger-bg: var(--semantic-error-bg')
+    expect(wikiSource).toContain('--ntk-template-wiki-tree-active-bg: var(--ntk-template-wiki-filter-active-bg);')
+
+    expect(wikiChatSource).toContain('--ntk-template-wiki-chat-danger-text: var(--semantic-error-text')
+    expect(wikiChatSource).toContain('--ntk-template-wiki-chat-send-disabled-bg: var(--ntk-template-wiki-chat-row-bg);')
+    expect(wikiChatSource).toContain('box-shadow: inset 0 0 0 1px var(--ntk-template-wiki-chat-send-disabled-border);')
+
+    expect(wikiChatDrawerSource).not.toMatch(/--(ntk-template-wiki-chat-drawer-[\w-]+):\s*var\(\s*--\1\s*,/m)
+    expect(wikiChatDrawerSource).toContain('--ntk-template-wiki-chat-drawer-send-disabled-bg: var(')
+    expect(wikiChatDrawerSource).toContain('--ntk-template-wiki-chat-drawer-send-disabled-border: var(')
+
+    expect(topbarSource).toContain('--ntk-reference-topbar-popup-hover-bg:')
+    expect(topbarSource).toContain('background: var(--ntk-reference-topbar-popup-hover-bg);')
+    expect(topbarSource).toContain('color: var(--ntk-reference-topbar-popup-accent-text);')
+    expect(topbarSource).not.toContain('background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));')
+
+    expect(catalogPanelSource).toContain('--ntk-reference-catalog-panel-accent-soft-text: var(--ntk-reference-catalog-panel-text);')
+    expect(catalogPanelSource).toContain('border: 1px solid var(--ntk-reference-catalog-panel-accent-soft-border);')
+
+    expect(presetSelectorSource).toContain('--ntk-reference-preset-selector-bar-popup-hover-bg:')
+    expect(presetSelectorSource).toContain('background: var(--ntk-reference-preset-selector-bar-popup-hover-bg);')
+
+    expect(contextRailSource).toContain('--ntk-reference-context-rail-tone-info: var(--semantic-info-text')
+    expect(contextRailSource).toContain('&--neutral { background: var(--ntk-reference-context-rail-tone-neutral); }')
+  })
+
   it('keeps tokens.scss as a generic dark fallback instead of a second preset source of truth', () => {
     const tokensSource = readRepoFile('../../../src/styles/tokens.scss')
     const darkFallbackBlock = readCssBlock(tokensSource, 'html.dark:not([data-theme]),')

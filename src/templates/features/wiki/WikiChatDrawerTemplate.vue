@@ -312,135 +312,147 @@ function sendQuestion(text?: string): void {
 <style scoped lang="scss">
 .ntk-template-wiki-chat-drawer {
   --ntk-template-wiki-chat-drawer-surface-bg: var(
-    --ntk-template-wiki-chat-drawer-surface-bg,
+    --ntk-template-wiki-chat-drawer-surface-bg-override,
     var(--ntk-template-page-card-bg, var(--ntk-bg-card))
   );
   --ntk-template-wiki-chat-drawer-surface-border: var(
-    --ntk-template-wiki-chat-drawer-surface-border,
+    --ntk-template-wiki-chat-drawer-surface-border-override,
     var(--ntk-template-page-border, var(--ntk-border-color))
   );
   --ntk-template-wiki-chat-drawer-surface-shadow: var(
-    --ntk-template-wiki-chat-drawer-surface-shadow,
+    --ntk-template-wiki-chat-drawer-surface-shadow-override,
     0 18px 32px color-mix(in srgb, var(--ntk-text-primary) 15%, transparent)
   );
   --ntk-template-wiki-chat-drawer-header-bg: var(
-    --ntk-template-wiki-chat-drawer-header-bg,
+    --ntk-template-wiki-chat-drawer-header-bg-override,
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card))) 0%,
-      color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 8%, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary))) 100%
+      color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 18%, var(--ntk-template-page-card-bg, var(--ntk-bg-card))) 0%,
+      color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 14%, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary))) 100%
     )
   );
   --ntk-template-wiki-chat-drawer-header-text: var(
-    --ntk-template-wiki-chat-drawer-header-text,
+    --ntk-template-wiki-chat-drawer-header-text-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-header-action-bg: var(
-    --ntk-template-wiki-chat-drawer-header-action-bg,
-    color-mix(in srgb, var(--ntk-template-page-title, var(--ntk-text-primary)) 12%, transparent)
+    --ntk-template-wiki-chat-drawer-header-action-bg-override,
+    color-mix(in srgb, var(--ntk-template-page-title, var(--ntk-text-primary)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))
   );
   --ntk-template-wiki-chat-drawer-header-action-bg-hover: var(
-    --ntk-template-wiki-chat-drawer-header-action-bg-hover,
-    color-mix(in srgb, var(--ntk-template-page-title, var(--ntk-text-primary)) 20%, transparent)
+    --ntk-template-wiki-chat-drawer-header-action-bg-hover-override,
+    color-mix(in srgb, var(--ntk-template-page-title, var(--ntk-text-primary)) 22%, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)))
   );
   --ntk-template-wiki-chat-drawer-icon-bg: var(
-    --ntk-template-wiki-chat-drawer-icon-bg,
-    color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 18%, transparent)
+    --ntk-template-wiki-chat-drawer-icon-bg-override,
+    color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 24%, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)))
   );
   --ntk-template-wiki-chat-drawer-title-color: var(
-    --ntk-template-wiki-chat-drawer-title-color,
+    --ntk-template-wiki-chat-drawer-title-color-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-context-color: var(
-    --ntk-template-wiki-chat-drawer-context-color,
-    color-mix(in srgb, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)) 82%, transparent)
+    --ntk-template-wiki-chat-drawer-context-color-override,
+    var(--ntk-template-page-subtitle, var(--ntk-text-secondary))
   );
   --ntk-template-wiki-chat-drawer-empty-title-color: var(
-    --ntk-template-wiki-chat-drawer-empty-title-color,
+    --ntk-template-wiki-chat-drawer-empty-title-color-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-suggestion-border: var(
-    --ntk-template-wiki-chat-drawer-suggestion-border,
+    --ntk-template-wiki-chat-drawer-suggestion-border-override,
     var(--ntk-template-page-border, var(--ntk-border-color))
   );
   --ntk-template-wiki-chat-drawer-suggestion-bg: var(
-    --ntk-template-wiki-chat-drawer-suggestion-bg,
+    --ntk-template-wiki-chat-drawer-suggestion-bg-override,
     var(--ntk-template-page-card-bg, var(--ntk-bg-card))
   );
   --ntk-template-wiki-chat-drawer-suggestion-text: var(
-    --ntk-template-wiki-chat-drawer-suggestion-text,
+    --ntk-template-wiki-chat-drawer-suggestion-text-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-avatar-bg: var(
-    --ntk-template-wiki-chat-drawer-avatar-bg,
+    --ntk-template-wiki-chat-drawer-avatar-bg-override,
     var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary))
   );
   --ntk-template-wiki-chat-drawer-avatar-text: var(
-    --ntk-template-wiki-chat-drawer-avatar-text,
+    --ntk-template-wiki-chat-drawer-avatar-text-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-avatar-user-bg: var(
-    --ntk-template-wiki-chat-drawer-avatar-user-bg,
+    --ntk-template-wiki-chat-drawer-avatar-user-bg-override,
     var(--ntk-accent, var(--ntk-primary))
   );
   --ntk-template-wiki-chat-drawer-avatar-user-text: var(
-    --ntk-template-wiki-chat-drawer-avatar-user-text,
+    --ntk-template-wiki-chat-drawer-avatar-user-text-override,
     var(--ntk-text-on-accent, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-bubble-bg: var(
-    --ntk-template-wiki-chat-drawer-bubble-bg,
+    --ntk-template-wiki-chat-drawer-bubble-bg-override,
     var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary))
   );
   --ntk-template-wiki-chat-drawer-bubble-text: var(
-    --ntk-template-wiki-chat-drawer-bubble-text,
+    --ntk-template-wiki-chat-drawer-bubble-text-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-code-bg: var(
-    --ntk-template-wiki-chat-drawer-code-bg,
-    color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 90%, transparent)
+    --ntk-template-wiki-chat-drawer-code-bg-override,
+    color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 78%, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)))
   );
   --ntk-template-wiki-chat-drawer-input-area-border: var(
-    --ntk-template-wiki-chat-drawer-input-area-border,
-    color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 72%, transparent)
+    --ntk-template-wiki-chat-drawer-input-area-border-override,
+    color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 88%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))
   );
   --ntk-template-wiki-chat-drawer-input-wrap-border: var(
-    --ntk-template-wiki-chat-drawer-input-wrap-border,
+    --ntk-template-wiki-chat-drawer-input-wrap-border-override,
     var(--ntk-template-page-border, var(--ntk-border-color))
   );
   --ntk-template-wiki-chat-drawer-input-wrap-bg: var(
-    --ntk-template-wiki-chat-drawer-input-wrap-bg,
-    color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 84%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))
+    --ntk-template-wiki-chat-drawer-input-wrap-bg-override,
+    color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 88%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))
   );
   --ntk-template-wiki-chat-drawer-input-text: var(
-    --ntk-template-wiki-chat-drawer-input-text,
+    --ntk-template-wiki-chat-drawer-input-text-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-input-placeholder: var(
-    --ntk-template-wiki-chat-drawer-input-placeholder,
+    --ntk-template-wiki-chat-drawer-input-placeholder-override,
     var(--ntk-template-page-subtitle, var(--ntk-text-secondary))
   );
   --ntk-template-wiki-chat-drawer-send-bg: var(
-    --ntk-template-wiki-chat-drawer-send-bg,
+    --ntk-template-wiki-chat-drawer-send-bg-override,
     var(--ntk-accent, var(--ntk-primary))
   );
   --ntk-template-wiki-chat-drawer-send-text: var(
-    --ntk-template-wiki-chat-drawer-send-text,
+    --ntk-template-wiki-chat-drawer-send-text-override,
     var(--ntk-text-on-accent, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-meta-color: var(
-    --ntk-template-wiki-chat-drawer-meta-color,
+    --ntk-template-wiki-chat-drawer-meta-color-override,
     var(--ntk-template-page-subtitle, var(--ntk-text-secondary))
   );
   --ntk-template-wiki-chat-drawer-source-bg: var(
-    --ntk-template-wiki-chat-drawer-source-bg,
-    color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 54%, transparent)
+    --ntk-template-wiki-chat-drawer-source-bg-override,
+    color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 86%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))
   );
   --ntk-template-wiki-chat-drawer-source-name-color: var(
-    --ntk-template-wiki-chat-drawer-source-name-color,
+    --ntk-template-wiki-chat-drawer-source-name-color-override,
     var(--ntk-template-page-title, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-source-chunk-color: var(
-    --ntk-template-wiki-chat-drawer-source-chunk-color,
+    --ntk-template-wiki-chat-drawer-source-chunk-color-override,
+    var(--ntk-template-page-subtitle, var(--ntk-text-secondary))
+  );
+  --ntk-template-wiki-chat-drawer-send-disabled-bg: var(
+    --ntk-template-wiki-chat-drawer-send-disabled-bg-override,
+    var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary))
+  );
+  --ntk-template-wiki-chat-drawer-send-disabled-border: var(
+    --ntk-template-wiki-chat-drawer-send-disabled-border-override,
+    color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 84%, transparent)
+  );
+  --ntk-template-wiki-chat-drawer-send-disabled-text: var(
+    --ntk-template-wiki-chat-drawer-send-disabled-text-override,
     var(--ntk-template-page-subtitle, var(--ntk-text-secondary))
   );
 
@@ -646,8 +658,9 @@ function sendQuestion(text?: string): void {
 
 .ntk-template-wiki-chat-drawer__send:disabled {
   opacity: 1;
-  background: color-mix(in srgb, var(--ntk-template-wiki-chat-drawer-input-wrap-border) 88%, var(--ntk-template-wiki-chat-drawer-surface-bg));
-  color: color-mix(in srgb, var(--ntk-template-wiki-chat-drawer-meta-color) 88%, transparent);
+  background: var(--ntk-template-wiki-chat-drawer-send-disabled-bg);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-wiki-chat-drawer-send-disabled-border);
+  color: var(--ntk-template-wiki-chat-drawer-send-disabled-text);
   cursor: not-allowed;
 }
 
