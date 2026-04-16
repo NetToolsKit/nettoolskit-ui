@@ -69,6 +69,7 @@ npm run test:e2e -- --project=chromium
   - [Composables](#composables-api)
   - [Theme Configuration](#theme-configuration)
 - [Documentation](#documentation)
+  - [Official Vue + Quasar UI References](#official-vue--quasar-ui-references)
 - [Design System](#design-system)
 - [Project Structure](#project-structure)
   - [Architecture Layers](#architecture-layers)
@@ -891,6 +892,23 @@ interface ThemeGradients {
 ```bash
 npm run dev:samples
 ```
+
+### Official Vue + Quasar UI References
+
+Use the official documentation below as the source of truth for theme, dark mode, popup, portal, and layout decisions before adding local overrides:
+
+- [Quasar Dark Mode](https://quasar.dev/style/dark-mode)
+- [Quasar Dark Plugin](https://quasar.dev/quasar-plugins/dark/)
+- [Quasar Body Classes](https://quasar.dev/style/body-classes/)
+- [Quasar Color Palette And Brand Colors](https://quasar.dev/style/color-palette/)
+- [Quasar Sass And SCSS Variables](https://quasar.dev/style/sass-scss-variables/)
+- [Quasar QMenu](https://quasar.dev/vue-components/menu/)
+- [Quasar QDialog](https://quasar.dev/vue-components/dialog/)
+- [Quasar QSelect](https://quasar.dev/vue-components/select/)
+- [Quasar QDrawer](https://quasar.dev/layout/drawer/)
+- [Quasar QPage And QPageContainer](https://quasar.dev/layout/page/)
+- [Vue SFC CSS Features](https://vuejs.org/api/sfc-css-features)
+- [Vue Teleport](https://vuejs.org/guide/built-ins/teleport.html)
 
 ### Template-First Delivery
 
