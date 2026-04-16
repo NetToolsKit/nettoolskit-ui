@@ -702,13 +702,30 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   --ntk-template-crud-list-surface-muted: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   --ntk-template-crud-list-text: var(--ntk-template-page-title, var(--ntk-text-primary));
   --ntk-template-crud-list-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
-  --ntk-template-crud-list-filter-active-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 18%, var(--ntk-template-crud-list-surface));
-  --ntk-template-crud-list-filter-active-text: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
-  --ntk-template-crud-list-filter-active-border: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 32%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  --ntk-template-crud-list-info-soft: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 18%, var(--ntk-template-crud-list-surface));
-  --ntk-template-crud-list-success-soft: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 18%, var(--ntk-template-crud-list-surface));
-  --ntk-template-crud-list-warning-soft: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 20%, var(--ntk-template-crud-list-surface));
-  --ntk-template-crud-list-danger-soft: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 18%, var(--ntk-template-crud-list-surface));
+  --ntk-template-crud-list-filter-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-crud-list-filter-active-text: var(--ntk-template-semantic-accent-emphasis-text);
+  --ntk-template-crud-list-filter-active-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-crud-list-tone-neutral-bg: var(--ntk-template-semantic-neutral-emphasis-bg);
+  --ntk-template-crud-list-tone-neutral-text: var(--ntk-template-semantic-neutral-emphasis-text);
+  --ntk-template-crud-list-tone-neutral-border: var(--ntk-template-semantic-neutral-emphasis-border);
+  --ntk-template-crud-list-tone-accent-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-crud-list-tone-accent-text: var(--ntk-template-semantic-accent-emphasis-text);
+  --ntk-template-crud-list-tone-accent-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-crud-list-tone-info-bg: var(--ntk-template-semantic-info-emphasis-bg);
+  --ntk-template-crud-list-tone-info-text: var(--ntk-template-semantic-info-emphasis-text);
+  --ntk-template-crud-list-tone-info-border: var(--ntk-template-semantic-info-emphasis-border);
+  --ntk-template-crud-list-tone-success-bg: var(--ntk-template-semantic-success-emphasis-bg);
+  --ntk-template-crud-list-tone-success-text: var(--ntk-template-semantic-success-emphasis-text);
+  --ntk-template-crud-list-tone-success-border: var(--ntk-template-semantic-success-emphasis-border);
+  --ntk-template-crud-list-tone-warning-bg: var(--ntk-template-semantic-warning-emphasis-bg);
+  --ntk-template-crud-list-tone-warning-text: var(--ntk-template-semantic-warning-emphasis-text);
+  --ntk-template-crud-list-tone-warning-border: var(--ntk-template-semantic-warning-emphasis-border);
+  --ntk-template-crud-list-tone-danger-bg: var(--ntk-template-semantic-danger-emphasis-bg);
+  --ntk-template-crud-list-tone-danger-text: var(--ntk-template-semantic-danger-emphasis-text);
+  --ntk-template-crud-list-tone-danger-border: var(--ntk-template-semantic-danger-emphasis-border);
+  --ntk-template-crud-list-bulk-bg: var(--ntk-template-crud-list-tone-info-bg);
+  --ntk-template-crud-list-bulk-border: var(--ntk-template-crud-list-tone-info-border);
+  --ntk-template-crud-list-bulk-text: var(--ntk-template-crud-list-tone-info-text);
 
   display: flex;
   flex-direction: column;
@@ -852,34 +869,45 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   font-size: 12px;
 }
 
+.ntk-template-crud-list__metric--neutral {
+  border-color: var(--ntk-template-crud-list-tone-neutral-border);
+  background: var(--ntk-template-crud-list-tone-neutral-bg);
+  color: var(--ntk-template-crud-list-tone-neutral-text);
+}
+
 .ntk-template-crud-list__metric strong {
   color: var(--ntk-template-page-title, var(--ntk-text-primary));
   font-size: 13px;
 }
 
-.ntk-template-crud-list__metric--primary,
+.ntk-template-crud-list__metric--primary {
+  border-color: var(--ntk-template-crud-list-tone-accent-border);
+  background: var(--ntk-template-crud-list-tone-accent-bg);
+  color: var(--ntk-template-crud-list-tone-accent-text);
+}
+
 .ntk-template-crud-list__metric--info {
-  border-color: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: var(--ntk-template-crud-list-info-soft);
-  color: var(--semantic-info-primary, var(--semantic-info));
+  border-color: var(--ntk-template-crud-list-tone-info-border);
+  background: var(--ntk-template-crud-list-tone-info-bg);
+  color: var(--ntk-template-crud-list-tone-info-text);
 }
 
 .ntk-template-crud-list__metric--success {
-  border-color: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: var(--ntk-template-crud-list-success-soft);
-  color: var(--semantic-success-primary, var(--semantic-success));
+  border-color: var(--ntk-template-crud-list-tone-success-border);
+  background: var(--ntk-template-crud-list-tone-success-bg);
+  color: var(--ntk-template-crud-list-tone-success-text);
 }
 
 .ntk-template-crud-list__metric--warning {
-  border-color: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: var(--ntk-template-crud-list-warning-soft);
-  color: var(--semantic-warning-primary, var(--semantic-warning));
+  border-color: var(--ntk-template-crud-list-tone-warning-border);
+  background: var(--ntk-template-crud-list-tone-warning-bg);
+  color: var(--ntk-template-crud-list-tone-warning-text);
 }
 
 .ntk-template-crud-list__metric--danger {
-  border-color: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: var(--ntk-template-crud-list-danger-soft);
-  color: var(--semantic-error-primary, var(--semantic-error));
+  border-color: var(--ntk-template-crud-list-tone-danger-border);
+  background: var(--ntk-template-crud-list-tone-danger-bg);
+  color: var(--ntk-template-crud-list-tone-danger-text);
 }
 
 .ntk-template-crud-list__bulk {
@@ -887,15 +915,15 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   align-items: center;
   gap: 10px;
   border-radius: var(--ntk-template-surface-radius, 12px);
-  border: 1px solid color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: var(--ntk-template-crud-list-info-soft);
+  border: 1px solid var(--ntk-template-crud-list-bulk-border);
+  background: var(--ntk-template-crud-list-bulk-bg);
   padding: 10px 12px;
 }
 
 .ntk-template-crud-list__bulk-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-crud-list-bulk-text);
 }
 
 .ntk-template-crud-list__bulk-actions {
@@ -1016,29 +1044,40 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   color: var(--ntk-template-crud-list-muted);
 }
 
-.ntk-template-crud-list__status--primary,
+.ntk-template-crud-list__status--neutral {
+  background: var(--ntk-template-crud-list-tone-neutral-bg);
+  border-color: var(--ntk-template-crud-list-tone-neutral-border);
+  color: var(--ntk-template-crud-list-tone-neutral-text);
+}
+
+.ntk-template-crud-list__status--primary {
+  background: var(--ntk-template-crud-list-tone-accent-bg);
+  border-color: var(--ntk-template-crud-list-tone-accent-border);
+  color: var(--ntk-template-crud-list-tone-accent-text);
+}
+
 .ntk-template-crud-list__status--info {
-  background: var(--ntk-template-crud-list-info-soft);
-  border-color: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 34%, transparent);
-  color: var(--semantic-info-primary, var(--semantic-info));
+  background: var(--ntk-template-crud-list-tone-info-bg);
+  border-color: var(--ntk-template-crud-list-tone-info-border);
+  color: var(--ntk-template-crud-list-tone-info-text);
 }
 
 .ntk-template-crud-list__status--success {
-  background: var(--ntk-template-crud-list-success-soft);
-  border-color: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 34%, transparent);
-  color: var(--semantic-success-primary, var(--semantic-success));
+  background: var(--ntk-template-crud-list-tone-success-bg);
+  border-color: var(--ntk-template-crud-list-tone-success-border);
+  color: var(--ntk-template-crud-list-tone-success-text);
 }
 
 .ntk-template-crud-list__status--warning {
-  background: var(--ntk-template-crud-list-warning-soft);
-  border-color: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 34%, transparent);
-  color: var(--semantic-warning-primary, var(--semantic-warning));
+  background: var(--ntk-template-crud-list-tone-warning-bg);
+  border-color: var(--ntk-template-crud-list-tone-warning-border);
+  color: var(--ntk-template-crud-list-tone-warning-text);
 }
 
 .ntk-template-crud-list__status--danger {
-  background: var(--ntk-template-crud-list-danger-soft);
-  border-color: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 34%, transparent);
-  color: var(--semantic-error-primary, var(--semantic-error));
+  background: var(--ntk-template-crud-list-tone-danger-bg);
+  border-color: var(--ntk-template-crud-list-tone-danger-border);
+  color: var(--ntk-template-crud-list-tone-danger-text);
 }
 
 .ntk-template-crud-list__row-actions,

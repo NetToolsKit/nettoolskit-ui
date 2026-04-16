@@ -525,21 +525,27 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   --ntk-template-dashboard-workspace-chip-border: var(--ntk-template-page-chip-border, var(--ntk-template-dashboard-workspace-border));
   --ntk-template-dashboard-workspace-chip-bg: var(--ntk-template-page-chip-bg, var(--ntk-template-dashboard-workspace-row));
   --ntk-template-dashboard-workspace-chip-text: var(--ntk-template-page-chip-text, var(--ntk-template-dashboard-workspace-subtitle));
-  --ntk-template-dashboard-workspace-tone-accent-text: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 54%, var(--ntk-template-dashboard-workspace-title));
-  --ntk-template-dashboard-workspace-tone-accent-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 18%, var(--ntk-template-dashboard-workspace-surface));
-  --ntk-template-dashboard-workspace-tone-accent-border: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 34%, var(--ntk-template-dashboard-workspace-border));
-  --ntk-template-dashboard-workspace-tone-info-text: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 54%, var(--ntk-template-dashboard-workspace-title));
-  --ntk-template-dashboard-workspace-tone-info-bg: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, var(--ntk-template-dashboard-workspace-surface));
-  --ntk-template-dashboard-workspace-tone-info-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 34%, var(--ntk-template-dashboard-workspace-border));
-  --ntk-template-dashboard-workspace-tone-success-text: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 54%, var(--ntk-template-dashboard-workspace-title));
-  --ntk-template-dashboard-workspace-tone-success-bg: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 18%, var(--ntk-template-dashboard-workspace-surface));
-  --ntk-template-dashboard-workspace-tone-success-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 34%, var(--ntk-template-dashboard-workspace-border));
-  --ntk-template-dashboard-workspace-tone-warning-text: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 58%, var(--ntk-template-dashboard-workspace-title));
-  --ntk-template-dashboard-workspace-tone-warning-bg: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 20%, var(--ntk-template-dashboard-workspace-surface));
-  --ntk-template-dashboard-workspace-tone-warning-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 36%, var(--ntk-template-dashboard-workspace-border));
-  --ntk-template-dashboard-workspace-tone-danger-text: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 54%, var(--ntk-template-dashboard-workspace-title));
-  --ntk-template-dashboard-workspace-tone-danger-bg: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 18%, var(--ntk-template-dashboard-workspace-surface));
-  --ntk-template-dashboard-workspace-tone-danger-border: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 34%, var(--ntk-template-dashboard-workspace-border));
+  --ntk-template-dashboard-workspace-filter-active-text: var(--ntk-template-semantic-accent-emphasis-text);
+  --ntk-template-dashboard-workspace-filter-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-dashboard-workspace-filter-active-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-dashboard-workspace-tone-neutral-text: var(--ntk-template-semantic-neutral-emphasis-text);
+  --ntk-template-dashboard-workspace-tone-neutral-bg: var(--ntk-template-semantic-neutral-emphasis-bg);
+  --ntk-template-dashboard-workspace-tone-neutral-border: var(--ntk-template-semantic-neutral-emphasis-border);
+  --ntk-template-dashboard-workspace-tone-accent-text: var(--ntk-template-semantic-accent-emphasis-text);
+  --ntk-template-dashboard-workspace-tone-accent-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-dashboard-workspace-tone-accent-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-dashboard-workspace-tone-info-text: var(--ntk-template-semantic-info-emphasis-text);
+  --ntk-template-dashboard-workspace-tone-info-bg: var(--ntk-template-semantic-info-emphasis-bg);
+  --ntk-template-dashboard-workspace-tone-info-border: var(--ntk-template-semantic-info-emphasis-border);
+  --ntk-template-dashboard-workspace-tone-success-text: var(--ntk-template-semantic-success-emphasis-text);
+  --ntk-template-dashboard-workspace-tone-success-bg: var(--ntk-template-semantic-success-emphasis-bg);
+  --ntk-template-dashboard-workspace-tone-success-border: var(--ntk-template-semantic-success-emphasis-border);
+  --ntk-template-dashboard-workspace-tone-warning-text: var(--ntk-template-semantic-warning-emphasis-text);
+  --ntk-template-dashboard-workspace-tone-warning-bg: var(--ntk-template-semantic-warning-emphasis-bg);
+  --ntk-template-dashboard-workspace-tone-warning-border: var(--ntk-template-semantic-warning-emphasis-border);
+  --ntk-template-dashboard-workspace-tone-danger-text: var(--ntk-template-semantic-danger-emphasis-text);
+  --ntk-template-dashboard-workspace-tone-danger-bg: var(--ntk-template-semantic-danger-emphasis-bg);
+  --ntk-template-dashboard-workspace-tone-danger-border: var(--ntk-template-semantic-danger-emphasis-border);
 
   display: flex;
   flex-direction: column;
@@ -659,8 +665,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__filter--active {
-  background: var(--ntk-primary, var(--ntk-accent));
-  color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  background: var(--ntk-template-dashboard-workspace-filter-active-bg);
+  color: var(--ntk-template-dashboard-workspace-filter-active-text);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-dashboard-workspace-filter-active-border);
 }
 
 .ntk-template-dashboard-workspace__views {
@@ -684,9 +691,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__view--active {
-  border-color: var(--ntk-template-dashboard-workspace-tone-accent-border);
-  background: var(--ntk-template-dashboard-workspace-tone-accent-bg);
-  color: var(--ntk-template-dashboard-workspace-tone-accent-text);
+  border-color: var(--ntk-template-dashboard-workspace-filter-active-border);
+  background: var(--ntk-template-dashboard-workspace-filter-active-bg);
+  color: var(--ntk-template-dashboard-workspace-filter-active-text);
 }
 
 .ntk-template-dashboard-workspace__metrics {
@@ -713,9 +720,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ntk-template-dashboard-workspace-row);
-  color: var(--ntk-template-dashboard-workspace-subtitle);
-  border: 1px solid color-mix(in srgb, var(--ntk-template-dashboard-workspace-title) 10%, var(--ntk-template-dashboard-workspace-border));
+  background: var(--ntk-template-dashboard-workspace-tone-neutral-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-neutral-text);
+  border: 1px solid var(--ntk-template-dashboard-workspace-tone-neutral-border);
 }
 
 .ntk-template-dashboard-workspace__metric-main {
@@ -741,7 +748,12 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
-.ntk-template-dashboard-workspace__metric--primary .ntk-template-dashboard-workspace__metric-icon,
+.ntk-template-dashboard-workspace__metric--primary .ntk-template-dashboard-workspace__metric-icon {
+  background: var(--ntk-template-dashboard-workspace-tone-accent-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-accent-text);
+  border-color: var(--ntk-template-dashboard-workspace-tone-accent-border);
+}
+
 .ntk-template-dashboard-workspace__metric--info .ntk-template-dashboard-workspace__metric-icon {
   background: var(--ntk-template-dashboard-workspace-tone-info-bg);
   color: var(--ntk-template-dashboard-workspace-tone-info-text);
@@ -849,14 +861,14 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   min-width: 24px;
   min-height: 24px;
   border-radius: 999px;
-  background: var(--ntk-template-dashboard-workspace-row);
-  color: var(--ntk-template-dashboard-workspace-subtitle);
+  background: var(--ntk-template-dashboard-workspace-tone-neutral-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-neutral-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 600;
-  border: 1px solid color-mix(in srgb, var(--ntk-template-dashboard-workspace-title) 10%, var(--ntk-template-dashboard-workspace-border));
+  border: 1px solid var(--ntk-template-dashboard-workspace-tone-neutral-border);
 }
 
 .ntk-template-dashboard-workspace__lane-empty {

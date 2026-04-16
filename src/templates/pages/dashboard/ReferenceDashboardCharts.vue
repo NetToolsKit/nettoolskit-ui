@@ -136,6 +136,26 @@ const donutCallouts = computed(() => {
 
 <style scoped lang="scss">
 .ntk-reference-dashboard-charts {
+  --ntk-reference-dashboard-callout-text: var(--ntk-template-page-text, var(--ntk-text-primary));
+  --ntk-reference-dashboard-callout-muted: var(
+    --ntk-template-page-chip-text,
+    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)))
+  );
+  --ntk-reference-dashboard-callout-line: color-mix(
+    in srgb,
+    var(--ntk-reference-dashboard-callout-text) 24%,
+    var(--ntk-template-page-border, var(--ntk-border-color))
+  );
+  --ntk-reference-dashboard-chart-guide: color-mix(
+    in srgb,
+    var(--ntk-template-page-text, var(--ntk-text-primary)) 18%,
+    var(--ntk-template-page-border, var(--ntk-border-color))
+  );
+  --ntk-reference-dashboard-chart-tick: var(
+    --ntk-template-page-chip-text,
+    var(--ntk-template-page-subtitle, var(--ntk-text-tertiary, var(--ntk-text-secondary, var(--ntk-text-primary))))
+  );
+
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -209,26 +229,22 @@ const donutCallouts = computed(() => {
   gap: 2px;
   font-size: 11px;
   line-height: 1.2;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+  color: var(--ntk-reference-dashboard-callout-muted);
 }
 
 .ntk-reference-dashboard-charts__callout::before {
   content: '';
   position: absolute;
-  background: color-mix(
-    in srgb,
-    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 44%,
-    transparent
-  );
+  background: var(--ntk-reference-dashboard-callout-line);
 }
 
 .ntk-reference-dashboard-charts__callout strong {
-  color: var(--ntk-template-page-text, var(--ntk-text-primary));
+  color: var(--ntk-reference-dashboard-callout-text);
   font-weight: 600;
 }
 
 .ntk-reference-dashboard-charts__callout span {
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+  color: var(--ntk-reference-dashboard-callout-muted);
   font-weight: 600;
 }
 
@@ -315,7 +331,7 @@ const donutCallouts = computed(() => {
     90deg,
     color-mix(
       in srgb,
-      var(--ntk-template-page-border, var(--ntk-border-color)) 36%,
+      var(--ntk-reference-dashboard-chart-guide) 72%,
       transparent
     ) 0%,
     color-mix(
@@ -334,16 +350,8 @@ const donutCallouts = computed(() => {
   inset: 0;
   background: repeating-linear-gradient(
     90deg,
-    color-mix(
-      in srgb,
-      var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,
-      transparent
-    ) 0,
-    color-mix(
-      in srgb,
-      var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,
-      transparent
-    ) 1px,
+    var(--ntk-reference-dashboard-chart-guide) 0,
+    var(--ntk-reference-dashboard-chart-guide) 1px,
     transparent 1px,
     transparent calc(20% - 1px)
   );
@@ -370,10 +378,7 @@ const donutCallouts = computed(() => {
 }
 
 .ntk-reference-dashboard-charts__axis-tick {
-  color: var(
-    --ntk-template-page-subtitle-soft,
-    var(--ntk-text-tertiary, var(--ntk-text-secondary, var(--ntk-text-primary)))
-  );
+  color: var(--ntk-reference-dashboard-chart-tick);
   font-size: 11px;
 }
 

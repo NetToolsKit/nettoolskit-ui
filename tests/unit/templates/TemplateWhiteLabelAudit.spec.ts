@@ -593,6 +593,97 @@ describe('template white-label audit', () => {
     expect(auditedSources.every(source => source.includes('var(--'))).toBe(true)
   })
 
+  it('routes dashboard, workspace, CRUD, and chart tonal states through shared semantic tokens', () => {
+    const dashboardSource = readRepoFile('../../../src/templates/pages/dashboard/DashboardTemplate.vue')
+    const dashboardWorkspaceSource = readRepoFile('../../../src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue')
+    const crudSource = readRepoFile('../../../src/templates/pages/crud/CrudListTemplate.vue')
+    const chartsSource = readRepoFile('../../../src/templates/pages/dashboard/ReferenceDashboardCharts.vue')
+
+    for (const requiredDashboardSnippet of [
+      '--ntk-template-dashboard-tone-neutral-bg: var(--ntk-template-semantic-neutral-emphasis-bg);',
+      '--ntk-template-dashboard-tone-accent-bg: var(--ntk-template-semantic-accent-emphasis-bg);',
+      '--ntk-template-dashboard-tone-info-bg: var(--ntk-template-semantic-info-emphasis-bg);',
+      '--ntk-template-dashboard-tone-success-bg: var(--ntk-template-semantic-success-emphasis-bg);',
+      '--ntk-template-dashboard-tone-warning-bg: var(--ntk-template-semantic-warning-emphasis-bg);',
+      '--ntk-template-dashboard-tone-danger-bg: var(--ntk-template-semantic-danger-emphasis-bg);',
+      '--ntk-template-dashboard-top-stat-label: var(--ntk-template-page-chip-text, var(--ntk-template-dashboard-subtitle));',
+    ]) {
+      expect(dashboardSource, `Missing shared semantic token wiring in DashboardTemplate: ${requiredDashboardSnippet}`).toContain(requiredDashboardSnippet)
+    }
+
+    for (const forbiddenDashboardSnippet of [
+      '--ntk-template-dashboard-tone-accent-text: color-mix(',
+      '--ntk-template-dashboard-tone-info-text: color-mix(',
+      '--ntk-template-dashboard-tone-success-text: color-mix(',
+      '--ntk-template-dashboard-tone-warning-text: color-mix(',
+      '--ntk-template-dashboard-tone-danger-text: color-mix(',
+    ]) {
+      expect(dashboardSource, `DashboardTemplate still contains legacy local tone math: ${forbiddenDashboardSnippet}`).not.toContain(forbiddenDashboardSnippet)
+    }
+
+    for (const requiredWorkspaceSnippet of [
+      '--ntk-template-dashboard-workspace-filter-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);',
+      '--ntk-template-dashboard-workspace-tone-neutral-bg: var(--ntk-template-semantic-neutral-emphasis-bg);',
+      '--ntk-template-dashboard-workspace-tone-accent-bg: var(--ntk-template-semantic-accent-emphasis-bg);',
+      '--ntk-template-dashboard-workspace-tone-info-bg: var(--ntk-template-semantic-info-emphasis-bg);',
+      '--ntk-template-dashboard-workspace-tone-success-bg: var(--ntk-template-semantic-success-emphasis-bg);',
+      '--ntk-template-dashboard-workspace-tone-warning-bg: var(--ntk-template-semantic-warning-emphasis-bg);',
+      '--ntk-template-dashboard-workspace-tone-danger-bg: var(--ntk-template-semantic-danger-emphasis-bg);',
+    ]) {
+      expect(dashboardWorkspaceSource, `Missing shared semantic token wiring in DashboardWorkspaceTemplate: ${requiredWorkspaceSnippet}`).toContain(requiredWorkspaceSnippet)
+    }
+
+    for (const forbiddenWorkspaceSnippet of [
+      '--ntk-template-dashboard-workspace-tone-accent-text: color-mix(',
+      '--ntk-template-dashboard-workspace-tone-info-text: color-mix(',
+      '--ntk-template-dashboard-workspace-tone-success-text: color-mix(',
+      '--ntk-template-dashboard-workspace-tone-warning-text: color-mix(',
+      '--ntk-template-dashboard-workspace-tone-danger-text: color-mix(',
+    ]) {
+      expect(dashboardWorkspaceSource, `DashboardWorkspaceTemplate still contains legacy local tone math: ${forbiddenWorkspaceSnippet}`).not.toContain(forbiddenWorkspaceSnippet)
+    }
+
+    for (const requiredCrudSnippet of [
+      '--ntk-template-crud-list-filter-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);',
+      '--ntk-template-crud-list-tone-neutral-bg: var(--ntk-template-semantic-neutral-emphasis-bg);',
+      '--ntk-template-crud-list-tone-accent-bg: var(--ntk-template-semantic-accent-emphasis-bg);',
+      '--ntk-template-crud-list-tone-info-bg: var(--ntk-template-semantic-info-emphasis-bg);',
+      '--ntk-template-crud-list-tone-success-bg: var(--ntk-template-semantic-success-emphasis-bg);',
+      '--ntk-template-crud-list-tone-warning-bg: var(--ntk-template-semantic-warning-emphasis-bg);',
+      '--ntk-template-crud-list-tone-danger-bg: var(--ntk-template-semantic-danger-emphasis-bg);',
+      '--ntk-template-crud-list-bulk-bg: var(--ntk-template-crud-list-tone-info-bg);',
+    ]) {
+      expect(crudSource, `Missing shared semantic token wiring in CrudListTemplate: ${requiredCrudSnippet}`).toContain(requiredCrudSnippet)
+    }
+
+    for (const forbiddenCrudSnippet of [
+      '--ntk-template-crud-list-filter-active-bg: color-mix(',
+      '--ntk-template-crud-list-info-soft: color-mix(',
+      '--ntk-template-crud-list-success-soft: color-mix(',
+      '--ntk-template-crud-list-warning-soft: color-mix(',
+      '--ntk-template-crud-list-danger-soft: color-mix(',
+    ]) {
+      expect(crudSource, `CrudListTemplate still contains legacy local chip math: ${forbiddenCrudSnippet}`).not.toContain(forbiddenCrudSnippet)
+    }
+
+    for (const requiredChartSnippet of [
+      '--ntk-reference-dashboard-callout-line:',
+      '--ntk-reference-dashboard-chart-guide:',
+      '--ntk-reference-dashboard-chart-tick:',
+      'background: var(--ntk-reference-dashboard-callout-line);',
+      'color: var(--ntk-reference-dashboard-chart-tick);',
+    ]) {
+      expect(chartsSource, `Missing shared chart contrast token wiring in ReferenceDashboardCharts: ${requiredChartSnippet}`).toContain(requiredChartSnippet)
+    }
+
+    for (const forbiddenChartSnippet of [
+      'var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 44%,',
+      'var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,',
+    ]) {
+      expect(chartsSource, `ReferenceDashboardCharts still contains weak local guide math: ${forbiddenChartSnippet}`).not.toContain(forbiddenChartSnippet)
+    }
+  })
+
   it('keeps dark preset aliases wired for structural surfaces and shared inputs', () => {
     const themesSource = readRepoFile('../../../src/styles/themes.css')
     const bridgeSource = readRepoFile('../../../src/templates/styles/reference-app-bridge.scss')
