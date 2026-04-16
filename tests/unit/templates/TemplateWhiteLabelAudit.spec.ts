@@ -62,12 +62,14 @@ describe('template white-label audit', () => {
           '--ntk-template-placeholder-bg: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);',
           '--ntk-template-profile-avatar-bg: linear-gradient(135deg, #334155 0%, #1e293b 100%);',
           '--ntk-template-not-found-bg: radial-gradient(circle at top, #0f172a 0%, #1e3a8a 45%, #172554 100%);',
+          'var(--ntk-text-on-accent, #ffffff)',
         ],
       },
       {
         label: 'LoginTemplate',
         source: readRepoFile('../../../src/templates/features/auth/LoginTemplate.vue'),
         forbiddenSnippets: [
+          ':color="submitColor"',
           'color="grey-7"',
           'linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #164e63 100%)',
           'rgba(14, 165, 233, 0.16)',
@@ -87,6 +89,8 @@ describe('template white-label audit', () => {
         label: 'ErrorNotFoundTemplate',
         source: readRepoFile('../../../src/templates/pages/system/ErrorNotFoundTemplate.vue'),
         forbiddenSnippets: [
+          "secondaryAction.color || 'grey-8'",
+          "primaryAction.color || 'primary'",
           'radial-gradient(circle at top, #0f172a 0%, #1e3a8a 45%, #172554 100%)',
           '#93c5fd',
           '#e2e8f0',
@@ -177,6 +181,7 @@ describe('template white-label audit', () => {
         label: 'CrudListTemplate',
         source: readRepoFile('../../../src/templates/pages/crud/CrudListTemplate.vue'),
         forbiddenSnippets: [
+          ":color=\"action.color || 'primary'\"",
           '#e2e8f0',
           '#ffffff',
           'rgba(',
@@ -187,6 +192,7 @@ describe('template white-label audit', () => {
         label: 'DashboardWorkspaceTemplate',
         source: readRepoFile('../../../src/templates/pages/dashboard/DashboardWorkspaceTemplate.vue'),
         forbiddenSnippets: [
+          ":color=\"action.color || 'primary'\"",
           'var(--ntk-template-page-bg, #f8fafc)',
           'var(--ntk-template-page-card-bg, #ffffff)',
           'var(--ntk-template-page-border, #e2e8f0)',
@@ -201,6 +207,7 @@ describe('template white-label audit', () => {
         source: readRepoFile('../../../src/templates/features/enterprise/EnterpriseCommandCenterTemplate.vue'),
         forbiddenSnippets: [
           ':color="action.color || \'primary\'"',
+          ':color="action.color"',
           'var(--ntk-template-page-bg, #f8fafc)',
           'var(--ntk-template-page-card-bg, #ffffff)',
           'var(--ntk-template-page-border, #e2e8f0)',
@@ -214,6 +221,7 @@ describe('template white-label audit', () => {
         source: readRepoFile('../../../src/templates/features/enterprise/ApprovalQueueTemplate.vue'),
         forbiddenSnippets: [
           ':color="action.color || \'primary\'"',
+          ':color="action.color"',
           'color="positive"',
           'color="warning"',
           'color="negative"',
@@ -229,6 +237,7 @@ describe('template white-label audit', () => {
         label: 'AuditTimelineTemplate',
         source: readRepoFile('../../../src/templates/features/enterprise/AuditTimelineTemplate.vue'),
         forbiddenSnippets: [
+          ":color=\"action.color || 'primary'\"",
           'var(--ntk-template-page-bg, #f8fafc)',
           'var(--ntk-template-page-card-bg, #ffffff)',
           'var(--ntk-template-page-border, #e2e8f0)',
@@ -261,6 +270,7 @@ describe('template white-label audit', () => {
         source: readRepoFile('../../../src/templates/navigation/UserMenuTemplate.vue'),
         forbiddenSnippets: [
           'color="primary"',
+          'var(--q-primary)',
           'var(--ntk-template-user-menu-border, rgba(148, 163, 184, 0.18))',
           'var(--ntk-template-page-card-bg, #ffffff)',
           'var(--ntk-template-user-menu-shadow, 0 4px 20px rgba(0, 0, 0, 0.15))',
@@ -404,6 +414,111 @@ describe('template white-label audit', () => {
           'var(--ntk-template-page-border, #e2e8f0)',
         ],
       },
+      {
+        label: 'ReferenceBrandLockup',
+        source: readRepoFile('../../../src/templates/features/reference-system/components/ReferenceBrandLockup.vue'),
+        forbiddenSnippets: [
+          'linear-gradient(135deg, #10b981 0%, #2dd4bf 100%)',
+          'var(--ntk-text-light, #ffffff)',
+          'rgba(2, 6, 23, 0.16)',
+          'var(--ntk-template-layout-title-color, var(--ntk-text-primary, #0f172a))',
+          'var(--ntk-template-layout-brand-subtitle, var(--ntk-text-secondary, #64748b))',
+        ],
+      },
+      {
+        label: 'ReferenceWorkspaceShell',
+        source: readRepoFile('../../../src/templates/features/reference-system/ReferenceWorkspaceShell.vue'),
+        forbiddenSnippets: [
+          'var(--ntk-reference-page-bg, var(--ntk-template-layout-page-bg, #f8fafc))',
+        ],
+      },
+      {
+        label: 'ReferenceReportDesignerTemplate',
+        source: readRepoFile('../../../src/templates/features/reference-system/ReferenceReportDesignerTemplate.vue'),
+        forbiddenSnippets: [
+          'var(--ntk-reference-page-bg, #eef4ff)',
+          'var(--ntk-template-editor-muted-text, #6b7280)',
+          'var(--ntk-text-secondary, #64748b)',
+          'var(--ntk-text-primary, #0f172a)',
+        ],
+      },
+      {
+        label: 'WikiChatDrawerTemplate secondary fallbacks',
+        source: readRepoFile('../../../src/templates/features/wiki/WikiChatDrawerTemplate.vue'),
+        forbiddenSnippets: [
+          'var(--ntk-text-on-accent, #ffffff)',
+        ],
+      },
+      {
+        label: 'AppBreadcrumbTemplate',
+        source: readRepoFile('../../../src/templates/navigation/AppBreadcrumbTemplate.vue'),
+        forbiddenSnippets: [
+          'var(--ntk-template-breadcrumb-bg, #f1f5f9)',
+          'var(--ntk-template-breadcrumb-link-color, #64748b)',
+          'var(--q-primary)',
+          'var(--ntk-template-breadcrumb-current-color, #0f172a)',
+          'var(--ntk-template-breadcrumb-sep-color, #cbd5e1)',
+        ],
+      },
+      {
+        label: 'AuthLayoutTemplate',
+        source: readRepoFile('../../../src/templates/layouts/AuthLayoutTemplate.vue'),
+        forbiddenSnippets: [
+          'var(--ntk-template-auth-layout-bg, #f8fafc)',
+        ],
+      },
+      {
+        label: 'PlaceholderTemplate action tokenization',
+        source: readRepoFile('../../../src/templates/pages/system/PlaceholderTemplate.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+          "secondaryAction.color || 'grey-8'",
+          "primaryAction.color || 'primary'",
+        ],
+      },
+      {
+        label: 'WikiChatTemplate runtime interactions',
+        source: readRepoFile('../../../src/templates/features/wiki/WikiChatTemplate.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+        ],
+      },
+      {
+        label: 'RuntimeSettingsSurface action tokenization',
+        source: readRepoFile('../../../src/templates/runtime/RuntimeSettingsSurface.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+        ],
+      },
+      {
+        label: 'ReferencePresetSelectorBar',
+        source: readRepoFile('../../../src/templates/features/reference-system/components/ReferencePresetSelectorBar.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+        ],
+      },
+      {
+        label: 'CmsMediaAssetPicker token alias',
+        source: readRepoFile('../../../src/templates/features/cms/authoring/CmsMediaAssetPicker.vue'),
+        forbiddenSnippets: [
+          'var(--q-primary)',
+        ],
+      },
+      {
+        label: 'cms-authoring-reference stylesheet',
+        source: readRepoFile('../../../src/templates/styles/cms-authoring-reference.css'),
+        forbiddenSnippets: [
+          'var(--ntk-cms-page-bg, var(--ntk-template-layout-page-bg, #fafafa))',
+          '--ntk-cms-bg-card: var(--ntk-cms-card-bg, #ffffff);',
+          '--ntk-cms-shell-bg: var(--ntk-cms-page-bg, #fafafa);',
+          '--ntk-cms-border-color: var(--ntk-cms-shell-border, #e5e5e5);',
+          'box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);',
+          'background: rgba(255, 255, 255, 0.62);',
+          'background: rgba(255, 255, 255, 0.92);',
+          'color-mix(in srgb, var(--ntk-cms-border-color) 75%, white)',
+          'linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px)',
+        ],
+      },
     ]
 
     for (const auditedFile of auditedFiles) {
@@ -449,6 +564,13 @@ describe('template white-label audit', () => {
       readRepoFile('../../../src/templates/features/reference-system/components/ReferenceContextRailPanel.vue'),
       readRepoFile('../../../src/templates/pages/dashboard/ReferenceDashboardCharts.vue'),
       readRepoFile('../../../src/templates/pages/account/ProfileTemplate.vue'),
+      readRepoFile('../../../src/templates/features/reference-system/components/ReferenceBrandLockup.vue'),
+      readRepoFile('../../../src/templates/features/reference-system/ReferenceWorkspaceShell.vue'),
+      readRepoFile('../../../src/templates/features/reference-system/ReferenceReportDesignerTemplate.vue'),
+      readRepoFile('../../../src/templates/navigation/AppBreadcrumbTemplate.vue'),
+      readRepoFile('../../../src/templates/layouts/AuthLayoutTemplate.vue'),
+      readRepoFile('../../../src/templates/features/reference-system/components/ReferencePresetSelectorBar.vue'),
+      readRepoFile('../../../src/templates/styles/cms-authoring-reference.css'),
     ]
 
     expect(auditedSources.every(source => source.includes('var(--'))).toBe(true)

@@ -1,8 +1,15 @@
+import { nextTick } from 'vue'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 
 import ThemeDotsSwitcher from '../../../src/templates/navigation/ThemeDotsSwitcher.vue'
-import { themeOptions, useThemeSwitcher } from '../../../src/composables/useThemeSwitcher'
+import {
+  DEFAULT_THEME_ID,
+  THEME_SWITCHER_STORAGE_KEY,
+  resetThemePreference,
+  themeOptions,
+  useThemeSwitcher,
+} from '../../../src/composables/useThemeSwitcher'
 
 describe('theme switcher tokenization', () => {
   beforeEach(() => {
@@ -39,6 +46,21 @@ describe('theme switcher tokenization', () => {
     await wrapper.findAll('button')[claudeIndex]!.trigger('click')
 
     expect(document.documentElement.dataset.theme).toBe('claude')
-    expect(localStorage.getItem('ntk-theme')).toBe('claude')
+    expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBe('claude')
+  })
+
+  it('resets the active theme to the default preset without keeping a stored preference', async () => {
+    const { setTheme } = useThemeSwitcher()
+
+    setTheme('kraken')
+    await nextTick()
+    expect(document.documentElement.dataset.theme).toBe('kraken')
+    expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBe('kraken')
+
+    resetThemePreference()
+    await nextTick()
+
+    expect(document.documentElement.dataset.theme).toBe(DEFAULT_THEME_ID)
+    expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBeNull()
   })
 })

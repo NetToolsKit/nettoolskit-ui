@@ -129,8 +129,7 @@
               <q-btn
                 type="submit"
                 :label="submitLabel"
-                :color="submitColor"
-                class="ntk-template-login__submit"
+                :class="resolveSubmitClass()"
                 size="lg"
                 unelevated
                 no-caps
@@ -173,6 +172,14 @@ interface TemplateLoginSubmitPayload {
   email: string
   password: string
 }
+
+type TemplateLoginTone =
+  | 'neutral'
+  | 'primary'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'danger'
 
 const props = withDefaults(defineProps<{
   email?: string
@@ -301,6 +308,53 @@ function handleSubmit(): void {
     email: emailModel.value.trim(),
     password: passwordModel.value,
   })
+}
+
+function resolveSubmitClass(): string[] {
+  return [
+    'ntk-template-login__submit',
+    'ntk-template-tone-action',
+    `ntk-template-tone-action--tone-${resolveSubmitTone(props.submitColor)}`,
+    'ntk-template-tone-action--variant-solid',
+  ]
+}
+
+function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
+  const value = color?.trim().toLowerCase() ?? ''
+
+  if (!value) {
+    return 'primary'
+  }
+
+  if (['primary', 'accent', 'brand', 'blue', 'indigo', 'violet'].includes(value)) {
+    return 'primary'
+  }
+
+  if (['info', 'cyan', 'teal'].includes(value)) {
+    return 'info'
+  }
+
+  if (['positive', 'success', 'green'].includes(value)) {
+    return 'success'
+  }
+
+  if (['warning', 'amber', 'orange', 'yellow'].includes(value)) {
+    return 'warning'
+  }
+
+  if (['negative', 'danger', 'error', 'red'].includes(value)) {
+    return 'danger'
+  }
+
+  if (
+    value.startsWith('grey')
+    || value.startsWith('gray')
+    || ['neutral', 'slate', 'dark', 'secondary'].includes(value)
+  ) {
+    return 'neutral'
+  }
+
+  return 'primary'
 }
 </script>
 

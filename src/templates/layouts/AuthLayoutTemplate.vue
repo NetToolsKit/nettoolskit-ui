@@ -32,7 +32,7 @@ withDefaults(defineProps<{
 <style scoped lang="scss">
 .ntk-template-auth-layout__container {
   min-height: 100vh;
-  background: var(--ntk-template-auth-layout-bg, #f8fafc);
+  background: var(--ntk-template-auth-layout-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary)));
 }
 
 .ntk-template-auth-layout__page {

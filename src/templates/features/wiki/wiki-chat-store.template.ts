@@ -9,9 +9,9 @@ import { computed, reactive, type DeepReadonly } from 'vue'
 import type {
   TemplateWikiChatMessage,
   TemplateWikiConversation,
-  TemplateWikiSourceReference,
 } from './wiki-template.types'
 import type {
+  TemplateWikiChatHydratedState,
   TemplateWikiChatResponse,
   TemplateWikiConversationDetail,
 } from './wiki-chat-service.template'
@@ -32,6 +32,8 @@ export interface TemplateWikiChatServiceAdapter {
   listConversations: () => Promise<TemplateWikiConversation[]>
   getConversation: (conversationId: string) => Promise<TemplateWikiConversationDetail>
   deleteConversation: (conversationId: string) => Promise<void>
+  readPersistedState?: () => TemplateWikiChatHydratedState | null
+  persistActiveConversation?: (conversationId: string | null) => void
 }
 
 export interface TemplateWikiChatStore {
@@ -46,15 +48,18 @@ export interface TemplateWikiChatStore {
   sendMessage: (question: string) => Promise<TemplateWikiChatResponse>
   deleteConversation: (conversationId: string) => Promise<void>
   startNewConversation: () => void
+  resetState: () => void
 }
 
 export function createTemplateWikiChatStore(
   service: TemplateWikiChatServiceAdapter
 ): TemplateWikiChatStore {
+  const hydratedState = service.readPersistedState?.()
+
   const state = reactive<TemplateWikiChatState>({
-    conversations: [],
-    activeConversationId: null,
-    messages: [],
+    conversations: hydratedState?.conversations ?? [],
+    activeConversationId: hydratedState?.activeConversationId ?? null,
+    messages: hydratedState?.messages ?? [],
     loading: false,
     sending: false,
     drawerOpen: false,
@@ -89,6 +94,14 @@ export function createTemplateWikiChatStore(
     state.loading = true
     try {
       state.conversations = await service.listConversations()
+      if (
+        state.activeConversationId &&
+        !state.conversations.some(conversation => conversation.id === state.activeConversationId)
+      ) {
+        state.activeConversationId = null
+        state.messages = []
+        service.persistActiveConversation?.(null)
+      }
     } finally {
       state.loading = false
     }
@@ -100,6 +113,7 @@ export function createTemplateWikiChatStore(
       const detail = await service.getConversation(conversationId)
       state.activeConversationId = detail.id
       state.messages = detail.messages
+      service.persistActiveConversation?.(detail.id)
     } finally {
       state.loading = false
     }
@@ -107,6 +121,8 @@ export function createTemplateWikiChatStore(
 
   async function sendMessage(question: string): Promise<TemplateWikiChatResponse> {
     state.sending = true
+    const previousMessages = [...state.messages]
+    const previousActiveConversationId = state.activeConversationId
 
     const userMsg: TemplateWikiChatMessage = {
       id: crypto.randomUUID(),
@@ -129,21 +145,14 @@ export function createTemplateWikiChatStore(
         state.activeConversationId = response.conversationId
       }
 
-      const assistantMsg: TemplateWikiChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: response.answer,
-        sources: response.sources,
-        fromCache: response.fromCache,
-        createdAt: new Date().toISOString(),
-      }
-      state.messages.push(assistantMsg)
-
-      void loadConversations()
+      await loadConversation(response.conversationId)
+      await loadConversations()
 
       return response
     } catch (err) {
-      state.messages.pop()
+      state.activeConversationId = previousActiveConversationId
+      state.messages = previousMessages
+      service.persistActiveConversation?.(previousActiveConversationId)
       throw err
     } finally {
       state.sending = false
@@ -152,16 +161,28 @@ export function createTemplateWikiChatStore(
 
   async function deleteConversationById(conversationId: string): Promise<void> {
     await service.deleteConversation(conversationId)
-    state.conversations = state.conversations.filter(c => c.id !== conversationId)
+    state.conversations = await service.listConversations()
     if (state.activeConversationId === conversationId) {
       state.activeConversationId = null
       state.messages = []
+      service.persistActiveConversation?.(null)
     }
   }
 
   function startNewConversation(): void {
     state.activeConversationId = null
     state.messages = []
+    service.persistActiveConversation?.(null)
+  }
+
+  function resetState(): void {
+    state.conversations = []
+    state.activeConversationId = null
+    state.messages = []
+    state.loading = false
+    state.sending = false
+    state.drawerOpen = false
+    state.contextHint = null
   }
 
   return {
@@ -176,5 +197,6 @@ export function createTemplateWikiChatStore(
     sendMessage,
     deleteConversation: deleteConversationById,
     startNewConversation,
+    resetState,
   }
 }

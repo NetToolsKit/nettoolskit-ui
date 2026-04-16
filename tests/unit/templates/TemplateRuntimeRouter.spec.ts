@@ -25,12 +25,13 @@ describe('template runtime router', () => {
   it('derives menu constants from typed scaffold route nodes', () => {
     const dashboardItem = templateRuntimeMenuItems.find(item => item.id === 'dashboard')
     const knowledgeItem = templateRuntimeMenuItems.find(item => item.id === 'knowledge')
+    const knowledgeChatItem = templateRuntimeMenuItems.find(item => item.id === 'knowledge-chat')
     const settingsItem = templateRuntimeMenuItems.find(item => item.id === 'settings')
     const profileItem = templateRuntimeMenuItems.find(item => item.id === 'profile')
 
     expect(dashboardItem?.routeName).toBe('TemplateRuntimeDashboard')
     expect(knowledgeItem?.routeName).toBe('TemplateRuntimeKnowledge')
-    expect(knowledgeItem?.children?.some(child => child.routeName === 'TemplateRuntimeKnowledgeChat')).toBe(true)
+    expect(knowledgeChatItem?.routeName).toBe('TemplateRuntimeKnowledgeChat')
     expect(settingsItem?.stickyBottom).toBe(true)
     expect(profileItem).toBeUndefined()
   })

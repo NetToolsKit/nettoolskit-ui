@@ -217,7 +217,7 @@ const profile = computed<TemplateUserMenuProfile>(() => {
   --ntk-template-user-menu-avatar-text-color: var(--ntk-template-user-menu-avatar-color, var(--ntk-text-on-primary, var(--ntk-text-inverse)));
   --ntk-template-user-menu-header-surface: var(--ntk-template-user-menu-header-bg, color-mix(in srgb, var(--ntk-template-user-menu-text-color) 2%, var(--ntk-template-user-menu-surface)));
   --ntk-template-user-menu-profile-surface: var(--ntk-template-user-menu-profile-bg, var(--ntk-template-user-menu-surface));
-  --ntk-template-user-menu-accent: var(--ntk-accent, var(--q-primary));
+  --ntk-template-user-menu-accent: var(--ntk-template-user-menu-accent-color, var(--ntk-accent, var(--ntk-primary)));
 
   min-width: 320px;
   border: 1px solid var(--ntk-template-user-menu-border-color);

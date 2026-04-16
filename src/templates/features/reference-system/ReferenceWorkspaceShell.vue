@@ -121,7 +121,7 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .ntk-reference-workspace-shell {
   min-height: 100vh;
-  background: var(--ntk-reference-page-bg, var(--ntk-template-layout-page-bg, #f8fafc));
+  background: var(--ntk-reference-page-bg, var(--ntk-template-layout-page-bg, var(--ntk-template-page-bg, var(--ntk-shell-bg, var(--ntk-bg-secondary)))));
 }
 
 .ntk-reference-workspace-shell :deep(.ntk-reference-workspace-shell__page-container) {

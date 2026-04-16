@@ -177,7 +177,7 @@ function onCanvasObjectClick(objectId: string): void {
   gap: 16px;
   padding: 20px;
   min-height: 100%;
-  background: var(--ntk-reference-page-bg, #eef4ff);
+  background: var(--ntk-reference-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary)));
 }
 
 .ntk-reference-designer__grid {
@@ -206,7 +206,7 @@ function onCanvasObjectClick(objectId: string): void {
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-template-editor-muted-text, #6b7280);
+  color: var(--ntk-template-editor-muted-text, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
   white-space: nowrap;
 }
 
@@ -223,13 +223,13 @@ function onCanvasObjectClick(objectId: string): void {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
   font-size: 12px;
   white-space: nowrap;
 }
 
 .ntk-reference-designer__doc-date {
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
 }
 
 @media (max-width: 1180px) {

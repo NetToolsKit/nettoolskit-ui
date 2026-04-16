@@ -26,15 +26,16 @@ export const themeOptions: ThemeOption[] = [
   { id: 'kraken', label: 'Kraken', color: 'var(--ntk-theme-preview-kraken)' },
 ]
 
-const STORAGE_KEY = 'ntk-theme'
+export const DEFAULT_THEME_ID: ThemeId = 'revolut'
+export const THEME_SWITCHER_STORAGE_KEY = 'ntk-theme'
 
 function readStoredTheme(): ThemeId {
-  if (typeof window === 'undefined') return 'revolut'
-  const stored = localStorage.getItem(STORAGE_KEY)
+  if (typeof window === 'undefined') return DEFAULT_THEME_ID
+  const stored = localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)
   if (stored && themeOptions.some(t => t.id === stored)) {
     return stored as ThemeId
   }
-  return 'revolut'
+  return DEFAULT_THEME_ID
 }
 
 const activeTheme = ref<ThemeId>(readStoredTheme())
@@ -109,19 +110,36 @@ applyThemeToDOM(activeTheme.value)
 
 watch(activeTheme, (newTheme) => {
   applyThemeToDOM(newTheme)
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEY, newTheme)
-  }
 })
+
+function persistThemePreference(themeId: ThemeId): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  localStorage.setItem(THEME_SWITCHER_STORAGE_KEY, themeId)
+}
+
+export function resetThemePreference(nextTheme: ThemeId = DEFAULT_THEME_ID): void {
+  activeTheme.value = nextTheme
+
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  localStorage.removeItem(THEME_SWITCHER_STORAGE_KEY)
+}
 
 export function useThemeSwitcher() {
   function setTheme(themeId: ThemeId): void {
     activeTheme.value = themeId
+    persistThemePreference(themeId)
   }
 
   return {
     activeTheme,
     themeOptions,
     setTheme,
+    resetThemePreference,
   }
 }

@@ -10,17 +10,17 @@
         <q-btn
           no-caps
           unelevated
-          color="primary"
           icon="save"
           label="Salvar alterações"
+          class="ntk-template-runtime-settings__action ntk-template-runtime-settings__action--primary"
           @click="submitForm"
         />
         <q-btn
           no-caps
-          outline
-          color="primary"
+          unelevated
           icon="restart_alt"
           label="Resetar runtime"
+          class="ntk-template-runtime-settings__action ntk-template-runtime-settings__action--secondary"
           @click="$emit('reset-runtime-data')"
         />
       </div>
@@ -152,8 +152,20 @@ function submitForm(): void {
 
 <style scoped lang="scss">
 .ntk-template-runtime-settings {
+  --ntk-template-runtime-settings-bg: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
+  --ntk-template-runtime-settings-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-runtime-settings-border: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-runtime-settings-title: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-runtime-settings-subtitle: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-runtime-settings-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  --ntk-template-runtime-settings-row: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-runtime-settings-accent: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-runtime-settings-accent-contrast: var(--ntk-text-on-accent, var(--ntk-text-primary));
+  --ntk-template-runtime-settings-accent-soft: color-mix(in srgb, var(--ntk-template-runtime-settings-accent) 12%, transparent);
+  --ntk-template-runtime-settings-focus: var(--ntk-border-focus, var(--ntk-template-runtime-settings-accent));
+
   padding: 12px;
-  background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
+  background: var(--ntk-template-runtime-settings-bg);
 }
 
 .ntk-template-runtime-settings__hero {
@@ -162,22 +174,22 @@ function submitForm(): void {
   gap: 16px;
   margin-bottom: 16px;
   padding: 18px 20px;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-runtime-settings-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  background: var(--ntk-template-runtime-settings-surface);
 }
 
 .ntk-template-runtime-settings__hero h1,
 .ntk-template-runtime-settings__section-header h2 {
   margin: 0;
   font-size: 20px;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-runtime-settings-title);
 }
 
 .ntk-template-runtime-settings__hero p,
 .ntk-template-runtime-settings__section-header p {
   margin: 6px 0 0;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-runtime-settings-subtitle);
 }
 
 .ntk-template-runtime-settings__hero-actions {
@@ -185,6 +197,27 @@ function submitForm(): void {
   gap: 10px;
   align-items: flex-start;
   flex-wrap: wrap;
+}
+
+.ntk-template-runtime-settings__action {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.ntk-template-runtime-settings__action--primary {
+  background: var(--ntk-template-runtime-settings-accent);
+  color: var(--ntk-template-runtime-settings-accent-contrast);
+}
+
+.ntk-template-runtime-settings__action--secondary {
+  border: 1px solid var(--ntk-template-runtime-settings-border);
+  background: var(--ntk-template-runtime-settings-surface);
+  color: var(--ntk-template-runtime-settings-title);
+}
+
+.ntk-template-runtime-settings__action:focus-visible {
+  outline: 2px solid var(--ntk-template-runtime-settings-focus);
+  outline-offset: 2px;
 }
 
 .ntk-template-runtime-settings__summary {
@@ -196,9 +229,9 @@ function submitForm(): void {
 
 .ntk-template-runtime-settings__summary-card,
 .ntk-template-runtime-settings__card {
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-runtime-settings-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  background: var(--ntk-template-runtime-settings-surface);
 }
 
 .ntk-template-runtime-settings__summary-card {
@@ -209,14 +242,14 @@ function submitForm(): void {
 }
 
 .ntk-template-runtime-settings__summary-card span {
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-runtime-settings-subtitle);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .ntk-template-runtime-settings__summary-card strong {
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-runtime-settings-title);
   font-size: 18px;
 }
 
@@ -246,16 +279,25 @@ function submitForm(): void {
 .ntk-template-runtime-settings__field span {
   font-size: 12px;
   font-weight: 600;
-  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  color: var(--ntk-template-runtime-settings-text);
 }
 
 .ntk-template-runtime-settings__field input {
   min-height: 42px;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-runtime-settings-border);
   border-radius: 10px;
   padding: 0 12px;
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  background: var(--ntk-template-runtime-settings-row);
+  color: var(--ntk-template-runtime-settings-title);
+}
+
+.ntk-template-runtime-settings__field input::placeholder {
+  color: var(--ntk-template-runtime-settings-subtitle);
+}
+
+.ntk-template-runtime-settings__field input:focus-visible {
+  outline: 2px solid var(--ntk-template-runtime-settings-focus);
+  outline-offset: 2px;
 }
 
 .ntk-template-runtime-settings__toggle {
@@ -265,18 +307,23 @@ function submitForm(): void {
   align-items: start;
   padding: 12px;
   border-radius: 10px;
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  background: var(--ntk-template-runtime-settings-row);
   margin-bottom: 10px;
+}
+
+.ntk-template-runtime-settings__toggle input {
+  margin-top: 2px;
+  accent-color: var(--ntk-template-runtime-settings-accent);
 }
 
 .ntk-template-runtime-settings__toggle strong {
   display: block;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-runtime-settings-title);
 }
 
 .ntk-template-runtime-settings__toggle p {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-runtime-settings-subtitle);
   font-size: 13px;
 }
 

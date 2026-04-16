@@ -66,6 +66,23 @@ describe('resolveReferenceWhitelabelPreset', () => {
 describe('createReferenceWhitelabelStyleVars', () => {
   const preset = resolveReferenceWhitelabelPreset('reference-light')
   const vars = createReferenceWhitelabelStyleVars(preset)
+  const derivedLeakProneKeys = [
+    '--ntk-template-layout-header-shadow',
+    '--ntk-template-layout-nav-text',
+    '--ntk-template-layout-nav-hover-bg',
+    '--ntk-template-layout-nav-active-text',
+    '--ntk-template-layout-nav-group-text',
+    '--ntk-template-login-brand-subtitle',
+    '--ntk-template-login-brand-feature-text',
+    '--ntk-template-login-brand-feature-bg',
+    '--ntk-template-login-brand-footer',
+    '--ntk-template-profile-avatar-shadow',
+    '--ntk-reference-badge-bg',
+    '--ntk-reference-shell-chrome-border',
+    '--ntk-reference-shell-glow',
+    '--ntk-template-horizontal-link-hover-color',
+    '--ntk-template-horizontal-link-active-color',
+  ] as const
 
   it('maps palette colors to CSS custom properties', () => {
     expect(vars['--ntk-primary']).toBe(preset.palette.primary)
@@ -113,6 +130,34 @@ describe('createReferenceWhitelabelStyleVars', () => {
     expect(vars['--ntk-template-page-bg']).toBe(preset.palette.background)
     expect(vars['--ntk-template-page-card-bg']).toBe(preset.palette.surface)
     expect(vars['--ntk-template-page-title']).toBe(preset.palette.text)
+  })
+
+  it('routes shell contrast through stable token aliases', () => {
+    expect(vars['--ntk-text-on-accent']).toBe(preset.palette.surface)
+    expect(vars['--ntk-template-layout-nav-active-text']).toBe('var(--ntk-text-on-accent)')
+    expect(vars['--ntk-template-horizontal-link-hover-color']).toBe('var(--ntk-text-on-accent)')
+    expect(vars['--ntk-template-horizontal-link-active-color']).toBe('var(--ntk-text-on-accent)')
+    expect(vars['--ntk-template-login-brand-text']).toBe('var(--ntk-text-light)')
+  })
+
+  it('keeps the derived composer tokens free of literal white and rgba leaks', () => {
+    for (const candidatePreset of listReferenceWhitelabelPresets()) {
+      const candidateVars = createReferenceWhitelabelStyleVars(candidatePreset)
+
+      for (const key of derivedLeakProneKeys) {
+        const value = String(candidateVars[key] ?? '')
+
+        expect(value).not.toContain('#ffffff')
+        expect(value).not.toContain('rgba(')
+      }
+    }
+  })
+
+  it('derives translucent tokens with deterministic color-mix expressions', () => {
+    expect(String(vars['--ntk-template-layout-header-shadow'])).toContain('color-mix(in srgb,')
+    expect(String(vars['--ntk-template-login-brand-subtitle'])).toContain('color-mix(in srgb,')
+    expect(String(vars['--ntk-reference-shell-glow'])).toContain('color-mix(in srgb,')
+    expect(String(vars['--ntk-reference-badge-bg'])).toContain('var(--ntk-bg-card)')
   })
 })
 

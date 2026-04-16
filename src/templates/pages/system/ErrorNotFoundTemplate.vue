@@ -24,12 +24,12 @@
           :label="secondaryAction.label"
           :icon="secondaryAction.icon"
           :to="secondaryAction.to"
-          :color="secondaryAction.color || 'grey-8'"
           :disable="secondaryAction.disable"
           :flat="secondaryAction.flat ?? false"
           :outline="secondaryAction.outline ?? true"
           :unelevated="secondaryAction.unelevated ?? false"
           :aria-label="secondaryAction.ariaLabel || secondaryAction.label"
+          :class="resolveActionClass(secondaryAction, 'neutral')"
           @click="handleSecondaryActionClick"
         />
 
@@ -38,12 +38,12 @@
           :label="primaryAction.label"
           :icon="primaryAction.icon"
           :to="primaryAction.to"
-          :color="primaryAction.color || 'primary'"
           :disable="primaryAction.disable"
           :flat="primaryAction.flat ?? false"
           :outline="primaryAction.outline ?? false"
           :unelevated="primaryAction.unelevated ?? true"
           :aria-label="primaryAction.ariaLabel || primaryAction.label"
+          :class="resolveActionClass(primaryAction, 'primary')"
           @click="handlePrimaryActionClick"
         />
       </div>
@@ -54,7 +54,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-import type { TemplatePageAction } from '../page-template.types'
+import type {
+  TemplatePageAction,
+  TemplatePageTone,
+} from '../page-template.types'
 
 const props = withDefaults(defineProps<{
   code?: string
@@ -99,6 +102,60 @@ function handleSecondaryActionClick(): void {
   if (!props.secondaryAction.to) {
     router.back()
   }
+}
+
+function resolveActionClass(
+  action: TemplatePageAction,
+  fallbackTone: TemplatePageTone,
+): string[] {
+  const variant = action.flat ? 'flat' : action.outline ? 'outline' : 'solid'
+
+  return [
+    'ntk-template-tone-action',
+    `ntk-template-tone-action--tone-${resolveActionTone(action.color, fallbackTone)}`,
+    `ntk-template-tone-action--variant-${variant}`,
+  ]
+}
+
+function resolveActionTone(
+  color: string | undefined,
+  fallback: TemplatePageTone,
+): TemplatePageTone {
+  const value = color?.trim().toLowerCase() ?? ''
+
+  if (!value) {
+    return fallback
+  }
+
+  if (['primary', 'accent', 'brand', 'blue', 'indigo', 'violet'].includes(value)) {
+    return 'primary'
+  }
+
+  if (['info', 'cyan', 'teal'].includes(value)) {
+    return 'info'
+  }
+
+  if (['positive', 'success', 'green'].includes(value)) {
+    return 'success'
+  }
+
+  if (['warning', 'amber', 'orange', 'yellow'].includes(value)) {
+    return 'warning'
+  }
+
+  if (['negative', 'danger', 'error', 'red'].includes(value)) {
+    return 'danger'
+  }
+
+  if (
+    value.startsWith('grey')
+    || value.startsWith('gray')
+    || ['neutral', 'slate', 'dark', 'secondary'].includes(value)
+  ) {
+    return 'neutral'
+  }
+
+  return fallback
 }
 </script>
 

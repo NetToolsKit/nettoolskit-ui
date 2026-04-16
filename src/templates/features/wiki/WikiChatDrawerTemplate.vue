@@ -333,7 +333,7 @@ function sendQuestion(text?: string): void {
   );
   --ntk-template-wiki-chat-drawer-header-text: var(
     --ntk-template-wiki-chat-drawer-header-text,
-    var(--ntk-text-on-accent, #ffffff)
+    var(--ntk-text-on-accent, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-header-action-bg: var(
     --ntk-template-wiki-chat-drawer-header-action-bg,
@@ -349,7 +349,7 @@ function sendQuestion(text?: string): void {
   );
   --ntk-template-wiki-chat-drawer-title-color: var(
     --ntk-template-wiki-chat-drawer-title-color,
-    var(--ntk-text-on-accent, #ffffff)
+    var(--ntk-text-on-accent, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-context-color: var(
     --ntk-template-wiki-chat-drawer-context-color,
@@ -385,7 +385,7 @@ function sendQuestion(text?: string): void {
   );
   --ntk-template-wiki-chat-drawer-avatar-user-text: var(
     --ntk-template-wiki-chat-drawer-avatar-user-text,
-    var(--ntk-text-on-accent, #ffffff)
+    var(--ntk-text-on-accent, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-bubble-bg: var(
     --ntk-template-wiki-chat-drawer-bubble-bg,
@@ -417,7 +417,7 @@ function sendQuestion(text?: string): void {
   );
   --ntk-template-wiki-chat-drawer-send-text: var(
     --ntk-template-wiki-chat-drawer-send-text,
-    var(--ntk-text-on-accent, #ffffff)
+    var(--ntk-text-on-accent, var(--ntk-text-primary))
   );
   --ntk-template-wiki-chat-drawer-meta-color: var(
     --ntk-template-wiki-chat-drawer-meta-color,

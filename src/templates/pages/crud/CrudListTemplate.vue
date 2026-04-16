@@ -22,12 +22,12 @@
           :label="action.label"
           :icon="action.icon"
           :to="action.to"
-          :color="action.color || 'primary'"
           :disable="action.disable"
           :flat="action.flat ?? false"
           :outline="action.outline ?? false"
           :unelevated="action.unelevated ?? true"
           :aria-label="action.ariaLabel || action.label"
+          :class="resolveActionClass(action, 'primary')"
           @click="emitAction(action.id)"
         />
       </div>
@@ -126,12 +126,12 @@
           no-caps
           :label="action.label"
           :icon="action.icon"
-          :color="action.color || 'primary'"
           :disable="action.disable"
           :flat="action.flat ?? false"
           :outline="action.outline ?? true"
           :unelevated="action.unelevated ?? false"
           :aria-label="action.ariaLabel || action.label"
+          :class="resolveActionClass(action, 'primary')"
           @click="emitBulkAction(action.id)"
         />
       </div>
@@ -362,6 +362,7 @@ import type {
   TemplateCrudRowAction,
   TemplateCrudViewMode,
   TemplatePageAction,
+  TemplatePageTone,
 } from '../page-template.types'
 
 const props = withDefaults(defineProps<{
@@ -579,6 +580,60 @@ function emitBulkAction(actionId: string): void {
     actionId,
     selectedIds: [...selectedIds.value],
   })
+}
+
+function resolveActionClass(
+  action: TemplatePageAction,
+  fallbackTone: TemplatePageTone,
+): string[] {
+  const variant = action.flat ? 'flat' : action.outline ? 'outline' : 'solid'
+
+  return [
+    'ntk-template-tone-action',
+    `ntk-template-tone-action--tone-${resolveActionTone(action.color, fallbackTone)}`,
+    `ntk-template-tone-action--variant-${variant}`,
+  ]
+}
+
+function resolveActionTone(
+  color: string | undefined,
+  fallback: TemplatePageTone,
+): TemplatePageTone {
+  const value = color?.trim().toLowerCase() ?? ''
+
+  if (!value) {
+    return fallback
+  }
+
+  if (['primary', 'accent', 'brand', 'blue', 'indigo', 'violet'].includes(value)) {
+    return 'primary'
+  }
+
+  if (['info', 'cyan', 'teal'].includes(value)) {
+    return 'info'
+  }
+
+  if (['positive', 'success', 'green'].includes(value)) {
+    return 'success'
+  }
+
+  if (['warning', 'amber', 'orange', 'yellow'].includes(value)) {
+    return 'warning'
+  }
+
+  if (['negative', 'danger', 'error', 'red'].includes(value)) {
+    return 'danger'
+  }
+
+  if (
+    value.startsWith('grey')
+    || value.startsWith('gray')
+    || ['neutral', 'slate', 'dark', 'secondary'].includes(value)
+  ) {
+    return 'neutral'
+  }
+
+  return fallback
 }
 
 function emitRowClick(recordId: string): void {

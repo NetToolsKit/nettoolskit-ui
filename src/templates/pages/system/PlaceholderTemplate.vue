@@ -22,7 +22,6 @@
 
           <q-badge
             v-if="statusLabel"
-            color="primary"
             class="ntk-template-placeholder__status"
           >
             {{ statusLabel }}
@@ -75,12 +74,12 @@
             :label="secondaryAction.label"
             :icon="secondaryAction.icon"
             :to="secondaryAction.to"
-            :color="secondaryAction.color || 'grey-8'"
             :disable="secondaryAction.disable"
             :flat="secondaryAction.flat ?? false"
             :outline="secondaryAction.outline ?? true"
             :unelevated="secondaryAction.unelevated ?? false"
             :aria-label="secondaryAction.ariaLabel || secondaryAction.label"
+            :class="resolveActionClass(secondaryAction, 'secondary')"
             @click="emitActionClick(secondaryAction)"
           />
 
@@ -90,12 +89,12 @@
             :label="primaryAction.label"
             :icon="primaryAction.icon"
             :to="primaryAction.to"
-            :color="primaryAction.color || 'primary'"
             :disable="primaryAction.disable"
             :flat="primaryAction.flat ?? false"
             :outline="primaryAction.outline ?? false"
             :unelevated="primaryAction.unelevated ?? true"
             :aria-label="primaryAction.ariaLabel || primaryAction.label"
+            :class="resolveActionClass(primaryAction, 'primary')"
             @click="emitActionClick(primaryAction)"
           />
         </q-card-actions>
@@ -107,7 +106,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { TemplatePageAction, TemplatePageHint } from '../page-template.types'
+import type {
+  TemplatePageAction,
+  TemplatePageHint,
+  TemplatePageTone,
+} from '../page-template.types'
 
 const props = withDefaults(defineProps<{
   title?: string
@@ -144,6 +147,60 @@ const hasActions = computed<boolean>(() => Boolean(props.primaryAction || props.
 
 function emitActionClick(action: TemplatePageAction): void {
   emit('action-click', action.id)
+}
+
+function resolveActionClass(
+  action: TemplatePageAction,
+  variant: 'primary' | 'secondary',
+): string[] {
+  const fallbackTone: TemplatePageTone = variant === 'primary' ? 'primary' : 'neutral'
+
+  return [
+    'ntk-template-placeholder__action',
+    `ntk-template-placeholder__action--${variant}`,
+    `ntk-template-placeholder__action--tone-${resolveActionTone(action.color, fallbackTone)}`,
+  ]
+}
+
+function resolveActionTone(
+  color: string | undefined,
+  fallback: TemplatePageTone,
+): TemplatePageTone {
+  const value = color?.trim().toLowerCase() ?? ''
+
+  if (!value) {
+    return fallback
+  }
+
+  if (['primary', 'accent', 'brand', 'blue', 'indigo', 'violet'].includes(value)) {
+    return 'primary'
+  }
+
+  if (['info', 'cyan', 'teal'].includes(value)) {
+    return 'info'
+  }
+
+  if (['positive', 'success', 'green'].includes(value)) {
+    return 'success'
+  }
+
+  if (['warning', 'amber', 'orange', 'yellow'].includes(value)) {
+    return 'warning'
+  }
+
+  if (['negative', 'danger', 'error', 'red'].includes(value)) {
+    return 'danger'
+  }
+
+  if (
+    value.startsWith('grey')
+    || value.startsWith('gray')
+    || ['neutral', 'slate', 'dark', 'secondary'].includes(value)
+  ) {
+    return 'neutral'
+  }
+
+  return fallback
 }
 </script>
 
@@ -207,7 +264,18 @@ function emitActionClick(action: TemplatePageAction): void {
 }
 
 .ntk-template-placeholder__status {
+  border: 1px solid color-mix(
+    in srgb,
+    var(--ntk-template-placeholder-status-color, var(--ntk-primary)) 16%,
+    transparent
+  );
+  color: var(--ntk-template-placeholder-status-color, var(--ntk-primary));
+  background: var(
+    --ntk-template-placeholder-status-bg,
+    color-mix(in srgb, var(--ntk-template-placeholder-status-color, var(--ntk-primary)) 12%, transparent)
+  );
   letter-spacing: 0.3px;
+  font-weight: 600;
 }
 
 .ntk-template-placeholder__title {
@@ -253,6 +321,94 @@ function emitActionClick(action: TemplatePageAction): void {
   flex-wrap: wrap;
   gap: 10px;
   padding: 16px 18px 20px;
+}
+
+:deep(.ntk-template-placeholder__action.q-btn) {
+  border-radius: 10px;
+  min-height: 40px;
+  padding-inline: 14px;
+  font-weight: 600;
+  box-shadow: none;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+:deep(.ntk-template-placeholder__action.q-btn:hover) {
+  transform: translateY(-1px);
+}
+
+:deep(.ntk-template-placeholder__action.q-btn:before) {
+  box-shadow: none;
+}
+
+:deep(.ntk-template-placeholder__action--primary.q-btn) {
+  border: 1px solid var(--ntk-template-placeholder-action-accent);
+  color: var(--ntk-template-placeholder-action-primary-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  background: var(--ntk-template-placeholder-action-accent);
+}
+
+:deep(.ntk-template-placeholder__action--primary.q-btn:hover) {
+  border-color: var(--ntk-template-placeholder-action-accent-hover, var(--ntk-template-placeholder-action-accent));
+  background: var(--ntk-template-placeholder-action-accent-hover, var(--ntk-template-placeholder-action-accent));
+}
+
+:deep(.ntk-template-placeholder__action--secondary.q-btn) {
+  border: 1px solid var(--ntk-template-placeholder-action-border, var(--ntk-template-placeholder-action-accent));
+  color: var(--ntk-template-placeholder-action-secondary-text, var(--ntk-template-placeholder-action-accent));
+  background: var(
+    --ntk-template-placeholder-action-secondary-bg,
+    color-mix(in srgb, var(--ntk-template-placeholder-action-accent) 8%, transparent)
+  );
+}
+
+:deep(.ntk-template-placeholder__action--secondary.q-btn:hover) {
+  border-color: var(--ntk-template-placeholder-action-accent-hover, var(--ntk-template-placeholder-action-accent));
+  color: var(--ntk-template-placeholder-action-accent-hover, var(--ntk-template-placeholder-action-accent));
+  background: var(
+    --ntk-template-placeholder-action-secondary-hover-bg,
+    color-mix(in srgb, var(--ntk-template-placeholder-action-accent) 14%, transparent)
+  );
+}
+
+.ntk-template-placeholder__action--tone-neutral {
+  --ntk-template-placeholder-action-accent: var(--ntk-text-secondary);
+  --ntk-template-placeholder-action-accent-hover: var(--ntk-text-primary);
+  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--ntk-border-color) 88%, transparent);
+  --ntk-template-placeholder-action-secondary-bg: color-mix(in srgb, var(--ntk-text-secondary) 6%, transparent);
+  --ntk-template-placeholder-action-secondary-hover-bg: color-mix(in srgb, var(--ntk-text-primary) 10%, transparent);
+}
+
+.ntk-template-placeholder__action--tone-primary {
+  --ntk-template-placeholder-action-accent: var(--ntk-primary);
+  --ntk-template-placeholder-action-accent-hover: var(--ntk-primary-hover, var(--ntk-primary));
+  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--ntk-primary) 24%, transparent);
+}
+
+.ntk-template-placeholder__action--tone-info {
+  --ntk-template-placeholder-action-accent: var(--semantic-info-primary, var(--ntk-info));
+  --ntk-template-placeholder-action-accent-hover: var(--semantic-info-secondary, var(--semantic-info-primary, var(--ntk-info)));
+  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 24%, transparent);
+}
+
+.ntk-template-placeholder__action--tone-success {
+  --ntk-template-placeholder-action-accent: var(--semantic-success-primary, var(--ntk-success));
+  --ntk-template-placeholder-action-accent-hover: var(--semantic-success-secondary, var(--semantic-success-primary, var(--ntk-success)));
+  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 24%, transparent);
+}
+
+.ntk-template-placeholder__action--tone-warning {
+  --ntk-template-placeholder-action-accent: var(--semantic-warning-primary, var(--ntk-warning));
+  --ntk-template-placeholder-action-accent-hover: var(--semantic-warning-secondary, var(--semantic-warning-primary, var(--ntk-warning)));
+  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 24%, transparent);
+}
+
+.ntk-template-placeholder__action--tone-danger {
+  --ntk-template-placeholder-action-accent: var(--semantic-danger-primary, var(--ntk-danger));
+  --ntk-template-placeholder-action-accent-hover: var(--semantic-danger-secondary, var(--semantic-danger-primary, var(--ntk-danger)));
+  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-danger-primary, var(--ntk-danger)) 24%, transparent);
 }
 
 @media (max-width: 768px) {

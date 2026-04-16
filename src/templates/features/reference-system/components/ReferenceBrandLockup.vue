@@ -27,6 +27,12 @@ defineProps<{
 
 <style scoped lang="scss">
 .ntk-reference-brand-lockup {
+  --ntk-reference-brand-mark-bg: var(--ntk-reference-brand-mark-background, var(--ntk-template-layout-brand-mark-bg, var(--ntk-primary-gradient, var(--ntk-accent))));
+  --ntk-reference-brand-mark-color: var(--ntk-reference-brand-mark-text, var(--ntk-text-on-accent, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
+  --ntk-reference-brand-mark-shadow: var(--ntk-reference-shell-glow, var(--ntk-shadow-md));
+  --ntk-reference-brand-name-color: var(--ntk-reference-brand-name, var(--ntk-template-layout-title-color, var(--ntk-text-heading, var(--ntk-text-primary))));
+  --ntk-reference-brand-subtitle-color: var(--ntk-reference-brand-subtitle, var(--ntk-template-layout-brand-subtitle, var(--ntk-text-muted, var(--ntk-text-secondary))));
+
   display: flex;
   align-items: center;
   gap: 12px;
@@ -43,19 +49,19 @@ defineProps<{
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: var(--ntk-gradient-accent, linear-gradient(135deg, #10b981 0%, #2dd4bf 100%));
-  color: var(--ntk-text-light, #ffffff);
+  background: var(--ntk-reference-brand-mark-bg);
+  color: var(--ntk-reference-brand-mark-color);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   letter-spacing: 0.14em;
-  box-shadow: var(--ntk-reference-shell-glow, 0 16px 32px rgba(2, 6, 23, 0.16));
+  box-shadow: var(--ntk-reference-brand-mark-shadow);
 }
 
 .ntk-reference-brand-lockup__name {
   display: block;
-  color: var(--ntk-template-layout-title-color, var(--ntk-text-primary, #0f172a));
+  color: var(--ntk-reference-brand-name-color);
   font-family: var(--ntk-font-family-display, Inter, system-ui, sans-serif);
   font-size: 14px;
   font-weight: 600;
@@ -65,7 +71,7 @@ defineProps<{
 .ntk-reference-brand-lockup__subtitle {
   display: block;
   margin-top: 2px;
-  color: var(--ntk-template-layout-brand-subtitle, var(--ntk-text-secondary, #64748b));
+  color: var(--ntk-reference-brand-subtitle-color);
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;

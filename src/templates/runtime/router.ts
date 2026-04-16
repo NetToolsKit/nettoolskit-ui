@@ -14,6 +14,7 @@ import {
   createWebHashHistory,
   type RouteRecordRaw,
   type Router,
+  useRoute,
   useRouter,
 } from 'vue-router'
 
@@ -26,6 +27,7 @@ import {
 import { templateWikiChatService } from '../features/wiki/wiki-chat-service.template'
 import { createTemplateWikiChatStore } from '../features/wiki/wiki-chat-store.template'
 import { AuthLayoutTemplate, MainLayoutTemplate } from '../layouts'
+import { clearTemplateLayoutPersistence } from '../layouts/MainLayoutTemplate.vue'
 import {
   CrudListTemplate,
   DashboardTemplate,
@@ -47,7 +49,11 @@ import {
 } from '../scaffolding'
 import { createTemplateAuthStore } from '../scaffolding/auth-store.template'
 import { templateAuthService } from '../scaffolding/auth-service.template'
-import { themeOptions, useThemeSwitcher } from '../../composables/useThemeSwitcher'
+import {
+  resetThemePreference,
+  themeOptions,
+  useThemeSwitcher,
+} from '../../composables/useThemeSwitcher'
 import RuntimeSettingsSurface from './RuntimeSettingsSurface.vue'
 import {
   templateRuntimeData,
@@ -66,6 +72,11 @@ const runtimeAuthStore = createTemplateAuthStore({
   userKey: 'ntk_runtime_user',
 })
 
+const RUNTIME_LOGIN_ROUTE_NAME = 'TemplateRuntimeLogin'
+const RUNTIME_DASHBOARD_ROUTE_NAME = 'TemplateRuntimeDashboard'
+const RUNTIME_LOGIN_REDIRECT_QUERY_KEY = 'redirect'
+const RUNTIME_LAYOUT_STORAGE_PREFIX = 'ntk-template-runtime-layout'
+
 const runtimeWikiChatStore = createTemplateWikiChatStore({
   ask: (question) => templateWikiChatService.ask({ question }),
   continueConversation: (conversationId, question) =>
@@ -73,6 +84,9 @@ const runtimeWikiChatStore = createTemplateWikiChatStore({
   listConversations: () => templateWikiChatService.listConversations(),
   getConversation: (conversationId) => templateWikiChatService.getConversation(conversationId),
   deleteConversation: (conversationId) => templateWikiChatService.deleteConversation(conversationId),
+  readPersistedState: () => templateWikiChatService.readPersistedState(),
+  persistActiveConversation: (conversationId) =>
+    templateWikiChatService.persistActiveConversation(conversationId),
 })
 
 /* ------------------------------------------------------------------ */
@@ -157,6 +171,73 @@ function getRuntimeChatMessages() {
     ...message,
     sources: message.sources?.map(source => ({ ...source })),
   }))
+}
+
+function normalizeRuntimeRedirectTarget(candidate: unknown): string | null {
+  const rawValue = Array.isArray(candidate) ? candidate[0] : candidate
+  if (typeof rawValue !== 'string') {
+    return null
+  }
+
+  const value = rawValue.trim()
+  if (!value.startsWith('/') || value.startsWith('//')) {
+    return null
+  }
+
+  if (
+    value === '/login'
+    || value.startsWith('/login?')
+    || value === '/auth/login'
+    || value.startsWith('/auth/login?')
+  ) {
+    return null
+  }
+
+  return value
+}
+
+function resolveRuntimePostLoginLocation(candidate: unknown) {
+  return normalizeRuntimeRedirectTarget(candidate) ?? { name: RUNTIME_DASHBOARD_ROUTE_NAME }
+}
+
+function createRuntimeLoginRedirect(toFullPath: string) {
+  const redirectTarget = normalizeRuntimeRedirectTarget(toFullPath)
+
+  if (!redirectTarget) {
+    return { name: RUNTIME_LOGIN_ROUTE_NAME }
+  }
+
+  return {
+    name: RUNTIME_LOGIN_ROUTE_NAME,
+    query: {
+      [RUNTIME_LOGIN_REDIRECT_QUERY_KEY]: redirectTarget,
+    },
+  }
+}
+
+function clearRuntimeAuthSession(): void {
+  runtimeAuthStore.logout()
+}
+
+function clearRuntimeWikiChatWorkspace(): void {
+  templateWikiChatService.resetPersistence()
+  runtimeWikiChatStore.resetState()
+}
+
+function clearRuntimeLayoutWorkspace(): void {
+  clearTemplateLayoutPersistence(RUNTIME_LAYOUT_STORAGE_PREFIX)
+}
+
+function clearRuntimeThemeWorkspace(): void {
+  resetThemePreference()
+}
+
+function resetRuntimeWorkspace(): void {
+  clearRuntimeWikiChatWorkspace()
+  clearRuntimeLayoutWorkspace()
+  clearRuntimeThemeWorkspace()
+  templateRuntimeData.reset()
+  clearRuntimeAuthSession()
 }
 
 /* ------------------------------------------------------------------ */
@@ -462,6 +543,7 @@ const RuntimeWikiChatPage = defineComponent({
 const RuntimeSettingsPage = defineComponent({
   name: 'TemplateRuntimeSettingsPage',
   setup() {
+    const router = useRouter()
     const { activeTheme } = useThemeSwitcher()
     const activeThemeLabel = computed(() => {
       return themeOptions.find(option => option.id === activeTheme.value)?.label ?? activeTheme.value
@@ -476,9 +558,9 @@ const RuntimeSettingsPage = defineComponent({
         const updatedSettings = templateRuntimeData.updateSettings(settings)
         runtimeAuthStore.updateUserName(updatedSettings.operatorName)
       },
-      onResetRuntimeData: () => {
-        templateRuntimeData.reset()
-        runtimeAuthStore.updateUserName(templateRuntimeData.state.settings.operatorName)
+      onResetRuntimeData: async () => {
+        resetRuntimeWorkspace()
+        await router.replace({ name: RUNTIME_LOGIN_ROUTE_NAME })
       },
     })
   },
@@ -545,8 +627,8 @@ const RuntimeProfilePage = defineComponent({
       sectionTitle: 'Perfil e preferências',
       showLogoutAction: true,
       onLogoutClick: () => {
-        runtimeAuthStore.logout()
-        void router.push({ name: 'TemplateRuntimeLogin' })
+        clearRuntimeAuthSession()
+        void router.replace({ name: RUNTIME_LOGIN_ROUTE_NAME })
       },
     })
   },
@@ -556,6 +638,7 @@ const RuntimeLoginPage = defineComponent({
   name: 'TemplateRuntimeLoginPage',
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const email = ref('')
     const password = ref('')
     const loading = ref(false)
@@ -587,7 +670,9 @@ const RuntimeLoginPage = defineComponent({
             },
             result.token,
           )
-          await router.push({ name: 'TemplateRuntimeDashboard' })
+          await router.push(
+            resolveRuntimePostLoginLocation(route.query[RUNTIME_LOGIN_REDIRECT_QUERY_KEY]),
+          )
         } finally {
           loading.value = false
         }
@@ -664,19 +749,18 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
       icon: 'menu_book',
       order: 40,
     },
-    children: [
-      {
-        id: 'knowledge-chat',
-        path: 'chat',
-        name: 'TemplateRuntimeKnowledgeChat',
-        component: RuntimeWikiChatPage,
-        menu: {
-          text: 'Assistente',
-          icon: 'chat',
-          order: 1,
-        },
-      },
-    ],
+  },
+  {
+    id: 'knowledge-chat',
+    path: 'knowledge/chat',
+    name: 'TemplateRuntimeKnowledgeChat',
+    component: RuntimeWikiChatPage,
+    layoutId: 'main',
+    menu: {
+      text: 'Assistente',
+      icon: 'chat',
+      order: 41,
+    },
   },
   {
     id: 'settings',
@@ -743,7 +827,7 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
         menuItems: templateRuntimeMenuItems,
         useRouterView: true,
         persistMode: true,
-        storageKeyPrefix: 'ntk-template-runtime-layout',
+        storageKeyPrefix: RUNTIME_LAYOUT_STORAGE_PREFIX,
         showBreadcrumb: true,
         showHeader: true,
         showDrawer: true,
@@ -780,8 +864,8 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
             'onUpdate:sideMenuVariant': (value: 'vercel' | 'reference') => { layoutControls.setSideMenuVariant(value) },
             onAccountClick: () => { void router.push({ name: 'TemplateRuntimeProfile' }) },
             onLogoutClick: () => {
-              runtimeAuthStore.logout()
-              void router.push({ name: 'TemplateRuntimeLogin' })
+              clearRuntimeAuthSession()
+              void router.replace({ name: RUNTIME_LOGIN_ROUTE_NAME })
             },
           }),
         ],
@@ -870,14 +954,14 @@ export function createTemplateRuntimeRoutes(): RouteRecordRaw[] {
 
 function installAuthGuard(router: Router): void {
   router.beforeEach((to) => {
-    const isLoginRoute = to.name === 'TemplateRuntimeLogin'
+    const isLoginRoute = to.name === RUNTIME_LOGIN_ROUTE_NAME
     const isAuthenticated = runtimeAuthStore.isAuthenticated.value || runtimeAuthStore.checkAuth()
 
     if (!isAuthenticated && !isLoginRoute) {
-      return { name: 'TemplateRuntimeLogin' }
+      return createRuntimeLoginRedirect(to.fullPath)
     }
     if (isAuthenticated && isLoginRoute) {
-      return { name: 'TemplateRuntimeDashboard' }
+      return resolveRuntimePostLoginLocation(to.query[RUNTIME_LOGIN_REDIRECT_QUERY_KEY])
     }
   })
 }

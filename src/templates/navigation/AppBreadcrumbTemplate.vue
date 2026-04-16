@@ -111,7 +111,7 @@ function navigateTo(routeName?: string, path?: string): void {
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
-  background: var(--ntk-template-breadcrumb-bg, #f1f5f9);
+  background: var(--ntk-template-breadcrumb-bg, var(--ntk-bg-tertiary));
 }
 
 .ntk-template-breadcrumb__link {
@@ -119,12 +119,12 @@ function navigateTo(routeName?: string, path?: string): void {
   align-items: center;
   border: none;
   background: transparent;
-  color: var(--ntk-template-breadcrumb-link-color, #64748b);
+  color: var(--ntk-template-breadcrumb-link-color, var(--ntk-text-secondary));
   cursor: pointer;
   transition: color 0.15s ease;
 
   &:hover {
-    color: var(--ntk-template-breadcrumb-link-hover-color, var(--q-primary));
+    color: var(--ntk-template-breadcrumb-link-hover-color, var(--ntk-text-link, var(--ntk-primary)));
   }
 }
 
@@ -133,12 +133,12 @@ function navigateTo(routeName?: string, path?: string): void {
 }
 
 .ntk-template-breadcrumb__current {
-  color: var(--ntk-template-breadcrumb-current-color, #0f172a);
+  color: var(--ntk-template-breadcrumb-current-color, var(--ntk-text-primary));
   font-weight: 600;
 }
 
 .ntk-template-breadcrumb__sep {
-  color: var(--ntk-template-breadcrumb-sep-color, #cbd5e1);
+  color: var(--ntk-template-breadcrumb-sep-color, var(--ntk-border-dark, var(--ntk-border-color)));
   font-weight: 300;
 }
 </style>

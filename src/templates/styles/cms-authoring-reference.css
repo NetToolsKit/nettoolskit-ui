@@ -1,4 +1,18 @@
 .cms-shell-page {
+  --ntk-cms-page-surface: var(--ntk-cms-page-bg, var(--ntk-template-layout-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary))));
+  --ntk-cms-card-surface: var(--ntk-cms-card-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  --ntk-cms-shell-surface: var(--ntk-cms-shell-bg, var(--ntk-cms-page-surface));
+  --ntk-cms-shell-border-color: var(--ntk-cms-shell-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  --ntk-cms-shell-text-primary: var(--ntk-cms-shell-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-cms-shell-text-secondary: var(--ntk-cms-shell-text-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  --ntk-cms-shell-accent-color: var(--ntk-cms-shell-accent, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-cms-surface-shadow: var(--ntk-cms-shadow, var(--ntk-template-surface-shadow, var(--ntk-shadow-sm)));
+  --ntk-cms-grid-line-vertical: var(--ntk-cms-stage-grid-vertical, color-mix(in srgb, var(--ntk-cms-shell-text-secondary) 8%, transparent));
+  --ntk-cms-grid-line-horizontal: var(--ntk-cms-stage-grid-horizontal, color-mix(in srgb, var(--ntk-cms-shell-text-secondary) 6%, transparent));
+  --ntk-cms-ruler-line-color: var(--ntk-cms-ruler-line, color-mix(in srgb, var(--ntk-cms-shell-text-secondary) 22%, transparent));
+  --ntk-cms-ruler-grid-color: var(--ntk-cms-ruler-grid, color-mix(in srgb, var(--ntk-cms-shell-text-secondary) 14%, transparent));
+  --ntk-cms-nav-button-bg: var(--ntk-cms-nav-surface, color-mix(in srgb, var(--ntk-cms-card-surface) 62%, var(--ntk-cms-shell-surface)));
+  --ntk-cms-rail-action-bg: var(--ntk-cms-action-surface, color-mix(in srgb, var(--ntk-cms-card-surface) 92%, var(--ntk-cms-shell-surface)));
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
@@ -8,11 +22,11 @@
   min-width: 0;
   min-height: 100%;
   width: 100%;
-  background: var(--ntk-cms-page-bg, var(--ntk-template-layout-page-bg, #fafafa));
+  background: var(--ntk-cms-page-surface);
 }
 
 .cms-shell-page-container {
-  background: var(--ntk-cms-page-bg, var(--ntk-template-layout-page-bg, #fafafa));
+  background: var(--ntk-cms-page-surface);
   padding: var(--ntk-cms-space-md) var(--ntk-cms-space-lg) var(--ntk-cms-space-lg);
 }
 
@@ -192,7 +206,7 @@
   gap: calc(var(--ntk-cms-space-xs) * 0.75);
   flex-wrap: wrap;
   padding: 0 calc(var(--ntk-cms-space-xs) * 0.5);
-  border-bottom: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 85%, white);
+  border-bottom: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 85%, var(--ntk-cms-card-surface));
 }
 
 .cms-workspace-tab {
@@ -214,7 +228,7 @@
 }
 
 .cms-workspace-tab--active {
-  border-color: color-mix(in srgb, var(--ntk-cms-border-color) 88%, white);
+  border-color: color-mix(in srgb, var(--ntk-cms-border-color) 88%, var(--ntk-cms-card-surface));
   background: var(--ntk-cms-bg-card);
   color: var(--ntk-cms-text-primary);
   box-shadow: 0 -1px 0 color-mix(in srgb, var(--ntk-cms-accent) 40%, transparent);
@@ -292,14 +306,14 @@
   flex-direction: column;
   gap: var(--ntk-cms-space-sm);
   padding-top: var(--ntk-cms-space-sm);
-  border-top: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
+  border-top: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, var(--ntk-cms-card-surface));
 }
 
 .cms-pages__reusable-library {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
   overflow: hidden;
@@ -337,7 +351,7 @@
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--ntk-cms-surface-shadow);
 }
 
 .cms-pages__quick-starts-header {
@@ -1830,13 +1844,13 @@
 }
 
 .cms-designer-card {
-  --ntk-cms-bg-card: var(--ntk-cms-card-bg, #ffffff);
-  --ntk-cms-shell-bg: var(--ntk-cms-page-bg, #fafafa);
-  --ntk-cms-border-color: var(--ntk-cms-shell-border, #e5e5e5);
-  --ntk-cms-text-primary: var(--ntk-cms-shell-text, #111111);
-  --ntk-cms-text-secondary: var(--ntk-cms-shell-text-muted, #525252);
-  --ntk-cms-tab-active: var(--ntk-cms-shell-accent, #111111);
-  --ntk-cms-accent: var(--ntk-cms-shell-accent, #111111);
+  --ntk-cms-bg-card: var(--ntk-cms-card-surface);
+  --ntk-cms-shell-bg: var(--ntk-cms-shell-surface);
+  --ntk-cms-border-color: var(--ntk-cms-shell-border-color);
+  --ntk-cms-text-primary: var(--ntk-cms-shell-text-primary);
+  --ntk-cms-text-secondary: var(--ntk-cms-shell-text-secondary);
+  --ntk-cms-tab-active: var(--ntk-cms-shell-accent-color);
+  --ntk-cms-accent: var(--ntk-cms-shell-accent-color);
   overflow: visible;
   color: var(--ntk-cms-text-primary);
   background: transparent;
@@ -1859,13 +1873,13 @@
   min-height: 3.3rem;
   padding: var(--ntk-cms-space-md) var(--ntk-cms-space-lg);
   background: var(--ntk-cms-bg-card);
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 75%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 75%, var(--ntk-cms-card-surface));
   border-radius: var(--ntk-cms-radius-lg);
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
   gap: calc(var(--ntk-cms-space-xs) * 0.75);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--ntk-cms-surface-shadow);
 }
 
 .cms-designer-card__toolbar-row {
@@ -1879,7 +1893,7 @@
 .cms-designer-card__toolbar-row--info {
   min-height: 2rem;
   padding-top: calc(var(--ntk-cms-space-xs) * 0.5);
-  border-top: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 68%, white);
+  border-top: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 68%, var(--ntk-cms-card-surface));
   justify-content: space-between;
 }
 
@@ -1901,7 +1915,7 @@
 .cms-designer-card__toolbar-divider {
   width: 1px;
   align-self: stretch;
-  background: color-mix(in srgb, var(--ntk-cms-border-color) 85%, white);
+  background: color-mix(in srgb, var(--ntk-cms-border-color) 85%, var(--ntk-cms-card-surface));
 }
 
 .cms-designer-card__toolbar-spacer {
@@ -1963,7 +1977,7 @@
 .cms-designer-card__toolbar-group :deep(.q-btn),
 .cms-designer-card__toolbar-group :deep(.q-field__control),
 .cms-designer-card__toolbar-group :deep(.q-btn-dropdown__arrow-container) {
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 80%, var(--ntk-cms-card-surface));
   border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
   background: var(--ntk-cms-bg-card);
   color: var(--ntk-cms-text-primary);
@@ -2022,7 +2036,7 @@
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--ntk-cms-surface-shadow);
 }
 
 .cms-designer-card__sidebar,
@@ -2032,7 +2046,7 @@
   gap: var(--ntk-cms-space-md);
   padding: var(--ntk-cms-space-md);
   overflow: auto;
-  background: color-mix(in srgb, var(--ntk-cms-page-bg, #fafafa) 88%, var(--ntk-cms-bg-card));
+  background: color-mix(in srgb, var(--ntk-cms-page-surface) 88%, var(--ntk-cms-bg-card));
 }
 
 .cms-pages__rail .cms-preview-toolbar,
@@ -2054,12 +2068,12 @@
   overflow: auto;
   position: relative;
   background:
-    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(to right, var(--ntk-cms-grid-line-vertical) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ntk-cms-grid-line-horizontal) 1px, transparent 1px),
     linear-gradient(
       180deg,
       var(--ntk-cms-bg-card) 0%,
-      color-mix(in srgb, var(--ntk-cms-page-bg, #fafafa) 55%, var(--ntk-cms-bg-card)) 100%
+      color-mix(in srgb, var(--ntk-cms-page-surface) 55%, var(--ntk-cms-bg-card)) 100%
     );
   background-size: 24px 24px, 24px 24px, auto;
   flex: 1 1 auto;
@@ -2071,12 +2085,12 @@
   inset-block: 0;
   inset-inline-start: 0;
   width: 2.25rem;
-  border-inline-end: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border-inline-end: 1px solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   background:
     repeating-linear-gradient(
       to bottom,
-      rgba(148, 163, 184, 0.22) 0,
-      rgba(148, 163, 184, 0.22) 1px,
+      var(--ntk-cms-ruler-line-color) 0,
+      var(--ntk-cms-ruler-line-color) 1px,
       transparent 1px,
       transparent 24px
     );
@@ -2087,7 +2101,7 @@
   background: linear-gradient(
     180deg,
     var(--ntk-cms-bg-card) 0%,
-    color-mix(in srgb, var(--ntk-cms-page-bg, #fafafa) 55%, var(--ntk-cms-bg-card)) 100%
+    color-mix(in srgb, var(--ntk-cms-page-surface) 55%, var(--ntk-cms-bg-card)) 100%
   );
 }
 
@@ -2097,9 +2111,9 @@
   gap: 0;
   align-items: center;
   padding: var(--ntk-cms-space-sm) var(--ntk-cms-space-lg);
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 72%, var(--ntk-cms-card-surface));
   border-radius: var(--ntk-cms-radius-lg);
-  background: color-mix(in srgb, var(--ntk-cms-page-bg, #fafafa) 82%, var(--ntk-cms-bg-card));
+  background: color-mix(in srgb, var(--ntk-cms-page-surface) 82%, var(--ntk-cms-bg-card));
 }
 
 .cms-designer-card__ruler-shell--pages,
@@ -2131,7 +2145,7 @@
   min-width: 3.1rem;
   min-height: 2rem;
   padding: 0 calc(var(--ntk-cms-space-xs) * 1.25);
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
   background: var(--ntk-cms-bg-card);
   color: var(--ntk-cms-text-primary);
@@ -2140,7 +2154,7 @@
 }
 
 .cms-designer-card__ruler-mode {
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
   background: var(--ntk-cms-bg-card);
 }
@@ -2152,14 +2166,14 @@
   align-items: end;
   gap: 0;
   padding: calc(var(--ntk-cms-space-xs) * 0.75) var(--ntk-cms-space-sm) calc(var(--ntk-cms-space-xs) * 0.6);
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   border-radius: var(--ntk-cms-radius-md);
   background:
-    repeating-linear-gradient(to right, rgba(148, 163, 184, 0.14) 0, rgba(148, 163, 184, 0.14) 1px, transparent 1px, transparent calc(100% / 17)),
+    repeating-linear-gradient(to right, var(--ntk-cms-ruler-grid-color) 0, var(--ntk-cms-ruler-grid-color) 1px, transparent 1px, transparent calc(100% / 17)),
     linear-gradient(
       180deg,
       var(--ntk-cms-bg-card) 0%,
-      color-mix(in srgb, var(--ntk-cms-page-bg, #fafafa) 65%, var(--ntk-cms-bg-card)) 100%
+      color-mix(in srgb, var(--ntk-cms-page-surface) 65%, var(--ntk-cms-bg-card)) 100%
     );
   overflow: hidden;
 }
@@ -2183,7 +2197,7 @@
   inset-inline-start: 0;
   width: 1px;
   height: 0.85rem;
-  background: color-mix(in srgb, var(--ntk-cms-border-color) 80%, #cbd5e1);
+  background: color-mix(in srgb, var(--ntk-cms-border-color) 80%, var(--ntk-cms-text-secondary));
 }
 
 .cms-designer-card__sidebar-header,
@@ -2222,7 +2236,7 @@
   gap: var(--ntk-cms-space-sm);
   border: var(--ntk-cms-border-width) solid transparent;
   border-radius: var(--ntk-cms-radius-md);
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--ntk-cms-nav-button-bg);
   color: var(--ntk-cms-text-secondary);
   padding: calc(var(--ntk-cms-space-xs) * 1.5) var(--ntk-cms-space-sm);
   text-align: left;
@@ -2249,7 +2263,7 @@
 .cms-designer-card__rail-actions :deep(.q-btn) {
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--ntk-cms-rail-action-bg);
   min-height: 2.75rem;
 }
 
@@ -2262,7 +2276,7 @@
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-lg);
   background: var(--ntk-cms-bg-card);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--ntk-cms-surface-shadow);
 }
 
 .cms-settings {
@@ -2276,8 +2290,8 @@
 .cms-settings__preview {
   background: linear-gradient(
     180deg,
-    var(--ntk-cms-page-bg, #fafafa) 0%,
-    color-mix(in srgb, var(--ntk-cms-page-bg, #fafafa) 84%, var(--ntk-cms-bg-card)) 100%
+    var(--ntk-cms-page-surface) 0%,
+    color-mix(in srgb, var(--ntk-cms-page-surface) 84%, var(--ntk-cms-bg-card)) 100%
   );
 }
 
@@ -2289,9 +2303,9 @@
 
 /* ── Admin Card (Tenant + Actions) ─────────────────── */
 .cms-settings__admin {
-  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, white);
+  border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   border-radius: var(--ntk-cms-radius-lg);
-  background: color-mix(in srgb, var(--ntk-cms-bg-card) 92%, var(--ntk-cms-page-bg, #fafafa));
+  background: color-mix(in srgb, var(--ntk-cms-bg-card) 92%, var(--ntk-cms-page-surface));
   padding: var(--ntk-cms-space-md);
   display: flex;
   flex-direction: column;

@@ -206,7 +206,7 @@ function getKindIcon(kind: CmsMediaAssetKind): string {
   --cms-media-border: var(--ntk-template-cms-media-border, var(--ntk-template-page-border, var(--ntk-border-color, currentColor)));
   --cms-media-surface: var(--ntk-template-cms-media-surface, var(--ntk-template-page-card-bg, var(--ntk-bg-card, transparent)));
   --cms-media-surface-soft: var(--ntk-template-cms-media-surface-soft, color-mix(in srgb, var(--cms-media-border) 12%, transparent));
-  --cms-media-chip-bg: var(--ntk-template-cms-media-chip-bg, color-mix(in srgb, var(--ntk-accent, var(--q-primary)) 12%, var(--cms-media-surface)));
+  --cms-media-chip-bg: var(--ntk-template-cms-media-chip-bg, color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 12%, var(--cms-media-surface)));
   --cms-media-chip-text: var(--ntk-template-cms-media-chip-text, var(--ntk-text-primary, var(--ntk-text-heading, currentColor)));
   --cms-media-chip-incompatible-bg: var(--ntk-template-cms-media-chip-incompatible-bg, color-mix(in srgb, var(--ntk-error, var(--ntk-negative, currentColor)) 14%, var(--cms-media-surface)));
   --cms-media-chip-incompatible-text: var(--ntk-template-cms-media-chip-incompatible-text, var(--ntk-error, var(--ntk-negative, currentColor)));

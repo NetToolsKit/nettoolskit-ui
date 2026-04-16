@@ -5,6 +5,14 @@ import type { ReferenceWhitelabelPreset } from './types'
 
 export const REFERENCE_WHITELABEL_STORAGE_KEY = 'ntk.reference.whitelabel.preset'
 
+function mixWithTransparent(color: string, percentage: number): string {
+  return `color-mix(in srgb, ${color} ${percentage}%, transparent)`
+}
+
+function createShadow(offsets: string, color: string, percentage: number): string {
+  return `${offsets} ${mixWithTransparent(color, percentage)}`
+}
+
 export function listReferenceWhitelabelPresets(): ReferenceWhitelabelPreset[] {
   return [...referenceWhitelabelPresets]
 }
@@ -20,39 +28,44 @@ export function resolveReferenceWhitelabelPreset(presetId?: string | null): Refe
 export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPreset): CSSProperties {
   const { palette, typography, radius, shadow, gradients, brand } = preset
   const isDarkShell = preset.id !== 'reference-light'
+  const shellContrastText = isDarkShell ? palette.text : palette.surface
+  const shellContrastTextVar = 'var(--ntk-text-on-accent)'
   const shellHeaderBackground = palette.surface
   const shellHeaderShadow = isDarkShell
-    ? '0 4px 16px rgba(2, 6, 23, 0.24)'
-    : '0 1px 3px rgba(15, 23, 42, 0.04)'
+    ? createShadow('0 4px 16px', 'var(--ntk-secondary)', 24)
+    : createShadow('0 1px 3px', 'var(--ntk-secondary)', 4)
   const shellDrawerBackground = `linear-gradient(180deg, ${palette.secondary} 0%, ${palette.primaryDark} 100%)`
-  const shellNavText = isDarkShell
-    ? 'rgba(226, 247, 236, 0.84)'
-    : 'rgba(255, 255, 255, 0.86)'
-  const shellNavHoverBackground = isDarkShell
-    ? 'rgba(255, 255, 255, 0.04)'
-    : 'rgba(255, 255, 255, 0.08)'
+  const shellNavText = mixWithTransparent(shellContrastTextVar, isDarkShell ? 84 : 86)
+  const shellNavHoverBackground = mixWithTransparent(shellContrastTextVar, isDarkShell ? 4 : 8)
   const shellNavActiveBackground = `linear-gradient(90deg, color-mix(in srgb, ${palette.accent} 24%, transparent) 0%, color-mix(in srgb, ${palette.accent} 8%, transparent) 100%)`
   const shellNavActiveBorder = `color-mix(in srgb, ${palette.accent} 72%, ${palette.primaryLight})`
-  const shellGroupText = isDarkShell
-    ? 'rgba(203, 244, 229, 0.74)'
-    : 'rgba(226, 232, 240, 0.82)'
+  const shellGroupText = mixWithTransparent(shellContrastTextVar, isDarkShell ? 74 : 82)
   const shellGroupPill = `color-mix(in srgb, ${palette.accent} 18%, transparent)`
   const shellSubmenuHover = `color-mix(in srgb, ${palette.accent} 8%, ${palette.surfaceAlt})`
   const shellSubmenuActive = `color-mix(in srgb, ${palette.accent} 14%, ${palette.surfaceAlt})`
   const shellChromeBackground = palette.surface
   const shellChromeBorder = isDarkShell
-    ? 'rgba(148, 163, 184, 0.14)'
-    : 'rgba(15, 23, 42, 0.08)'
+    ? mixWithTransparent('var(--ntk-text-muted)', 14)
+    : mixWithTransparent('var(--ntk-secondary)', 8)
   const referencePanelBackground = isDarkShell
     ? palette.surface
     : palette.surface
   const referencePanelMutedBackground = isDarkShell
     ? palette.surfaceAlt
     : palette.surfaceAlt
-  const referenceBadgeBackground = `color-mix(in srgb, ${palette.accent} 16%, ${isDarkShell ? palette.surfaceAlt : '#ffffff'})`
+  const referenceBadgeBackground = `color-mix(in srgb, var(--ntk-reference-accent) 16%, ${isDarkShell ? 'var(--ntk-reference-panel-muted-bg)' : 'var(--ntk-bg-card)'})`
   const referenceHeroBackground = isDarkShell
     ? palette.background
     : palette.background
+  const loginBrandText = 'var(--ntk-text-light)'
+  const loginBrandSubtitle = mixWithTransparent('var(--ntk-template-login-brand-text)', 78)
+  const loginBrandFeatureText = mixWithTransparent('var(--ntk-template-login-brand-text)', 92)
+  const loginBrandFeatureBackground = mixWithTransparent('var(--ntk-template-login-brand-text)', 14)
+  const loginBrandFooter = mixWithTransparent('var(--ntk-template-login-brand-text)', 64)
+  const profileAvatarShadow = mixWithTransparent('var(--ntk-secondary)', 20)
+  const referenceShellGlow = isDarkShell
+    ? createShadow('0 10px 24px', 'var(--ntk-secondary)', 24)
+    : createShadow('0 1px 3px', 'var(--ntk-secondary)', 5)
 
   return {
     '--ntk-primary': palette.primary,
@@ -70,6 +83,7 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-text-muted': palette.textMuted,
     '--ntk-text-dark': palette.text,
     '--ntk-text-light': palette.surface,
+    '--ntk-text-on-accent': shellContrastText,
     '--ntk-text-on-primary': palette.surface,
     '--ntk-border-color': palette.border,
     '--ntk-border-light': palette.border,
@@ -125,7 +139,7 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-template-layout-nav-hover-bg': shellNavHoverBackground,
     '--ntk-template-layout-nav-active-bg': shellNavActiveBackground,
     '--ntk-template-layout-nav-active-border': shellNavActiveBorder,
-    '--ntk-template-layout-nav-active-text': '#ffffff',
+    '--ntk-template-layout-nav-active-text': 'var(--ntk-text-on-accent)',
     '--ntk-template-layout-nav-group-text': shellGroupText,
     '--ntk-template-layout-nav-group-pill-bg': shellGroupPill,
     '--ntk-template-layout-submenu-hover-bg': shellSubmenuHover,
@@ -134,11 +148,11 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-template-auth-layout-bg': palette.background,
     '--ntk-template-login-page-bg': palette.background,
     '--ntk-template-login-brand-bg': gradients.hero,
-    '--ntk-template-login-brand-text': palette.surface,
-    '--ntk-template-login-brand-subtitle': 'rgba(255, 255, 255, 0.78)',
-    '--ntk-template-login-brand-feature-text': 'rgba(255, 255, 255, 0.92)',
-    '--ntk-template-login-brand-feature-bg': 'rgba(255, 255, 255, 0.14)',
-    '--ntk-template-login-brand-footer': 'rgba(255, 255, 255, 0.64)',
+    '--ntk-template-login-brand-text': loginBrandText,
+    '--ntk-template-login-brand-subtitle': loginBrandSubtitle,
+    '--ntk-template-login-brand-feature-text': loginBrandFeatureText,
+    '--ntk-template-login-brand-feature-bg': loginBrandFeatureBackground,
+    '--ntk-template-login-brand-footer': loginBrandFooter,
     '--ntk-template-login-form-bg': gradients.panel,
     '--ntk-template-login-form-border': palette.border,
     '--ntk-template-login-form-card-bg': palette.surface,
@@ -166,7 +180,7 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-template-profile-hero-bg': gradients.panel,
     '--ntk-template-profile-avatar-bg': gradients.accent,
     '--ntk-template-profile-avatar-border': palette.surface,
-    '--ntk-template-profile-avatar-shadow': 'rgba(15, 23, 42, 0.2)',
+    '--ntk-template-profile-avatar-shadow': profileAvatarShadow,
     '--ntk-template-notification-bg': palette.surface,
     '--ntk-template-notification-border': palette.border,
     '--ntk-template-notification-radius': radius.md,
@@ -194,13 +208,11 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-reference-hero-bg': referenceHeroBackground,
     '--ntk-reference-shell-chrome-bg': shellChromeBackground,
     '--ntk-reference-shell-chrome-border': shellChromeBorder,
-    '--ntk-reference-shell-glow': isDarkShell
-      ? '0 10px 24px rgba(2, 6, 23, 0.24)'
-      : '0 1px 3px rgba(0, 0, 0, 0.05)',
+    '--ntk-reference-shell-glow': referenceShellGlow,
     '--ntk-template-horizontal-link-color': shellNavText,
-    '--ntk-template-horizontal-link-hover-color': '#ffffff',
+    '--ntk-template-horizontal-link-hover-color': 'var(--ntk-text-on-accent)',
     '--ntk-template-horizontal-link-hover-bg': shellNavHoverBackground,
-    '--ntk-template-horizontal-link-active-color': '#ffffff',
+    '--ntk-template-horizontal-link-active-color': 'var(--ntk-text-on-accent)',
     '--ntk-template-horizontal-link-active-border': shellNavActiveBorder,
     '--ntk-template-horizontal-link-active-bg': shellNavActiveBackground,
     '--ntk-template-horizontal-link-submenu-hover-bg': shellSubmenuHover,

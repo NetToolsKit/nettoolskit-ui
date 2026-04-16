@@ -95,7 +95,7 @@
 
   --ntk-template-login-page-bg: var(--ntk-bg-secondary);
   --ntk-template-login-brand-bg: var(--ntk-login-brand-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
-  --ntk-template-login-brand-text: var(--ntk-login-brand-text, var(--ntk-text-on-accent, #ffffff));
+  --ntk-template-login-brand-text: var(--ntk-login-brand-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
   --ntk-template-login-brand-subtitle: var(--ntk-login-brand-subtitle, color-mix(in srgb, var(--ntk-template-login-brand-text) 78%, transparent));
   --ntk-template-login-brand-feature-text: var(--ntk-login-brand-feature-text, color-mix(in srgb, var(--ntk-template-login-brand-text) 92%, transparent));
   --ntk-template-login-brand-feature-bg: var(--ntk-login-brand-feature-bg, color-mix(in srgb, var(--ntk-accent) 20%, transparent));
@@ -124,7 +124,7 @@
   --ntk-template-profile-avatar-shadow: var(--ntk-profile-avatar-shadow, color-mix(in srgb, var(--ntk-text-primary) 20%, transparent));
 
   --ntk-template-not-found-bg: var(--ntk-not-found-bg, radial-gradient(circle at top, var(--ntk-primary-gradient-start, var(--ntk-accent)) 0%, var(--ntk-primary-gradient-end, var(--ntk-accent-hover, var(--ntk-accent))) 100%));
-  --ntk-template-not-found-text: var(--ntk-not-found-text, var(--ntk-text-on-accent, #ffffff));
+  --ntk-template-not-found-text: var(--ntk-not-found-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
   --ntk-template-not-found-card-bg: var(--ntk-not-found-card-bg, color-mix(in srgb, var(--ntk-text-primary) 60%, transparent));
   --ntk-template-not-found-border: var(--ntk-not-found-border, color-mix(in srgb, var(--ntk-border-color) 35%, transparent));
   --ntk-template-not-found-code-color: var(--ntk-not-found-code-color, var(--semantic-info-primary, var(--ntk-info)));
@@ -153,6 +153,74 @@
   min-height: var(--ntk-template-button-height);
   border-radius: var(--ntk-template-button-radius);
   padding-inline: var(--ntk-template-button-padding-x);
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action {
+  --ntk-template-tone-action-accent: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-tone-action-bg: var(--ntk-template-tone-action-accent);
+  --ntk-template-tone-action-fg: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse, var(--ntk-text-primary))));
+  --ntk-template-tone-action-border: color-mix(in srgb, var(--ntk-template-tone-action-accent) 40%, var(--ntk-border-color));
+
+  border: 1px solid transparent !important;
+  background: var(--ntk-template-tone-action-bg) !important;
+  color: var(--ntk-template-tone-action-fg) !important;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action .q-icon,
+[class*='ntk-template-'] .ntk-template-tone-action .q-spinner {
+  color: inherit !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-neutral {
+  --ntk-template-tone-action-accent: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-tone-action-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-tone-action-fg: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-tone-action-border: var(--ntk-template-page-border, var(--ntk-border-color));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-primary,
+[class*='ntk-template-'] .ntk-template-tone-action--tone-info {
+  --ntk-template-tone-action-accent: var(--semantic-info-primary, var(--ntk-info));
+  --ntk-template-tone-action-bg: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-tone-action-fg: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse, var(--ntk-text-primary))));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-success {
+  --ntk-template-tone-action-accent: var(--semantic-success-primary, var(--ntk-success));
+  --ntk-template-tone-action-bg: var(--semantic-success-primary, var(--ntk-success));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-warning {
+  --ntk-template-tone-action-accent: var(--semantic-warning-primary, var(--ntk-warning));
+  --ntk-template-tone-action-bg: var(--semantic-warning-primary, var(--ntk-warning));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-danger {
+  --ntk-template-tone-action-accent: var(--semantic-error-primary, var(--ntk-error));
+  --ntk-template-tone-action-bg: var(--semantic-error-primary, var(--ntk-error));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--variant-outline,
+[class*='ntk-template-'] .ntk-template-tone-action--variant-flat {
+  background: transparent !important;
+  color: var(--ntk-template-tone-action-accent) !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--variant-outline {
+  border-color: var(--ntk-template-tone-action-border) !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--variant-flat {
+  border-color: transparent !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action.q-btn--disabled {
+  opacity: 0.62;
 }
 
 [class*='ntk-template-'] .q-badge {
