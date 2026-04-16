@@ -2,6 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const RUNTIME_BASE = '/?template-runtime=1'
 const RUNTIME_LOGIN_URL = `${RUNTIME_BASE}#/auth/login`
+const WIKI_CHAT_STORAGE_KEY = 'ntk_template_runtime_wiki_chat_v1'
 
 const DARK_THEMES = [
   { id: 'warp', label: 'Warp' },
@@ -10,16 +11,105 @@ const DARK_THEMES = [
 
 type RgbTriplet = [number, number, number]
 
-async function resetRuntimeState(page: Page, themeId?: string): Promise<void> {
+interface ChatSourceSeed {
+  documentName: string
+  chunkContent: string
+  relevance: number
+}
+
+interface ChatMessageSeed {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  createdAt: string
+  fromCache?: boolean
+  sources?: ChatSourceSeed[]
+}
+
+interface ChatConversationSeed {
+  id: string
+  title: string
+  createdAt: string
+  updatedAt: string
+  messages: ChatMessageSeed[]
+}
+
+interface ChatSnapshotSeed {
+  version: 1
+  selectedConversationId: string | null
+  lastConversationNumber: number
+  lastMessageNumber: number
+  conversations: ChatConversationSeed[]
+}
+
+function createSeededChatSnapshot(): ChatSnapshotSeed {
+  return {
+    version: 1,
+    selectedConversationId: 'conv-1',
+    lastConversationNumber: 1,
+    lastMessageNumber: 2,
+    conversations: [
+      {
+        id: 'conv-1',
+        title: 'Checklist seed',
+        createdAt: '2026-04-16T12:00:00.000Z',
+        updatedAt: '2026-04-16T12:00:00.000Z',
+        messages: [
+          {
+            id: 'msg-1',
+            role: 'user',
+            content: 'Checklist seed?',
+            createdAt: '2026-04-16T12:00:00.000Z',
+          },
+          {
+            id: 'msg-2',
+            role: 'assistant',
+            content: 'Resumo local salvo para esta conversa: Checklist seed. Consulte Manual Operacional.md e confirme o proximo passo antes de concluir a acao.',
+            createdAt: '2026-04-16T12:00:00.000Z',
+            fromCache: false,
+            sources: [
+              {
+                documentName: 'Manual Operacional.md',
+                chunkContent: 'Fluxo local de atendimento para clientes, pedidos e tarefas do workspace.',
+                relevance: 0.96,
+              },
+              {
+                documentName: 'Guia de Configuracoes.md',
+                chunkContent: 'Preferencias persistidas localmente sao reaplicadas ao recarregar o runtime.',
+                relevance: 0.91,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  }
+}
+
+async function resetRuntimeState(
+  page: Page,
+  options?: {
+    themeId?: string
+    chatSnapshot?: ChatSnapshotSeed
+  }
+): Promise<void> {
   await page.goto('/')
-  await page.evaluate(({ themeId }) => {
+  await page.evaluate(({ themeId, storageKey, chatSnapshot }) => {
     window.localStorage.clear()
     window.sessionStorage.clear()
 
     if (themeId) {
       window.localStorage.setItem('ntk-theme', themeId)
     }
-  }, { themeId })
+
+    if (chatSnapshot) {
+      window.localStorage.setItem(storageKey, JSON.stringify(chatSnapshot))
+    }
+  }, {
+    themeId: options?.themeId,
+    storageKey: WIKI_CHAT_STORAGE_KEY,
+    chatSnapshot: options?.chatSnapshot ?? null,
+  })
 }
 
 async function loginToRuntime(page: Page): Promise<void> {
@@ -192,10 +282,17 @@ function expectDarkReadableSurface(
   metrics: Awaited<ReturnType<typeof readResolvedSurfaceMetrics>>,
   context: string
 ): void {
+  expectReadableSurface(metrics, context)
   expect(
     metrics.backgroundLuminance,
     `${context} should stay on a dark surface, got ${metrics.backgroundColor}`
   ).toBeLessThan(0.35)
+}
+
+function expectReadableSurface(
+  metrics: Awaited<ReturnType<typeof readResolvedSurfaceMetrics>>,
+  context: string
+): void {
   expect(
     metrics.contrastRatio,
     `${context} should keep readable text, got fg ${metrics.textColor} on bg ${metrics.backgroundColor}`
@@ -302,6 +399,230 @@ async function assertOverlayDarkSurfaces(page: Page, themeId: string): Promise<v
   await expect(assistantDrawer).not.toBeVisible()
 }
 
+async function assertSettingsDarkSurfaces(page: Page, themeId: string): Promise<void> {
+  await page.goto(`${RUNTIME_BASE}#/settings`)
+  await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+
+  const hero = page.locator('.ntk-template-runtime-settings__hero')
+  const heroTitle = hero.locator('h1')
+  const summaryCard = page.locator('.ntk-template-runtime-settings__summary-card').first()
+  const summaryValue = summaryCard.locator('strong')
+  const workspaceInput = page.locator('input[name="runtime-workspace-name"]')
+  const firstToggle = page.locator('.ntk-template-runtime-settings__toggle').first()
+  const firstToggleTitle = firstToggle.locator('strong')
+
+  await expect(hero).toBeVisible()
+  await expect(summaryCard).toBeVisible()
+  await expect(workspaceInput).toBeVisible()
+  await expect(firstToggle).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(hero, heroTitle),
+    `${themeId} settings hero`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(summaryCard, summaryValue),
+    `${themeId} settings summary card`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(workspaceInput),
+    `${themeId} settings workspace input`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(firstToggle, firstToggleTitle),
+    `${themeId} settings toggle row`
+  )
+}
+
+async function assertProfileDarkSurfaces(page: Page, themeId: string): Promise<void> {
+  await page.goto(`${RUNTIME_BASE}#/profile`)
+  await expect(page.getByRole('heading', { name: 'Admin NetToolsKit' })).toBeVisible()
+
+  const hero = page.locator('.ntk-template-profile__hero')
+  const heroTitle = hero.locator('.ntk-template-profile__title')
+  const roleBadge = page.locator('.ntk-template-profile__role-badge').first()
+  const profileCard = page.locator('.ntk-template-profile__card').first()
+  const rowValue = profileCard.locator('.ntk-template-profile__row-value').first()
+  const logoutButton = page.locator('.ntk-template-profile__logout-btn').first()
+
+  await expect(hero).toBeVisible()
+  await expect(roleBadge).toBeVisible()
+  await expect(profileCard).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(hero, heroTitle),
+    `${themeId} profile hero`
+  )
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(roleBadge),
+    `${themeId} profile role badge`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(profileCard, rowValue),
+    `${themeId} profile details card`
+  )
+
+  if (await logoutButton.isVisible()) {
+    expectReadableSurface(
+      await readResolvedSurfaceMetrics(logoutButton),
+      `${themeId} profile logout action`
+    )
+  }
+}
+
+async function assertWikiDarkSurfaces(page: Page, themeId: string): Promise<void> {
+  await page.goto(`${RUNTIME_BASE}#/knowledge`)
+  await expect(page.getByRole('heading', { name: 'Base de conhecimento' })).toBeVisible()
+
+  const hero = page.locator('.ntk-template-wiki__hero')
+  const heroTitle = hero.locator('.ntk-template-wiki__hero-title')
+  const heroChip = page.locator('.ntk-template-wiki__chip').first()
+  const heroChipText = heroChip.locator('span').last()
+  const sidebar = page.locator('.ntk-template-wiki__sidebar')
+  const sidebarTitle = sidebar.locator('.ntk-template-wiki__sidebar-title')
+  const sidebarSearch = page.locator('.ntk-template-wiki__sidebar-search')
+  const sidebarSearchInput = page.locator('.ntk-template-wiki__sidebar .ntk-template-wiki__search-input').first()
+  const contentSearch = page.locator('.ntk-template-wiki__toolbar .ntk-template-wiki__search')
+  const contentSearchInput = page.locator('.ntk-template-wiki__toolbar .ntk-template-wiki__search-input').first()
+  const firstTreeItem = page.locator('.ntk-template-wiki__tree-item').first()
+  const wikiSurface = page.locator('.ntk-template-wiki__surface')
+  const activeFilter = page.locator('.ntk-template-wiki__filter--active').first()
+  const tableHeader = page.locator('.ntk-template-wiki__table th').nth(1)
+  const tableBodyCell = page.locator('.ntk-template-wiki__table tbody tr').first().locator('td').nth(1)
+
+  await expect(hero).toBeVisible()
+  await expect(sidebar).toBeVisible()
+  await expect(sidebarSearch).toBeVisible()
+  await expect(contentSearch).toBeVisible()
+  await expect(wikiSurface).toBeVisible()
+  await expect(tableHeader).toBeVisible()
+  await expect(tableBodyCell).toBeVisible()
+  await firstTreeItem.click()
+
+  const activeTreeItem = page.locator('.ntk-template-wiki__tree-item--active').first()
+  const activeTreeLabel = activeTreeItem.locator('.ntk-template-wiki__tree-label')
+
+  await expect(activeTreeItem).toBeVisible()
+  await expect(activeFilter).toBeVisible()
+  await expect(heroChip).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(hero, heroTitle),
+    `${themeId} knowledge hero`
+  )
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(heroChip, heroChipText),
+    `${themeId} knowledge hero chip`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(sidebar, sidebarTitle),
+    `${themeId} knowledge sidebar`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(sidebarSearch, sidebarSearchInput),
+    `${themeId} knowledge category search`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(contentSearch, contentSearchInput),
+    `${themeId} knowledge content search`
+  )
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(activeTreeItem, activeTreeLabel),
+    `${themeId} knowledge active tree item`
+  )
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(activeFilter),
+    `${themeId} knowledge active filter`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(wikiSurface, tableHeader),
+    `${themeId} knowledge content surface`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(tableBodyCell),
+    `${themeId} knowledge table body`
+  )
+}
+
+async function assertKnowledgeChatDarkSurfaces(page: Page, themeId: string): Promise<void> {
+  await page.goto(`${RUNTIME_BASE}#/knowledge/chat`)
+
+  const chatShell = page.locator('.ntk-template-wiki-chat__chat')
+  const chatTitle = page.locator('.ntk-template-wiki-chat__chat-title')
+  const sidebar = page.locator('.ntk-template-wiki-chat__sidebar')
+  const sidebarTitle = page.locator('.ntk-template-wiki-chat__sidebar-title')
+  const activeConversation = page.locator('.ntk-template-wiki-chat__conversation--active').first()
+  const activeConversationTitle = activeConversation.locator('.ntk-template-wiki-chat__conversation-title')
+  const messageBubble = page.locator('.ntk-template-wiki-chat__message-content').first()
+  const sourceCard = page.locator('.ntk-template-wiki-chat__source').first()
+  const sourceTitle = sourceCard.locator('strong').first()
+  const inputWrap = page.locator('.ntk-template-wiki-chat__input-wrap')
+  const input = page.locator('.ntk-template-wiki-chat__input')
+  const startNewConversationButton = page.getByRole('button', { name: 'Start new conversation' }).first()
+
+  await expect(page.locator('.ntk-template-wiki-chat__chat-subtitle')).toContainText('Converse com a base local')
+  await expect(chatShell).toBeVisible()
+  await expect(sidebar).toBeVisible()
+  await expect(activeConversation).toBeVisible()
+  await expect(messageBubble).toBeVisible()
+  await expect(sourceCard).toBeVisible()
+  await expect(inputWrap).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(chatShell, chatTitle),
+    `${themeId} knowledge chat shell`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(sidebar, sidebarTitle),
+    `${themeId} knowledge chat sidebar`
+  )
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(activeConversation, activeConversationTitle),
+    `${themeId} knowledge active conversation`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(messageBubble),
+    `${themeId} knowledge message bubble`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(sourceCard, sourceTitle),
+    `${themeId} knowledge source card`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(inputWrap, input),
+    `${themeId} knowledge chat input`
+  )
+
+  await startNewConversationButton.click()
+
+  const emptyIcon = page.locator('.ntk-template-wiki-chat__empty-icon')
+  const emptyTitle = page.locator('.ntk-template-wiki-chat__empty-title')
+  const suggestion = page.locator('.ntk-template-wiki-chat__suggestion').first()
+  const suggestionText = suggestion.locator('span').first()
+  const disabledSendButton = page.locator('.ntk-template-wiki-chat__send')
+
+  await expect(emptyIcon).toBeVisible()
+  await expect(suggestion).toBeVisible()
+  await expect(disabledSendButton).toBeDisabled()
+
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(emptyIcon),
+    `${themeId} knowledge empty icon`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(suggestion, suggestionText),
+    `${themeId} knowledge suggestion card`
+  )
+  expectReadableSurface(
+    await readResolvedSurfaceMetrics(disabledSendButton),
+    `${themeId} knowledge disabled send action`
+  )
+  expect(
+    await emptyTitle.textContent(),
+    `${themeId} knowledge empty title should stay available after resetting the conversation`
+  ).not.toBeNull()
+}
+
 test.describe('template runtime dark theme guardrails', () => {
   for (const theme of DARK_THEMES) {
     test(`keeps dashboard cards dark and legible in ${theme.label}`, async ({ page }) => {
@@ -337,7 +658,7 @@ test.describe('template runtime dark theme guardrails', () => {
     })
 
     test(`keeps login, search and table surfaces readable in ${theme.label}`, async ({ page }) => {
-      await resetRuntimeState(page, theme.id)
+      await resetRuntimeState(page, { themeId: theme.id })
       await page.goto(RUNTIME_LOGIN_URL)
 
       await expect.poll(async () => {
@@ -393,6 +714,26 @@ test.describe('template runtime dark theme guardrails', () => {
       await activateTheme(page, theme)
 
       await assertOverlayDarkSurfaces(page, theme.id)
+    })
+
+    test(`keeps settings, profile and knowledge surfaces dark and legible in ${theme.label}`, async ({ page }) => {
+      await resetRuntimeState(page)
+      await loginToRuntime(page)
+      await activateTheme(page, theme)
+
+      await assertSettingsDarkSurfaces(page, theme.id)
+      await assertProfileDarkSurfaces(page, theme.id)
+      await assertWikiDarkSurfaces(page, theme.id)
+    })
+
+    test(`keeps knowledge chat surfaces dark and legible in ${theme.label}`, async ({ page }) => {
+      await resetRuntimeState(page, {
+        chatSnapshot: createSeededChatSnapshot(),
+      })
+      await loginToRuntime(page)
+      await activateTheme(page, theme)
+
+      await assertKnowledgeChatDarkSurfaces(page, theme.id)
     })
   }
 })
