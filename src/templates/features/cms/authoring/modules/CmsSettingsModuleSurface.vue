@@ -76,6 +76,7 @@
                     dense
                     emit-value
                     map-options
+                    popup-content-class="cms-settings-module-surface__popup"
                     :options="tenantProfileOptions"
                     :label="cmsUiText.tenantProfileFieldLabel"
                     :aria-label="cmsUiText.tenantProfileSelectorAriaLabel"
@@ -117,6 +118,7 @@
                       dense
                       emit-value
                       map-options
+                      popup-content-class="cms-settings-module-surface__popup"
                       :options="cmsDomainTransferOptions"
                       :label="tr('Domain package', 'Pacote de dominio')"
                       :aria-label="tr('Domain package selector', 'Seletor de pacote de dominio')"
@@ -275,7 +277,7 @@
                               </div>
                             </div>
                             <q-chip dense square icon="notifications" :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
-                              <q-tooltip v-if="settings.branding.notificationsTooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
+                              <q-tooltip v-if="settings.branding.notificationsTooltip" class="cms-settings-module-surface__tooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
                               {{ settings.branding.notificationCount }}
                             </q-chip>
                           </div>
@@ -411,6 +413,7 @@
                           dense
                           emit-value
                           map-options
+                          popup-content-class="cms-settings-module-surface__popup"
                           :options="themePresetOptions"
                           :label="cmsUiText.themePresetFieldLabel"
                           @update:model-value="onThemePresetChange($event)"
@@ -685,6 +688,7 @@
                             dense
                             emit-value
                             map-options
+                            popup-content-class="cms-settings-module-surface__popup"
                             :options="groupOptions"
                             :label="tr('Group', 'Grupo')"
                           />
@@ -845,6 +849,7 @@
                           dense
                           emit-value
                           map-options
+                          popup-content-class="cms-settings-module-surface__popup"
                           :options="cmsLocaleOptions"
                           :label="tr('Language', 'Idioma')"
                           @update:model-value="onCmsLocaleChange($event)"
@@ -922,6 +927,7 @@
                           dense
                           emit-value
                           map-options
+                          popup-content-class="cms-settings-module-surface__popup"
                           :options="cmsAuthoredContentModelOptions"
                           :label="tr('Content model library', 'Biblioteca de modelos de conteúdo')"
                         />
@@ -1006,6 +1012,7 @@
                                 dense
                                 emit-value
                                 map-options
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="cmsAuthoredContentModelFieldPresetOptions"
                                 :label="tr('Field preset library', 'Biblioteca de presets de campo')"
                                 class="cms-content-model-fields__preset-select"
@@ -1062,6 +1069,7 @@
                                 dense
                                 emit-value
                                 map-options
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="cmsContentModelFieldTypeOptions"
                                 :label="tr('Field type', 'Tipo do campo')"
                               />
@@ -1165,6 +1173,7 @@
                                 emit-value
                                 map-options
                                 use-chips
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="getCmsContentModelFieldDraftReferenceOptions(field)"
                                 :label="field.repeatable ? tr('Default references', 'Referências padrão') : tr('Default reference', 'Referência padrão')"
                                 @update:model-value="field.defaultValue = Array.isArray($event) ? $event.join('\n') : String($event ?? '')"
@@ -1253,6 +1262,7 @@
                                 emit-value
                                 map-options
                                 use-chips
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="cmsMediaKindOptions"
                                 :label="tr('Allowed media kinds', 'Tipos de midia permitidos')"
                               />
@@ -1265,6 +1275,7 @@
                                 emit-value
                                 map-options
                                 use-chips
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="cmsReferenceKindOptions"
                                 :label="tr('Allowed reference kinds', 'Tipos de referência permitidos')"
                               />
@@ -1280,6 +1291,7 @@
                                 dense
                                 emit-value
                                 map-options
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="cmsContentModelFieldVisibilitySourceOptions"
                                 :label="tr('Visibility source', 'Origem da visibilidade')"
                                 @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
@@ -1291,6 +1303,7 @@
                                 dense
                                 emit-value
                                 map-options
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="getCmsContentModelFieldVisibilityTargetOptions(fieldIndex)"
                                 :label="tr('Depends on field', 'Depende do campo')"
                                 @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
@@ -1302,6 +1315,7 @@
                                 dense
                                 emit-value
                                 map-options
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="getCmsContentModelFieldVisibilityOperatorOptions(field.visibilitySource)"
                                 :label="tr('Condition', 'Condição')"
                                 @update:model-value="normalizeCmsContentModelFieldVisibilityDraft(fieldIndex)"
@@ -1313,6 +1327,7 @@
                                 dense
                                 emit-value
                                 map-options
+                                popup-content-class="cms-settings-module-surface__popup"
                                 :options="pageStatusOptions"
                                 :label="tr('Expected status', 'Status esperado')"
                               />
@@ -1419,6 +1434,7 @@
                                   clearable
                                   emit-value
                                   map-options
+                                  popup-content-class="cms-settings-module-surface__popup"
                                   :options="getCmsFieldPresetReplacementOptions(preset)"
                                   :label="tr('Replacement preset', 'Preset substituto')"
                                   @update:model-value="updateCmsAuthoredContentModelFieldPresetReplacement(preset.id, $event)"
@@ -1480,6 +1496,7 @@
                             map-options
                             multiple
                             use-chips
+                            popup-content-class="cms-settings-module-surface__popup"
                             :options="cmsContentModelPresetOptions"
                             :label="tr('Allowed section presets', 'Presets de seção permitidos')"
                             @update:model-value="emit('update:authoredContentModelAllowedSectionSelections', $event)"
@@ -1502,7 +1519,7 @@
             </div>
             <div class="cms-designer-card__rail-actions">
               <q-btn round flat icon="tune" :aria-label="cmsUiText.showAdvancedOverridesLabel" @click="emit('update:showAdvancedThemeFields', !showAdvancedThemeFields)">
-                <q-tooltip>{{ cmsUiText.showAdvancedOverridesLabel }}</q-tooltip>
+                <q-tooltip class="cms-settings-module-surface__tooltip">{{ cmsUiText.showAdvancedOverridesLabel }}</q-tooltip>
               </q-btn>
             </div>
           </aside>
@@ -1555,7 +1572,7 @@
                 </div>
               </div>
               <q-chip dense square icon="notifications" :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
-                <q-tooltip v-if="settings.branding.notificationsTooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
+                <q-tooltip v-if="settings.branding.notificationsTooltip" class="cms-settings-module-surface__tooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
                 {{ settings.branding.notificationCount }}
               </q-chip>
             </div>

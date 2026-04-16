@@ -413,13 +413,17 @@
 }
 
 .cms-usage-drawer {
+  --ntk-cms-usage-drawer-surface: var(--ntk-template-popup-bg, var(--ntk-cms-card-surface));
+  --ntk-cms-usage-drawer-text: var(--ntk-template-popup-text, var(--ntk-cms-shell-text-primary));
+  --ntk-cms-usage-drawer-muted: var(--ntk-template-popup-muted, var(--ntk-cms-text-secondary));
+  --ntk-cms-usage-drawer-border: var(--ntk-template-popup-border, var(--ntk-cms-shell-border-color));
   width: min(30rem, 92vw);
   max-width: 92vw;
   max-height: 100vh;
   border-radius: 0;
-  border: var(--ntk-cms-border-width) solid var(--ntk-cms-shell-border-color);
-  background: var(--ntk-cms-card-surface);
-  color: var(--ntk-cms-shell-text-primary);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-usage-drawer-border);
+  background: var(--ntk-cms-usage-drawer-surface);
+  color: var(--ntk-cms-usage-drawer-text);
   box-shadow: var(--ntk-cms-drawer-shadow, var(--ntk-template-popup-shadow, var(--ntk-shadow-lg)));
   display: flex;
   flex-direction: column;
@@ -435,13 +439,17 @@
   justify-content: space-between;
   gap: var(--ntk-cms-space-sm);
   padding: var(--ntk-cms-space-md);
-  background: color-mix(in srgb, var(--ntk-cms-shell-text-primary) 3%, var(--ntk-cms-card-surface));
+  background: color-mix(in srgb, var(--ntk-cms-usage-drawer-text) 3%, var(--ntk-cms-usage-drawer-surface));
 }
 
 .cms-usage-drawer__header small {
   display: block;
   margin-top: calc(var(--ntk-cms-space-xs) / 2);
-  color: var(--ntk-cms-text-secondary);
+  color: var(--ntk-cms-usage-drawer-muted);
+}
+
+.cms-usage-drawer__close {
+  color: var(--ntk-cms-usage-drawer-muted);
 }
 
 .cms-usage-drawer__body {
@@ -469,9 +477,9 @@
   flex-direction: column;
   gap: calc(var(--ntk-cms-space-xs) / 1.5);
   padding: var(--ntk-cms-space-md);
-  border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-usage-drawer-border);
   border-radius: var(--ntk-cms-radius-md);
-  background: color-mix(in srgb, var(--ntk-cms-shell-bg) 78%, var(--ntk-cms-card-surface));
+  background: color-mix(in srgb, var(--ntk-cms-usage-drawer-surface) 88%, var(--ntk-cms-shell-surface));
 }
 
 .cms-usage-drawer__reference-header {
@@ -479,6 +487,11 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--ntk-cms-space-sm);
+}
+
+.cms-usage-drawer__reference small,
+.cms-usage-drawer__summary small {
+  color: var(--ntk-cms-usage-drawer-muted);
 }
 
 .cms-pages__preview {

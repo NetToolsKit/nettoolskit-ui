@@ -57,6 +57,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="cmsBuilderCommandOptions"
                 option-label="label"
                 option-value="value"
@@ -85,6 +86,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="blocksPageOptions"
                 :label="tr('Target page', 'Página alvo')"
                 @update:model-value="emit('update:activeBlocksPageId', String($event ?? ''))"
@@ -95,6 +97,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="blocksSectionOptions"
                 :label="tr('Target section', 'Seção alvo')"
                 @update:model-value="emit('update:activeBlocksSectionId', String($event ?? ''))"
@@ -105,6 +108,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="activeBlocksBlockOptions"
                 :label="tr('Target block', 'Bloco alvo')"
                 @update:model-value="emit('update:activeBlocksBlockId', String($event ?? ''))"
@@ -115,6 +119,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="cmsBlockPaletteOptions"
                 :label="tr('Palette block', 'Bloco da paleta')"
                 @update:model-value="emit('update:selectedPaletteBlockType', String($event ?? ''))"
@@ -125,6 +130,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="cmsBlockPresetOptions"
                 option-label="label"
                 option-value="value"
@@ -207,6 +213,7 @@
                         use-chips
                         emit-value
                         map-options
+                        popup-content-class="cms-blocks-module-surface__popup"
                         :options="field.options"
                         option-label="label"
                         option-value="value"
@@ -240,6 +247,7 @@
                         use-chips
                         emit-value
                         map-options
+                        popup-content-class="cms-blocks-module-surface__popup"
                         :options="getCmsPageCustomFieldReferenceOptions(field)"
                         option-label="label"
                         option-value="value"
@@ -345,6 +353,7 @@
                         dense
                         emit-value
                         map-options
+                        popup-content-class="cms-blocks-module-surface__popup"
                         :options="getCmsPageCustomFieldReferenceOptions(field)"
                         option-label="label"
                         option-value="value"
@@ -360,6 +369,7 @@
                         dense
                         emit-value
                         map-options
+                        popup-content-class="cms-blocks-module-surface__popup"
                         :options="field.options"
                         option-label="label"
                         option-value="value"
@@ -426,6 +436,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="cmsReusableBlockOptions"
                 :label="tr('Reusable library', 'Biblioteca reutilizável')"
                 @update:model-value="emit('update:selectedReusableBlockId', String($event ?? ''))"
@@ -482,6 +493,7 @@
                 dense
                 emit-value
                 map-options
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="cmsAuthoredBlockPresetOptions"
                 :label="tr('Preset library', 'Biblioteca de presets')"
                 @update:model-value="emit('update:selectedAuthoredBlockPresetId', String($event ?? '') as CmsBlockPresetId)"
@@ -494,6 +506,7 @@
                 map-options
                 multiple
                 use-chips
+                popup-content-class="cms-blocks-module-surface__popup"
                 :options="cmsPresetStarterSectionOptions"
                 :label="tr('Starter sections', 'Seções iniciais')"
                 @update:model-value="emit('update:authoredPresetStarterSectionSelections', $event as CmsSectionPresetId[])"
@@ -606,6 +619,7 @@
                     clearable
                     emit-value
                     map-options
+                    popup-content-class="cms-blocks-module-surface__popup"
                     :options="getCmsReusableBlockReplacementOptions(reusableBlock)"
                     :label="tr('Replacement block', 'Bloco substituto')"
                     @update:model-value="updateReusableBlockReplacement(reusableBlock.id, $event)"
@@ -763,6 +777,7 @@
                       clearable
                       emit-value
                       map-options
+                      popup-content-class="cms-blocks-module-surface__popup"
                       :options="getCmsAuthoredBlockPresetReplacementOptions(preset)"
                       :label="tr('Replacement preset', 'Preset substituto')"
                       @update:model-value="updateCmsAuthoredPresetReplacement(preset.id, $event)"
@@ -1030,13 +1045,13 @@
               </div>
               <div class="cms-designer-card__rail-actions">
                 <q-btn round flat icon="done_all" :disable="!canToggleActiveSectionBlocks" :aria-label="tr('Enable all blocks', 'Ativar todos os blocos')" @click="setCmsBuilderSectionBlocksEnabled(true)">
-                  <q-tooltip>{{ tr('Enable all blocks', 'Ativar todos os blocos') }}</q-tooltip>
+                  <q-tooltip class="cms-blocks-module-surface__tooltip">{{ tr('Enable all blocks', 'Ativar todos os blocos') }}</q-tooltip>
                 </q-btn>
                 <q-btn round flat icon="remove_done" :disable="!canToggleActiveSectionBlocks" :aria-label="tr('Disable all blocks', 'Desativar todos os blocos')" @click="setCmsBuilderSectionBlocksEnabled(false)">
-                  <q-tooltip>{{ tr('Disable all blocks', 'Desativar todos os blocos') }}</q-tooltip>
+                  <q-tooltip class="cms-blocks-module-surface__tooltip">{{ tr('Disable all blocks', 'Desativar todos os blocos') }}</q-tooltip>
                 </q-btn>
                 <q-btn round flat icon="auto_fix_off" :disable="!canRemoveDisabledBlocksFromActiveSection" :aria-label="tr('Remove disabled blocks', 'Remover blocos desativados')" @click="removeDisabledBlocksFromActiveSection()">
-                  <q-tooltip>{{ tr('Remove disabled blocks', 'Remover blocos desativados') }}</q-tooltip>
+                  <q-tooltip class="cms-blocks-module-surface__tooltip">{{ tr('Remove disabled blocks', 'Remover blocos desativados') }}</q-tooltip>
                 </q-btn>
               </div>
             </aside>
@@ -1279,6 +1294,7 @@
               dense
               emit-value
               map-options
+              popup-content-class="cms-blocks-module-surface__popup"
               :label="field.label"
               :disable="activeBlocksSelectionReadOnly"
               :options="field.options ?? []"

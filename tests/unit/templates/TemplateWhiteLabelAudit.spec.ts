@@ -625,6 +625,150 @@ describe('template white-label audit', () => {
     }
   })
 
+  it('keeps shell and navigation components bound to shared header, drawer, and horizontal-nav tokens', () => {
+    const mainLayoutSource = readRepoFile('../../../src/templates/layouts/MainLayoutTemplate.vue')
+    const menuLinkSource = readRepoFile('../../../src/templates/navigation/MenuLinkTemplate.vue')
+    const horizontalMenuSource = readRepoFile('../../../src/templates/navigation/HorizontalMenuLinkTemplate.vue')
+    const breadcrumbSource = readRepoFile('../../../src/templates/navigation/AppBreadcrumbTemplate.vue')
+
+    for (const requiredLayoutSnippet of [
+      '--ntk-template-layout-header-bg: var(--ntk-header-bg,',
+      '--ntk-template-layout-header-text: var(--ntk-template-layout-title-color,',
+      '--ntk-template-layout-horizontal-bg: var(--ntk-layout-horizontal-bg,',
+      '--ntk-template-layout-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-drawer-text,',
+      '--ntk-template-layout-drawer-bg: var(--ntk-layout-drawer-bg,',
+      '--ntk-template-layout-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text,',
+      '--ntk-template-layout-nav-text: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 82%, transparent);',
+      '--ntk-template-layout-nav-active-bg: linear-gradient(',
+      '--ntk-template-layout-nav-hover-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent);',
+      '--ntk-template-layout-submenu-bg: var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg,',
+      '--ntk-template-layout-submenu-border: var(--ntk-template-overlay-border, var(--ntk-template-layout-toolbar-border));',
+      '--ntk-template-layout-submenu-text: var(--ntk-template-overlay-text, var(--ntk-template-page-title,',
+      '--ntk-template-layout-submenu-shadow: var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft));',
+      '--ntk-template-layout-submenu-hover-bg: var(--ntk-template-overlay-hover-bg,',
+      '--ntk-template-layout-submenu-active-bg: var(--ntk-template-overlay-active-bg,',
+      '--ntk-template-layout-submenu-active-text: var(--ntk-layout-submenu-active-text, var(--ntk-template-layout-submenu-text));',
+      'background: var(--ntk-template-layout-header-bg) !important;',
+      'color: var(--ntk-template-layout-header-text) !important;',
+      'background: var(--ntk-template-layout-horizontal-bg);',
+      'color: var(--ntk-template-layout-horizontal-text);',
+      'background: var(--ntk-template-layout-drawer-bg) !important;',
+      'color: var(--ntk-template-layout-drawer-text) !important;',
+      'font-family: var(--ntk-template-layout-title-font, var(--ntk-font-family-display, system-ui, sans-serif));',
+      'font-family: var(--ntk-template-layout-group-font, var(--ntk-font-family-mono, ui-monospace, monospace));',
+    ]) {
+      expect(mainLayoutSource, `Missing shell token wiring in MainLayoutTemplate: ${requiredLayoutSnippet}`).toContain(requiredLayoutSnippet)
+    }
+
+    for (const requiredMenuSnippet of [
+      '--ntk-template-menu-link-text: var(--ntk-template-layout-nav-text, var(--ntk-template-layout-drawer-text,',
+      '--ntk-template-menu-link-active-border: var(--ntk-template-layout-nav-active-border,',
+      '--ntk-template-menu-link-active-bg: var(--ntk-template-layout-nav-active-bg,',
+      '--ntk-template-menu-link-active-text: var(--ntk-template-layout-nav-active-text,',
+      '--ntk-template-menu-link-submenu-bg: var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg,',
+      '--ntk-template-menu-link-submenu-border: var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border,',
+      '--ntk-template-menu-link-submenu-text: var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text,',
+      '--ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg,',
+      '--ntk-template-menu-link-submenu-active-text: var(--ntk-template-layout-submenu-active-text,',
+      '--ntk-template-overlay-bg: var(--ntk-template-menu-link-submenu-bg);',
+      '--ntk-template-overlay-border: var(--ntk-template-menu-link-submenu-border);',
+      '--ntk-template-overlay-text: var(--ntk-template-menu-link-submenu-text);',
+      'background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 5%, transparent));',
+      'background: var(--ntk-template-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent));',
+    ]) {
+      expect(menuLinkSource, `Missing drawer-nav token wiring in MenuLinkTemplate: ${requiredMenuSnippet}`).toContain(requiredMenuSnippet)
+    }
+
+    for (const requiredHorizontalSnippet of [
+      'content-class="ntk-template-horizontal-link__submenu-popup"',
+      '--ntk-template-horizontal-link-color: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 75%, transparent);',
+      '--ntk-template-horizontal-link-hover-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));',
+      '--ntk-template-horizontal-link-hover-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 8%, transparent);',
+      '--ntk-template-horizontal-link-active-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));',
+      '--ntk-template-horizontal-link-active-border: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));',
+      '--ntk-template-horizontal-link-submenu-bg: var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg,',
+      '--ntk-template-horizontal-link-submenu-border: var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border,',
+      '--ntk-template-horizontal-link-submenu-text: var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text,',
+      '--ntk-template-horizontal-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg,',
+      '--ntk-template-horizontal-link-submenu-active-color: var(--ntk-template-layout-submenu-active-text,',
+      '--ntk-template-overlay-bg: var(--ntk-template-horizontal-link-submenu-bg);',
+      '--ntk-template-overlay-border: var(--ntk-template-horizontal-link-submenu-border);',
+      '--ntk-template-overlay-text: var(--ntk-template-horizontal-link-submenu-text);',
+    ]) {
+      expect(horizontalMenuSource, `Missing horizontal-nav token wiring in HorizontalMenuLinkTemplate: ${requiredHorizontalSnippet}`).toContain(requiredHorizontalSnippet)
+    }
+
+    for (const requiredBreadcrumbSnippet of [
+      '--ntk-template-breadcrumb-bg: var(--ntk-template-layout-header-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent));',
+      '--ntk-template-breadcrumb-border: var(--ntk-template-layout-header-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent));',
+      '--ntk-template-breadcrumb-link-color: var(--ntk-template-layout-header-breadcrumb-link, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent));',
+      '--ntk-template-breadcrumb-link-hover-color: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));',
+      '--ntk-template-breadcrumb-current-color: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));',
+      '--ntk-template-breadcrumb-sep-color: var(--ntk-template-layout-header-breadcrumb-sep, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent));',
+    ]) {
+      expect(breadcrumbSource, `Missing header-shell token wiring in AppBreadcrumbTemplate: ${requiredBreadcrumbSnippet}`).toContain(requiredBreadcrumbSnippet)
+    }
+  })
+
+  it('keeps Quasar overlay tokens and portal hooks wired through the shared theme bridge', () => {
+    const themesSource = readRepoFile('../../../src/styles/themes.css')
+    const bridgeSource = readRepoFile('../../../src/templates/styles/reference-app-bridge.scss')
+    const menuLinkSource = readRepoFile('../../../src/templates/navigation/MenuLinkTemplate.vue')
+    const topbarSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferenceTopbarActions.vue')
+    const presetSelectorSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferencePresetSelectorBar.vue')
+    const horizontalMenuSource = readRepoFile('../../../src/templates/navigation/HorizontalMenuLinkTemplate.vue')
+    const cmsDrawerSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsEntityUsageDrawer.vue')
+    const cmsMediaAssetPickerSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsMediaAssetPicker.vue')
+    const cmsPreviewToolbarSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue')
+    const cmsBlocksModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsBlocksModuleSurface.vue')
+    const cmsPagesModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsPagesModuleSurface.vue')
+    const cmsSettingsModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsSettingsModuleSurface.vue')
+    const cmsMediaModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue')
+    const cmsReleasesModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsReleasesModuleSurface.vue')
+    const cmsStylesSource = readRepoFile('../../../src/templates/styles/cms-authoring-reference.css')
+
+    for (const requiredOverlayToken of [
+      '--ntk-surface-overlay:',
+      '--ntk-surface-dialog:',
+      '--ntk-surface-menu:',
+      '--ntk-text-popup:',
+      '--ntk-border-popup:',
+      '--ntk-popup-bg:',
+    ]) {
+      expect(themesSource, `Missing overlay token in themes.css: ${requiredOverlayToken}`).toContain(requiredOverlayToken)
+    }
+
+    for (const requiredBridgeSnippet of [
+      'html[data-theme] {',
+      '.q-dialog__backdrop {',
+      ':is(.q-menu, .q-popup-proxy, .q-dialog__inner > div, .q-dialog__inner > section, .q-dialog__inner > article, .q-dialog__inner > .q-card, .q-dialog-plugin) {',
+      ':is(.q-item, .q-item__section, .q-item__label, .q-toolbar__title, .q-dialog__title, .q-dialog__message, .q-banner__title, .q-banner__message, .q-field__native, .q-field__input, .q-select__dropdown-icon, .q-checkbox__label, .q-radio__label) {',
+      ':is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {',
+      '.q-tooltip {',
+      'background: var(--ntk-template-overlay-bg) !important;',
+      'color: var(--ntk-template-overlay-text) !important;',
+      'border: 1px solid var(--ntk-template-overlay-border) !important;',
+      'box-shadow: var(--ntk-template-overlay-shadow) !important;',
+    ]) {
+      expect(bridgeSource, `Missing Quasar overlay bridge snippet: ${requiredBridgeSnippet}`).toContain(requiredBridgeSnippet)
+    }
+
+    expect(menuLinkSource).toContain('class="ntk-template-menu-link__tooltip"')
+    expect(topbarSource).toContain('popup-content-class="ntk-reference-topbar__preset-popup"')
+    expect(topbarSource).toContain('class="ntk-reference-topbar__tooltip"')
+    expect(presetSelectorSource).toContain('popup-content-class="ntk-reference-preset-selector-bar__popup"')
+    expect(horizontalMenuSource).toContain('content-class="ntk-template-horizontal-link__submenu-popup"')
+    expect(cmsDrawerSource).toContain('class="cms-usage-drawer-dialog"')
+    expect(cmsMediaAssetPickerSource).toContain('popup-content-class="cms-media-asset-picker__popup"')
+    expect(cmsPreviewToolbarSource).toContain('popup-content-class="cms-preview-toolbar__popup"')
+    expect(cmsBlocksModuleSource).toContain('popup-content-class="cms-blocks-module-surface__popup"')
+    expect(cmsPagesModuleSource).toContain('popup-content-class="cms-pages-module-surface__popup"')
+    expect(cmsSettingsModuleSource).toContain('popup-content-class="cms-settings-module-surface__popup"')
+    expect(cmsMediaModuleSource).toContain('popup-content-class="cms-media-module-surface__popup"')
+    expect(cmsReleasesModuleSource).toContain('popup-content-class="cms-releases-module-surface__popup"')
+    expect(cmsStylesSource).toContain('.cms-usage-drawer-dialog :deep(.q-dialog__inner)')
+  })
+
   it('keeps tokens.scss as a generic dark fallback instead of a second preset source of truth', () => {
     const tokensSource = readRepoFile('../../../src/styles/tokens.scss')
     const darkFallbackBlock = readCssBlock(tokensSource, 'html.dark:not([data-theme]),')

@@ -167,11 +167,13 @@ async function assertCrudDarkSurfaces(
   const searchInput = page.getByLabel(searchLabel)
   const tableWrap = page.locator('.ntk-template-crud-list__table-wrap')
   const tableHeader = page.locator(`table[aria-label="${tableLabel}"] thead th`).first()
+  const tableBodyCell = page.locator(`table[aria-label="${tableLabel}"] tbody tr`).first().locator('td').first()
 
   await expect(searchSurface).toBeVisible()
   await page.getByRole('button', { name: tableToggleLabel }).click()
   await expect(tableWrap).toBeVisible()
   await expect(tableHeader).toBeVisible()
+  await expect(tableBodyCell).toBeVisible()
 
   expectDarkReadableSurface(
     await readResolvedSurfaceMetrics(searchSurface, searchInput),
@@ -181,6 +183,72 @@ async function assertCrudDarkSurfaces(
     await readResolvedSurfaceMetrics(tableWrap, tableHeader),
     `${themeId} ${route} table surface`
   )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(tableBodyCell),
+    `${themeId} ${route} table body surface`
+  )
+}
+
+async function assertOverlayDarkSurfaces(page: Page, themeId: string): Promise<void> {
+  const userMenuTrigger = page.locator('.ntk-template-user-menu__avatar').first()
+
+  await expect(userMenuTrigger).toBeVisible()
+  await userMenuTrigger.click()
+
+  const userMenu = page.locator('.ntk-template-user-menu').last()
+  const userMenuProfileName = userMenu.locator('.text-subtitle1').first()
+
+  await expect(userMenu).toBeVisible()
+  await expect(userMenuProfileName).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(userMenu, userMenuProfileName),
+    `${themeId} user menu overlay`
+  )
+
+  await page.keyboard.press('Escape')
+  await expect(userMenu).not.toBeVisible()
+
+  const collapseDrawerButton = page.getByLabel('Collapse side menu')
+  await expect(collapseDrawerButton).toBeVisible()
+  await collapseDrawerButton.click()
+  await expect(page.getByLabel('Expand side menu')).toBeVisible()
+
+  const firstDrawerLink = page.locator('.ntk-template-main-layout__drawer .ntk-template-menu-link').first()
+  await expect(firstDrawerLink).toBeVisible()
+  await firstDrawerLink.hover()
+
+  const drawerTooltip = page.locator('.q-tooltip').filter({ hasText: 'Dashboard' }).last()
+  await expect(drawerTooltip).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(drawerTooltip),
+    `${themeId} drawer tooltip overlay`
+  )
+
+  const assistantTrigger = page.getByLabel(/abrir assistente/i)
+  await expect(assistantTrigger).toBeVisible()
+  await assistantTrigger.click()
+
+  const assistantDrawer = page.getByRole('dialog', { name: /assistant drawer/i })
+  const assistantDrawerTitle = assistantDrawer.locator('.ntk-template-wiki-chat-drawer__title')
+  const assistantDrawerInput = assistantDrawer.locator('.ntk-template-wiki-chat-drawer__input')
+
+  await expect(assistantDrawer).toBeVisible()
+  await expect(assistantDrawerTitle).toBeVisible()
+  await expect(assistantDrawerInput).toBeVisible()
+
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(assistantDrawer, assistantDrawerTitle),
+    `${themeId} assistant drawer dialog surface`
+  )
+  expectDarkReadableSurface(
+    await readResolvedSurfaceMetrics(assistantDrawerInput),
+    `${themeId} assistant drawer input surface`
+  )
+
+  await assistantDrawer.getByRole('button', { name: /close drawer/i }).click()
+  await expect(assistantDrawer).not.toBeVisible()
 }
 
 test.describe('template runtime dark theme guardrails', () => {
@@ -257,6 +325,14 @@ test.describe('template runtime dark theme guardrails', () => {
         'Tabela de pedidos',
         theme.id
       )
+    })
+
+    test(`keeps teleported Quasar overlays dark and legible in ${theme.label}`, async ({ page }) => {
+      await resetRuntimeState(page)
+      await loginToRuntime(page)
+      await activateTheme(page, theme)
+
+      await assertOverlayDarkSurfaces(page, theme.id)
     })
   }
 })

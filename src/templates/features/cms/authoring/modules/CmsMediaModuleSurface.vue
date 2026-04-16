@@ -24,6 +24,7 @@
           :options="mediaAssetOptions"
           :label="t('Media library asset', 'Asset da biblioteca de mídia')"
           :hint="t('Select an asset to edit it or start a blank draft.', 'Selecione um asset para editar ou inicie um rascunho em branco.')"
+          popup-content-class="cms-media-module-surface__popup"
           @update:model-value="emit('update:selectedMediaAssetId', String($event ?? ''))"
         />
         <q-select
@@ -34,6 +35,7 @@
           map-options
           :options="mediaAssetKindOptions"
           :label="t('Asset kind', 'Tipo do asset')"
+          popup-content-class="cms-media-module-surface__popup"
           @update:model-value="updateDraft({ kind: normalizeKind($event) })"
         />
         <q-input
@@ -101,6 +103,7 @@
           :options="mediaReplacementOptions"
           :label="t('Replace target asset', 'Asset alvo da substituição')"
           :hint="t('Optional. Use with Replace references to swap runtime bindings safely.', 'Opcional. Use com Substituir referências para trocar vínculos de runtime com segurança.')"
+          popup-content-class="cms-media-module-surface__popup"
           @update:model-value="updateDraft({ replaceTargetAssetId: String($event ?? '') })"
         />
         <q-input

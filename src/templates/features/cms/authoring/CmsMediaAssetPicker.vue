@@ -18,6 +18,7 @@
       option-label="label"
       option-value="value"
       class="cms-media-asset-picker__select"
+      popup-content-class="cms-media-asset-picker__popup"
       @update:model-value="emit('update:modelValue', $event)"
     >
       <template #option="scope">

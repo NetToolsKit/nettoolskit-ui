@@ -23,6 +23,7 @@
           map-options
           :options="releaseEnvironmentOptions"
           :label="t('Environment', 'Ambiente')"
+          popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:activeReleaseEnvironment', normalizeReleaseEnvironment($event))"
         />
         <q-select
@@ -33,6 +34,7 @@
           map-options
           :options="releaseOptions"
           :label="t('Active release', 'Release ativo')"
+          popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:selectedReleaseId', normalizeSelectValue($event))"
         />
         <q-input
@@ -51,6 +53,7 @@
           map-options
           :options="rollbackTargetOptions"
           :label="t('Rollback target', 'Alvo do rollback')"
+          popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:releaseRollbackTargetId', normalizeSelectValue($event))"
         />
         <q-select
@@ -61,6 +64,7 @@
           map-options
           :options="promotionTargetEnvironmentOptions"
           :label="t('Promote to environment', 'Promover para ambiente')"
+          popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:releasePromotionTargetEnvironment', normalizePromotionTargetEnvironment($event))"
         />
       </div>
@@ -406,6 +410,7 @@
             :options="releaseAcknowledgementDecisionOptions"
             :label="t('Decision', 'Decisão')"
             :aria-label="t('Review acknowledgement decision', 'Decisão do reconhecimento de revisão')"
+            popup-content-class="cms-releases-module-surface__popup"
             @update:model-value="emit('update:releaseAcknowledgementDecision', normalizeDecision($event))"
           />
           <q-input

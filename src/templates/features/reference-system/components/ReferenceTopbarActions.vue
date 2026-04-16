@@ -48,7 +48,7 @@
         >
           {{ notificationCount }}
         </q-badge>
-        <q-tooltip>Notifications</q-tooltip>
+        <q-tooltip class="ntk-reference-topbar__tooltip">Notifications</q-tooltip>
 
         <q-menu
           anchor="bottom right"
@@ -121,7 +121,7 @@
         aria-label="Help"
         @click="emit('help-click')"
       >
-        <q-tooltip>Help</q-tooltip>
+        <q-tooltip class="ntk-reference-topbar__tooltip">Help</q-tooltip>
       </q-btn>
 
       <q-separator
@@ -214,8 +214,6 @@ onUnmounted(() => {
   --ntk-reference-topbar-accent: var(--ntk-primary, var(--ntk-accent));
   --ntk-reference-topbar-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 24%, transparent);
   --ntk-reference-topbar-accent-soft-border: color-mix(in srgb, var(--ntk-reference-topbar-accent) 28%, transparent);
-  --ntk-reference-topbar-unread-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 12%, var(--ntk-reference-topbar-surface));
-  --ntk-reference-topbar-popup-shadow: var(--ntk-reference-shell-glow, 0 12px 28px color-mix(in srgb, var(--ntk-reference-topbar-text) 10%, transparent));
   display: flex;
   align-items: center;
   gap: 12px;
@@ -287,97 +285,81 @@ onUnmounted(() => {
   }
 }
 
-:deep(.ntk-reference-topbar__preset-popup) {
-  border: 1px solid var(--ntk-reference-topbar-border);
+:global(.ntk-reference-topbar__preset-popup) {
   border-radius: 12px;
-  background: var(--ntk-reference-topbar-surface);
-  color: var(--ntk-reference-topbar-text);
-  box-shadow: var(--ntk-reference-topbar-popup-shadow);
+  min-width: 180px;
 }
 
-:deep(.ntk-reference-topbar__preset-popup .q-item) {
-  color: var(--ntk-reference-topbar-text);
-}
-
-:deep(.ntk-reference-topbar__preset-popup .q-item__label--caption),
-:deep(.ntk-reference-topbar__preset-popup .q-item__section--side) {
-  color: var(--ntk-reference-topbar-text-muted) !important;
-}
-
-:deep(.ntk-reference-topbar__preset-popup .q-item.q-manual-focusable--focused),
-:deep(.ntk-reference-topbar__preset-popup .q-item:hover) {
-  background: color-mix(in srgb, var(--ntk-reference-topbar-accent) 10%, var(--ntk-reference-topbar-surface));
+:global(.ntk-reference-topbar__preset-popup .q-item.q-manual-focusable--focused),
+:global(.ntk-reference-topbar__preset-popup .q-item:hover) {
+  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
 }
 
 .ntk-reference-topbar__counter-badge {
-  background: var(--ntk-reference-topbar-accent-soft-bg) !important;
-  color: var(--ntk-reference-topbar-accent) !important;
-  border: 1px solid var(--ntk-reference-topbar-accent-soft-border);
+  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 24%, transparent) !important;
+  color: var(--ntk-primary, var(--ntk-accent)) !important;
+  border: 1px solid color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 28%, transparent);
 }
 
 .ntk-reference-topbar__counter-badge--inline {
   position: static;
 }
 
-.ntk-reference-topbar__notifications-menu {
+:global(.ntk-reference-topbar__notifications-menu) {
   min-width: 340px;
   max-width: 400px;
-  border: 1px solid var(--ntk-reference-topbar-border);
   border-radius: 12px;
-  background: var(--ntk-reference-topbar-surface);
-  box-shadow: var(--ntk-reference-shell-glow, 0 4px 16px color-mix(in srgb, var(--ntk-reference-topbar-text) 8%, transparent));
   overflow: hidden;
 }
 
-.ntk-reference-topbar__notifications-header {
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notifications-header) {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 16px 10px;
-  background: var(--ntk-reference-topbar-surface);
 }
 
-.ntk-reference-topbar__notifications-title {
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notifications-title) {
   font-weight: 600;
   font-size: 13px;
-  color: var(--ntk-reference-topbar-text);
+  color: var(--ntk-template-popup-text, var(--ntk-text-primary));
   flex: 1;
 }
 
-.ntk-reference-topbar__notifications-empty {
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notifications-empty) {
   padding: 20px 16px;
   font-size: 13px;
-  color: var(--ntk-reference-topbar-text-muted);
+  color: var(--ntk-template-popup-muted, var(--ntk-text-secondary));
   text-align: center;
 }
 
-.ntk-reference-topbar__notif-item--unread {
-  background: var(--ntk-reference-topbar-unread-bg);
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-item--unread) {
+  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 12%, var(--ntk-template-popup-bg, var(--ntk-bg-card)));
 }
 
-.ntk-reference-topbar__notif-icon--muted {
-  color: var(--ntk-reference-topbar-icon-muted);
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-icon--muted) {
+  color: var(--ntk-template-popup-muted, var(--ntk-text-secondary));
 }
 
-.ntk-reference-topbar__notif-icon--accent {
-  color: var(--ntk-reference-topbar-accent);
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-icon--accent) {
+  color: var(--ntk-primary, var(--ntk-accent));
 }
 
-.ntk-reference-topbar__notif-item-title {
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-item-title) {
   font-size: 13px;
   line-height: 1.3;
 }
 
-.ntk-reference-topbar__notif-item-desc {
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-item-desc) {
   font-size: 12px;
-  color: var(--ntk-reference-topbar-text-muted);
+  color: var(--ntk-template-popup-muted, var(--ntk-text-secondary));
   white-space: normal;
   line-height: 1.4;
 }
 
-.ntk-reference-topbar__notif-item-time {
+:global(.ntk-reference-topbar__notifications-menu .ntk-reference-topbar__notif-item-time) {
   font-size: 11px;
-  color: var(--ntk-reference-topbar-text-muted);
+  color: var(--ntk-template-popup-muted, var(--ntk-text-secondary));
   white-space: nowrap;
 }
 </style>

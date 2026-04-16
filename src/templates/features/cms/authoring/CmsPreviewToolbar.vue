@@ -12,6 +12,7 @@
       map-options
       :options="sourceOptions"
       :label="tr('Preview source', 'Origem do preview')"
+      popup-content-class="cms-preview-toolbar__popup"
       @update:model-value="$emit('update:source', $event)"
     />
     <q-select
@@ -22,6 +23,7 @@
       map-options
       :options="localeOptions"
       :label="tr('Preview locale', 'Locale do preview')"
+      popup-content-class="cms-preview-toolbar__popup"
       @update:model-value="$emit('update:locale', $event)"
     />
     <q-select
@@ -32,6 +34,7 @@
       map-options
       :options="viewportOptions"
       :label="tr('Preview viewport', 'Viewport do preview')"
+      popup-content-class="cms-preview-toolbar__popup"
       @update:model-value="$emit('update:viewport', $event)"
     />
     <div class="cms-preview-toolbar__chips">

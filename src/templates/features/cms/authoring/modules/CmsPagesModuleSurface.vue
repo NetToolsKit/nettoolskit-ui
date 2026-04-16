@@ -117,6 +117,7 @@
                   dense
                   emit-value
                   map-options
+                  popup-content-class="cms-pages-module-surface__popup"
                   :options="cmsPageTemplateOptions"
                   :label="tr('Page template', 'Template de página')"
                   class="cms-pages__template-select"
@@ -128,6 +129,7 @@
                   dense
                   emit-value
                   map-options
+                  popup-content-class="cms-pages-module-surface__popup"
                   :options="cmsBuilderCommandOptions"
                   option-label="label"
                   option-value="value"
@@ -222,6 +224,7 @@
                   dense
                   emit-value
                   map-options
+                  popup-content-class="cms-pages-module-surface__popup"
                   :options="cmsContentModelOptions"
                   :label="tr('Content model', 'Modelo de conteúdo')"
                   @update:model-value="updateCmsPageContentModel(pageIndex, $event)"
@@ -246,6 +249,7 @@
                   dense
                   emit-value
                   map-options
+                  popup-content-class="cms-pages-module-surface__popup"
                   :options="pageStatusOptions"
                   :label="tr('Status', 'Status')"
                 />
@@ -318,6 +322,7 @@
                           use-chips
                           emit-value
                           map-options
+                          popup-content-class="cms-pages-module-surface__popup"
                           :options="field.options"
                           option-label="label"
                           option-value="value"
@@ -349,6 +354,7 @@
                           use-chips
                           emit-value
                           map-options
+                          popup-content-class="cms-pages-module-surface__popup"
                           :options="getCmsPageCustomFieldReferenceOptions(field)"
                           option-label="label"
                           option-value="value"
@@ -445,6 +451,7 @@
                           dense
                           emit-value
                           map-options
+                          popup-content-class="cms-pages-module-surface__popup"
                           :options="getCmsPageCustomFieldReferenceOptions(field)"
                           option-label="label"
                           option-value="value"
@@ -459,6 +466,7 @@
                           dense
                           emit-value
                           map-options
+                          popup-content-class="cms-pages-module-surface__popup"
                           :options="field.options"
                           option-label="label"
                           option-value="value"
@@ -482,6 +490,7 @@
                       dense
                       emit-value
                       map-options
+                      popup-content-class="cms-pages-module-surface__popup"
                       :options="getCmsSectionPresetOptions(page)"
                       :label="tr('Section preset', 'Preset de seção')"
                       class="cms-page-item__section-preset-select"
@@ -493,6 +502,7 @@
                       dense
                       emit-value
                       map-options
+                      popup-content-class="cms-pages-module-surface__popup"
                       :options="getCmsSectionStarterPresetOptions(pageIndex)"
                       :label="tr('Starter preset', 'Preset inicial')"
                       class="cms-page-item__section-preset-select"
@@ -538,6 +548,7 @@
                       dense
                       emit-value
                       map-options
+                      popup-content-class="cms-pages-module-surface__popup"
                       :options="getCmsReusableSectionOptions(page)"
                       :label="tr('Reusable section', 'Seção reutilizável')"
                       class="cms-page-item__section-preset-select"
@@ -894,6 +905,7 @@
                       clearable
                       emit-value
                       map-options
+                      popup-content-class="cms-pages-module-surface__popup"
                       :options="getCmsReusableSectionReplacementOptions(reusableSection)"
                       :label="tr('Replacement section', 'Seção substituta')"
                       @update:model-value="updateReusableSectionReplacement(reusableSection.id, $event)"

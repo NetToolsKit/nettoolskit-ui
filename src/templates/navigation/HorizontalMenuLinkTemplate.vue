@@ -5,6 +5,7 @@
     no-caps
     dropdown-icon="expand_more"
     class="ntk-template-horizontal-link"
+    content-class="ntk-template-horizontal-link__submenu-popup"
     :class="{ 'ntk-template-horizontal-link--active': isCurrentItemActive }"
   >
     <template #label>
@@ -150,12 +151,13 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   --ntk-template-horizontal-link-active-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
   --ntk-template-horizontal-link-active-border: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
   --ntk-template-horizontal-link-active-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 10%, transparent);
-  --ntk-template-horizontal-link-submenu-bg: var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
-  --ntk-template-horizontal-link-submenu-text: var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-submenu-hover-bg: color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent);
-  --ntk-template-horizontal-link-submenu-active-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, transparent);
-  --ntk-template-horizontal-link-submenu-active-border: var(--ntk-primary, var(--ntk-accent));
-  --ntk-template-horizontal-link-submenu-active-color: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-horizontal-link-submenu-bg: var(--ntk-template-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)))));
+  --ntk-template-horizontal-link-submenu-border: var(--ntk-template-layout-submenu-border, var(--ntk-template-overlay-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent)));
+  --ntk-template-horizontal-link-submenu-text: var(--ntk-template-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
+  --ntk-template-horizontal-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent)));
+  --ntk-template-horizontal-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, transparent)));
+  --ntk-template-horizontal-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-horizontal-link-submenu-active-color: var(--ntk-template-layout-submenu-active-text, var(--ntk-primary, var(--ntk-accent)));
 
   color: var(--ntk-template-horizontal-link-color) !important;
   font-size: 13px;
@@ -180,7 +182,6 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-horizontal-link__submenu {
   min-width: 220px;
-  background: var(--ntk-template-horizontal-link-submenu-bg);
 }
 
 .ntk-template-horizontal-link__submenu-item {
@@ -197,5 +198,13 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   border-left: 3px solid var(--ntk-template-horizontal-link-submenu-active-border) !important;
   background-color: var(--ntk-template-horizontal-link-submenu-active-bg);
   color: var(--ntk-template-horizontal-link-submenu-active-color);
+}
+
+.ntk-template-horizontal-link__submenu-popup {
+  --ntk-template-overlay-bg: var(--ntk-template-horizontal-link-submenu-bg);
+  --ntk-template-overlay-border: var(--ntk-template-horizontal-link-submenu-border);
+  --ntk-template-overlay-text: var(--ntk-template-horizontal-link-submenu-text);
+  --ntk-template-overlay-hover-bg: var(--ntk-template-horizontal-link-submenu-hover-bg);
+  --ntk-template-overlay-active-bg: var(--ntk-template-horizontal-link-submenu-active-bg);
 }
 </style>

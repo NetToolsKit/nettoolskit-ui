@@ -124,6 +124,7 @@
                 </span>
                 <q-tooltip
                   v-if="isDrawerMiniMode && item.groupLabel"
+                  class="ntk-template-main-layout__group-tooltip"
                   :offset="[10, 0]"
                 >
                   {{ item.groupLabel }}
@@ -464,9 +465,14 @@ watch(sideMenuVariant, value => {
   --ntk-template-layout-nav-hover-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent);
   --ntk-template-layout-reference-nav-hover-bg: var(--ntk-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 7%, transparent));
   --ntk-template-layout-toolbar-border: color-mix(in srgb, var(--ntk-template-layout-page-text) 12%, transparent);
-  --ntk-template-layout-submenu-hover-bg: color-mix(in srgb, var(--ntk-template-layout-page-text) 5%, transparent);
+  --ntk-template-layout-submenu-bg: var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary))));
+  --ntk-template-layout-submenu-border: var(--ntk-template-overlay-border, var(--ntk-template-layout-toolbar-border));
+  --ntk-template-layout-submenu-text: var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary))));
+  --ntk-template-layout-submenu-shadow: var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft));
+  --ntk-template-layout-submenu-hover-bg: var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-layout-page-text) 5%, transparent));
   --ntk-template-layout-submenu-active-border: var(--ntk-primary, var(--ntk-accent));
-  --ntk-template-layout-submenu-active-bg: color-mix(in srgb, var(--ntk-template-layout-submenu-active-border) 12%, transparent);
+  --ntk-template-layout-submenu-active-bg: var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-template-layout-submenu-active-border) 12%, transparent));
+  --ntk-template-layout-submenu-active-text: var(--ntk-layout-submenu-active-text, var(--ntk-template-layout-submenu-text));
   --ntk-template-page-card-bg: var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
   --ntk-shadow-soft: 0 4px 16px color-mix(in srgb, var(--ntk-template-layout-page-text) 8%, transparent);
 
@@ -500,7 +506,7 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__title {
-  font-family: var(--ntk-font-family-display, Inter, system-ui, sans-serif);
+  font-family: var(--ntk-template-layout-title-font, var(--ntk-font-family-display, system-ui, sans-serif));
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0;
@@ -569,7 +575,7 @@ watch(sideMenuVariant, value => {
 .ntk-template-main-layout__group-caption {
   min-height: 26px;
   padding: 8px 14px 4px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-template-layout-group-font, var(--ntk-font-family-mono, ui-monospace, monospace));
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.14em;
