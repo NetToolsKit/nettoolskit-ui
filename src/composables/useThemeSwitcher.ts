@@ -78,6 +78,7 @@ function syncQuasarColorPalette(): void {
   }
 
   const root = document.documentElement
+  const body = document.body
   root.style.setProperty('--q-primary', readThemeVariable('--ntk-accent', 'var(--ntk-primary, currentColor)'))
   root.style.setProperty('--q-secondary', readThemeVariable('--ntk-secondary', 'var(--ntk-text-muted, currentColor)'))
   root.style.setProperty('--q-accent', readThemeVariable('--ntk-accent-hover', 'var(--ntk-accent, currentColor)'))
@@ -87,13 +88,34 @@ function syncQuasarColorPalette(): void {
   root.style.setProperty('--q-info', readThemeVariable('--ntk-info', 'var(--ntk-info, currentColor)'))
 
   const darkScheme = readThemeVariable('--ntk-dark-scheme', '0')
-  root.style.colorScheme = darkScheme === '1' ? 'dark' : 'light'
+  const isDark = darkScheme === '1'
+  const appBackground = readThemeVariable('--ntk-bg-primary', readThemeVariable('--ntk-shell-bg', 'transparent'))
+  const appText = readThemeVariable('--ntk-text-primary', readThemeVariable('--ntk-text-heading', 'currentColor'))
+  root.style.colorScheme = isDark ? 'dark' : 'light'
+  root.classList.toggle('dark', isDark)
+  root.style.backgroundColor = appBackground
+  root.style.color = appText
+
+  if (body) {
+    body.classList.toggle('body--dark', isDark)
+    body.classList.toggle('body--light', !isDark)
+    body.style.colorScheme = isDark ? 'dark' : 'light'
+    body.style.backgroundColor = appBackground
+    body.style.color = appText
+  }
 }
 
 function applyThemeToDOM(themeId: ThemeId): void {
   if (typeof document === 'undefined') return
 
-  document.documentElement.dataset.theme = themeId
+  const root = document.documentElement
+  const body = document.body
+  root.dataset.theme = themeId
+
+  if (body) {
+    body.dataset.theme = themeId
+  }
+
   syncThemePreviewSwatches()
   syncQuasarColorPalette()
 

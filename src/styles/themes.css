@@ -348,3 +348,74 @@
 
   --ntk-dark-scheme: 0;
 }
+
+/* ============================================================
+ * THEME TOKEN BRIDGE
+ * ============================================================
+ * Promove aliases de preset para os tokens base consumidos
+ * pelos templates e por partes do Quasar.
+ */
+html[data-theme],
+html[data-theme] body {
+  --ntk-bg-primary: var(--ntk-shell-bg);
+  --ntk-bg-secondary: var(--ntk-card-bg);
+  --ntk-bg-tertiary: var(--ntk-row-bg);
+  --ntk-bg-card: var(--ntk-card-bg);
+  --ntk-bg-elevated: var(--ntk-card-bg);
+  --ntk-bg-hover: var(--ntk-row-hover-bg);
+  --ntk-bg-active: var(--ntk-nav-active-bg, var(--ntk-accent-soft));
+  --ntk-surface-card: var(--ntk-card-bg);
+  --ntk-surface-overlay: color-mix(in srgb, var(--ntk-card-bg) 94%, var(--ntk-shell-bg));
+  --ntk-surface-dialog: var(--ntk-surface-overlay);
+  --ntk-surface-menu: var(--ntk-surface-overlay);
+  --ntk-surface-table: var(--ntk-card-bg);
+  --ntk-surface-table-header: color-mix(in srgb, var(--ntk-row-bg) 72%, var(--ntk-card-bg));
+  --ntk-surface-table-row: var(--ntk-row-bg);
+  --ntk-surface-table-row-hover: var(--ntk-row-hover-bg);
+
+  --ntk-text-primary: var(--ntk-text-heading);
+  --ntk-text-secondary: var(--ntk-text-body);
+  --ntk-text-link: var(--ntk-accent);
+  --ntk-text-link-hover: var(--ntk-accent-hover);
+  --ntk-text-dark: var(--ntk-text-heading);
+  --ntk-text-light: var(--ntk-text-body);
+  --ntk-text-lighter: var(--ntk-text-muted);
+  --ntk-text-on-primary: var(--ntk-text-on-accent);
+  --ntk-text-popup: var(--ntk-text-heading);
+  --ntk-text-table-heading: var(--ntk-text-heading);
+  --ntk-text-table-body: var(--ntk-text-body);
+
+  --ntk-border-color: var(--ntk-border);
+  --ntk-border-light: color-mix(in srgb, var(--ntk-border) 58%, transparent);
+  --ntk-border-dark: var(--ntk-border-strong);
+  --ntk-border-input: var(--ntk-border);
+  --ntk-border-input-hover: var(--ntk-border-strong);
+  --ntk-border-popup: color-mix(in srgb, var(--ntk-border) 82%, transparent);
+  --ntk-border-table: var(--ntk-border);
+
+  --ntk-input-bg: color-mix(in srgb, var(--ntk-card-bg) 84%, var(--ntk-shell-bg));
+  --ntk-input-text: var(--ntk-text-heading);
+  --ntk-input-label: var(--ntk-text-body);
+  --ntk-input-placeholder: var(--ntk-text-muted);
+  --ntk-input-icon: var(--ntk-text-muted);
+
+  --ntk-chip-bg: var(--ntk-row-bg);
+  --ntk-chip-text: var(--ntk-text-body);
+  --ntk-menu-bg: var(--ntk-card-bg);
+  --ntk-popup-bg: var(--ntk-card-bg);
+  --ntk-sidebar-bg: var(--ntk-drawer-bg);
+  --ntk-sidebar-border: var(--ntk-border);
+  --ntk-sidebar-item-hover: var(--ntk-row-hover-bg);
+  --ntk-sidebar-item-active-bg: var(--ntk-nav-active-bg, var(--ntk-accent-soft));
+  --ntk-sidebar-item-active-text: var(--ntk-accent);
+}
+
+html[data-theme] {
+  background: var(--ntk-bg-primary);
+  color: var(--ntk-text-primary);
+}
+
+html[data-theme] body {
+  background: var(--ntk-bg-primary);
+  color: var(--ntk-text-primary);
+}

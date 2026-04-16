@@ -23,10 +23,24 @@
   --ntk-template-form-control-height: 44px;
   --ntk-template-form-control-radius: var(--ntk-radius-md);
   --ntk-template-form-control-bg: var(--ntk-input-bg);
+  --ntk-template-form-control-border: var(--ntk-border-input);
+  --ntk-template-form-control-border-hover: var(--ntk-border-input-hover);
   --ntk-template-form-label-color: var(--ntk-input-label);
   --ntk-template-form-label-size: 13px;
   --ntk-template-form-label-weight: var(--ntk-font-weight-medium);
   --ntk-template-form-icon-color: var(--ntk-input-icon);
+  --ntk-template-popup-bg: var(--ntk-popup-bg, var(--ntk-surface-overlay, var(--ntk-bg-card)));
+  --ntk-template-popup-border: var(--ntk-border-popup, var(--ntk-border-color));
+  --ntk-template-popup-shadow: var(--ntk-shadow-lg);
+  --ntk-template-popup-text: var(--ntk-text-popup, var(--ntk-text-primary));
+  --ntk-template-popup-muted: var(--ntk-text-secondary);
+  --ntk-template-table-bg: var(--ntk-surface-table, var(--ntk-template-page-card-bg));
+  --ntk-template-table-header-bg: var(--ntk-surface-table-header, var(--ntk-template-page-row-bg));
+  --ntk-template-table-row-bg: var(--ntk-surface-table-row, var(--ntk-template-page-row-bg));
+  --ntk-template-table-row-hover-bg: var(--ntk-surface-table-row-hover, var(--ntk-template-page-row-hover-bg));
+  --ntk-template-table-border: var(--ntk-border-table, var(--ntk-template-page-border));
+  --ntk-template-table-heading: var(--ntk-text-table-heading, var(--ntk-template-page-title));
+  --ntk-template-table-text: var(--ntk-text-table-body, var(--ntk-template-page-text));
 
   --ntk-template-notification-bg: var(--ntk-bg-card);
   --ntk-template-notification-border: var(--ntk-border-color);
@@ -147,6 +161,8 @@
   border-radius: var(--ntk-template-surface-radius);
   border: 1px solid var(--ntk-template-surface-border);
   box-shadow: var(--ntk-template-surface-shadow);
+  background: var(--ntk-template-page-card-bg);
+  color: var(--ntk-template-page-text);
 }
 
 [class*='ntk-template-'] .q-btn:not(.q-btn--round) {
@@ -238,6 +254,21 @@
   min-height: var(--ntk-template-form-control-height);
   border-radius: var(--ntk-template-form-control-radius);
   background: var(--ntk-template-form-control-bg);
+  color: var(--ntk-input-text);
+}
+
+[class*='ntk-template-'] .q-field__native,
+[class*='ntk-template-'] .q-field__input,
+[class*='ntk-template-'] .q-field textarea,
+[class*='ntk-template-'] .q-field input {
+  color: var(--ntk-input-text) !important;
+}
+
+[class*='ntk-template-'] .q-field__native::placeholder,
+[class*='ntk-template-'] .q-field__input::placeholder,
+[class*='ntk-template-'] .q-field textarea::placeholder,
+[class*='ntk-template-'] .q-field input::placeholder {
+  color: var(--ntk-input-placeholder) !important;
 }
 
 [class*='ntk-template-'] .q-field__label {
@@ -249,6 +280,132 @@
 [class*='ntk-template-'] .q-field__prepend,
 [class*='ntk-template-'] .q-field__append {
   color: var(--ntk-template-form-icon-color);
+}
+
+html[data-theme] :is(.q-field--filled, .q-field--outlined, .q-field--standout, .q-field--standard) .q-field__control {
+  background: var(--ntk-template-form-control-bg) !important;
+  color: var(--ntk-input-text) !important;
+}
+
+html[data-theme] .q-field--filled .q-field__control::before,
+html[data-theme] .q-field--standout .q-field__control::before {
+  background: var(--ntk-template-form-control-bg) !important;
+  border-color: var(--ntk-template-form-control-border) !important;
+  opacity: 1 !important;
+}
+
+html[data-theme] .q-field--outlined .q-field__control::before,
+html[data-theme] .q-field--outlined .q-field__control::after,
+html[data-theme] .q-field--standard .q-field__control::before,
+html[data-theme] .q-field--standard .q-field__control::after {
+  border-color: var(--ntk-template-form-control-border) !important;
+}
+
+html[data-theme] .q-field:hover .q-field__control::before,
+html[data-theme] .q-field:hover .q-field__control::after {
+  border-color: var(--ntk-template-form-control-border-hover) !important;
+}
+
+html[data-theme] .q-field--focused .q-field__control::before,
+html[data-theme] .q-field--focused .q-field__control::after {
+  border-color: var(--ntk-border-focus) !important;
+}
+
+html[data-theme] .q-field__native,
+html[data-theme] .q-field__input,
+html[data-theme] .q-field textarea,
+html[data-theme] .q-field input,
+html[data-theme] .q-field__marginal,
+html[data-theme] .q-select__dropdown-icon {
+  color: var(--ntk-input-text) !important;
+}
+
+html[data-theme] .q-field__label,
+html[data-theme] .q-field__bottom,
+html[data-theme] .q-field__messages,
+html[data-theme] .q-field__counter {
+  color: var(--ntk-input-label) !important;
+}
+
+html[data-theme] :is(input, textarea):-webkit-autofill,
+html[data-theme] :is(input, textarea):-webkit-autofill:hover,
+html[data-theme] :is(input, textarea):-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ntk-input-text);
+  box-shadow: 0 0 0 1000px var(--ntk-input-bg) inset;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog__inner > div, .q-dialog__inner > section, .q-dialog__inner > article) {
+  background: var(--ntk-template-popup-bg) !important;
+  color: var(--ntk-template-popup-text) !important;
+  border: 1px solid var(--ntk-template-popup-border);
+  box-shadow: var(--ntk-template-popup-shadow);
+}
+
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog, .q-dialog__inner) :is(.q-card, .q-list, .q-item, .q-item__section, .q-item__label, .q-card__section, .q-toolbar, .q-toolbar__title, .q-dialog__title, .q-dialog__message) {
+  color: var(--ntk-template-popup-text) !important;
+}
+
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog) :is(.q-list, .q-card, .q-card__section, .q-table__container, .q-table__middle, .q-table__top, .q-table__bottom) {
+  background: transparent !important;
+}
+
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog) .q-separator {
+  background: var(--ntk-template-popup-border) !important;
+}
+
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog) .q-item:hover,
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog) .q-item.q-manual-focusable--focused,
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog) .q-item--active {
+  background: var(--ntk-bg-hover) !important;
+}
+
+html[data-theme] :is(.q-menu, .q-popup-proxy, .q-dialog) :is(.q-item__label--caption, .q-field__bottom, .q-field__messages, .q-field__counter) {
+  color: var(--ntk-template-popup-muted) !important;
+}
+
+html[data-theme] .q-tooltip {
+  background: var(--ntk-template-popup-bg) !important;
+  color: var(--ntk-template-popup-text) !important;
+  border: 1px solid var(--ntk-template-popup-border) !important;
+  box-shadow: var(--ntk-template-popup-shadow) !important;
+}
+
+html[data-theme] :is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {
+  background: var(--ntk-template-table-bg) !important;
+  color: var(--ntk-template-table-text) !important;
+}
+
+html[data-theme] .q-table__top,
+html[data-theme] .q-table__bottom {
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+html[data-theme] .q-table thead tr,
+html[data-theme] .q-table thead th {
+  background: var(--ntk-template-table-header-bg) !important;
+  color: var(--ntk-template-table-heading) !important;
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+html[data-theme] .q-table tbody tr,
+html[data-theme] .q-table tbody td {
+  background: var(--ntk-template-table-row-bg) !important;
+  color: var(--ntk-template-table-text) !important;
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+html[data-theme] .q-table tbody tr:hover td,
+html[data-theme] .q-table tbody tr:hover th,
+html[data-theme] .q-table tbody tr.q-tr--selected td {
+  background: var(--ntk-template-table-row-hover-bg) !important;
+}
+
+html[data-theme] .q-table__grid-item-card,
+html[data-theme] .q-table__grid-content .q-card {
+  background: var(--ntk-template-table-bg) !important;
+  color: var(--ntk-template-table-text) !important;
+  border-color: var(--ntk-template-table-border) !important;
 }
 
 [class*='ntk-template-'] :is(button, [role='button'], a, input, textarea):focus-visible {
