@@ -84,6 +84,42 @@
   --ntk-template-page-accent-value: var(--ntk-accent-value, var(--semantic-success-primary, var(--ntk-success)));
   --ntk-template-page-avatar-bg: var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
   --ntk-template-page-row-hover-bg: var(--ntk-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
+  --ntk-template-semantic-accent-soft-bg: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-accent-soft-border: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-accent-soft-text: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-accent-emphasis-bg: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-accent-emphasis-border: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-accent-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-info-soft-bg: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-info-soft-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-info-soft-text: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-info-emphasis-bg: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-info-emphasis-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-info-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-success-soft-bg: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-success-soft-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-success-soft-text: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-success-emphasis-bg: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-success-emphasis-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-success-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-warning-soft-bg: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 20%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-warning-soft-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 36%, var(--ntk-template-page-border));
+  --ntk-template-semantic-warning-soft-text: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 58%, var(--ntk-template-page-title));
+  --ntk-template-semantic-warning-emphasis-bg: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 26%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-warning-emphasis-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 44%, var(--ntk-template-page-border));
+  --ntk-template-semantic-warning-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-danger-soft-bg: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-danger-soft-border: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-danger-soft-text: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-danger-emphasis-bg: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-danger-emphasis-border: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-danger-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-neutral-soft-bg: color-mix(in srgb, var(--ntk-template-page-text) 12%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-neutral-soft-border: color-mix(in srgb, var(--ntk-template-page-text) 20%, var(--ntk-template-page-border));
+  --ntk-template-semantic-neutral-soft-text: var(--ntk-template-page-text);
+  --ntk-template-semantic-neutral-emphasis-bg: color-mix(in srgb, var(--ntk-template-page-text) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-neutral-emphasis-border: color-mix(in srgb, var(--ntk-template-page-text) 28%, var(--ntk-template-page-border));
+  --ntk-template-semantic-neutral-emphasis-text: var(--ntk-template-page-title);
 
   --ntk-template-shell-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
   --ntk-template-shell-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
@@ -250,6 +286,94 @@
 [class*='ntk-template-'] .ntk-template-tone-action .q-icon,
 [class*='ntk-template-'] .ntk-template-tone-action .q-spinner {
   color: inherit !important;
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip,
+.ntk-template-semantic-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 2px 10px;
+  border: 1px solid var(--ntk-template-semantic-border, transparent);
+  border-radius: var(--ntk-template-badge-radius);
+  background: var(--ntk-template-semantic-bg, transparent);
+  color: var(--ntk-template-semantic-text, var(--ntk-template-page-title));
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--soft,
+.ntk-template-semantic-chip--soft {
+  --ntk-template-semantic-bg: var(--ntk-template-semantic-soft-bg);
+  --ntk-template-semantic-border: var(--ntk-template-semantic-soft-border);
+  --ntk-template-semantic-text: var(--ntk-template-semantic-soft-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--emphasis,
+.ntk-template-semantic-chip--emphasis {
+  --ntk-template-semantic-bg: var(--ntk-template-semantic-emphasis-bg);
+  --ntk-template-semantic-border: var(--ntk-template-semantic-emphasis-border);
+  --ntk-template-semantic-text: var(--ntk-template-semantic-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--accent,
+.ntk-template-semantic-chip--accent {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-accent-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-accent-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-accent-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-accent-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--info,
+.ntk-template-semantic-chip--info {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-info-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-info-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-info-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-info-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-info-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-info-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--success,
+.ntk-template-semantic-chip--success {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-success-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-success-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-success-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-success-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-success-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-success-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--warning,
+.ntk-template-semantic-chip--warning {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-warning-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-warning-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-warning-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-warning-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-warning-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-warning-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--danger,
+.ntk-template-semantic-chip--danger {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-danger-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-danger-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-danger-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-danger-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-danger-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-danger-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--neutral,
+.ntk-template-semantic-chip--neutral {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-neutral-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-neutral-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-neutral-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-neutral-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-neutral-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-neutral-emphasis-text);
 }
 
 [class*='ntk-template-'] .ntk-template-tone-action--tone-neutral {
