@@ -280,6 +280,16 @@ function resolveActionTone(
 
 <style scoped lang="scss">
 .ntk-template-audit-timeline {
+  --ntk-template-audit-timeline-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-audit-timeline-surface-muted: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-audit-timeline-text: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-audit-timeline-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-audit-timeline-search-text: var(--ntk-input-text, var(--ntk-template-page-text, var(--ntk-text-primary)));
+  --ntk-template-audit-timeline-search-placeholder: var(--ntk-input-placeholder, var(--ntk-template-audit-timeline-muted));
+  --ntk-template-audit-timeline-filter-active-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 18%, var(--ntk-template-audit-timeline-surface));
+  --ntk-template-audit-timeline-filter-active-text: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-audit-timeline-filter-active-border: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 32%, var(--ntk-template-page-border, var(--ntk-border-color)));
+
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -334,7 +344,8 @@ function resolveActionTone(
   align-items: center;
   gap: 8px;
   padding: 0 10px;
-  color: var(--ntk-template-page-subtitle);
+  background: var(--ntk-template-audit-timeline-surface-muted);
+  color: var(--ntk-template-audit-timeline-muted);
 }
 
 .ntk-template-audit-timeline__search input {
@@ -342,6 +353,11 @@ function resolveActionTone(
   background: transparent;
   outline: 0;
   width: 100%;
+  color: var(--ntk-template-audit-timeline-search-text);
+}
+
+.ntk-template-audit-timeline__search input::placeholder {
+  color: var(--ntk-template-audit-timeline-search-placeholder);
 }
 
 .ntk-template-audit-timeline__filters {
@@ -358,7 +374,7 @@ function resolveActionTone(
   border-radius: 6px;
   min-height: 32px;
   padding: 4px 10px;
-  color: var(--ntk-template-page-subtitle);
+  color: var(--ntk-template-audit-timeline-muted);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -366,8 +382,9 @@ function resolveActionTone(
 }
 
 .ntk-template-audit-timeline__filter--active {
-  background: var(--ntk-primary);
-  color: var(--ntk-text-on-primary);
+  background: var(--ntk-template-audit-timeline-filter-active-bg);
+  color: var(--ntk-template-audit-timeline-filter-active-text);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-audit-timeline-filter-active-border);
 }
 
 .ntk-template-audit-timeline__timeline {
@@ -387,6 +404,7 @@ function resolveActionTone(
 }
 
 .ntk-template-audit-timeline__event:hover {
+  background: var(--ntk-template-page-row-hover-bg, var(--ntk-bg-hover, var(--ntk-template-audit-timeline-surface-muted)));
   box-shadow: var(--ntk-template-surface-shadow-hover);
 }
 
@@ -425,16 +443,16 @@ function resolveActionTone(
 }
 
 .ntk-template-audit-timeline__event-main strong {
-  color: var(--ntk-template-page-title);
+  color: var(--ntk-template-audit-timeline-text);
 }
 
 .ntk-template-audit-timeline__event-main small {
-  color: var(--ntk-template-page-subtitle);
+  color: var(--ntk-template-audit-timeline-muted);
 }
 
 .ntk-template-audit-timeline__event-main p {
   margin: 6px 0 0;
-  color: var(--ntk-template-page-subtitle);
+  color: var(--ntk-template-audit-timeline-muted);
 }
 
 .ntk-template-audit-timeline__event-meta {
@@ -443,7 +461,7 @@ function resolveActionTone(
   flex-wrap: wrap;
   gap: 10px;
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle);
+  color: var(--ntk-template-audit-timeline-muted);
 }
 
 .ntk-template-audit-timeline__empty {
@@ -456,12 +474,12 @@ function resolveActionTone(
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--ntk-template-page-subtitle);
+  color: var(--ntk-template-audit-timeline-muted);
 }
 
 .ntk-template-audit-timeline__empty h2 {
   margin: 0;
-  color: var(--ntk-template-page-title);
+  color: var(--ntk-template-audit-timeline-text);
 }
 
 .ntk-template-audit-timeline__empty p {

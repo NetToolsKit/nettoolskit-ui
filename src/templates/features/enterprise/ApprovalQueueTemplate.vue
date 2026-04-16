@@ -416,6 +416,20 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
 
 <style scoped lang="scss">
 .ntk-template-approval-queue {
+  --ntk-template-approval-queue-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-approval-queue-surface-muted: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-approval-queue-text: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-approval-queue-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-approval-queue-search-text: var(--ntk-input-text, var(--ntk-template-page-text, var(--ntk-text-primary)));
+  --ntk-template-approval-queue-search-placeholder: var(--ntk-input-placeholder, var(--ntk-template-approval-queue-muted));
+  --ntk-template-approval-queue-filter-active-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 18%, var(--ntk-template-approval-queue-surface));
+  --ntk-template-approval-queue-filter-active-text: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-approval-queue-filter-active-border: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 32%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  --ntk-template-approval-queue-info-soft: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 18%, var(--ntk-template-approval-queue-surface));
+  --ntk-template-approval-queue-success-soft: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 18%, var(--ntk-template-approval-queue-surface));
+  --ntk-template-approval-queue-warning-soft: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 20%, var(--ntk-template-approval-queue-surface));
+  --ntk-template-approval-queue-danger-soft: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 18%, var(--ntk-template-approval-queue-surface));
+
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -470,7 +484,8 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   align-items: center;
   gap: 8px;
   padding: 0 10px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: var(--ntk-template-approval-queue-surface-muted);
+  color: var(--ntk-template-approval-queue-muted);
 }
 
 .ntk-template-approval-queue__search input {
@@ -478,6 +493,11 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   background: transparent;
   outline: 0;
   width: 100%;
+  color: var(--ntk-template-approval-queue-search-text);
+}
+
+.ntk-template-approval-queue__search input::placeholder {
+  color: var(--ntk-template-approval-queue-search-placeholder);
 }
 
 .ntk-template-approval-queue__filters {
@@ -497,23 +517,25 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-approval-queue-muted);
   cursor: pointer;
 }
 
 .ntk-template-approval-queue__filter--active {
-  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
-  color: var(--ntk-text-on-primary, var(--ntk-on-primary, var(--ntk-text-inverse)));
+  background: var(--ntk-template-approval-queue-filter-active-bg);
+  color: var(--ntk-template-approval-queue-filter-active-text);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-approval-queue-filter-active-border);
 }
 
 .ntk-template-approval-queue__bulk {
   border: 1px solid color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-info-soft);
   border-radius: 12px;
   padding: 10px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--ntk-template-approval-queue-text);
 }
 
 .ntk-template-approval-queue__bulk-actions {
@@ -552,27 +574,31 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
 
 .ntk-template-approval-queue__status {
   min-height: 24px;
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 2px 8px;
   font-size: 11px;
   display: inline-flex;
   align-items: center;
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: var(--ntk-template-approval-queue-surface-muted);
+  color: var(--ntk-template-approval-queue-muted);
 }
 
 .ntk-template-approval-queue__status--success {
-  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-success-soft);
+  border-color: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 34%, transparent);
   color: var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success)));
 }
 
 .ntk-template-approval-queue__status--warning {
-  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-warning-soft);
+  border-color: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 34%, transparent);
   color: var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning)));
 }
 
 .ntk-template-approval-queue__status--danger {
-  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-danger-soft);
+  border-color: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 34%, transparent);
   color: var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error)));
 }
 
@@ -662,19 +688,19 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
 
 .ntk-template-approval-queue__bulk-action--approve,
 .ntk-template-approval-queue__decision-action--approve {
-  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-success-soft);
   color: var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success)));
 }
 
 .ntk-template-approval-queue__bulk-action--request,
 .ntk-template-approval-queue__decision-action--request {
-  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-warning-soft);
   color: var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning)));
 }
 
 .ntk-template-approval-queue__bulk-action--reject,
 .ntk-template-approval-queue__decision-action--reject {
-  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-approval-queue-danger-soft);
   color: var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error)));
 }
 

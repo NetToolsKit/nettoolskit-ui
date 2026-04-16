@@ -525,6 +525,21 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   --ntk-template-dashboard-workspace-chip-border: var(--ntk-template-page-chip-border, var(--ntk-template-dashboard-workspace-border));
   --ntk-template-dashboard-workspace-chip-bg: var(--ntk-template-page-chip-bg, var(--ntk-template-dashboard-workspace-row));
   --ntk-template-dashboard-workspace-chip-text: var(--ntk-template-page-chip-text, var(--ntk-template-dashboard-workspace-subtitle));
+  --ntk-template-dashboard-workspace-tone-accent-text: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 54%, var(--ntk-template-dashboard-workspace-title));
+  --ntk-template-dashboard-workspace-tone-accent-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 18%, var(--ntk-template-dashboard-workspace-surface));
+  --ntk-template-dashboard-workspace-tone-accent-border: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 34%, var(--ntk-template-dashboard-workspace-border));
+  --ntk-template-dashboard-workspace-tone-info-text: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 54%, var(--ntk-template-dashboard-workspace-title));
+  --ntk-template-dashboard-workspace-tone-info-bg: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, var(--ntk-template-dashboard-workspace-surface));
+  --ntk-template-dashboard-workspace-tone-info-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 34%, var(--ntk-template-dashboard-workspace-border));
+  --ntk-template-dashboard-workspace-tone-success-text: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 54%, var(--ntk-template-dashboard-workspace-title));
+  --ntk-template-dashboard-workspace-tone-success-bg: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 18%, var(--ntk-template-dashboard-workspace-surface));
+  --ntk-template-dashboard-workspace-tone-success-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 34%, var(--ntk-template-dashboard-workspace-border));
+  --ntk-template-dashboard-workspace-tone-warning-text: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 58%, var(--ntk-template-dashboard-workspace-title));
+  --ntk-template-dashboard-workspace-tone-warning-bg: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 20%, var(--ntk-template-dashboard-workspace-surface));
+  --ntk-template-dashboard-workspace-tone-warning-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 36%, var(--ntk-template-dashboard-workspace-border));
+  --ntk-template-dashboard-workspace-tone-danger-text: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 54%, var(--ntk-template-dashboard-workspace-title));
+  --ntk-template-dashboard-workspace-tone-danger-bg: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 18%, var(--ntk-template-dashboard-workspace-surface));
+  --ntk-template-dashboard-workspace-tone-danger-border: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 34%, var(--ntk-template-dashboard-workspace-border));
 
   display: flex;
   flex-direction: column;
@@ -669,9 +684,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__view--active {
-  border-color: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 45%, var(--ntk-template-dashboard-workspace-border));
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 14%, var(--ntk-template-dashboard-workspace-surface));
-  color: var(--ntk-primary, var(--ntk-accent));
+  border-color: var(--ntk-template-dashboard-workspace-tone-accent-border);
+  background: var(--ntk-template-dashboard-workspace-tone-accent-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-accent-text);
 }
 
 .ntk-template-dashboard-workspace__metrics {
@@ -700,6 +715,7 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   justify-content: center;
   background: var(--ntk-template-dashboard-workspace-row);
   color: var(--ntk-template-dashboard-workspace-subtitle);
+  border: 1px solid color-mix(in srgb, var(--ntk-template-dashboard-workspace-title) 10%, var(--ntk-template-dashboard-workspace-border));
 }
 
 .ntk-template-dashboard-workspace__metric-main {
@@ -727,23 +743,27 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 
 .ntk-template-dashboard-workspace__metric--primary .ntk-template-dashboard-workspace__metric-icon,
 .ntk-template-dashboard-workspace__metric--info .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 14%, var(--ntk-template-dashboard-workspace-surface));
-  color: var(--semantic-info-primary, var(--ntk-info));
+  background: var(--ntk-template-dashboard-workspace-tone-info-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-info-text);
+  border-color: var(--ntk-template-dashboard-workspace-tone-info-border);
 }
 
 .ntk-template-dashboard-workspace__metric--success .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 14%, var(--ntk-template-dashboard-workspace-surface));
-  color: var(--semantic-success-primary, var(--ntk-success));
+  background: var(--ntk-template-dashboard-workspace-tone-success-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-success-text);
+  border-color: var(--ntk-template-dashboard-workspace-tone-success-border);
 }
 
 .ntk-template-dashboard-workspace__metric--warning .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 16%, var(--ntk-template-dashboard-workspace-surface));
-  color: var(--semantic-warning-primary, var(--ntk-warning));
+  background: var(--ntk-template-dashboard-workspace-tone-warning-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-warning-text);
+  border-color: var(--ntk-template-dashboard-workspace-tone-warning-border);
 }
 
 .ntk-template-dashboard-workspace__metric--danger .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 14%, var(--ntk-template-dashboard-workspace-surface));
-  color: var(--semantic-error-primary, var(--ntk-error));
+  background: var(--ntk-template-dashboard-workspace-tone-danger-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-danger-text);
+  border-color: var(--ntk-template-dashboard-workspace-tone-danger-border);
 }
 
 .ntk-template-dashboard-workspace__panels {
@@ -836,6 +856,7 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   justify-content: center;
   font-size: 11px;
   font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--ntk-template-dashboard-workspace-title) 10%, var(--ntk-template-dashboard-workspace-border));
 }
 
 .ntk-template-dashboard-workspace__lane-empty {
@@ -892,8 +913,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   border-radius: 999px;
   padding: 2px 8px;
   font-size: 11px;
-  background: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 14%, var(--ntk-template-dashboard-workspace-surface));
-  color: var(--semantic-info-primary, var(--ntk-info));
+  border: 1px solid var(--ntk-template-dashboard-workspace-tone-info-border);
+  background: var(--ntk-template-dashboard-workspace-tone-info-bg);
+  color: var(--ntk-template-dashboard-workspace-tone-info-text);
 }
 
 .ntk-template-dashboard-workspace__lane-assignee {

@@ -193,6 +193,10 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   --ntk-template-profile-border: var(--ntk-template-page-border, var(--ntk-border-color));
   --ntk-template-profile-text: var(--ntk-template-page-title, var(--ntk-text-primary));
   --ntk-template-profile-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+  --ntk-template-profile-primary-soft: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 18%, var(--ntk-template-profile-surface));
+  --ntk-template-profile-info-soft: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, var(--ntk-template-profile-surface));
+  --ntk-template-profile-neutral-soft: color-mix(in srgb, var(--ntk-template-profile-muted) 14%, var(--ntk-template-profile-surface));
+  --ntk-template-profile-danger-soft: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 10%, var(--ntk-template-profile-surface));
 
   display: flex;
   flex-direction: column;
@@ -333,31 +337,19 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 }
 
 .ntk-template-profile__role-badge--primary {
-  background: color-mix(
-    in srgb,
-    var(--ntk-primary, var(--ntk-accent)) 14%,
-    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
-  );
+  background: var(--ntk-template-profile-primary-soft);
   color: var(--ntk-primary, var(--ntk-accent));
   border-color: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 36%, transparent);
 }
 
 .ntk-template-profile__role-badge--info {
-  background: color-mix(
-    in srgb,
-    var(--semantic-info-primary, var(--ntk-info)) 14%,
-    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
-  );
+  background: var(--ntk-template-profile-info-soft);
   color: var(--semantic-info-primary, var(--ntk-info));
   border-color: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 36%, transparent);
 }
 
 .ntk-template-profile__role-badge--neutral {
-  background: color-mix(
-    in srgb,
-    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,
-    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
-  );
+  background: var(--ntk-template-profile-neutral-soft);
   color: var(--ntk-template-page-text, var(--ntk-text-primary));
   border-color: color-mix(
     in srgb,
@@ -373,11 +365,7 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
     var(--semantic-error-primary, var(--ntk-error)) 36%,
     transparent
   );
-  background: color-mix(
-    in srgb,
-    var(--semantic-error-primary, var(--ntk-error)) 6%,
-    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
-  );
+  background: var(--ntk-template-profile-danger-soft);
 }
 
 @media (max-width: 768px) {

@@ -253,6 +253,21 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   --ntk-template-dashboard-row-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   --ntk-template-dashboard-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
   --ntk-template-dashboard-icon-neutral: color-mix(in srgb, var(--ntk-template-dashboard-text) 82%, var(--ntk-text-primary));
+  --ntk-template-dashboard-tone-accent-text: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 54%, var(--ntk-template-dashboard-title));
+  --ntk-template-dashboard-tone-accent-bg: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 18%, var(--ntk-template-dashboard-surface));
+  --ntk-template-dashboard-tone-accent-border: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 34%, var(--ntk-template-dashboard-border));
+  --ntk-template-dashboard-tone-info-text: color-mix(in srgb, var(--ntk-info, var(--semantic-info-primary)) 54%, var(--ntk-template-dashboard-title));
+  --ntk-template-dashboard-tone-info-bg: color-mix(in srgb, var(--ntk-info, var(--semantic-info-primary)) 18%, var(--ntk-template-dashboard-surface));
+  --ntk-template-dashboard-tone-info-border: color-mix(in srgb, var(--ntk-info, var(--semantic-info-primary)) 34%, var(--ntk-template-dashboard-border));
+  --ntk-template-dashboard-tone-success-text: color-mix(in srgb, var(--ntk-success, var(--semantic-success-primary)) 54%, var(--ntk-template-dashboard-title));
+  --ntk-template-dashboard-tone-success-bg: color-mix(in srgb, var(--ntk-success, var(--semantic-success-primary)) 18%, var(--ntk-template-dashboard-surface));
+  --ntk-template-dashboard-tone-success-border: color-mix(in srgb, var(--ntk-success, var(--semantic-success-primary)) 34%, var(--ntk-template-dashboard-border));
+  --ntk-template-dashboard-tone-warning-text: color-mix(in srgb, var(--ntk-warning, var(--semantic-warning-primary)) 58%, var(--ntk-template-dashboard-title));
+  --ntk-template-dashboard-tone-warning-bg: color-mix(in srgb, var(--ntk-warning, var(--semantic-warning-primary)) 20%, var(--ntk-template-dashboard-surface));
+  --ntk-template-dashboard-tone-warning-border: color-mix(in srgb, var(--ntk-warning, var(--semantic-warning-primary)) 36%, var(--ntk-template-dashboard-border));
+  --ntk-template-dashboard-tone-danger-text: color-mix(in srgb, var(--ntk-error, var(--semantic-error-primary)) 54%, var(--ntk-template-dashboard-title));
+  --ntk-template-dashboard-tone-danger-bg: color-mix(in srgb, var(--ntk-error, var(--semantic-error-primary)) 18%, var(--ntk-template-dashboard-surface));
+  --ntk-template-dashboard-tone-danger-border: color-mix(in srgb, var(--ntk-error, var(--semantic-error-primary)) 34%, var(--ntk-template-dashboard-border));
 
   display: flex;
   flex-direction: column;
@@ -335,32 +350,38 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   align-items: center;
   justify-content: center;
   border-radius: 10px;
+  border: 1px solid transparent;
 }
 
 .ntk-template-dashboard__metric--neutral .ntk-template-dashboard__metric-icon {
   background: color-mix(in srgb, var(--ntk-template-dashboard-text) 8%, var(--ntk-template-dashboard-surface));
   color: var(--ntk-template-dashboard-icon-neutral);
+  border-color: color-mix(in srgb, var(--ntk-template-dashboard-text) 14%, var(--ntk-template-dashboard-border));
 }
 
 .ntk-template-dashboard__metric--primary .ntk-template-dashboard__metric-icon,
 .ntk-template-dashboard__metric--info .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-info) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-info);
+  background: var(--ntk-template-dashboard-tone-info-bg);
+  color: var(--ntk-template-dashboard-tone-info-text);
+  border-color: var(--ntk-template-dashboard-tone-info-border);
 }
 
 .ntk-template-dashboard__metric--success .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-success) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-success);
+  background: var(--ntk-template-dashboard-tone-success-bg);
+  color: var(--ntk-template-dashboard-tone-success-text);
+  border-color: var(--ntk-template-dashboard-tone-success-border);
 }
 
 .ntk-template-dashboard__metric--warning .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-warning) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-warning);
+  background: var(--ntk-template-dashboard-tone-warning-bg);
+  color: var(--ntk-template-dashboard-tone-warning-text);
+  border-color: var(--ntk-template-dashboard-tone-warning-border);
 }
 
 .ntk-template-dashboard__metric--danger .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-error) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-error);
+  background: var(--ntk-template-dashboard-tone-danger-bg);
+  color: var(--ntk-template-dashboard-tone-danger-text);
+  border-color: var(--ntk-template-dashboard-tone-danger-border);
 }
 
 .ntk-template-dashboard__metric-value {
@@ -452,40 +473,47 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   justify-content: center;
   background: color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
   color: var(--ntk-template-dashboard-icon-neutral);
+  border: 1px solid color-mix(in srgb, var(--ntk-template-dashboard-text) 14%, var(--ntk-template-dashboard-border));
   flex-shrink: 0;
 }
 
 .ntk-template-dashboard__activity-icon--blue,
 .ntk-template-dashboard__activity-icon--teal {
-  background: color-mix(in srgb, var(--ntk-info) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-info);
+  background: var(--ntk-template-dashboard-tone-info-bg);
+  color: var(--ntk-template-dashboard-tone-info-text);
+  border-color: var(--ntk-template-dashboard-tone-info-border);
 }
 
 .ntk-template-dashboard__activity-icon--indigo,
 .ntk-template-dashboard__activity-icon--violet,
 .ntk-template-dashboard__activity-icon--pink {
-  background: color-mix(in srgb, var(--ntk-accent) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-accent);
+  background: var(--ntk-template-dashboard-tone-accent-bg);
+  color: var(--ntk-template-dashboard-tone-accent-text);
+  border-color: var(--ntk-template-dashboard-tone-accent-border);
 }
 
 .ntk-template-dashboard__activity-icon--green {
-  background: color-mix(in srgb, var(--ntk-success) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-success);
+  background: var(--ntk-template-dashboard-tone-success-bg);
+  color: var(--ntk-template-dashboard-tone-success-text);
+  border-color: var(--ntk-template-dashboard-tone-success-border);
 }
 
 .ntk-template-dashboard__activity-icon--amber {
-  background: color-mix(in srgb, var(--ntk-warning) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-warning);
+  background: var(--ntk-template-dashboard-tone-warning-bg);
+  color: var(--ntk-template-dashboard-tone-warning-text);
+  border-color: var(--ntk-template-dashboard-tone-warning-border);
 }
 
 .ntk-template-dashboard__activity-icon--slate {
   background: color-mix(in srgb, var(--ntk-template-dashboard-text) 8%, var(--ntk-template-dashboard-surface));
   color: var(--ntk-template-dashboard-icon-neutral);
+  border-color: color-mix(in srgb, var(--ntk-template-dashboard-text) 14%, var(--ntk-template-dashboard-border));
 }
 
 .ntk-template-dashboard__activity-icon--red {
-  background: color-mix(in srgb, var(--ntk-error) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-error);
+  background: var(--ntk-template-dashboard-tone-danger-bg);
+  color: var(--ntk-template-dashboard-tone-danger-text);
+  border-color: var(--ntk-template-dashboard-tone-danger-border);
 }
 
 .ntk-template-dashboard__top-row {
@@ -543,12 +571,14 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   font-size: 11px;
   font-weight: 700;
   color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  border: 1px solid color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 10%, var(--ntk-template-dashboard-border));
   background: color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 78%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-dashboard__top-row:first-child .ntk-template-dashboard__top-rank {
-  background: color-mix(in srgb, var(--ntk-accent) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
-  color: var(--ntk-accent);
+  background: var(--ntk-template-dashboard-tone-accent-bg);
+  color: var(--ntk-template-dashboard-tone-accent-text);
+  border-color: var(--ntk-template-dashboard-tone-accent-border);
 }
 
 .ntk-template-dashboard__top-name {

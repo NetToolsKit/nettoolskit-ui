@@ -698,6 +698,18 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 
 <style scoped lang="scss">
 .ntk-template-crud-list {
+  --ntk-template-crud-list-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-crud-list-surface-muted: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-crud-list-text: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-crud-list-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-crud-list-filter-active-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 18%, var(--ntk-template-crud-list-surface));
+  --ntk-template-crud-list-filter-active-text: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-crud-list-filter-active-border: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 32%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  --ntk-template-crud-list-info-soft: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 18%, var(--ntk-template-crud-list-surface));
+  --ntk-template-crud-list-success-soft: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 18%, var(--ntk-template-crud-list-surface));
+  --ntk-template-crud-list-warning-soft: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 20%, var(--ntk-template-crud-list-surface));
+  --ntk-template-crud-list-danger-soft: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 18%, var(--ntk-template-crud-list-surface));
+
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -781,7 +793,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 .ntk-template-crud-list__filter {
   border: 0;
   background: transparent;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-crud-list-muted);
   border-radius: 6px;
   min-height: 32px;
   padding: 4px 10px;
@@ -793,8 +805,9 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__filter--active {
-  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
-  color: var(--ntk-text-on-primary, var(--ntk-text-inverse, var(--ntk-text-primary)));
+  background: var(--ntk-template-crud-list-filter-active-bg);
+  color: var(--ntk-template-crud-list-filter-active-text);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-crud-list-filter-active-border);
 }
 
 .ntk-template-crud-list__views {
@@ -815,8 +828,9 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__view--active {
-  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
-  color: var(--ntk-text-on-primary, var(--ntk-text-inverse, var(--ntk-text-primary)));
+  background: var(--ntk-template-crud-list-filter-active-bg);
+  color: var(--ntk-template-crud-list-filter-active-text);
+  box-shadow: inset 0 0 0 1px var(--ntk-template-crud-list-filter-active-border);
 }
 
 .ntk-template-crud-list__metrics {
@@ -846,21 +860,25 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 .ntk-template-crud-list__metric--primary,
 .ntk-template-crud-list__metric--info {
   border-color: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: var(--ntk-template-crud-list-info-soft);
   color: var(--semantic-info-primary, var(--semantic-info));
 }
 
 .ntk-template-crud-list__metric--success {
   border-color: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: var(--ntk-template-crud-list-success-soft);
   color: var(--semantic-success-primary, var(--semantic-success));
 }
 
 .ntk-template-crud-list__metric--warning {
   border-color: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: var(--ntk-template-crud-list-warning-soft);
   color: var(--semantic-warning-primary, var(--semantic-warning));
 }
 
 .ntk-template-crud-list__metric--danger {
   border-color: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: var(--ntk-template-crud-list-danger-soft);
   color: var(--semantic-error-primary, var(--semantic-error));
 }
 
@@ -870,7 +888,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   gap: 10px;
   border-radius: var(--ntk-template-surface-radius, 12px);
   border: 1px solid color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-crud-list-info-soft);
   padding: 10px 12px;
 }
 
@@ -961,7 +979,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__row:hover {
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 5%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-page-row-hover-bg, var(--ntk-bg-hover, var(--ntk-template-crud-list-surface-muted)));
 }
 
 .ntk-template-crud-list__column-check {
@@ -987,34 +1005,39 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 
 .ntk-template-crud-list__status {
   min-height: 24px;
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 2px 9px;
   font-size: 11px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: var(--ntk-template-crud-list-surface-muted);
+  color: var(--ntk-template-crud-list-muted);
 }
 
 .ntk-template-crud-list__status--primary,
 .ntk-template-crud-list__status--info {
-  background: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-crud-list-info-soft);
+  border-color: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 34%, transparent);
   color: var(--semantic-info-primary, var(--semantic-info));
 }
 
 .ntk-template-crud-list__status--success {
-  background: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-crud-list-success-soft);
+  border-color: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 34%, transparent);
   color: var(--semantic-success-primary, var(--semantic-success));
 }
 
 .ntk-template-crud-list__status--warning {
-  background: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-crud-list-warning-soft);
+  border-color: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 34%, transparent);
   color: var(--semantic-warning-primary, var(--semantic-warning));
 }
 
 .ntk-template-crud-list__status--danger {
-  background: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: var(--ntk-template-crud-list-danger-soft);
+  border-color: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 34%, transparent);
   color: var(--semantic-error-primary, var(--semantic-error));
 }
 
@@ -1030,8 +1053,8 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   height: 28px;
   border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 7px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: var(--ntk-template-crud-list-surface-muted);
+  color: var(--ntk-template-crud-list-muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1039,7 +1062,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__row-action:hover {
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  background: var(--ntk-template-page-row-hover-bg, var(--ntk-bg-hover, var(--ntk-template-crud-list-surface-muted)));
 }
 
 .ntk-template-crud-list__cards {

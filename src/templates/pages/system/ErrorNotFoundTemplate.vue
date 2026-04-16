@@ -161,6 +161,11 @@ function resolveActionTone(
 
 <style scoped lang="scss">
 .ntk-template-not-found {
+  --ntk-template-not-found-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-not-found-surface-border: color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 72%, transparent);
+  --ntk-template-not-found-surface-bg: color-mix(in srgb, var(--ntk-template-not-found-surface) 88%, transparent);
+  --ntk-template-not-found-readable-subtitle: color-mix(in srgb, var(--ntk-template-not-found-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) 92%, transparent);
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,8 +183,8 @@ function resolveActionTone(
   text-align: center;
   padding: 28px 24px;
   border-radius: 18px;
-  background: var(--ntk-template-not-found-card-bg, color-mix(in srgb, var(--ntk-text-primary) 60%, transparent));
-  border: 1px solid var(--ntk-template-not-found-border, color-mix(in srgb, var(--ntk-border-color) 35%, transparent));
+  background: var(--ntk-template-not-found-card-bg, var(--ntk-template-not-found-surface-bg));
+  border: 1px solid var(--ntk-template-not-found-border, var(--ntk-template-not-found-surface-border));
   backdrop-filter: blur(4px);
 }
 
@@ -202,7 +207,7 @@ function resolveActionTone(
   margin: 10px auto 0;
   max-width: 500px;
   font-size: 15px;
-  color: var(--ntk-template-not-found-subtitle, color-mix(in srgb, var(--ntk-template-not-found-text) 82%, transparent));
+  color: var(--ntk-template-not-found-subtitle, var(--ntk-template-not-found-readable-subtitle));
 }
 
 .ntk-template-not-found__actions {
