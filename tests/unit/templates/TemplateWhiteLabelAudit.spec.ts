@@ -604,8 +604,10 @@ describe('template white-label audit', () => {
     }
 
     for (const requiredAlias of [
+      '--ntk-bg-primary: var(--ntk-shell-bg);',
       '--ntk-bg-card: var(--ntk-card-bg);',
       '--ntk-bg-elevated: var(--ntk-card-bg);',
+      '--ntk-text-primary: var(--ntk-text-heading);',
       '--ntk-input-text: var(--ntk-text-heading);',
       '--ntk-input-placeholder: var(--ntk-text-muted);',
       '--ntk-input-bg:',
@@ -620,6 +622,49 @@ describe('template white-label audit', () => {
       "color: var(--ntk-input-placeholder) !important;",
     ]) {
       expect(bridgeSource, `Missing shared dark-surface guardrail ${requiredBridgeSnippet}`).toContain(requiredBridgeSnippet)
+    }
+  })
+
+  it('keeps tokens.scss as a generic dark fallback instead of a second preset source of truth', () => {
+    const tokensSource = readRepoFile('../../../src/styles/tokens.scss')
+    const darkFallbackBlock = readCssBlock(tokensSource, 'html.dark:not([data-theme]),')
+
+    expect(darkFallbackBlock, 'Missing generic dark fallback block in tokens.scss').not.toBe('')
+    expect(tokensSource).toContain("html.dark:not([data-theme]),")
+    expect(tokensSource).toContain("html[data-theme='dark'],")
+    expect(tokensSource).toContain('body.body--dark:not([data-theme])')
+
+    for (const requiredFallbackToken of [
+      '--ntk-bg-primary:',
+      '--ntk-bg-secondary:',
+      '--ntk-text-primary:',
+      '--ntk-border-color:',
+      '--ntk-input-bg:',
+      '--ntk-template-page-bg:',
+    ]) {
+      expect(
+        darkFallbackBlock,
+        `Missing neutral fallback token in tokens.scss dark block: ${requiredFallbackToken}`
+      ).toContain(requiredFallbackToken)
+    }
+
+    for (const presetOwnedToken of [
+      '--ntk-dark-scheme:',
+      '--ntk-shell-bg:',
+      '--ntk-card-bg:',
+      '--ntk-header-bg:',
+      '--ntk-drawer-bg:',
+      '--ntk-drawer-text:',
+      '--ntk-nav-hover-bg:',
+      '--ntk-nav-active-bg:',
+      '--ntk-nav-active-border:',
+      "[data-theme='warp']",
+      "[data-theme='resend']",
+    ]) {
+      expect(
+        darkFallbackBlock,
+        `tokens.scss dark fallback should not redefine preset-owned theme tokens: ${presetOwnedToken}`
+      ).not.toContain(presetOwnedToken)
     }
   })
 })

@@ -15,6 +15,11 @@ describe('theme switcher tokenization', () => {
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.removeAttribute('data-theme')
+    document.body.removeAttribute('data-theme')
+    document.documentElement.classList.remove('dark')
+    document.body.classList.remove('body--dark', 'body--light')
+    document.documentElement.style.cssText = ''
+    document.body.style.cssText = ''
     const { setTheme } = useThemeSwitcher()
     setTheme('revolut')
   })
@@ -46,6 +51,7 @@ describe('theme switcher tokenization', () => {
     await wrapper.findAll('button')[claudeIndex]!.trigger('click')
 
     expect(document.documentElement.dataset.theme).toBe('claude')
+    expect(document.body.dataset.theme).toBe('claude')
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBe('claude')
   })
 
@@ -55,12 +61,14 @@ describe('theme switcher tokenization', () => {
     setTheme('kraken')
     await nextTick()
     expect(document.documentElement.dataset.theme).toBe('kraken')
+    expect(document.body.dataset.theme).toBe('kraken')
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBe('kraken')
 
     resetThemePreference()
     await nextTick()
 
     expect(document.documentElement.dataset.theme).toBe(DEFAULT_THEME_ID)
+    expect(document.body.dataset.theme).toBe(DEFAULT_THEME_ID)
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBeNull()
   })
 
@@ -73,6 +81,9 @@ describe('theme switcher tokenization', () => {
       await nextTick()
 
       expect(document.documentElement.dataset.theme).toBe(darkTheme)
+      expect(document.body.dataset.theme).toBe(darkTheme)
+      expect(document.documentElement.dataset.theme).not.toBe('dark')
+      expect(document.body.dataset.theme).not.toBe('dark')
       expect(document.documentElement.classList.contains('dark')).toBe(true)
       expect(document.documentElement.style.colorScheme).toBe('dark')
       expect(document.body.classList.contains('body--dark')).toBe(true)
@@ -85,10 +96,33 @@ describe('theme switcher tokenization', () => {
     await nextTick()
 
     expect(document.documentElement.dataset.theme).toBe('revolut')
+    expect(document.body.dataset.theme).toBe('revolut')
     expect(document.documentElement.classList.contains('dark')).toBe(false)
     expect(document.documentElement.style.colorScheme).toBe('light')
     expect(document.body.classList.contains('body--dark')).toBe(false)
     expect(document.body.classList.contains('body--light')).toBe(true)
     expect(document.body.style.colorScheme).toBe('light')
+  })
+
+  it('keeps preset selection separate from the generic dark fallback selector model', async () => {
+    const { setTheme } = useThemeSwitcher()
+
+    document.documentElement.style.setProperty('--ntk-dark-scheme', '1')
+    setTheme('warp')
+    await nextTick()
+
+    expect(document.documentElement.dataset.theme).toBe('warp')
+    expect(document.body.dataset.theme).toBe('warp')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.body.classList.contains('body--dark')).toBe(true)
+
+    document.documentElement.style.setProperty('--ntk-dark-scheme', '0')
+    setTheme('claude')
+    await nextTick()
+
+    expect(document.documentElement.dataset.theme).toBe('claude')
+    expect(document.body.dataset.theme).toBe('claude')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(document.body.classList.contains('body--light')).toBe(true)
   })
 })

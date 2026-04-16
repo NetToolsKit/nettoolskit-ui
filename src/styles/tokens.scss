@@ -337,43 +337,45 @@
 }
 
 /* ============================================
- * Dark Mode
- * Variáveis para modo escuro
- * Ativado via classe .dark ou [data-theme="dark"]
+ * Generic Dark Fallback
+ * This block exists only for consumers that use a plain
+ * dark mode flag without the preset-driven themes.css layer.
+ * When a preset is active through [data-theme="<preset>"],
+ * themes.css remains the single source of truth.
  * ============================================ */
-.dark,
-[data-theme="dark"],
-.body--dark {
-  /* Primary RGB for dark mode */
+html.dark:not([data-theme]),
+html[data-theme='dark'],
+body.body--dark:not([data-theme]) {
+  /* Neutral primary RGB fallback */
   --ntk-primary-rgb: 123, 116, 212;
   
-  /* Background Colors - Dark */
-  --ntk-bg-primary: #0f172a;
-  --ntk-bg-secondary: #1e293b;
-  --ntk-bg-tertiary: #334155;
-  --ntk-bg-card: #1e293b;
-  --ntk-bg-elevated: #334155;
-  --ntk-bg-overlay: rgba(0, 0, 0, 0.7);
-  --ntk-bg-hover: #334155;
+  /* Neutral surface fallback */
+  --ntk-bg-primary: #0f1115;
+  --ntk-bg-secondary: #171b22;
+  --ntk-bg-tertiary: #212734;
+  --ntk-bg-card: var(--ntk-bg-secondary);
+  --ntk-bg-elevated: var(--ntk-bg-tertiary);
+  --ntk-bg-overlay: rgba(0, 0, 0, 0.68);
+  --ntk-bg-hover: color-mix(in srgb, var(--ntk-bg-tertiary) 84%, white);
   --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.15);
   
-  /* Text Colors - Dark */
-  --ntk-text-primary: #f1f5f9;
-  --ntk-text-secondary: #cbd5e1;
-  --ntk-text-muted: #94a3b8;
-  --ntk-text-inverse: #0f172a;
-  --ntk-text-dark: #f1f5f9;
-  --ntk-text-light: #cbd5e1;
-  --ntk-text-lighter: #94a3b8;
+  /* Neutral text fallback */
+  --ntk-text-primary: #f3f5f7;
+  --ntk-text-secondary: #c7ced8;
+  --ntk-text-muted: #97a3b4;
+  --ntk-text-inverse: #0f1115;
+  --ntk-text-dark: var(--ntk-text-primary);
+  --ntk-text-light: var(--ntk-text-secondary);
+  --ntk-text-lighter: var(--ntk-text-muted);
   
-  /* Border Colors - Dark */
-  --ntk-border-color: #334155;
-  --ntk-border-light: #475569;
-  --ntk-border-dark: #1e293b;
+  /* Neutral border fallback */
+  --ntk-border-color: rgba(255, 255, 255, 0.12);
+  --ntk-border-light: rgba(255, 255, 255, 0.08);
+  --ntk-border-dark: rgba(255, 255, 255, 0.18);
   --ntk-border-input: rgba(255, 255, 255, 0.24);
-  --ntk-border-input-hover: rgba(255, 255, 255, 0.5);
+  --ntk-border-input-hover: rgba(255, 255, 255, 0.42);
   
-  /* Shadows - Dark (mais sutis) */
+  /* Neutral shadow fallback */
   --ntk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --ntk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   --ntk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
@@ -381,24 +383,24 @@
   --ntk-shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.4);
   --ntk-shadow-popup: 0 8px 24px rgba(0, 0, 0, 0.5);
   
-  /* Gradients - Dark */
+  /* Generic dark gradients */
   --ntk-gradient-hero: linear-gradient(135deg, var(--ntk-bg-primary) 0%, var(--ntk-bg-secondary) 100%);
   --ntk-gradient-loading: linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%);
   
-  /* Feedback Colors - Dark (mais vibrantes) */
+  /* Generic semantic fills */
   --ntk-success-light: color-mix(in srgb, var(--semantic-success) 20%, transparent);
   --ntk-warning-light: color-mix(in srgb, var(--semantic-warning) 20%, transparent);
   --ntk-error-light: color-mix(in srgb, var(--semantic-error) 20%, transparent);
   --ntk-info-light: color-mix(in srgb, var(--semantic-info) 20%, transparent);
   
-  /* Form Colors - Dark */
-  --ntk-input-bg: var(--ntk-bg-secondary);
+  /* Generic form fallback */
+  --ntk-input-bg: color-mix(in srgb, var(--ntk-bg-secondary) 88%, var(--ntk-bg-primary));
   --ntk-input-text: var(--ntk-text-primary);
   --ntk-input-label: var(--ntk-text-secondary);
   --ntk-input-placeholder: var(--ntk-text-muted);
   --ntk-input-icon: var(--ntk-text-secondary);
   
-  /* Component Colors - Dark */
+  /* Generic component fallback */
   --ntk-chip-bg: var(--ntk-bg-tertiary);
   --ntk-chip-text: var(--ntk-text-primary);
   
@@ -409,7 +411,7 @@
   
   --ntk-sidebar-item-hover: var(--ntk-bg-tertiary);
 
-  /* Template bridge dark overrides */
+  /* Template fallback surfaces */
   --ntk-template-page-bg: var(--ntk-bg-primary);
   --ntk-template-page-card-bg: var(--ntk-bg-secondary);
   --ntk-template-page-row-bg: var(--ntk-bg-tertiary);

@@ -1,7 +1,9 @@
 /**
- * useTheme Composable
- * Gerencia temas dinamicamente na aplicação
- * Permite trocar cores, fontes e configurações em tempo real
+ * useTheme composable
+ *
+ * Legacy theme adapter for component-level CSS variables.
+ * Shared DOM theme state such as data-theme, dark-mode classes,
+ * and color-scheme is owned by the centralized runtime theme contract.
  */
 
 import { ref, computed, readonly } from 'vue';
@@ -14,9 +16,13 @@ const currentTheme = ref<ThemeConfig>(defaultTheme);
 const themeName = ref<ThemeName>('sentinela');
 
 /**
- * Aplica as variáveis CSS do tema no documento
+ * Apply legacy theme CSS variables to the document root.
  */
 function applyThemeToCSS(theme: ThemeConfig): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
   const root = document.documentElement;
   const normalizedBackground = theme.colors.background.replace('#', '');
   const hasHexBackground = /^[0-9A-Fa-f]{6}$/.test(normalizedBackground);
@@ -109,11 +115,8 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--ntk-surface-soft', theme.colors.backgroundLight);
   root.style.setProperty('--ntk-border-subtle', theme.colors.border);
   
-  // Data attribute para CSS selectors
-  root.setAttribute('data-theme', theme.name.toLowerCase());
-
-  // Semantic tokens are owned by semantic.config defaults and explicit white-label overrides.
-  // Theme switching must not mutate semantic defaults implicitly.
+  // The shared DOM theme contract is managed elsewhere.
+  // This legacy composable must only update its own CSS variables.
   applySemanticColors();
 }
 
