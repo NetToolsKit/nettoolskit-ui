@@ -391,6 +391,8 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   border: 1px solid var(--ntk-template-dashboard-border);
   border-radius: 12px;
   box-shadow: none;
+  background: var(--ntk-template-dashboard-surface);
+  color: var(--ntk-template-dashboard-text);
 }
 
 .ntk-template-dashboard__section-title {

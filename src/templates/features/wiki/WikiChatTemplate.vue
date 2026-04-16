@@ -385,6 +385,8 @@ function sendQuestion(text?: string): void {
   --ntk-template-wiki-chat-text-color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
   --ntk-template-wiki-chat-row-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   --ntk-template-wiki-chat-row-hover-bg: var(--ntk-template-page-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
+  --ntk-template-wiki-chat-source-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-row-bg) 84%, var(--ntk-template-wiki-chat-surface-bg));
+  --ntk-template-wiki-chat-input-bg: color-mix(in srgb, var(--ntk-template-wiki-chat-row-bg) 82%, var(--ntk-template-wiki-chat-surface-bg));
   --ntk-template-wiki-chat-focus: var(--ntk-border-focus, var(--ntk-accent));
   --ntk-template-wiki-chat-accent-bg: var(--ntk-accent, var(--ntk-primary));
   --ntk-template-wiki-chat-accent-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
@@ -458,6 +460,7 @@ function sendQuestion(text?: string): void {
   padding: 0 10px;
   height: 34px;
   color: var(--ntk-template-wiki-chat-subtitle-color);
+  background: var(--ntk-template-wiki-chat-input-bg);
 }
 
 .ntk-template-wiki-chat__search-input {
@@ -514,6 +517,7 @@ function sendQuestion(text?: string): void {
 
 .ntk-template-wiki-chat__conversation--active {
   background: var(--ntk-template-wiki-chat-accent-soft);
+  color: var(--ntk-template-wiki-chat-title-color);
 }
 .ntk-template-wiki-chat__conversation-main {
   flex: 1;
@@ -711,8 +715,13 @@ function sendQuestion(text?: string): void {
 .ntk-template-wiki-chat__source {
   border-radius: 8px;
   border: 1px solid var(--ntk-template-wiki-chat-surface-border);
+  background: var(--ntk-template-wiki-chat-source-bg);
   padding: 8px;
   margin-top: 4px;
+}
+
+.ntk-template-wiki-chat__source strong {
+  color: var(--ntk-template-wiki-chat-title-color);
 }
 
 .ntk-template-wiki-chat__source p {
@@ -734,6 +743,7 @@ function sendQuestion(text?: string): void {
 .ntk-template-wiki-chat__input-area {
   border-top: 1px solid var(--ntk-template-wiki-chat-header-divider);
   padding: 12px;
+  background: var(--ntk-template-wiki-chat-surface-bg);
 }
 
 .ntk-template-wiki-chat__input-wrap {
@@ -743,6 +753,7 @@ function sendQuestion(text?: string): void {
   border: 1px solid var(--ntk-template-wiki-chat-surface-border);
   border-radius: 10px;
   padding: 8px 10px;
+  background: var(--ntk-template-wiki-chat-input-bg);
 }
 
 .ntk-template-wiki-chat__input-wrap:focus-within {
@@ -785,7 +796,9 @@ function sendQuestion(text?: string): void {
 }
 
 .ntk-template-wiki-chat__send:disabled {
-  opacity: 0.4;
+  opacity: 1;
+  background: color-mix(in srgb, var(--ntk-template-wiki-chat-surface-border) 90%, var(--ntk-template-wiki-chat-surface-bg));
+  color: color-mix(in srgb, var(--ntk-template-wiki-chat-subtitle-color) 88%, transparent);
   cursor: not-allowed;
 }
 

@@ -2,6 +2,7 @@
   <q-dialog
     :model-value="modelValue"
     position="right"
+    class="cms-usage-drawer-dialog"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <q-card class="cms-usage-drawer">

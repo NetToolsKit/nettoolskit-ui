@@ -451,6 +451,12 @@ function resolveActionTone(
 
 <style scoped lang="scss">
 .ntk-template-enterprise-command {
+  --ntk-template-enterprise-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-enterprise-border: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-enterprise-text: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-enterprise-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-enterprise-row-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -464,19 +470,21 @@ function resolveActionTone(
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-enterprise-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  background: var(--ntk-template-enterprise-surface);
+  color: var(--ntk-template-enterprise-text);
 }
 
 .ntk-template-enterprise-command__hero h1 {
   margin: 0;
   font-size: 20px;
+  color: var(--ntk-template-enterprise-text);
 }
 
 .ntk-template-enterprise-command__hero p {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
 }
 
 .ntk-template-enterprise-command__hero-actions {
@@ -492,18 +500,18 @@ function resolveActionTone(
   gap: 8px;
   flex-wrap: wrap;
   padding: 8px;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-enterprise-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  background: var(--ntk-template-enterprise-surface);
 }
 
 .ntk-template-enterprise-command__search {
   width: min(320px, 100%);
   min-height: 42px;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-enterprise-border);
   border-radius: 8px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: var(--ntk-template-enterprise-surface);
+  color: var(--ntk-template-enterprise-muted);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -515,6 +523,11 @@ function resolveActionTone(
   border: 0;
   outline: 0;
   background: transparent;
+  color: var(--ntk-template-enterprise-text);
+}
+
+.ntk-template-enterprise-command__search input::placeholder {
+  color: color-mix(in srgb, var(--ntk-template-enterprise-muted) 78%, transparent);
 }
 
 .ntk-template-enterprise-command__filters {
@@ -522,8 +535,8 @@ function resolveActionTone(
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  border: 1px solid var(--ntk-template-enterprise-border);
+  background: var(--ntk-template-enterprise-surface);
 }
 
 .ntk-template-enterprise-command__filter {
@@ -532,7 +545,7 @@ function resolveActionTone(
   background: transparent;
   border-radius: 6px;
   padding: 4px 10px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -551,9 +564,9 @@ function resolveActionTone(
 }
 
 .ntk-template-enterprise-command__kpi {
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-enterprise-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  background: var(--ntk-template-enterprise-surface);
   padding: 10px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -605,7 +618,14 @@ function resolveActionTone(
 }
 
 .ntk-template-enterprise-command__card {
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-enterprise-border);
+  background: var(--ntk-template-enterprise-surface);
+  color: var(--ntk-template-enterprise-text);
+  box-shadow: none;
+}
+
+.ntk-template-enterprise-command__card :deep(.q-card__section) {
+  color: inherit;
 }
 
 .ntk-template-enterprise-command__card--wide {
@@ -623,14 +643,15 @@ function resolveActionTone(
 .ntk-template-enterprise-command__card-header h2 {
   margin: 0;
   font-size: 14px;
+  color: var(--ntk-template-enterprise-text);
 }
 
 .ntk-template-enterprise-command__card-header span {
   min-width: 24px;
   min-height: 24px;
   border-radius: 999px;
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: var(--ntk-template-enterprise-row-bg);
+  color: var(--ntk-template-enterprise-muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -641,8 +662,9 @@ function resolveActionTone(
 .ntk-template-enterprise-command__empty {
   min-height: 120px;
   border-radius: 8px;
-  border: 1px dashed var(--ntk-template-page-border, var(--ntk-border-color));
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  border: 1px dashed var(--ntk-template-enterprise-border);
+  background: color-mix(in srgb, var(--ntk-template-enterprise-row-bg) 72%, transparent);
+  color: var(--ntk-template-enterprise-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -653,9 +675,9 @@ function resolveActionTone(
 .ntk-template-enterprise-command__alert,
 .ntk-template-enterprise-command__activity {
   width: 100%;
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-enterprise-border);
   border-radius: 8px;
-  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  background: var(--ntk-template-enterprise-row-bg);
   margin-top: 8px;
   padding: 10px;
   text-align: left;
@@ -692,7 +714,7 @@ function resolveActionTone(
 .ntk-template-enterprise-command__alert-main strong,
 .ntk-template-enterprise-command__activity-main strong {
   display: block;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-enterprise-text);
   font-size: 13px;
 }
 
@@ -700,7 +722,7 @@ function resolveActionTone(
 .ntk-template-enterprise-command__activity-main small {
   display: block;
   margin-top: 2px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
   font-size: 12px;
 }
 
@@ -710,7 +732,7 @@ function resolveActionTone(
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
   font-size: 11px;
 }
 
@@ -723,18 +745,19 @@ function resolveActionTone(
 .ntk-template-enterprise-command__table td {
   text-align: left;
   padding: 8px;
-  border-bottom: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border-bottom: 1px solid var(--ntk-template-enterprise-border);
 }
 
 .ntk-template-enterprise-command__table th {
   font-size: 11px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
   text-transform: uppercase;
+  background: color-mix(in srgb, var(--ntk-template-enterprise-row-bg) 68%, transparent);
 }
 
 .ntk-template-enterprise-command__table td {
   font-size: 13px;
-  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-template-enterprise-text)));
 }
 
 .ntk-template-enterprise-command__table tr[role='button'] {
@@ -747,7 +770,7 @@ function resolveActionTone(
 
 .ntk-template-enterprise-command__service-name {
   font-weight: 600;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-enterprise-text);
 }
 
 .ntk-template-enterprise-command__service-row--neutral {

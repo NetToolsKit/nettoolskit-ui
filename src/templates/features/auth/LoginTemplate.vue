@@ -360,6 +360,19 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 
 <style scoped lang="scss">
 .ntk-template-login {
+  --ntk-template-login-field-bg: var(
+    --ntk-template-login-field-bg,
+    color-mix(
+      in srgb,
+      var(--ntk-template-login-form-card-bg, var(--ntk-bg-card)) 88%,
+      var(--ntk-template-login-form-bg, var(--ntk-bg-primary))
+    )
+  );
+  --ntk-template-login-field-border: var(--ntk-template-login-form-border, var(--ntk-border-color));
+  --ntk-template-login-field-text: var(--ntk-template-login-form-title, var(--ntk-text-primary));
+  --ntk-template-login-field-label: var(--ntk-template-login-form-subtitle, var(--ntk-text-secondary));
+  --ntk-template-login-field-placeholder: var(--ntk-template-login-version, var(--ntk-text-muted));
+
   min-height: 100%;
   background: var(--ntk-template-login-page-bg, var(--ntk-bg-secondary));
 }
@@ -472,6 +485,7 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
   border: 1px solid var(--ntk-template-login-form-border, var(--ntk-border-color));
   background: var(--ntk-template-login-form-card-bg, var(--ntk-bg-card));
   box-shadow: 0 14px 28px var(--ntk-template-login-form-shadow, color-mix(in srgb, var(--ntk-text-primary) 6%, transparent));
+  color: var(--ntk-template-login-field-text);
 }
 
 .ntk-template-login__mobile-logo {
@@ -516,6 +530,36 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 
 .ntk-template-login__field-icon {
   color: var(--ntk-template-form-icon-color, var(--ntk-input-icon));
+}
+
+.ntk-template-login__form :deep(.q-field__control) {
+  background: var(--ntk-template-login-field-bg);
+  color: var(--ntk-template-login-field-text);
+}
+
+.ntk-template-login__form :deep(.q-field--outlined .q-field__control::before) {
+  border-color: var(--ntk-template-login-field-border);
+}
+
+.ntk-template-login__form :deep(.q-field--outlined.q-field--focused .q-field__control::before),
+.ntk-template-login__form :deep(.q-field--outlined.q-field--focused .q-field__control::after) {
+  border-color: var(--ntk-accent, var(--ntk-primary));
+}
+
+.ntk-template-login__form :deep(.q-field__label),
+.ntk-template-login__form :deep(.q-field__native),
+.ntk-template-login__form :deep(.q-field__input),
+.ntk-template-login__form :deep(.q-field__marginal) {
+  color: var(--ntk-template-login-field-label);
+}
+
+.ntk-template-login__form :deep(.q-field__native),
+.ntk-template-login__form :deep(.q-field__input) {
+  color: var(--ntk-template-login-field-text);
+}
+
+.ntk-template-login__form :deep(input::placeholder) {
+  color: var(--ntk-template-login-field-placeholder);
 }
 
 @media (max-width: 1024px) {

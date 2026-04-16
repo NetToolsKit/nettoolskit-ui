@@ -48,8 +48,8 @@
       </slot>
     </section>
 
-    <q-scroll-area
-      class="ntk-template-profile__scroll"
+    <div
+      class="ntk-template-profile__content"
       :aria-label="groupsAriaLabel"
     >
       <section
@@ -82,7 +82,7 @@
           </template>
         </q-card>
       </section>
-    </q-scroll-area>
+    </div>
   </q-page>
 </template>
 
@@ -189,6 +189,11 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 
 <style scoped lang="scss">
 .ntk-template-profile {
+  --ntk-template-profile-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-profile-border: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-profile-text: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-profile-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+
   display: flex;
   flex-direction: column;
   background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
@@ -205,13 +210,14 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
       var(--ntk-card-bg, var(--ntk-bg-card)) 100%
     )
   );
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-profile-border);
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  color: var(--ntk-template-profile-text);
 }
 
 .ntk-template-profile__hero-left {
@@ -248,13 +254,13 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   margin: 0;
   font-size: 18px;
   line-height: 1.3;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-profile-text);
 }
 
 .ntk-template-profile__email {
   margin: 2px 0 0;
   font-size: 13px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+  color: var(--ntk-template-profile-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -264,13 +270,14 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   margin-top: 6px;
 }
 
-.ntk-template-profile__scroll {
-  flex: 1;
-  min-height: 0;
+.ntk-template-profile__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .ntk-template-profile__section {
-  margin-bottom: 16px;
+  min-width: 0;
 }
 
 .ntk-template-profile__section-label {
@@ -283,13 +290,19 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+  color: var(--ntk-template-profile-muted);
 }
 
 .ntk-template-profile__card {
-  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  border: 1px solid var(--ntk-template-profile-border);
   border-radius: 12px;
   box-shadow: none;
+  background: var(--ntk-template-profile-surface);
+  color: var(--ntk-template-profile-text);
+}
+
+.ntk-template-profile__card :deep(.q-separator) {
+  background: var(--ntk-template-profile-border);
 }
 
 .ntk-template-profile__row {
@@ -303,13 +316,13 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 .ntk-template-profile__row-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
+  color: var(--ntk-template-profile-muted);
 }
 
 .ntk-template-profile__row-value {
   font-size: 14px;
   font-weight: 600;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-profile-text);
   text-align: right;
 }
 

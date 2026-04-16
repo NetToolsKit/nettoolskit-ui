@@ -417,8 +417,16 @@
   max-width: 92vw;
   max-height: 100vh;
   border-radius: 0;
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-shell-border-color);
+  background: var(--ntk-cms-card-surface);
+  color: var(--ntk-cms-shell-text-primary);
+  box-shadow: var(--ntk-cms-drawer-shadow, var(--ntk-template-popup-shadow, var(--ntk-shadow-lg)));
   display: flex;
   flex-direction: column;
+}
+
+.cms-usage-drawer-dialog :deep(.q-dialog__inner) {
+  background: transparent;
 }
 
 .cms-usage-drawer__header {
@@ -427,6 +435,7 @@
   justify-content: space-between;
   gap: var(--ntk-cms-space-sm);
   padding: var(--ntk-cms-space-md);
+  background: color-mix(in srgb, var(--ntk-cms-shell-text-primary) 3%, var(--ntk-cms-card-surface));
 }
 
 .cms-usage-drawer__header small {
@@ -462,7 +471,7 @@
   padding: var(--ntk-cms-space-md);
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);
-  background: var(--ntk-cms-shell-bg);
+  background: color-mix(in srgb, var(--ntk-cms-shell-bg) 78%, var(--ntk-cms-card-surface));
 }
 
 .cms-usage-drawer__reference-header {
