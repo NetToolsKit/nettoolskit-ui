@@ -146,12 +146,18 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
 
 <style scoped lang="scss">
 .ntk-reference-context-rail {
+  --ntk-reference-context-rail-panel-bg: var(--ntk-template-editor-panel-bg, var(--ntk-bg-tertiary));
+  --ntk-reference-context-rail-border: var(--ntk-template-editor-button-border, var(--ntk-border-color));
+  --ntk-reference-context-rail-text: var(--ntk-template-editor-canvas-text, var(--ntk-text-primary));
+  --ntk-reference-context-rail-muted: var(--ntk-template-editor-canvas-text-muted, var(--ntk-text-lighter));
+  --ntk-reference-context-rail-accent: var(--ntk-primary, var(--ntk-accent));
+
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: var(--ntk-template-editor-panel-bg, #f3f4f6);
-  border-left: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  background: var(--ntk-reference-context-rail-panel-bg);
+  border-left: 1px solid var(--ntk-reference-context-rail-border);
   min-width: 200px;
   max-width: 240px;
 }
@@ -161,24 +167,24 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
   align-items: center;
   gap: 6px;
   padding: 10px 12px 8px;
-  border-bottom: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border-bottom: 1px solid var(--ntk-reference-context-rail-border);
 }
 
 .ntk-reference-context-rail__header-icon {
-  color: var(--ntk-template-editor-canvas-text, #6b7280);
+  color: var(--ntk-reference-context-rail-muted);
 }
 
 .ntk-reference-context-rail__header-title {
   font-size: 12px;
   font-weight: 600;
-  color: var(--ntk-template-editor-canvas-text, #374151);
+  color: var(--ntk-reference-context-rail-text);
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .ntk-reference-context-rail__tabs {
   display: flex;
-  border-bottom: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border-bottom: 1px solid var(--ntk-reference-context-rail-border);
 }
 
 .ntk-reference-context-rail__tab {
@@ -190,12 +196,12 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  color: var(--ntk-template-editor-canvas-text, #6b7280);
+  color: var(--ntk-reference-context-rail-muted);
   transition: color 0.15s, border-color 0.15s;
 
   &--active {
-    color: var(--ntk-primary, #2563eb);
-    border-bottom-color: var(--ntk-primary, #2563eb);
+    color: var(--ntk-reference-context-rail-accent);
+    border-bottom-color: var(--ntk-reference-context-rail-accent);
     font-weight: 600;
   }
 }
@@ -220,18 +226,18 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--ntk-template-editor-canvas-text, #9ca3af);
+  color: var(--ntk-reference-context-rail-muted);
 }
 
 .ntk-reference-context-rail__field-value {
   font-size: 12px;
-  color: var(--ntk-template-editor-canvas-text, #374151);
+  color: var(--ntk-reference-context-rail-text);
   display: flex;
   align-items: center;
   gap: 4px;
 
   &--muted {
-    color: var(--ntk-template-editor-canvas-text, #9ca3af);
+    color: var(--ntk-reference-context-rail-muted);
     font-style: italic;
   }
 
@@ -265,20 +271,20 @@ const selectedObject = computed<TemplateEditorCanvasObject | null>(() => {
 }
 
 .ntk-reference-context-rail__empty-icon {
-  color: var(--ntk-template-editor-canvas-text, #9ca3af);
+  color: var(--ntk-reference-context-rail-muted);
   opacity: 0.5;
 }
 
 .ntk-reference-context-rail__empty-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--ntk-template-editor-canvas-text, #374151);
+  color: var(--ntk-reference-context-rail-text);
   margin: 0;
 }
 
 .ntk-reference-context-rail__empty-desc {
   font-size: 12px;
-  color: var(--ntk-template-editor-canvas-text, #9ca3af);
+  color: var(--ntk-reference-context-rail-muted);
   margin: 0;
 }
 </style>

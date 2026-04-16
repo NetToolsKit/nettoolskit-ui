@@ -17,7 +17,7 @@
           no-caps
           :label="action.label"
           :icon="action.icon"
-          :color="action.color || 'primary'"
+          :color="action.color"
           :disable="action.disable"
           :flat="action.flat ?? false"
           :outline="action.outline ?? false"
@@ -44,10 +44,10 @@
       </div>
 
       <div class="ntk-template-enterprise-command__filters">
-        <button
-          v-for="filter in resolvedFilters"
-          :key="filter.id"
-          type="button"
+      <button
+        v-for="filter in resolvedFilters"
+        :key="filter.id"
+        type="button"
           class="ntk-template-enterprise-command__filter"
           :class="{ 'ntk-template-enterprise-command__filter--active': effectiveFilterId === filter.id }"
           @click="setFilter(filter.id)"
@@ -100,11 +100,11 @@
           </div>
 
           <button
-            v-for="alert in filteredAlerts"
-            :key="alert.id"
-            type="button"
-            class="ntk-template-enterprise-command__alert"
-            :class="`ntk-template-enterprise-command__alert--${alert.severity || 'neutral'}`"
+          v-for="alert in filteredAlerts"
+          :key="alert.id"
+          type="button"
+          class="ntk-template-enterprise-command__alert"
+          :class="`ntk-template-enterprise-command__alert--${alert.severity || 'neutral'}`"
             @click="emit('alert-click', alert.id)"
           >
             <div class="ntk-template-enterprise-command__alert-main">
@@ -137,12 +137,13 @@
           </div>
 
           <button
-            v-for="activity in filteredActivities"
-            :key="activity.id"
-            type="button"
-            class="ntk-template-enterprise-command__activity"
-            @click="emit('activity-click', activity.id)"
-          >
+          v-for="activity in filteredActivities"
+          :key="activity.id"
+          type="button"
+          class="ntk-template-enterprise-command__activity"
+          :class="`ntk-template-enterprise-command__activity--${activity.tone || 'neutral'}`"
+          @click="emit('activity-click', activity.id)"
+        >
             <div class="ntk-template-enterprise-command__activity-main">
               <strong>{{ activity.title }}</strong>
               <small>{{ activity.description || emptyValueLabel }}</small>
@@ -180,6 +181,7 @@
                 :key="service.id"
                 role="button"
                 tabindex="0"
+                :class="`ntk-template-enterprise-command__service-row--${service.tone || 'neutral'}`"
                 @click="emit('service-click', service.id)"
                 @keyup.enter.prevent="emit('service-click', service.id)"
                 @keyup.space.prevent="emit('service-click', service.id)"
@@ -401,7 +403,7 @@ function setFilter(filterId: string): void {
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
 }
 
 .ntk-template-enterprise-command__hero {
@@ -410,9 +412,9 @@ function setFilter(filterId: string): void {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-enterprise-command__hero h1 {
@@ -422,7 +424,7 @@ function setFilter(filterId: string): void {
 
 .ntk-template-enterprise-command__hero p {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-enterprise-command__hero-actions {
@@ -438,18 +440,18 @@ function setFilter(filterId: string): void {
   gap: 8px;
   flex-wrap: wrap;
   padding: 8px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-enterprise-command__search {
   width: min(320px, 100%);
   min-height: 42px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 8px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -468,8 +470,8 @@ function setFilter(filterId: string): void {
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-enterprise-command__filter {
@@ -478,7 +480,7 @@ function setFilter(filterId: string): void {
   background: transparent;
   border-radius: 6px;
   padding: 4px 10px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -486,8 +488,8 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-enterprise-command__filter--active {
-  background: var(--ntk-primary, #512bd4);
-  color: var(--ntk-text-on-primary, #ffffff);
+  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  color: var(--ntk-text-on-primary, var(--ntk-on-primary, var(--ntk-text-inverse)));
 }
 
 .ntk-template-enterprise-command__kpis {
@@ -497,9 +499,9 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-enterprise-command__kpi {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 10px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -507,20 +509,41 @@ function setFilter(filterId: string): void {
   gap: 8px;
 }
 
+.ntk-template-enterprise-command__kpi--primary,
+.ntk-template-enterprise-command__kpi--info {
+  border-color: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
+.ntk-template-enterprise-command__kpi--success {
+  border-color: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
+.ntk-template-enterprise-command__kpi--warning {
+  border-color: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
+.ntk-template-enterprise-command__kpi--danger {
+  border-color: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
 .ntk-template-enterprise-command__kpi strong {
   display: block;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
   line-height: 1.15;
 }
 
 .ntk-template-enterprise-command__kpi span {
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 12px;
 }
 
 .ntk-template-enterprise-command__kpi small {
   font-size: 11px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-enterprise-command__grid {
@@ -530,7 +553,7 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-enterprise-command__card {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
 }
 
 .ntk-template-enterprise-command__card--wide {
@@ -554,8 +577,8 @@ function setFilter(filterId: string): void {
   min-width: 24px;
   min-height: 24px;
   border-radius: 999px;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -566,8 +589,8 @@ function setFilter(filterId: string): void {
 .ntk-template-enterprise-command__empty {
   min-height: 120px;
   border-radius: 8px;
-  border: 1px dashed var(--ntk-template-page-border, #e2e8f0);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  border: 1px dashed var(--ntk-template-page-border, var(--ntk-border-color));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -578,19 +601,46 @@ function setFilter(filterId: string): void {
 .ntk-template-enterprise-command__alert,
 .ntk-template-enterprise-command__activity {
   width: 100%;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 8px;
-  background: var(--ntk-template-page-row-bg, #f8fafc);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   margin-top: 8px;
   padding: 10px;
   text-align: left;
   cursor: pointer;
 }
 
+.ntk-template-enterprise-command__alert--primary,
+.ntk-template-enterprise-command__alert--info,
+.ntk-template-enterprise-command__activity--primary,
+.ntk-template-enterprise-command__activity--info,
+.ntk-template-enterprise-command__service-row--primary,
+.ntk-template-enterprise-command__service-row--info {
+  background: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
+.ntk-template-enterprise-command__alert--success,
+.ntk-template-enterprise-command__activity--success,
+.ntk-template-enterprise-command__service-row--success {
+  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
+.ntk-template-enterprise-command__alert--warning,
+.ntk-template-enterprise-command__activity--warning,
+.ntk-template-enterprise-command__service-row--warning {
+  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
+.ntk-template-enterprise-command__alert--danger,
+.ntk-template-enterprise-command__activity--danger,
+.ntk-template-enterprise-command__service-row--danger {
+  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+}
+
 .ntk-template-enterprise-command__alert-main strong,
 .ntk-template-enterprise-command__activity-main strong {
   display: block;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
   font-size: 13px;
 }
 
@@ -598,7 +648,7 @@ function setFilter(filterId: string): void {
 .ntk-template-enterprise-command__activity-main small {
   display: block;
   margin-top: 2px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 12px;
 }
 
@@ -608,7 +658,7 @@ function setFilter(filterId: string): void {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 11px;
 }
 
@@ -621,18 +671,18 @@ function setFilter(filterId: string): void {
 .ntk-template-enterprise-command__table td {
   text-align: left;
   padding: 8px;
-  border-bottom: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border-bottom: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
 }
 
 .ntk-template-enterprise-command__table th {
   font-size: 11px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   text-transform: uppercase;
 }
 
 .ntk-template-enterprise-command__table td {
   font-size: 13px;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
 }
 
 .ntk-template-enterprise-command__table tr[role='button'] {
@@ -640,12 +690,16 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-enterprise-command__table tr[role='button']:hover {
-  background: color-mix(in srgb, var(--ntk-primary, #512bd4) 5%, white);
+  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 5%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__service-name {
   font-weight: 600;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+}
+
+.ntk-template-enterprise-command__service-row--neutral {
+  background: transparent;
 }
 
 @media (max-width: 1024px) {

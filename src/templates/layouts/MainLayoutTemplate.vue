@@ -413,15 +413,47 @@ watch(sideMenuVariant, value => {
 
 <style lang="scss">
 .ntk-template-main-layout {
-  background: var(--ntk-template-layout-shell-bg, var(--ntk-template-layout-page-bg, #f8fafc));
-  color: var(--ntk-template-layout-page-text, var(--ntk-text-primary, #0f172a));
+  --ntk-template-layout-shell-bg: var(--ntk-template-layout-page-bg, var(--ntk-shell-bg, var(--ntk-bg-secondary)));
+  --ntk-template-layout-page-text: var(--ntk-text-primary);
+  --ntk-template-layout-header-bg: var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
+  --ntk-template-layout-header-text: var(--ntk-text-primary);
+  --ntk-template-layout-header-border: color-mix(in srgb, var(--ntk-template-layout-header-text) 12%, transparent);
+  --ntk-template-layout-header-shadow: 0 1px 3px color-mix(in srgb, var(--ntk-template-layout-page-text) 4%, transparent);
+  --ntk-template-layout-nav-start: var(--ntk-template-layout-nav-surface-start, color-mix(in srgb, var(--ntk-text-primary) 92%, var(--ntk-bg-primary)));
+  --ntk-template-layout-nav-end: var(--ntk-template-layout-nav-surface-end, color-mix(in srgb, var(--ntk-text-primary) 84%, var(--ntk-bg-primary)));
+  --ntk-template-layout-horizontal-bg: linear-gradient(90deg, var(--ntk-template-layout-nav-start) 0%, var(--ntk-template-layout-nav-end) 100%);
+  --ntk-template-layout-horizontal-text: var(--ntk-template-layout-on-dark, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-layout-horizontal-border: color-mix(in srgb, var(--ntk-template-layout-horizontal-text) 8%, transparent);
+  --ntk-template-layout-drawer-bg: linear-gradient(180deg, var(--ntk-template-layout-nav-start) 0%, var(--ntk-template-layout-nav-end) 100%);
+  --ntk-template-layout-drawer-text: var(--ntk-template-layout-on-dark, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-layout-drawer-border: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 22%, transparent);
+  --ntk-template-layout-drawer-inset: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 18%, transparent);
+  --ntk-template-layout-nav-group-text: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 88%, transparent);
+  --ntk-template-layout-nav-group-pill-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 18%, transparent);
+  --ntk-template-layout-nav-text: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 82%, transparent);
+  --ntk-template-layout-nav-active-border: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-layout-nav-active-bg: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ntk-template-layout-nav-active-border) 20%, transparent) 0%,
+    color-mix(in srgb, var(--ntk-template-layout-nav-active-border) 6%, transparent) 100%
+  );
+  --ntk-template-layout-nav-hover-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent);
+  --ntk-template-layout-toolbar-border: color-mix(in srgb, var(--ntk-template-layout-page-text) 12%, transparent);
+  --ntk-template-layout-submenu-hover-bg: color-mix(in srgb, var(--ntk-template-layout-page-text) 5%, transparent);
+  --ntk-template-layout-submenu-active-border: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-layout-submenu-active-bg: color-mix(in srgb, var(--ntk-template-layout-submenu-active-border) 12%, transparent);
+  --ntk-template-page-card-bg: var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
+  --ntk-shadow-soft: 0 4px 16px color-mix(in srgb, var(--ntk-template-layout-page-text) 8%, transparent);
+
+  background: var(--ntk-template-layout-shell-bg);
+  color: var(--ntk-template-layout-page-text);
 }
 
 .ntk-template-main-layout__header {
-  background: var(--ntk-template-layout-header-bg, #ffffff) !important;
-  color: var(--ntk-template-layout-header-text, #1f2937) !important;
-  border-bottom: 1px solid var(--ntk-template-layout-header-border, rgba(148, 163, 184, 0.18));
-  box-shadow: var(--ntk-template-layout-header-shadow, 0 1px 3px rgba(15, 23, 42, 0.04)) !important;
+  background: var(--ntk-template-layout-header-bg) !important;
+  color: var(--ntk-template-layout-header-text) !important;
+  border-bottom: 1px solid var(--ntk-template-layout-header-border);
+  box-shadow: var(--ntk-template-layout-header-shadow) !important;
   z-index: 2100 !important;
 }
 
@@ -467,17 +499,14 @@ watch(sideMenuVariant, value => {
 .ntk-template-main-layout__menu-btn :deep(.q-btn) {
   background: transparent;
   border: 0;
-  color: var(--ntk-template-layout-header-text, #1f2937);
+  color: var(--ntk-template-layout-header-text);
 }
 
 .ntk-template-main-layout__horizontal-nav {
   min-height: 48px !important;
-  background: var(
-    --ntk-template-layout-horizontal-bg,
-    linear-gradient(90deg, #1e293b 0%, #334155 100%)
-  );
-  color: var(--ntk-template-layout-horizontal-text, #ffffff);
-  border-top: 1px solid color-mix(in srgb, var(--ntk-template-layout-horizontal-text, #ffffff) 8%, transparent);
+  background: var(--ntk-template-layout-horizontal-bg);
+  color: var(--ntk-template-layout-horizontal-text);
+  border-top: 1px solid var(--ntk-template-layout-horizontal-border);
 }
 
 .ntk-template-main-layout__horizontal-nav-list {
@@ -487,19 +516,16 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__drawer {
-  background: var(
-    --ntk-template-layout-drawer-bg,
-    linear-gradient(180deg, #1e293b 0%, #334155 100%)
-  ) !important;
-  color: var(--ntk-template-layout-drawer-text, #ffffff) !important;
-  border-right: 1px solid var(--ntk-template-layout-drawer-border, rgba(148, 163, 184, 0.22));
+  background: var(--ntk-template-layout-drawer-bg) !important;
+  color: var(--ntk-template-layout-drawer-text) !important;
+  border-right: 1px solid var(--ntk-template-layout-drawer-border);
   transition:
     width 0.24s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.24s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ntk-template-main-layout__drawer--mini {
-  box-shadow: inset -1px 0 0 rgba(148, 163, 184, 0.18);
+  box-shadow: inset -1px 0 0 var(--ntk-template-layout-drawer-inset);
 }
 
 .ntk-template-main-layout__drawer-container {
@@ -523,7 +549,7 @@ watch(sideMenuVariant, value => {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-template-layout-nav-group-text, rgba(203, 213, 225, 0.88));
+  color: var(--ntk-template-layout-nav-group-text);
 }
 
 .ntk-template-main-layout__group-caption-text {
@@ -543,7 +569,7 @@ watch(sideMenuVariant, value => {
   height: 18px;
   padding: 0 6px;
   border-radius: 999px;
-  background: var(--ntk-template-layout-nav-group-pill-bg, rgba(148, 163, 184, 0.18));
+  background: var(--ntk-template-layout-nav-group-pill-bg);
   font-size: 10px;
 }
 
@@ -552,7 +578,7 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__page-container {
-  background: var(--ntk-template-layout-page-bg, #f8fafc);
+  background: var(--ntk-template-layout-page-bg);
 }
 
 .ntk-template-main-layout__slide-down-enter-active,
@@ -586,7 +612,7 @@ watch(sideMenuVariant, value => {
 }
 
 .q-drawer--left.q-drawer--bordered {
-  border-right: 1px solid var(--ntk-template-layout-drawer-border, rgba(148, 163, 184, 0.22));
+  border-right: 1px solid var(--ntk-template-layout-drawer-border);
 }
 
 @media (max-width: 768px) {

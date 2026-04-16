@@ -647,7 +647,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
 }
 
 .ntk-template-crud-list__hero {
@@ -656,20 +656,20 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   justify-content: space-between;
   gap: 12px;
   border-radius: var(--ntk-template-surface-radius, 12px);
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 14px 16px;
 }
 
 .ntk-template-crud-list__title {
   margin: 0;
   font-size: 20px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-crud-list__subtitle {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-crud-list__hero-actions {
@@ -686,8 +686,8 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   flex-wrap: wrap;
   gap: 8px;
   border-radius: var(--ntk-template-surface-radius, 12px);
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 8px;
 }
 
@@ -697,10 +697,10 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-form-control-radius, 8px);
-  background: var(--ntk-template-form-control-bg, #ffffff);
-  color: var(--ntk-template-form-icon-color, #64748b);
+  background: var(--ntk-template-form-control-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-form-icon-color, var(--ntk-text-secondary));
   padding: 0 10px;
 }
 
@@ -708,7 +708,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   border: 0;
   background: transparent;
   outline: 0;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
   width: 100%;
   font-size: 13px;
 }
@@ -719,14 +719,14 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-crud-list__filter {
   border: 0;
   background: transparent;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   border-radius: 6px;
   min-height: 32px;
   padding: 4px 10px;
@@ -738,14 +738,14 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__filter--active {
-  background: var(--ntk-primary, #512bd4);
-  color: var(--ntk-text-on-primary, #ffffff);
+  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  color: var(--ntk-text-on-primary, var(--ntk-text-inverse, var(--ntk-text-primary)));
 }
 
 .ntk-template-crud-list__views {
   margin-left: auto;
   display: inline-flex;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 8px;
   overflow: hidden;
 }
@@ -754,14 +754,14 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   width: 34px;
   height: 34px;
   border: 0;
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   cursor: pointer;
 }
 
 .ntk-template-crud-list__view--active {
-  background: var(--ntk-primary, #512bd4);
-  color: var(--ntk-text-on-primary, #ffffff);
+  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  color: var(--ntk-text-on-primary, var(--ntk-text-inverse, var(--ntk-text-primary)));
 }
 
 .ntk-template-crud-list__metrics {
@@ -776,37 +776,37 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   gap: 6px;
   min-height: 32px;
   border-radius: 999px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   padding: 4px 10px;
   font-size: 12px;
 }
 
 .ntk-template-crud-list__metric strong {
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
   font-size: 13px;
 }
 
 .ntk-template-crud-list__metric--primary,
 .ntk-template-crud-list__metric--info {
-  border-color: color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 44%, var(--ntk-template-page-border, #e2e8f0));
-  color: var(--semantic-info-primary, #3b82f6);
+  border-color: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  color: var(--semantic-info-primary, var(--semantic-info));
 }
 
 .ntk-template-crud-list__metric--success {
-  border-color: color-mix(in srgb, var(--semantic-success-primary, #22c55e) 44%, var(--ntk-template-page-border, #e2e8f0));
-  color: var(--semantic-success-primary, #22c55e);
+  border-color: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  color: var(--semantic-success-primary, var(--semantic-success));
 }
 
 .ntk-template-crud-list__metric--warning {
-  border-color: color-mix(in srgb, var(--semantic-warning-primary, #f59e0b) 44%, var(--ntk-template-page-border, #e2e8f0));
-  color: var(--semantic-warning-primary, #f59e0b);
+  border-color: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  color: var(--semantic-warning-primary, var(--semantic-warning));
 }
 
 .ntk-template-crud-list__metric--danger {
-  border-color: color-mix(in srgb, var(--semantic-error-primary, #ef4444) 44%, var(--ntk-template-page-border, #e2e8f0));
-  color: var(--semantic-error-primary, #ef4444);
+  border-color: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  color: var(--semantic-error-primary, var(--semantic-error));
 }
 
 .ntk-template-crud-list__bulk {
@@ -814,15 +814,15 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   align-items: center;
   gap: 10px;
   border-radius: var(--ntk-template-surface-radius, 12px);
-  border: 1px solid color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 44%, var(--ntk-template-page-border, #e2e8f0));
-  background: color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 10%, var(--ntk-template-page-card-bg, #ffffff));
+  border: 1px solid color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
   padding: 10px 12px;
 }
 
 .ntk-template-crud-list__bulk-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-crud-list__bulk-actions {
@@ -833,9 +833,9 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__surface {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-surface-radius, 12px);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   min-height: 240px;
   overflow: hidden;
 }
@@ -860,18 +860,18 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-crud-list__empty h2 {
   margin: 0;
   font-size: 20px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-crud-list__empty p {
   margin: 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-crud-list__table-wrap {
@@ -890,15 +890,15 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   font-weight: 600;
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   padding: 10px 12px;
-  border-bottom: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border-bottom: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
 }
 
 .ntk-template-crud-list__table td {
   padding: 10px 12px;
-  color: var(--ntk-template-page-text, #334155);
-  border-bottom: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  border-bottom: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
 }
 
 .ntk-template-crud-list__row {
@@ -906,7 +906,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__row:hover {
-  background: color-mix(in srgb, var(--ntk-primary, #512bd4) 5%, white);
+  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 5%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-crud-list__column-check {
@@ -927,7 +927,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 
 .ntk-template-crud-list__cell--emphasis {
   font-weight: 600;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-crud-list__status {
@@ -938,29 +938,29 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-crud-list__status--primary,
 .ntk-template-crud-list__status--info {
-  background: color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 14%, white);
-  color: var(--semantic-info-primary, #3b82f6);
+  background: color-mix(in srgb, var(--semantic-info-primary, var(--semantic-info)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--semantic-info-primary, var(--semantic-info));
 }
 
 .ntk-template-crud-list__status--success {
-  background: color-mix(in srgb, var(--semantic-success-primary, #22c55e) 14%, white);
-  color: var(--semantic-success-primary, #22c55e);
+  background: color-mix(in srgb, var(--semantic-success-primary, var(--semantic-success)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--semantic-success-primary, var(--semantic-success));
 }
 
 .ntk-template-crud-list__status--warning {
-  background: color-mix(in srgb, var(--semantic-warning-primary, #f59e0b) 16%, white);
-  color: var(--semantic-warning-primary, #f59e0b);
+  background: color-mix(in srgb, var(--semantic-warning-primary, var(--semantic-warning)) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--semantic-warning-primary, var(--semantic-warning));
 }
 
 .ntk-template-crud-list__status--danger {
-  background: color-mix(in srgb, var(--semantic-error-primary, #ef4444) 14%, white);
-  color: var(--semantic-error-primary, #ef4444);
+  background: color-mix(in srgb, var(--semantic-error-primary, var(--semantic-error)) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--semantic-error-primary, var(--semantic-error));
 }
 
 .ntk-template-crud-list__row-actions,
@@ -973,10 +973,10 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 .ntk-template-crud-list__row-action {
   width: 28px;
   height: 28px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 7px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -984,7 +984,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__row-action:hover {
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
 }
 
 .ntk-template-crud-list__cards {
@@ -995,9 +995,9 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__card {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -1006,7 +1006,7 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 }
 
 .ntk-template-crud-list__card:hover {
-  box-shadow: var(--ntk-template-surface-shadow-hover, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--ntk-template-surface-shadow-hover, 0 4px 6px -1px color-mix(in srgb, var(--ntk-text-primary) 10%, transparent));
 }
 
 .ntk-template-crud-list__card-header {
@@ -1019,13 +1019,13 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
 .ntk-template-crud-list__card-title {
   margin: 0;
   font-size: 15px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-crud-list__card-subtitle {
   margin: 4px 0 0;
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-crud-list__card-fields {
@@ -1045,13 +1045,13 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-crud-list__card-field dd {
   margin: 0;
   font-size: 13px;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
   text-align: right;
 }
 
@@ -1066,8 +1066,8 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   border-radius: 999px;
   padding: 2px 8px;
   font-size: 11px;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 @media (max-width: 1024px) {

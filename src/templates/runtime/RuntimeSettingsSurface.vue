@@ -153,7 +153,7 @@ function submitForm(): void {
 <style scoped lang="scss">
 .ntk-template-runtime-settings {
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
 }
 
 .ntk-template-runtime-settings__hero {
@@ -162,22 +162,22 @@ function submitForm(): void {
   gap: 16px;
   margin-bottom: 16px;
   padding: 18px 20px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-runtime-settings__hero h1,
 .ntk-template-runtime-settings__section-header h2 {
   margin: 0;
   font-size: 20px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-runtime-settings__hero p,
 .ntk-template-runtime-settings__section-header p {
   margin: 6px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-runtime-settings__hero-actions {
@@ -196,9 +196,9 @@ function submitForm(): void {
 
 .ntk-template-runtime-settings__summary-card,
 .ntk-template-runtime-settings__card {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-runtime-settings__summary-card {
@@ -209,14 +209,14 @@ function submitForm(): void {
 }
 
 .ntk-template-runtime-settings__summary-card span {
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .ntk-template-runtime-settings__summary-card strong {
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
   font-size: 18px;
 }
 
@@ -246,16 +246,16 @@ function submitForm(): void {
 .ntk-template-runtime-settings__field span {
   font-size: 12px;
   font-weight: 600;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
 }
 
 .ntk-template-runtime-settings__field input {
   min-height: 42px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 10px;
   padding: 0 12px;
-  background: var(--ntk-template-page-row-bg, #f8fafc);
-  color: var(--ntk-template-page-title, #1e293b);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-runtime-settings__toggle {
@@ -265,18 +265,18 @@ function submitForm(): void {
   align-items: start;
   padding: 12px;
   border-radius: 10px;
-  background: var(--ntk-template-page-row-bg, #f8fafc);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   margin-bottom: 10px;
 }
 
 .ntk-template-runtime-settings__toggle strong {
   display: block;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-runtime-settings__toggle p {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 13px;
 }
 

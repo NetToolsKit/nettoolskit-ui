@@ -248,14 +248,26 @@ const loginPassword = ref('demo-password')
 
 <style scoped lang="scss">
 .ntk-reference-catalog-preview {
+  --ntk-reference-catalog-preview-shell-border: var(--ntk-reference-shell-chrome-border, var(--ntk-border-color));
+  --ntk-reference-catalog-preview-shell-bg: var(--ntk-reference-shell-chrome-bg, color-mix(in srgb, var(--ntk-bg-card) 90%, transparent));
+  --ntk-reference-catalog-preview-shell-shadow: var(--ntk-reference-shell-glow, 0 18px 48px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
+  --ntk-reference-catalog-preview-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-catalog-preview-muted: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  --ntk-reference-catalog-preview-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 12%, transparent));
+  --ntk-reference-catalog-preview-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary)));
+  --ntk-reference-catalog-preview-muted-badge-bg: var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary));
+  --ntk-reference-catalog-preview-surface-border: var(--ntk-reference-border, var(--ntk-border-color));
+  --ntk-reference-catalog-preview-surface-bg: var(--ntk-reference-panel-bg, var(--ntk-bg-card));
+  --ntk-reference-catalog-preview-surface-shadow: var(--ntk-shadow-md, 0 24px 48px color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
+
   display: flex;
   flex-direction: column;
   gap: 18px;
   padding: 22px;
-  border: 1px solid var(--ntk-reference-shell-chrome-border, rgba(148, 163, 184, 0.16));
+  border: 1px solid var(--ntk-reference-catalog-preview-shell-border);
   border-radius: 28px;
-  background: var(--ntk-reference-shell-chrome-bg, rgba(255, 255, 255, 0.9));
-  box-shadow: var(--ntk-reference-shell-glow, 0 18px 48px rgba(15, 23, 42, 0.08));
+  background: var(--ntk-reference-catalog-preview-shell-bg);
+  box-shadow: var(--ntk-reference-catalog-preview-shell-shadow);
 }
 
 .ntk-reference-catalog-preview__header {
@@ -271,17 +283,17 @@ const loginPassword = ref('demo-password')
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-reference-catalog-preview-muted);
 }
 
 .ntk-reference-catalog-preview__header h2 {
   margin: 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-reference-catalog-preview-text);
 }
 
 .ntk-reference-catalog-preview__subtitle {
   margin: 8px 0 0;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-reference-catalog-preview-muted);
   line-height: 1.6;
 }
 
@@ -297,8 +309,8 @@ const loginPassword = ref('demo-password')
   padding: 0 12px;
   display: inline-flex;
   align-items: center;
-  background: var(--ntk-reference-badge-bg, rgba(16, 185, 129, 0.12));
-  color: var(--ntk-reference-badge-text, #10b981);
+  background: var(--ntk-reference-catalog-preview-badge-bg);
+  color: var(--ntk-reference-catalog-preview-badge-text);
   font-size: 12px;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-weight: 500;
@@ -306,17 +318,17 @@ const loginPassword = ref('demo-password')
 }
 
 .ntk-reference-catalog-preview__badge--muted {
-  background: var(--ntk-reference-panel-muted-bg, #eef2ff);
-  color: var(--ntk-text-secondary, #64748b);
+  background: var(--ntk-reference-catalog-preview-muted-badge-bg);
+  color: var(--ntk-reference-catalog-preview-muted);
 }
 
 .ntk-reference-catalog-preview__surface {
   min-height: 560px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-catalog-preview-surface-border);
   border-radius: 24px;
   overflow: auto;
-  background: var(--ntk-reference-panel-bg, #ffffff);
-  box-shadow: var(--ntk-shadow-md, 0 24px 48px rgba(15, 23, 42, 0.12));
+  background: var(--ntk-reference-catalog-preview-surface-bg);
+  box-shadow: var(--ntk-reference-catalog-preview-surface-shadow);
 }
 
 .ntk-reference-catalog-preview__empty {
@@ -326,7 +338,7 @@ const loginPassword = ref('demo-password')
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-reference-catalog-preview-muted);
 }
 
 @media (max-width: 980px) {

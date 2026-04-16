@@ -118,13 +118,20 @@ const selectedReport = computed(() => {
   gap: 20px;
   padding: 24px;
   min-height: 100%;
-  background: var(--ntk-reference-page-bg, #eef4ff);
+  background: var(--ntk-reference-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary)));
 }
 
 .ntk-reference-manager__hero {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 24px;
-  background: var(--ntk-reference-hero-bg, linear-gradient(135deg, #ffffff 0%, #eef2ff 100%));
+  background: var(
+    --ntk-reference-hero-bg,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 96%, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)))) 0%,
+      color-mix(in srgb, var(--ntk-reference-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary))) 88%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-tertiary))) 100%
+    )
+  );
   padding: 24px;
   display: flex;
   justify-content: space-between;
@@ -137,27 +144,27 @@ const selectedReport = computed(() => {
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
 }
 
 .ntk-reference-manager__hero h1 {
   margin: 8px 0 0;
   font-size: clamp(28px, 4vw, 40px);
   line-height: 1.05;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
 }
 
 .ntk-reference-manager__subtitle {
   margin: 12px 0 0;
   max-width: 720px;
-  color: var(--ntk-text-secondary, #475569);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
 }
 
 .ntk-reference-manager__brand-card {
   min-width: 260px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 18px;
-  background: color-mix(in srgb, var(--ntk-reference-panel-bg, #ffffff) 82%, transparent);
+  background: color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 82%, transparent);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -168,8 +175,8 @@ const selectedReport = computed(() => {
   width: 54px;
   height: 54px;
   border-radius: 18px;
-  background: var(--ntk-reference-accent, #2563eb);
-  color: #ffffff;
+  background: var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)));
+  color: var(--ntk-text-on-accent, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -180,12 +187,12 @@ const selectedReport = computed(() => {
 
 .ntk-reference-manager__brand-card strong {
   display: block;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
 }
 
 .ntk-reference-manager__brand-card p {
   margin: 4px 0 0;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
   font-size: 13px;
 }
 
@@ -196,14 +203,14 @@ const selectedReport = computed(() => {
 }
 
 .ntk-reference-manager__stat {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 18px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
+  background: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
   padding: 18px;
 }
 
 .ntk-reference-manager__stat span {
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
   font-size: 12px;
 }
 
@@ -211,7 +218,7 @@ const selectedReport = computed(() => {
   display: block;
   margin-top: 10px;
   font-size: 28px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
 }
 
 .ntk-reference-manager__grid {

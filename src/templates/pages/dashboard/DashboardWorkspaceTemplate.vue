@@ -464,11 +464,21 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 
 <style scoped lang="scss">
 .ntk-template-dashboard-workspace {
+  --ntk-template-dashboard-workspace-bg: var(--ntk-template-page-bg, var(--ntk-bg-page, var(--ntk-bg-base)));
+  --ntk-template-dashboard-workspace-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-dashboard-workspace-border: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-dashboard-workspace-title: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-dashboard-workspace-subtitle: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-dashboard-workspace-row: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-dashboard-workspace-chip-border: var(--ntk-template-page-chip-border, var(--ntk-template-dashboard-workspace-border));
+  --ntk-template-dashboard-workspace-chip-bg: var(--ntk-template-page-chip-bg, var(--ntk-template-dashboard-workspace-row));
+  --ntk-template-dashboard-workspace-chip-text: var(--ntk-template-page-chip-text, var(--ntk-template-dashboard-workspace-subtitle));
+
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-dashboard-workspace-bg);
 }
 
 .ntk-template-dashboard-workspace__hero {
@@ -477,20 +487,20 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   gap: 10px;
   align-items: center;
   border-radius: var(--ntk-template-surface-radius, 12px);
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
+  background: var(--ntk-template-dashboard-workspace-surface);
   padding: 14px 16px;
 }
 
 .ntk-template-dashboard-workspace__title {
   margin: 0;
   font-size: 20px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-dashboard-workspace-title);
 }
 
 .ntk-template-dashboard-workspace__subtitle {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
 .ntk-template-dashboard-workspace__chips {
@@ -507,9 +517,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   min-height: 30px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid var(--ntk-template-page-chip-border, #e2e8f0);
-  background: var(--ntk-template-page-chip-bg, #f1f5f9);
-  color: var(--ntk-template-page-chip-text, #475569);
+  border: 1px solid var(--ntk-template-dashboard-workspace-chip-border);
+  background: var(--ntk-template-dashboard-workspace-chip-bg);
+  color: var(--ntk-template-dashboard-workspace-chip-text);
   font-size: 12px;
 }
 
@@ -526,8 +536,8 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   flex-wrap: wrap;
   gap: 8px;
   border-radius: var(--ntk-template-surface-radius, 12px);
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
+  background: var(--ntk-template-dashboard-workspace-surface);
   padding: 8px;
 }
 
@@ -537,10 +547,10 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
   border-radius: var(--ntk-template-form-control-radius, 8px);
-  background: var(--ntk-template-form-control-bg, #ffffff);
-  color: var(--ntk-template-form-icon-color, #64748b);
+  background: var(--ntk-template-form-control-bg, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--ntk-template-form-icon-color, var(--ntk-text-secondary));
   padding: 0 10px;
 }
 
@@ -548,7 +558,7 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   border: 0;
   background: transparent;
   outline: 0;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
   width: 100%;
   font-size: 13px;
 }
@@ -558,14 +568,14 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
+  background: var(--ntk-template-dashboard-workspace-surface);
 }
 
 .ntk-template-dashboard-workspace__filter {
   border: 0;
   background: transparent;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
   border-radius: 6px;
   min-height: 32px;
   padding: 4px 10px;
@@ -582,8 +592,8 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__filter--active {
-  background: var(--ntk-primary, #512bd4);
-  color: var(--ntk-text-on-primary, #ffffff);
+  background: var(--ntk-primary, var(--ntk-accent));
+  color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-primary)));
 }
 
 .ntk-template-dashboard-workspace__views {
@@ -594,22 +604,22 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__view {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
   border-radius: 8px;
   min-height: 34px;
   padding: 4px 10px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-dashboard-workspace-surface);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
   cursor: pointer;
 }
 
 .ntk-template-dashboard-workspace__view--active {
-  border-color: color-mix(in srgb, var(--ntk-primary, #512bd4) 45%, var(--ntk-template-page-border, #e2e8f0));
-  background: color-mix(in srgb, var(--ntk-primary, #512bd4) 14%, white);
-  color: var(--ntk-primary, #512bd4);
+  border-color: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 45%, var(--ntk-template-dashboard-workspace-border));
+  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 14%, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--ntk-primary, var(--ntk-accent));
 }
 
 .ntk-template-dashboard-workspace__metrics {
@@ -619,9 +629,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__metric {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-dashboard-workspace-surface);
   padding: 12px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -636,8 +646,8 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-dashboard-workspace-row);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
 .ntk-template-dashboard-workspace__metric-main {
@@ -650,38 +660,38 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 .ntk-template-dashboard-workspace__metric-main strong {
   font-size: 20px;
   line-height: 1.1;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-dashboard-workspace-title);
 }
 
 .ntk-template-dashboard-workspace__metric-main span {
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
 .ntk-template-dashboard-workspace__metric-delta {
   font-size: 11px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
 .ntk-template-dashboard-workspace__metric--primary .ntk-template-dashboard-workspace__metric-icon,
 .ntk-template-dashboard-workspace__metric--info .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 14%, white);
-  color: var(--semantic-info-primary, #3b82f6);
+  background: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 14%, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--semantic-info-primary, var(--ntk-info));
 }
 
 .ntk-template-dashboard-workspace__metric--success .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-success-primary, #22c55e) 14%, white);
-  color: var(--semantic-success-primary, #22c55e);
+  background: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 14%, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--semantic-success-primary, var(--ntk-success));
 }
 
 .ntk-template-dashboard-workspace__metric--warning .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-warning-primary, #f59e0b) 16%, white);
-  color: var(--semantic-warning-primary, #f59e0b);
+  background: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 16%, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--semantic-warning-primary, var(--ntk-warning));
 }
 
 .ntk-template-dashboard-workspace__metric--danger .ntk-template-dashboard-workspace__metric-icon {
-  background: color-mix(in srgb, var(--semantic-error-primary, #ef4444) 14%, white);
-  color: var(--semantic-error-primary, #ef4444);
+  background: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 14%, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--semantic-error-primary, var(--ntk-error));
 }
 
 .ntk-template-dashboard-workspace__panels {
@@ -691,20 +701,20 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__panel {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-dashboard-workspace-surface);
   padding: 12px;
   text-align: left;
   cursor: pointer;
 }
 
 .ntk-template-dashboard-workspace__panel:hover {
-  box-shadow: var(--ntk-template-surface-shadow-hover, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--ntk-template-surface-shadow-hover, 0 4px 6px -1px color-mix(in srgb, var(--ntk-text-primary) 10%, transparent));
 }
 
 .ntk-template-dashboard-workspace__panel:focus-visible {
-  outline: 2px solid var(--ntk-border-focus, #512bd4);
+  outline: 2px solid var(--ntk-border-focus, var(--ntk-primary, var(--ntk-accent)));
   outline-offset: 2px;
 }
 
@@ -712,7 +722,7 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
   font-size: 12px;
 }
 
@@ -721,12 +731,12 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   margin-top: 8px;
   font-size: 24px;
   line-height: 1.1;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-dashboard-workspace-title);
 }
 
 .ntk-template-dashboard-workspace__panel-description {
   margin: 8px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
   font-size: 12px;
 }
 
@@ -737,9 +747,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__lane {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-dashboard-workspace-surface);
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -753,22 +763,22 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   justify-content: space-between;
   gap: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border-bottom: 1px solid var(--ntk-template-dashboard-workspace-border);
 }
 
 .ntk-template-dashboard-workspace__lane-header h2 {
   margin: 0;
   font-size: 14px;
   font-weight: 700;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-dashboard-workspace-title);
 }
 
 .ntk-template-dashboard-workspace__lane-header span {
   min-width: 24px;
   min-height: 24px;
   border-radius: 999px;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-dashboard-workspace-row);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -779,8 +789,8 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 .ntk-template-dashboard-workspace__lane-empty {
   margin-top: 6px;
   border-radius: 8px;
-  border: 1px dashed var(--ntk-template-page-border, #e2e8f0);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  border: 1px dashed var(--ntk-template-dashboard-workspace-border);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
   min-height: 96px;
   padding: 10px;
   display: flex;
@@ -791,9 +801,9 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__lane-item {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-workspace-border);
   border-radius: 8px;
-  background: var(--ntk-template-page-row-bg, #f8fafc);
+  background: var(--ntk-template-dashboard-workspace-row);
   text-align: left;
   padding: 10px;
   display: flex;
@@ -804,18 +814,18 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
 }
 
 .ntk-template-dashboard-workspace__lane-item:hover {
-  border-color: color-mix(in srgb, var(--ntk-primary, #512bd4) 36%, var(--ntk-template-page-border, #e2e8f0));
+  border-color: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 36%, var(--ntk-template-dashboard-workspace-border));
 }
 
 .ntk-template-dashboard-workspace__lane-item-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-dashboard-workspace-title);
 }
 
 .ntk-template-dashboard-workspace__lane-item-subtitle {
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
 .ntk-template-dashboard-workspace__lane-item-meta {
@@ -830,13 +840,13 @@ function resolveLaneCount(lane: TemplateDashboardWorkspaceLane): number {
   border-radius: 999px;
   padding: 2px 8px;
   font-size: 11px;
-  background: color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 14%, white);
-  color: var(--semantic-info-primary, #3b82f6);
+  background: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 14%, var(--ntk-template-dashboard-workspace-surface));
+  color: var(--semantic-info-primary, var(--ntk-info));
 }
 
 .ntk-template-dashboard-workspace__lane-assignee {
   font-size: 11px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-workspace-subtitle);
 }
 
 @media (max-width: 1024px) {

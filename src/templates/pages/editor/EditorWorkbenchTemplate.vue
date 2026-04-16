@@ -127,7 +127,7 @@
           <q-btn
             no-caps
             unelevated
-            color="primary"
+            class="ntk-template-editor-workbench__preview-button"
             icon="visibility"
             :label="previewLabel"
             :aria-label="previewAriaLabel"
@@ -725,19 +725,19 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  background: var(--ntk-template-editor-bg, #eef0f4);
-  color: var(--ntk-template-editor-text, #1f2937);
-  border: 1px solid var(--ntk-template-editor-border, #d1d5db);
+  background: var(--ntk-template-editor-bg, var(--ntk-bg-secondary));
+  color: var(--ntk-template-editor-text, var(--ntk-text-primary));
+  border: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-radius, 8px);
-  box-shadow: var(--ntk-template-editor-shadow, 0 4px 20px rgba(15, 23, 42, 0.08));
+  box-shadow: var(--ntk-template-editor-shadow, 0 4px 20px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
   overflow: hidden;
 }
 
 .ntk-template-editor-workbench__topbar {
   min-height: 56px;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--ntk-template-editor-border, #d1d5db);
-  background: var(--ntk-template-editor-toolbar-bg, #f8f9fb);
+  border-bottom: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-toolbar-bg, var(--ntk-bg-card));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -753,7 +753,7 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__document p {
   margin: 2px 0 0;
   font-size: 12px;
-  color: var(--ntk-template-editor-muted-text, #6b7280);
+  color: var(--ntk-template-editor-muted-text, var(--ntk-text-secondary));
 }
 
 .ntk-template-editor-workbench__topbar-actions,
@@ -766,8 +766,8 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__commandbar {
   min-height: 46px;
   padding: 6px 10px;
-  border-bottom: 1px solid var(--ntk-template-editor-border, #d1d5db);
-  background: var(--ntk-template-editor-commandbar-bg, #ffffff);
+  border-bottom: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-commandbar-bg, var(--ntk-bg-card));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -782,10 +782,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__toolbar-action {
   min-height: 30px;
   min-width: 30px;
-  border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-control-radius, 6px);
-  background: var(--ntk-template-editor-button-bg, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -801,7 +801,7 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__toolbar-action:hover:not(:disabled),
 .ntk-template-editor-workbench__menu-pill:hover,
 .ntk-template-editor-workbench__zoom-step:hover {
-  background: var(--ntk-template-editor-button-hover-bg, #f3f4f6);
+  background: var(--ntk-template-editor-button-hover-bg, var(--ntk-bg-tertiary));
 }
 
 .ntk-template-editor-workbench__toolbar-action:disabled,
@@ -812,10 +812,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
 .ntk-template-editor-workbench__menu-pill {
   min-height: 30px;
-  border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-control-radius, 6px);
-  background: var(--ntk-template-editor-button-bg, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -827,18 +827,18 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-control-radius, 6px);
   overflow: hidden;
-  background: var(--ntk-template-editor-button-bg, #ffffff);
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-editor-workbench__zoom-step {
   height: 30px;
   width: 30px;
   border: 0;
-  background: var(--ntk-template-editor-button-bg, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -848,10 +848,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__zoom-select {
   height: 30px;
   border: 0;
-  border-left: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
-  border-right: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
-  background: var(--ntk-template-editor-button-bg, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  border-left: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
+  border-right: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   font-size: 12px;
   padding: 0 6px;
   outline: none;
@@ -870,16 +870,16 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 }
 
 .ntk-template-editor-workbench__widgets-panel {
-  border-right: 1px solid var(--ntk-template-editor-border, #d1d5db);
-  background: var(--ntk-template-editor-panel-bg, #f3f4f6);
+  border-right: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-panel-bg, var(--ntk-bg-tertiary));
   padding: 8px;
   overflow: auto;
 }
 
 .ntk-template-editor-workbench__widget-search {
-  border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-control-radius, 6px);
-  background: var(--ntk-template-editor-surface, #ffffff);
+  background: var(--ntk-template-editor-surface, var(--ntk-bg-card));
   min-height: 32px;
   display: inline-flex;
   align-items: center;
@@ -894,20 +894,20 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   background: transparent;
   width: 100%;
   font-size: 12px;
-  color: var(--ntk-template-editor-text, #1f2937);
+  color: var(--ntk-template-editor-text, var(--ntk-text-primary));
 }
 
 .ntk-template-editor-workbench__widget-section {
   margin-top: 10px;
-  border: 1px solid var(--ntk-template-editor-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-radius, 8px);
-  background: var(--ntk-template-editor-surface, #ffffff);
+  background: var(--ntk-template-editor-surface, var(--ntk-bg-card));
 }
 
 .ntk-template-editor-workbench__widget-section-header {
   padding: 6px 8px;
   font-size: 12px;
-  border-bottom: 1px solid var(--ntk-template-editor-border-soft, #e5e7eb);
+  border-bottom: 1px solid var(--ntk-template-editor-border-soft, var(--ntk-border-color));
 }
 
 .ntk-template-editor-workbench__widget-grid {
@@ -918,10 +918,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__widget-item {
   min-height: 62px;
   border: 0;
-  border-right: 1px solid var(--ntk-template-editor-border-soft, #e5e7eb);
-  border-bottom: 1px solid var(--ntk-template-editor-border-soft, #e5e7eb);
-  background: var(--ntk-template-editor-surface, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  border-right: 1px solid var(--ntk-template-editor-border-soft, var(--ntk-border-color));
+  border-bottom: 1px solid var(--ntk-template-editor-border-soft, var(--ntk-border-color));
+  background: var(--ntk-template-editor-surface, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -936,21 +936,21 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 }
 
 .ntk-template-editor-workbench__widget-item--active {
-  background: var(--ntk-template-editor-accent-soft, #dbeafe);
-  color: var(--ntk-template-editor-accent, #1e3a8a);
+  background: var(--ntk-template-editor-accent-soft, color-mix(in srgb, var(--ntk-primary) 16%, var(--ntk-bg-card)));
+  color: var(--ntk-template-editor-accent, var(--ntk-primary));
 }
 
 .ntk-template-editor-workbench__canvas-shell {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: var(--ntk-template-editor-shell-bg, #e5e7eb);
+  background: var(--ntk-template-editor-shell-bg, var(--ntk-bg-tertiary));
 }
 
 .ntk-template-editor-workbench__ruler-top {
   min-height: 24px;
-  border-bottom: 1px solid var(--ntk-template-editor-border, #cbd5e1);
-  background: var(--ntk-template-editor-ruler-bg, #f8fafc);
+  border-bottom: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-ruler-bg, var(--ntk-bg-secondary));
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -959,10 +959,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__ruler-mark {
   width: 50px;
   flex: 0 0 50px;
-  border-right: 1px solid var(--ntk-template-editor-border-soft, #e2e8f0);
+  border-right: 1px solid var(--ntk-template-editor-border-soft, var(--ntk-border-color));
   padding-left: 4px;
   font-size: 10px;
-  color: var(--ntk-template-editor-muted-text, #64748b);
+  color: var(--ntk-template-editor-muted-text, var(--ntk-text-lighter));
 }
 
 .ntk-template-editor-workbench__canvas-body {
@@ -973,8 +973,8 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 }
 
 .ntk-template-editor-workbench__ruler-left {
-  border-right: 1px solid var(--ntk-template-editor-border, #cbd5e1);
-  background: var(--ntk-template-editor-ruler-bg, #f8fafc);
+  border-right: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-ruler-bg, var(--ntk-bg-secondary));
   display: flex;
   flex-direction: column;
 }
@@ -982,7 +982,7 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__ruler-mark--vertical {
   width: auto;
   min-height: 50px;
-  border-bottom: 1px solid var(--ntk-template-editor-border-soft, #e2e8f0);
+  border-bottom: 1px solid var(--ntk-template-editor-border-soft, var(--ntk-border-color));
   border-right: 0;
   transform: rotate(-90deg);
   transform-origin: left top;
@@ -994,13 +994,13 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   position: relative;
   min-height: 560px;
   overflow: auto;
-  background: var(--ntk-template-editor-stage-bg, #f9fafb);
+  background: var(--ntk-template-editor-stage-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-editor-workbench__canvas-stage--grid {
   background-image:
-    linear-gradient(var(--ntk-template-editor-stage-grid, rgba(148, 163, 184, 0.2)) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ntk-template-editor-stage-grid, rgba(148, 163, 184, 0.2)) 1px, transparent 1px);
+    linear-gradient(var(--ntk-template-editor-stage-grid, color-mix(in srgb, var(--ntk-text-secondary) 20%, transparent)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ntk-template-editor-stage-grid, color-mix(in srgb, var(--ntk-text-secondary) 20%, transparent)) 1px, transparent 1px);
   background-size: 20px 20px, 20px 20px;
 }
 
@@ -1009,17 +1009,17 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   top: 0;
   z-index: 3;
   min-height: 38px;
-  background: var(--ntk-template-editor-ruler-overlay-bg, rgba(248, 250, 252, 0.9));
-  border-bottom: 1px solid var(--ntk-template-editor-border, #cbd5e1);
+  background: var(--ntk-template-editor-ruler-overlay-bg, color-mix(in srgb, var(--ntk-bg-card) 90%, transparent));
+  border-bottom: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
   display: grid;
   grid-template-columns: repeat(7, minmax(120px, 1fr));
 }
 
 .ntk-template-editor-workbench__canvas-header-cell {
-  border-right: 1px solid var(--ntk-template-editor-border, #d1d5db);
+  border-right: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
   font-size: 11px;
   font-weight: 700;
-  color: var(--ntk-template-editor-button-text, #374151);
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   padding: 0 8px;
@@ -1027,9 +1027,9 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
 .ntk-template-editor-workbench__canvas-object {
   position: absolute;
-  border: 1px solid var(--ntk-template-editor-canvas-object-border, #9ca3af);
-  background: var(--ntk-template-editor-canvas-object-bg, rgba(255, 255, 255, 0.92));
-  color: var(--ntk-template-editor-text, #111827);
+  border: 1px solid var(--ntk-template-editor-canvas-object-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-canvas-object-bg, color-mix(in srgb, var(--ntk-bg-card) 92%, transparent));
+  color: var(--ntk-template-editor-text, var(--ntk-text-primary));
   border-radius: calc(var(--ntk-template-editor-control-radius, 6px) - 2px);
   padding: 8px 10px;
   display: flex;
@@ -1037,19 +1037,19 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   gap: 4px;
   text-align: left;
   cursor: pointer;
-  box-shadow: var(--ntk-template-editor-canvas-object-shadow, 0 1px 2px rgba(15, 23, 42, 0.06));
+  box-shadow: var(--ntk-template-editor-canvas-object-shadow, 0 1px 2px color-mix(in srgb, var(--ntk-text-primary) 6%, transparent));
 }
 
 .ntk-template-editor-workbench__canvas-object--primary {
-  border-color: var(--ntk-template-editor-accent, #2563eb);
+  border-color: var(--ntk-template-editor-accent, var(--ntk-primary));
 }
 
 .ntk-template-editor-workbench__canvas-object--info {
-  border-color: var(--ntk-template-editor-info, #0284c7);
+  border-color: var(--ntk-template-editor-info, var(--semantic-info-primary, var(--ntk-info)));
 }
 
 .ntk-template-editor-workbench__canvas-object--warning {
-  border-color: var(--ntk-template-editor-warning, #d97706);
+  border-color: var(--ntk-template-editor-warning, var(--semantic-warning-primary, var(--ntk-warning)));
 }
 
 .ntk-template-editor-workbench__canvas-object-title {
@@ -1063,12 +1063,12 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
 .ntk-template-editor-workbench__canvas-object small {
   font-size: 11px;
-  color: var(--ntk-template-editor-muted-text, #6b7280);
+  color: var(--ntk-template-editor-muted-text, var(--ntk-text-secondary));
 }
 
 .ntk-template-editor-workbench__right-rail {
-  border-left: 1px solid var(--ntk-template-editor-border, #d1d5db);
-  background: var(--ntk-template-editor-panel-bg, #f3f4f6);
+  border-left: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-panel-bg, var(--ntk-bg-tertiary));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1079,10 +1079,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__rail-action {
   height: 30px;
   width: 30px;
-  border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-control-radius, 6px);
-  background: var(--ntk-template-editor-button-bg, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1091,8 +1091,8 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
 .ntk-template-editor-workbench__statusbar {
   min-height: 34px;
-  border-top: 1px solid var(--ntk-template-editor-border, #d1d5db);
-  background: var(--ntk-template-editor-statusbar-bg, #f8fafc);
+  border-top: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
+  background: var(--ntk-template-editor-statusbar-bg, var(--ntk-bg-secondary));
   padding: 4px 8px;
   display: flex;
   align-items: center;
@@ -1108,10 +1108,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
 .ntk-template-editor-workbench__status-segment {
   min-height: 24px;
-  border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+  border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   border-radius: var(--ntk-template-editor-control-radius, 6px);
-  background: var(--ntk-template-editor-button-bg, #ffffff);
-  color: var(--ntk-template-editor-button-text, #374151);
+  background: var(--ntk-template-editor-button-bg, var(--ntk-bg-card));
+  color: var(--ntk-template-editor-button-text, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1125,18 +1125,18 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 }
 
 .ntk-template-editor-workbench__status-segment--warning {
-  border-color: var(--ntk-template-editor-warning, #f59e0b);
-  color: var(--ntk-template-editor-warning-text, #92400e);
+  border-color: var(--ntk-template-editor-warning, var(--semantic-warning-primary, var(--ntk-warning)));
+  color: var(--ntk-template-editor-warning-text, color-mix(in srgb, var(--ntk-template-editor-warning, var(--semantic-warning-primary, var(--ntk-warning))) 58%, var(--ntk-text-primary)));
 }
 
 .ntk-template-editor-workbench__status-segment--info {
-  border-color: var(--ntk-template-editor-info, #0ea5e9);
-  color: var(--ntk-template-editor-info-text, #0c4a6e);
+  border-color: var(--ntk-template-editor-info, var(--semantic-info-primary, var(--ntk-info)));
+  color: var(--ntk-template-editor-info-text, color-mix(in srgb, var(--ntk-template-editor-info, var(--semantic-info-primary, var(--ntk-info))) 58%, var(--ntk-text-primary)));
 }
 
 .ntk-template-editor-workbench__status-segment--success {
-  border-color: var(--ntk-template-editor-success, #22c55e);
-  color: var(--ntk-template-editor-success-text, #14532d);
+  border-color: var(--ntk-template-editor-success, var(--semantic-success-primary, var(--ntk-success)));
+  color: var(--ntk-template-editor-success-text, color-mix(in srgb, var(--ntk-template-editor-success, var(--semantic-success-primary, var(--ntk-success))) 58%, var(--ntk-text-primary)));
 }
 
 @media (max-width: 1260px) {
@@ -1164,12 +1164,12 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
   .ntk-template-editor-workbench__widgets-panel {
     border-right: 0;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: 1px solid var(--ntk-border-color);
   }
 
   .ntk-template-editor-workbench__right-rail {
     border-left: 0;
-    border-top: 1px solid #d1d5db;
+    border-top: 1px solid var(--ntk-border-color);
     flex-direction: row;
     justify-content: center;
   }
@@ -1184,11 +1184,11 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   min-height: 300px;
   padding: 40px 24px;
   gap: 12px;
-  color: var(--ntk-template-editor-canvas-text, #374151);
+  color: var(--ntk-template-editor-canvas-text, var(--ntk-text-primary));
 }
 
 .ntk-template-editor-workbench__tab-placeholder-icon {
-  color: var(--ntk-template-editor-canvas-text, #94a3b8);
+  color: var(--ntk-template-editor-canvas-text-muted, var(--ntk-text-lighter));
   opacity: 0.5;
 }
 
@@ -1196,12 +1196,12 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   font-size: 16px;
   font-weight: 600;
   margin: 0;
-  color: var(--ntk-template-editor-canvas-text, #374151);
+  color: var(--ntk-template-editor-canvas-text, var(--ntk-text-primary));
 }
 
 .ntk-template-editor-workbench__tab-placeholder-desc {
   font-size: 13px;
-  color: var(--ntk-template-editor-canvas-text, #94a3b8);
+  color: var(--ntk-template-editor-canvas-text-muted, var(--ntk-text-lighter));
   margin: 0;
   text-align: center;
   max-width: 320px;
@@ -1217,23 +1217,23 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   td {
     padding: 8px 12px;
     text-align: left;
-    border: 1px solid var(--ntk-template-editor-button-border, #d1d5db);
+    border: 1px solid var(--ntk-template-editor-button-border, var(--ntk-border-color));
   }
 
   th {
-    background: var(--ntk-template-editor-panel-bg, #f3f4f6);
+    background: var(--ntk-template-editor-panel-bg, var(--ntk-bg-tertiary));
     font-weight: 600;
     font-size: 12px;
-    color: var(--ntk-template-editor-canvas-text, #374151);
+    color: var(--ntk-template-editor-canvas-text, var(--ntk-text-primary));
   }
 
   td {
-    background: var(--ntk-template-editor-canvas-bg, #ffffff);
-    color: var(--ntk-template-editor-canvas-text, #374151);
+    background: var(--ntk-template-editor-canvas-bg, var(--ntk-bg-card));
+    color: var(--ntk-template-editor-canvas-text, var(--ntk-text-primary));
   }
 
   tr:nth-child(even) td {
-    background: var(--ntk-template-editor-panel-bg, #f9fafb);
+    background: var(--ntk-template-editor-panel-bg, var(--ntk-bg-secondary));
   }
 }
 
@@ -1252,24 +1252,24 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   display: flex;
   align-items: flex-start;
   padding: 6px 10px;
-  border-bottom: 1px dashed var(--ntk-template-editor-stage-grid, rgba(148, 163, 184, 0.35));
+  border-bottom: 1px dashed var(--ntk-template-editor-stage-grid, color-mix(in srgb, var(--ntk-text-secondary) 35%, transparent));
 }
 
 .ntk-template-editor-workbench__document-region--header {
   height: 180px;
   flex-shrink: 0;
-  background: rgba(224, 242, 254, 0.18);
+  background: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, transparent);
 }
 
 .ntk-template-editor-workbench__document-region--body {
   flex: 1;
-  background: rgba(240, 253, 244, 0.18);
+  background: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 18%, transparent);
 }
 
 .ntk-template-editor-workbench__document-region--footer {
   height: 100px;
   flex-shrink: 0;
-  background: rgba(254, 249, 195, 0.18);
+  background: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 18%, transparent);
   border-bottom: none;
 }
 
@@ -1278,14 +1278,14 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ntk-template-editor-muted-text, #94a3b8);
+  color: var(--ntk-template-editor-muted-text, var(--ntk-text-lighter));
   opacity: 0.7;
 }
 
 /* ── Preview mode ──────────────────────────────────────────────────────── */
 
 .ntk-template-editor-workbench__canvas-stage--preview {
-  background: #ffffff;
+  background: var(--ntk-bg-card);
 }
 
 .ntk-template-editor-workbench__canvas-stage--preview
@@ -1304,5 +1304,10 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__canvas-stage--preview
   .ntk-template-editor-workbench__document-regions {
   opacity: 0.6;
+}
+
+.ntk-template-editor-workbench__preview-button {
+  background: var(--ntk-template-editor-preview-button-bg, var(--ntk-primary));
+  color: var(--ntk-template-editor-preview-button-text, var(--ntk-text-on-primary));
 }
 </style>

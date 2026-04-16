@@ -111,9 +111,9 @@ function handleSecondaryActionClick(): void {
   padding: 18px;
   background: var(
     --ntk-template-not-found-bg,
-    radial-gradient(circle at top, #0f172a 0%, #1e3a8a 45%, #172554 100%)
+    radial-gradient(circle at top, var(--ntk-primary-gradient-start, var(--ntk-accent)) 0%, var(--ntk-primary-gradient-end, var(--ntk-accent-hover, var(--ntk-accent))) 100%)
   );
-  color: var(--ntk-template-not-found-text, #ffffff);
+  color: var(--ntk-template-not-found-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
 }
 
 .ntk-template-not-found__container {
@@ -121,8 +121,8 @@ function handleSecondaryActionClick(): void {
   text-align: center;
   padding: 28px 24px;
   border-radius: 18px;
-  background: var(--ntk-template-not-found-card-bg, rgba(15, 23, 42, 0.6));
-  border: 1px solid var(--ntk-template-not-found-border, rgba(148, 163, 184, 0.35));
+  background: var(--ntk-template-not-found-card-bg, color-mix(in srgb, var(--ntk-text-primary) 60%, transparent));
+  border: 1px solid var(--ntk-template-not-found-border, color-mix(in srgb, var(--ntk-border-color) 35%, transparent));
   backdrop-filter: blur(4px);
 }
 
@@ -131,8 +131,8 @@ function handleSecondaryActionClick(): void {
   line-height: 0.85;
   font-weight: 800;
   letter-spacing: 2px;
-  color: var(--ntk-template-not-found-code-color, #93c5fd);
-  text-shadow: 0 6px 16px var(--ntk-template-not-found-code-shadow, rgba(15, 23, 42, 0.35));
+  color: var(--ntk-template-not-found-code-color, var(--semantic-info-primary, var(--ntk-info)));
+  text-shadow: 0 6px 16px var(--ntk-template-not-found-code-shadow, color-mix(in srgb, var(--ntk-text-primary) 35%, transparent));
 }
 
 .ntk-template-not-found__title {
@@ -145,7 +145,7 @@ function handleSecondaryActionClick(): void {
   margin: 10px auto 0;
   max-width: 500px;
   font-size: 15px;
-  color: var(--ntk-template-not-found-subtitle, #e2e8f0);
+  color: var(--ntk-template-not-found-subtitle, color-mix(in srgb, var(--ntk-template-not-found-text) 82%, transparent));
 }
 
 .ntk-template-not-found__actions {

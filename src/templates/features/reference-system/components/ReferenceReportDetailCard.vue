@@ -102,11 +102,11 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .ntk-reference-detail-card {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 20px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
+  background: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
   padding: 20px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--ntk-text-primary, var(--ntk-text-body)) 5%, transparent);
 }
 
 .ntk-reference-detail-card__header {
@@ -122,16 +122,16 @@ const emit = defineEmits<{
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
 }
 
 .ntk-reference-detail-card__header h2 {
   margin: 8px 0 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
 }
 
 .ntk-reference-detail-card__description {
-  color: var(--ntk-text-secondary, #475569);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
 }
 
 .ntk-reference-detail-card__meta {
@@ -145,12 +145,12 @@ const emit = defineEmits<{
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: color-mix(in srgb, var(--ntk-text-secondary, #64748b) 76%, transparent);
+  color: color-mix(in srgb, var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body))) 76%, transparent);
 }
 
 .ntk-reference-detail-card__meta dd {
   margin: 6px 0 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
   font-weight: 600;
 }
 
@@ -164,8 +164,8 @@ const emit = defineEmits<{
 .ntk-reference-detail-card__tag {
   padding: 6px 10px;
   border-radius: 999px;
-  background: var(--ntk-reference-badge-bg, #eff6ff);
-  color: var(--ntk-reference-badge-text, #1d4ed8);
+  background: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 88%, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)))));
+  color: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))));
   font-size: 12px;
   font-weight: 700;
 }
@@ -177,9 +177,9 @@ const emit = defineEmits<{
 }
 
 .ntk-reference-detail-card__action {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 16px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg, color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 92%, var(--ntk-reference-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary)))));
   padding: 16px;
   text-align: left;
   cursor: pointer;
@@ -189,13 +189,13 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
 }
 
 .ntk-reference-detail-card__action span {
   display: block;
   margin-top: 8px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
   font-size: 13px;
 }
 

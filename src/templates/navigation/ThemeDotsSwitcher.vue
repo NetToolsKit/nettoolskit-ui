@@ -34,6 +34,10 @@ const { activeTheme, themeOptions, setTheme } = useThemeSwitcher()
 }
 
 .ntk-template-theme-dots__dot {
+  --ntk-template-theme-dot-ring: color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 92%, transparent);
+  --ntk-template-theme-dot-active-border: var(--ntk-text-heading, var(--ntk-text-primary));
+  --ntk-template-theme-dot-focus: var(--ntk-accent, var(--ntk-primary));
+
   width: 18px;
   height: 18px;
   border-radius: 999px;
@@ -45,7 +49,7 @@ const { activeTheme, themeOptions, setTheme } = useThemeSwitcher()
     box-shadow 0.2s ease;
   padding: 0;
   outline: none;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ntk-template-page-border, #e2e8f0) 92%, transparent);
+  box-shadow: 0 0 0 1px var(--ntk-template-theme-dot-ring);
 }
 
 .ntk-template-theme-dots__dot:hover {
@@ -53,12 +57,12 @@ const { activeTheme, themeOptions, setTheme } = useThemeSwitcher()
 }
 
 .ntk-template-theme-dots__dot--active {
-  border-color: var(--ntk-text-heading, #0f172a);
+  border-color: var(--ntk-template-theme-dot-active-border);
   transform: scale(1.08);
 }
 
 .ntk-template-theme-dots__dot:focus-visible {
-  outline: 2px solid var(--ntk-accent, #0f766e);
+  outline: 2px solid var(--ntk-template-theme-dot-focus);
   outline-offset: 2px;
 }
 </style>

@@ -47,9 +47,9 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .ntk-reference-tabs-bar {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 18px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
+  background: var(--ntk-reference-panel-bg);
   padding: 10px 14px;
   display: flex;
   align-items: center;
@@ -65,9 +65,9 @@ const emit = defineEmits<{
 
 .ntk-reference-tabs-bar__tab {
   min-width: 140px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 14px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg);
   text-align: left;
   padding: 10px 12px;
   cursor: pointer;
@@ -75,34 +75,34 @@ const emit = defineEmits<{
 
 .ntk-reference-tabs-bar__tab span {
   display: block;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
   font-weight: 700;
 }
 
 .ntk-reference-tabs-bar__tab small {
   display: block;
   margin-top: 4px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-tabs-bar__tab--active {
-  border-color: var(--ntk-reference-accent, #2563eb);
-  background: var(--ntk-reference-accent-soft, rgba(37, 99, 235, 0.12));
+  border-color: var(--ntk-reference-accent);
+  background: var(--ntk-reference-accent-soft);
 }
 
 .ntk-reference-tabs-bar__meta {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
   font-size: 13px;
 }
 
 .ntk-reference-tabs-bar__preset-badge {
   padding: 6px 10px;
   border-radius: 999px;
-  background: var(--ntk-reference-badge-bg, #eff6ff);
-  color: var(--ntk-reference-badge-text, #1d4ed8);
+  background: var(--ntk-reference-badge-bg);
+  color: var(--ntk-reference-badge-text);
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-weight: 500;
 }

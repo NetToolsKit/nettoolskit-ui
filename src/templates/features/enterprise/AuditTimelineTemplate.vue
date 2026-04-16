@@ -232,7 +232,7 @@ function setFilter(filterId: string): void {
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-page-bg);
 }
 
 .ntk-template-audit-timeline__hero {
@@ -240,9 +240,9 @@ function setFilter(filterId: string): void {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg);
   padding: 14px 16px;
 }
 
@@ -253,7 +253,7 @@ function setFilter(filterId: string): void {
 
 .ntk-template-audit-timeline__hero p {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
 }
 
 .ntk-template-audit-timeline__hero-actions {
@@ -267,22 +267,22 @@ function setFilter(filterId: string): void {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg);
   padding: 8px;
 }
 
 .ntk-template-audit-timeline__search {
   width: min(320px, 100%);
   min-height: 42px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border);
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 0 10px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
 }
 
 .ntk-template-audit-timeline__search input {
@@ -296,7 +296,7 @@ function setFilter(filterId: string): void {
   display: inline-flex;
   gap: 4px;
   padding: 4px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border);
   border-radius: 8px;
 }
 
@@ -306,7 +306,7 @@ function setFilter(filterId: string): void {
   border-radius: 6px;
   min-height: 32px;
   padding: 4px 10px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -314,8 +314,8 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-audit-timeline__filter--active {
-  background: var(--ntk-primary, #512bd4);
-  color: var(--ntk-text-on-primary, #ffffff);
+  background: var(--ntk-primary);
+  color: var(--ntk-text-on-primary);
 }
 
 .ntk-template-audit-timeline__timeline {
@@ -324,9 +324,9 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-audit-timeline__event {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg);
   padding: 10px;
   display: grid;
   grid-template-columns: 4px minmax(0, 1fr);
@@ -335,34 +335,34 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-audit-timeline__event:hover {
-  box-shadow: var(--ntk-template-surface-shadow-hover, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--ntk-template-surface-shadow-hover);
 }
 
 .ntk-template-audit-timeline__event:focus-visible {
-  outline: 2px solid var(--ntk-border-focus, #512bd4);
+  outline: 2px solid var(--ntk-border-focus);
   outline-offset: 2px;
 }
 
 .ntk-template-audit-timeline__event-rail {
   border-radius: 999px;
-  background: var(--ntk-template-page-border, #e2e8f0);
+  background: var(--ntk-template-page-border);
 }
 
 .ntk-template-audit-timeline__event--info .ntk-template-audit-timeline__event-rail,
 .ntk-template-audit-timeline__event--primary .ntk-template-audit-timeline__event-rail {
-  background: var(--semantic-info-primary, #3b82f6);
+  background: var(--semantic-info-primary);
 }
 
 .ntk-template-audit-timeline__event--success .ntk-template-audit-timeline__event-rail {
-  background: var(--semantic-success-primary, #22c55e);
+  background: var(--semantic-success-primary);
 }
 
 .ntk-template-audit-timeline__event--warning .ntk-template-audit-timeline__event-rail {
-  background: var(--semantic-warning-primary, #f59e0b);
+  background: var(--semantic-warning-primary);
 }
 
 .ntk-template-audit-timeline__event--danger .ntk-template-audit-timeline__event-rail {
-  background: var(--semantic-error-primary, #ef4444);
+  background: var(--semantic-error-primary);
 }
 
 .ntk-template-audit-timeline__event-main header {
@@ -373,16 +373,16 @@ function setFilter(filterId: string): void {
 }
 
 .ntk-template-audit-timeline__event-main strong {
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title);
 }
 
 .ntk-template-audit-timeline__event-main small {
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
 }
 
 .ntk-template-audit-timeline__event-main p {
   margin: 6px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
 }
 
 .ntk-template-audit-timeline__event-meta {
@@ -391,12 +391,12 @@ function setFilter(filterId: string): void {
   flex-wrap: wrap;
   gap: 10px;
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
 }
 
 .ntk-template-audit-timeline__empty {
   min-height: 220px;
-  border: 1px dashed var(--ntk-template-page-border, #e2e8f0);
+  border: 1px dashed var(--ntk-template-page-border);
   border-radius: 12px;
   text-align: center;
   display: flex;
@@ -404,12 +404,12 @@ function setFilter(filterId: string): void {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle);
 }
 
 .ntk-template-audit-timeline__empty h2 {
   margin: 0;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title);
 }
 
 .ntk-template-audit-timeline__empty p {

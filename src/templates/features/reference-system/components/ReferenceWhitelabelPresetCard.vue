@@ -42,17 +42,17 @@ const swatches = computed(() => {
     {
       id: 'accent',
       label: 'Accent',
-      background: props.preset.palette.accent,
+      background: 'var(--ntk-accent)',
     },
     {
       id: 'drawer',
       label: 'Drawer',
-      background: `linear-gradient(180deg, ${props.preset.palette.secondary} 0%, ${props.preset.palette.primaryDark} 100%)`,
+      background: 'linear-gradient(180deg, var(--ntk-secondary) 0%, var(--ntk-primary-dark) 100%)',
     },
     {
       id: 'stage',
       label: 'Stage',
-      background: props.preset.palette.surfaceAlt,
+      background: 'var(--ntk-bg-tertiary)',
     },
   ]
 })
@@ -60,11 +60,11 @@ const swatches = computed(() => {
 
 <style scoped lang="scss">
 .ntk-reference-preset-card {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 20px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
+  background: var(--ntk-reference-panel-bg);
   padding: 20px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--ntk-reference-shell-glow);
 }
 
 .ntk-reference-preset-card__label {
@@ -73,16 +73,16 @@ const swatches = computed(() => {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-preset-card h3 {
   margin: 8px 0 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
 }
 
 .ntk-reference-preset-card p {
-  color: var(--ntk-text-secondary, #475569);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-preset-card__swatch-grid {
@@ -97,13 +97,13 @@ const swatches = computed(() => {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 14px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg);
 }
 
 .ntk-reference-preset-card__swatch span {
-  color: var(--ntk-text-secondary, #475569);
+  color: var(--ntk-text-secondary);
   font-size: 13px;
 }
 
@@ -111,13 +111,13 @@ const swatches = computed(() => {
   width: 88px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--ntk-border-color);
 }
 
 .ntk-reference-preset-card__note {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border-top: 1px solid var(--ntk-reference-border);
   font-size: 13px;
   line-height: 1.6;
 }

@@ -134,12 +134,26 @@ const documentGroups = computed<DocumentGroup[]>(() => {
 
 <style scoped lang="scss">
 .ntk-reference-doc-nav {
+  --ntk-reference-doc-nav-panel-bg: var(--ntk-template-editor-panel-bg, var(--ntk-bg-secondary));
+  --ntk-reference-doc-nav-toolbar-bg: var(--ntk-template-editor-toolbar-bg, var(--ntk-bg-tertiary));
+  --ntk-reference-doc-nav-commandbar-bg: var(--ntk-template-editor-commandbar-bg, var(--ntk-bg-card));
+  --ntk-reference-doc-nav-border: var(--ntk-template-editor-border, var(--ntk-border-color));
+  --ntk-reference-doc-nav-border-soft: var(--ntk-template-editor-border-soft, var(--ntk-reference-doc-nav-border));
+  --ntk-reference-doc-nav-text: var(--ntk-template-editor-text, var(--ntk-text-primary));
+  --ntk-reference-doc-nav-muted: var(--ntk-template-editor-muted-text, var(--ntk-text-secondary));
+  --ntk-reference-doc-nav-muted-strong: var(--ntk-template-editor-canvas-text, var(--ntk-reference-doc-nav-text));
+  --ntk-reference-doc-nav-hover-bg: var(--ntk-template-editor-button-hover-bg, var(--ntk-bg-hover));
+  --ntk-reference-doc-nav-accent-bg: var(--ntk-template-editor-accent-bg, color-mix(in srgb, var(--ntk-primary) 12%, var(--ntk-reference-doc-nav-commandbar-bg)));
+  --ntk-reference-doc-nav-accent: var(--ntk-template-editor-accent, var(--ntk-primary));
+  --ntk-reference-doc-nav-info: var(--ntk-template-editor-info, var(--semantic-info-primary, var(--ntk-info)));
+  --ntk-reference-doc-nav-warning: var(--ntk-template-editor-warning, var(--semantic-warning-primary, var(--ntk-warning)));
+
   display: flex;
   flex-direction: column;
   gap: 0;
   height: 100%;
   overflow-y: auto;
-  background: var(--ntk-template-editor-panel-bg, #f3f4f6);
+  background: var(--ntk-reference-doc-nav-panel-bg);
 }
 
 .ntk-reference-doc-nav__header {
@@ -147,15 +161,15 @@ const documentGroups = computed<DocumentGroup[]>(() => {
   align-items: center;
   gap: 6px;
   padding: 10px 12px 8px;
-  border-bottom: 1px solid var(--ntk-template-editor-border, #d1d5db);
-  background: var(--ntk-template-editor-toolbar-bg, #f8f9fb);
+  border-bottom: 1px solid var(--ntk-reference-doc-nav-border);
+  background: var(--ntk-reference-doc-nav-toolbar-bg);
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
 .ntk-reference-doc-nav__header-icon {
-  color: var(--ntk-template-editor-muted-text, #6b7280);
+  color: var(--ntk-reference-doc-nav-muted);
 }
 
 .ntk-reference-doc-nav__header-title {
@@ -163,7 +177,7 @@ const documentGroups = computed<DocumentGroup[]>(() => {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ntk-template-editor-text, #374151);
+  color: var(--ntk-reference-doc-nav-text);
 }
 
 .ntk-reference-doc-nav__doc-label {
@@ -171,10 +185,10 @@ const documentGroups = computed<DocumentGroup[]>(() => {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--ntk-template-editor-border, #d1d5db);
+  border-bottom: 1px solid var(--ntk-reference-doc-nav-border);
   font-size: 12px;
-  color: var(--ntk-template-editor-muted-text, #6b7280);
-  background: var(--ntk-template-editor-commandbar-bg, #ffffff);
+  color: var(--ntk-reference-doc-nav-muted);
+  background: var(--ntk-reference-doc-nav-commandbar-bg);
 }
 
 .ntk-reference-doc-nav__tree {
@@ -197,7 +211,7 @@ const documentGroups = computed<DocumentGroup[]>(() => {
 }
 
 .ntk-reference-doc-nav__group-icon {
-  color: var(--ntk-template-editor-muted-text, #9ca3af);
+  color: var(--ntk-reference-doc-nav-muted);
 }
 
 .ntk-reference-doc-nav__group-label {
@@ -205,15 +219,15 @@ const documentGroups = computed<DocumentGroup[]>(() => {
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--ntk-template-editor-muted-text, #6b7280);
+  color: var(--ntk-reference-doc-nav-muted);
   flex: 1;
 }
 
 .ntk-reference-doc-nav__group-count {
   font-size: 10px;
   font-weight: 600;
-  color: var(--ntk-template-editor-muted-text, #9ca3af);
-  background: var(--ntk-template-editor-border, #e5e7eb);
+  color: var(--ntk-reference-doc-nav-muted);
+  background: var(--ntk-reference-doc-nav-border-soft);
   border-radius: 10px;
   padding: 1px 6px;
 }
@@ -235,18 +249,18 @@ const documentGroups = computed<DocumentGroup[]>(() => {
   text-align: left;
   width: 100%;
   font-size: 12px;
-  color: var(--ntk-template-editor-text, #374151);
+  color: var(--ntk-reference-doc-nav-text);
   border-radius: 0;
   transition: background 0.1s;
 
   &:hover {
-    background: var(--ntk-template-editor-button-hover-bg, #e5e7eb);
+    background: var(--ntk-reference-doc-nav-hover-bg);
   }
 }
 
 .ntk-reference-doc-nav__item--active {
-  background: var(--ntk-template-editor-accent-bg, #eff6ff) !important;
-  color: var(--ntk-template-editor-accent, #2563eb);
+  background: var(--ntk-reference-doc-nav-accent-bg) !important;
+  color: var(--ntk-reference-doc-nav-accent);
   font-weight: 600;
 }
 
@@ -255,22 +269,22 @@ const documentGroups = computed<DocumentGroup[]>(() => {
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: var(--ntk-template-editor-muted-text, #9ca3af);
+  background: var(--ntk-reference-doc-nav-muted);
 
   .ntk-reference-doc-nav__item--primary & {
-    background: var(--ntk-template-editor-accent, #2563eb);
+    background: var(--ntk-reference-doc-nav-accent);
   }
 
   .ntk-reference-doc-nav__item--info & {
-    background: var(--ntk-template-editor-info, #0284c7);
+    background: var(--ntk-reference-doc-nav-info);
   }
 
   .ntk-reference-doc-nav__item--warning & {
-    background: var(--ntk-template-editor-warning, #d97706);
+    background: var(--ntk-reference-doc-nav-warning);
   }
 
   .ntk-reference-doc-nav__item--active & {
-    background: var(--ntk-template-editor-accent, #2563eb);
+    background: var(--ntk-reference-doc-nav-accent);
   }
 }
 
@@ -282,14 +296,14 @@ const documentGroups = computed<DocumentGroup[]>(() => {
 }
 
 .ntk-reference-doc-nav__item-lock {
-  color: var(--ntk-template-editor-muted-text, #9ca3af);
+  color: var(--ntk-reference-doc-nav-muted);
   flex-shrink: 0;
 }
 
 .ntk-reference-doc-nav__empty-group {
   padding: 4px 24px 8px;
   font-size: 11px;
-  color: var(--ntk-template-editor-muted-text, #9ca3af);
+  color: var(--ntk-reference-doc-nav-muted);
   font-style: italic;
 }
 </style>

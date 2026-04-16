@@ -242,11 +242,23 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 
 <style scoped lang="scss">
 .ntk-template-dashboard {
+  --ntk-template-dashboard-bg: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
+  --ntk-template-dashboard-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-dashboard-border: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-dashboard-title: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-dashboard-subtitle: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-dashboard-chip-border: var(--ntk-template-page-chip-border, var(--ntk-template-dashboard-border));
+  --ntk-template-dashboard-chip-text: var(--ntk-template-page-chip-text, var(--ntk-template-dashboard-subtitle));
+  --ntk-template-dashboard-chip-bg: var(--ntk-template-page-chip-bg, var(--ntk-bg-secondary));
+  --ntk-template-dashboard-row-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-dashboard-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  --ntk-template-dashboard-icon-neutral: color-mix(in srgb, var(--ntk-template-dashboard-text) 82%, var(--ntk-text-primary));
+
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-dashboard-bg);
 }
 
 .ntk-template-dashboard__hero {
@@ -255,9 +267,9 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-border);
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-dashboard-surface);
 }
 
 .ntk-template-dashboard__hero-title-row {
@@ -275,12 +287,12 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 .ntk-template-dashboard__title {
   margin: 0;
   font-size: 20px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-dashboard-title);
 }
 
 .ntk-template-dashboard__subtitle {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-subtitle);
 }
 
 .ntk-template-dashboard__chips {
@@ -295,9 +307,9 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   gap: 5px;
   padding: 5px 12px;
   border-radius: 16px;
-  border: 1px solid var(--ntk-template-page-chip-border, #e2e8f0);
-  color: var(--ntk-template-page-chip-text, #475569);
-  background: var(--ntk-template-page-chip-bg, #f8fafc);
+  border: 1px solid var(--ntk-template-dashboard-chip-border);
+  color: var(--ntk-template-dashboard-chip-text);
+  background: var(--ntk-template-dashboard-chip-bg);
 }
 
 .ntk-template-dashboard__metrics {
@@ -312,8 +324,8 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   gap: 12px;
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-dashboard-border);
+  background: var(--ntk-template-dashboard-surface);
 }
 
 .ntk-template-dashboard__metric-icon {
@@ -326,41 +338,41 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 }
 
 .ntk-template-dashboard__metric--neutral .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-template-page-text, #334155) 8%, var(--ntk-template-page-card-bg, #ffffff));
-  color: color-mix(in srgb, var(--ntk-template-page-text, #334155) 82%, black);
+  background: color-mix(in srgb, var(--ntk-template-dashboard-text) 8%, var(--ntk-template-dashboard-surface));
+  color: var(--ntk-template-dashboard-icon-neutral);
 }
 
 .ntk-template-dashboard__metric--primary .ntk-template-dashboard__metric-icon,
 .ntk-template-dashboard__metric--info .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-info, #3b82f6) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-info, #3b82f6);
+  background: color-mix(in srgb, var(--ntk-info) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-info);
 }
 
 .ntk-template-dashboard__metric--success .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-success, #22c55e) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-success, #22c55e);
+  background: color-mix(in srgb, var(--ntk-success) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-success);
 }
 
 .ntk-template-dashboard__metric--warning .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-warning, #f59e0b) 16%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-warning, #f59e0b);
+  background: color-mix(in srgb, var(--ntk-warning) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-warning);
 }
 
 .ntk-template-dashboard__metric--danger .ntk-template-dashboard__metric-icon {
-  background: color-mix(in srgb, var(--ntk-error, #ef4444) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-error, #ef4444);
+  background: color-mix(in srgb, var(--ntk-error) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-error);
 }
 
 .ntk-template-dashboard__metric-value {
   font-size: 22px;
   font-weight: 700;
   line-height: 1.1;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-dashboard__metric-label {
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-dashboard-subtitle);
 }
 
 .ntk-template-dashboard__charts {
@@ -376,7 +388,7 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 }
 
 .ntk-template-dashboard__card {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-dashboard-border);
   border-radius: 12px;
   box-shadow: none;
 }
@@ -389,7 +401,7 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   margin-bottom: 14px;
   padding-left: 2px;
 }
@@ -409,13 +421,13 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   min-height: 40px;
   padding: 10px 8px;
   border-radius: 8px;
-  background: var(--ntk-template-page-row-bg, #f8fafc);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
   transition: background 0.15s ease;
 }
 
 .ntk-template-dashboard__activity-row:hover,
 .ntk-template-dashboard__top-row:hover {
-  background: var(--ntk-template-page-row-hover-bg, #f8fafc);
+  background: var(--ntk-template-page-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
 }
 
 .ntk-template-dashboard__activity-row {
@@ -426,7 +438,7 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
 }
 
 .ntk-template-dashboard__activity-icon {
@@ -436,42 +448,42 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--ntk-template-page-text, #334155) 8%, var(--ntk-template-page-card-bg, #ffffff));
-  color: color-mix(in srgb, var(--ntk-template-page-text, #334155) 82%, black);
+  background: color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-dashboard-icon-neutral);
   flex-shrink: 0;
 }
 
 .ntk-template-dashboard__activity-icon--blue,
 .ntk-template-dashboard__activity-icon--teal {
-  background: color-mix(in srgb, var(--ntk-info, #3b82f6) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-info, #3b82f6);
+  background: color-mix(in srgb, var(--ntk-info) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-info);
 }
 
 .ntk-template-dashboard__activity-icon--indigo,
 .ntk-template-dashboard__activity-icon--violet,
 .ntk-template-dashboard__activity-icon--pink {
-  background: color-mix(in srgb, var(--ntk-accent, #0f766e) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-accent, #0f766e);
+  background: color-mix(in srgb, var(--ntk-accent) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-accent);
 }
 
 .ntk-template-dashboard__activity-icon--green {
-  background: color-mix(in srgb, var(--ntk-success, #22c55e) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-success, #22c55e);
+  background: color-mix(in srgb, var(--ntk-success) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-success);
 }
 
 .ntk-template-dashboard__activity-icon--amber {
-  background: color-mix(in srgb, var(--ntk-warning, #f59e0b) 16%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-warning, #f59e0b);
+  background: color-mix(in srgb, var(--ntk-warning) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-warning);
 }
 
 .ntk-template-dashboard__activity-icon--slate {
-  background: color-mix(in srgb, var(--ntk-template-page-text, #334155) 8%, var(--ntk-template-page-card-bg, #ffffff));
-  color: color-mix(in srgb, var(--ntk-template-page-text, #334155) 82%, black);
+  background: color-mix(in srgb, var(--ntk-template-dashboard-text) 8%, var(--ntk-template-dashboard-surface));
+  color: var(--ntk-template-dashboard-icon-neutral);
 }
 
 .ntk-template-dashboard__activity-icon--red {
-  background: color-mix(in srgb, var(--ntk-error, #ef4444) 14%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-error, #ef4444);
+  background: color-mix(in srgb, var(--ntk-error) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-error);
 }
 
 .ntk-template-dashboard__top-row {
@@ -487,15 +499,15 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--ntk-template-page-avatar-bg, linear-gradient(135deg, #334155 0%, #1e293b 100%));
-  color: #ffffff;
+  background: var(--ntk-template-page-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent))));
+  color: var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-text-primary)));
   font-size: 11px;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 16%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-text-primary))) 16%, transparent);
 }
 
 .ntk-template-dashboard__top-info {
@@ -507,7 +519,7 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 
 .ntk-template-dashboard__top-bar-track {
   height: 4px;
-  background: var(--ntk-template-page-border, #e2e8f0);
+  background: var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 2px;
   overflow: hidden;
 }
@@ -515,7 +527,7 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 .ntk-template-dashboard__top-bar-fill {
   height: 100%;
   border-radius: 2px;
-  background: var(--ntk-template-page-bar-fill, linear-gradient(90deg, #0f766e 0%, #14b8a6 100%));
+  background: var(--ntk-template-page-bar-fill, var(--ntk-primary-gradient, var(--ntk-accent)));
   transition: width 0.4s ease;
 }
 
@@ -528,13 +540,13 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: var(--ntk-template-page-subtitle, #64748b);
-  background: color-mix(in srgb, var(--ntk-template-page-row-bg, #f8fafc) 78%, var(--ntk-template-page-card-bg, #ffffff));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  background: color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 78%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-dashboard__top-row:first-child .ntk-template-dashboard__top-rank {
-  background: color-mix(in srgb, var(--ntk-accent, #0f766e) 16%, var(--ntk-template-page-card-bg, #ffffff));
-  color: var(--ntk-accent, #0f766e);
+  background: color-mix(in srgb, var(--ntk-accent) 16%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-accent);
 }
 
 .ntk-template-dashboard__top-name {
@@ -543,13 +555,13 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
   white-space: nowrap;
   font-size: 13px;
   font-weight: 500;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
 }
 
 .ntk-template-dashboard__top-value {
   display: block;
   font-weight: 700;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-dashboard__top-stats {
@@ -566,20 +578,20 @@ const topItems = computed<TemplateDashboardTopItem[]>(() => props.topItems)
 }
 
 .ntk-template-dashboard__top-stat--secondary .ntk-template-dashboard__top-secondary {
-  color: var(--ntk-template-page-accent-value, #10b981);
+  color: var(--ntk-template-page-accent-value, var(--semantic-success-primary, var(--ntk-success)));
 }
 
 .ntk-template-dashboard__top-stat-label {
   font-size: 10px;
   font-weight: 500;
-  color: var(--ntk-template-page-subtitle-soft, #94a3b8);
+  color: var(--ntk-template-page-subtitle-soft, color-mix(in srgb, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)) 72%, transparent));
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
 .ntk-template-dashboard__top-secondary {
   display: block;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 15px;
   font-weight: 700;
 }

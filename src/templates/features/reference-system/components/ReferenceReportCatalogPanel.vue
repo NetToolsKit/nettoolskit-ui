@@ -140,13 +140,23 @@ function selectReport(reportId: string): void {
 
 <style scoped lang="scss">
 .ntk-reference-catalog-panel {
+  --ntk-reference-catalog-panel-surface: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
+  --ntk-reference-catalog-panel-surface-muted: var(--ntk-reference-panel-muted-bg, color-mix(in srgb, var(--ntk-reference-catalog-panel-surface) 92%, transparent));
+  --ntk-reference-catalog-panel-border: var(--ntk-reference-border, color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
+  --ntk-reference-catalog-panel-text: var(--ntk-text-primary);
+  --ntk-reference-catalog-panel-text-muted: var(--ntk-text-secondary);
+  --ntk-reference-catalog-panel-accent: var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-reference-catalog-panel-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 12%, var(--ntk-reference-catalog-panel-surface));
+  --ntk-reference-catalog-panel-accent-strong-bg: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 24%, transparent);
+  --ntk-reference-catalog-panel-accent-strong-border: color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 28%, transparent);
+  --ntk-reference-catalog-panel-shadow: 0 18px 40px color-mix(in srgb, var(--ntk-text-primary) 6%, transparent);
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-catalog-panel-border);
   border-radius: 18px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+  background: var(--ntk-reference-catalog-panel-surface);
+  box-shadow: var(--ntk-reference-catalog-panel-shadow);
   overflow: hidden;
 }
 
@@ -155,13 +165,13 @@ function selectReport(reportId: string): void {
   justify-content: space-between;
   gap: 12px;
   padding: 18px 18px 12px;
-  border-bottom: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border-bottom: 1px solid var(--ntk-reference-catalog-panel-border);
 }
 
 .ntk-reference-catalog-panel__header h2 {
   margin: 4px 0 0;
   font-size: 18px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-reference-catalog-panel-text);
 }
 
 .ntk-reference-catalog-panel__eyebrow {
@@ -170,15 +180,15 @@ function selectReport(reportId: string): void {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-reference-catalog-panel-text-muted);
 }
 
 .ntk-reference-catalog-panel__count {
   align-self: flex-start;
   padding: 6px 10px;
   border-radius: 999px;
-  background: var(--ntk-reference-badge-bg, #eff6ff);
-  color: var(--ntk-reference-badge-text, #1d4ed8);
+  background: var(--ntk-reference-catalog-panel-accent-soft-bg);
+  color: var(--ntk-reference-catalog-panel-accent);
   font-size: 12px;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-weight: 500;
@@ -187,14 +197,14 @@ function selectReport(reportId: string): void {
 .ntk-reference-catalog-panel__search {
   margin: 16px 18px 0;
   min-height: 44px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-catalog-panel-border);
   border-radius: 12px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-catalog-panel-surface-muted);
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 12px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-reference-catalog-panel-text-muted);
 }
 
 .ntk-reference-catalog-panel__search input {
@@ -203,7 +213,7 @@ function selectReport(reportId: string): void {
   outline: 0;
   background: transparent;
   font-size: 13px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-reference-catalog-panel-text);
 }
 
 .ntk-reference-catalog-panel__groups {
@@ -227,15 +237,15 @@ function selectReport(reportId: string): void {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: var(--ntk-text-secondary, #475569);
+  color: var(--ntk-reference-catalog-panel-text-muted);
   font-size: 12px;
 }
 
 .ntk-reference-catalog-panel__item {
   width: 100%;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-catalog-panel-border);
   border-radius: 14px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
+  background: var(--ntk-reference-catalog-panel-surface);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -251,8 +261,8 @@ function selectReport(reportId: string): void {
 
 .ntk-reference-catalog-panel__item:hover,
 .ntk-reference-catalog-panel__item--active {
-  border-color: var(--ntk-reference-accent, #2563eb);
-  box-shadow: var(--ntk-reference-shell-glow, 0 12px 24px rgba(37, 99, 235, 0.1));
+  border-color: var(--ntk-reference-catalog-panel-accent);
+  box-shadow: var(--ntk-reference-shell-glow, 0 12px 24px color-mix(in srgb, var(--ntk-reference-catalog-panel-accent) 10%, transparent));
   transform: translateY(-1px);
 }
 
@@ -262,13 +272,13 @@ function selectReport(reportId: string): void {
   gap: 6px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-reference-catalog-panel-text);
 }
 
 .ntk-reference-catalog-panel__item-main small {
   display: block;
   margin-top: 3px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-reference-catalog-panel-text-muted);
   font-size: 12px;
 }
 

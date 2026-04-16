@@ -17,7 +17,7 @@
           no-caps
           :label="action.label"
           :icon="action.icon"
-          :color="action.color || 'primary'"
+          :color="action.color"
           :disable="action.disable"
           :flat="action.flat ?? false"
           :outline="action.outline ?? false"
@@ -71,6 +71,7 @@
           no-caps
           icon="task_alt"
           :label="approveSelectedLabel"
+          class="ntk-template-approval-queue__bulk-action ntk-template-approval-queue__bulk-action--approve"
           @click="emitBulkDecision('approve')"
         />
         <q-btn
@@ -79,6 +80,7 @@
           no-caps
           icon="rate_review"
           :label="requestChangesSelectedLabel"
+          class="ntk-template-approval-queue__bulk-action ntk-template-approval-queue__bulk-action--request"
           @click="emitBulkDecision('request_changes')"
         />
         <q-btn
@@ -87,6 +89,7 @@
           no-caps
           icon="cancel"
           :label="rejectSelectedLabel"
+          class="ntk-template-approval-queue__bulk-action ntk-template-approval-queue__bulk-action--reject"
           @click="emitBulkDecision('reject')"
         />
       </div>
@@ -146,6 +149,7 @@
             no-caps
             icon="visibility"
             :label="openLabel"
+            class="ntk-template-approval-queue__decision-action ntk-template-approval-queue__decision-action--neutral"
             @click="emit('open-item', item.id)"
           />
           <q-btn
@@ -153,7 +157,7 @@
             no-caps
             icon="task_alt"
             :label="approveLabel"
-            color="positive"
+            class="ntk-template-approval-queue__decision-action ntk-template-approval-queue__decision-action--approve"
             @click="emitDecision(item.id, 'approve')"
           />
           <q-btn
@@ -161,7 +165,7 @@
             no-caps
             icon="rate_review"
             :label="requestChangesLabel"
-            color="warning"
+            class="ntk-template-approval-queue__decision-action ntk-template-approval-queue__decision-action--request"
             @click="emitDecision(item.id, 'request_changes')"
           />
           <q-btn
@@ -169,7 +173,7 @@
             no-caps
             icon="cancel"
             :label="rejectLabel"
-            color="negative"
+            class="ntk-template-approval-queue__decision-action ntk-template-approval-queue__decision-action--reject"
             @click="emitDecision(item.id, 'reject')"
           />
         </div>
@@ -364,7 +368,7 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
 }
 
 .ntk-template-approval-queue__hero {
@@ -372,9 +376,9 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 14px 16px;
 }
 
@@ -385,7 +389,7 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
 
 .ntk-template-approval-queue__hero p {
   margin: 4px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-approval-queue__hero-actions {
@@ -399,22 +403,22 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 8px;
 }
 
 .ntk-template-approval-queue__search {
   width: min(320px, 100%);
   min-height: 42px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 0 10px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-approval-queue__search input {
@@ -428,7 +432,7 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   display: inline-flex;
   gap: 4px;
   padding: 4px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 8px;
 }
 
@@ -441,18 +445,18 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   cursor: pointer;
 }
 
 .ntk-template-approval-queue__filter--active {
-  background: var(--ntk-primary, #512bd4);
-  color: var(--ntk-text-on-primary, #ffffff);
+  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  color: var(--ntk-text-on-primary, var(--ntk-on-primary, var(--ntk-text-inverse)));
 }
 
 .ntk-template-approval-queue__bulk {
-  border: 1px solid color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 44%, var(--ntk-template-page-border, #e2e8f0));
-  background: color-mix(in srgb, var(--semantic-info-primary, #3b82f6) 10%, white);
+  border: 1px solid color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 44%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
   border-radius: 12px;
   padding: 10px 12px;
   display: flex;
@@ -473,9 +477,9 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
 }
 
 .ntk-template-approval-queue__item {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   padding: 12px;
 }
 
@@ -491,7 +495,7 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-approval-queue__status {
@@ -501,28 +505,28 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   font-size: 11px;
   display: inline-flex;
   align-items: center;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-approval-queue__status--success {
-  background: color-mix(in srgb, var(--semantic-success-primary, #22c55e) 14%, white);
-  color: var(--semantic-success-primary, #22c55e);
+  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success)));
 }
 
 .ntk-template-approval-queue__status--warning {
-  background: color-mix(in srgb, var(--semantic-warning-primary, #f59e0b) 14%, white);
-  color: var(--semantic-warning-primary, #f59e0b);
+  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning)));
 }
 
 .ntk-template-approval-queue__status--danger {
-  background: color-mix(in srgb, var(--semantic-error-primary, #ef4444) 14%, white);
-  color: var(--semantic-error-primary, #ef4444);
+  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 14%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error)));
 }
 
 .ntk-template-approval-queue__summary {
   margin: 8px 0 0;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-approval-queue__meta {
@@ -531,7 +535,7 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   gap: 12px;
   flex-wrap: wrap;
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-approval-queue__tags {
@@ -545,8 +549,8 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   min-height: 22px;
   border-radius: 999px;
   padding: 2px 8px;
-  background: var(--ntk-template-page-row-bg, #f1f5f9);
-  color: var(--ntk-template-page-subtitle, #64748b);
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   font-size: 11px;
 }
 
@@ -559,21 +563,21 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
 
 .ntk-template-approval-queue__empty {
   min-height: 220px;
-  border: 1px dashed var(--ntk-template-page-border, #e2e8f0);
+  border: 1px dashed var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-approval-queue__empty h2 {
   margin: 0;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-approval-queue__empty p {
@@ -594,5 +598,36 @@ function emitBulkDecision(decision: TemplateApprovalDecision): void {
   .ntk-template-approval-queue__bulk-actions {
     margin-left: 0;
   }
+}
+
+.ntk-template-approval-queue__bulk-action,
+.ntk-template-approval-queue__decision-action {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.ntk-template-approval-queue__bulk-action--approve,
+.ntk-template-approval-queue__decision-action--approve {
+  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success)));
+}
+
+.ntk-template-approval-queue__bulk-action--request,
+.ntk-template-approval-queue__decision-action--request {
+  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning)));
+}
+
+.ntk-template-approval-queue__bulk-action--reject,
+.ntk-template-approval-queue__decision-action--reject {
+  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error)));
+}
+
+.ntk-template-approval-queue__decision-action--neutral {
+  background: color-mix(in srgb, var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary)) 72%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
 }
 </style>

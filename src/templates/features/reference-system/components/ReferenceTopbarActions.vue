@@ -24,7 +24,7 @@
           <q-icon
             name="close"
             size="14px"
-            class="cursor-pointer"
+            class="cursor-pointer ntk-reference-topbar__close-icon"
             @click="clearSearch"
           />
         </template>
@@ -77,8 +77,8 @@
               <q-item-section avatar>
                 <q-icon
                   :name="notif.icon"
-                  :color="notif.read ? 'grey-5' : 'primary'"
                   size="18px"
+                  :class="notif.read ? 'ntk-reference-topbar__notif-icon--muted' : 'ntk-reference-topbar__notif-icon--accent'"
                 />
               </q-item-section>
               <q-item-section>
@@ -204,6 +204,16 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .ntk-reference-topbar {
+  --ntk-reference-topbar-surface: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
+  --ntk-reference-topbar-surface-muted: var(--ntk-reference-panel-muted-bg, color-mix(in srgb, var(--ntk-reference-topbar-surface) 92%, transparent));
+  --ntk-reference-topbar-border: var(--ntk-reference-border, color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
+  --ntk-reference-topbar-text: var(--ntk-text-primary);
+  --ntk-reference-topbar-text-muted: var(--ntk-text-secondary);
+  --ntk-reference-topbar-icon-muted: color-mix(in srgb, var(--ntk-reference-topbar-text-muted) 72%, transparent);
+  --ntk-reference-topbar-accent: var(--ntk-primary, var(--ntk-accent));
+  --ntk-reference-topbar-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 24%, transparent);
+  --ntk-reference-topbar-accent-soft-border: color-mix(in srgb, var(--ntk-reference-topbar-accent) 28%, transparent);
+  --ntk-reference-topbar-unread-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 12%, var(--ntk-reference-topbar-surface));
   display: flex;
   align-items: center;
   gap: 12px;
@@ -217,23 +227,27 @@ onUnmounted(() => {
 
 .ntk-reference-topbar__search-input {
   :deep(.q-field__control) {
-    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 92%, transparent);
+    background: var(--ntk-reference-topbar-surface-muted);
     border-radius: 10px;
-    color: var(--ntk-reference-topbar-control-text, #0f172a);
+    color: var(--ntk-reference-topbar-text);
   }
 
   :deep(.q-field__outlined .q-field__control::before) {
-    border-color: var(--ntk-reference-topbar-control-border, #e2e8f0);
+    border-color: var(--ntk-reference-topbar-border);
   }
 
   :deep(.q-field__native),
   :deep(.q-field__input) {
-    color: var(--ntk-reference-topbar-control-text, #0f172a);
+    color: var(--ntk-reference-topbar-text);
   }
 }
 
 .ntk-reference-topbar__search-icon {
-  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-icon-muted);
+}
+
+.ntk-reference-topbar__close-icon {
+  color: var(--ntk-reference-topbar-icon-muted);
 }
 
 .ntk-reference-topbar__actions {
@@ -244,10 +258,10 @@ onUnmounted(() => {
 }
 
 .ntk-reference-topbar__action-btn {
-  border: 1px solid var(--ntk-reference-topbar-control-border, rgba(148, 163, 184, 0.18));
+  border: 1px solid var(--ntk-reference-topbar-border);
   border-radius: 10px;
-  background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 92%, transparent);
-  color: var(--ntk-reference-topbar-control-text, #64748b);
+  background: var(--ntk-reference-topbar-surface-muted);
+  color: var(--ntk-reference-topbar-text-muted);
 }
 
 .ntk-reference-topbar__separator {
@@ -259,7 +273,7 @@ onUnmounted(() => {
   min-width: 180px;
 
   :deep(.q-field__control) {
-    background: color-mix(in srgb, var(--ntk-reference-topbar-control-bg, #f1f5f9) 92%, transparent);
+    background: var(--ntk-reference-topbar-surface-muted);
     border-radius: 10px;
   }
 
@@ -267,14 +281,14 @@ onUnmounted(() => {
   :deep(.q-field__native),
   :deep(.q-field__input),
   :deep(.q-select__dropdown-icon) {
-    color: var(--ntk-reference-topbar-control-text, #0f172a) !important;
+    color: var(--ntk-reference-topbar-text) !important;
   }
 }
 
 .ntk-reference-topbar__counter-badge {
-  background: color-mix(in srgb, var(--ntk-accent, #10b981) 24%, transparent) !important;
-  color: var(--ntk-accent, #10b981) !important;
-  border: 1px solid color-mix(in srgb, var(--ntk-accent, #10b981) 28%, transparent);
+  background: var(--ntk-reference-topbar-accent-soft-bg) !important;
+  color: var(--ntk-reference-topbar-accent) !important;
+  border: 1px solid var(--ntk-reference-topbar-accent-soft-border);
 }
 
 .ntk-reference-topbar__counter-badge--inline {
@@ -284,10 +298,10 @@ onUnmounted(() => {
 .ntk-reference-topbar__notifications-menu {
   min-width: 340px;
   max-width: 400px;
-  border: 1px solid var(--ntk-reference-topbar-border, rgba(148, 163, 184, 0.18));
+  border: 1px solid var(--ntk-reference-topbar-border);
   border-radius: 12px;
-  background: var(--ntk-reference-topbar-surface, #ffffff);
-  box-shadow: var(--ntk-reference-shell-glow, 0 4px 16px rgba(15, 23, 42, 0.08));
+  background: var(--ntk-reference-topbar-surface);
+  box-shadow: var(--ntk-reference-shell-glow, 0 4px 16px color-mix(in srgb, var(--ntk-reference-topbar-text) 8%, transparent));
   overflow: hidden;
 }
 
@@ -296,25 +310,33 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 12px 16px 10px;
-  background: var(--ntk-reference-topbar-action-bg, #ffffff);
+  background: var(--ntk-reference-topbar-surface);
 }
 
 .ntk-reference-topbar__notifications-title {
   font-weight: 600;
   font-size: 13px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-reference-topbar-text);
   flex: 1;
 }
 
 .ntk-reference-topbar__notifications-empty {
   padding: 20px 16px;
   font-size: 13px;
-  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-text-muted);
   text-align: center;
 }
 
 .ntk-reference-topbar__notif-item--unread {
-  background: color-mix(in srgb, var(--ntk-accent, #10b981) 12%, var(--ntk-reference-topbar-surface, #ffffff));
+  background: var(--ntk-reference-topbar-unread-bg);
+}
+
+.ntk-reference-topbar__notif-icon--muted {
+  color: var(--ntk-reference-topbar-icon-muted);
+}
+
+.ntk-reference-topbar__notif-icon--accent {
+  color: var(--ntk-reference-topbar-accent);
 }
 
 .ntk-reference-topbar__notif-item-title {
@@ -324,14 +346,14 @@ onUnmounted(() => {
 
 .ntk-reference-topbar__notif-item-desc {
   font-size: 12px;
-  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-text-muted);
   white-space: normal;
   line-height: 1.4;
 }
 
 .ntk-reference-topbar__notif-item-time {
   font-size: 11px;
-  color: var(--ntk-reference-topbar-control-muted, #94a3b8);
+  color: var(--ntk-reference-topbar-text-muted);
   white-space: nowrap;
 }
 </style>

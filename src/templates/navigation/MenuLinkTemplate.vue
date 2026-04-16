@@ -22,6 +22,7 @@
       transition-show="jump-right"
       transition-hide="jump-left"
       square
+      content-class="ntk-template-menu-link__submenu-popup"
     >
       <q-list class="ntk-template-menu-link__submenu">
         <q-item
@@ -67,6 +68,7 @@
       transition-show="jump-right"
       transition-hide="jump-left"
       square
+      content-class="ntk-template-menu-link__submenu-popup"
     >
       <q-list class="ntk-template-menu-link__submenu">
         <q-item
@@ -175,7 +177,7 @@
     >
       <q-badge
         :label="item.badge"
-        color="primary"
+        class="ntk-template-menu-link__badge"
       />
     </q-item-section>
   </q-item>
@@ -294,8 +296,21 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 <style lang="scss">
 .ntk-template-menu-link {
+  --ntk-template-menu-link-text: var(--ntk-template-layout-nav-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-menu-link-active-border: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-menu-link-active-bg: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 20%, transparent) 0%, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 6%, transparent) 100%));
+  --ntk-template-menu-link-active-text: var(--ntk-template-layout-nav-active-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-menu-link-submenu-bg: var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
+  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
+  --ntk-template-menu-link-submenu-text: var(--ntk-text-primary);
+  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
+  --ntk-template-menu-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 12%, transparent));
+  --ntk-template-menu-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-template-menu-link-active-border));
+  --ntk-template-menu-link-submenu-active-text: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-menu-link-shadow: var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
+
   transition: all 0.2s ease;
-  color: var(--ntk-template-layout-nav-text, rgba(255, 255, 255, 0.82)) !important;
+  color: var(--ntk-template-menu-link-text) !important;
 
   .q-item__section,
   .q-item-section,
@@ -305,7 +320,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__expansion-header {
-  color: var(--ntk-template-layout-nav-text, rgba(255, 255, 255, 0.82)) !important;
+  color: var(--ntk-template-menu-link-text) !important;
 }
 
 .ntk-template-menu-link__expansion-header .q-expansion-item__toggle-icon {
@@ -313,9 +328,9 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link--active {
-  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8));
-  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15));
-  color: var(--ntk-template-layout-nav-active-text, #ffffff) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border);
+  background: var(--ntk-template-menu-link-active-bg);
+  color: var(--ntk-template-menu-link-active-text) !important;
 }
 
 .ntk-template-menu-link--inactive {
@@ -326,26 +341,37 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   min-width: 220px;
   padding: 6px;
   border-radius: 8px;
-  border: 1px solid var(--ntk-template-layout-toolbar-border, rgba(148, 163, 184, 0.18));
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: var(--ntk-shadow-soft, 0 4px 16px rgba(15, 23, 42, 0.08));
+  border: 1px solid var(--ntk-template-menu-link-submenu-border);
+  background: var(--ntk-template-menu-link-submenu-bg);
+  box-shadow: var(--ntk-template-menu-link-shadow);
 
   .q-item {
     border-left: 3px solid transparent;
     border-radius: 12px;
-    color: var(--ntk-text-primary, #0f172a);
+    color: var(--ntk-template-menu-link-submenu-text);
 
     &:hover {
-      background: var(--ntk-template-layout-submenu-hover-bg, rgba(15, 23, 42, 0.05));
+      background: var(--ntk-template-menu-link-submenu-hover-bg);
     }
   }
 
   .q-item.q-router-link--active,
   .q-item--active {
-    color: var(--ntk-primary, #10b981) !important;
-    border-left-color: var(--ntk-template-layout-submenu-active-border, var(--ntk-primary, #10b981));
-    background: var(--ntk-template-layout-submenu-active-bg, rgba(16, 185, 129, 0.12));
+    color: var(--ntk-template-menu-link-submenu-active-text) !important;
+    border-left-color: var(--ntk-template-menu-link-submenu-active-border);
+    background: var(--ntk-template-menu-link-submenu-active-bg);
   }
+}
+
+.ntk-template-menu-link__submenu-popup {
+  --ntk-template-menu-link-submenu-bg: var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
+  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
+  --ntk-template-menu-link-submenu-text: var(--ntk-text-primary);
+  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
+  --ntk-template-menu-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 12%, transparent));
+  --ntk-template-menu-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-template-menu-link-active-border));
+  --ntk-template-menu-link-submenu-active-text: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-menu-link-shadow: var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
 }
 
 .ntk-template-menu-link__expanded-list {
@@ -353,7 +379,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
   .q-item.q-router-link--active,
   .q-item--active {
-    color: var(--ntk-template-layout-nav-active-text, #ffffff) !important;
+    color: var(--ntk-template-layout-nav-active-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) !important;
   }
 }
 
@@ -363,13 +389,13 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__child--active {
-  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8));
-  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15));
+  border-left: 4px solid var(--ntk-template-menu-link-active-border);
+  background: var(--ntk-template-menu-link-active-bg);
 }
 
 .ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid var(--ntk-template-layout-nav-active-border, rgba(255, 255, 255, 0.8));
-  background: var(--ntk-template-layout-nav-active-bg, rgba(255, 255, 255, 0.15));
+  border-left: 4px solid var(--ntk-template-menu-link-active-border);
+  background: var(--ntk-template-menu-link-active-bg);
 }
 
 .ntk-template-menu-link--labels {
@@ -398,7 +424,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link :deep(.q-item__label--caption) {
   opacity: 0.72;
-  color: color-mix(in srgb, var(--ntk-template-layout-nav-text, #ffffff) 76%, transparent) !important;
+  color: color-mix(in srgb, var(--ntk-template-menu-link-text) 76%, transparent) !important;
 }
 
 .ntk-template-menu-link--visual-reference {
@@ -409,19 +435,19 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-reference-nav-hover-bg, rgba(0, 0, 0, 0.05));
+  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active {
-  border-left: 4px solid var(--ntk-template-layout-reference-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
-  background: var(--ntk-template-layout-reference-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border) !important;
+  background: var(--ntk-template-menu-link-active-bg) !important;
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-icon,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item__label,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item__section,
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active .q-item-section {
-  color: var(--ntk-template-layout-nav-active-text, #ffffff) !important;
+  color: var(--ntk-template-menu-link-active-text) !important;
   font-weight: 500;
 }
 
@@ -432,12 +458,12 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-reference-nav-hover-bg, rgba(0, 0, 0, 0.05));
+  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference.ntk-template-menu-link__expansion-header--active {
-  border-left: 4px solid var(--ntk-template-layout-reference-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
-  background: var(--ntk-template-layout-reference-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border) !important;
+  background: var(--ntk-template-menu-link-active-bg) !important;
 }
 
 .ntk-template-menu-link__child.ntk-template-menu-link--visual-reference,
@@ -449,8 +475,8 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-reference,
 .ntk-template-menu-link--visual-reference .ntk-template-menu-link__child--active {
-  border-left: 4px solid var(--ntk-template-layout-reference-nav-active-border, rgba(255, 255, 255, 0.8)) !important;
-  background: var(--ntk-template-layout-reference-nav-active-bg, rgba(255, 255, 255, 0.15)) !important;
+  border-left: 4px solid var(--ntk-template-menu-link-active-border) !important;
+  background: var(--ntk-template-menu-link-active-bg) !important;
 }
 
 .ntk-template-menu-link--visual-vercel {
@@ -467,15 +493,15 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link--visual-vercel:hover {
   transform: translateX(3px);
-  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
+  background: var(--ntk-template-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent));
 }
 
 .ntk-template-menu-link--visual-vercel.ntk-template-menu-link--active {
-  border-left-color: var(--ntk-template-layout-nav-active-border, #10b981);
-  background: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%));
+  border-left-color: var(--ntk-template-menu-link-active-border);
+  background: var(--ntk-template-menu-link-active-bg);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-nav-active-border, #10b981) 24%, transparent),
-    0 10px 18px rgba(15, 23, 42, 0.18);
+    0 0 0 1px color-mix(in srgb, var(--ntk-template-menu-link-active-border) 24%, transparent),
+    0 10px 18px color-mix(in srgb, var(--ntk-template-layout-page-text) 18%, transparent);
   transform: translateX(4px);
 }
 
@@ -485,7 +511,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-layout-drawer-text) 14%, transparent);
   animation: ntk-template-menu-link-select-in 0.24s ease-out;
 }
 
@@ -501,19 +527,24 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel:hover {
   transform: translateX(3px);
-  background: var(--ntk-template-layout-nav-hover-bg, rgba(255, 255, 255, 0.08));
+  background: var(--ntk-template-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent));
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-vercel.ntk-template-menu-link__expansion-header--active {
-  border-left-color: var(--ntk-template-layout-nav-active-border, #10b981);
-  background: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%));
+  border-left-color: var(--ntk-template-menu-link-active-border);
+  background: var(--ntk-template-menu-link-active-bg);
   transform: translateX(4px);
 }
 
 .ntk-template-menu-link__child--active.ntk-template-menu-link--visual-vercel,
 .ntk-template-menu-link--visual-vercel .ntk-template-menu-link__child--active {
-  border-left-color: var(--ntk-template-layout-nav-active-border, #10b981);
-  background: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, rgba(16, 185, 129, 0.17) 0%, rgba(16, 185, 129, 0.05) 100%));
+  border-left-color: var(--ntk-template-menu-link-active-border);
+  background: var(--ntk-template-menu-link-active-bg);
+}
+
+.ntk-template-menu-link__badge {
+  background: var(--ntk-primary, var(--ntk-accent)) !important;
+  color: var(--ntk-template-layout-on-dark, var(--ntk-text-on-accent, var(--ntk-text-primary))) !important;
 }
 
 @keyframes ntk-template-menu-link-select-in {

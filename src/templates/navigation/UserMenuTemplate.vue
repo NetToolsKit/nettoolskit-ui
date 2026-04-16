@@ -27,7 +27,7 @@
             no-caps
             flat
             :label="signOutLabel"
-            color="primary"
+            class="ntk-template-user-menu__accent-action"
             @click="$emit('logout-click')"
           />
         </div>
@@ -53,8 +53,7 @@
                 flat
                 no-caps
                 :label="accountLabel"
-                color="primary"
-                class="q-px-none"
+                class="q-px-none ntk-template-user-menu__accent-action"
                 @click="$emit('account-click')"
               />
             </div>
@@ -88,7 +87,7 @@
           <q-item-section side>
             <q-toggle
               :model-value="modelValue"
-              color="primary"
+              class="ntk-template-user-menu__toggle"
               @update:model-value="$emit('update:modelValue', $event)"
             />
           </q-item-section>
@@ -111,7 +110,7 @@
             <q-toggle
               :model-value="showLabelsInMini"
               :disable="modelValue"
-              color="primary"
+              class="ntk-template-user-menu__toggle"
               @update:model-value="$emit('update:showLabelsInMini', $event)"
             />
           </q-item-section>
@@ -137,7 +136,7 @@
             <q-toggle
               :model-value="sideMenuVariant === 'vercel'"
               :disable="modelValue"
-              color="primary"
+              class="ntk-template-user-menu__toggle"
               @update:model-value="$emit('update:sideMenuVariant', $event ? 'vercel' : 'reference')"
             />
           </q-item-section>
@@ -208,22 +207,34 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 
 <style lang="scss">
 .ntk-template-user-menu {
+  --ntk-template-user-menu-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-user-menu-border-color: var(--ntk-template-user-menu-border, var(--ntk-border-color));
+  --ntk-template-user-menu-shadow-color: color-mix(in srgb, var(--ntk-text-primary) 14%, transparent);
+  --ntk-template-user-menu-text-color: var(--ntk-template-user-menu-text, var(--ntk-text-primary));
+  --ntk-template-user-menu-muted-color: var(--ntk-template-user-menu-muted, var(--ntk-text-secondary));
+  --ntk-template-user-menu-avatar-border-color: var(--ntk-template-user-menu-avatar-border, var(--ntk-template-user-menu-surface));
+  --ntk-template-user-menu-avatar-bg-color: var(--ntk-template-user-menu-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary)));
+  --ntk-template-user-menu-avatar-text-color: var(--ntk-template-user-menu-avatar-color, var(--ntk-text-on-primary, var(--ntk-text-inverse)));
+  --ntk-template-user-menu-header-surface: var(--ntk-template-user-menu-header-bg, color-mix(in srgb, var(--ntk-template-user-menu-text-color) 2%, var(--ntk-template-user-menu-surface)));
+  --ntk-template-user-menu-profile-surface: var(--ntk-template-user-menu-profile-bg, var(--ntk-template-user-menu-surface));
+  --ntk-template-user-menu-accent: var(--ntk-accent, var(--q-primary));
+
   min-width: 320px;
-  border: 1px solid var(--ntk-template-user-menu-border, rgba(148, 163, 184, 0.18));
+  border: 1px solid var(--ntk-template-user-menu-border-color);
   border-radius: var(--ntk-template-user-menu-radius, 8px);
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: var(--ntk-template-user-menu-shadow, 0 4px 20px rgba(0, 0, 0, 0.15));
+  background: var(--ntk-template-user-menu-surface);
+  box-shadow: var(--ntk-template-user-menu-shadow, 0 4px 20px var(--ntk-template-user-menu-shadow-color));
   overflow: hidden;
-  color: var(--ntk-template-user-menu-text, #0f172a);
+  color: var(--ntk-template-user-menu-text-color);
 }
 
 .ntk-template-user-menu__avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--ntk-template-user-menu-avatar-border, #ffffff);
-  background: var(--ntk-template-user-menu-avatar-bg, var(--ntk-avatar-bg, #64748b));
-  color: var(--ntk-template-user-menu-avatar-color, #ffffff);
+  border: 2px solid var(--ntk-template-user-menu-avatar-border-color);
+  background: var(--ntk-template-user-menu-avatar-bg-color);
+  color: var(--ntk-template-user-menu-avatar-text-color);
   font-weight: 600;
   line-height: 1;
   text-align: center;
@@ -234,43 +245,42 @@ const profile = computed<TemplateUserMenuProfile>(() => {
 }
 
 .ntk-template-user-menu__header {
-  background: var(--ntk-template-user-menu-header-bg, rgba(0, 0, 0, 0.02));
+  background: var(--ntk-template-user-menu-header-surface);
 }
 
 .ntk-template-user-menu__profile {
-  background: var(--ntk-template-user-menu-profile-bg, #ffffff);
+  background: var(--ntk-template-user-menu-profile-surface);
 }
 
 .ntk-template-user-menu__section-label {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-template-user-menu-muted, #64748b) !important;
+  color: var(--ntk-template-user-menu-muted-color) !important;
 }
 
 .ntk-template-user-menu__item-icon {
-  color: var(--ntk-template-user-menu-muted, #64748b);
+  color: var(--ntk-template-user-menu-muted-color);
 }
 
 .ntk-template-user-menu :deep(.q-separator) {
-  background: var(--ntk-template-user-menu-border, rgba(148, 163, 184, 0.18));
+  background: var(--ntk-template-user-menu-border-color);
 }
 
 .ntk-template-user-menu :deep(.q-item) {
-  color: var(--ntk-template-user-menu-text, #0f172a);
+  color: var(--ntk-template-user-menu-text-color);
 }
 
 .ntk-template-user-menu :deep(.q-item__label--caption) {
-  color: var(--ntk-template-user-menu-muted, #64748b) !important;
+  color: var(--ntk-template-user-menu-muted-color) !important;
 }
 
-/* Override Quasar color="primary" to use theme accent */
-.ntk-template-user-menu :deep(.q-btn.text-primary),
-.ntk-template-user-menu :deep(.q-btn .text-primary) {
-  color: var(--ntk-accent, var(--q-primary)) !important;
+.ntk-template-user-menu :deep(.ntk-template-user-menu__accent-action),
+.ntk-template-user-menu :deep(.ntk-template-user-menu__accent-action .q-icon) {
+  color: var(--ntk-template-user-menu-accent) !important;
 }
 
-.ntk-template-user-menu :deep(.q-toggle__inner--truthy) {
-  color: var(--ntk-accent, var(--q-primary)) !important;
+.ntk-template-user-menu :deep(.ntk-template-user-menu__toggle .q-toggle__inner--truthy) {
+  color: var(--ntk-template-user-menu-accent) !important;
 }
 </style>

@@ -50,9 +50,9 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .ntk-reference-catalog-surface-card {
   width: 100%;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 24px;
-  background: var(--ntk-reference-panel-bg, #ffffff);
+  background: var(--ntk-reference-panel-bg);
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -68,8 +68,8 @@ const emit = defineEmits<{
 .ntk-reference-catalog-surface-card:hover,
 .ntk-reference-catalog-surface-card--active {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--ntk-reference-accent, #10b981) 54%, var(--ntk-reference-border, #dbe4f0));
-  box-shadow: var(--ntk-reference-shell-glow, 0 18px 36px rgba(15, 23, 42, 0.08));
+  border-color: color-mix(in srgb, var(--ntk-reference-accent) 54%, var(--ntk-reference-border));
+  box-shadow: var(--ntk-reference-shell-glow);
 }
 
 .ntk-reference-catalog-surface-card__top,
@@ -95,34 +95,34 @@ const emit = defineEmits<{
 }
 
 .ntk-reference-catalog-surface-card__tag {
-  background: var(--ntk-reference-badge-bg, rgba(16, 185, 129, 0.12));
-  color: var(--ntk-reference-badge-text, #10b981);
+  background: var(--ntk-reference-badge-bg);
+  color: var(--ntk-reference-badge-text);
 }
 
 .ntk-reference-catalog-surface-card__template {
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
-  color: var(--ntk-text-secondary, #64748b);
+  background: var(--ntk-reference-panel-muted-bg);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-catalog-surface-card__body h3 {
   margin: 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
 }
 
 .ntk-reference-catalog-surface-card__subtitle {
   margin: 8px 0 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
   font-weight: 600;
 }
 
 .ntk-reference-catalog-surface-card__description {
   margin: 10px 0 0;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
   line-height: 1.6;
 }
 
 .ntk-reference-catalog-surface-card__footer {
-  color: var(--ntk-reference-accent, #10b981);
+  color: var(--ntk-reference-accent);
   font-size: 13px;
   font-weight: 600;
 }

@@ -9,7 +9,7 @@
         <div class="ntk-reference-dashboard-charts__donut-stage">
           <div
             class="ntk-reference-dashboard-charts__donut"
-            :style="{ background: donutBackground }"
+            :style="{ '--ntk-reference-dashboard-donut-background': donutBackground }"
             aria-hidden="true"
           >
             <div class="ntk-reference-dashboard-charts__donut-hole" />
@@ -34,20 +34,20 @@
       </div>
 
       <div class="ntk-reference-dashboard-charts__bars">
-        <div
-          v-for="item in categorySeries"
-          :key="item.id"
-          class="ntk-reference-dashboard-charts__bar-row"
-        >
-          <span class="ntk-reference-dashboard-charts__bar-label">{{ item.label }}</span>
-          <div class="ntk-reference-dashboard-charts__bar-track">
-            <div
-              class="ntk-reference-dashboard-charts__bar-fill"
-              :style="{
-                width: `${Math.max((item.value / maxCategoryValue) * 100, 12)}%`,
-                background: item.color,
-              }"
-            />
+          <div
+            v-for="item in categorySeries"
+            :key="item.id"
+            class="ntk-reference-dashboard-charts__bar-row"
+          >
+            <span class="ntk-reference-dashboard-charts__bar-label">{{ item.label }}</span>
+            <div class="ntk-reference-dashboard-charts__bar-track">
+              <div
+                class="ntk-reference-dashboard-charts__bar-fill"
+                :style="{
+                  '--ntk-reference-dashboard-bar-fill': item.color,
+                  width: `${Math.max((item.value / maxCategoryValue) * 100, 12)}%`,
+                }"
+              />
           </div>
         </div>
 
@@ -142,19 +142,22 @@ const donutCallouts = computed(() => {
 }
 
 .ntk-reference-dashboard-charts__card {
-  border: 1px solid var(--ntk-template-page-border, #f1f5f9);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   min-height: 340px;
   padding: 16px 18px 18px;
-  box-shadow: var(--ntk-template-surface-shadow, 0 1px 3px rgba(0, 0, 0, 0.05));
+  box-shadow: var(
+    --ntk-template-surface-shadow,
+    0 1px 3px color-mix(in srgb, var(--ntk-text-primary) 5%, transparent)
+  );
 }
 
 .ntk-reference-dashboard-charts__header h3 {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-primary));
 }
 
 .ntk-reference-dashboard-charts__donut-layout {
@@ -180,15 +183,23 @@ const donutCallouts = computed(() => {
   aspect-ratio: 1;
   border-radius: 50%;
   margin: 0 auto;
-  box-shadow: inset 0 0 0 3px var(--ntk-template-page-card-bg, #ffffff);
+  background: var(
+    --ntk-reference-dashboard-donut-background,
+    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
+  );
+  box-shadow: inset 0 0 0 3px var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-reference-dashboard-charts__donut-hole {
   position: absolute;
   inset: 22%;
   border-radius: 50%;
-  background: var(--ntk-template-page-card-bg, #ffffff);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-page-border, #e2e8f0) 72%, transparent);
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  box-shadow: inset 0 0 0 1px color-mix(
+    in srgb,
+    var(--ntk-template-page-border, var(--ntk-border-color)) 72%,
+    transparent
+  );
 }
 
 .ntk-reference-dashboard-charts__callout {
@@ -198,22 +209,26 @@ const donutCallouts = computed(() => {
   gap: 2px;
   font-size: 11px;
   line-height: 1.2;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
 }
 
 .ntk-reference-dashboard-charts__callout::before {
   content: '';
   position: absolute;
-  background: color-mix(in srgb, var(--ntk-template-page-subtitle, #64748b) 44%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 44%,
+    transparent
+  );
 }
 
 .ntk-reference-dashboard-charts__callout strong {
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-primary));
   font-weight: 600;
 }
 
 .ntk-reference-dashboard-charts__callout span {
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
   font-weight: 600;
 }
 
@@ -290,7 +305,7 @@ const donutCallouts = computed(() => {
 
 .ntk-reference-dashboard-charts__bar-label {
   font-size: 12px;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-primary));
 }
 
 .ntk-reference-dashboard-charts__bar-track {
@@ -298,8 +313,16 @@ const donutCallouts = computed(() => {
   border-radius: 0;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--ntk-template-page-border, #e2e8f0) 36%, transparent) 0%,
-    color-mix(in srgb, var(--ntk-template-page-row-bg, #f8fafc) 86%, var(--ntk-template-page-card-bg, #ffffff)) 100%
+    color-mix(
+      in srgb,
+      var(--ntk-template-page-border, var(--ntk-border-color)) 36%,
+      transparent
+    ) 0%,
+    color-mix(
+      in srgb,
+      var(--ntk-template-page-row-bg, var(--ntk-bg-secondary)) 86%,
+      var(--ntk-template-page-card-bg, var(--ntk-bg-card))
+    ) 100%
   );
   overflow: hidden;
   position: relative;
@@ -311,8 +334,16 @@ const donutCallouts = computed(() => {
   inset: 0;
   background: repeating-linear-gradient(
     90deg,
-    color-mix(in srgb, var(--ntk-template-page-subtitle, #64748b) 12%, transparent) 0,
-    color-mix(in srgb, var(--ntk-template-page-subtitle, #64748b) 12%, transparent) 1px,
+    color-mix(
+      in srgb,
+      var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,
+      transparent
+    ) 0,
+    color-mix(
+      in srgb,
+      var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,
+      transparent
+    ) 1px,
     transparent 1px,
     transparent calc(20% - 1px)
   );
@@ -322,6 +353,7 @@ const donutCallouts = computed(() => {
 .ntk-reference-dashboard-charts__bar-fill {
   height: 100%;
   border-radius: 0 4px 4px 0;
+  background: var(--ntk-reference-dashboard-bar-fill, var(--ntk-primary, var(--ntk-accent)));
 }
 
 .ntk-reference-dashboard-charts__axis {
@@ -338,7 +370,10 @@ const donutCallouts = computed(() => {
 }
 
 .ntk-reference-dashboard-charts__axis-tick {
-  color: var(--ntk-template-page-subtitle-soft, #94a3b8);
+  color: var(
+    --ntk-template-page-subtitle-soft,
+    var(--ntk-text-tertiary, var(--ntk-text-secondary, var(--ntk-text-primary)))
+  );
   font-size: 11px;
 }
 

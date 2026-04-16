@@ -155,7 +155,7 @@ function emitActionClick(action: TemplatePageAction): void {
   padding: 16px;
   background: var(
     --ntk-template-placeholder-bg,
-    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)
+    linear-gradient(180deg, var(--ntk-bg-secondary) 0%, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 8%, var(--ntk-bg-secondary)) 100%)
   );
 }
 
@@ -170,17 +170,20 @@ function emitActionClick(action: TemplatePageAction): void {
   width: 320px;
   height: 320px;
   border-radius: 999px;
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.14), rgba(59, 130, 246, 0));
+  background: var(
+    --ntk-template-placeholder-decor-bg,
+    radial-gradient(circle at center, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 14%, transparent), transparent)
+  );
   pointer-events: none;
 }
 
 .ntk-template-placeholder__card {
   position: relative;
   border-radius: 14px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   overflow: hidden;
-  box-shadow: 0 10px 30px var(--ntk-template-placeholder-shadow, rgba(15, 23, 42, 0.08));
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  box-shadow: 0 10px 30px var(--ntk-template-placeholder-shadow, color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
+  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
 }
 
 .ntk-template-placeholder__hero {
@@ -199,8 +202,8 @@ function emitActionClick(action: TemplatePageAction): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--ntk-template-placeholder-icon-color, #2563eb);
-  background: var(--ntk-template-placeholder-icon-bg, rgba(37, 99, 235, 0.12));
+  color: var(--ntk-template-placeholder-icon-color, var(--semantic-info-primary, var(--ntk-info)));
+  background: var(--ntk-template-placeholder-icon-bg, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 12%, transparent));
 }
 
 .ntk-template-placeholder__status {
@@ -211,19 +214,19 @@ function emitActionClick(action: TemplatePageAction): void {
   margin: 0;
   font-size: 28px;
   line-height: 1.15;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-placeholder__subtitle {
   margin: 0;
   font-size: 14px;
-  color: var(--ntk-template-page-text, #334155);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
 }
 
 .ntk-template-placeholder__description {
   margin: 0;
   font-size: 13px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   max-width: 580px;
 }
 
@@ -241,8 +244,8 @@ function emitActionClick(action: TemplatePageAction): void {
   min-height: 36px;
   padding: 8px 10px;
   border-radius: 8px;
-  color: var(--ntk-template-page-text, #334155);
-  background: var(--ntk-template-page-row-bg, #f8fafc);
+  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  background: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
 }
 
 .ntk-template-placeholder__actions {

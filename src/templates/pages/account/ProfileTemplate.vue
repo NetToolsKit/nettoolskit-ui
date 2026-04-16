@@ -8,7 +8,7 @@
       <div class="ntk-template-profile__hero-left">
         <q-avatar
           size="52px"
-          class="ntk-template-profile__avatar text-white"
+          class="ntk-template-profile__avatar"
           font-size="20px"
         >
           <img
@@ -27,9 +27,9 @@
             {{ profile.email || emptyValueLabel }}
           </p>
           <q-badge
-            :color="roleTone"
             :label="resolvedRoleLabel"
             class="ntk-template-profile__role-badge"
+            :class="roleToneClass"
           />
         </div>
       </div>
@@ -39,10 +39,10 @@
           v-if="showLogoutAction"
           outline
           no-caps
-          color="negative"
           icon="logout"
           :label="logoutLabel"
           :aria-label="logoutAriaLabel"
+          class="ntk-template-profile__logout-btn"
           @click="emit('logout-click')"
         />
       </slot>
@@ -145,15 +145,15 @@ const resolvedRoleLabel = computed<string>(() => {
   return props.roleLabel || profile.value.role || 'Member'
 })
 
-const roleTone = computed<string>(() => {
+const roleToneClass = computed<string>(() => {
   const normalizedRole = resolvedRoleLabel.value.toLowerCase()
   if (normalizedRole.includes('admin') || normalizedRole.includes('owner')) {
-    return 'primary'
+    return 'ntk-template-profile__role-badge--primary'
   }
   if (normalizedRole.includes('manager') || normalizedRole.includes('lead')) {
-    return 'info'
+    return 'ntk-template-profile__role-badge--info'
   }
-  return 'grey-7'
+  return 'ntk-template-profile__role-badge--neutral'
 })
 
 const profileGroups = computed<TemplateProfileGroup[]>(() => {
@@ -191,7 +191,7 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 .ntk-template-profile {
   display: flex;
   flex-direction: column;
-  background: var(--ntk-template-page-bg, #f8fafc);
+  background: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
   padding: 12px;
   gap: 12px;
 }
@@ -199,9 +199,13 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 .ntk-template-profile__hero {
   background: var(
     --ntk-template-profile-hero-bg,
-    linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)
+    linear-gradient(
+      135deg,
+      var(--ntk-shell-bg, var(--ntk-bg-secondary)) 0%,
+      var(--ntk-card-bg, var(--ntk-bg-card)) 100%
+    )
   );
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
@@ -220,10 +224,20 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 .ntk-template-profile__avatar {
   background: var(
     --ntk-template-profile-avatar-bg,
-    linear-gradient(135deg, #334155 0%, #1e293b 100%)
+    var(--ntk-primary-gradient, linear-gradient(135deg, var(--ntk-primary), var(--ntk-accent)))
   );
-  border: 2px solid var(--ntk-template-profile-avatar-border, #ffffff);
-  box-shadow: 0 2px 8px var(--ntk-template-profile-avatar-shadow, rgba(30, 41, 59, 0.2));
+  border: 2px solid var(
+    --ntk-template-profile-avatar-border,
+    var(--ntk-card-bg, var(--ntk-bg-card))
+  );
+  color: var(
+    --ntk-template-profile-avatar-color,
+    var(--ntk-text-on-accent, var(--ntk-text-primary))
+  );
+  box-shadow: 0 2px 8px var(
+    --ntk-template-profile-avatar-shadow,
+    color-mix(in srgb, var(--ntk-text-primary) 20%, transparent)
+  );
 }
 
 .ntk-template-profile__hero-content {
@@ -234,13 +248,13 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   margin: 0;
   font-size: 18px;
   line-height: 1.3;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
 }
 
 .ntk-template-profile__email {
   margin: 2px 0 0;
   font-size: 13px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -269,11 +283,11 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
 }
 
 .ntk-template-profile__card {
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
+  border: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
   border-radius: 12px;
   box-shadow: none;
 }
@@ -289,14 +303,68 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 .ntk-template-profile__row-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
 }
 
 .ntk-template-profile__row-value {
   font-size: 14px;
   font-weight: 600;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-page-title, var(--ntk-text-primary));
   text-align: right;
+}
+
+.ntk-template-profile__role-badge {
+  background: var(--ntk-template-profile-role-bg, var(--ntk-bg-tertiary));
+  color: var(--ntk-template-profile-role-text, var(--ntk-text-primary));
+  border: 1px solid var(--ntk-template-profile-role-border, var(--ntk-border-color));
+}
+
+.ntk-template-profile__role-badge--primary {
+  background: color-mix(
+    in srgb,
+    var(--ntk-primary, var(--ntk-accent)) 14%,
+    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
+  );
+  color: var(--ntk-primary, var(--ntk-accent));
+  border-color: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 36%, transparent);
+}
+
+.ntk-template-profile__role-badge--info {
+  background: color-mix(
+    in srgb,
+    var(--semantic-info-primary, var(--ntk-info)) 14%,
+    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
+  );
+  color: var(--semantic-info-primary, var(--ntk-info));
+  border-color: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 36%, transparent);
+}
+
+.ntk-template-profile__role-badge--neutral {
+  background: color-mix(
+    in srgb,
+    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 12%,
+    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
+  );
+  color: var(--ntk-template-page-text, var(--ntk-text-primary));
+  border-color: color-mix(
+    in srgb,
+    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 20%,
+    transparent
+  );
+}
+
+.ntk-template-profile__logout-btn {
+  color: var(--semantic-error-primary, var(--ntk-error));
+  border-color: color-mix(
+    in srgb,
+    var(--semantic-error-primary, var(--ntk-error)) 36%,
+    transparent
+  );
+  background: color-mix(
+    in srgb,
+    var(--semantic-error-primary, var(--ntk-error)) 6%,
+    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
+  );
 }
 
 @media (max-width: 768px) {

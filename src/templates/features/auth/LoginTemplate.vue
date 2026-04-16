@@ -94,7 +94,7 @@
               <template #prepend>
                 <q-icon
                   name="mail"
-                  color="grey-7"
+                  class="ntk-template-login__field-icon"
                 />
               </template>
             </q-input>
@@ -112,7 +112,7 @@
               <template #prepend>
                 <q-icon
                   name="lock"
-                  color="grey-7"
+                  class="ntk-template-login__field-icon"
                 />
               </template>
               <template #append>
@@ -307,7 +307,7 @@ function handleSubmit(): void {
 <style scoped lang="scss">
 .ntk-template-login {
   min-height: 100%;
-  background: var(--ntk-template-login-page-bg, #f8fafc);
+  background: var(--ntk-template-login-page-bg, var(--ntk-bg-secondary));
 }
 
 .ntk-template-login__layout {
@@ -319,20 +319,19 @@ function handleSubmit(): void {
 .ntk-template-login__brand {
   position: relative;
   overflow: hidden;
-  background: var(
-    --ntk-template-login-brand-bg,
-    linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #164e63 100%)
-  );
-  color: var(--ntk-template-login-brand-text, #ffffff);
+  background: var(--ntk-template-login-brand-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  color: var(--ntk-template-login-brand-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
 }
 
 .ntk-template-login__brand::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.16) 0%, rgba(14, 165, 233, 0) 54%),
-    radial-gradient(circle at 80% 76%, rgba(20, 184, 166, 0.18) 0%, rgba(20, 184, 166, 0) 58%);
+  background: var(
+    --ntk-template-login-brand-overlay,
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 16%, transparent) 0%, transparent 54%),
+    radial-gradient(circle at 80% 76%, color-mix(in srgb, var(--ntk-accent) 18%, transparent) 0%, transparent 58%)
+  );
 }
 
 .ntk-template-login__brand-shell {
@@ -371,7 +370,7 @@ function handleSubmit(): void {
 .ntk-template-login__brand-subtitle {
   margin: 14px 0 0;
   max-width: 560px;
-  color: var(--ntk-template-login-brand-subtitle, rgba(255, 255, 255, 0.78));
+  color: var(--ntk-template-login-brand-subtitle, color-mix(in srgb, var(--ntk-template-login-brand-text) 78%, transparent));
   font-size: 15px;
   line-height: 1.55;
 }
@@ -387,7 +386,7 @@ function handleSubmit(): void {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-template-login-brand-feature-text, rgba(255, 255, 255, 0.92));
+  color: var(--ntk-template-login-brand-feature-text, color-mix(in srgb, var(--ntk-template-login-brand-text) 92%, transparent));
 }
 
 .ntk-template-login__feature-icon {
@@ -395,13 +394,13 @@ function handleSubmit(): void {
   height: 30px;
   border-radius: 8px;
   padding: 6px;
-  background: var(--ntk-template-login-brand-feature-bg, rgba(20, 184, 166, 0.2));
+  background: var(--ntk-template-login-brand-feature-bg, color-mix(in srgb, var(--ntk-accent) 20%, transparent));
 }
 
 .ntk-template-login__brand-bottom {
   font-size: 11px;
   letter-spacing: 0.3px;
-  color: var(--ntk-template-login-brand-footer, rgba(255, 255, 255, 0.6));
+  color: var(--ntk-template-login-brand-footer, color-mix(in srgb, var(--ntk-template-login-brand-text) 60%, transparent));
 }
 
 .ntk-template-login__form-area {
@@ -409,19 +408,16 @@ function handleSubmit(): void {
   align-items: center;
   justify-content: center;
   padding: 24px 18px;
-  background: var(
-    --ntk-template-login-form-bg,
-    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)
-  );
+  background: var(--ntk-template-login-form-bg, linear-gradient(180deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-primary) 100%));
 }
 
 .ntk-template-login__form-shell {
   width: min(560px, 100%);
   padding: 20px;
   border-radius: 14px;
-  border: 1px solid var(--ntk-template-login-form-border, #e2e8f0);
-  background: var(--ntk-template-login-form-card-bg, #ffffff);
-  box-shadow: 0 14px 28px var(--ntk-template-login-form-shadow, rgba(15, 23, 42, 0.06));
+  border: 1px solid var(--ntk-template-login-form-border, var(--ntk-border-color));
+  background: var(--ntk-template-login-form-card-bg, var(--ntk-bg-card));
+  box-shadow: 0 14px 28px var(--ntk-template-login-form-shadow, color-mix(in srgb, var(--ntk-text-primary) 6%, transparent));
 }
 
 .ntk-template-login__mobile-logo {
@@ -438,12 +434,12 @@ function handleSubmit(): void {
   margin: 0;
   font-size: 24px;
   line-height: 1.2;
-  color: var(--ntk-template-login-form-title, #1e293b);
+  color: var(--ntk-template-login-form-title, var(--ntk-text-primary));
 }
 
 .ntk-template-login__form-subtitle {
   margin: 6px 0 0;
-  color: var(--ntk-template-login-form-subtitle, #64748b);
+  color: var(--ntk-template-login-form-subtitle, var(--ntk-text-secondary));
 }
 
 .ntk-template-login__form {
@@ -461,7 +457,11 @@ function handleSubmit(): void {
   margin-top: 12px;
   font-size: 11px;
   text-align: center;
-  color: var(--ntk-template-login-version, #94a3b8);
+  color: var(--ntk-template-login-version, var(--ntk-text-muted));
+}
+
+.ntk-template-login__field-icon {
+  color: var(--ntk-template-form-icon-color, var(--ntk-input-icon));
 }
 
 @media (max-width: 1024px) {

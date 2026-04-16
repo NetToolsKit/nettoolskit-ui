@@ -294,9 +294,9 @@ const showArchitecture = computed(() => {
   gap: 28px;
   padding: 24px;
   background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--ntk-reference-accent, #10b981) 16%, transparent) 0%, transparent 34%),
-    radial-gradient(circle at 6% 16%, color-mix(in srgb, var(--ntk-primary-light, #5eead4) 10%, transparent) 0%, transparent 22%),
-    var(--ntk-reference-page-bg, var(--ntk-bg-primary, #f8fafc));
+    radial-gradient(circle at top right, color-mix(in srgb, var(--ntk-reference-accent) 16%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 6% 16%, color-mix(in srgb, var(--ntk-primary-light) 10%, transparent) 0%, transparent 22%),
+    var(--ntk-reference-page-bg);
 }
 
 .ntk-reference-catalog-template__hero {
@@ -304,10 +304,10 @@ const showArchitecture = computed(() => {
   grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
   gap: 20px;
   padding: 28px;
-  border: 1px solid var(--ntk-reference-shell-chrome-border, rgba(148, 163, 184, 0.16));
+  border: 1px solid var(--ntk-reference-shell-chrome-border);
   border-radius: 32px;
-  background: var(--ntk-reference-shell-chrome-bg, #ffffff);
-  box-shadow: var(--ntk-reference-shell-glow, 0 18px 36px rgba(15, 23, 42, 0.08));
+  background: var(--ntk-reference-shell-chrome-bg);
+  box-shadow: var(--ntk-reference-shell-glow);
 }
 
 .ntk-reference-catalog-template__eyebrow,
@@ -317,20 +317,20 @@ const showArchitecture = computed(() => {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-catalog-template__hero h1,
 .ntk-reference-catalog-template__section-header h2,
 .ntk-reference-catalog-template__section-header h3 {
   margin: 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
 }
 
 .ntk-reference-catalog-template__hero-description {
   margin: 12px 0 0;
   max-width: 680px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
   line-height: 1.7;
   font-size: 15px;
 }
@@ -338,14 +338,14 @@ const showArchitecture = computed(() => {
 .ntk-reference-catalog-template__search {
   margin-top: 22px;
   min-height: 48px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 18px;
-  background: color-mix(in srgb, var(--ntk-reference-panel-muted-bg, #f8fbff) 84%, transparent);
+  background: color-mix(in srgb, var(--ntk-reference-panel-muted-bg) 84%, transparent);
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 16px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-catalog-template__search-input {
@@ -353,7 +353,7 @@ const showArchitecture = computed(() => {
   border: 0;
   background: transparent;
   outline: 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
   font-size: 14px;
 }
 
@@ -373,24 +373,24 @@ const showArchitecture = computed(() => {
 }
 
 .ntk-reference-catalog-template__stat {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 18px;
   padding: 16px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg);
 }
 
 .ntk-reference-catalog-template__stat strong {
   display: block;
   font-size: 26px;
   line-height: 1.1;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
   font-family: var(--ntk-font-family-display, 'Space Grotesk', Inter, system-ui, sans-serif);
 }
 
 .ntk-reference-catalog-template__stat span {
   display: block;
   margin-top: 4px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
   font-size: 13px;
 }
 
@@ -399,15 +399,15 @@ const showArchitecture = computed(() => {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 16px;
   padding: 12px 14px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg);
 }
 
 .ntk-reference-catalog-template__callout strong {
   font-size: 13px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
 }
 
 .ntk-reference-catalog-template__callout small {
@@ -416,8 +416,8 @@ const showArchitecture = computed(() => {
   padding: 0 8px;
   display: inline-flex;
   align-items: center;
-  background: var(--ntk-reference-badge-bg, rgba(16, 185, 129, 0.12));
-  color: var(--ntk-reference-badge-text, #10b981);
+  background: var(--ntk-reference-badge-bg);
+  color: var(--ntk-reference-badge-text);
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -443,11 +443,11 @@ const showArchitecture = computed(() => {
 .ntk-reference-catalog-template__runtime-links,
 .ntk-reference-catalog-template__presets,
 .ntk-reference-catalog-template__architecture {
-  border: 1px solid var(--ntk-reference-shell-chrome-border, rgba(148, 163, 184, 0.16));
+  border: 1px solid var(--ntk-reference-shell-chrome-border);
   border-radius: 30px;
   padding: 22px;
-  background: var(--ntk-reference-shell-chrome-bg, #ffffff);
-  box-shadow: var(--ntk-reference-shell-glow, 0 18px 36px rgba(15, 23, 42, 0.08));
+  background: var(--ntk-reference-shell-chrome-bg);
+  box-shadow: var(--ntk-reference-shell-glow);
 }
 
 .ntk-reference-catalog-template__section-header {
@@ -467,8 +467,8 @@ const showArchitecture = computed(() => {
   padding: 0 12px;
   display: inline-flex;
   align-items: center;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
-  color: var(--ntk-text-secondary, #64748b);
+  background: var(--ntk-reference-panel-muted-bg);
+  color: var(--ntk-text-secondary);
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 12px;
   font-weight: 500;
@@ -476,14 +476,14 @@ const showArchitecture = computed(() => {
 
 .ntk-reference-catalog-template__empty {
   min-height: 220px;
-  border: 1px dashed var(--ntk-reference-border, #dbe4f0);
+  border: 1px dashed var(--ntk-reference-border);
   border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
 }
 
 .ntk-reference-catalog-template__surface-grid,
@@ -498,9 +498,9 @@ const showArchitecture = computed(() => {
 
 .ntk-reference-catalog-template__runtime-link,
 .ntk-reference-catalog-template__architecture-card {
-  border: 1px solid var(--ntk-reference-border, #dbe4f0);
+  border: 1px solid var(--ntk-reference-border);
   border-radius: 22px;
-  background: var(--ntk-reference-panel-muted-bg, #f8fbff);
+  background: var(--ntk-reference-panel-muted-bg);
   padding: 18px;
   text-align: left;
 }
@@ -514,7 +514,7 @@ const showArchitecture = computed(() => {
 
 .ntk-reference-catalog-template__runtime-link:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--ntk-reference-accent, #10b981) 44%, var(--ntk-reference-border, #dbe4f0));
+  border-color: color-mix(in srgb, var(--ntk-reference-accent) 44%, var(--ntk-reference-border));
 }
 
 .ntk-reference-catalog-template__runtime-link-head,
@@ -522,19 +522,19 @@ const showArchitecture = computed(() => {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-reference-accent, #10b981);
+  color: var(--ntk-reference-accent);
 }
 
 .ntk-reference-catalog-template__runtime-link p,
 .ntk-reference-catalog-template__architecture-card p {
   margin: 12px 0 0;
-  color: var(--ntk-text-secondary, #64748b);
+  color: var(--ntk-text-secondary);
   line-height: 1.6;
 }
 
 .ntk-reference-catalog-template__architecture-card h3 {
   margin: 14px 0 0;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
 }
 
 .ntk-reference-catalog-template__architecture-list {
@@ -542,7 +542,7 @@ const showArchitecture = computed(() => {
   padding-left: 18px;
   display: grid;
   gap: 8px;
-  color: var(--ntk-text-primary, #0f172a);
+  color: var(--ntk-text-primary);
 }
 
 @media (max-width: 1240px) {

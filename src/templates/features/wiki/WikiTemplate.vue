@@ -733,11 +733,48 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 </script>
 <style scoped lang="scss">
 .ntk-template-wiki {
+  --ntk-template-wiki-surface-bg: var(--ntk-template-page-bg, var(--ntk-bg-secondary));
+  --ntk-template-wiki-card-bg: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+  --ntk-template-wiki-border: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-wiki-title: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-wiki-subtitle: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-wiki-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  --ntk-template-wiki-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  --ntk-template-wiki-chip-surface: var(--ntk-template-page-chip-bg, var(--ntk-bg-tertiary));
+  --ntk-template-wiki-chip-text: var(--ntk-template-page-chip-text, var(--ntk-text-secondary));
+  --ntk-template-wiki-chip-info-text: var(--ntk-info, var(--ntk-primary));
+  --ntk-template-wiki-chip-info-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-info-text) 12%, transparent);
+  --ntk-template-wiki-chip-success-text: var(--ntk-success, var(--ntk-primary));
+  --ntk-template-wiki-chip-success-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-success-text) 12%, transparent);
+  --ntk-template-wiki-chip-warning-text: var(--ntk-warning, var(--ntk-primary));
+  --ntk-template-wiki-chip-warning-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-warning-text) 14%, transparent);
+  --ntk-template-wiki-chip-danger-text: var(--ntk-error, var(--ntk-primary));
+  --ntk-template-wiki-chip-danger-bg: color-mix(in srgb, var(--ntk-template-wiki-chip-danger-text) 14%, transparent);
+  --ntk-template-wiki-sidebar-search-border: var(--ntk-template-wiki-border);
+  --ntk-template-wiki-sidebar-search-bg: var(--ntk-template-wiki-card-bg);
+  --ntk-template-wiki-sidebar-search-text: var(--ntk-template-wiki-muted);
+  --ntk-template-wiki-tree-hover-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-wiki-tree-active-bg: color-mix(in srgb, var(--ntk-template-wiki-icon-bg, var(--ntk-accent)) 10%, transparent);
+  --ntk-template-wiki-tree-active-text: var(--ntk-template-wiki-icon-bg, var(--ntk-accent));
+  --ntk-template-wiki-folder-color: var(--ntk-warning, var(--ntk-accent));
+  --ntk-template-wiki-filter-border: var(--ntk-template-wiki-border);
+  --ntk-template-wiki-filter-active-bg: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-wiki-filter-active-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
+  --ntk-template-wiki-view-active-bg: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-wiki-view-active-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
+  --ntk-template-wiki-table-border: var(--ntk-template-wiki-border);
+  --ntk-template-wiki-file-bg: color-mix(in srgb, var(--ntk-template-wiki-icon-bg, var(--ntk-accent)) 12%, transparent);
+  --ntk-template-wiki-file-text: var(--ntk-template-wiki-icon-bg, var(--ntk-accent));
+  --ntk-template-wiki-tag-bg: color-mix(in srgb, var(--ntk-template-wiki-file-text) 12%, transparent);
+  --ntk-template-wiki-tag-text: var(--ntk-template-wiki-file-text);
+  --ntk-template-wiki-status-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-wiki-action-hover-bg: var(--ntk-template-page-border, var(--ntk-border-color));
+  --ntk-template-wiki-summary-border: var(--ntk-template-page-border, var(--ntk-border-color));
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  background: var(--ntk-template-wiki-bg, #f8fafc);
+  background: var(--ntk-template-wiki-surface-bg);
 }
 
 .ntk-template-wiki__hero {
@@ -746,8 +783,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   gap: 10px;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: var(--ntk-template-page-card-bg, #ffffff);
+  border: 1px solid var(--ntk-template-wiki-border);
+  background: var(--ntk-template-wiki-card-bg);
 }
 
 .ntk-template-wiki__hero-main {
@@ -763,20 +800,20 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ntk-template-wiki-icon-bg, #0f766e);
-  color: var(--ntk-template-wiki-icon-text, #ffffff);
+  background: var(--ntk-template-wiki-icon-bg, var(--ntk-accent));
+  color: var(--ntk-template-wiki-icon-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
 }
 
 .ntk-template-wiki__hero-title {
   margin: 0;
   font-size: 17px;
-  color: var(--ntk-template-page-title, #1e293b);
+  color: var(--ntk-template-wiki-title);
 }
 
 .ntk-template-wiki__hero-subtitle {
   margin: 2px 0 0;
   font-size: 12px;
-  color: var(--ntk-template-page-subtitle, #64748b);
+  color: var(--ntk-template-wiki-subtitle);
 }
 
 .ntk-template-wiki__hero-stats {
@@ -794,28 +831,28 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   border-radius: 14px;
   padding: 4px 10px;
   font-size: 11px;
-  color: #475569;
-  background: #f1f5f9;
+  color: var(--ntk-template-wiki-chip-text);
+  background: var(--ntk-template-wiki-chip-surface);
 }
 
 .ntk-template-wiki__chip--info {
-  color: #1d4ed8;
-  background: rgba(59, 130, 246, 0.12);
+  color: var(--ntk-template-wiki-chip-info-text);
+  background: var(--ntk-template-wiki-chip-info-bg);
 }
 
 .ntk-template-wiki__chip--success {
-  color: #166534;
-  background: rgba(34, 197, 94, 0.12);
+  color: var(--ntk-template-wiki-chip-success-text);
+  background: var(--ntk-template-wiki-chip-success-bg);
 }
 
 .ntk-template-wiki__chip--warning {
-  color: #92400e;
-  background: rgba(245, 158, 11, 0.14);
+  color: var(--ntk-template-wiki-chip-warning-text);
+  background: var(--ntk-template-wiki-chip-warning-bg);
 }
 
 .ntk-template-wiki__chip--danger {
-  color: #991b1b;
-  background: rgba(239, 68, 68, 0.14);
+  color: var(--ntk-template-wiki-chip-danger-text);
+  background: var(--ntk-template-wiki-chip-danger-bg);
 }
 
 .ntk-template-wiki__hero-action {
@@ -833,8 +870,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__sidebar {
   width: 300px;
   border-radius: 12px;
-  border: 1px solid var(--ntk-template-page-border, #e2e8f0);
-  background: #ffffff;
+  border: 1px solid var(--ntk-template-wiki-border);
+  background: var(--ntk-template-wiki-card-bg);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -842,7 +879,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 
 .ntk-template-wiki__sidebar-header {
   padding: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--ntk-template-wiki-summary-border);
 }
 
 .ntk-template-wiki__sidebar-title {
@@ -852,7 +889,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
 }
 
 .ntk-template-wiki__sidebar-search,
@@ -860,12 +897,12 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ntk-template-wiki-sidebar-search-border);
   border-radius: 8px;
   padding: 0 10px;
   height: 34px;
-  color: #64748b;
-  background: #ffffff;
+  color: var(--ntk-template-wiki-sidebar-search-text);
+  background: var(--ntk-template-wiki-sidebar-search-bg);
 }
 
 .ntk-template-wiki__search-input {
@@ -873,7 +910,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   background: transparent;
   width: 100%;
   outline: none;
-  color: #334155;
+  color: var(--ntk-template-wiki-text);
   font-size: 12px;
 }
 
@@ -893,17 +930,17 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   gap: 6px;
   padding: 7px 12px;
   cursor: pointer;
-  color: #475569;
+  color: var(--ntk-template-wiki-muted);
   text-align: left;
 }
 
 .ntk-template-wiki__tree-item:hover {
-  background: #f8fafc;
+  background: var(--ntk-template-wiki-tree-hover-bg);
 }
 
 .ntk-template-wiki__tree-item--active {
-  background: rgba(15, 118, 110, 0.1);
-  color: #0f766e;
+  background: var(--ntk-template-wiki-tree-active-bg);
+  color: var(--ntk-template-wiki-tree-active-text);
 }
 
 .ntk-template-wiki__tree-item--child {
@@ -919,7 +956,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 }
 
 .ntk-template-wiki__tree-folder {
-  color: #f59e0b;
+  color: var(--ntk-template-wiki-folder-color);
 }
 
 .ntk-template-wiki__tree-label {
@@ -935,8 +972,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   padding: 1px 7px;
   border-radius: 9px;
   font-size: 10px;
-  color: #475569;
-  background: #f1f5f9;
+  color: var(--ntk-template-wiki-chip-text);
+  background: var(--ntk-template-wiki-chip-surface);
 }
 
 .ntk-template-wiki__tree-badge--sm {
@@ -985,8 +1022,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  border: 1px solid var(--ntk-template-wiki-filter-border);
+  background: var(--ntk-template-wiki-card-bg);
 }
 
 .ntk-template-wiki__filter {
@@ -995,19 +1032,19 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   border-radius: 6px;
   padding: 4px 10px;
   font-size: 12px;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
   cursor: pointer;
 }
 
 .ntk-template-wiki__filter--active {
-  background: #1e293b;
-  color: #ffffff;
+  background: var(--ntk-template-wiki-filter-active-bg);
+  color: var(--ntk-template-wiki-filter-active-text);
 }
 
 .ntk-template-wiki__views {
   margin-left: auto;
   display: inline-flex;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ntk-template-wiki-filter-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -1016,23 +1053,24 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   width: 34px;
   height: 34px;
   border: none;
-  background: #ffffff;
-  color: #64748b;
+  background: var(--ntk-template-wiki-card-bg);
+  color: var(--ntk-template-wiki-muted);
   cursor: pointer;
 }
 
 .ntk-template-wiki__view--active {
-  background: #1e293b;
-  color: #ffffff;
+  background: var(--ntk-template-wiki-view-active-bg);
+  color: var(--ntk-template-wiki-view-active-text);
 }
+
 .ntk-template-wiki__surface {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ntk-template-wiki-border);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--ntk-template-wiki-card-bg);
   overflow: hidden;
 }
 
@@ -1041,7 +1079,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--ntk-template-wiki-summary-border);
 }
 
 .ntk-template-wiki__crumbs {
@@ -1053,26 +1091,26 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__crumb {
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
   font-size: 12px;
   cursor: pointer;
   padding: 0;
 }
 
 .ntk-template-wiki__crumb--current {
-  color: #334155;
+  color: var(--ntk-template-wiki-text);
   font-weight: 600;
   cursor: default;
 }
 
 .ntk-template-wiki__crumb-separator {
-  color: #cbd5e1;
+  color: var(--ntk-template-wiki-border);
   font-size: 12px;
 }
 
 .ntk-template-wiki__meta {
   margin-left: auto;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
   font-size: 12px;
 }
 
@@ -1091,7 +1129,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__table th {
   text-align: left;
   font-size: 11px;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
   text-transform: uppercase;
   padding: 8px 10px;
 }
@@ -1099,8 +1137,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__table td {
   padding: 10px;
   font-size: 13px;
-  color: #334155;
-  border-top: 1px solid #f1f5f9;
+  color: var(--ntk-template-wiki-text);
+  border-top: 1px solid var(--ntk-template-wiki-summary-border);
 }
 
 .ntk-template-wiki__column-check {
@@ -1120,8 +1158,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #eef2ff;
-  color: #4f46e5;
+  background: var(--ntk-template-wiki-file-bg);
+  color: var(--ntk-template-wiki-file-text);
 }
 
 .ntk-template-wiki__file-icon--large {
@@ -1133,13 +1171,13 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__file-name {
   display: block;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--ntk-template-wiki-title);
 }
 
 .ntk-template-wiki__file-size {
   display: block;
   font-size: 11px;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
 }
 
 .ntk-template-wiki__tags {
@@ -1152,8 +1190,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   padding: 2px 7px;
   border-radius: 4px;
   font-size: 10px;
-  color: #4f46e5;
-  background: #eef2ff;
+  color: var(--ntk-template-wiki-tag-text);
+  background: var(--ntk-template-wiki-tag-bg);
 }
 
 .ntk-template-wiki__status {
@@ -1161,8 +1199,8 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 11px;
-  color: #1e293b;
-  background: #f1f5f9;
+  color: var(--ntk-template-wiki-text);
+  background: var(--ntk-template-wiki-status-bg);
 }
 
 .ntk-template-wiki__actions {
@@ -1176,13 +1214,13 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
   cursor: pointer;
 }
 
 .ntk-template-wiki__action:hover {
-  background: #e2e8f0;
-  color: #334155;
+  background: var(--ntk-template-wiki-action-hover-bg);
+  color: var(--ntk-template-wiki-text);
 }
 
 .ntk-template-wiki__cards {
@@ -1192,7 +1230,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 }
 
 .ntk-template-wiki__card {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ntk-template-wiki-border);
   border-radius: 10px;
   padding: 12px;
   display: flex;
@@ -1203,12 +1241,12 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 .ntk-template-wiki__card-name {
   font-size: 13px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--ntk-template-wiki-title);
 }
 
 .ntk-template-wiki__card-meta {
   font-size: 11px;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
 }
 
 .ntk-template-wiki__summary {
@@ -1216,14 +1254,14 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--ntk-template-wiki-summary-border);
 }
 
 .ntk-template-wiki__summary-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #64748b;
+  color: var(--ntk-template-wiki-muted);
   font-size: 12px;
 }
 
