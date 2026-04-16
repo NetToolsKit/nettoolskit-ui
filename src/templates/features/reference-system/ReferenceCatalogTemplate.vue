@@ -289,6 +289,10 @@ const showArchitecture = computed(() => {
 
 <style scoped lang="scss">
 .ntk-reference-catalog-template {
+  --ntk-reference-catalog-template-callout-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent) 12%, var(--ntk-reference-panel-bg, var(--ntk-bg-card))));
+  --ntk-reference-catalog-template-callout-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent));
+  --ntk-reference-catalog-template-callout-badge-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-catalog-template-callout-badge-text) 14%, transparent));
+
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -416,8 +420,9 @@ const showArchitecture = computed(() => {
   padding: 0 8px;
   display: inline-flex;
   align-items: center;
-  background: var(--ntk-reference-badge-bg);
-  color: var(--ntk-reference-badge-text);
+  background: var(--ntk-reference-catalog-template-callout-badge-bg);
+  color: var(--ntk-reference-catalog-template-callout-badge-text);
+  border: 1px solid var(--ntk-reference-catalog-template-callout-badge-border);
   font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -530,6 +535,12 @@ const showArchitecture = computed(() => {
   margin: 12px 0 0;
   color: var(--ntk-text-secondary);
   line-height: 1.6;
+}
+
+:global(.body--dark) .ntk-reference-catalog-template {
+  --ntk-reference-catalog-template-callout-badge-bg: color-mix(in srgb, var(--ntk-reference-accent) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary)));
+  --ntk-reference-catalog-template-callout-badge-text: var(--ntk-text-primary);
+  --ntk-reference-catalog-template-callout-badge-border: color-mix(in srgb, var(--ntk-reference-accent) 36%, var(--ntk-reference-border));
 }
 
 .ntk-reference-catalog-template__architecture-card h3 {

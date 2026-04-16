@@ -253,9 +253,11 @@ const loginPassword = ref('demo-password')
   --ntk-reference-catalog-preview-shell-shadow: var(--ntk-reference-shell-glow, 0 18px 48px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
   --ntk-reference-catalog-preview-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-primary)));
   --ntk-reference-catalog-preview-muted: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
-  --ntk-reference-catalog-preview-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 12%, transparent));
+  --ntk-reference-catalog-preview-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 12%, var(--ntk-reference-panel-bg, var(--ntk-bg-card))));
   --ntk-reference-catalog-preview-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary)));
+  --ntk-reference-catalog-preview-badge-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-badge-text) 14%, transparent));
   --ntk-reference-catalog-preview-muted-badge-bg: var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary));
+  --ntk-reference-catalog-preview-muted-badge-border: var(--ntk-reference-border, var(--ntk-border-color));
   --ntk-reference-catalog-preview-surface-border: var(--ntk-reference-border, var(--ntk-border-color));
   --ntk-reference-catalog-preview-surface-bg: var(--ntk-reference-panel-bg, var(--ntk-bg-card));
   --ntk-reference-catalog-preview-surface-shadow: var(--ntk-shadow-md, 0 24px 48px color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
@@ -311,6 +313,7 @@ const loginPassword = ref('demo-password')
   align-items: center;
   background: var(--ntk-reference-catalog-preview-badge-bg);
   color: var(--ntk-reference-catalog-preview-badge-text);
+  border: 1px solid var(--ntk-reference-catalog-preview-badge-border);
   font-size: 12px;
   font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-weight: 500;
@@ -320,6 +323,7 @@ const loginPassword = ref('demo-password')
 .ntk-reference-catalog-preview__badge--muted {
   background: var(--ntk-reference-catalog-preview-muted-badge-bg);
   color: var(--ntk-reference-catalog-preview-muted);
+  border-color: var(--ntk-reference-catalog-preview-muted-badge-border);
 }
 
 .ntk-reference-catalog-preview__surface {
@@ -345,5 +349,11 @@ const loginPassword = ref('demo-password')
   .ntk-reference-catalog-preview__header {
     flex-direction: column;
   }
+}
+
+:global(.body--dark) .ntk-reference-catalog-preview {
+  --ntk-reference-catalog-preview-badge-bg: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary)));
+  --ntk-reference-catalog-preview-badge-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  --ntk-reference-catalog-preview-badge-border: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 36%, var(--ntk-reference-border, var(--ntk-border-color)));
 }
 </style>

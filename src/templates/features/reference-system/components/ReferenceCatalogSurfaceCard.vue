@@ -49,6 +49,12 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .ntk-reference-catalog-surface-card {
+  --ntk-reference-catalog-surface-card-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent) 12%, var(--ntk-reference-panel-bg)));
+  --ntk-reference-catalog-surface-card-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent));
+  --ntk-reference-catalog-surface-card-badge-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-catalog-surface-card-badge-text) 14%, transparent));
+  --ntk-reference-catalog-surface-card-template-border: var(--ntk-reference-border);
+  --ntk-reference-catalog-surface-card-footer-text: var(--ntk-reference-accent);
+
   width: 100%;
   border: 1px solid var(--ntk-reference-border);
   border-radius: 24px;
@@ -95,13 +101,15 @@ const emit = defineEmits<{
 }
 
 .ntk-reference-catalog-surface-card__tag {
-  background: var(--ntk-reference-badge-bg);
-  color: var(--ntk-reference-badge-text);
+  background: var(--ntk-reference-catalog-surface-card-badge-bg);
+  color: var(--ntk-reference-catalog-surface-card-badge-text);
+  border: 1px solid var(--ntk-reference-catalog-surface-card-badge-border);
 }
 
 .ntk-reference-catalog-surface-card__template {
   background: var(--ntk-reference-panel-muted-bg);
   color: var(--ntk-text-secondary);
+  border: 1px solid var(--ntk-reference-catalog-surface-card-template-border);
 }
 
 .ntk-reference-catalog-surface-card__body h3 {
@@ -122,8 +130,15 @@ const emit = defineEmits<{
 }
 
 .ntk-reference-catalog-surface-card__footer {
-  color: var(--ntk-reference-accent);
+  color: var(--ntk-reference-catalog-surface-card-footer-text);
   font-size: 13px;
   font-weight: 600;
+}
+
+:global(.body--dark) .ntk-reference-catalog-surface-card {
+  --ntk-reference-catalog-surface-card-badge-bg: color-mix(in srgb, var(--ntk-reference-accent) 24%, var(--ntk-reference-panel-muted-bg));
+  --ntk-reference-catalog-surface-card-badge-text: var(--ntk-text-primary);
+  --ntk-reference-catalog-surface-card-badge-border: color-mix(in srgb, var(--ntk-reference-accent) 36%, var(--ntk-reference-border));
+  --ntk-reference-catalog-surface-card-footer-text: var(--ntk-text-primary);
 }
 </style>

@@ -102,6 +102,10 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .ntk-reference-detail-card {
+  --ntk-reference-detail-card-tag-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 12%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)))));
+  --ntk-reference-detail-card-tag-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))));
+  --ntk-reference-detail-card-tag-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-detail-card-tag-text) 14%, transparent));
+
   border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 20px;
   background: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
@@ -164,8 +168,9 @@ const emit = defineEmits<{
 .ntk-reference-detail-card__tag {
   padding: 6px 10px;
   border-radius: 999px;
-  background: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 88%, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)))));
-  color: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))));
+  background: var(--ntk-reference-detail-card-tag-bg);
+  color: var(--ntk-reference-detail-card-tag-text);
+  border: 1px solid var(--ntk-reference-detail-card-tag-border);
   font-size: 12px;
   font-weight: 700;
 }
@@ -203,5 +208,11 @@ const emit = defineEmits<{
   .ntk-reference-detail-card__meta {
     grid-template-columns: 1fr;
   }
+}
+
+:global(.body--dark) .ntk-reference-detail-card {
+  --ntk-reference-detail-card-tag-bg: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary)));
+  --ntk-reference-detail-card-tag-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  --ntk-reference-detail-card-tag-border: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 36%, var(--ntk-reference-border, var(--ntk-border-color)));
 }
 </style>

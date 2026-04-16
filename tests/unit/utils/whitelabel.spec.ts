@@ -158,6 +158,7 @@ describe('createReferenceWhitelabelStyleVars', () => {
     expect(String(vars['--ntk-template-login-brand-subtitle'])).toContain('color-mix(in srgb,')
     expect(String(vars['--ntk-reference-shell-glow'])).toContain('color-mix(in srgb,')
     expect(String(vars['--ntk-reference-badge-bg'])).toContain('var(--ntk-bg-card)')
+    expect(String(vars['--ntk-reference-badge-text'])).toBe(preset.palette.accent)
   })
 })
 

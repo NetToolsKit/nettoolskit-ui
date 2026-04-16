@@ -53,7 +53,15 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
   const referencePanelMutedBackground = isDarkShell
     ? palette.surfaceAlt
     : palette.surfaceAlt
-  const referenceBadgeBackground = `color-mix(in srgb, var(--ntk-reference-accent) 16%, ${isDarkShell ? 'var(--ntk-reference-panel-muted-bg)' : 'var(--ntk-bg-card)'})`
+  const referenceBadgeBackground = isDarkShell
+    ? 'color-mix(in srgb, var(--ntk-reference-accent) 20%, var(--ntk-reference-panel-bg))'
+    : 'color-mix(in srgb, var(--ntk-reference-accent) 14%, var(--ntk-bg-card))'
+  const referenceBadgeBorder = isDarkShell
+    ? 'color-mix(in srgb, var(--ntk-reference-accent) 28%, var(--ntk-reference-panel-muted-bg))'
+    : 'color-mix(in srgb, var(--ntk-reference-accent) 20%, var(--ntk-bg-card))'
+  const referenceBadgeText = isDarkShell
+    ? 'var(--ntk-text-primary)'
+    : palette.accent
   const referenceHeroBackground = isDarkShell
     ? palette.background
     : palette.background
@@ -204,7 +212,8 @@ export function createReferenceWhitelabelStyleVars(preset: ReferenceWhitelabelPr
     '--ntk-reference-accent': palette.accent,
     '--ntk-reference-accent-soft': `color-mix(in srgb, ${palette.accent} 16%, transparent)`,
     '--ntk-reference-badge-bg': referenceBadgeBackground,
-    '--ntk-reference-badge-text': palette.accent,
+    '--ntk-reference-badge-border': referenceBadgeBorder,
+    '--ntk-reference-badge-text': referenceBadgeText,
     '--ntk-reference-hero-bg': referenceHeroBackground,
     '--ntk-reference-shell-chrome-bg': shellChromeBackground,
     '--ntk-reference-shell-chrome-border': shellChromeBorder,

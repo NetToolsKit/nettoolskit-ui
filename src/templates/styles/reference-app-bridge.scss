@@ -195,11 +195,15 @@
 
   --ntk-template-not-found-bg: var(--ntk-not-found-bg, radial-gradient(circle at top, var(--ntk-primary-gradient-start, var(--ntk-accent)) 0%, var(--ntk-primary-gradient-end, var(--ntk-accent-hover, var(--ntk-accent))) 100%));
   --ntk-template-not-found-text: var(--ntk-not-found-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
-  --ntk-template-not-found-card-bg: var(--ntk-not-found-card-bg, color-mix(in srgb, var(--ntk-text-primary) 60%, transparent));
-  --ntk-template-not-found-border: var(--ntk-not-found-border, color-mix(in srgb, var(--ntk-border-color) 35%, transparent));
+  --ntk-template-not-found-card-bg: var(--ntk-not-found-card-bg, color-mix(in srgb, var(--ntk-bg-card, var(--ntk-card-bg, var(--ntk-bg-primary))) 76%, transparent));
+  --ntk-template-not-found-border: var(--ntk-not-found-border, color-mix(in srgb, var(--ntk-template-not-found-text) 16%, transparent));
   --ntk-template-not-found-code-color: var(--ntk-not-found-code-color, var(--semantic-info-primary, var(--ntk-info)));
   --ntk-template-not-found-code-shadow: var(--ntk-not-found-code-shadow, color-mix(in srgb, var(--ntk-text-primary) 35%, transparent));
   --ntk-template-not-found-subtitle: var(--ntk-not-found-subtitle, color-mix(in srgb, var(--ntk-template-not-found-text) 82%, transparent));
+
+  --ntk-reference-badge-bg: var(--ntk-reference-badge-background, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 20%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)))));
+  --ntk-reference-badge-border: var(--ntk-reference-badge-outline, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 28%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary))));
+  --ntk-reference-badge-text: var(--ntk-reference-badge-foreground, var(--ntk-template-page-title, var(--ntk-text-primary)));
 }
 
 .dark,
