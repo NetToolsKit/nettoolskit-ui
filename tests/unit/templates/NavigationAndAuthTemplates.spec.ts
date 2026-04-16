@@ -210,6 +210,42 @@ describe('MenuLinkTemplate', () => {
     expect(wrapper.text()).toContain('Wiki')
     expect(wrapper.text()).toContain('Chat')
   })
+
+  it('keeps mini-mode tooltip and submenu hooks for shared shell overlays', () => {
+    const itemWithChildren = {
+      ...baseItem,
+      children: [
+        { id: 'wiki', text: 'Wiki', to: '/wiki' },
+        { id: 'wiki-chat', text: 'Chat', to: '/wiki/chat' },
+      ],
+    }
+
+    const wrapper = shallowMount(MenuLinkTemplate, {
+      ...navGlobal,
+      props: {
+        item: itemWithChildren,
+        miniMode: true,
+      },
+    })
+
+    const tooltip = wrapper.find('q-tooltip-stub.ntk-template-menu-link__tooltip')
+    const submenu = wrapper.find('q-menu-stub[content-class="ntk-template-menu-link__submenu-popup"]')
+
+    expect(tooltip.exists()).toBe(true)
+    expect(submenu.exists()).toBe(true)
+  })
+
+  it('keeps the mini-item tooltip hook for shared shell overlays', () => {
+    const wrapper = shallowMount(MenuLinkTemplate, {
+      ...navGlobal,
+      props: {
+        item: baseItem,
+        miniMode: true,
+      },
+    })
+
+    expect(wrapper.find('q-tooltip-stub.ntk-template-menu-link__tooltip').exists()).toBe(true)
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -252,6 +288,25 @@ describe('HorizontalMenuLinkTemplate', () => {
     expect(wrapper.find('q-btn-dropdown-stub').exists()).toBe(true)
     expect(wrapper.text()).toContain('Wiki')
     expect(wrapper.text()).toContain('Chat')
+  })
+
+  it('keeps the shared submenu popup hook for shell tokenized overlays', () => {
+    const itemWithChildren = {
+      ...baseItem,
+      children: [
+        { id: 'wiki', text: 'Wiki', to: '/wiki' },
+        { id: 'chat', text: 'Chat', to: '/wiki/chat' },
+      ],
+    }
+
+    const wrapper = shallowMount(HorizontalMenuLinkTemplate, {
+      ...navGlobal,
+      props: { item: itemWithChildren },
+    })
+
+    expect(
+      wrapper.find('q-btn-dropdown-stub[content-class="ntk-template-horizontal-link__submenu-popup"]').exists()
+    ).toBe(true)
   })
 })
 
