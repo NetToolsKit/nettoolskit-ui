@@ -437,30 +437,32 @@ watch(sideMenuVariant, value => {
 <style lang="scss">
 .ntk-template-main-layout {
   --ntk-template-layout-shell-bg: var(--ntk-template-layout-page-bg, var(--ntk-shell-bg, var(--ntk-bg-secondary)));
-  --ntk-template-layout-page-text: var(--ntk-text-primary);
-  --ntk-template-layout-header-bg: var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
-  --ntk-template-layout-header-text: var(--ntk-text-primary);
+  --ntk-template-layout-page-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  --ntk-template-layout-header-bg: var(--ntk-header-bg, var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary))));
+  --ntk-template-layout-header-text: var(--ntk-template-layout-title-color, var(--ntk-text-heading, var(--ntk-text-primary)));
   --ntk-template-layout-header-border: color-mix(in srgb, var(--ntk-template-layout-header-text) 12%, transparent);
   --ntk-template-layout-header-shadow: 0 1px 3px color-mix(in srgb, var(--ntk-template-layout-page-text) 4%, transparent);
-  --ntk-template-layout-nav-start: var(--ntk-template-layout-nav-surface-start, color-mix(in srgb, var(--ntk-text-primary) 92%, var(--ntk-bg-primary)));
-  --ntk-template-layout-nav-end: var(--ntk-template-layout-nav-surface-end, color-mix(in srgb, var(--ntk-text-primary) 84%, var(--ntk-bg-primary)));
-  --ntk-template-layout-horizontal-bg: linear-gradient(90deg, var(--ntk-template-layout-nav-start) 0%, var(--ntk-template-layout-nav-end) 100%);
-  --ntk-template-layout-horizontal-text: var(--ntk-template-layout-on-dark, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-layout-nav-start: var(--ntk-template-layout-nav-surface-start, var(--ntk-drawer-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))));
+  --ntk-template-layout-nav-end: var(--ntk-template-layout-nav-surface-end, color-mix(in srgb, var(--ntk-drawer-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))) 88%, var(--ntk-shell-bg, var(--ntk-bg-primary))));
+  --ntk-template-layout-horizontal-bg: var(--ntk-layout-horizontal-bg, linear-gradient(90deg, var(--ntk-template-layout-nav-start) 0%, var(--ntk-template-layout-nav-end) 100%));
+  --ntk-template-layout-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-drawer-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
   --ntk-template-layout-horizontal-border: color-mix(in srgb, var(--ntk-template-layout-horizontal-text) 8%, transparent);
-  --ntk-template-layout-drawer-bg: linear-gradient(180deg, var(--ntk-template-layout-nav-start) 0%, var(--ntk-template-layout-nav-end) 100%);
-  --ntk-template-layout-drawer-text: var(--ntk-template-layout-on-dark, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-layout-drawer-bg: var(--ntk-layout-drawer-bg, linear-gradient(180deg, var(--ntk-template-layout-nav-start) 0%, var(--ntk-template-layout-nav-end) 100%));
+  --ntk-template-layout-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)))));
   --ntk-template-layout-drawer-border: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 22%, transparent);
   --ntk-template-layout-drawer-inset: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 18%, transparent);
   --ntk-template-layout-nav-group-text: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 88%, transparent);
   --ntk-template-layout-nav-group-pill-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 18%, transparent);
   --ntk-template-layout-nav-text: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 82%, transparent);
   --ntk-template-layout-nav-active-border: var(--ntk-primary, var(--ntk-accent));
+  --ntk-template-layout-nav-active-text: var(--ntk-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-layout-drawer-text)));
   --ntk-template-layout-nav-active-bg: linear-gradient(
     90deg,
     color-mix(in srgb, var(--ntk-template-layout-nav-active-border) 20%, transparent) 0%,
     color-mix(in srgb, var(--ntk-template-layout-nav-active-border) 6%, transparent) 100%
   );
   --ntk-template-layout-nav-hover-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent);
+  --ntk-template-layout-reference-nav-hover-bg: var(--ntk-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text) 7%, transparent));
   --ntk-template-layout-toolbar-border: color-mix(in srgb, var(--ntk-template-layout-page-text) 12%, transparent);
   --ntk-template-layout-submenu-hover-bg: color-mix(in srgb, var(--ntk-template-layout-page-text) 5%, transparent);
   --ntk-template-layout-submenu-active-border: var(--ntk-primary, var(--ntk-accent));

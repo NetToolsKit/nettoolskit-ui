@@ -144,15 +144,15 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 <style lang="scss">
 .ntk-template-horizontal-link {
-  --ntk-template-horizontal-link-color: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) 75%, transparent);
-  --ntk-template-horizontal-link-hover-color: var(--ntk-template-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-hover-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) 8%, transparent);
-  --ntk-template-horizontal-link-active-color: var(--ntk-template-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-active-border: var(--ntk-template-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
-  --ntk-template-horizontal-link-active-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) 10%, transparent);
+  --ntk-template-horizontal-link-color: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 75%, transparent);
+  --ntk-template-horizontal-link-hover-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-template-horizontal-link-hover-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 8%, transparent);
+  --ntk-template-horizontal-link-active-color: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-template-horizontal-link-active-border: var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-template-horizontal-link-active-bg: color-mix(in srgb, var(--ntk-template-layout-horizontal-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 10%, transparent);
   --ntk-template-horizontal-link-submenu-bg: var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
-  --ntk-template-horizontal-link-submenu-text: var(--ntk-text-primary);
-  --ntk-template-horizontal-link-submenu-hover-bg: color-mix(in srgb, var(--ntk-text-primary) 5%, transparent);
+  --ntk-template-horizontal-link-submenu-text: var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)));
+  --ntk-template-horizontal-link-submenu-hover-bg: color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent);
   --ntk-template-horizontal-link-submenu-active-bg: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 10%, transparent);
   --ntk-template-horizontal-link-submenu-active-border: var(--ntk-primary, var(--ntk-accent));
   --ntk-template-horizontal-link-submenu-active-color: var(--ntk-primary, var(--ntk-accent));

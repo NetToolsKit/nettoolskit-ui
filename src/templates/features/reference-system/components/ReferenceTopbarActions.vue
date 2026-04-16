@@ -138,6 +138,7 @@
         map-options
         :options="presetOptions"
         :label="presetLabel"
+        popup-content-class="ntk-reference-topbar__preset-popup"
         class="ntk-reference-topbar__preset-select"
         @update:model-value="emit('update:selectedPresetId', $event)"
       />
@@ -214,6 +215,7 @@ onUnmounted(() => {
   --ntk-reference-topbar-accent-soft-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 24%, transparent);
   --ntk-reference-topbar-accent-soft-border: color-mix(in srgb, var(--ntk-reference-topbar-accent) 28%, transparent);
   --ntk-reference-topbar-unread-bg: color-mix(in srgb, var(--ntk-reference-topbar-accent) 12%, var(--ntk-reference-topbar-surface));
+  --ntk-reference-topbar-popup-shadow: var(--ntk-reference-shell-glow, 0 12px 28px color-mix(in srgb, var(--ntk-reference-topbar-text) 10%, transparent));
   display: flex;
   align-items: center;
   gap: 12px;
@@ -283,6 +285,28 @@ onUnmounted(() => {
   :deep(.q-select__dropdown-icon) {
     color: var(--ntk-reference-topbar-text) !important;
   }
+}
+
+:deep(.ntk-reference-topbar__preset-popup) {
+  border: 1px solid var(--ntk-reference-topbar-border);
+  border-radius: 12px;
+  background: var(--ntk-reference-topbar-surface);
+  color: var(--ntk-reference-topbar-text);
+  box-shadow: var(--ntk-reference-topbar-popup-shadow);
+}
+
+:deep(.ntk-reference-topbar__preset-popup .q-item) {
+  color: var(--ntk-reference-topbar-text);
+}
+
+:deep(.ntk-reference-topbar__preset-popup .q-item__label--caption),
+:deep(.ntk-reference-topbar__preset-popup .q-item__section--side) {
+  color: var(--ntk-reference-topbar-text-muted) !important;
+}
+
+:deep(.ntk-reference-topbar__preset-popup .q-item.q-manual-focusable--focused),
+:deep(.ntk-reference-topbar__preset-popup .q-item:hover) {
+  background: color-mix(in srgb, var(--ntk-reference-topbar-accent) 10%, var(--ntk-reference-topbar-surface));
 }
 
 .ntk-reference-topbar__counter-badge {

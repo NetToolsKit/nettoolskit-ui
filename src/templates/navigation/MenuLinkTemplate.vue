@@ -296,18 +296,18 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 <style lang="scss">
 .ntk-template-menu-link {
-  --ntk-template-menu-link-text: var(--ntk-template-layout-nav-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-menu-link-text: var(--ntk-template-layout-nav-text, var(--ntk-template-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary)))));
   --ntk-template-menu-link-active-border: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
   --ntk-template-menu-link-active-bg: var(--ntk-template-layout-nav-active-bg, linear-gradient(90deg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 20%, transparent) 0%, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 6%, transparent) 100%));
-  --ntk-template-menu-link-active-text: var(--ntk-template-layout-nav-active-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-menu-link-active-text: var(--ntk-template-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-title, var(--ntk-text-primary)))));
   --ntk-template-menu-link-submenu-bg: var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
-  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
-  --ntk-template-menu-link-submenu-text: var(--ntk-text-primary);
-  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
+  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent));
+  --ntk-template-menu-link-submenu-text: var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)));
+  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent));
   --ntk-template-menu-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 12%, transparent));
   --ntk-template-menu-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-template-menu-link-active-border));
   --ntk-template-menu-link-submenu-active-text: var(--ntk-primary, var(--ntk-accent));
-  --ntk-template-menu-link-shadow: var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
+  --ntk-template-menu-link-shadow: var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 8%, transparent));
 
   transition: all 0.2s ease;
   color: var(--ntk-template-menu-link-text) !important;
@@ -365,13 +365,13 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__submenu-popup {
   --ntk-template-menu-link-submenu-bg: var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)));
-  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
-  --ntk-template-menu-link-submenu-text: var(--ntk-text-primary);
-  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
+  --ntk-template-menu-link-submenu-border: var(--ntk-template-layout-toolbar-border, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 12%, transparent));
+  --ntk-template-menu-link-submenu-text: var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)));
+  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-layout-submenu-hover-bg, color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 5%, transparent));
   --ntk-template-menu-link-submenu-active-bg: var(--ntk-template-layout-submenu-active-bg, color-mix(in srgb, var(--ntk-template-menu-link-active-border) 12%, transparent));
   --ntk-template-menu-link-submenu-active-border: var(--ntk-template-layout-submenu-active-border, var(--ntk-template-menu-link-active-border));
   --ntk-template-menu-link-submenu-active-text: var(--ntk-primary, var(--ntk-accent));
-  --ntk-template-menu-link-shadow: var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
+  --ntk-template-menu-link-shadow: var(--ntk-shadow-soft, 0 4px 16px color-mix(in srgb, var(--ntk-template-page-text, var(--ntk-text-primary)) 8%, transparent));
 }
 
 .ntk-template-menu-link__expanded-list {
@@ -379,7 +379,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
   .q-item.q-router-link--active,
   .q-item--active {
-    color: var(--ntk-template-layout-nav-active-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) !important;
+    color: var(--ntk-template-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-title, var(--ntk-text-primary))))) !important;
   }
 }
 
@@ -435,7 +435,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
+  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 5%, transparent));
 }
 
 .ntk-template-menu-link--visual-reference.ntk-template-menu-link--active {
@@ -458,7 +458,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference:hover {
-  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-text-primary) 5%, transparent));
+  background: var(--ntk-template-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-drawer-text, var(--ntk-template-page-text, var(--ntk-text-primary))) 5%, transparent));
 }
 
 .ntk-template-menu-link__expansion-header.ntk-template-menu-link--visual-reference.ntk-template-menu-link__expansion-header--active {
@@ -544,7 +544,7 @@ function emitChildClick(child: TemplateMenuChildItem): void {
 
 .ntk-template-menu-link__badge {
   background: var(--ntk-primary, var(--ntk-accent)) !important;
-  color: var(--ntk-template-layout-on-dark, var(--ntk-text-on-accent, var(--ntk-text-primary))) !important;
+  color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-template-page-title, var(--ntk-text-primary)))) !important;
 }
 
 @keyframes ntk-template-menu-link-select-in {
