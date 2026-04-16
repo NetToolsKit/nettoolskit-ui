@@ -13,6 +13,17 @@ This workstream is explicitly frontend-only:
 - no runtime productization beyond visual and layout correctness
 - focus on theme architecture, layout architecture, contrast safety, and visual regression confidence
 
+## Relationship To The Templates Functional Plan
+
+This plan is the visual-architecture dependency for `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`.
+
+It owns the frontend visual recovery scope that was previously spread across the older plan's white-label, visual regression, and visual closeout slices. Runtime-local functionality, placeholder replacement, and non-visual release completion remain owned by the older plan.
+
+To avoid duplicate execution:
+- use this plan for theme, token, popup, layout, contrast, and preset-certification work
+- use the older plan for runtime functionality, local data flows, and final umbrella closeout
+- do not reopen visual tokenization or visual regression tasks in the older plan once they are tracked here
+
 ## Official Reference Stack
 
 These links are the source of truth for the workstream:
