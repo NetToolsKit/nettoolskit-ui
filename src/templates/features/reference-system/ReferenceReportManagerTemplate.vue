@@ -140,7 +140,7 @@ const selectedReport = computed(() => {
 
 .ntk-reference-manager__eyebrow {
   margin: 0;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;

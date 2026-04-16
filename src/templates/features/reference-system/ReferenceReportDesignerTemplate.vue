@@ -202,7 +202,7 @@ function onCanvasObjectClick(objectId: string): void {
 
 .ntk-reference-designer__doc-eyebrow {
   margin: 0;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;

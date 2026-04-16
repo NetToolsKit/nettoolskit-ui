@@ -176,7 +176,7 @@ function selectReport(reportId: string): void {
 
 .ntk-reference-catalog-panel__eyebrow {
   margin: 0;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -190,7 +190,7 @@ function selectReport(reportId: string): void {
   background: var(--ntk-reference-catalog-panel-accent-soft-bg);
   color: var(--ntk-reference-catalog-panel-accent);
   font-size: 12px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-weight: 500;
 }
 

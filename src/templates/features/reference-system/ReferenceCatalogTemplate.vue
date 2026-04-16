@@ -313,7 +313,7 @@ const showArchitecture = computed(() => {
 .ntk-reference-catalog-template__eyebrow,
 .ntk-reference-catalog-template__section-label {
   margin: 0 0 8px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -418,7 +418,7 @@ const showArchitecture = computed(() => {
   align-items: center;
   background: var(--ntk-reference-badge-bg);
   color: var(--ntk-reference-badge-text);
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -469,7 +469,7 @@ const showArchitecture = computed(() => {
   align-items: center;
   background: var(--ntk-reference-panel-muted-bg);
   color: var(--ntk-text-secondary);
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 12px;
   font-weight: 500;
 }

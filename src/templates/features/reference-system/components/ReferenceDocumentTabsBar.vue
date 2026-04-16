@@ -103,7 +103,7 @@ const emit = defineEmits<{
   border-radius: 999px;
   background: var(--ntk-reference-badge-bg);
   color: var(--ntk-reference-badge-text);
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-weight: 500;
 }
 

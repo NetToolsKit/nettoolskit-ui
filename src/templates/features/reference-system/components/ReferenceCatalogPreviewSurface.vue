@@ -279,7 +279,7 @@ const loginPassword = ref('demo-password')
 
 .ntk-reference-catalog-preview__eyebrow {
   margin: 0 0 8px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -312,7 +312,7 @@ const loginPassword = ref('demo-password')
   background: var(--ntk-reference-catalog-preview-badge-bg);
   color: var(--ntk-reference-catalog-preview-badge-text);
   font-size: 12px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-weight: 500;
   letter-spacing: 0.08em;
 }

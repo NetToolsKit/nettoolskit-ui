@@ -88,7 +88,7 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   font-size: 11px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
