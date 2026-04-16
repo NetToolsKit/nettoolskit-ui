@@ -63,4 +63,32 @@ describe('theme switcher tokenization', () => {
     expect(document.documentElement.dataset.theme).toBe(DEFAULT_THEME_ID)
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBeNull()
   })
+
+  it('applies structural dark mode classes for dark presets and restores light mode for light presets', async () => {
+    const { setTheme } = useThemeSwitcher()
+
+    for (const darkTheme of ['warp', 'resend'] as const) {
+      document.documentElement.style.setProperty('--ntk-dark-scheme', '1')
+      setTheme(darkTheme)
+      await nextTick()
+
+      expect(document.documentElement.dataset.theme).toBe(darkTheme)
+      expect(document.documentElement.classList.contains('dark')).toBe(true)
+      expect(document.documentElement.style.colorScheme).toBe('dark')
+      expect(document.body.classList.contains('body--dark')).toBe(true)
+      expect(document.body.classList.contains('body--light')).toBe(false)
+      expect(document.body.style.colorScheme).toBe('dark')
+    }
+
+    document.documentElement.style.setProperty('--ntk-dark-scheme', '0')
+    setTheme('revolut')
+    await nextTick()
+
+    expect(document.documentElement.dataset.theme).toBe('revolut')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(document.documentElement.style.colorScheme).toBe('light')
+    expect(document.body.classList.contains('body--dark')).toBe(false)
+    expect(document.body.classList.contains('body--light')).toBe(true)
+    expect(document.body.style.colorScheme).toBe('light')
+  })
 })

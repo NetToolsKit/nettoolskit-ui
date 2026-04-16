@@ -7,6 +7,23 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), 'utf8')
 }
 
+function readCssBlock(source: string, selector: string): string {
+  const selectorIndex = source.indexOf(selector)
+
+  if (selectorIndex < 0) {
+    return ''
+  }
+
+  const blockStart = source.indexOf('{', selectorIndex)
+  const blockEnd = source.indexOf('}', blockStart)
+
+  if (blockStart < 0 || blockEnd < 0) {
+    return ''
+  }
+
+  return source.slice(blockStart + 1, blockEnd)
+}
+
 describe('template white-label audit', () => {
   it('keeps audited reference-system and cms files free from previously identified hardcoded colors', () => {
     const auditedFiles = [
@@ -574,5 +591,35 @@ describe('template white-label audit', () => {
     ]
 
     expect(auditedSources.every(source => source.includes('var(--'))).toBe(true)
+  })
+
+  it('keeps dark preset aliases wired for structural surfaces and shared inputs', () => {
+    const themesSource = readRepoFile('../../../src/styles/themes.css')
+    const bridgeSource = readRepoFile('../../../src/templates/styles/reference-app-bridge.scss')
+
+    for (const themeId of ['warp', 'resend']) {
+      const themeBlock = readCssBlock(themesSource, `[data-theme='${themeId}']`)
+
+      expect(themeBlock, `Missing CSS block for ${themeId}`).toContain('--ntk-dark-scheme: 1;')
+    }
+
+    for (const requiredAlias of [
+      '--ntk-bg-card: var(--ntk-card-bg);',
+      '--ntk-bg-elevated: var(--ntk-card-bg);',
+      '--ntk-input-text: var(--ntk-text-heading);',
+      '--ntk-input-placeholder: var(--ntk-text-muted);',
+      '--ntk-input-bg:',
+    ]) {
+      expect(themesSource, `Missing shared theme alias ${requiredAlias}`).toContain(requiredAlias)
+    }
+
+    for (const requiredBridgeSnippet of [
+      "background: var(--ntk-template-page-card-bg);",
+      "color: var(--ntk-template-page-text);",
+      "color: var(--ntk-input-text) !important;",
+      "color: var(--ntk-input-placeholder) !important;",
+    ]) {
+      expect(bridgeSource, `Missing shared dark-surface guardrail ${requiredBridgeSnippet}`).toContain(requiredBridgeSnippet)
+    }
   })
 })
