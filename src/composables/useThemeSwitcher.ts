@@ -1,4 +1,5 @@
 import { ref, watch } from 'vue'
+import { syncThemeDomState } from '../config/theme/theme-dom'
 
 export type ThemeId = 'revolut' | 'claude' | 'warp' | 'resend' | 'superhuman' | 'kraken'
 
@@ -72,57 +73,16 @@ function syncThemePreviewSwatches(): void {
   }
 }
 
-function syncQuasarColorPalette(): void {
-  if (typeof document === 'undefined') {
-    return
-  }
-
-  const root = document.documentElement
-  const body = document.body
-  root.style.setProperty('--q-primary', readThemeVariable('--ntk-accent', 'var(--ntk-primary, currentColor)'))
-  root.style.setProperty('--q-secondary', readThemeVariable('--ntk-secondary', 'var(--ntk-text-muted, currentColor)'))
-  root.style.setProperty('--q-accent', readThemeVariable('--ntk-accent-hover', 'var(--ntk-accent, currentColor)'))
-  root.style.setProperty('--q-positive', readThemeVariable('--ntk-success', 'var(--ntk-positive, currentColor)'))
-  root.style.setProperty('--q-warning', readThemeVariable('--ntk-warning', 'var(--ntk-warning, currentColor)'))
-  root.style.setProperty('--q-negative', readThemeVariable('--ntk-error', 'var(--ntk-negative, currentColor)'))
-  root.style.setProperty('--q-info', readThemeVariable('--ntk-info', 'var(--ntk-info, currentColor)'))
-
-  const darkScheme = readThemeVariable('--ntk-dark-scheme', '0')
-  const isDark = darkScheme === '1'
-  const appBackground = readThemeVariable('--ntk-bg-primary', readThemeVariable('--ntk-shell-bg', 'transparent'))
-  const appText = readThemeVariable('--ntk-text-primary', readThemeVariable('--ntk-text-heading', 'currentColor'))
-  root.style.colorScheme = isDark ? 'dark' : 'light'
-  root.classList.toggle('dark', isDark)
-  root.style.backgroundColor = appBackground
-  root.style.color = appText
-
-  if (body) {
-    body.classList.toggle('body--dark', isDark)
-    body.classList.toggle('body--light', !isDark)
-    body.style.colorScheme = isDark ? 'dark' : 'light'
-    body.style.backgroundColor = appBackground
-    body.style.color = appText
-  }
-}
-
 function applyThemeToDOM(themeId: ThemeId): void {
   if (typeof document === 'undefined') return
 
-  const root = document.documentElement
-  const body = document.body
-  root.dataset.theme = themeId
-
-  if (body) {
-    body.dataset.theme = themeId
-  }
-
   syncThemePreviewSwatches()
-  syncQuasarColorPalette()
+  syncThemeDomState({ themeId })
 
   if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
     window.requestAnimationFrame(() => {
       syncThemePreviewSwatches()
-      syncQuasarColorPalette()
+      syncThemeDomState({ themeId })
     })
   }
 }

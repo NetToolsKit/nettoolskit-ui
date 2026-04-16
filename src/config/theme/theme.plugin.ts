@@ -13,6 +13,7 @@
  */
 
 import type { App, Plugin } from 'vue';
+import { syncThemeDomState } from './theme-dom';
 
 /**
  * Opções de configuração do tema
@@ -50,71 +51,36 @@ export interface NtkThemeOptions {
  * Aplica as opções de tema como variáveis CSS
  */
 function applyThemeOptions(options: NtkThemeOptions): void {
-  const root = document.documentElement;
-  
-  // Cores primárias
-  if (options.primary) {
-    root.style.setProperty('--ntk-primary', options.primary);
-  }
-  if (options.primaryDark) {
-    root.style.setProperty('--ntk-primary-dark', options.primaryDark);
-  }
-  if (options.primaryLight) {
-    root.style.setProperty('--ntk-primary-light', options.primaryLight);
-  }
-  
-  // Gradiente primário
+  const themeVars: Record<string, string | null | undefined> = {
+    '--ntk-primary': options.primary,
+    '--ntk-primary-dark': options.primaryDark,
+    '--ntk-primary-light': options.primaryLight,
+    '--ntk-secondary': options.secondary,
+    '--ntk-bg-primary': options.background,
+    '--ntk-bg-secondary': options.backgroundSecondary,
+    '--ntk-text-primary': options.textPrimary,
+    '--ntk-text-secondary': options.textSecondary,
+    '--ntk-border-color': options.borderColor,
+    '--ntk-font-family': options.fontFamily,
+    '--ntk-font-family-display': options.fontFamilyDisplay,
+  };
+
   if (options.primaryGradient) {
     const [start, end] = options.primaryGradient;
-    root.style.setProperty('--ntk-primary-gradient-start', start);
-    root.style.setProperty('--ntk-primary-gradient-end', end);
-    root.style.setProperty('--ntk-primary-gradient', `linear-gradient(135deg, ${start} 0%, ${end} 100%)`);
-    root.style.setProperty('--ntk-primary-gradient-hover', `linear-gradient(135deg, ${options.primaryDark || start} 0%, ${start} 100%)`);
-    root.style.setProperty('--ntk-gradient-accent', `linear-gradient(135deg, ${start} 0%, ${end} 100%)`);
+    themeVars['--ntk-primary-gradient-start'] = start;
+    themeVars['--ntk-primary-gradient-end'] = end;
+    themeVars['--ntk-primary-gradient'] = `linear-gradient(135deg, ${start} 0%, ${end} 100%)`;
+    themeVars['--ntk-primary-gradient-hover'] = `linear-gradient(135deg, ${options.primaryDark || start} 0%, ${start} 100%)`;
+    themeVars['--ntk-gradient-accent'] = `linear-gradient(135deg, ${start} 0%, ${end} 100%)`;
   }
-  
-  // Cores secundárias
-  if (options.secondary) {
-    root.style.setProperty('--ntk-secondary', options.secondary);
-  }
-  
-  // Backgrounds
-  if (options.background) {
-    root.style.setProperty('--ntk-bg-primary', options.background);
-  }
-  if (options.backgroundSecondary) {
-    root.style.setProperty('--ntk-bg-secondary', options.backgroundSecondary);
-  }
-  
-  // Texto
-  if (options.textPrimary) {
-    root.style.setProperty('--ntk-text-primary', options.textPrimary);
-  }
-  if (options.textSecondary) {
-    root.style.setProperty('--ntk-text-secondary', options.textSecondary);
-  }
-  
-  // Bordas
-  if (options.borderColor) {
-    root.style.setProperty('--ntk-border-color', options.borderColor);
-  }
-  
-  // Fontes
-  if (options.fontFamily) {
-    root.style.setProperty('--ntk-font-family', options.fontFamily);
-  }
-  if (options.fontFamilyDisplay) {
-    root.style.setProperty('--ntk-font-family-display', options.fontFamilyDisplay);
-  }
-  
-  // Modo escuro
-  if (options.dark) {
-    root.classList.add('dark');
-    root.setAttribute('data-theme', 'dark');
-  } else if (options.dark === false) {
-    root.classList.remove('dark');
-    root.setAttribute('data-theme', 'light');
-  }
+
+  syncThemeDomState({
+    dark: options.dark,
+    structuralBackground: options.background,
+    structuralText: options.textPrimary,
+    themeId: options.dark === undefined ? undefined : options.dark ? 'dark' : 'light',
+    themeVars,
+  });
 }
 
 /**
@@ -129,14 +95,10 @@ export const NtkThemePlugin: Plugin = {
     app.config.globalProperties.$ntkTheme = {
       update: applyThemeOptions,
       setDark: (dark: boolean) => {
-        const root = document.documentElement;
-        if (dark) {
-          root.classList.add('dark');
-          root.setAttribute('data-theme', 'dark');
-        } else {
-          root.classList.remove('dark');
-          root.setAttribute('data-theme', 'light');
-        }
+        syncThemeDomState({
+          dark,
+          themeId: dark ? 'dark' : 'light',
+        });
       },
       setPrimary: (color: string) => {
         document.documentElement.style.setProperty('--ntk-primary', color);
@@ -169,14 +131,10 @@ export function useNtkTheme() {
      * Define modo escuro
      */
     setDark: (dark: boolean) => {
-      const root = document.documentElement;
-      if (dark) {
-        root.classList.add('dark');
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.classList.remove('dark');
-        root.setAttribute('data-theme', 'light');
-      }
+      syncThemeDomState({
+        dark,
+        themeId: dark ? 'dark' : 'light',
+      });
     },
     
     /**
