@@ -62,7 +62,7 @@ defineProps<{
 .ntk-reference-brand-lockup__name {
   display: block;
   color: var(--ntk-reference-brand-name-color);
-  font-family: var(--ntk-font-family-display, Inter, system-ui, sans-serif);
+  font-family: var(--ntk-font-family-display, system-ui, sans-serif);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0;

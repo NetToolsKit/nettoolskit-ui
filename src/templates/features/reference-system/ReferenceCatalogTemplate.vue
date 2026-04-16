@@ -388,7 +388,7 @@ const showArchitecture = computed(() => {
   font-size: 26px;
   line-height: 1.1;
   color: var(--ntk-text-primary);
-  font-family: var(--ntk-font-family-display, 'Space Grotesk', Inter, system-ui, sans-serif);
+  font-family: var(--ntk-font-family-display, system-ui, sans-serif);
 }
 
 .ntk-reference-catalog-template__stat span {

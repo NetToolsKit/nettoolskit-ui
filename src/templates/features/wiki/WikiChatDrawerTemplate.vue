@@ -595,7 +595,7 @@ function sendQuestion(text?: string): void {
     background: var(--ntk-template-wiki-chat-drawer-code-bg);
     border-radius: 3px;
     padding: 1px 4px;
-    font-family: ui-monospace, monospace;
+    font-family: var(--ntk-font-family-mono, ui-monospace, monospace);
   }
 }
 
