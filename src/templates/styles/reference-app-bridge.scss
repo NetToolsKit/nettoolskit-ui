@@ -85,15 +85,53 @@
   --ntk-template-page-avatar-bg: var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
   --ntk-template-page-row-hover-bg: var(--ntk-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
 
-  --ntk-template-layout-header-bg: var(--ntk-header-bg, var(--ntk-bg-card));
-  --ntk-template-layout-header-text: var(--ntk-accent, var(--ntk-text-primary));
-  --ntk-template-layout-title-color: var(--ntk-text-heading, var(--ntk-text-primary));
-  --ntk-template-layout-horizontal-bg: var(--ntk-layout-horizontal-bg, var(--ntk-primary-gradient, var(--ntk-drawer-bg, var(--ntk-bg-card))));
-  --ntk-template-layout-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
-  --ntk-template-layout-drawer-bg: var(--ntk-layout-drawer-bg, var(--ntk-drawer-bg, var(--ntk-bg-card)));
-  --ntk-template-layout-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-text-primary)));
+  --ntk-template-shell-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
+  --ntk-template-shell-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  --ntk-template-shell-title-color: var(--ntk-layout-title-color, var(--ntk-text-heading, var(--ntk-text-primary)));
+  --ntk-template-shell-header-bg: var(--ntk-header-bg, var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary))));
+  --ntk-template-shell-header-text: var(--ntk-layout-header-text, var(--ntk-template-shell-title-color));
+  --ntk-template-shell-header-border: var(--ntk-layout-header-border, color-mix(in srgb, var(--ntk-template-shell-header-text) 12%, transparent));
+  --ntk-template-shell-header-shadow: var(--ntk-layout-header-shadow, 0 1px 3px color-mix(in srgb, var(--ntk-template-shell-text) 4%, transparent));
+  --ntk-template-shell-nav-surface-start: var(--ntk-layout-nav-surface-start, var(--ntk-drawer-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))));
+  --ntk-template-shell-nav-surface-end: var(--ntk-layout-nav-surface-end, color-mix(in srgb, var(--ntk-drawer-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))) 88%, var(--ntk-shell-bg, var(--ntk-bg-primary))));
+  --ntk-template-shell-horizontal-bg: var(--ntk-layout-horizontal-bg, linear-gradient(90deg, var(--ntk-template-shell-nav-surface-start) 0%, var(--ntk-template-shell-nav-surface-end) 100%));
+  --ntk-template-shell-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-drawer-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
+  --ntk-template-shell-horizontal-border: var(--ntk-layout-horizontal-border, color-mix(in srgb, var(--ntk-template-shell-horizontal-text) 8%, transparent));
+  --ntk-template-shell-drawer-bg: var(--ntk-layout-drawer-bg, linear-gradient(180deg, var(--ntk-template-shell-nav-surface-start) 0%, var(--ntk-template-shell-nav-surface-end) 100%));
+  --ntk-template-shell-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-template-shell-text)));
+  --ntk-template-shell-drawer-border: var(--ntk-layout-drawer-border, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 22%, transparent));
+  --ntk-template-shell-drawer-inset: var(--ntk-layout-drawer-inset, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 18%, transparent));
+  --ntk-template-shell-nav-group-text: var(--ntk-layout-nav-group-text, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 88%, transparent));
+  --ntk-template-shell-nav-group-pill-bg: var(--ntk-layout-nav-group-pill-bg, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 18%, transparent));
+  --ntk-template-shell-nav-text: var(--ntk-layout-nav-text, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 82%, transparent));
+  --ntk-template-shell-nav-active-border: var(--ntk-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-shell-nav-active-text: var(--ntk-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-shell-drawer-text)));
+  --ntk-template-shell-nav-active-bg: var(--ntk-layout-nav-active-bg, linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ntk-template-shell-nav-active-border) 20%, transparent) 0%,
+    color-mix(in srgb, var(--ntk-template-shell-nav-active-border) 6%, transparent) 100%
+  ));
+  --ntk-template-shell-nav-hover-bg: var(--ntk-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 8%, transparent));
+  --ntk-template-shell-reference-nav-hover-bg: var(--ntk-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 7%, transparent));
+  --ntk-template-shell-toolbar-border: var(--ntk-layout-toolbar-border, color-mix(in srgb, var(--ntk-template-shell-text) 12%, transparent));
+  --ntk-template-shell-submenu-bg: var(--ntk-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)))));
+  --ntk-template-shell-submenu-border: var(--ntk-layout-submenu-border, var(--ntk-template-overlay-border, var(--ntk-template-shell-toolbar-border)));
+  --ntk-template-shell-submenu-text: var(--ntk-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
+  --ntk-template-shell-submenu-shadow: var(--ntk-layout-submenu-shadow, var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft)));
+  --ntk-template-shell-submenu-hover-bg: var(--ntk-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-shell-text) 5%, transparent)));
+  --ntk-template-shell-submenu-active-border: var(--ntk-layout-submenu-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-shell-submenu-active-bg: var(--ntk-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-template-shell-submenu-active-border) 12%, transparent)));
+  --ntk-template-shell-submenu-active-text: var(--ntk-layout-submenu-active-text, var(--ntk-template-shell-submenu-text));
+
+  --ntk-template-layout-header-bg: var(--ntk-template-shell-header-bg);
+  --ntk-template-layout-header-text: var(--ntk-template-shell-header-text);
+  --ntk-template-layout-title-color: var(--ntk-template-shell-title-color);
+  --ntk-template-layout-horizontal-bg: var(--ntk-template-shell-horizontal-bg);
+  --ntk-template-layout-horizontal-text: var(--ntk-template-shell-horizontal-text);
+  --ntk-template-layout-drawer-bg: var(--ntk-template-shell-drawer-bg);
+  --ntk-template-layout-drawer-text: var(--ntk-template-shell-drawer-text);
   --ntk-template-layout-page-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
-  --ntk-template-layout-shell-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
+  --ntk-template-layout-shell-bg: var(--ntk-template-shell-bg);
   --ntk-template-auth-layout-bg: var(--ntk-template-page-bg);
 
   --ntk-template-menu-link-color: var(--ntk-drawer-text, var(--ntk-text-primary));
