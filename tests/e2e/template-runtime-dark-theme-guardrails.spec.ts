@@ -53,20 +53,71 @@ async function readResolvedSurfaceMetrics(surface: Locator, textSource: Locator 
   contrastRatio: number
 }> {
   const backgroundColor = await surface.evaluate((element) => {
+    type BrowserRgba = { red: number; green: number; blue: number; alpha: number }
+
+    function parseBrowserColor(value: string): BrowserRgba | null {
+      const normalized = value.trim().toLowerCase()
+
+      if (!normalized || normalized === 'transparent') {
+        return null
+      }
+
+      const channels = normalized.match(/[\d.]+/g)
+      if (!channels || channels.length < 3) {
+        return null
+      }
+
+      return {
+        red: Number(channels[0]),
+        green: Number(channels[1]),
+        blue: Number(channels[2]),
+        alpha: channels[3] ? Number(channels[3]) : 1,
+      }
+    }
+
+    function composite(top: BrowserRgba, bottom: BrowserRgba): BrowserRgba {
+      const alpha = top.alpha + bottom.alpha * (1 - top.alpha)
+
+      if (alpha <= 0) {
+        return { red: 255, green: 255, blue: 255, alpha: 0 }
+      }
+
+      return {
+        red: ((top.red * top.alpha) + (bottom.red * bottom.alpha * (1 - top.alpha))) / alpha,
+        green: ((top.green * top.alpha) + (bottom.green * bottom.alpha * (1 - top.alpha))) / alpha,
+        blue: ((top.blue * top.alpha) + (bottom.blue * bottom.alpha * (1 - top.alpha))) / alpha,
+        alpha,
+      }
+    }
+
+    function toRgbString(color: BrowserRgba): string {
+      return `rgb(${Math.round(color.red)}, ${Math.round(color.green)}, ${Math.round(color.blue)})`
+    }
+
     let current: HTMLElement | null = element as HTMLElement
+    const layers: BrowserRgba[] = []
 
     while (current) {
-      const style = window.getComputedStyle(current)
-      const background = style.backgroundColor
+      const background = parseBrowserColor(window.getComputedStyle(current).backgroundColor)
 
-      if (background && background !== 'rgba(0, 0, 0, 0)' && background !== 'transparent') {
-        return background
+      if (background && background.alpha > 0) {
+        layers.push(background)
+        if (background.alpha >= 1) {
+          break
+        }
       }
 
       current = current.parentElement
     }
 
-    return 'rgb(255, 255, 255)'
+    const bodyBackground = parseBrowserColor(window.getComputedStyle(document.body).backgroundColor)
+      ?? { red: 255, green: 255, blue: 255, alpha: 1 }
+
+    const compositeColor = layers
+      .reverse()
+      .reduce((accumulator, layer) => composite(layer, accumulator), bodyBackground)
+
+    return toRgbString(compositeColor)
   })
 
   const textColor = await textSource.evaluate(element => window.getComputedStyle(element).color)
@@ -259,8 +310,17 @@ test.describe('template runtime dark theme guardrails', () => {
       await activateTheme(page, theme)
 
       const cards = page.locator('.ntk-template-dashboard__card')
+      const dashboardChip = page.locator('.ntk-template-dashboard__chip').first()
+      const dashboardChipText = dashboardChip.locator('span').last()
 
       await expect(cards).toHaveCount(2)
+      await expect(dashboardChip).toBeVisible()
+      await expect(dashboardChipText).toBeVisible()
+
+      expectDarkReadableSurface(
+        await readResolvedSurfaceMetrics(dashboardChip, dashboardChipText),
+        `${theme.id} dashboard chip`
+      )
 
       for (const cardIndex of [0, 1]) {
         const card = cards.nth(cardIndex)
