@@ -360,6 +360,22 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 
 <style scoped lang="scss">
 .ntk-template-login {
+  --ntk-template-login-brand-subtitle: var(
+    --ntk-login-brand-subtitle,
+    color-mix(in srgb, var(--ntk-template-login-brand-text) 88%, transparent)
+  );
+  --ntk-template-login-brand-feature-text: var(
+    --ntk-login-brand-feature-text,
+    color-mix(in srgb, var(--ntk-template-login-brand-text) 96%, transparent)
+  );
+  --ntk-template-login-brand-feature-bg: var(
+    --ntk-login-brand-feature-bg,
+    color-mix(in srgb, var(--ntk-template-login-brand-text) 18%, transparent)
+  );
+  --ntk-template-login-brand-footer: var(
+    --ntk-login-brand-footer,
+    color-mix(in srgb, var(--ntk-template-login-brand-text) 74%, transparent)
+  );
   --ntk-template-login-field-bg: var(
     --ntk-template-login-field-bg,
     color-mix(
@@ -371,7 +387,10 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
   --ntk-template-login-field-border: var(--ntk-template-login-form-border, var(--ntk-border-color));
   --ntk-template-login-field-text: var(--ntk-template-login-form-title, var(--ntk-text-primary));
   --ntk-template-login-field-label: var(--ntk-template-login-form-subtitle, var(--ntk-text-secondary));
-  --ntk-template-login-field-placeholder: var(--ntk-template-login-version, var(--ntk-text-muted));
+  --ntk-template-login-field-placeholder: var(
+    --ntk-login-field-placeholder,
+    var(--ntk-input-placeholder, var(--ntk-template-login-version, var(--ntk-text-muted)))
+  );
 
   min-height: 100%;
   background: var(--ntk-template-login-page-bg, var(--ntk-bg-secondary));
@@ -437,7 +456,7 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 .ntk-template-login__brand-subtitle {
   margin: 14px 0 0;
   max-width: 560px;
-  color: var(--ntk-template-login-brand-subtitle, color-mix(in srgb, var(--ntk-template-login-brand-text) 78%, transparent));
+  color: var(--ntk-template-login-brand-subtitle);
   font-size: 15px;
   line-height: 1.55;
 }
@@ -453,7 +472,7 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-template-login-brand-feature-text, color-mix(in srgb, var(--ntk-template-login-brand-text) 92%, transparent));
+  color: var(--ntk-template-login-brand-feature-text);
 }
 
 .ntk-template-login__feature-icon {
@@ -461,13 +480,13 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
   height: 30px;
   border-radius: 8px;
   padding: 6px;
-  background: var(--ntk-template-login-brand-feature-bg, color-mix(in srgb, var(--ntk-accent) 20%, transparent));
+  background: var(--ntk-template-login-brand-feature-bg);
 }
 
 .ntk-template-login__brand-bottom {
   font-size: 11px;
   letter-spacing: 0.3px;
-  color: var(--ntk-template-login-brand-footer, color-mix(in srgb, var(--ntk-template-login-brand-text) 60%, transparent));
+  color: var(--ntk-template-login-brand-footer);
 }
 
 .ntk-template-login__form-area {

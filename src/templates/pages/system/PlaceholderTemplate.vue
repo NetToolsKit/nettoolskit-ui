@@ -206,6 +206,22 @@ function resolveActionTone(
 
 <style scoped lang="scss">
 .ntk-template-placeholder {
+  --ntk-template-placeholder-icon-bg: var(
+    --ntk-placeholder-icon-bg,
+    var(--ntk-template-semantic-info-soft-bg)
+  );
+  --ntk-template-placeholder-status-color: var(
+    --ntk-placeholder-status-color,
+    var(--ntk-template-semantic-accent-soft-text)
+  );
+  --ntk-template-placeholder-status-border: var(
+    --ntk-placeholder-status-border,
+    var(--ntk-template-semantic-accent-emphasis-border)
+  );
+  --ntk-template-placeholder-status-bg: var(
+    --ntk-placeholder-status-bg,
+    var(--ntk-template-semantic-accent-soft-bg)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -260,20 +276,13 @@ function resolveActionTone(
   align-items: center;
   justify-content: center;
   color: var(--ntk-template-placeholder-icon-color, var(--semantic-info-primary, var(--ntk-info)));
-  background: var(--ntk-template-placeholder-icon-bg, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 12%, transparent));
+  background: var(--ntk-template-placeholder-icon-bg);
 }
 
 .ntk-template-placeholder__status {
-  border: 1px solid color-mix(
-    in srgb,
-    var(--ntk-template-placeholder-status-color, var(--ntk-primary)) 16%,
-    transparent
-  );
-  color: var(--ntk-template-placeholder-status-color, var(--ntk-primary));
-  background: var(
-    --ntk-template-placeholder-status-bg,
-    color-mix(in srgb, var(--ntk-template-placeholder-status-color, var(--ntk-primary)) 12%, transparent)
-  );
+  border: 1px solid var(--ntk-template-placeholder-status-border);
+  color: var(--ntk-template-placeholder-status-color);
+  background: var(--ntk-template-placeholder-status-bg);
   letter-spacing: 0.3px;
   font-weight: 600;
 }
@@ -358,57 +367,67 @@ function resolveActionTone(
 :deep(.ntk-template-placeholder__action--secondary.q-btn) {
   border: 1px solid var(--ntk-template-placeholder-action-border, var(--ntk-template-placeholder-action-accent));
   color: var(--ntk-template-placeholder-action-secondary-text, var(--ntk-template-placeholder-action-accent));
-  background: var(
-    --ntk-template-placeholder-action-secondary-bg,
-    color-mix(in srgb, var(--ntk-template-placeholder-action-accent) 8%, transparent)
-  );
+  background: var(--ntk-template-placeholder-action-secondary-bg, var(--ntk-template-semantic-accent-soft-bg));
 }
 
 :deep(.ntk-template-placeholder__action--secondary.q-btn:hover) {
   border-color: var(--ntk-template-placeholder-action-accent-hover, var(--ntk-template-placeholder-action-accent));
   color: var(--ntk-template-placeholder-action-accent-hover, var(--ntk-template-placeholder-action-accent));
-  background: var(
-    --ntk-template-placeholder-action-secondary-hover-bg,
-    color-mix(in srgb, var(--ntk-template-placeholder-action-accent) 14%, transparent)
-  );
+  background: var(--ntk-template-placeholder-action-secondary-hover-bg, var(--ntk-template-semantic-accent-emphasis-bg));
 }
 
 .ntk-template-placeholder__action--tone-neutral {
-  --ntk-template-placeholder-action-accent: var(--ntk-text-secondary);
+  --ntk-template-placeholder-action-accent: var(--ntk-template-semantic-neutral-emphasis-text);
   --ntk-template-placeholder-action-accent-hover: var(--ntk-text-primary);
-  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--ntk-border-color) 88%, transparent);
-  --ntk-template-placeholder-action-secondary-bg: color-mix(in srgb, var(--ntk-text-secondary) 6%, transparent);
-  --ntk-template-placeholder-action-secondary-hover-bg: color-mix(in srgb, var(--ntk-text-primary) 10%, transparent);
+  --ntk-template-placeholder-action-border: var(--ntk-template-semantic-neutral-emphasis-border);
+  --ntk-template-placeholder-action-secondary-text: var(--ntk-template-semantic-neutral-soft-text);
+  --ntk-template-placeholder-action-secondary-bg: var(--ntk-template-semantic-neutral-soft-bg);
+  --ntk-template-placeholder-action-secondary-hover-bg: var(--ntk-template-semantic-neutral-emphasis-bg);
 }
 
 .ntk-template-placeholder__action--tone-primary {
   --ntk-template-placeholder-action-accent: var(--ntk-primary);
   --ntk-template-placeholder-action-accent-hover: var(--ntk-primary-hover, var(--ntk-primary));
-  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--ntk-primary) 24%, transparent);
+  --ntk-template-placeholder-action-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-placeholder-action-secondary-text: var(--ntk-template-semantic-accent-soft-text);
+  --ntk-template-placeholder-action-secondary-bg: var(--ntk-template-semantic-accent-soft-bg);
+  --ntk-template-placeholder-action-secondary-hover-bg: var(--ntk-template-semantic-accent-emphasis-bg);
 }
 
 .ntk-template-placeholder__action--tone-info {
   --ntk-template-placeholder-action-accent: var(--semantic-info-primary, var(--ntk-info));
   --ntk-template-placeholder-action-accent-hover: var(--semantic-info-secondary, var(--semantic-info-primary, var(--ntk-info)));
-  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 24%, transparent);
+  --ntk-template-placeholder-action-border: var(--ntk-template-semantic-info-emphasis-border);
+  --ntk-template-placeholder-action-secondary-text: var(--ntk-template-semantic-info-soft-text);
+  --ntk-template-placeholder-action-secondary-bg: var(--ntk-template-semantic-info-soft-bg);
+  --ntk-template-placeholder-action-secondary-hover-bg: var(--ntk-template-semantic-info-emphasis-bg);
 }
 
 .ntk-template-placeholder__action--tone-success {
   --ntk-template-placeholder-action-accent: var(--semantic-success-primary, var(--ntk-success));
   --ntk-template-placeholder-action-accent-hover: var(--semantic-success-secondary, var(--semantic-success-primary, var(--ntk-success)));
-  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 24%, transparent);
+  --ntk-template-placeholder-action-border: var(--ntk-template-semantic-success-emphasis-border);
+  --ntk-template-placeholder-action-secondary-text: var(--ntk-template-semantic-success-soft-text);
+  --ntk-template-placeholder-action-secondary-bg: var(--ntk-template-semantic-success-soft-bg);
+  --ntk-template-placeholder-action-secondary-hover-bg: var(--ntk-template-semantic-success-emphasis-bg);
 }
 
 .ntk-template-placeholder__action--tone-warning {
   --ntk-template-placeholder-action-accent: var(--semantic-warning-primary, var(--ntk-warning));
   --ntk-template-placeholder-action-accent-hover: var(--semantic-warning-secondary, var(--semantic-warning-primary, var(--ntk-warning)));
-  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 24%, transparent);
+  --ntk-template-placeholder-action-border: var(--ntk-template-semantic-warning-emphasis-border);
+  --ntk-template-placeholder-action-secondary-text: var(--ntk-template-semantic-warning-soft-text);
+  --ntk-template-placeholder-action-secondary-bg: var(--ntk-template-semantic-warning-soft-bg);
+  --ntk-template-placeholder-action-secondary-hover-bg: var(--ntk-template-semantic-warning-emphasis-bg);
 }
 
 .ntk-template-placeholder__action--tone-danger {
-  --ntk-template-placeholder-action-accent: var(--semantic-danger-primary, var(--ntk-danger));
-  --ntk-template-placeholder-action-accent-hover: var(--semantic-danger-secondary, var(--semantic-danger-primary, var(--ntk-danger)));
-  --ntk-template-placeholder-action-border: color-mix(in srgb, var(--semantic-danger-primary, var(--ntk-danger)) 24%, transparent);
+  --ntk-template-placeholder-action-accent: var(--semantic-error-primary, var(--ntk-error));
+  --ntk-template-placeholder-action-accent-hover: var(--semantic-error-secondary, var(--semantic-error-primary, var(--ntk-error)));
+  --ntk-template-placeholder-action-border: var(--ntk-template-semantic-danger-emphasis-border);
+  --ntk-template-placeholder-action-secondary-text: var(--ntk-template-semantic-danger-soft-text);
+  --ntk-template-placeholder-action-secondary-bg: var(--ntk-template-semantic-danger-soft-bg);
+  --ntk-template-placeholder-action-secondary-hover-bg: var(--ntk-template-semantic-danger-emphasis-bg);
 }
 
 @media (max-width: 768px) {

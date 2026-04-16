@@ -193,10 +193,18 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
   --ntk-template-profile-border: var(--ntk-template-page-border, var(--ntk-border-color));
   --ntk-template-profile-text: var(--ntk-template-page-title, var(--ntk-text-primary));
   --ntk-template-profile-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)));
-  --ntk-template-profile-primary-soft: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 18%, var(--ntk-template-profile-surface));
-  --ntk-template-profile-info-soft: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, var(--ntk-template-profile-surface));
-  --ntk-template-profile-neutral-soft: color-mix(in srgb, var(--ntk-template-profile-muted) 14%, var(--ntk-template-profile-surface));
-  --ntk-template-profile-danger-soft: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 10%, var(--ntk-template-profile-surface));
+  --ntk-template-profile-role-primary-bg: var(--ntk-template-semantic-accent-soft-bg);
+  --ntk-template-profile-role-primary-border: var(--ntk-template-semantic-accent-soft-border);
+  --ntk-template-profile-role-primary-text: var(--ntk-template-semantic-accent-soft-text);
+  --ntk-template-profile-role-info-bg: var(--ntk-template-semantic-info-soft-bg);
+  --ntk-template-profile-role-info-border: var(--ntk-template-semantic-info-soft-border);
+  --ntk-template-profile-role-info-text: var(--ntk-template-semantic-info-soft-text);
+  --ntk-template-profile-role-neutral-bg: var(--ntk-template-semantic-neutral-soft-bg);
+  --ntk-template-profile-role-neutral-border: var(--ntk-template-semantic-neutral-soft-border);
+  --ntk-template-profile-role-neutral-text: var(--ntk-template-semantic-neutral-soft-text);
+  --ntk-template-profile-logout-bg: var(--ntk-template-semantic-danger-soft-bg);
+  --ntk-template-profile-logout-border: var(--ntk-template-semantic-danger-soft-border);
+  --ntk-template-profile-logout-text: var(--ntk-template-semantic-danger-soft-text);
 
   display: flex;
   flex-direction: column;
@@ -337,35 +345,27 @@ const profileGroups = computed<TemplateProfileGroup[]>(() => {
 }
 
 .ntk-template-profile__role-badge--primary {
-  background: var(--ntk-template-profile-primary-soft);
-  color: var(--ntk-primary, var(--ntk-accent));
-  border-color: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent)) 36%, transparent);
+  background: var(--ntk-template-profile-role-primary-bg);
+  color: var(--ntk-template-profile-role-primary-text);
+  border-color: var(--ntk-template-profile-role-primary-border);
 }
 
 .ntk-template-profile__role-badge--info {
-  background: var(--ntk-template-profile-info-soft);
-  color: var(--semantic-info-primary, var(--ntk-info));
-  border-color: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 36%, transparent);
+  background: var(--ntk-template-profile-role-info-bg);
+  color: var(--ntk-template-profile-role-info-text);
+  border-color: var(--ntk-template-profile-role-info-border);
 }
 
 .ntk-template-profile__role-badge--neutral {
-  background: var(--ntk-template-profile-neutral-soft);
-  color: var(--ntk-template-page-text, var(--ntk-text-primary));
-  border-color: color-mix(
-    in srgb,
-    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary))) 20%,
-    transparent
-  );
+  background: var(--ntk-template-profile-role-neutral-bg);
+  color: var(--ntk-template-profile-role-neutral-text);
+  border-color: var(--ntk-template-profile-role-neutral-border);
 }
 
 .ntk-template-profile__logout-btn {
-  color: var(--semantic-error-primary, var(--ntk-error));
-  border-color: color-mix(
-    in srgb,
-    var(--semantic-error-primary, var(--ntk-error)) 36%,
-    transparent
-  );
-  background: var(--ntk-template-profile-danger-soft);
+  color: var(--ntk-template-profile-logout-text);
+  border-color: var(--ntk-template-profile-logout-border);
+  background: var(--ntk-template-profile-logout-bg);
 }
 
 @media (max-width: 768px) {

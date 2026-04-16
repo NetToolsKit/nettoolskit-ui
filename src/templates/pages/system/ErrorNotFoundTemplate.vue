@@ -161,10 +161,22 @@ function resolveActionTone(
 
 <style scoped lang="scss">
 .ntk-template-not-found {
-  --ntk-template-not-found-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
-  --ntk-template-not-found-surface-border: color-mix(in srgb, var(--ntk-template-page-border, var(--ntk-border-color)) 72%, transparent);
-  --ntk-template-not-found-surface-bg: color-mix(in srgb, var(--ntk-template-not-found-surface) 88%, transparent);
-  --ntk-template-not-found-readable-subtitle: color-mix(in srgb, var(--ntk-template-not-found-text, var(--ntk-text-on-accent, var(--ntk-text-primary))) 92%, transparent);
+  --ntk-template-not-found-card-bg: var(
+    --ntk-not-found-card-bg,
+    color-mix(in srgb, var(--ntk-bg-card, var(--ntk-card-bg, var(--ntk-bg-primary))) 88%, transparent)
+  );
+  --ntk-template-not-found-border: var(
+    --ntk-not-found-border,
+    color-mix(in srgb, var(--ntk-template-not-found-text) 24%, transparent)
+  );
+  --ntk-template-not-found-code-shadow: var(
+    --ntk-not-found-code-shadow,
+    color-mix(in srgb, var(--ntk-text-primary) 42%, transparent)
+  );
+  --ntk-template-not-found-subtitle: var(
+    --ntk-not-found-subtitle,
+    color-mix(in srgb, var(--ntk-template-not-found-text) 90%, transparent)
+  );
 
   display: flex;
   align-items: center;
@@ -183,8 +195,8 @@ function resolveActionTone(
   text-align: center;
   padding: 28px 24px;
   border-radius: 18px;
-  background: var(--ntk-template-not-found-card-bg, var(--ntk-template-not-found-surface-bg));
-  border: 1px solid var(--ntk-template-not-found-border, var(--ntk-template-not-found-surface-border));
+  background: var(--ntk-template-not-found-card-bg);
+  border: 1px solid var(--ntk-template-not-found-border);
   backdrop-filter: blur(4px);
 }
 
@@ -194,7 +206,7 @@ function resolveActionTone(
   font-weight: 800;
   letter-spacing: 2px;
   color: var(--ntk-template-not-found-code-color, var(--semantic-info-primary, var(--ntk-info)));
-  text-shadow: 0 6px 16px var(--ntk-template-not-found-code-shadow, color-mix(in srgb, var(--ntk-text-primary) 35%, transparent));
+  text-shadow: 0 6px 16px var(--ntk-template-not-found-code-shadow);
 }
 
 .ntk-template-not-found__title {
@@ -207,7 +219,7 @@ function resolveActionTone(
   margin: 10px auto 0;
   max-width: 500px;
   font-size: 15px;
-  color: var(--ntk-template-not-found-subtitle, var(--ntk-template-not-found-readable-subtitle));
+  color: var(--ntk-template-not-found-subtitle);
 }
 
 .ntk-template-not-found__actions {
