@@ -630,24 +630,25 @@ describe('template white-label audit', () => {
     const menuLinkSource = readRepoFile('../../../src/templates/navigation/MenuLinkTemplate.vue')
     const horizontalMenuSource = readRepoFile('../../../src/templates/navigation/HorizontalMenuLinkTemplate.vue')
     const breadcrumbSource = readRepoFile('../../../src/templates/navigation/AppBreadcrumbTemplate.vue')
+    const userMenuSource = readRepoFile('../../../src/templates/navigation/UserMenuTemplate.vue')
 
     for (const requiredLayoutSnippet of [
-      '--ntk-template-layout-header-bg: var(--ntk-header-bg,',
-      '--ntk-template-layout-header-text: var(--ntk-template-layout-title-color,',
-      '--ntk-template-layout-horizontal-bg: var(--ntk-layout-horizontal-bg,',
-      '--ntk-template-layout-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-drawer-text,',
-      '--ntk-template-layout-drawer-bg: var(--ntk-layout-drawer-bg,',
-      '--ntk-template-layout-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text,',
-      '--ntk-template-layout-nav-text: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 82%, transparent);',
-      '--ntk-template-layout-nav-active-bg: linear-gradient(',
-      '--ntk-template-layout-nav-hover-bg: color-mix(in srgb, var(--ntk-template-layout-drawer-text) 8%, transparent);',
-      '--ntk-template-layout-submenu-bg: var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg,',
-      '--ntk-template-layout-submenu-border: var(--ntk-template-overlay-border, var(--ntk-template-layout-toolbar-border));',
-      '--ntk-template-layout-submenu-text: var(--ntk-template-overlay-text, var(--ntk-template-page-title,',
-      '--ntk-template-layout-submenu-shadow: var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft));',
-      '--ntk-template-layout-submenu-hover-bg: var(--ntk-template-overlay-hover-bg,',
-      '--ntk-template-layout-submenu-active-bg: var(--ntk-template-overlay-active-bg,',
-      '--ntk-template-layout-submenu-active-text: var(--ntk-layout-submenu-active-text, var(--ntk-template-layout-submenu-text));',
+      '--ntk-template-layout-header-bg: var(--ntk-template-shell-header-bg);',
+      '--ntk-template-layout-header-text: var(--ntk-template-shell-header-text);',
+      '--ntk-template-layout-horizontal-bg: var(--ntk-template-shell-horizontal-bg);',
+      '--ntk-template-layout-horizontal-text: var(--ntk-template-shell-horizontal-text);',
+      '--ntk-template-layout-drawer-bg: var(--ntk-template-shell-drawer-bg);',
+      '--ntk-template-layout-drawer-text: var(--ntk-template-shell-drawer-text);',
+      '--ntk-template-layout-nav-text: var(--ntk-template-shell-nav-text);',
+      '--ntk-template-layout-nav-active-bg: var(--ntk-template-shell-nav-active-bg);',
+      '--ntk-template-layout-nav-hover-bg: var(--ntk-template-shell-nav-hover-bg);',
+      '--ntk-template-layout-submenu-bg: var(--ntk-template-shell-submenu-bg);',
+      '--ntk-template-layout-submenu-border: var(--ntk-template-shell-submenu-border);',
+      '--ntk-template-layout-submenu-text: var(--ntk-template-shell-submenu-text);',
+      '--ntk-template-layout-submenu-shadow: var(--ntk-template-shell-submenu-shadow);',
+      '--ntk-template-layout-submenu-hover-bg: var(--ntk-template-shell-submenu-hover-bg);',
+      '--ntk-template-layout-submenu-active-bg: var(--ntk-template-shell-submenu-active-bg);',
+      '--ntk-template-layout-submenu-active-text: var(--ntk-template-shell-submenu-active-text);',
       'background: var(--ntk-template-layout-header-bg) !important;',
       'color: var(--ntk-template-layout-header-text) !important;',
       'background: var(--ntk-template-layout-horizontal-bg);',
@@ -699,14 +700,25 @@ describe('template white-label audit', () => {
     }
 
     for (const requiredBreadcrumbSnippet of [
-      '--ntk-template-breadcrumb-bg: var(--ntk-template-layout-header-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent));',
-      '--ntk-template-breadcrumb-border: var(--ntk-template-layout-header-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent));',
-      '--ntk-template-breadcrumb-link-color: var(--ntk-template-layout-header-breadcrumb-link, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent));',
-      '--ntk-template-breadcrumb-link-hover-color: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));',
-      '--ntk-template-breadcrumb-current-color: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));',
-      '--ntk-template-breadcrumb-sep-color: var(--ntk-template-layout-header-breadcrumb-sep, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent));',
+      '--ntk-template-breadcrumb-surface: var(--ntk-template-layout-header-breadcrumb-bg, var(--ntk-template-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent)));',
+      '--ntk-template-breadcrumb-border-color: var(--ntk-template-layout-header-breadcrumb-border, var(--ntk-template-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent)));',
+      '--ntk-template-breadcrumb-link-text: var(--ntk-template-layout-header-breadcrumb-link, var(--ntk-template-breadcrumb-link-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent)));',
+      '--ntk-template-breadcrumb-link-hover-text: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-breadcrumb-link-hover-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));',
+      '--ntk-template-breadcrumb-current-text: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-breadcrumb-current-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));',
+      '--ntk-template-breadcrumb-separator-text: var(--ntk-template-layout-header-breadcrumb-sep, var(--ntk-template-breadcrumb-sep-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent)));',
+      '--ntk-template-breadcrumb-link-hover-bg: var(--ntk-template-layout-header-breadcrumb-hover-bg, color-mix(in srgb, var(--ntk-template-breadcrumb-current-text) 8%, transparent));',
     ]) {
       expect(breadcrumbSource, `Missing header-shell token wiring in AppBreadcrumbTemplate: ${requiredBreadcrumbSnippet}`).toContain(requiredBreadcrumbSnippet)
+    }
+
+    for (const requiredUserMenuSnippet of [
+      'class="ntk-template-user-menu__trigger"',
+      '--ntk-template-user-menu-trigger-color: var(--ntk-template-layout-header-action-text, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));',
+      '--ntk-template-user-menu-trigger-hover-bg: var(--ntk-template-layout-header-action-hover-bg, color-mix(in srgb, var(--ntk-template-user-menu-trigger-color) 10%, transparent));',
+      '--ntk-template-user-menu-trigger-focus-ring: var(--ntk-template-layout-header-action-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));',
+      'background: var(--ntk-template-user-menu-trigger-hover-bg) !important;',
+    ]) {
+      expect(userMenuSource, `Missing header-action token wiring in UserMenuTemplate: ${requiredUserMenuSnippet}`).toContain(requiredUserMenuSnippet)
     }
   })
 

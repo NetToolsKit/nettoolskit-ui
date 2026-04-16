@@ -2,6 +2,7 @@
   <q-btn
     round
     flat
+    class="ntk-template-user-menu__trigger"
   >
     <q-avatar
       size="40px"
@@ -226,6 +227,35 @@ const profile = computed<TemplateUserMenuProfile>(() => {
   box-shadow: var(--ntk-template-user-menu-shadow, 0 4px 20px var(--ntk-template-user-menu-shadow-color));
   overflow: hidden;
   color: var(--ntk-template-user-menu-text-color);
+}
+
+.ntk-template-user-menu__trigger {
+  --ntk-template-user-menu-trigger-color: var(--ntk-template-layout-header-action-text, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));
+  --ntk-template-user-menu-trigger-hover-bg: var(--ntk-template-layout-header-action-hover-bg, color-mix(in srgb, var(--ntk-template-user-menu-trigger-color) 10%, transparent));
+  --ntk-template-user-menu-trigger-focus-ring: var(--ntk-template-layout-header-action-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));
+  --ntk-template-user-menu-trigger-radius: var(--ntk-template-layout-header-action-radius, 999px);
+
+  color: var(--ntk-template-user-menu-trigger-color) !important;
+  border-radius: var(--ntk-template-user-menu-trigger-radius);
+}
+
+.ntk-template-user-menu__trigger::before {
+  background: var(--ntk-template-user-menu-trigger-hover-bg) !important;
+}
+
+.ntk-template-user-menu__trigger:hover::before,
+.ntk-template-user-menu__trigger.q-focusable--focused::before,
+.ntk-template-user-menu__trigger.q-hoverable:hover::before {
+  opacity: 1 !important;
+}
+
+.ntk-template-user-menu__trigger:focus-visible {
+  outline: 2px solid var(--ntk-template-user-menu-trigger-focus-ring);
+  outline-offset: 2px;
+}
+
+.ntk-template-user-menu__trigger :deep(.q-btn__content) {
+  color: inherit;
 }
 
 .ntk-template-user-menu__avatar {

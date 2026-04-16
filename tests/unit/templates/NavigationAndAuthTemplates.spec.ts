@@ -107,6 +107,7 @@ describe('UserMenuTemplate', () => {
 
     expect(wrapper.text()).toContain('AC')
     expect(wrapper.text()).toContain('Ana Costa')
+    expect(wrapper.find('.ntk-template-user-menu__trigger').exists()).toBe(true)
   })
 
   it('emits logout-click when sign out item is clicked', async () => {

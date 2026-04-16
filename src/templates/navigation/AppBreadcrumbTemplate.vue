@@ -105,47 +105,62 @@ function navigateTo(routeName?: string, path?: string): void {
 
 <style scoped lang="scss">
 .ntk-template-breadcrumb {
-  --ntk-template-breadcrumb-bg: var(--ntk-template-layout-header-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent));
-  --ntk-template-breadcrumb-border: var(--ntk-template-layout-header-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent));
-  --ntk-template-breadcrumb-link-color: var(--ntk-template-layout-header-breadcrumb-link, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent));
-  --ntk-template-breadcrumb-link-hover-color: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));
-  --ntk-template-breadcrumb-current-color: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-layout-header-text, var(--ntk-text-primary)));
-  --ntk-template-breadcrumb-sep-color: var(--ntk-template-layout-header-breadcrumb-sep, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent));
+  --ntk-template-breadcrumb-surface: var(--ntk-template-layout-header-breadcrumb-bg, var(--ntk-template-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 8%, transparent)));
+  --ntk-template-breadcrumb-border-color: var(--ntk-template-layout-header-breadcrumb-border, var(--ntk-template-breadcrumb-border, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 14%, transparent)));
+  --ntk-template-breadcrumb-link-text: var(--ntk-template-layout-header-breadcrumb-link, var(--ntk-template-breadcrumb-link-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 82%, transparent)));
+  --ntk-template-breadcrumb-link-hover-text: var(--ntk-template-layout-header-breadcrumb-link-hover, var(--ntk-template-breadcrumb-link-hover-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
+  --ntk-template-breadcrumb-current-text: var(--ntk-template-layout-header-breadcrumb-current, var(--ntk-template-breadcrumb-current-color, var(--ntk-template-layout-header-text, var(--ntk-text-primary))));
+  --ntk-template-breadcrumb-separator-text: var(--ntk-template-layout-header-breadcrumb-sep, var(--ntk-template-breadcrumb-sep-color, color-mix(in srgb, var(--ntk-template-layout-header-text, var(--ntk-text-primary)) 44%, transparent)));
+  --ntk-template-breadcrumb-link-hover-bg: var(--ntk-template-layout-header-breadcrumb-hover-bg, color-mix(in srgb, var(--ntk-template-breadcrumb-current-text) 8%, transparent));
+  --ntk-template-breadcrumb-focus-ring: var(--ntk-template-layout-header-breadcrumb-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
-  border: 1px solid var(--ntk-template-breadcrumb-border);
-  background: var(--ntk-template-breadcrumb-bg);
+  border: 1px solid var(--ntk-template-breadcrumb-border-color);
+  background: var(--ntk-template-breadcrumb-surface);
 }
 
 .ntk-template-breadcrumb__link {
   display: flex;
   align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
   border: none;
+  border-radius: 8px;
   background: transparent;
-  color: var(--ntk-template-breadcrumb-link-color);
+  color: var(--ntk-template-breadcrumb-link-text);
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 
   &:hover {
-    color: var(--ntk-template-breadcrumb-link-hover-color);
+    color: var(--ntk-template-breadcrumb-link-hover-text);
+    background: var(--ntk-template-breadcrumb-link-hover-bg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ntk-template-breadcrumb-focus-ring);
+    outline-offset: 2px;
   }
 }
 
 .ntk-template-breadcrumb__home {
+  color: currentColor;
   opacity: 0.92;
 }
 
 .ntk-template-breadcrumb__current {
-  color: var(--ntk-template-breadcrumb-current-color);
+  padding: 2px 4px;
+  color: var(--ntk-template-breadcrumb-current-text);
   font-weight: 600;
 }
 
 .ntk-template-breadcrumb__sep {
-  color: var(--ntk-template-breadcrumb-sep-color);
+  color: var(--ntk-template-breadcrumb-separator-text);
   font-weight: 400;
 }
 </style>
