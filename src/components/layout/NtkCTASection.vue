@@ -54,7 +54,6 @@
  */
 
 import { computed } from 'vue';
-import { useTheme } from '../../composables/ui/useTheme';
 
 /**
  * NtkCTASection - Seção de Call-to-Action
@@ -99,8 +98,6 @@ const props = withDefaults(defineProps<Props>(), {
   maxWidth: 900,
 });
 
-const { theme } = useTheme();
-
 const sectionClasses = computed(() => [
   `variant-${props.variant}`,
   `size-${props.size}`,
@@ -113,7 +110,7 @@ const sectionStyle = computed(() => {
   if (props.bgColor) {
     styles.background = props.bgColor;
   } else if (props.variant === 'gradient') {
-    styles.background = theme.value.gradients.primary;
+    styles.background = 'var(--ntk-primary-gradient)';
   }
   
   return styles;
@@ -127,12 +124,12 @@ const primaryBtnStyle = computed(() => {
   if (props.variant === 'gradient' || props.variant === 'dark') {
     return {
       background: 'var(--ntk-bg-primary)',
-      color: theme.value.colors.primary,
+      color: 'var(--ntk-primary)',
     };
   }
   return {
-    background: theme.value.gradients.primary,
-    color: 'var(--ntk-text-inverse)',
+    background: 'var(--ntk-primary-gradient)',
+    color: 'var(--ntk-text-on-accent)',
   };
 });
 </script>

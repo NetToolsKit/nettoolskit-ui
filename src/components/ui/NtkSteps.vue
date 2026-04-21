@@ -61,7 +61,6 @@
  */
 
 import { computed } from 'vue';
-import { useTheme } from '../../composables/ui/useTheme';
 
 export interface Step {
   number?: number | string;
@@ -95,12 +94,15 @@ const props = withDefaults(defineProps<Props>(), {
   activeStep: -1,
 });
 
-const { theme } = useTheme();
-
 const numberStyle = computed(() => {
-  const color = props.numberColor || theme.value.colors.primary;
+  if (!props.numberColor) {
+    return {
+      background: 'var(--ntk-primary-gradient)',
+    };
+  }
+
   return {
-    background: `linear-gradient(135deg, ${color} 0%, ${theme.value.colors.primaryDark} 100%)`,
+    background: `linear-gradient(135deg, ${props.numberColor} 0%, var(--ntk-primary-dark, var(--ntk-primary)) 100%)`,
   };
 });
 

@@ -43,7 +43,6 @@
  */
 
 import { computed } from 'vue';
-import { useTheme } from '../../composables/ui/useTheme';
 
 interface Props {
   /** Ícone (emoji ou texto) */
@@ -72,8 +71,6 @@ const props = withDefaults(defineProps<Props>(), {
   hoverable: true,
 });
 
-const { theme } = useTheme();
-
 const iconStyle = computed(() => {
   if (props.iconColor) {
     return { backgroundColor: props.iconColor };
@@ -84,7 +81,7 @@ const iconStyle = computed(() => {
 });
 
 const amountStyle = computed(() => ({
-  color: props.amountColor || theme.value.colors.primary,
+  color: props.amountColor || 'var(--ntk-primary)',
 }));
 
 const formattedCredits = computed(() => {

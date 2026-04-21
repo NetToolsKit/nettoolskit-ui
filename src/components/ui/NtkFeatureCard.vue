@@ -46,7 +46,6 @@
  */
 
 import { computed } from 'vue';
-import { useTheme } from '../../composables/ui/useTheme';
 
 interface Props {
   /** Ícone (emoji ou texto) */
@@ -81,16 +80,14 @@ const emit = defineEmits<{
   (e: 'click'): void;
 }>();
 
-const { theme } = useTheme();
-
 const iconCustomStyle = computed(() => {
   if (props.iconColor) {
     return { color: props.iconColor };
   }
   if (props.iconStyle === 'gradient') {
     return {
-      background: `linear-gradient(135deg, ${theme.value.colors.primary} 0%, ${theme.value.colors.primaryDark} 100%)`,
-      color: 'white',
+      background: 'var(--ntk-primary-gradient)',
+      color: 'var(--ntk-text-on-accent)',
     };
   }
   return {};

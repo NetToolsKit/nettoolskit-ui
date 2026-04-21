@@ -61,7 +61,6 @@
  */
 
 import { computed } from 'vue';
-import { useTheme } from '../../composables/ui/useTheme';
 
 /**
  * NtkStatCard - Card de estatísticas/métricas
@@ -109,8 +108,6 @@ const props = withDefaults(defineProps<Props>(), {
   animated: false,
 });
 
-const { theme } = useTheme();
-
 const cardClasses = computed(() => [
   `variant-${props.variant}`,
   `size-${props.size}`,
@@ -136,7 +133,7 @@ const valueStyle = computed(() => {
   }
   if (props.variant === 'gradient') {
     return {
-      background: theme.value.gradients.primary,
+      background: 'var(--ntk-primary-gradient)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       backgroundClip: 'text',
@@ -149,7 +146,7 @@ const iconStyle = computed(() => {
   if (props.iconColor) {
     return { color: props.iconColor };
   }
-  return { color: theme.value.colors.primary };
+  return { color: 'var(--ntk-primary)' };
 });
 
 const trendClass = computed(() => ({
