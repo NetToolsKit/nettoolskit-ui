@@ -31,8 +31,6 @@
             class="ntk-tech-stack__chip"
             dense
             outline
-            color="primary"
-            text-color="primary"
           >
             {{ item }}
           </q-chip>
@@ -113,6 +111,9 @@ withDefaults(defineProps<Props>(), {
 
 .ntk-tech-stack__chip {
   margin: 0;
+  color: var(--ntk-tech-stack-chip-text, var(--ntk-primary)) !important;
+  border-color: var(--ntk-tech-stack-chip-border, color-mix(in srgb, var(--ntk-primary) 42%, transparent)) !important;
+  background: var(--ntk-tech-stack-chip-bg, color-mix(in srgb, var(--ntk-primary) 8%, transparent)) !important;
 }
 
 @media (max-width: 900px) {

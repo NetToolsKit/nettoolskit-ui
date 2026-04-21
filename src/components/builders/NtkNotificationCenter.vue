@@ -8,7 +8,7 @@
     >
       <q-badge
         v-if="unreadCount > 0"
-        color="error"
+        class="notification-unread-badge"
         floating
       >
         {{ unreadCount }}
@@ -62,8 +62,8 @@
             >
               <q-item-section avatar>
                 <q-avatar
-                  :color="getNotificationColor(notification.type)"
-                  text-color="white"
+                  class="notification-avatar"
+                  :class="notificationAvatarClass(notification.type)"
                 >
                   <q-icon :name="getNotificationIcon(notification.type)" />
                 </q-avatar>
@@ -105,9 +105,9 @@
             <q-icon
               name="notifications_none"
               size="64px"
-              color="grey-5"
+              class="notification-empty__icon"
             />
-            <p class="text-grey-6">
+            <p class="notification-empty__text">
               No notifications
             </p>
           </div>
@@ -206,14 +206,8 @@ const getNotificationIcon = (type: Notification['type']): string => {
   return icons[type]
 }
 
-const getNotificationColor = (type: Notification['type']): string => {
-  const colors = {
-    info: 'info',
-    success: 'positive',
-    warning: 'warning',
-    error: 'negative'
-  }
-  return colors[type]
+const notificationAvatarClass = (type: Notification['type']): string => {
+  return `notification-avatar--${type}`
 }
 
 const formatTime = (timestamp: Date | string): string => {
@@ -237,6 +231,11 @@ const formatTime = (timestamp: Date | string): string => {
 <style lang="scss" scoped>
 .notification-center {
   position: relative;
+}
+
+.notification-unread-badge {
+  background: var(--semantic-error-primary, var(--ntk-error)) !important;
+  color: var(--ntk-text-on-accent, var(--ntk-bg-primary)) !important;
 }
 
 .notification-panel {
@@ -282,6 +281,30 @@ const formatTime = (timestamp: Date | string): string => {
   font-size: 0.75rem;
 }
 
+.notification-avatar {
+  --ntk-notification-avatar-bg: var(--ntk-primary);
+  --ntk-notification-avatar-text: var(--ntk-text-on-accent, var(--ntk-bg-primary));
+
+  background: var(--ntk-notification-avatar-bg) !important;
+  color: var(--ntk-notification-avatar-text) !important;
+}
+
+.notification-avatar--info {
+  --ntk-notification-avatar-bg: var(--semantic-info-primary, var(--ntk-info));
+}
+
+.notification-avatar--success {
+  --ntk-notification-avatar-bg: var(--semantic-success-primary, var(--ntk-success));
+}
+
+.notification-avatar--warning {
+  --ntk-notification-avatar-bg: var(--semantic-warning-primary, var(--ntk-warning));
+}
+
+.notification-avatar--error {
+  --ntk-notification-avatar-bg: var(--semantic-error-primary, var(--ntk-error));
+}
+
 .notification-empty {
   padding: var(--ntk-spacing-3xl) var(--ntk-spacing-lg);
   text-align: center;
@@ -290,6 +313,11 @@ const formatTime = (timestamp: Date | string): string => {
     margin-top: var(--ntk-spacing-md);
     margin-bottom: 0;
   }
+}
+
+.notification-empty__icon,
+.notification-empty__text {
+  color: var(--ntk-text-muted, var(--ntk-text-secondary)) !important;
 }
 
 .notification-footer {

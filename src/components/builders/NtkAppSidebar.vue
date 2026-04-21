@@ -7,8 +7,8 @@
     >
       <q-avatar
         size="56px"
-        :color="userProfile.avatarColor || 'primary'"
-        text-color="white"
+        class="sidebar-profile__avatar"
+        :style="userAvatarStyle"
       >
         <img
           v-if="userProfile.avatar"
@@ -90,7 +90,8 @@
             side
           >
             <q-badge
-              :color="item.badgeColor || 'primary'"
+              class="menu-badge"
+              :style="getBadgeStyle(item.badgeColor)"
               :label="item.badge"
             />
           </q-item-section>
@@ -191,12 +192,37 @@ const emit = defineEmits<{
 
 const route = useRoute()
 
+const colorTokenAliases: Record<string, string> = {
+  primary: 'var(--ntk-primary)',
+  secondary: 'var(--ntk-accent, var(--ntk-primary))',
+  accent: 'var(--ntk-accent, var(--ntk-primary))',
+  positive: 'var(--semantic-success-primary, var(--ntk-success))',
+  success: 'var(--semantic-success-primary, var(--ntk-success))',
+  negative: 'var(--semantic-error-primary, var(--ntk-error))',
+  error: 'var(--semantic-error-primary, var(--ntk-error))',
+  warning: 'var(--semantic-warning-primary, var(--ntk-warning))',
+  info: 'var(--semantic-info-primary, var(--ntk-info))',
+}
+
+const resolveThemeColor = (color?: string): string => {
+  if (!color) return 'var(--ntk-avatar-bg, var(--ntk-primary))'
+  return colorTokenAliases[color] ?? color
+}
+
 const userInitials = computed(() => {
   if (!props.userProfile) return ''
   const names = props.userProfile.name.split(' ')
   return names.length > 1
     ? `${names[0][0]}${names[names.length - 1][0]}`
     : names[0][0]
+})
+
+const userAvatarStyle = computed<Record<string, string>>(() => ({
+  '--ntk-sidebar-avatar-bg': resolveThemeColor(props.userProfile?.avatarColor),
+}))
+
+const getBadgeStyle = (color?: string): Record<string, string> => ({
+  '--ntk-sidebar-badge-bg': color ? resolveThemeColor(color) : 'var(--ntk-primary)',
 })
 
 const isActive = (item: MenuItem): boolean => {
@@ -247,6 +273,13 @@ const handleItemClick = (item: MenuItem) => {
   }
 }
 
+.sidebar-profile__avatar {
+  background: var(--ntk-sidebar-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary))) !important;
+  color: var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
+  border: 1px solid var(--ntk-avatar-border, transparent);
+  font-weight: 700;
+}
+
 .sidebar-menu {
   flex: 1;
   overflow-y: auto;
@@ -272,12 +305,17 @@ const handleItemClick = (item: MenuItem) => {
 
   &.q-router-link--active {
     background: var(--ntk-primary);
-    color: white;
+    color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-bg-primary)));
 
     :deep(.q-icon) {
-      color: white;
+      color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-bg-primary)));
     }
   }
+}
+
+.menu-badge {
+  background: var(--ntk-sidebar-badge-bg, var(--ntk-primary)) !important;
+  color: var(--ntk-sidebar-badge-text, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
 }
 
 .submenu-item {

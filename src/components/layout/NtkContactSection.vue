@@ -35,9 +35,8 @@
         <NtkButton
           type="submit"
           unelevated
-          color="primary"
           :label="submitLabel"
-          class="ntk-contact__submit"
+          class="ntk-contact__submit ntk-contact__action--primary"
         />
       </q-form>
 
@@ -75,8 +74,8 @@
           </div>
           <NtkButton
             :label="portalAction.label"
-            color="primary"
             unelevated
+            class="ntk-contact__action--primary"
             :href="portalAction.href"
             :target="portalAction.external ? '_blank' : undefined"
           />
@@ -184,6 +183,11 @@ function submitForm(): void {
 
 .ntk-contact__submit {
   width: fit-content;
+}
+
+.ntk-contact__action--primary {
+  background: var(--ntk-button-primary-bg, var(--ntk-primary)) !important;
+  color: var(--ntk-button-primary-text, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
 }
 
 .ntk-contact__channels {

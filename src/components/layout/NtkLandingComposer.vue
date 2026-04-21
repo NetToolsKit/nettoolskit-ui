@@ -31,8 +31,8 @@
           <NtkButton
             v-if="config.hero.primaryAction"
             :label="config.hero.primaryAction.label"
-            color="primary"
             unelevated
+            class="ntk-landing-composer__action ntk-landing-composer__action--primary"
             :href="config.hero.primaryAction.href"
             :target="config.hero.primaryAction.external ? '_blank' : undefined"
           />
@@ -40,7 +40,7 @@
             v-if="config.hero.secondaryAction"
             :label="config.hero.secondaryAction.label"
             outline
-            color="primary"
+            class="ntk-landing-composer__action ntk-landing-composer__action--secondary"
             :href="config.hero.secondaryAction.href"
             :target="config.hero.secondaryAction.external ? '_blank' : undefined"
           />
@@ -167,6 +167,17 @@ const heroImage = computed<string | undefined>(() => {
 
 .ntk-landing-composer__main {
   width: 100%;
+}
+
+.ntk-landing-composer__action--primary {
+  background: var(--ntk-button-primary-bg, var(--ntk-primary)) !important;
+  color: var(--ntk-button-primary-text, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
+}
+
+.ntk-landing-composer__action--secondary {
+  border-color: var(--ntk-button-secondary-border, var(--ntk-primary)) !important;
+  color: var(--ntk-button-secondary-text, var(--ntk-primary)) !important;
+  background: var(--ntk-button-secondary-bg, transparent) !important;
 }
 
 .ntk-landing-composer__code {

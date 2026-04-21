@@ -78,7 +78,7 @@ describe('template white-label audit', () => {
           'text-color="white"',
           'color="grey-5"',
           'class="text-grey-6"',
-          "info: 'info'",
+          'const colors = {',
           "success: 'positive'",
           "error: 'negative'",
         ],
