@@ -30,7 +30,7 @@
             v-model="internalValue"
             :minimal="true"
             :today-btn="true"
-            color="primary"
+            class="base-date-picker__calendar"
             :locale="dateLocale"
             @update:model-value="emitModelValue"
           >
@@ -38,14 +38,14 @@
               <q-btn
                 label="Hoje"
                 flat
-                color="primary"
+                class="base-date-picker__action base-date-picker__action--accent"
                 @click="setToday"
               />
               <q-btn
                 v-bind="{ 'v-close-popup': true }"
                 label="Fechar"
                 flat
-                color="primary"
+                class="base-date-picker__action"
               />
             </div>
           </q-date>
@@ -137,3 +137,46 @@ const setToday = () => {
   emitModelValue(`${year}/${month}/${day}`)
 }
 </script>
+
+<style lang="scss">
+.base-date-picker__calendar {
+  --base-date-picker-accent: var(--ntk-primary, var(--ntk-accent));
+  --base-date-picker-action-text: var(--ntk-input-action-text, var(--base-date-picker-accent));
+
+  font-family: var(--ntk-font-family);
+  background: var(--ntk-popup-bg) !important;
+  border-radius: var(--ntk-radius-md);
+  box-shadow: var(--ntk-shadow-popup);
+
+  .q-date__header {
+    background-color: var(--ntk-popup-header-bg) !important;
+    color: var(--ntk-popup-header-text) !important;
+  }
+
+  .q-date__view,
+  .q-date__calendar {
+    background: var(--ntk-popup-bg) !important;
+  }
+
+  .q-date__calendar-item .q-btn {
+    color: var(--ntk-text-dark) !important;
+
+    &:hover {
+      background-color: var(--ntk-bg-hover) !important;
+    }
+
+    &.q-btn--unelevated {
+      background-color: var(--base-date-picker-accent) !important;
+      color: var(--ntk-text-inverse) !important;
+    }
+  }
+
+  .base-date-picker__action {
+    color: var(--base-date-picker-action-text) !important;
+  }
+
+  .base-date-picker__action--accent {
+    font-weight: var(--ntk-font-weight-medium);
+  }
+}
+</style>

@@ -27,30 +27,30 @@
           <q-time 
             v-model="internalValue" 
             mask="HH:mm"
-            color="primary"
+            class="ntk-time-picker__clock"
             :format24h="timeFormat24h"
             @update:model-value="handleUpdate"
           >
             <div class="row items-center justify-between q-px-sm">
               <q-btn 
                 :label="timeFormat24h ? '12h' : '24h'" 
-                color="primary" 
                 flat 
                 dense
+                class="ntk-time-picker__action"
                 @click="timeFormat24h = !timeFormat24h" 
               />
               <div class="row items-center q-gutter-sm">
                 <q-btn
                   label="Agora"
-                  color="primary"
                   flat
+                  class="ntk-time-picker__action ntk-time-picker__action--accent"
                   @click="setNowTime"
                 />
                 <q-btn
                   v-close-popup
                   label="OK"
-                  color="primary"
                   flat
+                  class="ntk-time-picker__action"
                 />
               </div>
             </div>
@@ -132,7 +132,10 @@ const setNowTime = () => {
 </style>
 
 <style lang="scss">
-.q-time {
+.ntk-time-picker__clock {
+  --ntk-time-picker-accent: var(--ntk-primary, var(--ntk-accent));
+  --ntk-time-picker-action-text: var(--ntk-input-action-text, var(--ntk-time-picker-accent));
+
   font-family: var(--ntk-font-family);
   box-shadow: var(--ntk-shadow-popup);
   border-radius: var(--ntk-radius-md);
@@ -155,23 +158,27 @@ const setNowTime = () => {
       color: var(--ntk-text-dark) !important;
       
       &--active {
-        background: var(--ntk-primary) !important;
+        background: var(--ntk-time-picker-accent) !important;
         color: var(--ntk-text-inverse) !important;
       }
     }
   }
 
   .q-time__clock-pointer {
-    background-color: var(--ntk-primary) !important;
+    background-color: var(--ntk-time-picker-accent) !important;
     
     &::before,
     &::after {
-      background-color: var(--ntk-primary) !important;
+      background-color: var(--ntk-time-picker-accent) !important;
     }
   }
 
-  .q-btn--flat {
-    color: var(--ntk-primary) !important;
+  .ntk-time-picker__action {
+    color: var(--ntk-time-picker-action-text) !important;
+  }
+
+  .ntk-time-picker__action--accent {
+    font-weight: var(--ntk-font-weight-medium);
   }
 }
 </style>

@@ -60,7 +60,7 @@
               size="sm" 
               flat 
               dense
-              color="primary"
+              class="ntk-select__bulk-action ntk-select__bulk-action--accent"
               @click="selectAll"
             />
             <q-btn 
@@ -68,7 +68,7 @@
               size="sm" 
               flat 
               dense
-              color="grey-7"
+              class="ntk-select__bulk-action ntk-select__bulk-action--neutral"
               @click="deselectAll"
             />
           </div>
@@ -87,7 +87,7 @@
           <q-checkbox 
             :model-value="scope.selected" 
             dense
-            color="primary"
+            class="ntk-select__option-check"
             @update:model-value="scope.toggleOption(scope.opt)"
           />
         </q-item-section>
@@ -195,6 +195,15 @@ const deselectAll = () => {
     background-color: var(--ntk-primary);
     color: var(--ntk-text-inverse);
     border-radius: var(--ntk-radius-md);
+  }
+
+  :deep(.ntk-select__bulk-action--accent) {
+    color: var(--ntk-input-action-text, var(--ntk-primary, var(--ntk-accent))) !important;
+    font-weight: var(--ntk-font-weight-medium);
+  }
+
+  :deep(.ntk-select__bulk-action--neutral) {
+    color: var(--ntk-text-muted, var(--ntk-input-label)) !important;
   }
 }
 </style>

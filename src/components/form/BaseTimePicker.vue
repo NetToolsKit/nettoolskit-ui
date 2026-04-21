@@ -37,21 +37,21 @@
             v-model="internalValue"
             :format24h="format24h"
             :with-seconds="withSeconds"
-            color="primary"
+            class="base-time-picker__clock"
             @update:model-value="emitModelValue"
           >
             <div class="row items-center justify-between q-px-sm q-gutter-sm">
               <q-btn
                 label="Agora"
-                color="primary"
                 flat
+                class="base-time-picker__action base-time-picker__action--accent"
                 @click="setNowTime"
               />
               <q-btn
                 v-bind="{ 'v-close-popup': true }"
                 label="Fechar"
-                color="primary"
                 flat
+                class="base-time-picker__action"
               />
             </div>
           </q-time>
@@ -147,3 +147,52 @@ const setNowTime = () => {
   emitModelValue(`${hours}:${minutes}`)
 }
 </script>
+
+<style lang="scss">
+.base-time-picker__clock {
+  --base-time-picker-accent: var(--ntk-primary, var(--ntk-accent));
+  --base-time-picker-action-text: var(--ntk-input-action-text, var(--base-time-picker-accent));
+
+  font-family: var(--ntk-font-family);
+  background: var(--ntk-popup-bg) !important;
+  border-radius: var(--ntk-radius-md);
+  box-shadow: var(--ntk-shadow-popup);
+
+  .q-time__header {
+    background-color: var(--ntk-popup-header-bg) !important;
+    color: var(--ntk-popup-header-text) !important;
+  }
+
+  .q-time__content,
+  .q-time__clock,
+  .q-time__clock-position {
+    background: var(--ntk-popup-bg) !important;
+  }
+
+  .q-time__clock-position {
+    color: var(--ntk-text-dark) !important;
+
+    &--active {
+      background: var(--base-time-picker-accent) !important;
+      color: var(--ntk-text-inverse) !important;
+    }
+  }
+
+  .q-time__clock-pointer {
+    background-color: var(--base-time-picker-accent) !important;
+
+    &::before,
+    &::after {
+      background-color: var(--base-time-picker-accent) !important;
+    }
+  }
+
+  .base-time-picker__action {
+    color: var(--base-time-picker-action-text) !important;
+  }
+
+  .base-time-picker__action--accent {
+    font-weight: var(--ntk-font-weight-medium);
+  }
+}
+</style>

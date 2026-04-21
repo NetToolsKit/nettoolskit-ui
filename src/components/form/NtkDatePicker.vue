@@ -28,7 +28,7 @@
             v-model="internalValue"
             minimal
             today-btn
-            color="primary"
+            class="ntk-date-picker__calendar"
             :locale="dateLocale"
             @update:model-value="handleUpdate"
           >
@@ -36,14 +36,14 @@
               <q-btn
                 label="Hoje"
                 flat
-                color="primary"
+                class="ntk-date-picker__action ntk-date-picker__action--accent"
                 @click="setToday"
               />
               <q-btn
                 v-close-popup
                 label="Fechar"
                 flat
-                color="primary"
+                class="ntk-date-picker__action"
               />
             </div>
           </q-date>
@@ -133,7 +133,10 @@ const setToday = () => {
 </style>
 
 <style lang="scss">
-.q-date {
+.ntk-date-picker__calendar {
+  --ntk-date-picker-accent: var(--ntk-primary, var(--ntk-accent));
+  --ntk-date-picker-action-text: var(--ntk-input-action-text, var(--ntk-date-picker-accent));
+
   font-family: var(--ntk-font-family);
   box-shadow: var(--ntk-shadow-popup);
   border-radius: var(--ntk-radius-md);
@@ -168,13 +171,17 @@ const setToday = () => {
     }
 
     &.q-btn--unelevated {
-      background-color: var(--ntk-primary) !important;
+      background-color: var(--ntk-date-picker-accent) !important;
       color: var(--ntk-text-inverse) !important;
     }
   }
 
-  .q-btn--flat {
-    color: var(--ntk-primary) !important;
+  .ntk-date-picker__action {
+    color: var(--ntk-date-picker-action-text) !important;
+  }
+
+  .ntk-date-picker__action--accent {
+    font-weight: var(--ntk-font-weight-medium);
   }
 }
 </style>

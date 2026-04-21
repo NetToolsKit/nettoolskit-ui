@@ -25,6 +25,83 @@ function readCssBlock(source: string, selector: string): string {
 }
 
 describe('template white-label audit', () => {
+  it('keeps public chrome components on white-label tokens instead of Quasar palette names', () => {
+    const auditedFiles = [
+      {
+        label: 'NtkLandingComposer',
+        source: readRepoFile('../../../src/components/layout/NtkLandingComposer.vue'),
+        forbiddenSnippets: ['color="primary"'],
+        requiredSnippets: [
+          'class="ntk-landing-composer__action ntk-landing-composer__action--primary"',
+          'background: var(--ntk-button-primary-bg, var(--ntk-primary))',
+        ],
+      },
+      {
+        label: 'NtkContactSection',
+        source: readRepoFile('../../../src/components/layout/NtkContactSection.vue'),
+        forbiddenSnippets: ['color="primary"'],
+        requiredSnippets: [
+          'class="ntk-contact__submit ntk-contact__action--primary"',
+          'background: var(--ntk-button-primary-bg, var(--ntk-primary))',
+        ],
+      },
+      {
+        label: 'NtkTechStack',
+        source: readRepoFile('../../../src/components/layout/NtkTechStack.vue'),
+        forbiddenSnippets: ['color="primary"', 'text-color="primary"'],
+        requiredSnippets: [
+          'class="ntk-tech-stack__chip"',
+          'color: var(--ntk-tech-stack-chip-text, var(--ntk-primary))',
+        ],
+      },
+      {
+        label: 'NtkAppSidebar',
+        source: readRepoFile('../../../src/components/builders/NtkAppSidebar.vue'),
+        forbiddenSnippets: [
+          "userProfile.avatarColor || 'primary'",
+          'text-color="white"',
+          "item.badgeColor || 'primary'",
+          'color: white;',
+        ],
+        requiredSnippets: [
+          'class="sidebar-profile__avatar"',
+          'class="menu-badge"',
+          '--ntk-sidebar-avatar-bg',
+          '--ntk-sidebar-badge-bg',
+        ],
+      },
+      {
+        label: 'NtkNotificationCenter',
+        source: readRepoFile('../../../src/components/builders/NtkNotificationCenter.vue'),
+        forbiddenSnippets: [
+          'color="error"',
+          'text-color="white"',
+          'color="grey-5"',
+          'class="text-grey-6"',
+          "info: 'info'",
+          "success: 'positive'",
+          "error: 'negative'",
+        ],
+        requiredSnippets: [
+          'class="notification-unread-badge"',
+          'class="notification-avatar"',
+          'class="notification-empty__icon"',
+          'class="notification-empty__text"',
+        ],
+      },
+    ]
+
+    for (const { label, source, forbiddenSnippets, requiredSnippets } of auditedFiles) {
+      for (const forbiddenSnippet of forbiddenSnippets) {
+        expect(source, `${label} leaked a fixed Quasar palette value: ${forbiddenSnippet}`).not.toContain(forbiddenSnippet)
+      }
+
+      for (const requiredSnippet of requiredSnippets) {
+        expect(source, `${label} is missing white-label token wiring: ${requiredSnippet}`).toContain(requiredSnippet)
+      }
+    }
+  })
+
   it('keeps audited reference-system and cms files free from previously identified hardcoded colors', () => {
     const auditedFiles = [
       {
@@ -90,6 +167,56 @@ describe('template white-label audit', () => {
           "success: '#22c55e'",
           "warning: '#eab308'",
           "error: '#ef4444'",
+        ],
+      },
+      {
+        label: 'BaseDatePicker form wrapper',
+        source: readRepoFile('../../../src/components/form/BaseDatePicker.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+          'color="grey-7"',
+          'text-color="primary"',
+          'text-color="white"',
+        ],
+      },
+      {
+        label: 'BaseTimePicker form wrapper',
+        source: readRepoFile('../../../src/components/form/BaseTimePicker.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+          'color="grey-7"',
+          'text-color="primary"',
+          'text-color="white"',
+        ],
+      },
+      {
+        label: 'NtkDatePicker form wrapper',
+        source: readRepoFile('../../../src/components/form/NtkDatePicker.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+          'color="grey-7"',
+          'text-color="primary"',
+          'text-color="white"',
+        ],
+      },
+      {
+        label: 'NtkTimePicker form wrapper',
+        source: readRepoFile('../../../src/components/form/NtkTimePicker.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+          'color="grey-7"',
+          'text-color="primary"',
+          'text-color="white"',
+        ],
+      },
+      {
+        label: 'NtkSelect form wrapper',
+        source: readRepoFile('../../../src/components/form/NtkSelect.vue'),
+        forbiddenSnippets: [
+          'color="primary"',
+          'color="grey-7"',
+          'text-color="primary"',
+          'text-color="white"',
         ],
       },
       {
