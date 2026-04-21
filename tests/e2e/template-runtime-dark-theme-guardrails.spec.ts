@@ -152,6 +152,26 @@ async function readResolvedSurfaceMetrics(surface: Locator, textSource: Locator 
         return null
       }
 
+      if (normalized.startsWith('color(srgb')) {
+        const [channelPart = '', alphaPart] = normalized
+          .replace('color(srgb', '')
+          .replace(')', '')
+          .split('/')
+          .map(part => part.trim())
+        const channels = channelPart.split(/\s+/).slice(0, 3)
+
+        if (channels.length < 3) {
+          return null
+        }
+
+        return {
+          red: Number(channels[0]) * 255,
+          green: Number(channels[1]) * 255,
+          blue: Number(channels[2]) * 255,
+          alpha: alphaPart ? Number(alphaPart) : 1,
+        }
+      }
+
       const channels = normalized.match(/[\d.]+/g)
       if (!channels || channels.length < 3) {
         return null

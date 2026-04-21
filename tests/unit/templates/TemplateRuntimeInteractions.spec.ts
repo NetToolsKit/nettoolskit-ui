@@ -353,7 +353,7 @@ async function createReadyRuntimeRouter(
   const router = runtime.createTemplateRuntimeRouter()
 
   await router.push(initialLocation)
-  await router.isReady()
+  await flushPromises()
 
   return router
 }
