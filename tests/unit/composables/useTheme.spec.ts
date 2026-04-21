@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { useTheme } from '../../../src/composables/ui/useTheme'
 import { themes } from '../../../src/config/theme/theme.config'
+import { useNtkTheme } from '../../../src/config/theme/theme.plugin'
 
 // useTheme has module-level singleton state — reset to a known theme after each test
 afterEach(() => {
@@ -102,5 +103,28 @@ describe('useTheme', () => {
     expect(root.hasAttribute('data-theme')).toBe(false)
     expect(body.hasAttribute('data-theme')).toBe(false)
     expect(root.style.getPropertyValue('--theme-primary')).toBe(themes.platea.colors.primary)
+  })
+
+  it('keeps NtkThemePlugin dark mode separate from preset data-theme ids', () => {
+    const root = document.documentElement
+    const body = document.body
+    root.removeAttribute('data-theme')
+    body.removeAttribute('data-theme')
+
+    const { update, setDark } = useNtkTheme()
+    update({ dark: true, primary: '#101010', background: '#050505', textPrimary: '#f8fafc' })
+
+    expect(root.hasAttribute('data-theme')).toBe(false)
+    expect(body.hasAttribute('data-theme')).toBe(false)
+    expect(root.classList.contains('dark')).toBe(true)
+    expect(body.classList.contains('body--dark')).toBe(true)
+    expect(root.style.getPropertyValue('--ntk-primary')).toBe('#101010')
+
+    setDark(false)
+
+    expect(root.hasAttribute('data-theme')).toBe(false)
+    expect(body.hasAttribute('data-theme')).toBe(false)
+    expect(root.classList.contains('dark')).toBe(false)
+    expect(body.classList.contains('body--light')).toBe(true)
   })
 })

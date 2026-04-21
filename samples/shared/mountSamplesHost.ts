@@ -1,6 +1,7 @@
 import { createApp, type App, type Component } from 'vue'
 import {
   ClosePopup,
+  Dark,
   QAvatar,
   QBadge,
   QBanner,
@@ -63,7 +64,9 @@ export function mountSamplesHost(
   const app = createApp(rootComponent)
 
   app.use(Quasar, {
-    plugins: {},
+    plugins: {
+      Dark,
+    },
     components: {
       QAvatar,
       QBadge,

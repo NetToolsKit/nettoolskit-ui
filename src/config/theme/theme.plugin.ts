@@ -78,7 +78,6 @@ function applyThemeOptions(options: NtkThemeOptions): void {
     dark: options.dark,
     structuralBackground: options.background,
     structuralText: options.textPrimary,
-    themeId: options.dark === undefined ? undefined : options.dark ? 'dark' : 'light',
     themeVars,
   });
 }
@@ -97,7 +96,6 @@ export const NtkThemePlugin: Plugin = {
       setDark: (dark: boolean) => {
         syncThemeDomState({
           dark,
-          themeId: dark ? 'dark' : 'light',
         });
       },
       setPrimary: (color: string) => {
@@ -133,7 +131,6 @@ export function useNtkTheme() {
     setDark: (dark: boolean) => {
       syncThemeDomState({
         dark,
-        themeId: dark ? 'dark' : 'light',
       });
     },
     

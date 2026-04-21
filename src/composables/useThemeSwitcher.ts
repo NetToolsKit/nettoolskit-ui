@@ -77,22 +77,24 @@ function applyThemeToDOM(themeId: ThemeId): void {
   if (typeof document === 'undefined') return
 
   syncThemePreviewSwatches()
-  syncThemeDomState({ themeId })
+  syncThemeDomState({ presetId: themeId })
 
   if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
     window.requestAnimationFrame(() => {
       syncThemePreviewSwatches()
-      syncThemeDomState({ themeId })
+      syncThemeDomState({ presetId: themeId })
     })
   }
 }
 
-// Apply stored theme on module load
-applyThemeToDOM(activeTheme.value)
-
 watch(activeTheme, (newTheme) => {
   applyThemeToDOM(newTheme)
 })
+
+export function bootstrapThemeSwitcher(themeId: ThemeId = activeTheme.value): void {
+  activeTheme.value = themeId
+  applyThemeToDOM(themeId)
+}
 
 function persistThemePreference(themeId: ThemeId): void {
   if (typeof window === 'undefined') {
@@ -104,6 +106,7 @@ function persistThemePreference(themeId: ThemeId): void {
 
 export function resetThemePreference(nextTheme: ThemeId = DEFAULT_THEME_ID): void {
   activeTheme.value = nextTheme
+  applyThemeToDOM(nextTheme)
 
   if (typeof window === 'undefined') {
     return
@@ -115,6 +118,7 @@ export function resetThemePreference(nextTheme: ThemeId = DEFAULT_THEME_ID): voi
 export function useThemeSwitcher() {
   function setTheme(themeId: ThemeId): void {
     activeTheme.value = themeId
+    applyThemeToDOM(themeId)
     persistThemePreference(themeId)
   }
 

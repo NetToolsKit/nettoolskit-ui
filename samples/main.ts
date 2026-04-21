@@ -2,9 +2,8 @@
  * Samples runtime/main module.
  */
 
-import '../src/composables/useThemeSwitcher'
-
 import { defineAsyncComponent } from 'vue'
+import { bootstrapThemeSwitcher } from '../src/composables/useThemeSwitcher'
 import { createTemplateRuntimeRouter, bootRuntimeAuth } from '../src/templates/runtime'
 import { mountSamplesHost } from './shared/mountSamplesHost'
 
@@ -28,6 +27,8 @@ const templateRuntimeRouter = isTemplateRuntimeMode
   : null
 
 mountSamplesHost(RootComponent, app => {
+  bootstrapThemeSwitcher()
+
   if (templateRuntimeRouter) {
     bootRuntimeAuth()
     app.use(templateRuntimeRouter)

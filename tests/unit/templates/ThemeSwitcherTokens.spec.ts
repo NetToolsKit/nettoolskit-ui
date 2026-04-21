@@ -1,11 +1,14 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { nextTick } from 'vue'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 
 import ThemeDotsSwitcher from '../../../src/templates/navigation/ThemeDotsSwitcher.vue'
 import {
   DEFAULT_THEME_ID,
   THEME_SWITCHER_STORAGE_KEY,
+  bootstrapThemeSwitcher,
   resetThemePreference,
   themeOptions,
   useThemeSwitcher,
@@ -124,5 +127,59 @@ describe('theme switcher tokenization', () => {
     expect(document.body.dataset.theme).toBe('claude')
     expect(document.documentElement.classList.contains('dark')).toBe(false)
     expect(document.body.classList.contains('body--light')).toBe(true)
+  })
+
+  it('does not apply a stored preset as a module-load side effect', async () => {
+    vi.resetModules()
+    localStorage.setItem(THEME_SWITCHER_STORAGE_KEY, 'warp')
+    document.documentElement.removeAttribute('data-theme')
+    document.body.removeAttribute('data-theme')
+    document.documentElement.classList.remove('dark')
+    document.body.classList.remove('body--dark', 'body--light')
+
+    await import('../../../src/composables/useThemeSwitcher')
+
+    expect(document.documentElement.hasAttribute('data-theme')).toBe(false)
+    expect(document.body.hasAttribute('data-theme')).toBe(false)
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(document.body.classList.contains('body--dark')).toBe(false)
+  })
+
+  it('applies the stored preset only through the explicit bootstrap entrypoint', async () => {
+    vi.resetModules()
+    localStorage.setItem(THEME_SWITCHER_STORAGE_KEY, 'warp')
+    document.documentElement.removeAttribute('data-theme')
+    document.body.removeAttribute('data-theme')
+    document.documentElement.style.setProperty('--ntk-dark-scheme', '1')
+
+    const { bootstrapThemeSwitcher } = await import('../../../src/composables/useThemeSwitcher')
+    bootstrapThemeSwitcher()
+    await nextTick()
+
+    expect(document.documentElement.dataset.theme).toBe('warp')
+    expect(document.body.dataset.theme).toBe('warp')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.body.classList.contains('body--dark')).toBe(true)
+  })
+
+  it('allows bootstrap to force a preset without writing a stored preference', async () => {
+    localStorage.clear()
+
+    bootstrapThemeSwitcher('claude')
+    await nextTick()
+
+    expect(document.documentElement.dataset.theme).toBe('claude')
+    expect(document.body.dataset.theme).toBe('claude')
+    expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBeNull()
+  })
+
+  it('keeps Quasar Dark wired through the central DOM theme sync and sample host', () => {
+    const themeDomSource = readFileSync(resolve(process.cwd(), 'src/config/theme/theme-dom.ts'), 'utf8')
+    const sampleHostSource = readFileSync(resolve(process.cwd(), 'samples/shared/mountSamplesHost.ts'), 'utf8')
+
+    expect(themeDomSource).toContain("import { Dark } from 'quasar'")
+    expect(themeDomSource).toContain('Dark.set(isDark)')
+    expect(sampleHostSource).toContain('Dark,')
+    expect(sampleHostSource).toContain('plugins: {\n      Dark,')
   })
 })

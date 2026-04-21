@@ -1,8 +1,10 @@
+import { Dark } from 'quasar'
+
 export interface ThemeDomSyncOptions {
   dark?: boolean
   structuralBackground?: string
   structuralText?: string
-  themeId?: string | null
+  presetId?: string | null
   themeVars?: Record<string, string | null | undefined>
 }
 
@@ -46,15 +48,15 @@ function applyThemeVariables(root: HTMLElement, themeVars?: Record<string, strin
   }
 }
 
-function setThemeDataAttribute(root: HTMLElement, body: HTMLElement | null, themeId?: string | null): void {
-  if (themeId === undefined) {
+function setThemeDataAttribute(root: HTMLElement, body: HTMLElement | null, presetId?: string | null): void {
+  if (presetId === undefined) {
     return
   }
 
-  if (themeId) {
-    root.dataset.theme = themeId
+  if (presetId) {
+    root.dataset.theme = presetId
     if (body) {
-      body.dataset.theme = themeId
+      body.dataset.theme = presetId
     }
     return
   }
@@ -62,6 +64,14 @@ function setThemeDataAttribute(root: HTMLElement, body: HTMLElement | null, them
   delete root.dataset.theme
   if (body) {
     delete body.dataset.theme
+  }
+}
+
+function syncQuasarDarkMode(isDark: boolean): void {
+  try {
+    Dark.set(isDark)
+  } catch {
+    // Quasar may not be installed yet in tests or host apps; DOM classes remain authoritative fallback.
   }
 }
 
@@ -74,7 +84,7 @@ export function syncThemeDomState(options: ThemeDomSyncOptions = {}): void {
   const body = document.body
 
   applyThemeVariables(root, options.themeVars)
-  setThemeDataAttribute(root, body, options.themeId)
+  setThemeDataAttribute(root, body, options.presetId)
 
   const computedStyle = getComputedStyle(root)
   const isDark = options.dark ?? computedStyle.getPropertyValue('--ntk-dark-scheme').trim() === '1'
@@ -94,6 +104,7 @@ export function syncThemeDomState(options: ThemeDomSyncOptions = {}): void {
     setStyleProperty(root.style, quasarVar, value)
   }
 
+  syncQuasarDarkMode(isDark)
   root.classList.toggle('dark', isDark)
   root.style.colorScheme = isDark ? 'dark' : 'light'
   root.style.backgroundColor = structuralBackground
