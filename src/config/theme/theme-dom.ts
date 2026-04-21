@@ -10,7 +10,7 @@ export interface ThemeDomSyncOptions {
 }
 
 const QUASAR_COLOR_SOURCES = {
-  '--q-primary': ['--ntk-accent', '--ntk-primary'],
+  '--q-primary': ['--ntk-primary', '--ntk-accent'],
   '--q-secondary': ['--ntk-secondary', '--ntk-text-muted', '--ntk-text-secondary'],
   '--q-accent': ['--ntk-accent-hover', '--ntk-accent', '--ntk-primary-dark'],
   '--q-positive': ['--ntk-success', '--ntk-positive'],

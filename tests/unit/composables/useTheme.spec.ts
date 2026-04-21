@@ -119,6 +119,20 @@ describe('useTheme', () => {
     expect(root.classList.contains('dark')).toBe(true)
     expect(body.classList.contains('body--dark')).toBe(true)
     expect(root.style.getPropertyValue('--ntk-primary')).toBe('#101010')
+    expect(root.style.getPropertyValue('--q-primary')).toBe('#101010')
+
+    const { setPrimary, setGradient } = useNtkTheme()
+    setPrimary('#202020')
+
+    expect(root.style.getPropertyValue('--ntk-primary')).toBe('#202020')
+    expect(root.style.getPropertyValue('--q-primary')).toBe('#202020')
+
+    setGradient('#303030', '#404040')
+
+    expect(root.style.getPropertyValue('--ntk-primary')).toBe('#303030')
+    expect(root.style.getPropertyValue('--ntk-accent')).toBe('#404040')
+    expect(root.style.getPropertyValue('--q-primary')).toBe('#303030')
+    expect(root.style.getPropertyValue('--q-accent')).toBe('#404040')
 
     setDark(false)
 

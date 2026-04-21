@@ -1,8 +1,8 @@
 /**
  * NTK Theme Plugin
- * Plugin Vue para configuração global de temas
+ * Vue plugin for global theme configuration.
  * 
- * USO:
+ * USAGE:
  * import { NtkThemePlugin } from 'nettoolskit-ui-vue';
  * 
  * app.use(NtkThemePlugin, {
@@ -16,39 +16,39 @@ import type { App, Plugin } from 'vue';
 import { syncThemeDomState } from './theme-dom';
 
 /**
- * Opções de configuração do tema
+ * Theme configuration options.
  */
 export interface NtkThemeOptions {
-  /** Cor primária principal */
+  /** Main primary color */
   primary?: string;
-  /** Cor primária escura (hover) */
+  /** Dark primary color (hover) */
   primaryDark?: string;
-  /** Cor primária clara */
+  /** Light primary color */
   primaryLight?: string;
-  /** Gradiente primário [start, end] */
+  /** Primary gradient [start, end] */
   primaryGradient?: [string, string];
-  /** Cor secundária */
+  /** Secondary color */
   secondary?: string;
-  /** Cor de fundo principal */
+  /** Main background color */
   background?: string;
-  /** Cor de fundo secundária */
+  /** Secondary background color */
   backgroundSecondary?: string;
-  /** Cor de texto principal */
+  /** Main text color */
   textPrimary?: string;
-  /** Cor de texto secundário */
+  /** Secondary text color */
   textSecondary?: string;
-  /** Cor de borda */
+  /** Border color */
   borderColor?: string;
-  /** Ativar modo escuro */
+  /** Enable dark mode */
   dark?: boolean;
-  /** Família de fontes principal */
+  /** Main font family */
   fontFamily?: string;
-  /** Família de fontes para títulos */
+  /** Display/title font family */
   fontFamilyDisplay?: string;
 }
 
 /**
- * Aplica as opções de tema como variáveis CSS
+ * Applies theme options as CSS variables.
  */
 function applyThemeOptions(options: NtkThemeOptions): void {
   const themeVars: Record<string, string | null | undefined> = {
@@ -82,15 +82,36 @@ function applyThemeOptions(options: NtkThemeOptions): void {
   });
 }
 
+function applyPrimaryColor(color: string): void {
+  syncThemeDomState({
+    themeVars: {
+      '--ntk-primary': color,
+    },
+  });
+}
+
+function applyPrimaryGradient(start: string, end: string): void {
+  syncThemeDomState({
+    themeVars: {
+      '--ntk-primary': start,
+      '--ntk-accent': end,
+      '--ntk-primary-gradient-start': start,
+      '--ntk-primary-gradient-end': end,
+      '--ntk-primary-gradient': `linear-gradient(135deg, ${start} 0%, ${end} 100%)`,
+      '--ntk-gradient-accent': `linear-gradient(135deg, ${start} 0%, ${end} 100%)`,
+    },
+  });
+}
+
 /**
- * Plugin Vue para configuração de temas
+ * Vue plugin for theme configuration.
  */
 export const NtkThemePlugin: Plugin = {
   install(app: App, options: NtkThemeOptions = {}) {
-    // Aplica as opções de tema
+    // Apply the initial theme options.
     applyThemeOptions(options);
     
-    // Disponibiliza função para atualizar tema em runtime
+    // Expose runtime theme update helpers.
     app.config.globalProperties.$ntkTheme = {
       update: applyThemeOptions,
       setDark: (dark: boolean) => {
@@ -98,35 +119,27 @@ export const NtkThemePlugin: Plugin = {
           dark,
         });
       },
-      setPrimary: (color: string) => {
-        document.documentElement.style.setProperty('--ntk-primary', color);
-      },
-      setGradient: (start: string, end: string) => {
-        const root = document.documentElement;
-        root.style.setProperty('--ntk-primary-gradient-start', start);
-        root.style.setProperty('--ntk-primary-gradient-end', end);
-        root.style.setProperty('--ntk-primary-gradient', `linear-gradient(135deg, ${start} 0%, ${end} 100%)`);
-        root.style.setProperty('--ntk-gradient-accent', `linear-gradient(135deg, ${start} 0%, ${end} 100%)`);
-      }
+      setPrimary: applyPrimaryColor,
+      setGradient: applyPrimaryGradient,
     };
     
-    // Provide para Composition API
+    // Provide for the Composition API.
     app.provide('ntkTheme', app.config.globalProperties.$ntkTheme);
   }
 };
 
 /**
- * Composable para acessar funções de tema
+ * Composable for accessing theme helpers.
  */
 export function useNtkTheme() {
   return {
     /**
-     * Atualiza múltiplas opções de tema
+     * Updates multiple theme options.
      */
     update: applyThemeOptions,
     
     /**
-     * Define modo escuro
+     * Sets dark mode.
      */
     setDark: (dark: boolean) => {
       syncThemeDomState({
@@ -135,32 +148,24 @@ export function useNtkTheme() {
     },
     
     /**
-     * Define cor primária
+     * Sets the primary color.
      */
-    setPrimary: (color: string) => {
-      document.documentElement.style.setProperty('--ntk-primary', color);
-    },
+    setPrimary: applyPrimaryColor,
     
     /**
-     * Define gradiente primário
+     * Sets the primary gradient.
      */
-    setGradient: (start: string, end: string) => {
-      const root = document.documentElement;
-      root.style.setProperty('--ntk-primary-gradient-start', start);
-      root.style.setProperty('--ntk-primary-gradient-end', end);
-      root.style.setProperty('--ntk-primary-gradient', `linear-gradient(135deg, ${start} 0%, ${end} 100%)`);
-      root.style.setProperty('--ntk-gradient-accent', `linear-gradient(135deg, ${start} 0%, ${end} 100%)`);
-    },
+    setGradient: applyPrimaryGradient,
     
     /**
-     * Obtém valor de variável CSS
+     * Gets a CSS variable value.
      */
     getVar: (name: string): string => {
       return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     },
     
     /**
-     * Define variável CSS customizada
+     * Sets a custom CSS variable.
      */
     setVar: (name: string, value: string) => {
       document.documentElement.style.setProperty(name, value);
