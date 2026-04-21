@@ -89,11 +89,109 @@ describe('template white-label audit', () => {
           'class="notification-empty__text"',
         ],
       },
+      {
+        label: 'NtkSidebar',
+        source: readRepoFile('../../../src/components/layout/NtkSidebar.vue'),
+        forbiddenSnippets: [
+          ':color="item.badgeColor',
+          '<q-badge',
+          '`bg-${props.bgColor}`',
+          '`text-${props.textColor}`',
+          "default: 'white'",
+          "default: 'grey-8'",
+        ],
+        requiredSnippets: [
+          ':style="drawerStyle"',
+          'class="ntk-sidebar__badge"',
+          '--ntk-sidebar-bg-resolved',
+          '--ntk-sidebar-text-resolved',
+          '--ntk-sidebar-item-active-text-resolved',
+          '--ntk-sidebar-badge-bg',
+        ],
+      },
+      {
+        label: 'NtkPricingCard',
+        source: readRepoFile('../../../src/components/ui/NtkPricingCard.vue'),
+        forbiddenSnippets: [
+          ':color="feature.disabled',
+          "'grey-5' : 'positive'",
+          'color="positive"',
+          'color="grey-5"',
+        ],
+        requiredSnippets: [
+          'class="pricing-card__feature-icon"',
+          "pricing-card__feature-icon--disabled",
+          "pricing-card__feature-icon--enabled",
+          '--ntk-pricing-feature-icon-success',
+          '--ntk-pricing-feature-icon-muted',
+        ],
+      },
     ]
 
     for (const { label, source, forbiddenSnippets, requiredSnippets } of auditedFiles) {
       for (const forbiddenSnippet of forbiddenSnippets) {
         expect(source, `${label} leaked a fixed Quasar palette value: ${forbiddenSnippet}`).not.toContain(forbiddenSnippet)
+      }
+
+      for (const requiredSnippet of requiredSnippets) {
+        expect(source, `${label} is missing white-label token wiring: ${requiredSnippet}`).toContain(requiredSnippet)
+      }
+    }
+  })
+
+  it('keeps shared UI component defaults on CSS variable white-label tokens', () => {
+    const auditedFiles = [
+      {
+        label: 'NtkFeatureCard',
+        source: readRepoFile('../../../src/components/ui/NtkFeatureCard.vue'),
+        requiredSnippets: [
+          "background: 'var(--ntk-primary-gradient)'",
+          "color: 'var(--ntk-text-on-accent)'",
+        ],
+      },
+      {
+        label: 'NtkSteps',
+        source: readRepoFile('../../../src/components/ui/NtkSteps.vue'),
+        requiredSnippets: [
+          "background: 'var(--ntk-primary-gradient)'",
+          'var(--ntk-primary-dark, var(--ntk-primary))',
+        ],
+      },
+      {
+        label: 'NtkStatCard',
+        source: readRepoFile('../../../src/components/ui/NtkStatCard.vue'),
+        requiredSnippets: [
+          "background: 'var(--ntk-primary-gradient)'",
+          "return { color: 'var(--ntk-primary)' };",
+        ],
+      },
+      {
+        label: 'NtkCreditCard',
+        source: readRepoFile('../../../src/components/ui/NtkCreditCard.vue'),
+        requiredSnippets: [
+          "color: props.amountColor || 'var(--ntk-primary)'",
+        ],
+      },
+      {
+        label: 'NtkCTASection',
+        source: readRepoFile('../../../src/components/layout/NtkCTASection.vue'),
+        requiredSnippets: [
+          "styles.background = 'var(--ntk-primary-gradient)'",
+          "color: 'var(--ntk-primary)'",
+          "color: 'var(--ntk-text-on-accent)'",
+        ],
+      },
+    ]
+
+    for (const { label, source, requiredSnippets } of auditedFiles) {
+      for (const forbiddenSnippet of [
+        'useTheme',
+        'theme.value.colors',
+        'theme.value.gradients',
+        "color: 'white'",
+        'color: "white"',
+      ]) {
+        expect(source, `${label} leaked legacy theme styling: ${forbiddenSnippet}`).not.toContain(forbiddenSnippet)
       }
 
       for (const requiredSnippet of requiredSnippets) {

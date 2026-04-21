@@ -6,6 +6,7 @@
     :mini-width="miniWidth"
     :breakpoint="breakpoint"
     :class="drawerClass"
+    :style="drawerStyle"
     @update:model-value="$emit('update:model-value', $event)"
   >
     <q-scroll-area class="fit">
@@ -77,10 +78,12 @@
               v-if="!mini && item.badge"
               side
             >
-              <q-badge
-                :color="item.badgeColor || 'primary'"
-                :label="item.badge"
-              />
+              <span
+                class="ntk-sidebar__badge"
+                :style="getBadgeStyle(item.badgeColor)"
+              >
+                {{ item.badge }}
+              </span>
             </q-item-section>
 
             <!-- Tooltip for mini mode -->
@@ -134,6 +137,7 @@
  */
 
 import { computed } from 'vue'
+import type { CSSProperties } from 'vue'
 
 export interface SidebarItem {
   id?: string | number
@@ -176,15 +180,15 @@ const props = defineProps({
   },
   bgColor: {
     type: String,
-    default: 'white'
+    default: 'var(--ntk-sidebar-bg, var(--ntk-bg-card))'
   },
   textColor: {
     type: String,
-    default: 'grey-8'
+    default: 'var(--ntk-sidebar-text, var(--ntk-text-primary))'
   },
   activeColor: {
     type: String,
-    default: 'primary'
+    default: 'var(--ntk-sidebar-item-active-text, var(--ntk-accent, var(--ntk-primary)))'
   },
   logo: {
     type: String,
@@ -222,13 +226,54 @@ const props = defineProps({
 
 const emit = defineEmits(['update:model-value', 'toggle', 'item-click'])
 
+const colorTokenAliases: Record<string, string> = {
+  primary: 'var(--ntk-primary)',
+  secondary: 'var(--ntk-secondary, var(--ntk-accent, var(--ntk-primary)))',
+  accent: 'var(--ntk-accent, var(--ntk-primary))',
+  positive: 'var(--semantic-success-primary, var(--ntk-success))',
+  success: 'var(--semantic-success-primary, var(--ntk-success))',
+  negative: 'var(--semantic-error-primary, var(--ntk-error))',
+  error: 'var(--semantic-error-primary, var(--ntk-error))',
+  warning: 'var(--semantic-warning-primary, var(--ntk-warning))',
+  info: 'var(--semantic-info-primary, var(--ntk-info))',
+  white: 'var(--ntk-bg-card)',
+  'grey-5': 'var(--ntk-text-muted)',
+  'grey-7': 'var(--ntk-text-secondary)',
+  'grey-8': 'var(--ntk-text-primary)'
+}
+
+const resolveThemeColor = (color: string | undefined, fallback: string): string => {
+  const value = color?.trim()
+
+  if (!value) {
+    return fallback
+  }
+
+  return colorTokenAliases[value] ?? value
+}
+
 const drawerClass = computed(() => [
   'ntk-sidebar',
   'base-sidebar',
-  `bg-${props.bgColor}`,
-  `text-${props.textColor}`,
   props.customClass
 ])
+
+const drawerStyle = computed<CSSProperties>(() => ({
+  '--ntk-sidebar-bg-resolved': resolveThemeColor(
+    props.bgColor,
+    'var(--ntk-sidebar-bg, var(--ntk-bg-card))'
+  ),
+  '--ntk-sidebar-text-resolved': resolveThemeColor(
+    props.textColor,
+    'var(--ntk-sidebar-text, var(--ntk-text-primary))'
+  ),
+  '--ntk-sidebar-item-active-text-resolved': resolveThemeColor(
+    props.activeColor,
+    'var(--ntk-sidebar-item-active-text, var(--ntk-accent, var(--ntk-primary)))'
+  ),
+  '--ntk-sidebar-item-active-bg-resolved':
+    'var(--ntk-sidebar-item-active-bg, color-mix(in srgb, var(--ntk-sidebar-item-active-text-resolved) 12%, transparent))'
+}))
 
 const listClass = computed(() => [
   'ntk-sidebar__list',
@@ -247,6 +292,13 @@ const separatorClass = computed(() => [
   'q-my-md'
 ])
 
+const getBadgeStyle = (color?: string): CSSProperties => ({
+  '--ntk-sidebar-badge-bg': resolveThemeColor(
+    color,
+    'var(--ntk-sidebar-item-active-text-resolved, var(--ntk-accent, var(--ntk-primary)))'
+  )
+})
+
 const handleItemClick = (item: SidebarItem) => {
   if (item.onClick) {
     item.onClick()
@@ -258,6 +310,8 @@ const handleItemClick = (item: SidebarItem) => {
 <style scoped lang="scss">
 .ntk-sidebar {
   font-family: var(--ntk-font-family);
+  background: var(--ntk-sidebar-bg-resolved, var(--ntk-sidebar-bg, var(--ntk-bg-card)));
+  color: var(--ntk-sidebar-text-resolved, var(--ntk-sidebar-text, var(--ntk-text-primary)));
   border-right: 1px solid var(--ntk-sidebar-border);
 
   :deep(.q-scrollarea__content) {
@@ -299,6 +353,7 @@ const handleItemClick = (item: SidebarItem) => {
 .ntk-sidebar__item {
   border-radius: var(--ntk-radius-md);
   margin: var(--ntk-spacing-xs) var(--ntk-spacing-sm);
+  color: inherit;
   transition: all var(--ntk-transition-fast);
   text-decoration: none;
 
@@ -326,19 +381,34 @@ const handleItemClick = (item: SidebarItem) => {
   }
 
   &.q-router-link--active {
-    background: var(--ntk-sidebar-item-active-bg);
-    color: var(--ntk-sidebar-item-active-text);
+    background: var(--ntk-sidebar-item-active-bg-resolved, var(--ntk-sidebar-item-active-bg));
+    color: var(--ntk-sidebar-item-active-text-resolved, var(--ntk-sidebar-item-active-text));
     text-decoration: none;
 
     :deep(.q-icon) {
-      color: var(--ntk-sidebar-item-active-text);
+      color: var(--ntk-sidebar-item-active-text-resolved, var(--ntk-sidebar-item-active-text));
     }
 
     :deep(.q-item__label) {
       font-weight: var(--ntk-font-weight-semibold);
-      color: var(--ntk-sidebar-item-active-text);
+      color: var(--ntk-sidebar-item-active-text-resolved, var(--ntk-sidebar-item-active-text));
     }
   }
+}
+
+.ntk-sidebar__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  min-height: 1.25rem;
+  padding: 0 var(--ntk-spacing-xs);
+  border-radius: var(--ntk-radius-full, 999px);
+  background: var(--ntk-sidebar-badge-bg, var(--ntk-sidebar-item-active-text-resolved, var(--ntk-accent, var(--ntk-primary))));
+  color: var(--ntk-sidebar-badge-text, var(--ntk-text-on-accent, var(--ntk-bg-card)));
+  font-size: var(--ntk-font-size-xs);
+  font-weight: var(--ntk-font-weight-semibold);
+  line-height: 1;
 }
 
 .ntk-sidebar__separator {

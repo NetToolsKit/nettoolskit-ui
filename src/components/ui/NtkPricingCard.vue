@@ -46,7 +46,8 @@
         >
           <q-icon
             :name="feature.disabled ? 'close' : 'check'"
-            :color="feature.disabled ? 'grey-5' : 'positive'"
+            class="pricing-card__feature-icon"
+            :class="feature.disabled ? 'pricing-card__feature-icon--disabled' : 'pricing-card__feature-icon--enabled'"
             :size="$q.screen.xs ? 'var(--ntk-text-md)' : 'var(--ntk-text-lg)'"
           />
           <span>{{ feature.text }}</span>
@@ -231,6 +232,18 @@ const cardClasses = computed(() => ({
     &--disabled {
       color: var(--ntk-text-muted);
       text-decoration: line-through;
+    }
+  }
+
+  &__feature-icon {
+    flex: 0 0 auto;
+
+    &--enabled {
+      color: var(--ntk-pricing-feature-icon-success, var(--semantic-success-primary, var(--ntk-success)));
+    }
+
+    &--disabled {
+      color: var(--ntk-pricing-feature-icon-muted, var(--ntk-text-muted));
     }
   }
 
