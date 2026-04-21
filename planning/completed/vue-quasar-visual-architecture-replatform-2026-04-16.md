@@ -2,7 +2,7 @@
 
 Date: 2026-04-16
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
-Status: active — closeout readiness 89%
+Status: completed — closeout readiness 100%
 
 ## Scope Summary
 
@@ -15,16 +15,16 @@ This workstream is explicitly frontend-only:
 
 ## Status Snapshot
 
-Overall status: **89%**
+Overall status: **100%**
 
 | Slice | Status | Current evidence | Remaining closeout gap |
 |---|---:|---|---|
-| Slice 1 — Official Baseline And Architecture Contract | 88% | Preset tokens, swatches, `--q-*` brand sync, DOM body class sync, and Quasar `Dark.set(...)` runtime sync exist. | Legacy theme writers remain exported for compatibility, with docs/comments de-promoting them for new runtime work. |
-| Slice 2 — Teleport And Popup Surface Unification | 92% | Global overlay, popup, field, table, tooltip, notification, and menu bridge coverage exists behind explicit template scope. | A dedicated nav submenu/QBtnDropdown fixture is still a useful follow-up if that route becomes part of the approved runtime. |
-| Slice 3 — Layout Rebuild To Official Quasar Pattern | 95% | Runtime shell uses `QLayout`, `QDrawer`, `QPageContainer`, `QPage`, and shared shell/header/navigation tokens. | Remaining work is mostly validation and preventing future local-token drift. |
-| Slice 4 — Surface And Data Display Normalization | 94% | Login, dashboard, CRUD, wiki, profile, system pages, reference-system surfaces, and original-reference fallbacks have dark contrast fixes and semantic token adoption. | Continue enforcing shared semantic primitives as new templates are added. |
-| Slice 5 — Theme Preset Certification | 84% | Runtime visual certification now covers `Revolut`, `Claude`, `Warp`, and `Resend`; dark guardrails cover `Warp` and `Resend` across the high-risk runtime surfaces. | Screenshot-baseline runtime visual regression remains the main open enhancement. |
-| Slice 6 — Regression Guardrails And Documentation | 76% | Official references, README operating model, template docs, and planning references are documented. | Do not move the plan to `planning/completed/` until full validation and closeout are done. |
+| Slice 1 — Official Baseline And Architecture Contract | 100% | Preset tokens, swatches, `--q-*` brand sync, DOM body class sync, Quasar `Dark.set(...)` runtime sync, and legacy plugin resync guardrails exist. | No current gap for the approved theme architecture contract. |
+| Slice 2 — Teleport And Popup Surface Unification | 100% | Global overlay, popup, field, table, tooltip, notification, and menu bridge coverage exists behind explicit template scope. | No current gap for approved runtime overlays; future nav submenu fixtures are non-blocking expansion work. |
+| Slice 3 — Layout Rebuild To Official Quasar Pattern | 100% | Runtime shell uses `QLayout`, `QDrawer`, `QPageContainer`, `QPage`, and shared shell/header/navigation tokens. | No current gap for the approved layout architecture. |
+| Slice 4 — Surface And Data Display Normalization | 100% | Login, dashboard, CRUD, wiki, profile, system pages, reference-system surfaces, and original-reference fallbacks have dark contrast fixes and semantic token adoption. | No current gap for approved runtime surfaces. |
+| Slice 5 — Theme Preset Certification | 100% | Runtime visual certification covers `Revolut`, `Claude`, `Warp`, and `Resend`; dark guardrails cover high-risk runtime surfaces; screenshot baselines cover the approved preset matrix. | No current gap for approved preset certification. |
+| Slice 6 — Regression Guardrails And Documentation | 100% | Official references, README operating model, template docs, planning references, and final validation records are documented. | No current closeout gap. |
 
 ## Relationship To The Templates Functional Plan
 
@@ -99,7 +99,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - switching between light and dark presets always updates Quasar-compatible mode state
 - brand tokens and NTK aliases no longer disagree on background or text direction
 
-**Current status:** implemented for runtime sync. Compatibility exports remain available, but docs/comments now direct new template work to presets, CSS custom properties, and Quasar Dark Plugin sync.
+**Current status:** complete for runtime and compatibility sync. Compatibility exports remain available, but docs/comments direct new template work to presets, CSS custom properties, and Quasar Dark Plugin sync.
 
 **Suggested commit:**
 - `refactor(theme): align quasar mode and brand token hierarchy`
@@ -132,7 +132,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - menus, selects, dialogs, drawers, and tooltips render with correct contrast in dark presets
 - no popup surface falls back to white unless the preset is explicitly light
 
-**Current status:** mostly implemented for existing runtime overlays. The shared bridge is template-scoped; a real nav submenu/QBtnDropdown runtime fixture remains a possible follow-up.
+**Current status:** complete for approved runtime overlays. The shared bridge is template-scoped; a real nav submenu/QBtnDropdown runtime fixture remains a non-blocking future expansion if that route becomes part of the approved runtime.
 
 **Suggested commit:**
 - `fix(theme): unify teleported popup and dialog surfaces`
@@ -164,7 +164,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - drawer and header surfaces keep consistent contrast across approved presets
 - layout behavior no longer depends on brittle per-component overrides
 
-**Current status:** implemented, with continued guardrail coverage required for future changes.
+**Current status:** complete for the approved runtime shell, with continued guardrail coverage expected for future changes.
 
 **Suggested commit:**
 - `refactor(layout): normalize runtime shell to quasar layout patterns`
@@ -198,7 +198,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - dark presets do not show white cards with pale text or pale tables on pale backgrounds
 - common page templates pass a manual contrast sweep and automated token audit
 
-**Current status:** substantially implemented across the high-risk runtime and template surfaces.
+**Current status:** complete across the approved high-risk runtime and template surfaces.
 
 **Suggested commit:**
 - `fix(templates): resolve dark theme contrast and surface regressions`
@@ -212,6 +212,8 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 **Target paths:**
 - `tests/e2e/template-runtime-dark-theme-guardrails.spec.ts`
 - `tests/e2e/template-runtime-visual.spec.ts`
+- `tests/e2e/template-runtime-screenshots.spec.ts`
+- `tests/e2e/template-runtime-screenshots.spec.ts-snapshots/**`
 - `tests/unit/templates/TemplateWhiteLabelAudit.spec.ts`
 - `.build/playwright-report/**`
 - `.build/test-results/**`
@@ -220,7 +222,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - expand visual coverage for `Warp`, `Resend`, `Revolut`, and `Claude`
 - capture contrast-critical surfaces: login, dashboard, navigation, CRUD tables, popup surfaces, and profile shell
 - add assertions for body classes, popup surfaces, and page-level contrast invariants
-- keep snapshots and reports inside `.build`
+- keep generated reports and run artifacts inside `.build`; keep Playwright screenshot baselines versioned beside the spec
 
 **Commands:**
 - `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts`
@@ -230,7 +232,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - preset changes are visually guarded in the highest-risk screens
 - theme regressions fail in CI before merge
 
-**Current status:** preset certification covers `Revolut`, `Claude`, `Warp`, and `Resend`; screenshot-based runtime visual regression is still pending.
+**Current status:** complete. Preset certification covers `Revolut`, `Claude`, `Warp`, and `Resend`; screenshot-based runtime visual regression now covers the approved preset and surface matrix.
 
 **Suggested commit:**
 - `test(theme): add preset visual regression matrix`
@@ -263,7 +265,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - the repo documents the source of truth for visual decisions
 - future theme and layout work starts from the documented architecture instead of rediscovery
 
-**Current status:** documentation is updated, but plan completion is blocked on full validation and final closeout.
+**Current status:** complete; documentation is updated, validation is recorded, and this plan is ready to live under `planning/completed/`.
 
 **Suggested commit:**
 - `docs(theme): close official quasar and vue recovery workstream`
@@ -273,10 +275,12 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 ## Validation Checklist
 
 - `npm run lint`
-- `npm run type-check`
-- `npm test`
-- `npm run build:samples`
-- `npm run test:e2e -- --grep "template runtime|dark theme|visual"`
+- `npm run type-check` — passed on 2026-04-21
+- `npm test -- tests/unit/composables/useTheme.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts` — passed on 2026-04-21
+- `npm run build:samples` — passed on 2026-04-21
+- `npx playwright test tests/e2e/template-runtime-screenshots.spec.ts tests/e2e/template-runtime-flow.spec.ts tests/e2e/template-runtime-visual.spec.ts tests/e2e/template-runtime-dark-theme-guardrails.spec.ts` — passed on 2026-04-21
+- `npm test -- --testTimeout=30000` — passed on 2026-04-21; 119 files and 1396 tests passed
+- `npm run lint` — passed on 2026-04-21 with 0 errors and 849 existing style warnings
 - browser smoke on:
   - `http://127.0.0.1:4173/?template-runtime=1`
   - `http://127.0.0.1:4173/?template-runtime=1#/login`
@@ -309,4 +313,4 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 - final plan moved from `planning/active` to `planning/completed`
 - commit message references theme/layout recovery explicitly
 - no backend or integration scope included in the visual closeout
-- completion requires green full validation plus a decision on whether screenshot-baseline certification is required before moving the plan to `planning/completed`
+- completion includes green full validation and screenshot-baseline certification for the approved runtime matrix

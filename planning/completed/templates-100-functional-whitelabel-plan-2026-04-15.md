@@ -2,7 +2,7 @@
 
 Date: 2026-04-15
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
-Status: active — closeout readiness 92%
+Status: completed — closeout readiness 100%
 
 ## Scope Summary
 
@@ -14,16 +14,16 @@ Bring the template catalog and `?template-runtime=1` into a reference-ready stat
 
 ## Status Snapshot
 
-Overall status: **92%**
+Overall status: **100%**
 
 | Slice | Status | Current evidence | Remaining closeout gap |
 |---|---:|---|---|
 | Slice 1 — Guardrails And Baseline Audit | 100% | Router, white-label, navigation/auth, reference-system, theme-switcher, and dedicated runtime-interaction unit guardrails exist. | No current gap for the approved guardrail baseline. |
 | Slice 2 — Runtime Local Data And Persistence Contracts | 100% | Runtime local data, deterministic auth, persisted wiki/chat behavior, and split storage/factory modules exist. | No current gap for the local-first runtime contract. |
 | Slice 3 — Replace Placeholder Routes With Functional Surfaces | 100% | Approved runtime routes are functional and the router tests forbid placeholders. | No current gap for approved routes. |
-| Slice 4 — Complete White Label Tokenization | 96% | Shell, dashboard, CRUD, wiki, reference-system, semantic chips, dark contrast fixes, scoped Quasar bridge overrides, and legacy hardcoded fallback audits are implemented. | Continue to route new visual work through the visual architecture plan. |
-| Slice 5 — Runtime Coverage And Visual Confidence | 88% | Dedicated runtime flow, visual preset certification, dark contrast, whitelabel, and wiki/chat coverage exist. | Screenshot-baseline coverage remains optional but still open before closing the visual workstream. |
-| Slice 6 — Final Sweep, Documentation, And Closeout | 70% | README/reference docs and active-plan status updates are in progress. | Full validation and moving the plan to `planning/completed/` are still pending. |
+| Slice 4 — Complete White Label Tokenization | 100% | Shell, dashboard, CRUD, wiki, reference-system, semantic chips, dark contrast fixes, scoped Quasar bridge overrides, legacy hardcoded fallback audits, and Quasar brand resync guardrails are implemented. | No current gap for the approved white-label scope. |
+| Slice 5 — Runtime Coverage And Visual Confidence | 100% | Dedicated runtime flow, visual preset certification, dark contrast, whitelabel, wiki/chat coverage, and screenshot-baseline matrix coverage exist. | No current gap for approved runtime visual confidence. |
+| Slice 6 — Final Sweep, Documentation, And Closeout | 100% | README/reference docs are updated, final validations are recorded, and this plan is ready for `planning/completed/`. | No current closeout gap. |
 
 ## Recommended Specialist
 
@@ -177,7 +177,7 @@ Overall status: **92%**
 - tenant/theme switching updates all audited components without meaningful fixed visual islands
 - `ThemeDotsSwitcher` and its previews do not depend on TypeScript hex hardcodes
 
-**Current status:** largely implemented, with remaining architecture-level gaps tracked by the visual replatform plan.
+**Current status:** complete for the approved white-label scope.
 
 **Suggested commit:**
 - `refactor(templates/theme): complete white-label tokenization`
@@ -194,6 +194,8 @@ Overall status: **92%**
 - `tests/unit/templates/TemplateWhiteLabelAudit.spec.ts`
 - `tests/e2e/template-runtime-flow.spec.ts`
 - `tests/e2e/template-runtime-visual.spec.ts`
+- `tests/e2e/template-runtime-screenshots.spec.ts`
+- `tests/e2e/template-runtime-screenshots.spec.ts-snapshots/**`
 - `.build/playwright-report/**`
 - `.build/test-results/**`
 
@@ -209,7 +211,7 @@ Overall status: **92%**
 **Checkpoint:**
 - the approved runtime has minimum flow and visual coverage to block obvious regressions
 
-**Current status:** flow and preset visual certification are implemented; screenshot-baseline regression remains the only open visual confidence enhancement.
+**Current status:** complete. Flow, preset visual certification, dark contrast, and screenshot-baseline coverage are implemented for the approved runtime matrix.
 
 **Suggested commit:**
 - `test(runtime): add flow and visual regression coverage`
@@ -242,7 +244,7 @@ Overall status: **92%**
 - no critical open item remains for the functional runtime or full white-label scope
 - the plan is closed with validations recorded
 
-**Current status:** close to completion; final validation and completed-plan move remain open.
+**Current status:** complete; final validation passed and this plan is ready to live under `planning/completed/`.
 
 **Suggested commit:**
 - `docs(templates): close 100 percent functional and white-label workstream`
@@ -252,10 +254,12 @@ Overall status: **92%**
 ## Validation Checklist
 
 - `npm run lint`
-- `npm run type-check`
-- `npm test`
-- `npm run build:samples`
-- `npm run test:e2e -- --grep "template runtime"`
+- `npm run type-check` — passed on 2026-04-21
+- `npm test -- tests/unit/composables/useTheme.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts` — passed on 2026-04-21
+- `npm run build:samples` — passed on 2026-04-21
+- `npx playwright test tests/e2e/template-runtime-screenshots.spec.ts tests/e2e/template-runtime-flow.spec.ts tests/e2e/template-runtime-visual.spec.ts tests/e2e/template-runtime-dark-theme-guardrails.spec.ts` — passed on 2026-04-21
+- `npm test -- --testTimeout=30000` — passed on 2026-04-21; 119 files and 1396 tests passed
+- `npm run lint` — passed on 2026-04-21 with 0 errors and 849 existing style warnings
 - browser smoke on:
   - `http://127.0.0.1:4173/?template-runtime=1`
   - `http://127.0.0.1:4173/?template-runtime=1#/clients`
@@ -291,4 +295,4 @@ Overall status: **92%**
 - auth, clients, orders, settings, wiki, and chat working with local persistence
 - theme switching and branding responding through tokens, without meaningful hardcode dependency
 - automated suite covering runtime functionality and white-label audit
-- final closeout remains blocked only on full validation and the decision to move this active plan to `planning/completed/`
+- final closeout completed with the plan moved to `planning/completed/`
