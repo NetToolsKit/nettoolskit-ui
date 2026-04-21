@@ -114,7 +114,7 @@ async function resetRuntimeState(
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.locator('.ntk-template-login__form-shell')).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -125,7 +125,7 @@ async function loginToRuntime(page: Page): Promise<void> {
 }
 
 async function activateTheme(page: Page, theme: typeof DARK_THEMES[number]): Promise<void> {
-  await page.locator(`.ntk-template-theme-dots__dot[title="${theme.label}"]`).click()
+  await page.getByRole('button', { name: `Switch to ${theme.label} theme` }).click()
 
   await expect.poll(async () => {
     return await page.evaluate(() => document.documentElement.dataset.theme ?? '')
@@ -335,13 +335,24 @@ async function assertCrudDarkSurfaces(
   const searchInput = page.getByLabel(searchLabel)
   const tableWrap = page.locator('.ntk-template-crud-list__table-wrap')
   const tableHeader = page.locator(`table[aria-label="${tableLabel}"] thead th`).first()
-  const tableBodyCell = page.locator(`table[aria-label="${tableLabel}"] tbody tr`).first().locator('td').first()
+  const table = page.locator(`table[aria-label="${tableLabel}"]`)
+  const tableBodyCells = table.locator('tbody td:visible')
+  const tableStatusChips = table.locator('.ntk-template-crud-list__status:visible')
+  const tableRowActions = table.locator('.ntk-template-crud-list__row-action:visible')
+  const activeFilter = page.locator('.ntk-template-crud-list__filter--active').first()
+  const visibleFilters = page.locator('.ntk-template-crud-list__filter:visible')
+  const viewToggle = page.locator('.ntk-template-crud-list__view--active').first()
+  const metrics = page.locator('.ntk-template-crud-list__metric:visible')
+  const pagination = page.locator('.ntk-template-crud-list__pagination:visible, .q-pagination:visible')
+  const footer = page.locator('.ntk-template-crud-list__footer:visible, .q-table__bottom:visible')
 
   await expect(searchSurface).toBeVisible()
   await page.getByRole('button', { name: tableToggleLabel }).click()
   await expect(tableWrap).toBeVisible()
   await expect(tableHeader).toBeVisible()
-  await expect(tableBodyCell).toBeVisible()
+  await expect(tableBodyCells.first()).toBeVisible()
+  await expect(activeFilter).toBeVisible()
+  await expect(viewToggle).toBeVisible()
 
   expectDarkReadableSurface(
     await readResolvedSurfaceMetrics(searchSurface, searchInput),
@@ -351,14 +362,89 @@ async function assertCrudDarkSurfaces(
     await readResolvedSurfaceMetrics(tableWrap, tableHeader),
     `${themeId} ${route} table surface`
   )
+
+  const visibleCellCount = await tableBodyCells.count()
+  expect(visibleCellCount, `${themeId} ${route} should render visible table cells`).toBeGreaterThan(0)
+
+  for (let cellIndex = 0; cellIndex < visibleCellCount; cellIndex += 1) {
+    const cell = tableBodyCells.nth(cellIndex)
+    await expect(cell).toBeVisible()
+    expectDarkReadableSurface(
+      await readResolvedSurfaceMetrics(cell),
+      `${themeId} ${route} visible table cell ${cellIndex + 1}`
+    )
+  }
+
+  const filterCount = await visibleFilters.count()
+  expect(filterCount, `${themeId} ${route} should render filter controls`).toBeGreaterThan(0)
+
+  for (let filterIndex = 0; filterIndex < filterCount; filterIndex += 1) {
+    const filter = visibleFilters.nth(filterIndex)
+    await expect(filter).toBeVisible()
+    expectReadableSurface(
+      await readResolvedSurfaceMetrics(filter),
+      `${themeId} ${route} filter ${filterIndex + 1}`
+    )
+  }
+
+  const metricCount = await metrics.count()
+  expect(metricCount, `${themeId} ${route} should render metric chips`).toBeGreaterThan(0)
+
+  for (let metricIndex = 0; metricIndex < metricCount; metricIndex += 1) {
+    const metric = metrics.nth(metricIndex)
+    await expect(metric).toBeVisible()
+    expectReadableSurface(
+      await readResolvedSurfaceMetrics(metric),
+      `${themeId} ${route} metric chip ${metricIndex + 1}`
+    )
+  }
+
+  const statusChipCount = await tableStatusChips.count()
+  expect(statusChipCount, `${themeId} ${route} should render status chips`).toBeGreaterThan(0)
+
+  for (let statusIndex = 0; statusIndex < statusChipCount; statusIndex += 1) {
+    const statusChip = tableStatusChips.nth(statusIndex)
+    await expect(statusChip).toBeVisible()
+    expectReadableSurface(
+      await readResolvedSurfaceMetrics(statusChip),
+      `${themeId} ${route} status chip ${statusIndex + 1}`
+    )
+  }
+
+  const rowActionCount = await tableRowActions.count()
+  expect(rowActionCount, `${themeId} ${route} should render row actions`).toBeGreaterThan(0)
+
+  for (let actionIndex = 0; actionIndex < rowActionCount; actionIndex += 1) {
+    const rowAction = tableRowActions.nth(actionIndex)
+    await expect(rowAction).toBeVisible()
+    expectReadableSurface(
+      await readResolvedSurfaceMetrics(rowAction),
+      `${themeId} ${route} row action ${actionIndex + 1}`
+    )
+  }
+
   expectDarkReadableSurface(
-    await readResolvedSurfaceMetrics(tableBodyCell),
-    `${themeId} ${route} table body surface`
+    await readResolvedSurfaceMetrics(viewToggle),
+    `${themeId} ${route} active view toggle`
   )
+
+  if (await pagination.count() > 0) {
+    expectDarkReadableSurface(
+      await readResolvedSurfaceMetrics(pagination.first()),
+      `${themeId} ${route} pagination`
+    )
+  }
+
+  if (await footer.count() > 0) {
+    expectDarkReadableSurface(
+      await readResolvedSurfaceMetrics(footer.first()),
+      `${themeId} ${route} table footer`
+    )
+  }
 }
 
 async function assertOverlayDarkSurfaces(page: Page, themeId: string): Promise<void> {
-  const userMenuTrigger = page.locator('.ntk-template-user-menu__avatar').first()
+  const userMenuTrigger = page.locator('.ntk-template-user-menu__trigger')
 
   await expect(userMenuTrigger).toBeVisible()
   await userMenuTrigger.click()

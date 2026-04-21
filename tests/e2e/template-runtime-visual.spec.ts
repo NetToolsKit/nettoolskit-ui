@@ -101,7 +101,7 @@ async function resetRuntimeState(page: Page, preset: PresetCertification): Promi
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.locator('.ntk-template-login__form-shell')).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -349,6 +349,80 @@ async function assertShellCertification(page: Page, preset: PresetCertification)
   await assertReadable(drawer, firstMenuLinkText, preset, 'drawer navigation', { assertSurfaceFamily: true })
 }
 
+async function assertDashboardChartReferenceStructure(page: Page, preset: PresetCertification): Promise<void> {
+  const chartRoot = page.locator('.ntk-reference-dashboard-charts')
+  const chartCards = chartRoot.locator('.ntk-reference-dashboard-charts__card')
+  const donutCard = page.locator('.ntk-reference-dashboard-charts__card', {
+    has: page.locator('.ntk-reference-dashboard-charts__donut'),
+  })
+  const barsCard = page.locator('.ntk-reference-dashboard-charts__card', {
+    has: page.locator('.ntk-reference-dashboard-charts__bars'),
+  })
+  const donut = donutCard.locator('.ntk-reference-dashboard-charts__donut')
+  const donutHole = donut.locator('.ntk-reference-dashboard-charts__donut-hole')
+  const callouts = donutCard.locator('.ntk-reference-dashboard-charts__callout')
+  const barRows = barsCard.locator('.ntk-reference-dashboard-charts__bar-row')
+  const barFills = barsCard.locator('.ntk-reference-dashboard-charts__bar-fill')
+  const axisTicks = barsCard.locator('.ntk-reference-dashboard-charts__axis-tick')
+
+  await expect(chartRoot).toBeVisible()
+  await expect(chartCards).toHaveCount(2)
+  await expect(donutCard).toBeVisible()
+  await expect(barsCard).toBeVisible()
+  await expect(donut).toBeVisible()
+  await expect(donutHole).toBeVisible()
+  await expect(callouts).toHaveCount(4)
+  await expect(axisTicks).toHaveCount(7)
+
+  expect(await barRows.count(), `${preset.id} dashboard bars should keep multiple reference rows`).toBeGreaterThan(2)
+
+  const donutVisualContract = await donut.evaluate((element) => {
+    const style = window.getComputedStyle(element)
+    const rect = element.getBoundingClientRect()
+
+    return {
+      background: style.backgroundImage || style.background,
+      borderRadius: style.borderRadius,
+      height: rect.height,
+      width: rect.width,
+    }
+  })
+
+  expect(donutVisualContract.background, `${preset.id} dashboard donut should use the reference conic chart`).toContain('conic-gradient')
+  expect(donutVisualContract.borderRadius, `${preset.id} dashboard donut should stay circular`).toContain('50%')
+  expect(donutVisualContract.width, `${preset.id} dashboard donut should render with real width`).toBeGreaterThan(100)
+  expect(donutVisualContract.height, `${preset.id} dashboard donut should render with real height`).toBeGreaterThan(100)
+
+  for (const position of ['top-right', 'right', 'bottom-left', 'top-left']) {
+    const positionedCallout = donutCard.locator(`.ntk-reference-dashboard-charts__callout--${position}`)
+    await expect(positionedCallout).toBeVisible()
+    await expect(positionedCallout.locator('strong')).toBeVisible()
+    await expect(positionedCallout.locator('span')).toBeVisible()
+    await assertReadable(
+      positionedCallout,
+      positionedCallout.locator('strong'),
+      preset,
+      `dashboard donut callout ${position}`
+    )
+  }
+
+  const fillWidths = await barFills.evaluateAll((elements) => {
+    return elements.map((element) => Number.parseFloat(window.getComputedStyle(element).width))
+  })
+
+  expect(fillWidths.length, `${preset.id} dashboard bars should render reference fills`).toBeGreaterThan(2)
+  fillWidths.forEach((width, index) => {
+    expect(width, `${preset.id} dashboard bar ${index + 1} should have a visible fill`).toBeGreaterThan(0)
+  })
+
+  const axisValues = await axisTicks.evaluateAll((elements) => {
+    return elements.map(element => element.textContent?.trim() ?? '')
+  })
+
+  expect(axisValues.every(value => /^\d+$/.test(value)), `${preset.id} dashboard axis ticks should stay numeric`).toBe(true)
+  expect(axisValues[0], `${preset.id} dashboard axis should start at zero`).toBe('0')
+}
+
 async function assertDashboardCertification(page: Page, preset: PresetCertification): Promise<void> {
   await page.goto(`${RUNTIME_BASE}#/`)
   await expect(page.locator('.ntk-template-dashboard__title')).toBeVisible()
@@ -363,6 +437,7 @@ async function assertDashboardCertification(page: Page, preset: PresetCertificat
 
   await assertReadable(dashboardCard, dashboardCardTitle, preset, 'dashboard card', { assertSurfaceFamily: true })
   await assertReadable(chartCard, chartTitle, preset, 'dashboard chart card', { assertSurfaceFamily: true })
+  await assertDashboardChartReferenceStructure(page, preset)
 }
 
 async function assertClientsCertification(page: Page, preset: PresetCertification): Promise<void> {
@@ -455,7 +530,7 @@ async function assertChatCertification(page: Page, preset: PresetCertification):
 }
 
 async function assertOverlayCertification(page: Page, preset: PresetCertification): Promise<void> {
-  const userMenuTrigger = page.locator('.ntk-template-user-menu__avatar').first()
+  const userMenuTrigger = page.locator('.ntk-template-user-menu__trigger')
 
   await expect(userMenuTrigger).toBeVisible()
   await userMenuTrigger.click()
