@@ -146,7 +146,7 @@
   --ntk-template-shell-nav-text: var(--ntk-layout-nav-text, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 82%, transparent));
   --ntk-template-shell-nav-caption: var(--ntk-layout-nav-caption, color-mix(in srgb, var(--ntk-template-shell-nav-text) 78%, transparent));
   --ntk-template-shell-nav-active-border: var(--ntk-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-template-shell-nav-active-text: var(--ntk-layout-nav-active-text, var(--ntk-accent, var(--ntk-template-shell-drawer-text)));
+  --ntk-template-shell-nav-active-text: var(--ntk-layout-nav-active-text, var(--ntk-template-shell-drawer-text));
   --ntk-template-shell-nav-active-bg: var(--ntk-layout-nav-active-bg, linear-gradient(
     90deg,
     color-mix(in srgb, var(--ntk-template-shell-nav-active-border) 20%, transparent) 0%,
@@ -550,60 +550,60 @@
   color: var(--ntk-template-form-icon-color);
 }
 
-html[data-theme] :is(.q-field--filled, .q-field--outlined, .q-field--standout, .q-field--standard) .q-field__control {
+body[data-ntk-template-theme='true'] :is(.q-field--filled, .q-field--outlined, .q-field--standout, .q-field--standard) .q-field__control {
   background: var(--ntk-template-form-control-bg) !important;
   color: var(--ntk-input-text) !important;
 }
 
-html[data-theme] .q-field--filled .q-field__control::before,
-html[data-theme] .q-field--standout .q-field__control::before {
+body[data-ntk-template-theme='true'] .q-field--filled .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--standout .q-field__control::before {
   background: var(--ntk-template-form-control-bg) !important;
   border-color: var(--ntk-template-form-control-border) !important;
   opacity: 1 !important;
 }
 
-html[data-theme] .q-field--outlined .q-field__control::before,
-html[data-theme] .q-field--outlined .q-field__control::after,
-html[data-theme] .q-field--standard .q-field__control::before,
-html[data-theme] .q-field--standard .q-field__control::after {
+body[data-ntk-template-theme='true'] .q-field--outlined .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--outlined .q-field__control::after,
+body[data-ntk-template-theme='true'] .q-field--standard .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--standard .q-field__control::after {
   border-color: var(--ntk-template-form-control-border) !important;
 }
 
-html[data-theme] .q-field:hover .q-field__control::before,
-html[data-theme] .q-field:hover .q-field__control::after {
+body[data-ntk-template-theme='true'] .q-field:hover .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field:hover .q-field__control::after {
   border-color: var(--ntk-template-form-control-border-hover) !important;
 }
 
-html[data-theme] .q-field--focused .q-field__control::before,
-html[data-theme] .q-field--focused .q-field__control::after {
+body[data-ntk-template-theme='true'] .q-field--focused .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--focused .q-field__control::after {
   border-color: var(--ntk-border-focus) !important;
 }
 
-html[data-theme] .q-field__native,
-html[data-theme] .q-field__input,
-html[data-theme] .q-field textarea,
-html[data-theme] .q-field input,
-html[data-theme] .q-field__marginal,
-html[data-theme] .q-select__dropdown-icon {
+body[data-ntk-template-theme='true'] .q-field__native,
+body[data-ntk-template-theme='true'] .q-field__input,
+body[data-ntk-template-theme='true'] .q-field textarea,
+body[data-ntk-template-theme='true'] .q-field input,
+body[data-ntk-template-theme='true'] .q-field__marginal,
+body[data-ntk-template-theme='true'] .q-select__dropdown-icon {
   color: var(--ntk-input-text) !important;
 }
 
-html[data-theme] .q-field__label,
-html[data-theme] .q-field__bottom,
-html[data-theme] .q-field__messages,
-html[data-theme] .q-field__counter {
+body[data-ntk-template-theme='true'] .q-field__label,
+body[data-ntk-template-theme='true'] .q-field__bottom,
+body[data-ntk-template-theme='true'] .q-field__messages,
+body[data-ntk-template-theme='true'] .q-field__counter {
   color: var(--ntk-input-label) !important;
 }
 
-html[data-theme] :is(input, textarea):-webkit-autofill,
-html[data-theme] :is(input, textarea):-webkit-autofill:hover,
-html[data-theme] :is(input, textarea):-webkit-autofill:focus {
+body[data-ntk-template-theme='true'] :is(input, textarea):-webkit-autofill,
+body[data-ntk-template-theme='true'] :is(input, textarea):-webkit-autofill:hover,
+body[data-ntk-template-theme='true'] :is(input, textarea):-webkit-autofill:focus {
   -webkit-text-fill-color: var(--ntk-input-text);
   box-shadow: 0 0 0 1000px var(--ntk-input-bg) inset;
   transition: background-color 99999s ease-in-out 0s;
 }
 
-html[data-theme] {
+body[data-ntk-template-theme='true'] {
   .q-dialog__backdrop {
     background: var(--ntk-template-overlay-backdrop) !important;
   }
@@ -695,38 +695,38 @@ html[data-theme] {
   }
 }
 
-html[data-theme] :is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {
+body[data-ntk-template-theme='true'] :is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {
   background: var(--ntk-template-table-bg) !important;
   color: var(--ntk-template-table-text) !important;
 }
 
-html[data-theme] .q-table__top,
-html[data-theme] .q-table__bottom {
+body[data-ntk-template-theme='true'] .q-table__top,
+body[data-ntk-template-theme='true'] .q-table__bottom {
   border-color: var(--ntk-template-table-border) !important;
 }
 
-html[data-theme] .q-table thead tr,
-html[data-theme] .q-table thead th {
+body[data-ntk-template-theme='true'] .q-table thead tr,
+body[data-ntk-template-theme='true'] .q-table thead th {
   background: var(--ntk-template-table-header-bg) !important;
   color: var(--ntk-template-table-heading) !important;
   border-color: var(--ntk-template-table-border) !important;
 }
 
-html[data-theme] .q-table tbody tr,
-html[data-theme] .q-table tbody td {
+body[data-ntk-template-theme='true'] .q-table tbody tr,
+body[data-ntk-template-theme='true'] .q-table tbody td {
   background: var(--ntk-template-table-row-bg) !important;
   color: var(--ntk-template-table-text) !important;
   border-color: var(--ntk-template-table-border) !important;
 }
 
-html[data-theme] .q-table tbody tr:hover td,
-html[data-theme] .q-table tbody tr:hover th,
-html[data-theme] .q-table tbody tr.q-tr--selected td {
+body[data-ntk-template-theme='true'] .q-table tbody tr:hover td,
+body[data-ntk-template-theme='true'] .q-table tbody tr:hover th,
+body[data-ntk-template-theme='true'] .q-table tbody tr.q-tr--selected td {
   background: var(--ntk-template-table-row-hover-bg) !important;
 }
 
-html[data-theme] .q-table__grid-item-card,
-html[data-theme] .q-table__grid-content .q-card {
+body[data-ntk-template-theme='true'] .q-table__grid-item-card,
+body[data-ntk-template-theme='true'] .q-table__grid-content .q-card {
   background: var(--ntk-template-table-bg) !important;
   color: var(--ntk-template-table-text) !important;
   border-color: var(--ntk-template-table-border) !important;
@@ -737,7 +737,7 @@ html[data-theme] .q-table__grid-content .q-card {
   outline-offset: 2px;
 }
 
-.q-notification {
+body[data-ntk-template-theme='true'] .q-notification {
   background: var(--ntk-template-notification-bg) !important;
   border-radius: var(--ntk-template-notification-radius) !important;
   border: 1px solid var(--ntk-template-notification-border) !important;
@@ -745,11 +745,11 @@ html[data-theme] .q-table__grid-content .q-card {
   box-shadow: var(--ntk-template-notification-shadow) !important;
 }
 
-.q-notification .q-notification__message {
+body[data-ntk-template-theme='true'] .q-notification .q-notification__message {
   color: var(--ntk-template-notification-message) !important;
 }
 
-.q-notification.bg-positive {
+body[data-ntk-template-theme='true'] .q-notification.bg-positive {
   border-left-color: var(--ntk-template-notification-positive) !important;
 
   .q-notification__icon {
@@ -757,7 +757,7 @@ html[data-theme] .q-table__grid-content .q-card {
   }
 }
 
-.q-notification.bg-negative {
+body[data-ntk-template-theme='true'] .q-notification.bg-negative {
   border-left-color: var(--ntk-template-notification-negative) !important;
 
   .q-notification__icon {
@@ -765,7 +765,7 @@ html[data-theme] .q-table__grid-content .q-card {
   }
 }
 
-.q-notification.bg-warning {
+body[data-ntk-template-theme='true'] .q-notification.bg-warning {
   border-left-color: var(--ntk-template-notification-warning) !important;
 
   .q-notification__icon {
@@ -773,7 +773,7 @@ html[data-theme] .q-table__grid-content .q-card {
   }
 }
 
-.q-notification.bg-info {
+body[data-ntk-template-theme='true'] .q-notification.bg-info {
   border-left-color: var(--ntk-template-notification-info) !important;
 
   .q-notification__icon {
@@ -836,25 +836,25 @@ html[data-theme] .q-table__grid-content .q-card {
 /* ------------------------------------------------------------------ */
 
 /* Quasar text-primary / bg-primary follow the accent color when a theme is active */
-[data-theme] .text-primary,
-[data-theme] .q-btn.text-primary {
+body[data-ntk-template-theme='true'] .text-primary,
+body[data-ntk-template-theme='true'] .q-btn.text-primary {
   color: var(--ntk-accent) !important;
 }
 
-[data-theme] .bg-primary {
+body[data-ntk-template-theme='true'] .bg-primary {
   background: var(--ntk-accent) !important;
   color: var(--ntk-text-on-accent, var(--ntk-text-primary)) !important;
 }
 
-[data-theme] .q-toggle__inner--truthy {
+body[data-ntk-template-theme='true'] .q-toggle__inner--truthy {
   color: var(--ntk-accent) !important;
 }
 
-[data-theme] .q-checkbox__inner--truthy {
+body[data-ntk-template-theme='true'] .q-checkbox__inner--truthy {
   color: var(--ntk-accent) !important;
 }
 
 /* Focus ring */
-[data-theme] [class*='ntk-template-'] :is(button, [role='button'], a, input, textarea):focus-visible {
+body[data-ntk-template-theme='true'] [class*='ntk-template-'] :is(button, [role='button'], a, input, textarea):focus-visible {
   outline-color: var(--ntk-accent);
 }

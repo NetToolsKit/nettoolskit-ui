@@ -19,6 +19,7 @@ describe('theme switcher tokenization', () => {
     localStorage.clear()
     document.documentElement.removeAttribute('data-theme')
     document.body.removeAttribute('data-theme')
+    delete document.body.dataset.ntkTemplateTheme
     document.documentElement.classList.remove('dark')
     document.body.classList.remove('body--dark', 'body--light')
     document.documentElement.style.cssText = ''
@@ -55,6 +56,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe('claude')
     expect(document.body.dataset.theme).toBe('claude')
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBe('claude')
   })
 
@@ -72,6 +74,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe(DEFAULT_THEME_ID)
     expect(document.body.dataset.theme).toBe(DEFAULT_THEME_ID)
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBeNull()
   })
 
@@ -85,6 +88,7 @@ describe('theme switcher tokenization', () => {
 
       expect(document.documentElement.dataset.theme).toBe(darkTheme)
       expect(document.body.dataset.theme).toBe(darkTheme)
+      expect(document.body.dataset.ntkTemplateTheme).toBe('true')
       expect(document.documentElement.dataset.theme).not.toBe('dark')
       expect(document.body.dataset.theme).not.toBe('dark')
       expect(document.documentElement.classList.contains('dark')).toBe(true)
@@ -100,6 +104,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe('revolut')
     expect(document.body.dataset.theme).toBe('revolut')
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(document.documentElement.classList.contains('dark')).toBe(false)
     expect(document.documentElement.style.colorScheme).toBe('light')
     expect(document.body.classList.contains('body--dark')).toBe(false)
@@ -116,6 +121,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe('warp')
     expect(document.body.dataset.theme).toBe('warp')
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(document.documentElement.classList.contains('dark')).toBe(true)
     expect(document.body.classList.contains('body--dark')).toBe(true)
 
@@ -125,6 +131,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe('claude')
     expect(document.body.dataset.theme).toBe('claude')
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(document.documentElement.classList.contains('dark')).toBe(false)
     expect(document.body.classList.contains('body--light')).toBe(true)
   })
@@ -134,6 +141,7 @@ describe('theme switcher tokenization', () => {
     localStorage.setItem(THEME_SWITCHER_STORAGE_KEY, 'warp')
     document.documentElement.removeAttribute('data-theme')
     document.body.removeAttribute('data-theme')
+    delete document.body.dataset.ntkTemplateTheme
     document.documentElement.classList.remove('dark')
     document.body.classList.remove('body--dark', 'body--light')
 
@@ -141,6 +149,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.hasAttribute('data-theme')).toBe(false)
     expect(document.body.hasAttribute('data-theme')).toBe(false)
+    expect(document.body.dataset.ntkTemplateTheme).toBeUndefined()
     expect(document.documentElement.classList.contains('dark')).toBe(false)
     expect(document.body.classList.contains('body--dark')).toBe(false)
   })
@@ -158,6 +167,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe('warp')
     expect(document.body.dataset.theme).toBe('warp')
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(document.documentElement.classList.contains('dark')).toBe(true)
     expect(document.body.classList.contains('body--dark')).toBe(true)
   })
@@ -170,6 +180,7 @@ describe('theme switcher tokenization', () => {
 
     expect(document.documentElement.dataset.theme).toBe('claude')
     expect(document.body.dataset.theme).toBe('claude')
+    expect(document.body.dataset.ntkTemplateTheme).toBe('true')
     expect(localStorage.getItem(THEME_SWITCHER_STORAGE_KEY)).toBeNull()
   })
 
@@ -178,6 +189,8 @@ describe('theme switcher tokenization', () => {
     const sampleHostSource = readFileSync(resolve(process.cwd(), 'samples/shared/mountSamplesHost.ts'), 'utf8')
 
     expect(themeDomSource).toContain("import { Dark } from 'quasar'")
+    expect(themeDomSource).toContain('templateScope?: boolean')
+    expect(themeDomSource).toContain("body.dataset.ntkTemplateTheme = 'true'")
     expect(themeDomSource).toContain('Dark.set(isDark)')
     expect(sampleHostSource).toContain('Dark,')
     expect(sampleHostSource).toContain('plugins: {\n      Dark,')

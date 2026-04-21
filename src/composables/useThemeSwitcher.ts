@@ -77,12 +77,12 @@ function applyThemeToDOM(themeId: ThemeId): void {
   if (typeof document === 'undefined') return
 
   syncThemePreviewSwatches()
-  syncThemeDomState({ presetId: themeId })
+  syncThemeDomState({ presetId: themeId, templateScope: true })
 
   if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
     window.requestAnimationFrame(() => {
       syncThemePreviewSwatches()
-      syncThemeDomState({ presetId: themeId })
+      syncThemeDomState({ presetId: themeId, templateScope: true })
     })
   }
 }

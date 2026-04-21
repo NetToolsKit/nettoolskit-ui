@@ -5,6 +5,7 @@ export interface ThemeDomSyncOptions {
   structuralBackground?: string
   structuralText?: string
   presetId?: string | null
+  templateScope?: boolean
   themeVars?: Record<string, string | null | undefined>
 }
 
@@ -67,6 +68,19 @@ function setThemeDataAttribute(root: HTMLElement, body: HTMLElement | null, pres
   }
 }
 
+function setTemplateThemeScope(body: HTMLElement | null, templateScope?: boolean): void {
+  if (!body || templateScope === undefined) {
+    return
+  }
+
+  if (templateScope) {
+    body.dataset.ntkTemplateTheme = 'true'
+    return
+  }
+
+  delete body.dataset.ntkTemplateTheme
+}
+
 function syncQuasarDarkMode(isDark: boolean): void {
   try {
     Dark.set(isDark)
@@ -85,6 +99,7 @@ export function syncThemeDomState(options: ThemeDomSyncOptions = {}): void {
 
   applyThemeVariables(root, options.themeVars)
   setThemeDataAttribute(root, body, options.presetId)
+  setTemplateThemeScope(body, options.templateScope)
 
   const computedStyle = getComputedStyle(root)
   const isDark = options.dark ?? computedStyle.getPropertyValue('--ntk-dark-scheme').trim() === '1'

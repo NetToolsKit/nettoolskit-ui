@@ -851,18 +851,36 @@ describe('template white-label audit', () => {
     }
 
     for (const requiredBridgeSnippet of [
-      'html[data-theme] {',
+      "body[data-ntk-template-theme='true'] {",
       '.q-dialog__backdrop {',
       ':is(.q-menu, .q-popup-proxy, .q-dialog__inner > div, .q-dialog__inner > section, .q-dialog__inner > article, .q-dialog__inner > .q-card, .q-dialog-plugin) {',
       ':is(.q-item, .q-item__section, .q-item__label, .q-toolbar__title, .q-dialog__title, .q-dialog__message, .q-banner__title, .q-banner__message, .q-field__native, .q-field__input, .q-select__dropdown-icon, .q-checkbox__label, .q-radio__label) {',
       ':is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {',
       '.q-tooltip {',
+      "body[data-ntk-template-theme='true'] :is(.q-field--filled, .q-field--outlined, .q-field--standout, .q-field--standard) .q-field__control {",
+      "body[data-ntk-template-theme='true'] :is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {",
+      "body[data-ntk-template-theme='true'] .q-notification {",
+      "body[data-ntk-template-theme='true'] .text-primary,",
+      "body[data-ntk-template-theme='true'] .bg-primary {",
       'background: var(--ntk-template-overlay-bg) !important;',
       'color: var(--ntk-template-overlay-text) !important;',
       'border: 1px solid var(--ntk-template-overlay-border) !important;',
       'box-shadow: var(--ntk-template-overlay-shadow) !important;',
     ]) {
       expect(bridgeSource, `Missing Quasar overlay bridge snippet: ${requiredBridgeSnippet}`).toContain(requiredBridgeSnippet)
+    }
+
+    for (const forbiddenGlobalBridgeSnippet of [
+      'html[data-theme] {',
+      'html[data-theme] :is(.q-field',
+      'html[data-theme] :is(.q-table',
+      'html[data-theme] .q-notification',
+      '[data-theme] .text-primary',
+      '[data-theme] .bg-primary',
+      '[data-theme] .q-toggle__inner--truthy',
+      '[data-theme] .q-checkbox__inner--truthy',
+    ]) {
+      expect(bridgeSource, `Quasar bridge override must stay template-scoped: ${forbiddenGlobalBridgeSnippet}`).not.toContain(forbiddenGlobalBridgeSnippet)
     }
 
     expect(menuLinkSource).toContain('class="ntk-template-menu-link__tooltip"')
@@ -893,6 +911,9 @@ describe('template white-label audit', () => {
     expect(wikiSource).toContain('--ntk-template-wiki-chip-info-bg: var(--semantic-info-bg')
     expect(wikiSource).toContain('--ntk-template-wiki-chip-danger-bg: var(--semantic-error-bg')
     expect(wikiSource).toContain('--ntk-template-wiki-tree-active-bg: var(--ntk-template-wiki-filter-active-bg);')
+    expect(wikiSource).toContain('--ntk-template-wiki-filter-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);')
+    expect(wikiSource).toContain('--ntk-template-wiki-filter-active-text: var(--ntk-template-semantic-accent-emphasis-text);')
+    expect(wikiSource).toContain('border-color: var(--ntk-template-wiki-filter-active-border);')
 
     expect(wikiChatSource).toContain('--ntk-template-wiki-chat-danger-text: var(--semantic-error-text')
     expect(wikiChatSource).toContain('--ntk-template-wiki-chat-send-disabled-bg: var(--ntk-template-wiki-chat-row-bg);')
