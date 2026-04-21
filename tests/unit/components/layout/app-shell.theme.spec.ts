@@ -5,6 +5,63 @@
 import { describe, expect, it } from 'vitest'
 import { resolveAppShellTheme } from '@/components/layout/app-shell.theme'
 import { APP_SHELL_DEFAULT_THEME } from '@/components/layout/app-shell.config'
+import type { AppShellTheme } from '@/components/layout/app-shell.types'
+
+const LANDING_COLOR_KEYS = [
+  'landingAbsoluteWhite',
+  'landingBrandPrimary',
+  'landingBrandPrimaryDark',
+  'landingBrandPrimaryLight',
+  'landingBrandSecondary',
+  'landingGray900',
+  'landingGray800',
+  'landingGray700',
+  'landingGray600',
+  'landingGray500',
+  'landingGray400',
+  'landingGray300',
+  'landingGray200',
+  'landingGray100',
+  'landingGray50',
+  'landingWhite',
+  'landingSectionBgPrimary',
+  'landingSectionBgSecondary',
+  'landingSectionBgDark',
+  'landingSectionBgPrimaryDark',
+  'landingSectionBgSecondaryDark',
+  'landingSectionBgDarkDark',
+  'landingGhBgCanvas',
+  'landingGhBgSubtle',
+  'landingGhBgMuted',
+  'landingGhBorderDefault',
+  'landingGhFgDefault',
+  'landingGhFgMuted',
+  'landingGhFgSubtle',
+  'landingGhAccent',
+  'landingGhAccentEmphasis',
+  'landingGhAccentHover',
+  'landingGhAccentSubtle',
+  'landingSharedDarkBg',
+  'landingSharedDarkSurface',
+  'landingSharedDarkSurfaceMuted',
+  'landingSharedDarkBorder',
+  'landingSharedDarkText',
+  'landingSharedDarkTextMuted',
+  'landingSharedDarkAccent',
+  'landingCodeKeyword',
+  'landingCodeString',
+  'landingCodeComponent',
+  'landingCodeProp',
+  'landingCodeComment',
+  'landingThemeGradientStart',
+  'landingThemeGradientEnd',
+  'landingHeroHighlight1',
+  'landingHeroHighlight2',
+  'landingHeroHighlight3',
+  'landingHeroHighlight4',
+  'landingHeroHighlight5',
+  'landingBlack',
+] satisfies Array<keyof AppShellTheme>
 
 describe('app-shell.theme typography resolution', () => {
   it('uses base typography defaults when values are omitted', () => {
@@ -109,5 +166,15 @@ describe('app-shell.theme typography resolution', () => {
     expect(resolvedTheme.searchBackground).toBe('#aabbcc')
     expect(resolvedTheme.actionHoverBackground).toBe(APP_SHELL_DEFAULT_THEME.actionHoverBackground)
     expect(resolvedTheme.actionHoverBackground).not.toBe('#aabbcc')
+  })
+
+  it('keeps landing color defaults white-labelable through runtime CSS variables', () => {
+    for (const key of LANDING_COLOR_KEYS) {
+      const value = APP_SHELL_DEFAULT_THEME[key]
+
+      expect(typeof value, `${String(key)} must stay a string token for typed config consumers`).toBe('string')
+      expect(value, `${String(key)} must be routed through an ntk landing token`).toContain('var(--ntk-landing-')
+      expect(value, `${String(key)} must not be a fixed palette hex`).not.toMatch(/^#[\da-f]{3,8}$/i)
+    }
   })
 })
