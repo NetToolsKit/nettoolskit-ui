@@ -95,11 +95,12 @@ describe('Samples single reference runtime coverage', () => {
       '../../../samples/template-showcase',
       '../../../tests/unit/samples/TemplateShowcaseApprovedReference.spec.ts',
       '../../../tests/unit/samples/TemplateVisualFamilies.spec.ts',
-      '../../../tests/e2e/template-visual-regression.spec.ts',
     ]
 
     for (const relativePath of removedPaths) {
       expect(existsSync(resolve(specDirectory, relativePath))).toBe(false)
     }
+
+    expect(existsSync(resolve(specDirectory, '../../../tests/e2e/template-runtime-screenshots.spec.ts'))).toBe(true)
   })
 })

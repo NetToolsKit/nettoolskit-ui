@@ -811,7 +811,7 @@ These base parameters can propagate values to related tokens:
 
 | Composable | Returns | Description |
 |------------|---------|-------------|
-| `useTheme` | `theme`, `setTheme`, `primaryColor`, `isDark`, etc. | Theme management |
+| `useTheme` | `theme`, `setTheme`, `primaryColor`, `isDark`, etc. | Legacy compatibility theme management; prefer preset CSS variables plus Quasar Dark sync for new template work |
 | `useFormRules` | `rules`, `emailRules`, `cpfRules`, etc. | Form validation rules |
 | `useNotification` | `notify`, `success`, `error`, `warning`, `info` | Toast notifications |
 | `useDialog` | `confirm`, `alert`, `prompt` | Modal dialogs |
@@ -963,7 +963,7 @@ Template release checks:
 
 ```bash
 npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts
-npm run test:e2e -- tests/e2e/template-visual-regression.spec.ts --project=chromium
+npm run test:e2e -- tests/e2e/template-runtime-screenshots.spec.ts --project=chromium
 ```
 
 ### API References
