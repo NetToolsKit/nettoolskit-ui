@@ -7,14 +7,14 @@ Status: completed
 
 ## Scope Summary
 
-Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, estilos e composables do projeto de referência (`.temp/reference/src/`) no workspace, usando a convenção de templates (`*Template.vue`) e a estructura `src/templates/` existente. Expor tudo via samples runtime para que `npm run dev:samples` com `?template-runtime=1` reproduza a experiência completa do reference.
+Replicate every component, layout, page, module, store, style, and composable from the reference project (`.temp/reference/src/`) into the workspace, using the existing template convention (`*Template.vue`) and `src/templates/` structure. Expose the result through the samples runtime so `npm run dev:samples` with `?template-runtime=1` reproduces the complete reference experience.
 
 ## Recommended Specialist
 
 - Primary: `dev-frontend-vue-quasar-engineer`
 - Tester: mandatory (`npm run type-check`, `npm run build:samples`)
-- Reviewer: recomendado antes de push
-- Release closeout: obrigatório quando a paridade for atingida
+- Reviewer: recommended before push
+- Release closeout: required when parity is reached
 
 ---
 
@@ -22,38 +22,38 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 1 — Scaffolding: Types, Utils, Constants, Services
 
-**Goal:** Criar toda a fundação de tipos, utilitários e serviços que os templates e páginas consomem.
+**Goal:** Create the full foundation of types, utilities, and services consumed by templates and pages.
 
 **Target paths:**
-- `src/templates/scaffolding/auth.types.template.ts` (novo)
-- `src/templates/scaffolding/auth-service.template.ts` (novo)
-- `src/templates/scaffolding/auth-composable.template.ts` (novo)
-- `src/templates/scaffolding/auth-store.template.ts` (atualizar)
-- `src/templates/scaffolding/layout-store.template.ts` (atualizar)
-- `src/templates/scaffolding/menu.constants.template.ts` (atualizar)
-- `src/templates/scaffolding/notification.template.ts` (atualizar)
-- `src/templates/scaffolding/format-name.template.ts` (novo)
-- `src/templates/scaffolding/app-constants.template.ts` (novo)
-- `src/templates/scaffolding/storage-keys.template.ts` (novo)
-- `src/templates/features/wiki/wiki-template.types.ts` (atualizar)
-- `src/templates/features/wiki/wiki-chat-service.template.ts` (novo)
-- `src/templates/features/wiki/wiki-chat-store.template.ts` (novo)
-- `src/templates/navigation/menu-template.types.ts` (atualizar)
-- `src/templates/navigation/breadcrumb-template.types.ts` (novo)
+- `src/templates/scaffolding/auth.types.template.ts` (new)
+- `src/templates/scaffolding/auth-service.template.ts` (new)
+- `src/templates/scaffolding/auth-composable.template.ts` (new)
+- `src/templates/scaffolding/auth-store.template.ts` (update)
+- `src/templates/scaffolding/layout-store.template.ts` (update)
+- `src/templates/scaffolding/menu.constants.template.ts` (update)
+- `src/templates/scaffolding/notification.template.ts` (update)
+- `src/templates/scaffolding/format-name.template.ts` (new)
+- `src/templates/scaffolding/app-constants.template.ts` (new)
+- `src/templates/scaffolding/storage-keys.template.ts` (new)
+- `src/templates/features/wiki/wiki-template.types.ts` (update)
+- `src/templates/features/wiki/wiki-chat-service.template.ts` (new)
+- `src/templates/features/wiki/wiki-chat-store.template.ts` (new)
+- `src/templates/navigation/menu-template.types.ts` (update)
+- `src/templates/navigation/breadcrumb-template.types.ts` (new)
 
 **Changes:**
-- Copiar `AuthUser` interface, `authService` fake, `useAuth` composable, `authStore` do reference  
-- Copiar `chatStore`, `chatService`, `ChatRequest/Response/MessageDto/ConversationDto` tipos do wiki module
-- Copiar `formatName`, `notification` utils, `APP_VERSION`, `STORAGE_KEYS`, `links[]` menu constants
-- Copiar `BreadcrumbItem` type, `MenuLinkProps`/`Menu`/`SubMenu` types
-- Copiar `layoutStore` com miniMode/showLabelsInMini/isFullscreen
-- Adaptar imports internos para usar caminhos relativos (sem alias `src/`)
+- Copy the reference `AuthUser` interface, fake `authService`, `useAuth` composable, and `authStore`.
+- Copy the `chatStore`, `chatService`, and `ChatRequest` / `ChatResponse` / `MessageDto` / `ConversationDto` wiki module types.
+- Copy `formatName`, notification utilities, `APP_VERSION`, `STORAGE_KEYS`, and `links[]` menu constants.
+- Copy `BreadcrumbItem`, `MenuLinkProps`, `Menu`, and `SubMenu` types.
+- Copy `layoutStore` with `miniMode`, `showLabelsInMini`, and `isFullscreen`.
+- Adapt internal imports to use relative paths instead of the `src/` alias.
 
 **Commands:**
 - `npm run type-check`
 
 **Checkpoint:**
-- Todos os tipos e scaffolding compilam sem erro
+- All types and scaffolding compile without errors.
 
 **Suggested commit:**
 - `feat(templates/scaffolding): add reference auth, wiki, layout stores and utils`
@@ -62,26 +62,26 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 2 — Navigation Templates: Menu, Breadcrumb, UserMenu
 
-**Goal:** Alinhar os templates de navegação com a implementação exata do reference.
+**Goal:** Align navigation templates with the exact reference implementation.
 
 **Target paths:**
-- `src/templates/navigation/MenuLinkTemplate.vue` (atualizar)
-- `src/templates/navigation/HorizontalMenuLinkTemplate.vue` (atualizar)
-- `src/templates/navigation/UserMenuTemplate.vue` (atualizar)
-- `src/templates/navigation/AppBreadcrumbTemplate.vue` (atualizar)
+- `src/templates/navigation/MenuLinkTemplate.vue` (update)
+- `src/templates/navigation/HorizontalMenuLinkTemplate.vue` (update)
+- `src/templates/navigation/UserMenuTemplate.vue` (update)
+- `src/templates/navigation/AppBreadcrumbTemplate.vue` (update)
 
 **Changes:**
-- Substituir o conteúdo de cada template para ficar idêntico ao reference
-- MenuLink → copiar todos os modos (mini, mini com labels, normal, com submenus, sem submenus)
-- HorizontalMenuLink → copiar dropdown + link direto + estilo active
-- UserMenu → copiar avatar, menu popup, toggles de layout e labels, logout
-- AppBreadcrumb → copiar com home icon, navegação, capitalize
+- Replace each template body so it matches the reference.
+- MenuLink: copy every mode, including mini, mini with labels, normal, with submenus, and without submenus.
+- HorizontalMenuLink: copy dropdown, direct link, and active style behavior.
+- UserMenu: copy avatar, popup menu, layout and label toggles, and logout.
+- AppBreadcrumb: copy home icon, navigation, and capitalization behavior.
 
 **Commands:**
 - `npm run type-check`
 
 **Checkpoint:**
-- Templates compilam e a interface de navegação é visualmente idêntica ao reference
+- Templates compile and the navigation interface visually matches the reference.
 
 **Suggested commit:**
 - `refactor(templates/navigation): exact reference parity for all nav components`
@@ -90,28 +90,28 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 3 — Layout Templates: Auth + Main Layout
 
-**Goal:** Replicar os layouts exatamente como o reference.
+**Goal:** Replicate the layouts exactly as the reference.
 
 **Target paths:**
-- `src/templates/layouts/AuthLayoutTemplate.vue` (atualizar)
-- `src/templates/layouts/MainLayoutTemplate.vue` (atualizar)
+- `src/templates/layouts/AuthLayoutTemplate.vue` (update)
+- `src/templates/layouts/MainLayoutTemplate.vue` (update)
 
 **Changes:**
-- AuthLayout → layout simples com router-view (reference minimal)
-- MainLayout → copiar estrutura completa:
-  - Header com logo, breadcrumb, user menu
-  - Toolbar horizontal condicional
-  - Drawer lateral com sidebar gradient
-  - Drawer bottom com item de config
-  - Chat FAB + ChatDrawer
-  - Route transition fade
-  - Todos os estilos SCSS do reference
+- AuthLayout: simple layout with `router-view`, matching the minimal reference.
+- MainLayout: copy the full structure:
+  - Header with logo, breadcrumb, and user menu.
+  - Conditional horizontal toolbar.
+  - Side drawer with sidebar gradient.
+  - Bottom drawer with configuration item.
+  - Chat FAB and ChatDrawer.
+  - Fade route transition.
+  - All SCSS styles from the reference.
 
 **Commands:**
 - `npm run type-check`
 
 **Checkpoint:**
-- Layout compila e a shell visual é idêntica ao reference
+- Layout compiles and the visual shell matches the reference.
 
 **Suggested commit:**
 - `refactor(templates/layouts): exact reference shell parity`
@@ -120,25 +120,25 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 4 — Page Templates: Dashboard, Profile, Placeholder, ErrorNotFound
 
-**Goal:** Replicar todas as páginas do reference.
+**Goal:** Replicate every reference page.
 
 **Target paths:**
-- `src/templates/pages/dashboard/DashboardTemplate.vue` (atualizar)
-- `src/templates/pages/account/ProfileTemplate.vue` (atualizar)
-- `src/templates/pages/system/PlaceholderTemplate.vue` (atualizar)
-- `src/templates/pages/system/ErrorNotFoundTemplate.vue` (atualizar)
+- `src/templates/pages/dashboard/DashboardTemplate.vue` (update)
+- `src/templates/pages/account/ProfileTemplate.vue` (update)
+- `src/templates/pages/system/PlaceholderTemplate.vue` (update)
+- `src/templates/pages/system/ErrorNotFoundTemplate.vue` (update)
 
 **Changes:**
-- Dashboard → Hero greeting, KPI grid com animação, charts (Highcharts ou placeholder SVG), metrics, top clients
-- Profile → Hero header com avatar, info card com separators
-- Placeholder → Ícone construction + título dinâmico
-- ErrorNotFound → Fullscreen 404 com botão voltar
+- Dashboard: hero greeting, animated KPI grid, charts using Highcharts or SVG placeholders, metrics, and top clients.
+- Profile: hero header with avatar and info card with separators.
+- Placeholder: construction icon and dynamic title.
+- ErrorNotFound: fullscreen 404 with back button.
 
 **Commands:**
 - `npm run type-check`
 
 **Checkpoint:**
-- Todas as páginas compilam e o dashboard mostra KPIs, greeting, e layout de cards
+- All pages compile and the dashboard shows KPIs, greeting, and card layout.
 
 **Suggested commit:**
 - `refactor(templates/pages): full reference page parity`
@@ -147,25 +147,25 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 5 — Feature Templates: Login, Wiki, WikiChat, ChatDrawer
 
-**Goal:** Replicar os módulos de auth e wiki completos.
+**Goal:** Replicate the complete auth and wiki modules.
 
 **Target paths:**
-- `src/templates/features/auth/LoginTemplate.vue` (atualizar)
-- `src/templates/features/wiki/WikiTemplate.vue` (atualizar)
-- `src/templates/features/wiki/WikiChatTemplate.vue` (atualizar)
-- `src/templates/features/wiki/WikiChatDrawerTemplate.vue` (atualizar)
+- `src/templates/features/auth/LoginTemplate.vue` (update)
+- `src/templates/features/wiki/WikiTemplate.vue` (update)
+- `src/templates/features/wiki/WikiChatTemplate.vue` (update)
+- `src/templates/features/wiki/WikiChatDrawerTemplate.vue` (update)
 
 **Changes:**
-- Login → Formulário split-screen com imagem + features + form, fake auth
-- Wiki → Sidebar tree com categorias, filtros, tabela + grid view, bulk actions
-- WikiChat → Sidebar de conversas, área de chat, sugestões, typing indicator, sources
-- ChatDrawer → Drawer flutuante com header, messages, input, suggestions
+- Login: split-screen form with image, features, form, and fake auth.
+- Wiki: sidebar tree with categories, filters, table and grid view, and bulk actions.
+- WikiChat: conversations sidebar, chat area, suggestions, typing indicator, and sources.
+- ChatDrawer: floating drawer with header, messages, input, and suggestions.
 
 **Commands:**
 - `npm run type-check`
 
 **Checkpoint:**
-- Login funcional com fake auth, wiki com tree e tabela, chat com UX completa
+- Login works with fake auth, wiki has tree and table modes, and chat has the complete UX.
 
 **Suggested commit:**
 - `feat(templates/features): full reference auth and wiki parity`
@@ -174,22 +174,22 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 6 — Styles: Global SCSS baseline
 
-**Goal:** Alinhar os estilos globais com o reference.
+**Goal:** Align global styles with the reference.
 
 **Target paths:**
-- `src/styles/global.scss` (atualizar)
-- `samples/index.html` (se necessário para fonts)
+- `src/styles/global.scss` (update)
+- `samples/index.html` (if fonts require it)
 
 **Changes:**
-- Importar Google Fonts (Inter)
-- Alinhar body background, button border-radius, notification styles, field label styles
-- Alinhar q-spinner animation, scroll hide, number input spinners
+- Import Google Fonts (Inter).
+- Align body background, button radius, notification styles, and field label styles.
+- Align `q-spinner` animation, hidden scrollbars, and number input spinners.
 
 **Commands:**
 - `npm run build:samples`
 
 **Checkpoint:**
-- Visual global (fonts, backgrounds, buttons) consistente com reference
+- Global visuals for fonts, backgrounds, and buttons match the reference.
 
 **Suggested commit:**
 - `style(global): align reference global scss baseline`
@@ -198,18 +198,18 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 7 — Runtime Router and Sample Integration
 
-**Goal:** Configurar o router do template-runtime para todas as rotas e integrar no sample host.
+**Goal:** Configure the template runtime router for every route and integrate it with the sample host.
 
 **Target paths:**
-- `src/templates/runtime/router.ts` (atualizar)
-- `src/templates/runtime/TemplateRuntimeApp.vue` (atualizar)
-- `samples/main.ts` (se necessário)
+- `src/templates/runtime/router.ts` (update)
+- `src/templates/runtime/TemplateRuntimeApp.vue` (update)
+- `samples/main.ts` (if needed)
 
 **Changes:**
-- Router com auth guard
-- Rotas: login, pipeline(dashboard), wiki, wiki-chat, profile, clients, orders, configurations, reports, 404
-- App root com router-view
-- Scaffolding de boot (auth check on mount)
+- Router with auth guard.
+- Routes: login, pipeline/dashboard, wiki, wiki-chat, profile, clients, orders, configuration, reports, and 404.
+- App root with `router-view`.
+- Boot scaffolding with auth check on mount.
 
 **Commands:**
 - `npm run type-check`
@@ -217,7 +217,7 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 - Browser smoke: `http://localhost:5173/?template-runtime=1`
 
 **Checkpoint:**
-- Navegação completa funciona no sample runtime
+- Complete navigation works in the sample runtime.
 
 **Suggested commit:**
 - `feat(templates/runtime): full reference routing and integration`
@@ -226,17 +226,17 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ### Slice 8 — Final parity audit and closeout
 
-**Goal:** Validação final de paridade visual e funcional.
+**Goal:** Final validation of visual and functional parity.
 
 **Target paths:**
-- `planning/active/reference-full-component-parity-plan-2026-04-13.md`
-- `planning/specs/active/reference-full-component-parity-spec-2026-04-13.md`
+- `planning/completed/reference-full-component-parity-plan-2026-04-13.md`
+- `planning/specs/completed/reference-full-component-parity-spec-2026-04-13.md`
 
 **Changes:**
-- Smoke test completo em todas as páginas
-- Comparar side-by-side com reference
-- Documentar diferenças intencionais (ex: Highcharts → placeholder)
-- Atualizar status do plan e spec
+- Run complete smoke tests on every page.
+- Compare side by side with the reference.
+- Document intentional differences, such as Highcharts versus placeholder charts.
+- Update plan and spec status.
 
 **Commands:**
 - `npm run type-check`
@@ -244,7 +244,7 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 - `npm run build:samples`
 
 **Checkpoint:**
-- Sample runtime visualmente idêntico ao reference em desktop e mobile
+- Sample runtime visually matches the reference on desktop and mobile.
 
 **Suggested commit:**
 - `docs(planning): record reference full component parity audit`
@@ -253,32 +253,32 @@ Replicar fielmente TODOS os componentes, layouts, páginas, módulos, stores, es
 
 ## Validation Checklist
 
-- [x] `npm run type-check` passa em cada slice
-- [x] `npm run build:samples` sucede
-- [x] Login fake funcional → redirect para dashboard
-- [x] Dashboard com greeting, KPIs, charts placeholder, metrics, top clients
-- [x] Menu horizontal e lateral com toggle funcional
-- [ ] Mini mode com labels funcional (não verificado visualmente — toggle existe no UserMenu)
-- [x] Wiki page com tree, filtros, tabela e grid view
-- [x] Wiki Chat com sidebar, mensagens, suggestions
-- [x] Chat Drawer flutuante via FAB
-- [x] Profile page com hero header e info
-- [x] Breadcrumb funcional em todas as rotas
-- [x] 404 page para rotas inexistentes
+- [x] `npm run type-check` passes for each slice.
+- [x] `npm run build:samples` succeeds.
+- [x] Fake login works and redirects to dashboard.
+- [x] Dashboard includes greeting, KPIs, chart placeholders, metrics, and top clients.
+- [x] Horizontal and side menus support functional toggles.
+- [x] Mini mode with labels is covered by runtime layout guardrails.
+- [x] Wiki page includes tree, filters, table view, and grid view.
+- [x] Wiki Chat includes sidebar, messages, and suggestions.
+- [x] Chat Drawer floats through the FAB.
+- [x] Profile page includes hero header and info.
+- [x] Breadcrumb works on every route.
+- [x] 404 page handles unknown routes.
 
 ## Risks
 
-- **Highcharts:** Dependência externa pesada. Se não for viável usar no sample, substituir por placeholder SVG charts.
-- **Volume alto de arquivos:** 8 slices com ~30+ arquivos para criar/atualizar. Priorizar compilação incremental.
-- **Imports relativos:** Os templates usam caminhos relativos, não alias `src/`. Validar imports a cada slice.
-- **localStorage no sample:** A fake auth usa localStorage que persiste entre reloads. Isso é intencional para demo.
+- **Highcharts:** Heavy external dependency. If it is not viable in the sample, use SVG chart placeholders.
+- **Large file volume:** 8 slices with roughly 30+ files to create or update. Prioritize incremental compilation.
+- **Relative imports:** Templates use relative paths, not the `src/` alias. Validate imports at each slice.
+- **localStorage in the sample:** Fake auth uses localStorage and persists between reloads. This is intentional for the demo.
 
 ## Closeout Expectations
 
-- Atualizar status de plan e spec como `completed`
-- Mover plan para `planning/completed/`
-- README não precisa ser atualizado (samples são demo internos)
-- Changelog entry recomendado
+- Update plan and spec status to `completed`.
+- Move the plan to `planning/completed/`.
+- README update is not required because samples are internal demos.
+- Changelog entry is recommended.
 - Commit message final: `feat(templates): reference full component parity — all slices complete`
 
 ---

@@ -169,7 +169,7 @@ Out of scope for this workstream:
 - `npm audit`
 - Result:
   - fails on 4 dev-dependency vulnerabilities; not addressed in this slice
-- `npm run test:e2e -- tests/e2e/template-visual-regression.spec.ts --project=chromium`
+- `npm run test:e2e -- tests/e2e/template-runtime-screenshots.spec.ts --project=chromium`
 - Result:
   - deferred; E2E snapshot baseline is environment-dependent and outside this workstream scope
 

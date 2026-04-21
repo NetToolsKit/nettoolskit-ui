@@ -944,9 +944,9 @@ Template runtime theme work must follow the official Quasar model first, then la
    - Runtime shells must start from `QLayout`, `QDrawer`, `QPageContainer`, and `QPage`.
    - Local CSS should express the NetToolsKit product shell, not reimplement Quasar layout behavior.
 
-Current active plans:
-- `planning/active/vue-quasar-visual-architecture-replatform-2026-04-16.md`
-- `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`
+Completed closeout plans:
+- `planning/completed/vue-quasar-visual-architecture-replatform-2026-04-16.md`
+- `planning/completed/templates-100-functional-whitelabel-plan-2026-04-15.md`
 
 ### Template-First Delivery
 

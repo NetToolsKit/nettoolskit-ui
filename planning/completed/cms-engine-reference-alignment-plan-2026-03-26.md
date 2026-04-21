@@ -2,7 +2,7 @@
 
 Date: 2026-03-26
 Repository: `nettoolskit-ui-vue`
-Status: In Progress
+Status: Completed / archived
 Related history:
 - `planning/completed/cms-engine-enterprise-plan-2026-03-13.md`
 

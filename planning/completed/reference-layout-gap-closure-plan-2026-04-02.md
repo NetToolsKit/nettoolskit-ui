@@ -1,8 +1,8 @@
 # Plan: Reference Layout Gap Closure
 
 Date: 2026-04-02
-Status: In Progress
-Spec: `planning/specs/active/reference-layout-gap-closure-2026-04-02.md`
+Status: Completed / archived
+Spec: `planning/specs/completed/reference-layout-gap-closure-2026-04-02.md`
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 
 ## Ordered Tasks

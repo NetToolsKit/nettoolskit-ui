@@ -1,8 +1,8 @@
 # Plan: Reference System Layout Depth
 
 Date: 2026-04-03
-Status: Active
-Spec: `planning/specs/active/reference-layout-depth-2026-04-03.md`
+Status: Completed / archived
+Spec: `planning/specs/completed/reference-layout-depth-2026-04-03.md`
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 
 ## Ordered Tasks

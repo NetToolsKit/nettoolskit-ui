@@ -41,7 +41,7 @@ Overall status: **100%**
 **Goal:** Convert the already identified gaps into automated checks before expanding functionality.
 
 **Target paths:**
-- `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`
+- `planning/completed/templates-100-functional-whitelabel-plan-2026-04-15.md`
 - `tests/unit/templates/TemplateRuntimeRouter.spec.ts`
 - `tests/unit/templates/NavigationAndAuthTemplates.spec.ts`
 - `tests/unit/templates/ReferenceSystemTemplates.spec.ts`
@@ -223,7 +223,6 @@ Overall status: **100%**
 **Goal:** Close the workstream with an approved runtime, aligned documentation, and clear release checkpoints.
 
 **Target paths:**
-- `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`
 - `planning/completed/templates-100-functional-whitelabel-plan-2026-04-15.md`
 - `samples/README.md`
 - `src/templates/README.md`

@@ -552,8 +552,8 @@ Release blocker rule:
 8. Item 124: template regression and release closeout [Completed 2026-03-26]
    - Target paths:
      - `tests/unit/templates/**/*.spec.ts`
-     - `tests/e2e/template-visual-regression.spec.ts`
-     - `tests/e2e/template-visual-regression.spec.ts-snapshots/*`
+     - `tests/e2e/template-runtime-screenshots.spec.ts`
+     - `tests/e2e/template-runtime-screenshots.spec.ts-snapshots/*`
      - `landing-page/TemplateShowcaseApp.vue`
      - `landing-page/main.ts`
      - `README.md`
@@ -573,8 +573,8 @@ Release blocker rule:
       - added template showcase runtime mode (`/?templates=1`) wired through `landing-page/main.ts`
       - added `landing-page/TemplateShowcaseApp.vue` to render deterministic layout/page/feature template surfaces for regression
       - added visual regression suite:
-        - `tests/e2e/template-visual-regression.spec.ts`
-        - `tests/e2e/template-visual-regression.spec.ts-snapshots/*`
+        - `tests/e2e/template-runtime-screenshots.spec.ts`
+        - `tests/e2e/template-runtime-screenshots.spec.ts-snapshots/*`
      - updated release docs:
        - `README.md` (template catalog + template-first delivery + runtime preview mode)
        - `CHANGELOG.md` (template showcase and visual-regression entry)
