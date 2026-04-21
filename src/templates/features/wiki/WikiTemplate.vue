@@ -763,10 +763,11 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
   --ntk-template-wiki-tree-active-text: var(--ntk-template-wiki-filter-active-text);
   --ntk-template-wiki-folder-color: var(--ntk-warning, var(--ntk-accent));
   --ntk-template-wiki-filter-border: var(--ntk-template-wiki-border);
-  --ntk-template-wiki-filter-active-bg: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-template-wiki-filter-active-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
-  --ntk-template-wiki-view-active-bg: var(--ntk-template-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
-  --ntk-template-wiki-view-active-text: var(--ntk-text-on-accent, var(--ntk-text-primary));
+  --ntk-template-wiki-filter-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-wiki-filter-active-text: var(--ntk-template-semantic-accent-emphasis-text);
+  --ntk-template-wiki-filter-active-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-wiki-view-active-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-wiki-view-active-text: var(--ntk-template-semantic-accent-emphasis-text);
   --ntk-template-wiki-table-border: var(--ntk-template-wiki-border);
   --ntk-template-wiki-file-bg: var(--ntk-template-wiki-filter-active-bg);
   --ntk-template-wiki-file-text: var(--ntk-template-wiki-filter-active-text);
@@ -1048,6 +1049,7 @@ function resolveStatusLabel(status: TemplateWikiDocumentStatus): string {
 
 .ntk-template-wiki__filter--active {
   background: var(--ntk-template-wiki-filter-active-bg);
+  border-color: var(--ntk-template-wiki-filter-active-border);
   color: var(--ntk-template-wiki-filter-active-text);
 }
 
