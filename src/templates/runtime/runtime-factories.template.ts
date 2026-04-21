@@ -1,7 +1,6 @@
 import type {
   TemplateWikiCategoryNode,
   TemplateWikiDocument,
-  TemplateWikiSuggestion,
 } from '../features/wiki/wiki-template.types'
 import type {
   TemplateRuntimeClient,
