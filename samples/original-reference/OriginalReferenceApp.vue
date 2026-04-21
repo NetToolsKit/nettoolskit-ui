@@ -336,28 +336,28 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .ntk-original-reference {
-  --ntk-template-layout-shell-bg: var(--ntk-shell-bg, #f1f5f9);
-  --ntk-template-layout-page-bg: var(--ntk-shell-bg, #f1f5f9);
-  --ntk-template-layout-header-bg: var(--ntk-header-bg, #ffffff);
-  --ntk-template-layout-header-text: var(--ntk-accent, #0f766e);
-  --ntk-template-layout-title-color: var(--ntk-text-heading, #1f2937);
+  --ntk-template-layout-shell-bg: var(--ntk-shell-bg, var(--ntk-bg-primary));
+  --ntk-template-layout-page-bg: var(--ntk-shell-bg, var(--ntk-bg-primary));
+  --ntk-template-layout-header-bg: var(--ntk-header-bg, var(--ntk-bg-card));
+  --ntk-template-layout-header-text: var(--ntk-accent);
+  --ntk-template-layout-title-color: var(--ntk-text-heading);
   --ntk-template-layout-header-height: 50px;
   --ntk-template-layout-header-padding: 0 16px 0 12px;
   --ntk-template-layout-header-shadow: none;
-  --ntk-template-layout-header-border: var(--ntk-border, rgba(0, 0, 0, 0.12));
-  --ntk-template-layout-drawer-border: var(--ntk-border-strong, rgba(0, 0, 0, 0.21));
-  --ntk-template-layout-horizontal-bg: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+  --ntk-template-layout-header-border: var(--ntk-border);
+  --ntk-template-layout-drawer-border: var(--ntk-border-strong, var(--ntk-border));
+  --ntk-template-layout-horizontal-bg: var(--ntk-layout-horizontal-bg, linear-gradient(90deg, var(--ntk-template-shell-nav-surface-start) 0%, var(--ntk-template-shell-nav-surface-end) 100%));
   --ntk-template-layout-reference-nav-item-margin: 0;
   --ntk-template-layout-reference-nav-item-radius: 0;
-  --ntk-template-layout-reference-nav-hover-bg: var(--ntk-nav-hover-bg, rgba(0, 0, 0, 0.05));
-  --ntk-template-layout-reference-nav-active-bg: var(--ntk-nav-active-bg, rgba(255, 255, 255, 0.15));
-  --ntk-template-layout-reference-nav-active-border: var(--ntk-nav-active-border, rgba(255, 255, 255, 0.8));
-  --ntk-template-user-menu-header-bg: rgba(0, 0, 0, 0.02);
+  --ntk-template-layout-reference-nav-hover-bg: var(--ntk-nav-hover-bg, color-mix(in srgb, var(--ntk-template-layout-header-text) 8%, transparent));
+  --ntk-template-layout-reference-nav-active-bg: var(--ntk-nav-active-bg, color-mix(in srgb, var(--ntk-template-layout-header-text) 14%, transparent));
+  --ntk-template-layout-reference-nav-active-border: var(--ntk-nav-active-border, var(--ntk-template-layout-header-text));
+  --ntk-template-user-menu-header-bg: color-mix(in srgb, var(--ntk-text-primary) 2%, transparent);
   --ntk-template-user-menu-radius: 8px;
-  --ntk-template-user-menu-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  --ntk-template-user-menu-avatar-bg: var(--ntk-avatar-bg, #0f766e);
-  --ntk-template-user-menu-avatar-border: var(--ntk-avatar-border, #ffffff);
-  --ntk-template-user-menu-avatar-color: var(--ntk-avatar-color, #ffffff);
+  --ntk-template-user-menu-shadow: var(--ntk-shadow-lg);
+  --ntk-template-user-menu-avatar-bg: var(--ntk-avatar-bg, var(--ntk-accent));
+  --ntk-template-user-menu-avatar-border: var(--ntk-avatar-border, var(--ntk-text-on-accent));
+  --ntk-template-user-menu-avatar-color: var(--ntk-avatar-color, var(--ntk-text-on-accent));
   min-height: 100vh;
 }
 
@@ -373,13 +373,13 @@ onBeforeUnmount(() => {
   bottom: 24px;
   right: 24px;
   z-index: 1999;
-  background: var(--ntk-accent, #0f766e) !important;
-  color: var(--ntk-text-on-accent, #ffffff) !important;
-  box-shadow: 0 4px 16px var(--ntk-fab-shadow, rgba(15, 118, 110, 0.3));
+  background: var(--ntk-accent) !important;
+  color: var(--ntk-text-on-accent) !important;
+  box-shadow: 0 4px 16px var(--ntk-fab-shadow, color-mix(in srgb, var(--ntk-accent) 30%, transparent));
 }
 
 .ntk-original-reference__floating-action:hover {
-  box-shadow: 0 6px 24px var(--ntk-fab-shadow-hover, rgba(15, 118, 110, 0.4));
+  box-shadow: 0 6px 24px var(--ntk-fab-shadow-hover, color-mix(in srgb, var(--ntk-accent) 40%, transparent));
 }
 
 .ntk-original-reference__assistant-dialog {
@@ -389,27 +389,27 @@ onBeforeUnmount(() => {
 .ntk-original-reference__assistant-title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--ntk-text-heading, #1e293b);
+  color: var(--ntk-text-heading);
 }
 
 .ntk-original-reference__assistant-copy {
   margin: 8px 0 0;
-  color: var(--ntk-text-muted, #64748b);
+  color: var(--ntk-text-muted);
   line-height: 1.5;
 }
 
 /* Accent buttons — replace Quasar color="primary" */
 .ntk-original-reference__accent-btn {
-  color: var(--ntk-accent, #0f766e) !important;
+  color: var(--ntk-accent) !important;
 }
 
 .ntk-original-reference__accent-btn--filled {
-  background: var(--ntk-accent, #0f766e) !important;
-  color: var(--ntk-text-on-accent, #ffffff) !important;
+  background: var(--ntk-accent) !important;
+  color: var(--ntk-text-on-accent) !important;
 }
 
 .ntk-original-reference :deep(.ntk-template-main-layout__menu-btn .q-btn) {
-  color: var(--ntk-accent, #0f766e);
+  color: var(--ntk-accent);
 }
 
 .ntk-original-reference :deep(.ntk-template-user-menu__avatar) {
@@ -418,7 +418,7 @@ onBeforeUnmount(() => {
 
 /* Override Quasar toggle colors inside user menu */
 .ntk-original-reference :deep(.q-toggle__inner--truthy) {
-  color: var(--ntk-accent, #0f766e) !important;
+  color: var(--ntk-accent) !important;
 }
 
 @media (max-width: 768px) {

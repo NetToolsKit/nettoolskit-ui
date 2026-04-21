@@ -13,6 +13,7 @@
 
 import type { BrandPalette } from '../colors/palette.config';
 import { sentinelaPalette, plateaPalette, nettoolskitPalette } from '../colors/palette.config';
+import { semanticColors } from '../colors/semantic.config';
 import type { BrandIdentity } from '../brand/identity.config';
 import { sentinelaIdentity, plateaIdentity, nettoolskitIdentity } from '../brand/identity.config';
 
@@ -88,15 +89,15 @@ export const sentinelaTheme: ThemeConfig = {
     primaryLight: sentinelaPalette.primary[600],
     secondary: sentinelaPalette.secondary[500],
     accent: sentinelaPalette.accent[600],
-    background: '#FFFFFF',
-    backgroundLight: sentinelaPalette.neutral[50],
+    background: sentinelaPalette.neutral[50],
+    backgroundLight: sentinelaPalette.neutral[100],
     text: sentinelaPalette.neutral[900],
     textLight: sentinelaPalette.neutral[700],
     textMuted: sentinelaPalette.neutral[500],
     border: sentinelaPalette.neutral[200],
-    success: '#22c55e',
-    warning: '#eab308',
-    error: '#ef4444',
+    success: semanticColors.successPrimary,
+    warning: semanticColors.warningPrimary,
+    error: semanticColors.errorPrimary,
     info: sentinelaPalette.accent[500],
   },
   fonts: {
@@ -125,15 +126,15 @@ export const plateaTheme: ThemeConfig = {
     primaryLight: plateaPalette.primary[500],
     secondary: plateaPalette.secondary[500],
     accent: plateaPalette.accent[500],
-    background: '#FFFFFF',
-    backgroundLight: plateaPalette.neutral[50],
+    background: plateaPalette.neutral[50],
+    backgroundLight: plateaPalette.neutral[100],
     text: plateaPalette.neutral[900],
     textLight: plateaPalette.neutral[700],
     textMuted: plateaPalette.neutral[500],
     border: plateaPalette.neutral[200],
-    success: '#22c55e',
-    warning: '#eab308',
-    error: '#ef4444',
+    success: semanticColors.successPrimary,
+    warning: semanticColors.warningPrimary,
+    error: semanticColors.errorPrimary,
     info: plateaPalette.accent[500],
   },
   fonts: {
@@ -162,15 +163,15 @@ export const nettoolskitTheme: ThemeConfig = {
     primaryLight: nettoolskitPalette.primary[500],
     secondary: nettoolskitPalette.secondary[600],
     accent: nettoolskitPalette.accent[500],
-    background: '#FFFFFF',
-    backgroundLight: nettoolskitPalette.neutral[50],
+    background: nettoolskitPalette.neutral[50],
+    backgroundLight: nettoolskitPalette.neutral[100],
     text: nettoolskitPalette.neutral[900],
     textLight: nettoolskitPalette.neutral[700],
     textMuted: nettoolskitPalette.neutral[500],
     border: nettoolskitPalette.neutral[200],
-    success: '#22c55e',
-    warning: '#eab308',
-    error: '#ef4444',
+    success: semanticColors.successPrimary,
+    warning: semanticColors.warningPrimary,
+    error: semanticColors.errorPrimary,
     info: nettoolskitPalette.accent[500],
   },
   fonts: {
