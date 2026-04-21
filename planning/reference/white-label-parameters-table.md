@@ -1,3 +1,16 @@
+## White-Label Token Hierarchy
+
+White-label parameters should resolve through this hierarchy:
+
+1. Quasar brand variables: `--q-primary`, `--q-secondary`, `--q-accent`, `--q-dark`, `--q-positive`, `--q-negative`, `--q-info`, and `--q-warning`.
+2. NetToolsKit base aliases: `--ntk-*` and `--semantic-*`.
+3. Template aliases: `--ntk-template-page-*`, `--ntk-template-shell-*`, `--ntk-template-overlay-*`, `--ntk-template-semantic-*`, plus reference/CMS-specific aliases.
+4. Component declarations that consume aliases only.
+
+Raw brand values belong in the preset or parameter layer. Components should not introduce new raw colors or local contrast formulas unless the value is promoted to a shared token first.
+
+---
+
 | Parameter | Category | Simple description | Mode | Unified with |
 |---|---|---|---|---|
 | <code>fontFamily</code> | Typography | Font family | Basic | - |

@@ -2,7 +2,7 @@
 
 Date: 2026-04-16
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
-Status: active
+Status: active — closeout readiness 89%
 
 ## Scope Summary
 
@@ -12,6 +12,19 @@ This workstream is explicitly frontend-only:
 - no backend integration work
 - no runtime productization beyond visual and layout correctness
 - focus on theme architecture, layout architecture, contrast safety, and visual regression confidence
+
+## Status Snapshot
+
+Overall status: **89%**
+
+| Slice | Status | Current evidence | Remaining closeout gap |
+|---|---:|---|---|
+| Slice 1 — Official Baseline And Architecture Contract | 88% | Preset tokens, swatches, `--q-*` brand sync, DOM body class sync, and Quasar `Dark.set(...)` runtime sync exist. | Legacy theme writers remain exported for compatibility, with docs/comments de-promoting them for new runtime work. |
+| Slice 2 — Teleport And Popup Surface Unification | 92% | Global overlay, popup, field, table, tooltip, notification, and menu bridge coverage exists behind explicit template scope. | A dedicated nav submenu/QBtnDropdown fixture is still a useful follow-up if that route becomes part of the approved runtime. |
+| Slice 3 — Layout Rebuild To Official Quasar Pattern | 95% | Runtime shell uses `QLayout`, `QDrawer`, `QPageContainer`, `QPage`, and shared shell/header/navigation tokens. | Remaining work is mostly validation and preventing future local-token drift. |
+| Slice 4 — Surface And Data Display Normalization | 94% | Login, dashboard, CRUD, wiki, profile, system pages, reference-system surfaces, and original-reference fallbacks have dark contrast fixes and semantic token adoption. | Continue enforcing shared semantic primitives as new templates are added. |
+| Slice 5 — Theme Preset Certification | 84% | Runtime visual certification now covers `Revolut`, `Claude`, `Warp`, and `Resend`; dark guardrails cover `Warp` and `Resend` across the high-risk runtime surfaces. | Screenshot-baseline runtime visual regression remains the main open enhancement. |
+| Slice 6 — Regression Guardrails And Documentation | 76% | Official references, README operating model, template docs, and planning references are documented. | Do not move the plan to `planning/completed/` until full validation and closeout are done. |
 
 ## Relationship To The Templates Functional Plan
 
@@ -39,6 +52,17 @@ These links are the source of truth for the workstream:
 - Quasar QPage And QPageContainer: https://quasar.dev/layout/page/
 - Vue SFC CSS Features: https://vuejs.org/api/sfc-css-features
 - Vue Teleport: https://vuejs.org/guide/built-ins/teleport.html
+
+## Official Operating Model
+
+The visual architecture must follow the documented Quasar and Vue behavior:
+- Quasar dark mode is the runtime mode authority. Use Quasar's Dark Plugin / `$q.dark.set(...)` / `Dark.set(...)` path for actual component mode and keep `body--dark` / `body--light` as observable styling classes, not as a separate competing state.
+- Quasar brand colors are the first color layer. The allowed brand inputs are `primary`, `secondary`, `accent`, `dark`, `positive`, `negative`, `info`, and `warning`, exposed at runtime as `--q-*`.
+- NTK tokens alias the Quasar brand layer and the selected preset. Base tokens such as `--ntk-primary`, `--ntk-surface-*`, `--ntk-text-*`, and `--semantic-*` should not contradict `--q-*`.
+- Template tokens alias NTK tokens. Families such as `--ntk-template-page-*`, `--ntk-template-shell-*`, `--ntk-template-overlay-*`, and `--ntk-template-semantic-*` are component contracts, not independent brand systems.
+- Component styles consume template tokens. Components should not invent local `color-mix()` contrast formulas unless the formula is promoted to a shared token first.
+- Teleported surfaces need global or explicit popup hooks. Quasar `QMenu` content is injected under `body`, and Vue `Teleport` can render content outside the component DOM hierarchy, so scoped/container CSS is not enough for menus, dialogs, popup proxies, select menus, or tooltips.
+- Layout work must start from Quasar primitives: `QLayout`, `QDrawer`, `QPageContainer`, and `QPage`. Local shell CSS should style the product contract, not reimplement Quasar layout mechanics.
 
 ## Recommended Specialist
 
@@ -75,6 +99,8 @@ These links are the source of truth for the workstream:
 - switching between light and dark presets always updates Quasar-compatible mode state
 - brand tokens and NTK aliases no longer disagree on background or text direction
 
+**Current status:** implemented for runtime sync. Compatibility exports remain available, but docs/comments now direct new template work to presets, CSS custom properties, and Quasar Dark Plugin sync.
+
 **Suggested commit:**
 - `refactor(theme): align quasar mode and brand token hierarchy`
 
@@ -106,6 +132,8 @@ These links are the source of truth for the workstream:
 - menus, selects, dialogs, drawers, and tooltips render with correct contrast in dark presets
 - no popup surface falls back to white unless the preset is explicitly light
 
+**Current status:** mostly implemented for existing runtime overlays. The shared bridge is template-scoped; a real nav submenu/QBtnDropdown runtime fixture remains a possible follow-up.
+
 **Suggested commit:**
 - `fix(theme): unify teleported popup and dialog surfaces`
 
@@ -135,6 +163,8 @@ These links are the source of truth for the workstream:
 **Checkpoint:**
 - drawer and header surfaces keep consistent contrast across approved presets
 - layout behavior no longer depends on brittle per-component overrides
+
+**Current status:** implemented, with continued guardrail coverage required for future changes.
 
 **Suggested commit:**
 - `refactor(layout): normalize runtime shell to quasar layout patterns`
@@ -168,6 +198,8 @@ These links are the source of truth for the workstream:
 - dark presets do not show white cards with pale text or pale tables on pale backgrounds
 - common page templates pass a manual contrast sweep and automated token audit
 
+**Current status:** substantially implemented across the high-risk runtime and template surfaces.
+
 **Suggested commit:**
 - `fix(templates): resolve dark theme contrast and surface regressions`
 
@@ -197,6 +229,8 @@ These links are the source of truth for the workstream:
 **Checkpoint:**
 - preset changes are visually guarded in the highest-risk screens
 - theme regressions fail in CI before merge
+
+**Current status:** preset certification covers `Revolut`, `Claude`, `Warp`, and `Resend`; screenshot-based runtime visual regression is still pending.
 
 **Suggested commit:**
 - `test(theme): add preset visual regression matrix`
@@ -228,6 +262,8 @@ These links are the source of truth for the workstream:
 **Checkpoint:**
 - the repo documents the source of truth for visual decisions
 - future theme and layout work starts from the documented architecture instead of rediscovery
+
+**Current status:** documentation is updated, but plan completion is blocked on full validation and final closeout.
 
 **Suggested commit:**
 - `docs(theme): close official quasar and vue recovery workstream`
@@ -261,10 +297,11 @@ These links are the source of truth for the workstream:
 ## Definition Of Done
 
 - dark and light presets render menus, dialogs, selects, tables, cards, and forms with stable contrast
-- Quasar is the mode and brand baseline for the runtime shell
+- Quasar is the mode and brand baseline for the runtime shell, including real Dark Plugin state
 - teleported surfaces follow one global theme strategy
 - README contains the official Vue and Quasar references used as source of truth
 - automated unit and E2E guardrails cover the highest-risk preset regressions
+- runtime screenshot coverage exists for the approved preset matrix
 
 ## Closeout Expectations
 
@@ -272,3 +309,4 @@ These links are the source of truth for the workstream:
 - final plan moved from `planning/active` to `planning/completed`
 - commit message references theme/layout recovery explicitly
 - no backend or integration scope included in the visual closeout
+- completion requires green full validation plus a decision on whether screenshot-baseline certification is required before moving the plan to `planning/completed`

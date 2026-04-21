@@ -151,6 +151,8 @@ export * from './src/utils/async'
 // CONFIG - Theme
 // ============================================================================
 export * from './src/config/theme/theme.config'
+// Legacy compatibility export. Prefer the preset-driven runtime theme model,
+// CSS custom properties, and Quasar Dark Plugin sync for new template work.
 export * from './src/config/theme/theme.plugin'
 
 // ============================================================================
@@ -171,6 +173,8 @@ export * from './src/config/presets'
 // ============================================================================
 export * from './src/config/colors/palette.config'
 export * from './src/config/colors/semantic.config'
+// Legacy compatibility export. Prefer preset/theme CSS custom properties for
+// runtime white-label work so tokens can be swapped without plugin writes.
 export * from './src/config/colors/theme-mode.config'
 
 // ============================================================================

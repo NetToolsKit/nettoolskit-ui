@@ -1,28 +1,27 @@
 /**
  * Shared Styles Export
  * 
- * Este arquivo centraliza os estilos compartilhados do projeto.
+ * This file centralizes the shared project styles.
  * 
- * SISTEMA DE TOKENS:
- * - tokens.scss: Variáveis CSS globais (--ntk-*)
- * - global.scss: Reset e estilos globais
+ * TOKEN SYSTEM:
+ * - tokens.scss: global CSS custom properties (--ntk-*)
+ * - global.scss: reset and global styles
  * 
- * USO EM PROJETOS:
- * 1. Importe os estilos no main.ts ou App.vue:
+ * PROJECT USAGE:
+ * 1. Import the styles in main.ts or App.vue:
  *    @import 'nettoolskit-ui-vue/src/styles/tokens.scss';
  *    @import 'nettoolskit-ui-vue/src/styles/global.scss';
  * 
- * 2. Use o plugin para customizar cores:
- *    import { NtkThemePlugin } from 'nettoolskit-ui-vue';
- *    app.use(NtkThemePlugin, { primary: '#0D47A1', primaryGradient: ['#0D47A1', '#7B74D4'] });
+ * 2. Prefer preset/theme CSS variables for runtime branding:
+ *    :root { --ntk-primary: var(--brand-primary); }
  * 
- * 3. Ou sobrescreva variáveis CSS diretamente:
- *    :root { --ntk-primary: #0D47A1; }
+ * 3. Legacy plugin-based theme writes remain available for existing apps,
+ *    but new template runtime work should use the preset-driven model.
  */
 
 /**
- * Design Tokens - Valores padrão
- * Use CSS Custom Properties (--ntk-*) para customização em runtime
+ * Design Tokens - default values
+ * Use CSS custom properties (--ntk-*) for runtime customization.
  */
 export const DESIGN_TOKENS = {
   colors: {

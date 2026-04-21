@@ -2,22 +2,35 @@
 
 Date: 2026-04-15
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
-Status: active
+Status: active — closeout readiness 92%
 
 ## Scope Summary
 
-Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
-- todas as rotas aprovadas do runtime entreguem fluxos locais funcionais, sem páginas `Em breve`
-- auth, dashboard, clients, orders, settings e wiki/chat funcionem com dados locais persistidos e comportamento determinístico
-- os estilos dos templates sejam 100% dirigidos por variáveis CSS e tokens de tema, sem ilhas relevantes de cor fixa ou semântica direta do Quasar
-- a suíte automatizada impeça regressões funcionais e de white label
+Bring the template catalog and `?template-runtime=1` into a reference-ready state where:
+- every approved runtime route delivers a local functional flow, without `Coming soon` placeholders
+- auth, dashboard, clients, orders, settings, and wiki/chat work with deterministic local persistence
+- template styling is driven by CSS variables and theme tokens, without meaningful fixed-color islands or direct Quasar semantic drift
+- automated tests prevent functional and white-label regressions
+
+## Status Snapshot
+
+Overall status: **92%**
+
+| Slice | Status | Current evidence | Remaining closeout gap |
+|---|---:|---|---|
+| Slice 1 — Guardrails And Baseline Audit | 100% | Router, white-label, navigation/auth, reference-system, theme-switcher, and dedicated runtime-interaction unit guardrails exist. | No current gap for the approved guardrail baseline. |
+| Slice 2 — Runtime Local Data And Persistence Contracts | 100% | Runtime local data, deterministic auth, persisted wiki/chat behavior, and split storage/factory modules exist. | No current gap for the local-first runtime contract. |
+| Slice 3 — Replace Placeholder Routes With Functional Surfaces | 100% | Approved runtime routes are functional and the router tests forbid placeholders. | No current gap for approved routes. |
+| Slice 4 — Complete White Label Tokenization | 96% | Shell, dashboard, CRUD, wiki, reference-system, semantic chips, dark contrast fixes, scoped Quasar bridge overrides, and legacy hardcoded fallback audits are implemented. | Continue to route new visual work through the visual architecture plan. |
+| Slice 5 — Runtime Coverage And Visual Confidence | 88% | Dedicated runtime flow, visual preset certification, dark contrast, whitelabel, and wiki/chat coverage exist. | Screenshot-baseline coverage remains optional but still open before closing the visual workstream. |
+| Slice 6 — Final Sweep, Documentation, And Closeout | 70% | README/reference docs and active-plan status updates are in progress. | Full validation and moving the plan to `planning/completed/` are still pending. |
 
 ## Recommended Specialist
 
 - Primary: `dev-frontend-vue-quasar-engineer`
 - Tester: mandatory
-- Reviewer: recomendado antes de merge
-- Release closeout: obrigatório no encerramento do workstream
+- Reviewer: recommended before merge
+- Release closeout: required before closing the workstream
 
 ---
 
@@ -25,29 +38,31 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ### Slice 1 — Guardrails And Baseline Audit
 
-**Goal:** Transformar os gaps já identificados em verificações automatizadas antes da expansão funcional.
+**Goal:** Convert the already identified gaps into automated checks before expanding functionality.
 
 **Target paths:**
 - `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`
 - `tests/unit/templates/TemplateRuntimeRouter.spec.ts`
 - `tests/unit/templates/NavigationAndAuthTemplates.spec.ts`
 - `tests/unit/templates/ReferenceSystemTemplates.spec.ts`
-- `tests/unit/templates/TemplateWhiteLabelAudit.spec.ts` (novo)
-- `tests/unit/templates/ThemeSwitcherTokens.spec.ts` (novo)
-- `tests/unit/templates/TemplateRuntimeInteractions.spec.ts` (novo)
+- `tests/unit/templates/TemplateWhiteLabelAudit.spec.ts` (new)
+- `tests/unit/templates/ThemeSwitcherTokens.spec.ts` (new)
+- `tests/unit/templates/TemplateRuntimeInteractions.spec.ts`
 
 **Changes:**
-- adicionar auditoria automatizada para hardcoded colors e inline styles proibidos em `src/templates/**`
-- criar cobertura para `ThemeDotsSwitcher` e `useThemeSwitcher`
-- ampliar a cobertura do runtime além de scaffold/menu, cobrindo header actions, user menu, auth redirect e chat FAB
-- registrar exceções temporárias apenas quando estritamente necessárias e com plano de remoção
+- add automated audit coverage for prohibited hardcoded colors and inline styles in `src/templates/**`
+- cover `ThemeDotsSwitcher` and `useThemeSwitcher`
+- expand runtime coverage beyond scaffold/menu tests, including header actions, user menu, auth redirect, and chat FAB
+- register temporary exceptions only when strictly necessary and with a removal plan
 
 **Commands:**
 - `npm test -- tests/unit/templates/TemplateRuntimeRouter.spec.ts tests/unit/templates/NavigationAndAuthTemplates.spec.ts tests/unit/templates/ReferenceSystemTemplates.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts tests/unit/templates/TemplateRuntimeInteractions.spec.ts`
 
 **Checkpoint:**
-- a suíte falha quando um novo hardcode relevante entra em `src/templates/**`
-- o runtime possui cobertura mínima para navegação, auth shell e theme switching
+- the suite fails when a meaningful new hardcode enters `src/templates/**`
+- the runtime has minimum coverage for navigation, auth shell, and theme switching
+
+**Current status:** complete for the approved guardrail baseline.
 
 **Suggested commit:**
 - `test(templates): add runtime and white-label guardrails`
@@ -56,33 +71,35 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ### Slice 2 — Runtime Local Data And Persistence Contracts
 
-**Goal:** Trocar o runtime de demonstração por fluxos locais realmente utilizáveis, com estado persistido.
+**Goal:** Replace demo-only runtime behavior with usable local flows and persisted state.
 
 **Target paths:**
 - `src/templates/runtime/router.ts`
 - `src/templates/runtime/index.ts`
 - `src/templates/runtime/TemplateRuntimeApp.vue`
-- `src/templates/runtime/runtime-data.template.ts` (novo)
-- `src/templates/runtime/runtime-storage.template.ts` (novo)
-- `src/templates/runtime/runtime-factories.template.ts` (novo)
+- `src/templates/runtime/runtime-data.template.ts`
+- `src/templates/runtime/runtime-storage.template.ts`
+- `src/templates/runtime/runtime-factories.template.ts`
 - `src/templates/scaffolding/auth-service.template.ts`
 - `src/templates/scaffolding/auth-store.template.ts`
 - `src/templates/features/wiki/wiki-chat-service.template.ts`
 - `src/templates/features/wiki/wiki-chat-store.template.ts`
 
 **Changes:**
-- substituir `fakeDashboard` e serviços puramente fake por contratos locais persistidos em `localStorage`
-- tornar auth determinístico, com login, logout, restore session e estados de erro previsíveis
-- tornar o chat/wiki funcional com histórico local, continuidade de conversa, exclusão e reabertura persistida
-- separar fixtures, storage keys e fábricas de estado para facilitar evolução dos módulos
+- replace `fakeDashboard` and purely fake services with local contracts persisted in `localStorage`
+- make auth deterministic, including login, logout, session restore, and predictable error states
+- make wiki/chat functional with local history, conversation continuity, deletion, and persisted reopen behavior
+- split fixtures, storage keys, and state factories so modules can evolve safely
 
 **Commands:**
 - `npm run type-check`
 - `npm test -- tests/unit/templates/ScaffoldingTemplates.spec.ts tests/unit/templates/WikiTemplates.spec.ts tests/unit/templates/TemplateRuntimeInteractions.spec.ts`
 
 **Checkpoint:**
-- refresh do browser preserva sessão e dados locais esperados
-- wiki/chat não depende mais de respostas aleatórias
+- browser refresh preserves the expected session and local data
+- wiki/chat no longer depends on random responses
+
+**Current status:** implemented as a local-first runtime contract with split storage and factory modules.
 
 **Suggested commit:**
 - `feat(templates/runtime): add persistent local runtime data contracts`
@@ -91,7 +108,7 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ### Slice 3 — Replace Placeholder Routes With Functional Surfaces
 
-**Goal:** Remover `PlaceholderTemplate` das rotas principais do runtime aprovado.
+**Goal:** Remove `PlaceholderTemplate` from the approved runtime's main routes.
 
 **Target paths:**
 - `src/templates/runtime/router.ts`
@@ -101,23 +118,25 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 - `src/templates/features/enterprise/ApprovalQueueTemplate.vue`
 - `src/templates/features/enterprise/AuditTimelineTemplate.vue`
 - `src/templates/features/enterprise/EnterpriseCommandCenterTemplate.vue`
-- `src/templates/runtime/pages/RuntimeClientsTemplate.vue` (novo, se necessário)
-- `src/templates/runtime/pages/RuntimeOrdersTemplate.vue` (novo, se necessário)
-- `src/templates/runtime/pages/RuntimeSettingsTemplate.vue` (novo, se necessário)
+- `src/templates/runtime/pages/RuntimeClientsTemplate.vue` (new if needed)
+- `src/templates/runtime/pages/RuntimeOrdersTemplate.vue` (new if needed)
+- `src/templates/runtime/pages/RuntimeSettingsTemplate.vue` (new if needed)
 
 **Changes:**
-- implementar `Clients`, `Orders` e `Settings` com templates reutilizáveis já existentes
-- conectar filtros, seleção, ações locais e mensagens de estado com dados persistidos do runtime
-- alinhar labels, breadcrumbs, empty states e UX de navegação com o shell aprovado
-- manter o runtime como referência funcional do kit, não como coleção de placeholders
+- implement `Clients`, `Orders`, and `Settings` with existing reusable templates
+- connect filters, selection, local actions, and state messages to persisted runtime data
+- align labels, breadcrumbs, empty states, and navigation UX with the approved shell
+- keep the runtime as a functional kit reference, not a placeholder collection
 
 **Commands:**
 - `npm run type-check`
 - `npm test -- tests/unit/templates/CrudListTemplate.spec.ts tests/unit/templates/ProfileAndLayoutTemplates.spec.ts tests/unit/templates/EnterpriseFeatureTemplates.spec.ts tests/unit/templates/TemplateRuntimeInteractions.spec.ts`
 
 **Checkpoint:**
-- nenhuma rota principal do menu aprovado usa `PlaceholderTemplate`
-- clients/orders/settings executam ações locais reais com feedback visual
+- no approved main menu route uses `PlaceholderTemplate`
+- clients/orders/settings execute real local actions with visual feedback
+
+**Current status:** complete for approved runtime routes.
 
 **Suggested commit:**
 - `feat(templates/runtime): replace placeholder routes with functional local flows`
@@ -126,7 +145,7 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ### Slice 4 — Complete White Label Tokenization
 
-**Goal:** Eliminar hardcodes residuais relevantes e fazer a UI responder integralmente ao tenant/theme.
+**Goal:** Eliminate meaningful residual hardcodes and make the UI respond fully to tenant/theme changes.
 
 **Target paths:**
 - `src/composables/useThemeSwitcher.ts`
@@ -145,18 +164,20 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 - `src/templates/runtime/router.ts`
 
 **Changes:**
-- mover cores, gradientes, opacidades e estilos inline para tokens `--ntk-*`/`--semantic-*`
-- expor swatches dos temas por variável CSS em vez de hardcode em TypeScript
-- neutralizar usos de `color="primary|negative|..."` quando ainda não estiverem garantidos pelo bridge/tokens
-- reduzir a bridge para uma camada de aliases previsível, com defaults mínimos e não opinativos
+- move colors, gradients, opacity rules, and inline styles to `--ntk-*` / `--semantic-*` tokens
+- expose theme swatches through CSS variables instead of TypeScript hardcodes
+- neutralize `color="primary|negative|..."` usages where the bridge/tokens do not guarantee contrast yet
+- reduce the bridge to a predictable alias layer with minimal and non-opinionated defaults
 
 **Commands:**
 - `npm run type-check`
 - `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts tests/unit/templates/EditorWorkbenchTemplate.spec.ts tests/unit/templates/ReferenceSystemTemplates.spec.ts`
 
 **Checkpoint:**
-- troca de tema/tenant altera todos os componentes auditados sem ilhas visuais fixas relevantes
-- `ThemeDotsSwitcher` e seus previews não dependem de hex hardcoded em TS
+- tenant/theme switching updates all audited components without meaningful fixed visual islands
+- `ThemeDotsSwitcher` and its previews do not depend on TypeScript hex hardcodes
+
+**Current status:** largely implemented, with remaining architecture-level gaps tracked by the visual replatform plan.
 
 **Suggested commit:**
 - `refactor(templates/theme): complete white-label tokenization`
@@ -165,28 +186,30 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ### Slice 5 — Runtime Coverage And Visual Confidence
 
-**Goal:** Garantir confiança automatizada para o runtime aprovado e para os templates mais sensíveis.
+**Goal:** Provide automated confidence for the approved runtime and the most sensitive templates.
 
 **Target paths:**
 - `tests/unit/templates/TemplateRuntimeInteractions.spec.ts`
 - `tests/unit/templates/ThemeSwitcherTokens.spec.ts`
 - `tests/unit/templates/TemplateWhiteLabelAudit.spec.ts`
-- `tests/e2e/template-runtime-flow.spec.ts` (novo)
-- `tests/e2e/template-runtime-visual.spec.ts` (novo)
+- `tests/e2e/template-runtime-flow.spec.ts`
+- `tests/e2e/template-runtime-visual.spec.ts`
 - `.build/playwright-report/**`
 - `.build/test-results/**`
 
 **Changes:**
-- adicionar smoke E2E do runtime: login, logout, theme switcher, clients, orders, settings, wiki/chat
-- adicionar regressão visual focada no runtime aprovado e nos temas suportados
-- validar desktop e mobile nos pontos críticos do shell
+- add runtime E2E smoke coverage for login, logout, theme switcher, clients, orders, settings, and wiki/chat
+- add visual regression coverage focused on the approved runtime and supported themes
+- validate desktop and mobile shell-critical paths
 
 **Commands:**
 - `npm test -- tests/unit/templates/TemplateRuntimeInteractions.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts`
 - `npm run test:e2e -- --grep "template runtime"`
 
 **Checkpoint:**
-- o runtime aprovado possui cobertura de fluxo e visual mínima para impedir regressões óbvias
+- the approved runtime has minimum flow and visual coverage to block obvious regressions
+
+**Current status:** flow and preset visual certification are implemented; screenshot-baseline regression remains the only open visual confidence enhancement.
 
 **Suggested commit:**
 - `test(runtime): add flow and visual regression coverage`
@@ -195,19 +218,19 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ### Slice 6 — Final Sweep, Documentation, And Closeout
 
-**Goal:** Fechar o workstream com runtime aprovado, documentação alinhada e checkpoints de release claros.
+**Goal:** Close the workstream with an approved runtime, aligned documentation, and clear release checkpoints.
 
 **Target paths:**
 - `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`
 - `planning/completed/templates-100-functional-whitelabel-plan-2026-04-15.md`
 - `samples/README.md`
 - `src/templates/README.md`
-- `planning/reference/white-label-parameters-table.md` (se necessário atualizar)
+- `planning/reference/white-label-parameters-table.md` (update if needed)
 
 **Changes:**
-- registrar o estado final do runtime e os limites intencionais, se restarem
-- atualizar documentação dos templates e do runtime aprovado
-- mover o plano para `planning/completed/` ao encerrar
+- record the final runtime state and any intentional limits that remain
+- update template and approved-runtime documentation
+- move the plan to `planning/completed/` only when the workstream is actually closed
 
 **Commands:**
 - `npm run lint`
@@ -216,8 +239,10 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 - `npm run build:samples`
 
 **Checkpoint:**
-- nenhuma pendência crítica aberta para runtime funcional ou white label total
-- plano encerrado com validações registradas
+- no critical open item remains for the functional runtime or full white-label scope
+- the plan is closed with validations recorded
+
+**Current status:** close to completion; final validation and completed-plan move remain open.
 
 **Suggested commit:**
 - `docs(templates): close 100 percent functional and white-label workstream`
@@ -240,29 +265,30 @@ Levar o conjunto de templates e o `?template-runtime=1` para um estado em que:
 
 ## Risks And Mitigation
 
-- Runtime “100% funcional” pode virar escopo infinito se tentarmos transformá-lo em produto completo.
-  - Mitigation: tratar como runtime local completo de referência, com persistência local e fluxos aprovados, não integração backend real.
-- Tokenização total pode quebrar contraste e consistência visual entre temas.
-  - Mitigation: adicionar smoke visual por tema e focar primeiro nos componentes com maior impacto visual.
-- Guardrails muito rígidos podem bloquear padrões válidos com `var(--token, fallback)`.
-  - Mitigation: separar hardcode proibido de fallback aceitável e manter allowlist pequena e documentada.
+- Runtime "100% functional" can become unbounded if it is treated as a complete product.
+  - Mitigation: treat it as a complete local reference runtime with persistence and approved flows, not backend integration.
+- Full tokenization can break contrast and visual consistency across themes.
+  - Mitigation: add theme-level visual smoke coverage and prioritize the most visible components first.
+- Overly strict guardrails can block valid `var(--token, fallback)` patterns.
+  - Mitigation: separate prohibited hardcodes from acceptable fallbacks and keep the allowlist small and documented.
 
 ## Delivery Slices
 
 - POC:
   - Slice 1
-  - início do Slice 4 nos hardcodes mais críticos
+  - Slice 4 started on the most critical hardcodes
 - Incremental:
   - Slice 2
   - Slice 3
-  - restante do Slice 4
+  - remaining Slice 4 architecture guardrails
 - Final:
   - Slice 5
   - Slice 6
 
 ## Closeout Expectations
 
-- runtime aprovado sem rotas principais em placeholder
-- auth, clients, orders, settings, wiki e chat funcionando com persistência local
-- theme switching e branding respondendo por tokens, sem dependência relevante de hardcodes
-- suíte automatizada cobrindo funcionalidade do runtime e auditoria de white label
+- approved runtime without placeholder main routes
+- auth, clients, orders, settings, wiki, and chat working with local persistence
+- theme switching and branding responding through tokens, without meaningful hardcode dependency
+- automated suite covering runtime functionality and white-label audit
+- final closeout remains blocked only on full validation and the decision to move this active plan to `planning/completed/`

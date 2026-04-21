@@ -129,8 +129,7 @@ Ensure your project has the following dependencies:
 
 ```ts
 import { createApp } from 'vue'
-import { Quasar } from 'quasar'
-import { NtkThemePlugin, nettoolskitTheme } from '@nettoolskit/ui-vue'
+import { Quasar, Dark } from 'quasar'
 
 // Import styles
 import '@quasar/extras/material-icons/material-icons.css'
@@ -138,21 +137,24 @@ import 'quasar/dist/quasar.css'
 import '@nettoolskit/ui-vue/dist/index.css'
 
 const app = createApp(App)
-app.use(Quasar)
-app.use(themePlugin, themeConfig)
+app.use(Quasar, {
+  plugins: {
+    Dark,
+  },
+})
 app.mount('#app')
 ```
 
-### 2. Configure Theme (theme.config.ts)
+### 2. Configure Theme Tokens
 
-```ts
-import { ThemeConfig } from '@nettoolskit/ui-vue'
-
-export const themeConfig: ThemeConfig = {
-  logo: { letter: 'M', text: 'MyApp' },
-  appName: 'My Application',
-  tagline: 'Build amazing things',
-  colors: { primary: '#1976d2', secondary: '#424242' }
+```css
+:root {
+  --brand-primary: #1976d2;
+  --brand-accent: #0f766e;
+  --ntk-primary: var(--brand-primary);
+  --ntk-accent: var(--brand-accent);
+  --q-primary: var(--brand-primary);
+  --q-accent: var(--brand-accent);
 }
 ```
 
@@ -389,7 +391,9 @@ const {
 </template>
 ```
 
-#### useTheme - Dynamic Theme Management
+#### Legacy `useTheme` - Compatibility Theme Management
+
+`useTheme` remains available for existing consumers, but new template runtime work should prefer CSS custom properties, active preset tokens, and Quasar Dark Plugin state.
 
 ```ts
 import { useTheme } from '@nettoolskit/ui-vue'
@@ -528,6 +532,8 @@ await execute('user-123');
 
 ### Theme System
 
+The template runtime model is preset-driven: Quasar brand variables (`--q-*`) and NetToolsKit CSS variables (`--ntk-*`, `--semantic-*`, `--ntk-template-*`) are the fast-swap white-label layer.
+
 #### Available Themes
 
 | Theme | Primary Color | Use Case |
@@ -536,7 +542,9 @@ await execute('user-123');
 | `platea` | Teal (#4A9B7F) | Accessibility, organization, calm UX |
 | `dark` | Indigo (#6366f1) | Dark mode, developer tools |
 
-#### Creating Custom Themes
+#### Creating Custom Themes (Legacy Compatibility)
+
+The `ThemeConfig` / `useTheme()` path is preserved for existing apps. Prefer CSS variables and presets for new template-runtime white-label work so brand values can change without plugin-side writes.
 
 ```ts
 import type { ThemeConfig } from '@/shared/nettoolskit-ui-vue';
@@ -909,6 +917,36 @@ Use the official documentation below as the source of truth for theme, dark mode
 - [Quasar QPage And QPageContainer](https://quasar.dev/layout/page/)
 - [Vue SFC CSS Features](https://vuejs.org/api/sfc-css-features)
 - [Vue Teleport](https://vuejs.org/guide/built-ins/teleport.html)
+
+### Visual Theme Operating Model
+
+Template runtime theme work must follow the official Quasar model first, then layer NetToolsKit aliases on top:
+
+1. **Quasar runtime mode and brand layer**
+   - Quasar Dark Plugin state is the intended runtime source for dark/light behavior.
+   - Quasar brand colors are the first color contract: `primary`, `secondary`, `accent`, `dark`, `positive`, `negative`, `info`, and `warning`.
+   - Runtime brand values must be exposed through Quasar-compatible `--q-*` variables.
+
+2. **NetToolsKit base aliases**
+   - `--ntk-*` and `--semantic-*` tokens map the active preset into application language.
+   - These aliases must not contradict the active `--q-*` brand values.
+   - Raw color values belong at the preset/brand layer only.
+
+3. **Template contracts**
+   - `--ntk-template-page-*`, `--ntk-template-shell-*`, `--ntk-template-overlay-*`, `--ntk-template-semantic-*`, and reference/CMS aliases are component-facing contracts.
+   - Components should consume these contracts instead of recalculating contrast with local `color-mix()` formulas.
+
+4. **Quasar teleports and portals**
+   - Menus, dialogs, popup proxies, selects, and tooltips can render outside the component DOM tree.
+   - Style these surfaces through the shared overlay bridge or explicit popup classes, not through parent scoped CSS alone.
+
+5. **Layout primitives**
+   - Runtime shells must start from `QLayout`, `QDrawer`, `QPageContainer`, and `QPage`.
+   - Local CSS should express the NetToolsKit product shell, not reimplement Quasar layout behavior.
+
+Current active plans:
+- `planning/active/vue-quasar-visual-architecture-replatform-2026-04-16.md`
+- `planning/active/templates-100-functional-whitelabel-plan-2026-04-15.md`
 
 ### Template-First Delivery
 

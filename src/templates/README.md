@@ -61,6 +61,25 @@ A visual slice is only releasable when all mandatory acceptance criteria are com
 
 Use helpers from `contracts/template-acceptance.ts` to verify readiness.
 
+## Theme And Layout Contract
+
+Template styling must follow this hierarchy:
+
+1. Quasar mode and brand layer: `Dark` runtime state plus `--q-primary`, `--q-secondary`, `--q-accent`, `--q-dark`, `--q-positive`, `--q-negative`, `--q-info`, and `--q-warning`.
+2. NetToolsKit base aliases: `--ntk-*` and `--semantic-*`.
+3. Template aliases: `--ntk-template-page-*`, `--ntk-template-shell-*`, `--ntk-template-overlay-*`, `--ntk-template-semantic-*`, plus reference/CMS-specific aliases.
+4. Component styles: consume template aliases and avoid local contrast formulas unless the formula is promoted to the shared bridge first.
+
+Quasar components that render through portals or teleports must receive explicit global/popup styling hooks. Do not assume scoped CSS from a parent component will reach `QMenu`, `QDialog`, `QSelect` menus, `QPopupProxy`, or `QTooltip` content after it is mounted under `body`.
+
+Runtime layout templates should use Quasar layout primitives directly:
+- `QLayout`
+- `QDrawer`
+- `QPageContainer`
+- `QPage`
+
+The template layer may style the product shell, but it should not reimplement Quasar layout mechanics.
+
 ## Generic Template Reuse Rule
 
 Templates under `pages/` and `features/` must stay generic enough to be reused in:
@@ -76,4 +95,11 @@ Do not hardcode business-domain copy, route assumptions, or store bindings direc
 npm run lint
 npm run type-check
 npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts
+```
+
+For theme and visual architecture slices, also run the focused runtime guardrails:
+
+```bash
+npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/templates/ThemeSwitcherTokens.spec.ts
+npx playwright test tests/e2e/template-runtime-dark-theme-guardrails.spec.ts
 ```
