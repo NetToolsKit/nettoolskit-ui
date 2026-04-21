@@ -205,7 +205,7 @@ describe('BaseDatePicker', () => {
       expect(qDate.props('todayBtn')).toBe(true)
     })
 
-    it('should apply primary color', () => {
+    it('should use tokenized calendar colors instead of a fixed Quasar color prop', () => {
       // Arrange
 
       // Act
@@ -213,7 +213,8 @@ describe('BaseDatePicker', () => {
 
       // Assert
       const qDate = wrapper.findComponent({ name: 'QDate' })
-      expect(qDate.props('color')).toBe('primary')
+      expect(qDate.props('color')).toBeUndefined()
+      expect(qDate.classes()).toContain('base-date-picker__calendar')
     })
   })
 
