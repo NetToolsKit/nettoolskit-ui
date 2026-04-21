@@ -5,12 +5,21 @@ import {
   resetTemplateRuntimeData,
   templateRuntimeData,
 } from '../../../src/templates/runtime/runtime-data.template'
+import {
+  cloneRuntimeSnapshot,
+  createDefaultTemplateRuntimeData,
+  nextTemplateRuntimeOrderNumber,
+} from '../../../src/templates/runtime/runtime-factories.template'
+import {
+  loadTemplateRuntimeData,
+  persistTemplateRuntimeData,
+  TEMPLATE_RUNTIME_STORAGE_KEY,
+} from '../../../src/templates/runtime/runtime-storage.template'
 
-const STORAGE_KEY = 'ntk_template_runtime_data_v1'
 const FIXED_NOW = new Date('2026-04-16T12:00:00.000Z')
 
 function readPersistedSnapshot() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
+  return JSON.parse(localStorage.getItem(TEMPLATE_RUNTIME_STORAGE_KEY) ?? 'null')
 }
 
 describe('template runtime data store', () => {
@@ -180,7 +189,7 @@ describe('template runtime data store', () => {
 
   it('hydrates persisted settings and falls back to defaults for partial or invalid storage', () => {
     localStorage.setItem(
-      STORAGE_KEY,
+      TEMPLATE_RUNTIME_STORAGE_KEY,
       JSON.stringify({
         settings: {
           workspaceName: 'Hydrated Workspace',
@@ -207,12 +216,27 @@ describe('template runtime data store', () => {
     expect(templateRuntimeData.state.orders.length).toBeGreaterThan(0)
     expect(templateRuntimeData.wikiDocuments.value.length).toBeGreaterThan(0)
 
-    localStorage.setItem(STORAGE_KEY, '{invalid json')
+    localStorage.setItem(TEMPLATE_RUNTIME_STORAGE_KEY, '{invalid json')
     templateRuntimeData.hydrate()
 
     expect(templateRuntimeData.workspaceName.value).toBe('Atlas Flow')
     expect(templateRuntimeData.state.settings.compactTables).toBe(false)
     expect(templateRuntimeData.state.clients).toHaveLength(6)
     expect(templateRuntimeData.state.orders).toHaveLength(10)
+  })
+
+  it('keeps storage and seed helpers reusable without mutating shared snapshots', () => {
+    const seeded = createDefaultTemplateRuntimeData()
+    const cloned = cloneRuntimeSnapshot(seeded)
+
+    cloned.clients[0]!.name = 'Changed Client'
+    cloned.clients[0]!.tags.push('changed')
+
+    expect(seeded.clients[0]?.name).toBe('Distribuidora Alfa')
+    expect(seeded.clients[0]?.tags).not.toContain('changed')
+    expect(nextTemplateRuntimeOrderNumber(seeded)).toBe('PED-1051')
+
+    persistTemplateRuntimeData(cloned)
+    expect(loadTemplateRuntimeData().clients[0]?.name).toBe('Changed Client')
   })
 })
