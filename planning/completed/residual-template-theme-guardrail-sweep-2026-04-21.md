@@ -2,7 +2,7 @@
 
 Date: 2026-04-21
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
-Status: active - execution in progress
+Status: completed - archived in `planning/completed`
 
 ## Scope Summary
 
@@ -20,14 +20,14 @@ Out of scope:
 
 ## Status Snapshot
 
-Overall status: **35%**
+Overall status: **100%**
 
 | Slice | Status | Current evidence | Remaining closeout gap |
 |---|---:|---|---|
-| Slice 1 - Planning And Artifact Hygiene | 60% | Active plan created; stale docs/artifacts identified. | Commit docs cleanup and remove orphaned visual-regression snapshots. |
-| Slice 2 - Shared Component Token Leaks | 20% | Audits identified sidebar, pricing, feature/stat/credit/steps/CTA, and app-shell palette leaks. | Replace fixed Quasar/legacy theme colors with CSS variable contracts and guardrails. |
-| Slice 3 - Visual Guardrail Expansion | 15% | Audits identified missing chart, orders-table, avatar-initials, and dark table coverage. | Extend E2E screenshots and semantic guardrails. |
-| Slice 4 - Validation And Closeout | 0% | Prior closeout was green before this sweep. | Run focused tests, type-check, lint where appropriate, then move this plan to completed. |
+| Slice 1 - Planning And Artifact Hygiene | 100% | Completed references were cleaned, README links stayed in English, and orphaned visual-regression screenshots were removed. | None. |
+| Slice 2 - Shared Component Token Leaks | 100% | Shared components, app-shell defaults, legacy adapter defaults, branding colors, Quasar fallbacks, and reference template override order now route through token contracts. | None. |
+| Slice 3 - Visual Guardrail Expansion | 100% | Runtime screenshots cover charts/orders; dark guardrails iterate tables/overlays; semantic checks prove the user initials avatar and chart DOM structure. | None. |
+| Slice 4 - Validation And Closeout | 100% | Type-check, unit, lint, and focused Playwright visual suites passed after the final changes. | None. |
 
 ## Ordered Tasks
 
@@ -52,10 +52,11 @@ Overall status: **35%**
 
 ## Validation Checklist
 
-- `npm run type-check`
-- focused unit tests for updated components/audits
-- focused Playwright visual specs updated by this sweep
-- `npm run lint`
+- `npm run type-check` - passed.
+- `npm test -- --testTimeout=30000` - passed: 125 test files, 1413 tests.
+- `npm run lint` - passed with existing warnings only, 0 errors.
+- `npx playwright test tests/e2e/template-runtime-screenshots.spec.ts tests/e2e/template-runtime-visual.spec.ts tests/e2e/template-runtime-dark-theme-guardrails.spec.ts --workers=1 --reporter=line` - passed: 18 tests.
+- `rg` audits for direct Quasar color props/classes and legacy `theme.value.colors/theme.value.gradients` consumers - passed for template/component surfaces.
 
 ## Closeout Expectations
 
@@ -63,3 +64,7 @@ Overall status: **35%**
 - no orphaned visual-regression artifacts remain outside `.build` or `.temp`
 - shared component colors use CSS variable/token contracts instead of Quasar defaults or legacy `useTheme` values
 - dashboard charts, user initials, orders table, and dark table details are covered by stable visual guardrails
+
+## Final Status
+
+The residual sweep is complete. `planning/active` should be empty after this file is moved to `planning/completed`.
