@@ -119,12 +119,7 @@ const resolveTokenColor = (value?: string): string => {
 
 const iconStyle = computed(() => {
   const iconColor = resolveTokenColor(props.iconColor);
-  if (iconColor) {
-    return { backgroundColor: iconColor };
-  }
-  return {
-    backgroundColor: `rgba(var(--ntk-primary-rgb), 0.15)`,
-  };
+  return iconColor ? { backgroundColor: iconColor } : {};
 });
 
 const amountStyle = computed(() => ({
@@ -154,6 +149,7 @@ const formattedCredits = computed(() => {
 }
 
 .credit-icon {
+  background: var(--ntk-credit-card-icon-bg, var(--ntk-bg-active, var(--ntk-accent-soft)));
   width: 48px;
   height: 48px;
   display: flex;

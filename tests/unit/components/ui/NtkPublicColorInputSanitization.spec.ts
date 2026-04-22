@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+
 import { describe, expect, it, vi } from 'vitest'
 import { mount, shallowMount } from '@vue/test-utils'
 
@@ -21,6 +24,10 @@ vi.mock('../../../../src/composables/ui/useBranding', () => ({
 
 const styleOf = (wrapper: ReturnType<typeof mount> | ReturnType<typeof shallowMount>, selector: string): string => (
   wrapper.find(selector).attributes('style') ?? ''
+)
+
+const readComponentSource = (relativePath: string): string => (
+  readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), 'utf8')
 )
 
 describe('public UI color input sanitization', () => {
@@ -74,6 +81,22 @@ describe('public UI color input sanitization', () => {
     expect(styleOf(credit, '.credit-icon')).toContain('background-color: var(--credit-icon-bg)')
     expect(styleOf(credit, '.credit-amount')).toContain('color: var(--ntk-primary)')
     expect(styleOf(credit, '.credit-amount')).not.toContain('rgb(1, 2, 3)')
+  })
+
+  it('keeps NtkCreditCard default icon background on a component token instead of inline alpha', () => {
+    const wrapper = shallowMount(NtkCreditCard, {
+      props: {
+        icon: 'C',
+        name: 'Credits',
+        credits: 12,
+      },
+    })
+    const source = readComponentSource('../../../../src/components/ui/NtkCreditCard.vue')
+    const inlineAlphaFallback = ['rgba(var(--ntk-primary-rgb)', '0.15)'].join(', ')
+
+    expect(styleOf(wrapper, '.credit-icon')).toBe('')
+    expect(source).toContain('--ntk-credit-card-icon-bg')
+    expect(source).not.toContain(inlineAlphaFallback)
   })
 
   it('sanitizes step and stat color props before inline styles', () => {
