@@ -2,7 +2,7 @@
 
 Date: 2026-04-22
 Status: active
-Progress: 72%
+Progress: 88%
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: recommended
@@ -12,11 +12,11 @@ Release closeout: required before moving to `planning/completed`
 
 Raise the Vue + Quasar template runtime to enterprise-grade visual assurance by making the reference project in `.temp/reference` the explicit comparison base for samples and template runtime evidence.
 
-Current state: the runtime visual suite is green for theme contracts, dark theme contrast, Quasar overlay surfaces, screenshot baselines, chart structure, and user initials avatar behavior. The remaining gap is that direct reference-vs-sample evidence is not yet a first-class, repeatable artifact in every run.
+Current state: the runtime visual suite is green for theme contracts, dark theme contrast, Quasar overlay surfaces, screenshot baselines, chart structure, and user initials avatar behavior. Direct reference-vs-sample evidence now exists as a repeatable Playwright artifact under `.build/evidence`.
 
 ## Enterprise Status
 
-Overall status: 72%
+Overall status: 88%
 
 Completed coverage:
 - Existing Playwright visual suite validates Revolut, Claude, Warp, and Resend theme contracts.
@@ -26,10 +26,31 @@ Completed coverage:
 - Existing runtime coverage exercises dashboard, clients, orders, settings, knowledge, profile, chat, and overlays.
 
 Open enterprise gaps:
-- Direct `.temp/reference` to `samples` parity evidence must be generated as a durable `.build/evidence` artifact.
-- Route, menu, and asset parity must be validated against the reference source, not only against current sample expectations.
 - Historical intentional differences must be revalidated under the stricter "same resources as reference" requirement.
 - Final closeout must document whether chart implementation is accepted as reference-equivalent or must use the exact Highcharts implementation.
+
+## Evidence Update - 2026-04-22
+
+Generated evidence:
+- `.build/evidence/reference-visual-comparison/original-reference-dashboard.png`
+- `.build/evidence/reference-visual-comparison/original-reference-user-menu.png`
+- `.build/evidence/reference-visual-comparison/template-runtime-reference-charts.png`
+- `.build/evidence/reference-visual-comparison/template-runtime-user-menu.png`
+- `.build/evidence/reference-visual-comparison/template-runtime-reports-route.png`
+- `.build/evidence/reference-visual-comparison/template-runtime-warp-clients-table.png`
+- `.build/evidence/reference-visual-comparison/original-reference-contract.json`
+- `.build/evidence/reference-visual-comparison/template-runtime-reference-evidence.json`
+
+Validation results:
+- `npm run type-check`: passed.
+- `npx playwright test tests/e2e/template-runtime-reference-evidence.spec.ts --workers=1 --output=.build/test-results/reference-visual-evidence`: 2 passed.
+- `npx playwright test tests/e2e/template-runtime-reference-evidence.spec.ts tests/e2e/template-runtime-screenshots.spec.ts tests/e2e/template-runtime-visual.spec.ts tests/e2e/template-runtime-dark-theme-guardrails.spec.ts --workers=1 --output=.build/test-results/enterprise-visual-evidence`: 20 passed.
+- `npm run build:samples`: passed.
+
+Route/resource parity updates:
+- `#/configurations` is now supported as an alias for the runtime settings page.
+- `#/reports` is now available as a reference-route placeholder in the template runtime.
+- Sample logo asset hash matches all three reference logo aliases from `.temp/reference/src/assets/images`.
 
 ## Ordered Tasks
 
@@ -105,12 +126,12 @@ Suggested commit:
 
 ## Validation Checklist
 
-- [ ] Reference evidence spec exists and passes.
-- [ ] Evidence screenshots and manifest are generated under `.build/evidence/reference-visual-comparison`.
-- [ ] Full visual gate passes.
-- [ ] HTML report remains under `.build/playwright-report`.
-- [ ] Type-check passes.
-- [ ] Sample build passes.
+- [x] Reference evidence spec exists and passes.
+- [x] Evidence screenshots and manifest are generated under `.build/evidence/reference-visual-comparison`.
+- [x] Full visual gate passes.
+- [x] HTML report remains under `.build/playwright-report`.
+- [x] Type-check passes.
+- [x] Sample build passes.
 - [ ] Any remaining intentional implementation differences are explicitly accepted or converted into follow-up work.
 
 ## Risks
