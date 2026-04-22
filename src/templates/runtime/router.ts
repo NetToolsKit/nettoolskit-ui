@@ -32,6 +32,7 @@ import {
   CrudListTemplate,
   DashboardTemplate,
   ErrorNotFoundTemplate,
+  PlaceholderTemplate,
   ProfileTemplate,
 } from '../pages'
 import ReferenceDashboardCharts from '../pages/dashboard/ReferenceDashboardCharts.vue'
@@ -566,6 +567,53 @@ const RuntimeSettingsPage = defineComponent({
   },
 })
 
+const RuntimeReportsPage = defineComponent({
+  name: 'TemplateRuntimeReportsPage',
+  setup() {
+    const router = useRouter()
+
+    return () => h(PlaceholderTemplate, {
+      title: 'Reports in preparation',
+      subtitle: 'Reference reports route is available inside the reusable runtime shell.',
+      description: 'Use this placeholder to keep route parity with the source reference while the final report workspace is connected.',
+      icon: 'assessment',
+      statusLabel: 'Connected',
+      hints: [
+        {
+          id: 'reports-route-parity',
+          text: 'The /reports route mirrors the source reference route contract.',
+          icon: 'route',
+        },
+        {
+          id: 'reports-shell-parity',
+          text: 'The page keeps the same layout, theme tokens and navigation chrome.',
+          icon: 'dashboard_customize',
+        },
+      ],
+      primaryAction: {
+        id: 'reports-open-dashboard',
+        label: 'Back to dashboard',
+        icon: 'dashboard',
+      },
+      secondaryAction: {
+        id: 'reports-open-settings',
+        label: 'Open settings',
+        icon: 'settings',
+        outline: true,
+      },
+      onActionClick: (actionId: string) => {
+        if (actionId === 'reports-open-dashboard') {
+          void router.push({ name: RUNTIME_DASHBOARD_ROUTE_NAME })
+        }
+
+        if (actionId === 'reports-open-settings') {
+          void router.push({ name: 'TemplateRuntimeSettings' })
+        }
+      },
+    })
+  },
+})
+
 const RuntimeProfilePage = defineComponent({
   name: 'TemplateRuntimeProfilePage',
   setup() {
@@ -767,6 +815,7 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
     path: 'settings',
     name: 'TemplateRuntimeSettings',
     component: RuntimeSettingsPage,
+    alias: 'configurations',
     layoutId: 'main',
     menu: {
       text: 'Configurações',
@@ -774,6 +823,14 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
       order: 90,
       stickyBottom: true,
     },
+  },
+  {
+    id: 'reports',
+    path: 'reports',
+    name: 'TemplateRuntimeReports',
+    component: RuntimeReportsPage,
+    layoutId: 'main',
+    menu: false,
   },
   {
     id: 'profile',
