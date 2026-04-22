@@ -306,6 +306,26 @@ async function expectRuntimeScreenshot(
   })
 }
 
+async function assertUserAvatarInitials(userMenuTrigger: Locator): Promise<void> {
+  const avatar = userMenuTrigger.locator('.ntk-template-user-menu__avatar').first()
+
+  await expect(avatar, 'user menu trigger should render the configured initials').toHaveText('AN')
+  await expect(
+    avatar.locator('img, svg, .q-icon, i.material-icons'),
+    'user menu trigger should render initials instead of an icon or image'
+  ).toHaveCount(0)
+}
+
+async function assertDashboardChartsStructure(page: Page): Promise<void> {
+  const charts = page.locator('.ntk-reference-dashboard-charts')
+
+  await expect(charts.locator('.ntk-reference-dashboard-charts__card')).toHaveCount(2)
+  await expect(charts.locator('.ntk-reference-dashboard-charts__donut')).toBeVisible()
+  await expect(charts.locator('.ntk-reference-dashboard-charts__callout')).toHaveCount(4)
+  await expect(charts.locator('.ntk-reference-dashboard-charts__bar-row')).toHaveCount(2)
+  await expect(charts.locator('.ntk-reference-dashboard-charts__axis-tick').first()).toBeVisible()
+}
+
 async function capturePresetMatrix(page: Page, preset: PresetMatrixEntry): Promise<void> {
   await resetRuntimeState(page, preset)
   await loginToRuntime(page)
@@ -315,18 +335,25 @@ async function capturePresetMatrix(page: Page, preset: PresetMatrixEntry): Promi
   await expect(page.locator('.ntk-template-main-layout__header')).toBeVisible()
   await expectRuntimeScreenshot(page.locator('.ntk-template-main-layout__header'), preset, 'header')
   await expectRuntimeScreenshot(page.locator('.ntk-template-dashboard__card').first(), preset, 'dashboard-card')
+  await assertDashboardChartsStructure(page)
+  await expectRuntimeScreenshot(page.locator('.ntk-reference-dashboard-charts'), preset, 'charts')
 
   await page.goto(`${RUNTIME_BASE}#/clients`)
   await expect(page.getByRole('heading', { name: 'Clientes' })).toBeVisible()
   await expectRuntimeScreenshot(page.locator('.ntk-template-crud-list__table-wrap'), preset, 'clients-table')
+
+  await page.goto(`${RUNTIME_BASE}#/orders`)
+  await expect(page.getByRole('heading', { name: 'Pedidos' })).toBeVisible()
+  await expectRuntimeScreenshot(page.locator('.ntk-template-crud-list__table-wrap'), preset, 'orders-table')
 
   await page.goto(`${RUNTIME_BASE}#/settings`)
   await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
   await expectRuntimeScreenshot(page.locator('.ntk-template-runtime-settings__card').first(), preset, 'settings-card')
 
   await page.goto(`${RUNTIME_BASE}#/`)
-  const userMenuTrigger = page.locator('.ntk-template-user-menu__avatar').first()
+  const userMenuTrigger = page.locator('.ntk-template-user-menu__trigger').first()
   await expect(userMenuTrigger).toBeVisible()
+  await assertUserAvatarInitials(userMenuTrigger)
   await userMenuTrigger.click()
 
   const userMenu = page.locator('.ntk-template-user-menu').last()
