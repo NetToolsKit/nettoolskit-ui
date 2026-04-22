@@ -83,12 +83,12 @@ describe('NtkSection', () => {
     expect(wrapper.find('.footer-slot').exists()).toBe(true)
   })
 
-  it('applies bgColor as inline style', () => {
+  it('applies tokenized bgColor as inline style', () => {
     const wrapper = shallowMount(NtkSection, {
-      props: { title: 'T', bgColor: '#ff0000' },
+      props: { title: 'T', bgColor: 'surface-muted' },
     })
 
-    expect((wrapper.find('.ntk-section').element as HTMLElement).style.backgroundColor).toBe('rgb(255, 0, 0)')
+    expect(wrapper.find('.ntk-section').attributes('style')).toContain('background-color: var(--ntk-bg-secondary)')
   })
 })
 

@@ -81,6 +81,52 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { logo: themeLogo, appName, tagline: themeTagline, primaryColor, secondaryColor } = useBranding();
 
+const COLOR_TOKEN_ALIASES: Record<string, string> = {
+  primary: 'var(--ntk-primary)',
+  secondary: 'var(--ntk-secondary, var(--ntk-accent, var(--ntk-primary)))',
+  accent: 'var(--ntk-accent, var(--ntk-primary))',
+  brand: 'var(--ntk-primary)',
+  success: 'var(--ntk-success, var(--semantic-success-primary))',
+  positive: 'var(--ntk-success, var(--semantic-success-primary))',
+  warning: 'var(--ntk-warning, var(--semantic-warning-primary))',
+  error: 'var(--ntk-error, var(--semantic-error-primary))',
+  danger: 'var(--ntk-error, var(--semantic-error-primary))',
+  negative: 'var(--ntk-error, var(--semantic-error-primary))',
+  info: 'var(--ntk-info, var(--semantic-info-primary))',
+  neutral: 'var(--ntk-text-secondary)',
+  muted: 'var(--ntk-text-muted)',
+  text: 'var(--ntk-text-primary)',
+  inverse: 'var(--ntk-text-inverse)',
+};
+
+const QUASAR_NEUTRAL_ALIAS_PATTERN = /^(grey|gray|blue-grey)-\d+$/i;
+const UNSAFE_CSS_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(|javascript:/i;
+const HEX_COLOR_PATTERN = /#[\da-f]{3,8}\b/i;
+const RAW_COLOR_FUNCTION_PATTERN = /\b(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(\s*(?!var\(--)/i;
+const NAMED_COLOR_PATTERN = /\b(?:white|black|red|green|blue|hotpink|purple|violet|yellow|orange|pink|gray|grey|cyan|magenta|lime|navy|teal|maroon|olive|silver|gold|brown|coral|tomato|salmon|beige|ivory|snow|azure|lavender|plum|orchid|indigo)\b/i;
+
+const stripCssVariables = (value: string): string => value.replace(/var\([^)]*\)/gi, '');
+
+const resolveTokenColor = (value?: string): string => {
+  const normalized = value?.trim();
+  if (!normalized) {
+    return '';
+  }
+
+  const hasSafeTokenExpression = normalized.includes('var(--')
+    && !UNSAFE_CSS_VALUE_PATTERN.test(normalized)
+    && !HEX_COLOR_PATTERN.test(normalized)
+    && !RAW_COLOR_FUNCTION_PATTERN.test(normalized)
+    && !NAMED_COLOR_PATTERN.test(stripCssVariables(normalized));
+
+  if (hasSafeTokenExpression) {
+    return normalized;
+  }
+
+  const alias = normalized.toLowerCase().replace(/_/g, '-');
+  return COLOR_TOKEN_ALIASES[alias] ?? (QUASAR_NEUTRAL_ALIAS_PATTERN.test(alias) ? COLOR_TOKEN_ALIASES.neutral : '');
+};
+
 // Valores do tema ou props
 const letter = computed(() => props.letter || themeLogo.value.value);
 const text = computed(() => props.text || appName.value);
@@ -88,7 +134,7 @@ const tagline = computed(() => props.tagline || themeTagline.value);
 
 // Estilos dinâmicos
 const iconStyle = computed(() => {
-  const color = props.iconColor || primaryColor.value;
+  const color = resolveTokenColor(props.iconColor) || primaryColor.value;
   // Para o gradient, vamos usar a cor secundária como fallback
   const colorDark = secondaryColor.value;
 
@@ -107,7 +153,7 @@ const fontWeightMap = {
 };
 
 const textStyle = computed(() => ({
-  color: props.textColor || primaryColor.value,
+  color: resolveTokenColor(props.textColor) || primaryColor.value,
   fontWeight: fontWeightMap[props.fontWeight],
 }));
 </script>

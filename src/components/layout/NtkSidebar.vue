@@ -236,10 +236,26 @@ const colorTokenAliases: Record<string, string> = {
   error: 'var(--semantic-error-primary, var(--ntk-error))',
   warning: 'var(--semantic-warning-primary, var(--ntk-warning))',
   info: 'var(--semantic-info-primary, var(--ntk-info))',
-  white: 'var(--ntk-bg-card)',
   'grey-5': 'var(--ntk-text-muted)',
   'grey-7': 'var(--ntk-text-secondary)',
   'grey-8': 'var(--ntk-text-primary)'
+}
+
+const QUASAR_NEUTRAL_ALIAS_PATTERN = /^(grey|gray|blue-grey)-\d+$/i
+const UNSAFE_CSS_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(|javascript:/i
+const HEX_COLOR_PATTERN = /#[\da-f]{3,8}\b/i
+const RAW_COLOR_FUNCTION_PATTERN = /\b(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(\s*(?!var\(--)/i
+const NAMED_COLOR_PATTERN = /\b(?:white|black|red|green|blue|hotpink|purple|violet|yellow|orange|pink|gray|grey|cyan|magenta|lime|navy|teal|maroon|olive|silver|gold|brown|coral|tomato|salmon|beige|ivory|snow|azure|lavender|plum|orchid|indigo)\b/i
+
+const stripCssVariables = (value: string): string => value.replace(/var\([^)]*\)/gi, '')
+
+const isSafeCssTokenExpression = (value: string): boolean => {
+  const normalized = value.trim()
+  return normalized.includes('var(--')
+    && !UNSAFE_CSS_VALUE_PATTERN.test(normalized)
+    && !HEX_COLOR_PATTERN.test(normalized)
+    && !RAW_COLOR_FUNCTION_PATTERN.test(normalized)
+    && !NAMED_COLOR_PATTERN.test(stripCssVariables(normalized))
 }
 
 const resolveThemeColor = (color: string | undefined, fallback: string): string => {
@@ -249,7 +265,12 @@ const resolveThemeColor = (color: string | undefined, fallback: string): string 
     return fallback
   }
 
-  return colorTokenAliases[value] ?? value
+  if (isSafeCssTokenExpression(value)) {
+    return value
+  }
+
+  const alias = value.toLowerCase().replace(/_/g, '-')
+  return colorTokenAliases[alias] ?? (QUASAR_NEUTRAL_ALIAS_PATTERN.test(alias) ? 'var(--ntk-text-secondary)' : fallback)
 }
 
 const drawerClass = computed(() => [

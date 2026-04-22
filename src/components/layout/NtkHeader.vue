@@ -486,6 +486,58 @@ defineEmits([
 const $q = useQuasar()
 const isMobileView = computed(() => props.isMobile ?? !$q.screen.gt.xs)
 
+const COLOR_TOKEN_ALIASES: Record<string, string> = {
+  primary: 'var(--ntk-primary)',
+  secondary: 'var(--ntk-secondary, var(--ntk-accent, var(--ntk-primary)))',
+  accent: 'var(--ntk-accent, var(--ntk-primary))',
+  brand: 'var(--ntk-primary)',
+  success: 'var(--ntk-success, var(--semantic-success-primary))',
+  positive: 'var(--ntk-success, var(--semantic-success-primary))',
+  warning: 'var(--ntk-warning, var(--semantic-warning-primary))',
+  error: 'var(--ntk-error, var(--semantic-error-primary))',
+  danger: 'var(--ntk-error, var(--semantic-error-primary))',
+  negative: 'var(--ntk-error, var(--semantic-error-primary))',
+  info: 'var(--ntk-info, var(--semantic-info-primary))',
+  neutral: 'var(--ntk-text-secondary)',
+  muted: 'var(--ntk-text-muted)',
+  text: 'var(--ntk-text-primary)',
+  inverse: 'var(--ntk-text-inverse)',
+  surface: 'var(--ntk-bg-primary)',
+  'surface-muted': 'var(--ntk-bg-secondary)',
+  border: 'var(--ntk-border-color)',
+}
+
+const QUASAR_NEUTRAL_ALIAS_PATTERN = /^(grey|gray|blue-grey)-\d+$/i
+const UNSAFE_CSS_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(|javascript:/i
+const HEX_COLOR_PATTERN = /#[\da-f]{3,8}\b/i
+const RAW_COLOR_FUNCTION_PATTERN = /\b(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(\s*(?!var\(--)/i
+const NAMED_COLOR_PATTERN = /\b(?:white|black|red|green|blue|hotpink|purple|violet|yellow|orange|pink|gray|grey|cyan|magenta|lime|navy|teal|maroon|olive|silver|gold|brown|coral|tomato|salmon|beige|ivory|snow|azure|lavender|plum|orchid|indigo)\b/i
+
+const stripCssVariables = (value: string): string => value.replace(/var\([^)]*\)/gi, '')
+
+const isSafeCssTokenExpression = (value: string): boolean => {
+  const normalized = value.trim()
+  return normalized.includes('var(--')
+    && !UNSAFE_CSS_VALUE_PATTERN.test(normalized)
+    && !HEX_COLOR_PATTERN.test(normalized)
+    && !RAW_COLOR_FUNCTION_PATTERN.test(normalized)
+    && !NAMED_COLOR_PATTERN.test(stripCssVariables(normalized))
+}
+
+const resolveTokenColor = (value?: string, fallback = ''): string => {
+  const normalized = value?.trim()
+  if (!normalized) {
+    return fallback
+  }
+
+  if (isSafeCssTokenExpression(normalized)) {
+    return normalized
+  }
+
+  const alias = normalized.toLowerCase().replace(/_/g, '-')
+  return COLOR_TOKEN_ALIASES[alias] ?? (QUASAR_NEUTRAL_ALIAS_PATTERN.test(alias) ? COLOR_TOKEN_ALIASES.neutral : fallback)
+}
+
 const headerClass = computed(() => {
   const classes: Array<string | Record<string, boolean>> = [
     'ntk-header',
@@ -501,22 +553,28 @@ const headerClass = computed(() => {
     props.customClass
   ]
 
-  if (props.bgColor.trim().length > 0) {
-    classes.push(`bg-${props.bgColor}`)
-  }
-  if (props.textColor.trim().length > 0) {
-    classes.push(`text-${props.textColor}`)
-  }
-
   return classes
 })
 
-const headerTokenStyle = computed<Record<string, string>>(() => ({
-  '--ntk-header-action-color': props.actionColor,
-  '--ntk-header-search-icon-color': props.searchIconColor,
-  '--ntk-header-notification-badge-bg': props.notificationBadgeColor,
-  '--ntk-header-notification-badge-text': props.notificationBadgeTextColor
-}))
+const headerTokenStyle = computed<Record<string, string>>(() => {
+  const headerBg = resolveTokenColor(props.bgColor)
+  const headerText = resolveTokenColor(props.textColor)
+
+  return {
+    ...(headerBg ? { '--ntk-header-bg-color': headerBg } : {}),
+    ...(headerText ? { '--ntk-header-text-color': headerText } : {}),
+    '--ntk-header-action-color': resolveTokenColor(props.actionColor, 'var(--ntk-text-secondary)'),
+    '--ntk-header-search-icon-color': resolveTokenColor(props.searchIconColor, 'var(--ntk-text-muted)'),
+    '--ntk-header-notification-badge-bg': resolveTokenColor(
+      props.notificationBadgeColor,
+      'var(--semantic-error, var(--ntk-danger))'
+    ),
+    '--ntk-header-notification-badge-text': resolveTokenColor(
+      props.notificationBadgeTextColor,
+      'var(--ntk-text-inverse)'
+    )
+  }
+})
 </script>
 
 <style scoped lang="scss">
@@ -654,6 +712,8 @@ const headerTokenStyle = computed<Record<string, string>>(() => ({
  * ============================================ */
 .ntk-header {
   font-family: var(--ntk-font-body);
+  background: var(--ntk-header-bg-color, var(--ntk-bg-primary));
+  color: var(--ntk-header-text-color, var(--ntk-text-primary));
 
   :deep(.q-toolbar) {
     padding: 0 16px;

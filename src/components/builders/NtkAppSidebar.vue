@@ -204,9 +204,33 @@ const colorTokenAliases: Record<string, string> = {
   info: 'var(--semantic-info-primary, var(--ntk-info))',
 }
 
-const resolveThemeColor = (color?: string): string => {
-  if (!color) return 'var(--ntk-avatar-bg, var(--ntk-primary))'
-  return colorTokenAliases[color] ?? color
+const QUASAR_NEUTRAL_ALIAS_PATTERN = /^(grey|gray|blue-grey)-\d+$/i
+const UNSAFE_CSS_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(|javascript:/i
+const HEX_COLOR_PATTERN = /#[\da-f]{3,8}\b/i
+const RAW_COLOR_FUNCTION_PATTERN = /\b(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(\s*(?!var\(--)/i
+const NAMED_COLOR_PATTERN = /\b(?:white|black|red|green|blue|hotpink|purple|violet|yellow|orange|pink|gray|grey|cyan|magenta|lime|navy|teal|maroon|olive|silver|gold|brown|coral|tomato|salmon|beige|ivory|snow|azure|lavender|plum|orchid|indigo)\b/i
+
+const stripCssVariables = (value: string): string => value.replace(/var\([^)]*\)/gi, '')
+
+const isSafeCssTokenExpression = (value: string): boolean => {
+  const normalized = value.trim()
+  return normalized.includes('var(--')
+    && !UNSAFE_CSS_VALUE_PATTERN.test(normalized)
+    && !HEX_COLOR_PATTERN.test(normalized)
+    && !RAW_COLOR_FUNCTION_PATTERN.test(normalized)
+    && !NAMED_COLOR_PATTERN.test(stripCssVariables(normalized))
+}
+
+const resolveThemeColor = (color?: string, fallback = 'var(--ntk-avatar-bg, var(--ntk-primary))'): string => {
+  const value = color?.trim()
+  if (!value) return fallback
+
+  if (isSafeCssTokenExpression(value)) {
+    return value
+  }
+
+  const alias = value.toLowerCase().replace(/_/g, '-')
+  return colorTokenAliases[alias] ?? (QUASAR_NEUTRAL_ALIAS_PATTERN.test(alias) ? 'var(--ntk-text-secondary)' : fallback)
 }
 
 const userInitials = computed(() => {
@@ -222,7 +246,7 @@ const userAvatarStyle = computed<Record<string, string>>(() => ({
 }))
 
 const getBadgeStyle = (color?: string): Record<string, string> => ({
-  '--ntk-sidebar-badge-bg': color ? resolveThemeColor(color) : 'var(--ntk-primary)',
+  '--ntk-sidebar-badge-bg': resolveThemeColor(color, 'var(--ntk-primary)'),
 })
 
 const isActive = (item: MenuItem): boolean => {

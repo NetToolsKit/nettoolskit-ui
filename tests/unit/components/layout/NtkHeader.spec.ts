@@ -24,9 +24,9 @@ describe('NtkHeader', () => {
   it('applies token-driven action and badge styles', () => {
     const wrapper = mount(NtkHeader, {
       props: {
-        actionColor: '#112233',
-        notificationBadgeColor: '#ff0000',
-        notificationBadgeTextColor: '#ffffff',
+        actionColor: 'primary',
+        notificationBadgeColor: 'warning',
+        notificationBadgeTextColor: 'inverse',
         showNotifications: true,
         notificationCount: 3,
       },
@@ -34,9 +34,9 @@ describe('NtkHeader', () => {
 
     const header = wrapper.find('header[data-stub="QHeader"]')
     const style = header.attributes('style')
-    expect(style).toContain('--ntk-header-action-color: #112233')
-    expect(style).toContain('--ntk-header-notification-badge-bg: #ff0000')
-    expect(style).toContain('--ntk-header-notification-badge-text: #ffffff')
+    expect(style).toContain('--ntk-header-action-color: var(--ntk-primary)')
+    expect(style).toContain('--ntk-header-notification-badge-bg: var(--ntk-warning')
+    expect(style).toContain('--ntk-header-notification-badge-text: var(--ntk-text-inverse)')
   })
 
   it('does not force quasar bg/text classes when not configured', () => {
@@ -48,17 +48,20 @@ describe('NtkHeader', () => {
     expect(headerClasses.includes('text-')).toBe(false)
   })
 
-  it('adds quasar bg/text classes only when explicitly configured', () => {
+  it('uses tokenized styles instead of quasar bg/text classes when configured', () => {
     const wrapper = mount(NtkHeader, {
       props: {
-        bgColor: 'white',
+        bgColor: 'surface',
         textColor: 'grey-8',
       },
     })
 
     const header = wrapper.find('header[data-stub="QHeader"]')
     const headerClasses = header.attributes('class')
-    expect(headerClasses).toContain('bg-white')
-    expect(headerClasses).toContain('text-grey-8')
+    const headerStyle = header.attributes('style')
+    expect(headerClasses).not.toContain('bg-surface')
+    expect(headerClasses).not.toContain('text-grey-8')
+    expect(headerStyle).toContain('--ntk-header-bg-color: var(--ntk-bg-primary)')
+    expect(headerStyle).toContain('--ntk-header-text-color: var(--ntk-text-secondary)')
   })
 })

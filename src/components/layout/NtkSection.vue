@@ -91,9 +91,53 @@ const containerClasses = computed(() => ({
   'ntk-section__container--full-width': props.fullWidth
 }))
 
+const BACKGROUND_TOKEN_ALIASES: Record<string, string> = {
+  primary: 'var(--ntk-primary)',
+  secondary: 'var(--ntk-secondary, var(--ntk-accent, var(--ntk-primary)))',
+  accent: 'var(--ntk-accent, var(--ntk-primary))',
+  brand: 'var(--ntk-primary)',
+  surface: 'var(--ntk-bg-primary)',
+  'surface-muted': 'var(--ntk-bg-secondary)',
+  dark: 'var(--ntk-footer-bg)',
+  light: 'var(--ntk-bg-light)',
+  neutral: 'var(--ntk-bg-secondary)',
+  success: 'var(--ntk-success, var(--semantic-success-primary))',
+  warning: 'var(--ntk-warning, var(--semantic-warning-primary))',
+  error: 'var(--ntk-error, var(--semantic-error-primary))',
+  danger: 'var(--ntk-error, var(--semantic-error-primary))',
+  info: 'var(--ntk-info, var(--semantic-info-primary))',
+}
+
+const UNSAFE_CSS_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(|javascript:/i
+const HEX_COLOR_PATTERN = /#[\da-f]{3,8}\b/i
+const RAW_COLOR_FUNCTION_PATTERN = /\b(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(\s*(?!var\(--)/i
+const NAMED_COLOR_PATTERN = /\b(?:white|black|red|green|blue|hotpink|purple|violet|yellow|orange|pink|gray|grey|cyan|magenta|lime|navy|teal|maroon|olive|silver|gold|brown|coral|tomato|salmon|beige|ivory|snow|azure|lavender|plum|orchid|indigo)\b/i
+
+const stripCssVariables = (value: string): string => value.replace(/var\([^)]*\)/gi, '')
+
+const resolveTokenBackground = (value?: string): string => {
+  const normalized = value?.trim()
+  if (!normalized) {
+    return ''
+  }
+
+  const hasSafeTokenExpression = normalized.includes('var(--')
+    && !UNSAFE_CSS_VALUE_PATTERN.test(normalized)
+    && !HEX_COLOR_PATTERN.test(normalized)
+    && !RAW_COLOR_FUNCTION_PATTERN.test(normalized)
+    && !NAMED_COLOR_PATTERN.test(stripCssVariables(normalized))
+
+  if (hasSafeTokenExpression) {
+    return normalized
+  }
+
+  return BACKGROUND_TOKEN_ALIASES[normalized.toLowerCase().replace(/_/g, '-')] ?? ''
+}
+
 const sectionStyle = computed(() => {
-  if (props.bgColor) {
-    return { backgroundColor: props.bgColor }
+  const backgroundColor = resolveTokenBackground(props.bgColor)
+  if (backgroundColor) {
+    return { backgroundColor }
   }
   return {}
 })
