@@ -398,7 +398,7 @@ onBeforeUnmount(() => {
   line-height: 1.5;
 }
 
-/* Accent buttons — replace Quasar color="primary" */
+/* Accent buttons replace Quasar palette props. */
 .ntk-original-reference__accent-btn {
   color: var(--ntk-accent) !important;
 }
