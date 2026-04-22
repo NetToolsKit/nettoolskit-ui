@@ -64,18 +64,18 @@ function createSeededChatSnapshot(): ChatSnapshotSeed {
           {
             id: 'msg-2',
             role: 'assistant',
-            content: 'Resumo local salvo para esta conversa: Checklist seed. Consulte Manual Operacional.md e confirme o proximo passo antes de concluir a acao.',
+            content: 'Local summary saved for this conversation: Checklist seed. Review Operational Manual.md and confirm the next step before completing the action.',
             createdAt: '2026-04-16T12:00:00.000Z',
             fromCache: false,
             sources: [
               {
-                documentName: 'Manual Operacional.md',
-                chunkContent: 'Fluxo local de atendimento para clientes, pedidos e tarefas do workspace.',
+                documentName: 'Operational Manual.md',
+                chunkContent: 'Local service flow for clients, orders, and workspace tasks.',
                 relevance: 0.96,
               },
               {
-                documentName: 'Guia de Configuracoes.md',
-                chunkContent: 'Preferencias persistidas localmente sao reaplicadas ao recarregar o runtime.',
+                documentName: 'Settings Guide.md',
+                chunkContent: 'Locally persisted preferences are reapplied when the runtime reloads.',
                 relevance: 0.91,
               },
             ],
@@ -376,11 +376,12 @@ async function assertCrudDarkSurfaces(
   const searchSurface = page.locator('.ntk-template-crud-list__search')
   const searchInput = page.getByLabel(searchLabel)
   const tableWrap = page.locator('.ntk-template-crud-list__table-wrap')
-  const table = page.locator(`table[aria-label="${tableLabel}"]`)
+  const dataTable = tableWrap.locator('.ntk-data-table')
+  const table = dataTable.locator('table').first()
   const tableHeaderCells = table.locator('thead th:visible')
   const tableBodyCells = table.locator('tbody td:visible')
-  const tableStatusChips = table.locator('.ntk-template-crud-list__status:visible')
-  const tableRowActions = table.locator('.ntk-template-crud-list__row-action:visible')
+  const tableStatusChips = dataTable.locator('.ntk-data-table__status:visible')
+  const tableRowActions = dataTable.locator('.ntk-data-table__row-action:visible')
   const activeFilter = page.locator('.ntk-template-crud-list__filter--active').first()
   const visibleFilters = page.locator('.ntk-template-crud-list__filter:visible')
   const viewToggle = page.locator('.ntk-template-crud-list__view--active').first()
@@ -401,6 +402,7 @@ async function assertCrudDarkSurfaces(
   await expect(searchSurface).toBeVisible()
   await page.getByRole('button', { name: tableToggleLabel }).click()
   await expect(tableWrap).toBeVisible()
+  await expect(dataTable).toHaveAttribute('aria-label', tableLabel)
   await expect(tableHeaderCells.first()).toBeVisible()
   await expect(tableBodyCells.first()).toBeVisible()
   await expect(activeFilter).toBeVisible()
@@ -544,7 +546,7 @@ async function assertOverlayDarkSurfaces(page: Page, themeId: string): Promise<v
     `${themeId} drawer tooltip overlay`
   )
 
-  const assistantTrigger = page.getByLabel(/abrir assistente/i)
+  const assistantTrigger = page.getByLabel(/open assistant/i)
   await expect(assistantTrigger).toBeVisible()
   await assistantTrigger.click()
 
@@ -571,7 +573,7 @@ async function assertOverlayDarkSurfaces(page: Page, themeId: string): Promise<v
 
 async function assertSettingsDarkSurfaces(page: Page, themeId: string): Promise<void> {
   await page.goto(`${RUNTIME_BASE}#/settings`)
-  await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
   const hero = page.locator('.ntk-template-runtime-settings__hero')
   const heroTitle = hero.locator('h1')
@@ -642,7 +644,7 @@ async function assertProfileDarkSurfaces(page: Page, themeId: string): Promise<v
 
 async function assertWikiDarkSurfaces(page: Page, themeId: string): Promise<void> {
   await page.goto(`${RUNTIME_BASE}#/knowledge`)
-  await expect(page.getByRole('heading', { name: 'Base de conhecimento' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Knowledge base' })).toBeVisible()
 
   const hero = page.locator('.ntk-template-wiki__hero')
   const heroTitle = hero.locator('.ntk-template-wiki__hero-title')
@@ -737,7 +739,7 @@ async function assertKnowledgeChatDarkSurfaces(page: Page, themeId: string): Pro
   const input = page.locator('.ntk-template-wiki-chat__input')
   const startNewConversationButton = page.getByRole('button', { name: 'Start new conversation' }).first()
 
-  await expect(page.locator('.ntk-template-wiki-chat__chat-subtitle')).toContainText('Converse com a base local')
+  await expect(page.locator('.ntk-template-wiki-chat__chat-subtitle')).toContainText('Chat with the local base')
   await expect(chatShell).toBeVisible()
   await expect(sidebar).toBeVisible()
   await expect(activeConversation).toBeVisible()
@@ -868,19 +870,19 @@ test.describe('template runtime dark theme guardrails', () => {
       await assertCrudDarkSurfaces(
         page,
         'clients',
-        'Clientes',
-        'Buscar clientes',
-        'Alternar para tabela de clientes',
-        'Tabela de clientes',
+        'Clients',
+        'Search clients',
+        'Switch to clients table',
+        'Clients table',
         theme.id
       )
       await assertCrudDarkSurfaces(
         page,
         'orders',
-        'Pedidos',
-        'Buscar pedidos',
-        'Alternar para tabela de pedidos',
-        'Tabela de pedidos',
+        'Orders',
+        'Search orders',
+        'Switch to orders table',
+        'Orders table',
         theme.id
       )
     })

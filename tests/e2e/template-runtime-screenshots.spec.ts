@@ -107,34 +107,34 @@ function createRuntimeSeed(): RuntimeScreenshotSeedSnapshot {
     clients: [
       {
         id: 'client-shot-1',
-        name: 'Cliente Atlas',
+        name: 'Atlas Client',
         owner: 'Ana Lima',
-        segment: 'Distribuicao',
+        segment: 'Distribution',
         city: 'Recife',
         status: 'active',
         monthlyRevenue: 18000,
         lastOrderAt: '2026-04-10T09:00:00.000Z',
-        tags: ['nordeste', 'vip'],
+        tags: ['northeast', 'vip'],
       },
       {
         id: 'client-shot-2',
-        name: 'Cliente Boreal',
+        name: 'Boreal Client',
         owner: 'Bruno Serra',
-        segment: 'Industria',
+        segment: 'Industry',
         city: 'Curitiba',
         status: 'onboarding',
         monthlyRevenue: 9400,
         lastOrderAt: '2026-04-08T15:30:00.000Z',
-        tags: ['novo'],
+        tags: ['new'],
       },
     ],
     orders: [
       {
         id: 'order-shot-1',
-        number: 'PED-4001',
+        number: 'ORD-4001',
         clientId: 'client-shot-1',
-        clientName: 'Cliente Atlas',
-        category: 'Eletronicos',
+        clientName: 'Atlas Client',
+        category: 'Electronics',
         total: 7200,
         status: 'pending',
         createdAt: '2026-04-10T09:00:00.000Z',
@@ -142,10 +142,10 @@ function createRuntimeSeed(): RuntimeScreenshotSeedSnapshot {
       },
       {
         id: 'order-shot-2',
-        number: 'PED-4002',
+        number: 'ORD-4002',
         clientId: 'client-shot-2',
-        clientName: 'Cliente Boreal',
-        category: 'Industria',
+        clientName: 'Boreal Client',
+        category: 'Industry',
         total: 5400,
         status: 'in_progress',
         createdAt: '2026-04-09T12:00:00.000Z',
@@ -156,7 +156,7 @@ function createRuntimeSeed(): RuntimeScreenshotSeedSnapshot {
       workspaceName: 'Atlas Screenshot',
       operatorName: 'Admin NetToolsKit',
       supportEmail: 'screenshots@atlas.local',
-      locale: 'pt-BR',
+      locale: 'en-US',
       timezone: 'America/Sao_Paulo',
       notificationsEnabled: true,
       compactTables: true,
@@ -166,32 +166,32 @@ function createRuntimeSeed(): RuntimeScreenshotSeedSnapshot {
       categories: [
         {
           id: 'operations',
-          name: 'Operacoes',
+          name: 'Operations',
           count: 1,
           expanded: true,
           children: [
-            { id: 'operations-orders', name: 'Pedidos', count: 1 },
+            { id: 'operations-orders', name: 'Orders', count: 1 },
           ],
         },
       ],
       documents: [
         {
           id: 'doc-shot-1',
-          name: 'Manual Operacional.md',
+          name: 'Operational Manual.md',
           fileType: 'md',
           size: '12 KB',
-          category: 'Operacoes',
+          category: 'Operations',
           categoryId: 'operations',
-          subCategory: 'Pedidos',
+          subCategory: 'Orders',
           subCategoryId: 'operations-orders',
           tags: ['runtime'],
           status: 'processed',
           uploadDate: '10/04',
-          description: 'Documento seed para validar screenshots do runtime.',
+          description: 'Seed document used to validate runtime screenshots.',
         },
       ],
       suggestions: [
-        { id: 'sug-shot-1', text: 'Quais pedidos estao em aberto?', icon: 'help' },
+        { id: 'sug-shot-1', text: 'Which orders are still open?', icon: 'help' },
       ],
     },
   }
@@ -213,19 +213,19 @@ function createSeededChatSnapshot(): ChatSnapshotSeed {
           {
             id: 'msg-screenshot-1',
             role: 'user',
-            content: 'Validar screenshots do template runtime',
+            content: 'Validate template runtime screenshots',
             createdAt: '2026-04-16T12:00:00.000Z',
           },
           {
             id: 'msg-screenshot-2',
             role: 'assistant',
-            content: 'Resumo local salvo para esta conversa: Validar screenshots do template runtime. Consulte Manual Operacional.md e confirme superficies criticas.',
+            content: 'Local summary saved for this conversation: Validate template runtime screenshots. Review Operational Manual.md and confirm critical surfaces.',
             createdAt: '2026-04-16T12:00:00.000Z',
             fromCache: false,
             sources: [
               {
-                documentName: 'Manual Operacional.md',
-                chunkContent: 'Fluxo local de atendimento para clientes, pedidos e tarefas do workspace.',
+                documentName: 'Operational Manual.md',
+                chunkContent: 'Local service flow for clients, orders, and workspace tasks.',
                 relevance: 0.96,
               },
             ],
@@ -255,7 +255,7 @@ async function resetRuntimeState(page: Page, preset: PresetMatrixEntry): Promise
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -343,15 +343,15 @@ async function capturePresetMatrix(page: Page, preset: PresetMatrixEntry): Promi
   await expectRuntimeScreenshot(page.locator('.ntk-reference-dashboard-charts'), preset, 'charts')
 
   await page.goto(`${RUNTIME_BASE}#/clients`)
-  await expect(page.getByRole('heading', { name: 'Clientes' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Clients' })).toBeVisible()
   await expectRuntimeScreenshot(page.locator('.ntk-template-crud-list__table-wrap'), preset, 'clients-table')
 
   await page.goto(`${RUNTIME_BASE}#/orders`)
-  await expect(page.getByRole('heading', { name: 'Pedidos' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible()
   await expectRuntimeScreenshot(page.locator('.ntk-template-crud-list__table-wrap'), preset, 'orders-table')
 
   await page.goto(`${RUNTIME_BASE}#/settings`)
-  await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
   await expectRuntimeScreenshot(page.locator('.ntk-template-runtime-settings__card').first(), preset, 'settings-card')
 
   await page.goto(`${RUNTIME_BASE}#/`)

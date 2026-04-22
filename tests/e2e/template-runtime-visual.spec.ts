@@ -68,13 +68,13 @@ function createSeededChatSnapshot(): ChatSnapshotSeed {
           {
             id: 'msg-visual-2',
             role: 'assistant',
-            content: 'Resumo local salvo para esta conversa: Validar contraste do runtime. Consulte Manual Operacional.md e confirme superficies criticas.',
+            content: 'Local summary saved for this conversation: Validate runtime contrast. Review Operational Manual.md and confirm critical surfaces.',
             createdAt: '2026-04-16T12:00:00.000Z',
             fromCache: false,
             sources: [
               {
-                documentName: 'Manual Operacional.md',
-                chunkContent: 'Fluxo local de atendimento para clientes, pedidos e tarefas do workspace.',
+                documentName: 'Operational Manual.md',
+                chunkContent: 'Local support flow for customers, orders, and workspace tasks.',
                 relevance: 0.96,
               },
             ],
@@ -409,7 +409,7 @@ async function assertDashboardChartReferenceStructure(page: Page, preset: Preset
     return elements.map(element => element.textContent?.trim() ?? '')
   })
 
-  for (const category of ['Eletrônicos', 'Alimentos', 'Vestuário', 'Higiene']) {
+  for (const category of ['Electronics', 'Food', 'Fashion', 'Hygiene']) {
     expect(axisValues, `${preset.id} dashboard category axis should include ${category}`).toContain(category)
   }
 }
@@ -433,13 +433,13 @@ async function assertDashboardCertification(page: Page, preset: PresetCertificat
 
 async function assertClientsCertification(page: Page, preset: PresetCertification): Promise<void> {
   await page.goto(`${RUNTIME_BASE}#/clients`)
-  await expect(page.getByRole('heading', { name: 'Clientes' })).toBeVisible()
-  await page.getByRole('button', { name: 'Alternar para tabela de clientes' }).click()
+  await expect(page.getByRole('heading', { name: 'Clients' })).toBeVisible()
+  await page.getByRole('button', { name: 'Switch to clients table' }).click()
 
   const searchSurface = page.locator('.ntk-template-crud-list__search')
-  const searchInput = page.getByLabel('Buscar clientes')
+  const searchInput = page.getByLabel('Search clients')
   const tableWrap = page.locator('.ntk-template-crud-list__table-wrap')
-  const tableHeader = page.locator('table[aria-label="Tabela de clientes"] thead th').first()
+  const tableHeader = page.locator('.ntk-data-table[aria-label="Clients table"] thead th').first()
 
   await expect(searchSurface).toBeVisible()
   await expect(tableWrap).toBeVisible()
@@ -450,7 +450,7 @@ async function assertClientsCertification(page: Page, preset: PresetCertificatio
 
 async function assertSettingsCertification(page: Page, preset: PresetCertification): Promise<void> {
   await page.goto(`${RUNTIME_BASE}#/settings`)
-  await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
   const card = page.locator('.ntk-template-runtime-settings__card').first()
   const cardTitle = card.locator('h2')
@@ -465,7 +465,7 @@ async function assertSettingsCertification(page: Page, preset: PresetCertificati
 
 async function assertKnowledgeCertification(page: Page, preset: PresetCertification): Promise<void> {
   await page.goto(`${RUNTIME_BASE}#/knowledge`)
-  await expect(page.getByRole('heading', { name: 'Base de conhecimento' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Knowledge base' })).toBeVisible()
 
   const sidebar = page.locator('.ntk-template-wiki__sidebar')
   const sidebarTitle = sidebar.locator('.ntk-template-wiki__sidebar-title')
