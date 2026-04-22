@@ -139,7 +139,7 @@
 - release closeout: required for each stable phase commit
 
 ## Closeout Expectations
-- update this active plan with completed scope and validation evidence
+- update this completed plan with completed scope and validation evidence
 - keep README changes out unless the surface/export contract changes
 - produce a detailed English commit message with explicit validations
 - preserve changelog-ready details in the commit body only
@@ -169,7 +169,7 @@
 
 ### Slice 3
 - Target paths:
-  - `planning/active/cms-decomposition-plan-2026-04-07.md`
+  - `planning/completed/cms-decomposition-plan-2026-04-07.md`
 - Commands:
   - `npm run type-check`
   - `npm run lint`

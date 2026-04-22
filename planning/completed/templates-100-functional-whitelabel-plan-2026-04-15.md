@@ -231,7 +231,7 @@ Overall status: **100%**
 **Changes:**
 - record the final runtime state and any intentional limits that remain
 - update template and approved-runtime documentation
-- move the plan to `planning/completed/` only when the workstream is actually closed
+- keep the archived plan in `planning/completed/` because the workstream is closed
 
 **Commands:**
 - `npm run lint`

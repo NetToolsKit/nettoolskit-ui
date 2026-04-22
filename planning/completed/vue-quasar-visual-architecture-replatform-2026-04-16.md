@@ -251,7 +251,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 **Changes:**
 - keep the official Vue and Quasar links in the repository README
 - record the final token hierarchy and the popup/layout styling rules
-- move the plan to `planning/completed` when the regression matrix is green
+- keep the archived plan in `planning/completed` after the regression matrix is green
 - leave a short maintenance note telling future contributors to prefer official Quasar layout and theme patterns over local ad hoc overrides
 
 **Commands:**
@@ -309,7 +309,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 ## Closeout Expectations
 
 - final README update preserved
-- final plan moved from `planning/active` to `planning/completed`
+- final plan archived under `planning/completed`
 - commit message references theme/layout recovery explicitly
 - no backend or integration scope included in the visual closeout
 - completion includes green full validation and screenshot-baseline certification for the approved runtime matrix

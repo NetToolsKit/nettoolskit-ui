@@ -62,9 +62,9 @@ Out of scope for this workstream:
 
 ## Ordered Tasks
 
-1. Create the active execution track for CMS removal and reference-system adoption
+1. Create the execution track for CMS removal and reference-system adoption
    - Target paths:
-     - `planning/active/reference-whitelabel-samples-plan-2026-04-01.md`
+     - `planning/completed/reference-whitelabel-samples-plan-2026-04-01.md`
    - Checkpoints:
      - scope, risks, validations, and commit checkpoints are explicit
    - Commit checkpoint suggestion:
@@ -181,6 +181,6 @@ Out of scope for this workstream:
 
 ## Closeout Expectations
 
-- Keep this plan under `planning/active/` until CMS removal and sample runtime validation are complete.
+- This plan is archived under `planning/completed/` after CMS removal and sample runtime validation were completed.
 - Create real git commits at each stable checkpoint.
 - If the visual baseline changes, refresh the relevant Playwright snapshots in the same workstream.

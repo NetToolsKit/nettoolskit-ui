@@ -114,14 +114,14 @@ Out of scope:
 
 1. Reconcile plan status with runtime truth
    - Target paths:
-     - `planning/active/cms-engine-reference-alignment-plan-2026-03-26.md`
+     - `planning/completed/cms-engine-reference-alignment-plan-2026-03-26.md`
      - `planning/completed/cms-engine-enterprise-plan-2026-03-13.md`
    - Commands:
      - `git status --short`
      - `rg -n "NtkAppShell|MainLayoutTemplate|EditorWorkbenchTemplate" landing-page/CmsApp.vue src/templates -S`
    - Checkpoints:
-     - active plan exists
-     - plan explicitly records the current template/runtime gap
+     - completed plan is archived in `planning/completed`
+     - plan explicitly records the template/runtime gap that was closed
    - Commit checkpoint suggestion:
      - `docs(plan): reopen cms template-reference alignment execution`
 
@@ -162,7 +162,7 @@ Out of scope:
      - `feat(cms): adopt editor workbench template across authoring modules`
 
 4. Extract remaining reusable CMS chrome from `CmsApp.vue`
-   - Status: in progress
+   - Status: completed
    - Target paths:
      - `landing-page/CmsApp.vue`
      - `src/templates/features/cms/authoring/*.vue`
@@ -182,7 +182,7 @@ Out of scope:
      - `refactor(cms): extract reusable authoring chrome components`
 
 5. Move reusable landing/template runtime infrastructure into `src`
-   - Status: in progress
+   - Status: completed
    - Target paths:
      - `landing-page/main.ts`
      - `src/templates/runtime/**`
@@ -204,7 +204,7 @@ Out of scope:
    - Target paths:
      - `.temp/reference/**`
      - `.temp/comparison/**`
-     - `planning/active/cms-engine-reference-alignment-plan-2026-03-26.md`
+     - `planning/completed/cms-engine-reference-alignment-plan-2026-03-26.md`
      - `README.md`
      - `src/templates/**/README.md`
    - Commands:
@@ -233,17 +233,17 @@ Out of scope:
 - Implementation: `dev-frontend-vue-quasar-engineer`
 - Planning maintenance: `plan-active-work-planner`
 - Test gate: required
-- Review gate: required before closing this active plan
+- Review gate: required before closing this workstream
 - Release closeout: required with detailed English commit messages
 
 ## Closeout Expectations
 
-- Keep this plan in `planning/active/` until the CMS runtime truly matches the template/reference architecture.
+- This plan is archived in `planning/completed/` after the CMS runtime alignment workstream was closed.
 - If README files are touched, they must continue following `docs/standards/readme-frontend-super-agent-standard.md`.
 - Every stable phase must end with:
   - validation results
   - an English commit message
   - a real git commit
 - After full completion:
-  - move this plan to `planning/completed/`
+  - keep this archived plan in `planning/completed/`
   - update the historical enterprise plan only if a corrective note is needed

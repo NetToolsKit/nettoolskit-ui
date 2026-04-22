@@ -102,7 +102,7 @@ Out of scope for this workstream:
     - `npm run test -- tests/unit/templates/EnterpriseFeatureTemplates.spec.ts` — passes (10 tests)
     - `npm run test -- tests/unit/templates/ReferenceSystemTemplates.spec.ts` — passes
     - `npm audit --omit=dev` — 0 runtime vulnerabilities
-  - moved both active plans to `planning/completed/`
+  - archived both plans under `planning/completed/`
   - commit: `docs(plan): close out reference whitelabel report system workstream`
 
 ## Ordered Tasks
@@ -157,7 +157,7 @@ Out of scope for this workstream:
      - `landing-page/TemplateShowcaseApp.vue`
      - `tests/unit/templates/**`
      - `README.md`
-     - `planning/active/reference-whitelabel-report-system-plan-2026-04-01.md`
+     - `planning/completed/reference-whitelabel-report-system-plan-2026-04-01.md`
    - Commands:
      - `npm run lint`
      - `npm run type-check`
@@ -181,16 +181,16 @@ Out of scope for this workstream:
 - Implementation: `dev-frontend-vue-quasar-engineer`
 - Planning maintenance: `plan-active-work-planner`
 - Test gate: required
-- Review gate: required before closing the active plan
+- Review gate: required before closing the workstream
 - Release closeout: required with English commit messages
 
 ## Closeout Expectations
 
-- Keep this file under `planning/active/` until the reference-system samples replace the CMS public flow.
+- This file is archived under `planning/completed/` after the reference-system samples replaced the CMS public flow.
 - Every stable slice must end with:
   - validation results
   - an English commit message
   - a real git commit
 - When the workstream is complete:
-  - move this file to `planning/completed/`
+  - keep this archived file in `planning/completed/`
   - update README sections touched by the public demo/runtime flow

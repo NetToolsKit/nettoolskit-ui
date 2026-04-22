@@ -32,7 +32,7 @@ Overall status: **100%**
 ## Ordered Tasks
 
 1. Clean stale documentation and artifacts.
-   - Target paths: `README.md`, `planning/completed/**`, `tests/e2e/template-visual-regression.spec.ts-snapshots/**`
+   - Target paths: `README.md`, `planning/completed/**`, `tests/e2e/template-runtime-screenshots.spec.ts-snapshots/**`
    - Commands: `rg`, `git ls-files`, targeted doc checks
    - Commit suggestion: `docs(plans): clean completed template references`
 
@@ -48,7 +48,7 @@ Overall status: **100%**
 
 4. Final validation and closeout.
    - Commands: `npm run type-check`, focused unit/E2E tests, `npm run lint`
-   - Closeout: update this status to 100%, move to `planning/completed/`, and commit.
+   - Closeout: status updated to 100%, archived in `planning/completed/`, and committed.
 
 ## Validation Checklist
 
@@ -60,11 +60,11 @@ Overall status: **100%**
 
 ## Closeout Expectations
 
-- no active planning/doc references point to closed template workstreams
+- no stale planning/doc references point to closed template workstreams
 - no orphaned visual-regression artifacts remain outside `.build` or `.temp`
 - shared component colors use CSS variable/token contracts instead of Quasar defaults or legacy `useTheme` values
 - dashboard charts, user initials, orders table, and dark table details are covered by stable visual guardrails
 
 ## Final Status
 
-The residual sweep is complete. `planning/active` should be empty after this file is moved to `planning/completed`.
+The residual sweep is complete. No completed-plan entries remain in the open work folder after this file was moved to `planning/completed`.

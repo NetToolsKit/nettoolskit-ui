@@ -9,7 +9,7 @@ Status: Completed
 Normalize repository planning and generated-artifact structure.
 
 In scope:
-- move planning material out of `.temp/` into `planning/active`, `planning/completed` or `planning/reference`
+- move planning material out of `.temp/` into the planning lifecycle folders (`active`, `completed`, or `reference`)
 - classify active vs completed plans based on current completion state
 - clean disposable `.temp/` artifacts that no longer belong to planning
 - route generated test/build artifacts into `.build/` where toolchain supports it
@@ -38,9 +38,9 @@ Out of scope:
 
 ## Decisions
 
-- `planning/active/cms-engine-enterprise-plan-2026-03-13.md` remains active because items `111` and `112` are still pending.
-- `planning/active/landing-standardization-plan-2026-03-18.md` is completed and must move to `planning/completed/`.
-- `layout-cms.md` and the white-label hardcoded audit are support material, not active plans; they belong in `planning/reference/`.
+- `planning/completed/cms-engine-enterprise-plan-2026-03-13.md` is archived as completed after later CMS closeout work resolved the remaining items.
+- `planning/completed/landing-standardization-plan-2026-03-18.md` is archived as completed.
+- `layout-cms.md` and the white-label hardcoded audit are support material, not execution plans; they belong in `planning/reference/`.
 - `node_modules/` remains at repository root because npm/Vite/TypeScript resolution expects the standard location; it is not safe to relocate as a repository hygiene change.
 - Root deployment manifests such as `vercel.json` remain at root because their hosting providers expect that location.
 

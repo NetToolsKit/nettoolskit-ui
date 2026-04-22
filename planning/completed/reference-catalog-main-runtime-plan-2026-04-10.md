@@ -69,7 +69,7 @@
   - `tests/unit/landing/LandingTokenization.spec.ts`
   - `tests/unit/templates/ReferenceSystemTemplates.spec.ts`
   - `README.md`
-  - `planning/active/reference-catalog-main-runtime-plan-2026-04-10.md`
+  - `planning/completed/reference-catalog-main-runtime-plan-2026-04-10.md`
 - Checkpoint:
   - tests and docs describe the samples-first runtime without implying the marketing landing is canonical
 - Commit checkpoint:

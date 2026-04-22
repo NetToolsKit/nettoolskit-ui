@@ -75,7 +75,6 @@
 
 ### Task 5-6: Validation and closeout
 - target paths:
-  - `planning/active/samples-runtime-closeout-plan-2026-04-12.md`
   - `planning/completed/samples-runtime-closeout-plan-2026-04-12.md`
 - commands:
   - `npm run type-check`

@@ -113,7 +113,7 @@ Primary target paths:
 - `tests/e2e/cms-visual-regression.spec.ts`
 - `tests/unit/modules/cms/*.spec.ts`
 - `CHANGELOG.md`
-- `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
+- `planning/completed/cms-engine-enterprise-plan-2026-03-13.md`
 
 Closeout checkpoints:
 1. targeted validations for extracted surfaces pass
@@ -300,7 +300,7 @@ Release blocker rule:
 
 1. Item 117: lock reference parity matrix [Completed 2026-03-26]
    - Target paths:
-     - `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
+     - `planning/completed/cms-engine-enterprise-plan-2026-03-13.md`
      - `.temp/reference/src/**`
      - `src/**`
      - `landing-page/**`
@@ -558,7 +558,7 @@ Release blocker rule:
      - `landing-page/main.ts`
      - `README.md`
      - `CHANGELOG.md`
-     - `planning/active/cms-engine-enterprise-plan-2026-03-13.md`
+     - `planning/completed/cms-engine-enterprise-plan-2026-03-13.md`
    - Commands:
      - `npm audit --omit=dev`
      - `npm run type-check`

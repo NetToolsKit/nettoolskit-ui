@@ -136,7 +136,7 @@ Goal:
 
 Target paths:
 - `.temp/logs/`
-- `planning/active/reference-source-truth-parity-execution-plan-2026-04-13.md`
+- `planning/completed/reference-source-truth-parity-execution-plan-2026-04-13.md`
 - `planning/specs/active/reference-source-truth-parity-audit-2026-04-13.md`
 
 Changes:
