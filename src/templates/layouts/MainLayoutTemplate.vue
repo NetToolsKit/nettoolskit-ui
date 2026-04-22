@@ -490,6 +490,8 @@ watch(sideMenuVariant, value => {
 }
 
 .ntk-template-main-layout__header {
+  --ntk-template-toolbar-height: var(--ntk-template-layout-header-height, 56px);
+
   background: var(--ntk-template-layout-header-bg) !important;
   color: var(--ntk-template-layout-header-text) !important;
   border-bottom: 1px solid var(--ntk-template-layout-header-border);
