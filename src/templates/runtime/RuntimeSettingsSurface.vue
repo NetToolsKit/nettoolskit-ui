@@ -1,9 +1,9 @@
 <template>
-  <q-page class="ntk-template-runtime-settings" role="region" aria-label="Configurações do runtime">
+  <q-page class="ntk-template-runtime-settings" role="region" aria-label="Runtime settings">
     <section class="ntk-template-runtime-settings__hero">
       <div>
-        <h1>Configurações</h1>
-        <p>Preferências locais do runtime, branding do workspace e atalhos operacionais.</p>
+        <h1>Settings</h1>
+        <p>Local runtime preferences, workspace branding, and operational shortcuts.</p>
       </div>
 
       <div class="ntk-template-runtime-settings__hero-actions">
@@ -11,7 +11,7 @@
           no-caps
           unelevated
           icon="save"
-          label="Salvar alterações"
+          label="Save changes"
           class="ntk-template-runtime-settings__action ntk-template-runtime-settings__action--primary"
           @click="submitForm"
         />
@@ -19,7 +19,7 @@
           no-caps
           unelevated
           icon="restart_alt"
-          label="Resetar runtime"
+          label="Reset runtime"
           class="ntk-template-runtime-settings__action ntk-template-runtime-settings__action--secondary"
           @click="$emit('reset-runtime-data')"
         />
@@ -28,19 +28,19 @@
 
     <section class="ntk-template-runtime-settings__summary">
       <article class="ntk-template-runtime-settings__summary-card">
-        <span>Workspace ativo</span>
+        <span>Active workspace</span>
         <strong>{{ localModel.workspaceName }}</strong>
       </article>
       <article class="ntk-template-runtime-settings__summary-card">
-        <span>Clientes</span>
+        <span>Clients</span>
         <strong>{{ clientCount }}</strong>
       </article>
       <article class="ntk-template-runtime-settings__summary-card">
-        <span>Pedidos</span>
+        <span>Orders</span>
         <strong>{{ orderCount }}</strong>
       </article>
       <article class="ntk-template-runtime-settings__summary-card">
-        <span>Tema atual</span>
+        <span>Current theme</span>
         <strong>{{ activeThemeLabel }}</strong>
       </article>
     </section>
@@ -49,22 +49,22 @@
       <q-card class="ntk-template-runtime-settings__card">
         <q-card-section>
           <header class="ntk-template-runtime-settings__section-header">
-            <h2>Branding e operação</h2>
-            <p>Ajusta o nome do workspace e os dados exibidos no shell principal.</p>
+            <h2>Branding and operations</h2>
+            <p>Adjusts the workspace name and data displayed in the main shell.</p>
           </header>
 
           <label class="ntk-template-runtime-settings__field">
-            <span>Nome do workspace</span>
+            <span>Workspace name</span>
             <input v-model="localModel.workspaceName" type="text" name="runtime-workspace-name">
           </label>
 
           <label class="ntk-template-runtime-settings__field">
-            <span>Nome do operador</span>
+            <span>Operator name</span>
             <input v-model="localModel.operatorName" type="text" name="runtime-operator-name">
           </label>
 
           <label class="ntk-template-runtime-settings__field">
-            <span>E-mail de suporte</span>
+            <span>Support e-mail</span>
             <input v-model="localModel.supportEmail" type="email" name="runtime-support-email">
           </label>
         </q-card-section>
@@ -73,8 +73,8 @@
       <q-card class="ntk-template-runtime-settings__card">
         <q-card-section>
           <header class="ntk-template-runtime-settings__section-header">
-            <h2>Preferências locais</h2>
-            <p>Define idioma, timezone e o comportamento padrão das superfícies do runtime.</p>
+            <h2>Local preferences</h2>
+            <p>Defines language, timezone, and default runtime surface behavior.</p>
           </header>
 
           <div class="ntk-template-runtime-settings__field-row">
@@ -92,24 +92,24 @@
           <label class="ntk-template-runtime-settings__toggle">
             <input v-model="localModel.notificationsEnabled" type="checkbox" name="runtime-notifications-enabled">
             <div>
-              <strong>Notificações habilitadas</strong>
-              <p>Exibe alertas e confirmações nas jornadas locais do runtime.</p>
+              <strong>Notifications enabled</strong>
+              <p>Displays alerts and confirmations in local runtime journeys.</p>
             </div>
           </label>
 
           <label class="ntk-template-runtime-settings__toggle">
             <input v-model="localModel.compactTables" type="checkbox" name="runtime-compact-tables">
             <div>
-              <strong>Tabelas compactas por padrão</strong>
-              <p>Faz listas de clientes e pedidos abrirem em visualização de tabela.</p>
+              <strong>Compact tables by default</strong>
+              <p>Makes client and order lists open in table view.</p>
             </div>
           </label>
 
           <label class="ntk-template-runtime-settings__toggle">
             <input v-model="localModel.autoCreateFollowUp" type="checkbox" name="runtime-auto-follow-up">
             <div>
-              <strong>Criar follow-up automático</strong>
-              <p>Usado pelas ações rápidas de pedidos e pelo fluxo operacional local.</p>
+              <strong>Create automatic follow-up</strong>
+              <p>Used by order quick actions and the local operational flow.</p>
             </div>
           </label>
         </q-card-section>

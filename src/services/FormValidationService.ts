@@ -29,7 +29,7 @@ export class FormValidationService {
   /**
    * Validates required field
    */
-  static required(message = 'Campo obrigatório'): ValidationRule {
+  static required(message = 'Required field'): ValidationRule {
     return (val: any) => {
       // Validates null, undefined, empty string, empty array
       if (val === null || val === undefined) return message
@@ -42,7 +42,7 @@ export class FormValidationService {
   /**
    * Validates email format
    */
-  static email(message = 'E-mail inválido'): ValidationRule<string> {
+  static email(message = 'Invalid email'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true // Optional by default
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -56,7 +56,7 @@ export class FormValidationService {
   static minLength(min: number, message?: string): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
-      const defaultMessage = `Mínimo de ${min} caracteres`
+      const defaultMessage = `Minimum ${min} characters`
       return val.length >= min || message || defaultMessage
     }
   }
@@ -67,7 +67,7 @@ export class FormValidationService {
   static maxLength(max: number, message?: string): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
-      const defaultMessage = `Máximo de ${max} caracteres`
+      const defaultMessage = `Maximum ${max} characters`
       return val.length <= max || message || defaultMessage
     }
   }
@@ -78,7 +78,7 @@ export class FormValidationService {
   static lengthBetween(min: number, max: number, message?: string): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
-      const defaultMessage = `Entre ${min} e ${max} caracteres`
+      const defaultMessage = `Between ${min} and ${max} characters`
       return (val.length >= min && val.length <= max) || message || defaultMessage
     }
   }
@@ -86,7 +86,7 @@ export class FormValidationService {
   /**
    * Validates numbers only
    */
-  static numeric(message = 'Apenas números são permitidos'): ValidationRule<string> {
+  static numeric(message = 'Only numbers are allowed'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       return /^\d+$/.test(val) || message
@@ -96,7 +96,7 @@ export class FormValidationService {
   /**
    * Validates Brazilian CPF
    */
-  static cpf(message = 'CPF inválido'): ValidationRule<string> {
+  static cpf(message = 'Invalid CPF'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       
@@ -130,7 +130,7 @@ export class FormValidationService {
   /**
    * Validates Brazilian CNPJ
    */
-  static cnpj(message = 'CNPJ inválido'): ValidationRule<string> {
+  static cnpj(message = 'Invalid CNPJ'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       
@@ -176,7 +176,7 @@ export class FormValidationService {
   /**
    * Validates Brazilian phone
    */
-  static phone(message = 'Telefone inválido'): ValidationRule<string> {
+  static phone(message = 'Invalid phone number'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       const cleanPhone = val.replace(/\D/g, '')
@@ -188,7 +188,7 @@ export class FormValidationService {
   /**
    * Validates URL
    */
-  static url(message = 'URL inválida'): ValidationRule<string> {
+  static url(message = 'Invalid URL'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       try {
@@ -202,12 +202,12 @@ export class FormValidationService {
   }
 
   /**
-   * Validates date format DD/MM/YYYY
+   * Validates date format YYYY/MM/DD
    */
-  static dateFormat(message = 'Data inválida (DD/MM/AAAA)'): ValidationRule<string> {
+  static dateFormat(message = 'Invalid date (YYYY/MM/DD)'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
-      const datePattern = /^\d{2}\/\d{2}\/\d{4}$/
+      const datePattern = /^\d{4}\/\d{2}\/\d{2}$/
       return datePattern.test(val) || message
     }
   }
@@ -218,7 +218,7 @@ export class FormValidationService {
   static between(min: number, max: number, message?: string): ValidationRule<number> {
     return (val: number) => {
       if (val === null || val === undefined) return true
-      const defaultMessage = `Valor deve estar entre ${min} e ${max}`
+      const defaultMessage = `Value must be between ${min} and ${max}`
       return (val >= min && val <= max) || message || defaultMessage
     }
   }
@@ -229,7 +229,7 @@ export class FormValidationService {
   static min(minValue: number, message?: string): ValidationRule<number> {
     return (val: number) => {
       if (val === null || val === undefined) return true
-      const defaultMessage = `Valor mínimo: ${minValue}`
+      const defaultMessage = `Minimum value: ${minValue}`
       return val >= minValue || message || defaultMessage
     }
   }
@@ -240,7 +240,7 @@ export class FormValidationService {
   static max(maxValue: number, message?: string): ValidationRule<number> {
     return (val: number) => {
       if (val === null || val === undefined) return true
-      const defaultMessage = `Valor máximo: ${maxValue}`
+      const defaultMessage = `Maximum value: ${maxValue}`
       return val <= maxValue || message || defaultMessage
     }
   }
@@ -250,7 +250,7 @@ export class FormValidationService {
    */
   static match(otherValue: any, fieldName: string, message?: string): ValidationRule {
     return (val: any) => {
-      const defaultMessage = `Deve corresponder a ${fieldName}`
+      const defaultMessage = `Must match ${fieldName}`
       return val === otherValue || message || defaultMessage
     }
   }
@@ -258,7 +258,7 @@ export class FormValidationService {
   /**
    * Validates custom regex pattern
    */
-  static pattern(regex: RegExp, message = 'Formato inválido'): ValidationRule<string> {
+  static pattern(regex: RegExp, message = 'Invalid format'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       return regex.test(val) || message
@@ -269,7 +269,7 @@ export class FormValidationService {
    * Validates strong password
    * Minimum 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special
    */
-  static strongPassword(message = 'Senha fraca. Mínimo: 8 caracteres, 1 maiúscula, 1 minúscula, 1 número, 1 especial'): ValidationRule<string> {
+  static strongPassword(message = 'Weak password. Minimum: 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character'): ValidationRule<string> {
     return (val: string) => {
       if (!val) return true
       const hasMinLength = val.length >= 8

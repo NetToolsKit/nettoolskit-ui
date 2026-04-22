@@ -73,8 +73,7 @@
 import { computed } from 'vue'
 import { useBranding } from '../../composables/ui/useBranding'
 
-// ✅ NUNCA usar default export (frontend.instructions.md)
-// ✅ TypeScript interface para props
+// Do not use default script exports; keep props typed through interfaces.
 
 interface Props {
   variant?: 'default' | 'light' | 'dark' | 'gradient'
@@ -98,7 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { appName, tagline } = useBranding()
 
-// Valores computados com fallback para tema
+// Computed values with theme fallback.
 const title = computed(() => props.title || appName.value || '')
 const subtitle = computed(() => props.subtitle || tagline.value || '')
 

@@ -12,7 +12,7 @@
     :lazy-rules="lazyRules"
     stack-label
     class="ntk-time-picker"
-    @update:model-value="handleUpdate"
+    @update:model-value="handleTimeUpdate"
   >
     <template #append>
       <q-icon
@@ -29,7 +29,7 @@
             mask="HH:mm"
             class="ntk-time-picker__clock"
             :format24h="timeFormat24h"
-            @update:model-value="handleUpdate"
+            @update:model-value="handleTimeUpdate"
           >
             <div class="row items-center justify-between q-px-sm">
               <q-btn 
@@ -39,9 +39,9 @@
                 class="ntk-time-picker__action"
                 @click="timeFormat24h = !timeFormat24h" 
               />
-              <div class="row items-center q-gutter-sm">
+            <div class="row items-center q-gutter-sm">
                 <q-btn
-                  label="Agora"
+                  label="Now"
                   flat
                   class="ntk-time-picker__action ntk-time-picker__action--accent"
                   @click="setNowTime"
@@ -81,10 +81,16 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string | null]
+}>()
 
-const { internalValue, handleUpdate } = useNtkField(props, emit)
+const { internalValue, handleUpdate } = useNtkField<string | null>(props, emit)
 const timeFormat24h = ref(true)
+
+const handleTimeUpdate = (value: string | number | null) => {
+  handleUpdate(value === null ? null : String(value))
+}
 
 const setNowTime = () => {
   const now = new Date()

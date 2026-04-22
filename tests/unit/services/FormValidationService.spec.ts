@@ -11,23 +11,23 @@ describe('FormValidationService', () => {
     const rule = FormValidationService.required()
 
     it('should return error for null', () => {
-      expect(rule(null)).toBe('Campo obrigatório')
+      expect(rule(null)).toBe('Required field')
     })
 
     it('should return error for undefined', () => {
-      expect(rule(undefined)).toBe('Campo obrigatório')
+      expect(rule(undefined)).toBe('Required field')
     })
 
     it('should return error for empty string', () => {
-      expect(rule('')).toBe('Campo obrigatório')
+      expect(rule('')).toBe('Required field')
     })
 
     it('should return error for whitespace only', () => {
-      expect(rule('   ')).toBe('Campo obrigatório')
+      expect(rule('   ')).toBe('Required field')
     })
 
     it('should return error for empty array', () => {
-      expect(rule([])).toBe('Campo obrigatório')
+      expect(rule([])).toBe('Required field')
     })
 
     it('should return true for valid string', () => {
@@ -65,15 +65,15 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for invalid email without @', () => {
-      expect(rule('invalid')).toBe('E-mail inválido')
+      expect(rule('invalid')).toBe('Invalid email')
     })
 
     it('should return error for invalid email without domain', () => {
-      expect(rule('test@')).toBe('E-mail inválido')
+      expect(rule('test@')).toBe('Invalid email')
     })
 
     it('should return error for invalid email without TLD', () => {
-      expect(rule('test@example')).toBe('E-mail inválido')
+      expect(rule('test@example')).toBe('Invalid email')
     })
   })
 
@@ -94,7 +94,7 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for string shorter than min', () => {
-      expect(rule('1234')).toBe('Mínimo de 5 caracteres')
+      expect(rule('1234')).toBe('Minimum 5 characters')
     })
 
     it('should accept custom message', () => {
@@ -120,7 +120,7 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for string longer than max', () => {
-      expect(rule('123456')).toBe('Máximo de 5 caracteres')
+      expect(rule('123456')).toBe('Maximum 5 characters')
     })
   })
 
@@ -141,11 +141,11 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for string below min', () => {
-      expect(rule('12')).toBe('Entre 3 e 5 caracteres')
+      expect(rule('12')).toBe('Between 3 and 5 characters')
     })
 
     it('should return error for string above max', () => {
-      expect(rule('123456')).toBe('Entre 3 e 5 caracteres')
+      expect(rule('123456')).toBe('Between 3 and 5 characters')
     })
   })
 
@@ -162,11 +162,11 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for string with letters', () => {
-      expect(rule('123abc')).toBe('Apenas números são permitidos')
+      expect(rule('123abc')).toBe('Only numbers are allowed')
     })
 
     it('should return error for string with special chars', () => {
-      expect(rule('123-456')).toBe('Apenas números são permitidos')
+      expect(rule('123-456')).toBe('Only numbers are allowed')
     })
   })
 
@@ -187,15 +187,15 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for CPF with wrong length', () => {
-      expect(rule('1234567890')).toBe('CPF inválido')
+      expect(rule('1234567890')).toBe('Invalid CPF')
     })
 
     it('should return error for CPF with all same digits', () => {
-      expect(rule('11111111111')).toBe('CPF inválido')
+      expect(rule('11111111111')).toBe('Invalid CPF')
     })
 
     it('should return error for CPF with invalid check digits', () => {
-      expect(rule('12345678901')).toBe('CPF inválido')
+      expect(rule('12345678901')).toBe('Invalid CPF')
     })
   })
 
@@ -216,11 +216,11 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for CNPJ with wrong length', () => {
-      expect(rule('1122233300018')).toBe('CNPJ inválido')
+      expect(rule('1122233300018')).toBe('Invalid CNPJ')
     })
 
     it('should return error for CNPJ with all same digits', () => {
-      expect(rule('11111111111111')).toBe('CNPJ inválido')
+      expect(rule('11111111111111')).toBe('Invalid CNPJ')
     })
   })
 
@@ -245,7 +245,7 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for phone with wrong length', () => {
-      expect(rule('123456789')).toBe('Telefone inválido')
+      expect(rule('123456789')).toBe('Invalid phone number')
     })
   })
 
@@ -270,11 +270,11 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for invalid URL', () => {
-      expect(rule('not-a-url')).toBe('URL inválida')
+      expect(rule('not-a-url')).toBe('Invalid URL')
     })
 
     it('should return error for URL with invalid protocol', () => {
-      expect(rule('mailto:test@example.com')).toBe('URL inválida')
+      expect(rule('mailto:test@example.com')).toBe('Invalid URL')
     })
   })
 
@@ -287,15 +287,15 @@ describe('FormValidationService', () => {
     })
 
     it('should return true for valid date format', () => {
-      expect(rule('25/12/2024')).toBe(true)
+      expect(rule('2024/12/25')).toBe(true)
     })
 
     it('should return error for invalid date format', () => {
-      expect(rule('2024-12-25')).toBe('Data inválida (DD/MM/AAAA)')
+      expect(rule('25/12/2024')).toBe('Invalid date (YYYY/MM/DD)')
     })
 
     it('should return error for incomplete date', () => {
-      expect(rule('25/12')).toBe('Data inválida (DD/MM/AAAA)')
+      expect(rule('2024/12')).toBe('Invalid date (YYYY/MM/DD)')
     })
   })
 
@@ -320,11 +320,11 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for value below min', () => {
-      expect(rule(0)).toBe('Valor deve estar entre 1 e 10')
+      expect(rule(0)).toBe('Value must be between 1 and 10')
     })
 
     it('should return error for value above max', () => {
-      expect(rule(11)).toBe('Valor deve estar entre 1 e 10')
+      expect(rule(11)).toBe('Value must be between 1 and 10')
     })
   })
 
@@ -341,7 +341,7 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for value below min', () => {
-      expect(rule(4)).toBe('Valor mínimo: 5')
+      expect(rule(4)).toBe('Minimum value: 5')
     })
   })
 
@@ -358,20 +358,20 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for value above max', () => {
-      expect(rule(11)).toBe('Valor máximo: 10')
+      expect(rule(11)).toBe('Maximum value: 10')
     })
   })
 
   // ============================================================================
   describe('match()', () => {
     it('should return true when values match', () => {
-      const rule = FormValidationService.match('password123', 'Senha')
+      const rule = FormValidationService.match('password123', 'Password')
       expect(rule('password123')).toBe(true)
     })
 
     it('should return error when values do not match', () => {
-      const rule = FormValidationService.match('password123', 'Senha')
-      expect(rule('different')).toBe('Deve corresponder a Senha')
+      const rule = FormValidationService.match('password123', 'Password')
+      expect(rule('different')).toBe('Must match Password')
     })
   })
 
@@ -405,23 +405,23 @@ describe('FormValidationService', () => {
     })
 
     it('should return error for weak password (no uppercase)', () => {
-      expect(rule('abc123!@#')).toContain('Senha fraca')
+      expect(rule('abc123!@#')).toContain('Weak password')
     })
 
     it('should return error for weak password (no lowercase)', () => {
-      expect(rule('ABC123!@#')).toContain('Senha fraca')
+      expect(rule('ABC123!@#')).toContain('Weak password')
     })
 
     it('should return error for weak password (no number)', () => {
-      expect(rule('Abcdef!@#')).toContain('Senha fraca')
+      expect(rule('Abcdef!@#')).toContain('Weak password')
     })
 
     it('should return error for weak password (no special)', () => {
-      expect(rule('Abcdef123')).toContain('Senha fraca')
+      expect(rule('Abcdef123')).toContain('Weak password')
     })
 
     it('should return error for weak password (too short)', () => {
-      expect(rule('Ab1!')).toContain('Senha fraca')
+      expect(rule('Ab1!')).toContain('Weak password')
     })
   })
 
@@ -441,7 +441,7 @@ describe('FormValidationService', () => {
         FormValidationService.required(),
         FormValidationService.minLength(10)
       )
-      expect(rule('hi')).toBe('Mínimo de 10 caracteres')
+      expect(rule('hi')).toBe('Minimum 10 characters')
     })
 
     it('should return required error first', () => {
@@ -449,7 +449,7 @@ describe('FormValidationService', () => {
         FormValidationService.required(),
         FormValidationService.email()
       )
-      expect(rule('')).toBe('Campo obrigatório')
+      expect(rule('')).toBe('Required field')
     })
   })
 })
@@ -486,8 +486,8 @@ describe('FormValidator', () => {
       const result = FormValidator.validate(data, rules)
 
       expect(result.valid).toBe(false)
-      expect(result.errors.name).toBe('Campo obrigatório')
-      expect(result.errors.email).toBe('E-mail inválido')
+      expect(result.errors.name).toBe('Required field')
+      expect(result.errors.email).toBe('Invalid email')
     })
 
     it('should stop at first failing rule per field', () => {

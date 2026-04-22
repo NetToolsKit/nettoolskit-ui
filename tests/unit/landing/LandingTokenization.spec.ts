@@ -70,14 +70,14 @@ describe('Samples single reference runtime coverage', () => {
   it('makes the original sample self-contained instead of depending on showcase files', () => {
     expect(originalReferenceSource).toContain("from './original-reference.sample-data'")
     expect(originalReferenceSource).toContain("from './OriginalReferenceCharts.vue'")
-    expect(originalReferenceSource).toContain('Abrir assistente')
-    expect(originalReferenceSource).not.toContain('Abrir packs')
+    expect(originalReferenceSource).toContain('Open assistant')
+    expect(originalReferenceSource).not.toContain('Open packs')
     expect(originalReferenceSource).not.toContain('/?templates=1')
     expect(originalReferenceSource).not.toContain('/?samples=1')
     expect(originalReferenceDataSource).toContain('getGreetingText()}')
     expect(originalReferenceDataSource).toContain(', Admin')
-    expect(originalReferenceChartsSource).toContain('Pedidos por Status')
-    expect(originalReferenceChartsSource).toContain('Vendas por Categoria')
+    expect(originalReferenceChartsSource).toContain('Orders by Status')
+    expect(originalReferenceChartsSource).toContain('Sales by Category')
   })
 
   it('documents the single-sample public runtime in samples/README.md', () => {

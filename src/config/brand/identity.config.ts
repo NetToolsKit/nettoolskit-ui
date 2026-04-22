@@ -106,7 +106,7 @@ export interface BrandIdentity {
   /**
    * Short tagline or slogan
    * Optional descriptive subtitle
-   * @example 'Sistema de Busca', 'Agenda Visual Assistida'
+   * @example 'Search System', 'Assisted Visual Schedule'
    */
   tagline?: string
   
@@ -164,14 +164,14 @@ export interface BrandIdentity {
 export const sentinelaIdentity: BrandIdentity = {
   name: 'sentinela',
   displayName: 'Sentinela',
-  tagline: 'Sistema de Busca',
+  tagline: 'Search System',
   logo: {
     type: 'letter',
     value: 'S',
     alt: 'Sentinela Logo',
     size: 'md',
   },
-  description: 'Sistema inteligente de busca e monitoramento de vídeos no YouTube. Encontre, organize e monitore conteúdo de forma eficiente.',
+  description: 'Intelligent YouTube video search and monitoring system. Find, organize, and monitor content efficiently.',
   url: 'https://sentinela.example.com',
   version: '1.0.0',
   copyright: 'Sentinela',
@@ -273,7 +273,7 @@ export type BrandName = keyof typeof identities
  * 
  * const brand = getBrandIdentity('sentinela')
  * console.log(brand.displayName) // 'Sentinela'
- * console.log(brand.tagline)     // 'Sistema de Busca'
+ * console.log(brand.tagline)     // 'Search System'
  * ```
  */
 export function getBrandIdentity(name: BrandName): BrandIdentity {
@@ -291,7 +291,7 @@ export function getBrandIdentity(name: BrandName): BrandIdentity {
  * @example
  * ```typescript
  * getCopyrightNotice('sentinela')
- * // Returns: "© 2025 Sentinela. Todos os direitos reservados."
+ * // Returns: "© 2025 Sentinela. All rights reserved."
  * ```
  */
 export function getCopyrightNotice(brandName: BrandName): string {
@@ -299,5 +299,5 @@ export function getCopyrightNotice(brandName: BrandName): string {
   const year = new Date().getFullYear()
   const holder = brand.copyright || brand.displayName
   
-  return `© ${year} ${holder}. Todos os direitos reservados.`
+  return `© ${year} ${holder}. All rights reserved.`
 }

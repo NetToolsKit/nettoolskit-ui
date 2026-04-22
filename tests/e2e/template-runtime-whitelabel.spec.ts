@@ -13,7 +13,7 @@ async function resetRuntimeState(page: Page): Promise<void> {
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -44,24 +44,24 @@ test.describe('template runtime whitelabel', () => {
       return await page.evaluate(() => window.localStorage.getItem('ntk-theme') ?? '')
     }).toBe('claude')
 
-    await page.getByLabel(/abrir assistente/i).click()
+    await page.getByLabel(/open assistant/i).click()
     await expect(page.getByRole('dialog', { name: /assistant drawer/i })).toBeVisible()
     await page.getByRole('button', { name: /close drawer/i }).click()
 
     await page.goto(`${RUNTIME_BASE}#/clients`)
-    await expect(page.getByRole('heading', { name: 'Clientes' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Clients' })).toBeVisible()
 
     await page.goto(`${RUNTIME_BASE}#/orders`)
-    await expect(page.getByRole('heading', { name: 'Pedidos' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible()
 
     await page.goto(`${RUNTIME_BASE}#/knowledge`)
-    await expect(page.getByRole('heading', { name: 'Base de conhecimento' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Knowledge base' })).toBeVisible()
     await page.getByRole('button', { name: 'Export' }).click()
     await expect(page).toHaveURL(/template-runtime=1#\/knowledge\/chat$/)
-    await expect(page.getByRole('heading', { name: 'Assistente de conhecimento' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Knowledge assistant' })).toBeVisible()
 
     await page.goto(`${RUNTIME_BASE}#/settings`)
-    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
     await page.goto(`${RUNTIME_BASE}#/profile`)
     await expect(page.getByRole('heading', { name: 'Admin NetToolsKit' })).toBeVisible()
@@ -77,7 +77,7 @@ test.describe('template runtime whitelabel', () => {
     }).toBe('kraken')
 
     await page.goto(`${RUNTIME_BASE}#/settings`)
-    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
     await page.reload()
 

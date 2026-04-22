@@ -110,12 +110,12 @@ withDefaults(defineProps<Props>(), {
   customClass: '',
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'blur',
-  'focus',
-  'input',
-])
+const emit = defineEmits<{
+  'update:modelValue': [value: unknown]
+  blur: [event: Event]
+  focus: [event: Event]
+  input: [event: unknown]
+}>()
 
 const emitModelValue = (value: unknown) => {
   emit('update:modelValue', value)

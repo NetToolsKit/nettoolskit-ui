@@ -42,14 +42,14 @@
           >
             <div class="row items-center justify-between q-px-sm q-gutter-sm">
               <q-btn
-                label="Agora"
+                label="Now"
                 flat
                 class="base-time-picker__action base-time-picker__action--accent"
                 @click="setNowTime"
               />
               <q-btn
                 v-bind="{ 'v-close-popup': true }"
-                label="Fechar"
+                label="Close"
                 flat
                 class="base-time-picker__action"
               />
@@ -113,11 +113,11 @@ const props = withDefaults(defineProps<Props>(), {
   customClass: '',
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'blur',
-  'focus',
-])
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+  blur: [event: Event]
+  focus: [event: Event]
+}>()
 
 const internalValue = ref(props.modelValue)
 

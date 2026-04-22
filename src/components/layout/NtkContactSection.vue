@@ -70,7 +70,7 @@
         >
           <div class="ntk-contact__portal-content">
             <strong>Ja e cliente?</strong>
-            <p>{{ portalAction.description || 'Acesse a area do cliente para acompanhar seus projetos.' }}</p>
+            <p>{{ portalAction.description || 'Access the client area to track your projects.' }}</p>
           </div>
           <NtkButton
             :label="portalAction.label"
@@ -139,7 +139,7 @@ const props = withDefaults(defineProps<Props>(), {
   fields: () => [],
   channels: () => [],
   portalAction: undefined,
-  submitLabel: 'Enviar mensagem',
+  submitLabel: 'Send message',
   variant: 'default',
   size: 'md',
 })
@@ -157,7 +157,7 @@ for (const field of props.fields) {
  * Handles required rule.
  */
 function requiredRule(value: string): true | string {
-  return Boolean(value && value.trim()) || 'Campo obrigatorio'
+  return Boolean(value && value.trim()) || 'Required field'
 }
 
 /**

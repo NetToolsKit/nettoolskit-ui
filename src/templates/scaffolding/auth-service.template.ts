@@ -40,7 +40,7 @@ const SEEDED_LOCAL_ACCOUNTS: ReadonlyArray<TemplateLocalAuthAccount> = [
     token: 'ntk-local-auth-runtime-support',
     user: {
       id: 'runtime-support',
-      name: 'Suporte NetToolsKit',
+      name: 'NetToolsKit Support',
       email: 'support@nettoolskit.dev',
       role: 'Support',
     },
@@ -63,13 +63,13 @@ export const templateAuthService = {
     const normalizedEmail = normalizeEmail(email)
 
     if (!normalizedEmail || !password) {
-      throw new Error('E-mail e senha são obrigatórios')
+      throw new Error('Email and password are required')
     }
 
     const account = SEEDED_LOCAL_ACCOUNTS.find(candidate => candidate.user.email === normalizedEmail)
 
     if (!account || account.password !== password) {
-      throw new Error('Credenciais locais inválidas. Use uma conta seeded do runtime.')
+      throw new Error('Invalid local credentials. Use a seeded runtime account.')
     }
 
     return {

@@ -5,25 +5,25 @@
   >
     <article class="ntk-reference-dashboard-charts__card">
       <div class="ntk-reference-dashboard-charts__header">
-        <h3>Pedidos por Status</h3>
+        <h3>Orders by Status</h3>
       </div>
 
       <div
         ref="statusChartEl"
         class="ntk-reference-dashboard-charts__chart ntk-reference-dashboard-charts__chart--donut"
-        aria-label="Pedidos por Status"
+        aria-label="Orders by Status"
       />
     </article>
 
     <article class="ntk-reference-dashboard-charts__card">
       <div class="ntk-reference-dashboard-charts__header">
-        <h3>Vendas por Categoria</h3>
+        <h3>Sales by Category</h3>
       </div>
 
       <div
         ref="categoryChartEl"
         class="ntk-reference-dashboard-charts__chart ntk-reference-dashboard-charts__chart--bars"
-        aria-label="Vendas por Categoria"
+        aria-label="Sales by Category"
       />
     </article>
   </div>
@@ -161,7 +161,7 @@ function createStatusChart(): void {
     title: { text: undefined },
     credits: { enabled: false },
     tooltip: {
-      pointFormat: '<b>{point.y}</b> pedidos ({point.percentage:.1f}%)',
+      pointFormat: '<b>{point.y}</b> orders ({point.percentage:.1f}%)',
       style: { fontSize: '12px', color: palette.textColor },
     },
     plotOptions: {
@@ -187,7 +187,7 @@ function createStatusChart(): void {
       },
     },
     series: [{
-      name: 'Pedidos',
+      name: 'Orders',
       data,
       type: 'pie',
     }],
@@ -247,7 +247,7 @@ function createCategoryChart(): void {
       allowDecimals: false,
     },
     tooltip: {
-      pointFormat: '<b>{point.y}</b> vendas',
+      pointFormat: '<b>{point.y}</b> sales',
       style: { fontSize: '12px', color: palette.textColor },
     },
     legend: { enabled: false },
@@ -264,7 +264,7 @@ function createCategoryChart(): void {
     },
     series: [
       {
-        name: 'Vendas',
+        name: 'Sales',
         data,
         type: 'bar',
       },

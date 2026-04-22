@@ -32,13 +32,13 @@ body {
 }
 
 /* ============================================
- * Quasar Page Container - Previne scroll desnecessário
+ * Quasar Page Container - Prevents unnecessary scroll
  * ============================================ */
 .q-page {
-  // Remove qualquer min-height que force scroll
+  // Removes any min-height that forces scroll.
   min-height: auto !important;
   
-  // Páginas dentro do layout devem ter altura natural
+  // Pages inside the layout should keep natural height.
   > div[class*="-page"] {
     min-height: auto;
   }

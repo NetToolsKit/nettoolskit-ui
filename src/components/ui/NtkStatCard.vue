@@ -63,13 +63,13 @@
 import { computed } from 'vue';
 
 /**
- * NtkStatCard - Card de estatísticas/métricas
+ * NtkStatCard - statistics/metrics card.
  * 
- * Usado em landing pages para exibir números importantes como:
- * - Usuários ativos
+ * Used in landing pages to display important metrics such as:
+ * - Active users
  * - Downloads
- * - Avaliações
- * - Métricas de negócio
+ * - Ratings
+ * - Business metrics
  */
 
 interface TrendData {
@@ -84,7 +84,7 @@ interface Props {
   label: string;
   /** Icon as emoji or text */
   icon?: string;
-  /** Prefix before the value, for example R$ or $ */
+  /** Prefix before the value, for example USD or $ */
   prefix?: string;
   /** Suffix after the value, for example +, %, or K */
   suffix?: string;
@@ -92,13 +92,13 @@ interface Props {
   trend?: TrendData;
   /** Visual variant */
   variant?: 'default' | 'outlined' | 'gradient' | 'minimal';
-  /** Tamanho */
+  /** Size */
   size?: 'sm' | 'md' | 'lg';
   /** Value color override */
   valueColor?: string;
   /** Icon color override */
   iconColor?: string;
-  /** Animação de contagem */
+  /** Count animation flag */
   animated?: boolean;
 }
 
@@ -115,14 +115,14 @@ const cardClasses = computed(() => [
 
 const formattedValue = computed(() => {
   if (typeof props.value === 'number') {
-    // Formata números grandes (1000 -> 1K, 1000000 -> 1M)
+    // Format large numbers (1000 -> 1K, 1000000 -> 1M)
     if (props.value >= 1000000) {
       return (props.value / 1000000).toFixed(1) + 'M';
     }
     if (props.value >= 1000) {
       return (props.value / 1000).toFixed(1) + 'K';
     }
-    return props.value.toLocaleString('pt-BR');
+    return props.value.toLocaleString('en-US');
   }
   return props.value;
 });

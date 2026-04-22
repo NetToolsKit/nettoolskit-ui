@@ -37,8 +37,8 @@ interface ChatSnapshotSeed {
 
 const SEEDED_SOURCES: ChatSourceSeed[] = [
   {
-    documentName: 'Manual Operacional.md',
-    chunkContent: 'Fluxo local de atendimento para clientes, pedidos e tarefas do workspace.',
+    documentName: 'Operational Manual.md',
+    chunkContent: 'Local support flow for customers, orders, and workspace tasks.',
     relevance: 0.96,
   },
   {
@@ -83,7 +83,7 @@ function createSeededChatSnapshot(): ChatSnapshotSeed {
           {
             id: 'msg-2',
             role: 'assistant',
-            content: 'Resumo local salvo para esta conversa: Checklist seed. Consulte Manual Operacional.md e confirme o proximo passo antes de concluir a acao.',
+            content: 'Local summary saved for this conversation: Checklist seed. Review Operational Manual.md and confirm the next step before completing the action.',
             createdAt: '2026-04-16T12:00:00.000Z',
             fromCache: false,
             sources: SEEDED_SOURCES,
@@ -110,7 +110,7 @@ async function resetRuntimeState(
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -132,11 +132,11 @@ test.describe('template runtime wiki chat', () => {
     await resetRuntimeState(page)
     await loginToRuntime(page)
 
-    const question = 'Como funciona o fluxo local?'
+    const question = 'How does the local flow work?'
     const expectedTitle = buildConversationTitle(question)
-    const assistantAnswer = 'Resumo local salvo para esta conversa: Como funciona o fluxo local. Consulte'
+    const assistantAnswer = 'Local summary saved for this conversation: How does the local flow work. Review'
 
-    await page.getByLabel('Abrir assistente').click()
+    await page.getByLabel('Open assistant').click()
 
     const drawer = page.getByRole('dialog', { name: 'Assistant drawer' })
     await expect(drawer).toBeVisible()
@@ -161,7 +161,7 @@ test.describe('template runtime wiki chat', () => {
       await fullscreenButton.click()
       await expect(page).toHaveURL(/template-runtime=1#\/knowledge\/chat$/)
       await expect(page.locator('.ntk-template-wiki-chat__chat-subtitle')).toContainText(
-        'Converse com a base local'
+        'Chat with the local base'
       )
       await expect(page.locator('.ntk-template-wiki-chat__chat-title')).toHaveText(expectedTitle)
       await expect(
@@ -181,11 +181,11 @@ test.describe('template runtime wiki chat', () => {
     await page.goto(`${RUNTIME_BASE}#/knowledge/chat`)
 
     const seededTitle = 'Checklist seed'
-    const newQuestion = 'Qual o proximo passo do pedido local?'
+    const newQuestion = 'What is the next step for the local order?'
     const expectedNewTitle = buildConversationTitle(newQuestion)
 
     await expect(page.locator('.ntk-template-wiki-chat__chat-subtitle')).toContainText(
-      'Converse com a base local'
+      'Chat with the local base'
     )
     await expect(page.locator('.ntk-template-wiki-chat__chat-title')).toHaveText(seededTitle)
     await expect(
@@ -205,7 +205,7 @@ test.describe('template runtime wiki chat', () => {
     ).toBeVisible()
     await expect(page.locator('.ntk-template-wiki-chat__message-body')).toContainText([
       newQuestion,
-      'Resumo local salvo para esta conversa: Qual o proximo passo do pedido local. Consulte',
+      'Local summary saved for this conversation: What is the next step for the local order. Review',
     ])
 
     const seededConversation = page.locator('.ntk-template-wiki-chat__conversation', {
@@ -218,7 +218,7 @@ test.describe('template runtime wiki chat', () => {
 
     await page.reload()
     await expect(page.locator('.ntk-template-wiki-chat__chat-subtitle')).toContainText(
-      'Converse com a base local'
+      'Chat with the local base'
     )
     await expect(page.locator('.ntk-template-wiki-chat__chat-title')).toHaveText(expectedNewTitle)
     await expect(

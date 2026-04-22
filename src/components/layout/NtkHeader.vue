@@ -473,15 +473,15 @@ const props = defineProps({
   }
 })
 
-defineEmits([
-  'toggle-menu',
-  'update:search-value',
-  'notifications-click',
-  'user-click',
-  'theme-toggle',
-  'cta-click',
-  'mobile-menu-toggle'
-])
+defineEmits<{
+  'toggle-menu': []
+  'update:search-value': [value: string | number | null]
+  'notifications-click': []
+  'user-click': []
+  'theme-toggle': []
+  'cta-click': []
+  'mobile-menu-toggle': []
+}>()
 
 const $q = useQuasar()
 const isMobileView = computed(() => props.isMobile ?? !$q.screen.gt.xs)

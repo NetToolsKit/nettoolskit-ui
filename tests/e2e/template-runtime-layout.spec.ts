@@ -21,7 +21,7 @@ async function resetRuntimeState(page: Page): Promise<void> {
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')

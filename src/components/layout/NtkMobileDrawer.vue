@@ -8,7 +8,7 @@
     class="ntk-mobile-drawer"
   >
     <div class="drawer-content">
-      <!-- Header com botão comprimir -->
+      <!-- Header with collapse button -->
       <div class="drawer-header">
         <button 
           class="drawer-compress-btn"
@@ -30,7 +30,7 @@
         </button>
       </div>
 
-      <!-- Navegação -->
+      <!-- Navigation -->
       <nav class="drawer-nav">
         <a
           v-for="(item, index) in navItems"
@@ -65,7 +65,7 @@
         </a>
       </div>
 
-      <!-- Slot para conteúdo adicional -->
+      <!-- Slot for additional content -->
       <div
         v-if="$slots.default"
         class="drawer-extra"
@@ -86,19 +86,19 @@ import { QDrawer, QIcon } from 'quasar';
 import type { NavLink } from '../../config/brand/navigation.config';
 
 interface Props {
-  /** Controla abertura do drawer */
+  /** Controls drawer open state */
   modelValue: boolean;
-  /** Lado do drawer */
+  /** Drawer side */
   side?: 'left' | 'right';
   /** Drawer width */
   width?: number;
-  /** Itens de navegação */
+  /** Navigation items */
   navItems?: NavLink[];
-  /** Texto do botão CTA */
+  /** CTA button text */
   ctaText?: string;
-  /** Link do botão CTA */
+  /** CTA button link */
   ctaLink?: string;
-  /** Texto do botão comprimir */
+  /** Collapse button text */
   compressLabel?: string;
 }
 
@@ -108,7 +108,7 @@ const props = withDefaults(defineProps<Props>(), {
   navItems: () => [],
   ctaText: '',
   ctaLink: '#',
-  compressLabel: 'Comprimir',
+  compressLabel: 'Collapse',
 });
 
 const emit = defineEmits<{
@@ -138,7 +138,7 @@ function close() {
  */
 function handleNavClick(item: NavLink) {
   emit('nav-click', item);
-  // Fecha o drawer após clicar em um link interno
+  // Close the drawer after clicking an internal link.
   if (!item.external) {
     close();
   }

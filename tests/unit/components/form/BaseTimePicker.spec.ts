@@ -284,7 +284,7 @@ describe('BaseTimePicker', () => {
   })
 
   describe('Calendar Actions', () => {
-    it('should render "Agora" button to set current time', () => {
+    it('should render "Now" button to set current time', () => {
       // Arrange
 
       // Act
@@ -292,11 +292,11 @@ describe('BaseTimePicker', () => {
 
       // Assert
       const buttons = wrapper.findAllComponents({ name: 'QBtn' })
-      const nowButton = buttons.find(btn => btn.text().includes('Agora'))
+      const nowButton = buttons.find(btn => btn.text().includes('Now'))
       expect(nowButton).toBeDefined()
     })
 
-    it('should render "Fechar" button to close popup', () => {
+    it('should render "Close" button to close popup', () => {
       // Arrange
 
       // Act
@@ -304,15 +304,15 @@ describe('BaseTimePicker', () => {
 
       // Assert
       const buttons = wrapper.findAllComponents({ name: 'QBtn' })
-      const closeButton = buttons.find(btn => btn.text().includes('Fechar'))
+      const closeButton = buttons.find(btn => btn.text().includes('Close'))
       expect(closeButton).toBeDefined()
     })
 
-    it('should set current time when "Agora" is clicked', async () => {
+    it('should set current time when "Now" is clicked', async () => {
       // Arrange
       const wrapper = mount(BaseTimePicker)
       const buttons = wrapper.findAllComponents({ name: 'QBtn' })
-      const nowButton = buttons.find(btn => btn.text().includes('Agora'))
+      const nowButton = buttons.find(btn => btn.text().includes('Now'))
 
       // Act
       await nowButton?.trigger('click')
@@ -321,11 +321,11 @@ describe('BaseTimePicker', () => {
       expect(wrapper.emitted('update:modelValue')).toBeTruthy()
     })
 
-    it('should close popup when "Fechar" is clicked', async () => {
+    it('should close popup when "Close" is clicked', async () => {
       // Arrange
       const wrapper = mount(BaseTimePicker)
       const buttons = wrapper.findAllComponents({ name: 'QBtn' })
-      const closeButton = buttons.find(btn => btn.text().includes('Fechar'))
+      const closeButton = buttons.find(btn => btn.text().includes('Close'))
 
       // Act
       await closeButton?.trigger('click')

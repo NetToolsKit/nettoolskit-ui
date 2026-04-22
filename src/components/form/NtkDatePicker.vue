@@ -34,14 +34,14 @@
           >
             <div class="row items-center justify-end q-gutter-xs">
               <q-btn
-                label="Hoje"
+                label="Today"
                 flat
                 class="ntk-date-picker__action ntk-date-picker__action--accent"
                 @click="setToday"
               />
               <q-btn
                 v-close-popup
-                label="Fechar"
+                label="Close"
                 flat
                 class="ntk-date-picker__action"
               />
@@ -68,20 +68,22 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: 'DD/MM/YYYY'
+    default: 'YYYY/MM/DD'
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string | number | null]
+}>()
 
 const { internalValue, handleUpdate } = useNtkField(props, emit)
 
-// Locale object for QDate component
+// Locale object for QDate component.
 const dateLocale = {
-  days: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-  daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-  months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-  monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+  days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 }
 
 const setToday = () => {

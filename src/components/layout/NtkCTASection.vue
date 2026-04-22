@@ -56,13 +56,13 @@
 import { computed } from 'vue';
 
 /**
- * NtkCTASection - Seção de Call-to-Action
+ * NtkCTASection - call-to-action section.
  * 
- * Usado em landing pages para destacar ações importantes como:
- * - Começar agora
- * - Criar conta
- * - Baixar app
- * - Agendar demo
+ * Used in landing pages to highlight important actions such as:
+ * - Get started.
+ * - Create an account.
+ * - Download the app.
+ * - Schedule a demo.
  */
 
 interface CTAButton {
@@ -73,21 +73,21 @@ interface CTAButton {
 interface Props {
   /** Main title */
   title: string;
-  /** Subtítulo opcional */
+  /** Optional subtitle */
   subtitle?: string;
-  /** Botão CTA primário */
+  /** Primary CTA button */
   primaryCTA: CTAButton;
-  /** Botão CTA secundário (opcional) */
+  /** Optional secondary CTA button */
   secondaryCTA?: CTAButton;
-  /** Variante visual */
+  /** Visual variant */
   variant?: 'default' | 'gradient' | 'dark' | 'light';
-  /** Tamanho da seção */
+  /** Section size */
   size?: 'sm' | 'md' | 'lg';
   /** Layout */
   layout?: 'centered' | 'split';
   /** Maximum container width */
   maxWidth?: number;
-  /** Cor de fundo customizada */
+  /** Custom background token or alias */
   bgColor?: string;
 }
 
@@ -358,7 +358,7 @@ const primaryBtnStyle = computed(() => {
   line-height: 1.5;
 }
 
-// Botões
+// Buttons
 .cta-actions {
   display: flex;
   flex-wrap: wrap;

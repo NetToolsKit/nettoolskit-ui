@@ -133,13 +133,13 @@ describe('DashboardTemplate', () => {
   it('renders greetingIcon before the title', () => {
     const wrapper = shallowMount(DashboardTemplate, {
       ...globalMountOptions,
-      props: { title: 'Bom dia, João', greetingIcon: '☀️' },
+      props: { title: 'Good morning, John', greetingIcon: '☀️' },
     })
 
     const icon = wrapper.find('.ntk-template-dashboard__greeting-icon')
     expect(icon.exists()).toBe(true)
     expect(icon.text()).toBe('☀️')
-    expect(wrapper.find('.ntk-template-dashboard__title').text()).toBe('Bom dia, João')
+    expect(wrapper.find('.ntk-template-dashboard__title').text()).toBe('Good morning, John')
   })
 
   it('does not render greeting-icon element when greetingIcon is not set', () => {

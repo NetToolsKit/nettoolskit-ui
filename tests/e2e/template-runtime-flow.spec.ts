@@ -99,34 +99,34 @@ function createRuntimeSeed(): RuntimeFlowSeedSnapshot {
     clients: [
       {
         id: 'client-flow-1',
-        name: 'Cliente Atlas',
+        name: 'Atlas Client',
         owner: 'Ana Lima',
-        segment: 'Distribuicao',
+        segment: 'Distribution',
         city: 'Recife',
         status: 'active',
         monthlyRevenue: 18000,
         lastOrderAt: '2026-04-10T09:00:00.000Z',
-        tags: ['nordeste', 'vip'],
+        tags: ['northeast', 'vip'],
       },
       {
         id: 'client-flow-2',
-        name: 'Cliente Boreal',
+        name: 'Boreal Client',
         owner: 'Bruno Serra',
-        segment: 'Industria',
+        segment: 'Industry',
         city: 'Curitiba',
         status: 'onboarding',
         monthlyRevenue: 9400,
         lastOrderAt: '2026-04-08T15:30:00.000Z',
-        tags: ['novo'],
+        tags: ['new'],
       },
     ],
     orders: [
       {
         id: 'order-flow-1',
-        number: 'PED-3001',
+        number: 'ORD-3001',
         clientId: 'client-flow-1',
-        clientName: 'Cliente Atlas',
-        category: 'Eletronicos',
+        clientName: 'Atlas Client',
+        category: 'Electronics',
         total: 7200,
         status: 'pending',
         createdAt: '2026-04-10T09:00:00.000Z',
@@ -134,10 +134,10 @@ function createRuntimeSeed(): RuntimeFlowSeedSnapshot {
       },
       {
         id: 'order-flow-2',
-        number: 'PED-3002',
+        number: 'ORD-3002',
         clientId: 'client-flow-2',
-        clientName: 'Cliente Boreal',
-        category: 'Industria',
+        clientName: 'Boreal Client',
+        category: 'Industry',
         total: 5400,
         status: 'in_progress',
         createdAt: '2026-04-09T12:00:00.000Z',
@@ -146,9 +146,9 @@ function createRuntimeSeed(): RuntimeFlowSeedSnapshot {
     ],
     settings: {
       workspaceName: 'Atlas Runtime',
-      operatorName: 'Operadora Runtime',
+      operatorName: 'Runtime Operator',
       supportEmail: 'runtime@atlas.local',
-      locale: 'pt-BR',
+      locale: 'en-US',
       timezone: 'America/Sao_Paulo',
       notificationsEnabled: true,
       compactTables: true,
@@ -158,32 +158,32 @@ function createRuntimeSeed(): RuntimeFlowSeedSnapshot {
       categories: [
         {
           id: 'operations',
-          name: 'Operacoes',
+          name: 'Operations',
           count: 1,
           expanded: true,
           children: [
-            { id: 'operations-orders', name: 'Pedidos', count: 1 },
+            { id: 'operations-orders', name: 'Orders', count: 1 },
           ],
         },
       ],
       documents: [
         {
           id: 'doc-flow-1',
-          name: 'Fluxo integrado.md',
+          name: 'Integrated flow.md',
           fileType: 'md',
           size: '12 KB',
-          category: 'Operacoes',
+          category: 'Operations',
           categoryId: 'operations',
-          subCategory: 'Pedidos',
+          subCategory: 'Orders',
           subCategoryId: 'operations-orders',
           tags: ['runtime'],
           status: 'processed',
           uploadDate: '10/04',
-          description: 'Documento seed para validar a jornada integrada do runtime.',
+          description: 'Seed document used to validate the integrated runtime journey.',
         },
       ],
       suggestions: [
-        { id: 'sug-flow-1', text: 'Quais pedidos estao em aberto?', icon: 'help' },
+        { id: 'sug-flow-1', text: 'Which orders are still open?', icon: 'help' },
       ],
     },
   }
@@ -192,7 +192,7 @@ function createRuntimeSeed(): RuntimeFlowSeedSnapshot {
 function buildConversationTitle(question: string): string {
   const cleaned = question.trim().replace(/\s+/g, ' ').replace(/[!?.,;:]+$/g, '')
   if (!cleaned) {
-    return 'Nova conversa'
+    return 'New conversation'
   }
 
   const title = cleaned.length > 56
@@ -213,7 +213,7 @@ async function resetAndSeedRuntimeState(page: Page): Promise<void> {
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -264,44 +264,44 @@ test.describe('template runtime end-to-end flow', () => {
     await selectTheme(page, 'Claude', 'claude')
 
     await page.goto(`${RUNTIME_BASE}#/clients`)
-    const clientsTable = page.locator('table[aria-label="Tabela de clientes"]')
-    await expect(page.getByRole('heading', { name: 'Clientes' })).toBeVisible()
-    await expect(clientsTable).toContainText('Cliente Atlas')
+    const clientsTable = page.locator('.ntk-data-table[aria-label="Clients table"]')
+    await expect(page.getByRole('heading', { name: 'Clients' })).toBeVisible()
+    await expect(clientsTable).toContainText('Atlas Client')
 
-    await page.getByRole('button', { name: 'Novo cliente' }).click()
-    await expect(clientsTable).toContainText('Novo Cliente 3')
+    await page.getByRole('button', { name: 'New client' }).click()
+    await expect(clientsTable).toContainText('New Client 3')
 
-    const borealRow = clientsTable.locator('tbody tr', { hasText: 'Cliente Boreal' })
-    await borealRow.getByRole('button', { name: 'Atualizar status do cliente' }).click()
-    await expect(borealRow).toContainText('Ativo')
+    const borealRow = clientsTable.locator('tbody tr', { hasText: 'Boreal Client' })
+    await borealRow.getByRole('button', { name: 'Update client status' }).click()
+    await expect(borealRow).toContainText('Active')
 
     await page.goto(`${RUNTIME_BASE}#/orders`)
-    const ordersTable = page.locator('table[aria-label="Tabela de pedidos"]')
-    await expect(page.getByRole('heading', { name: 'Pedidos' })).toBeVisible()
-    await ordersTable.locator('tbody tr', { hasText: 'PED-3001' }).getByRole('checkbox').click()
-    await expect(page.locator('.ntk-template-crud-list__bulk-label')).toHaveText('1 pedidos selecionados')
-    await page.getByRole('button', { name: 'Concluir' }).click()
-    await expect(ordersTable.locator('tbody tr', { hasText: 'PED-3001' })).toContainText('Concluído')
+    const ordersTable = page.locator('.ntk-data-table[aria-label="Orders table"]')
+    await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible()
+    await ordersTable.locator('tbody tr', { hasText: 'ORD-3001' }).getByRole('checkbox').click()
+    await expect(page.locator('.ntk-template-crud-list__bulk-label')).toHaveText('1 selected orders')
+    await page.getByRole('button', { name: 'Complete', exact: true }).click()
+    await expect(ordersTable.locator('tbody tr', { hasText: 'ORD-3001' })).toContainText('Completed')
 
     await page.goto(`${RUNTIME_BASE}#/settings`)
-    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
-    await page.getByLabel('Nome do workspace').fill('Atlas Prime Runtime')
-    await page.getByLabel('Nome do operador').fill('Marina Campos')
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
+    await page.getByLabel('Workspace name').fill('Atlas Prime Runtime')
+    await page.getByLabel('Operator name').fill('Marina Campos')
     await page.locator('input[name="runtime-compact-tables"]').uncheck()
-    await page.getByRole('button', { name: 'Salvar alterações' }).click()
+    await page.getByRole('button', { name: 'Save changes' }).click()
 
     await page.goto(`${RUNTIME_BASE}#/clients`)
-    await expect(page.locator('[aria-label="Cards de clientes"]')).toBeVisible()
-    await expect(page.locator('table[aria-label="Tabela de clientes"]')).toHaveCount(0)
+    await expect(page.locator('[aria-label="Client cards"]')).toBeVisible()
+    await expect(page.locator('.ntk-data-table[aria-label="Clients table"]')).toHaveCount(0)
 
     await openUserMenu(page)
     await page.locator('.q-item', { hasText: 'Horizontal menu' }).first().locator('.q-toggle').click()
     await expect(page.locator('.ntk-template-main-layout__horizontal-nav')).toBeVisible()
     await expect(page.locator('.ntk-template-main-layout__drawer')).toHaveCount(0)
 
-    const question = 'Como seguir o pedido local integrado?'
+    const question = 'How should we continue the integrated local order?'
     const expectedTitle = buildConversationTitle(question)
-    await page.getByLabel('Abrir assistente').click()
+    await page.getByLabel('Open assistant').click()
     const drawer = page.getByRole('dialog', { name: 'Assistant drawer' })
     await expect(drawer).toBeVisible()
     await drawer.locator('textarea').fill(question)
@@ -332,9 +332,9 @@ test.describe('template runtime end-to-end flow', () => {
     await expect(page.getByRole('heading', { name: 'Marina Campos' })).toBeVisible()
 
     const runtimeSnapshot = await readRuntimeSnapshot(page)
-    expect(runtimeSnapshot.clients.find(client => client.name === 'Cliente Boreal')?.status).toBe('active')
-    expect(runtimeSnapshot.clients.some(client => client.name === 'Novo Cliente 3')).toBeTruthy()
-    expect(runtimeSnapshot.orders.find(order => order.number === 'PED-3001')?.status).toBe('completed')
+    expect(runtimeSnapshot.clients.find(client => client.name === 'Boreal Client')?.status).toBe('active')
+    expect(runtimeSnapshot.clients.some(client => client.name === 'New Client 3')).toBeTruthy()
+    expect(runtimeSnapshot.orders.find(order => order.number === 'ORD-3001')?.status).toBe('completed')
     expect(runtimeSnapshot.settings).toMatchObject({
       workspaceName: 'Atlas Prime Runtime',
       operatorName: 'Marina Campos',

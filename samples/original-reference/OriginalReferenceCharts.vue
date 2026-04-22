@@ -1,5 +1,5 @@
 <template>
-  <!-- Shared chart surface keeps "Pedidos por Status" and "Vendas por Categoria" aligned to the reference. -->
+  <!-- Shared chart surface keeps "Orders by Status" and "Sales by Category" aligned to the reference. -->
   <ReferenceDashboardCharts
     :status-segments="statusSegments"
     :category-series="categorySeries"

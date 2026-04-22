@@ -216,15 +216,19 @@ const props = defineProps({
   },
   toggleLabel: {
     type: String,
-    default: 'Comprimir'
+    default: 'Collapse'
   },
   toggleTooltip: {
     type: String,
-    default: 'Expandir Menu'
+    default: 'Expand Menu'
   }
 })
 
-const emit = defineEmits(['update:model-value', 'toggle', 'item-click'])
+const emit = defineEmits<{
+  'update:model-value': [value: boolean]
+  toggle: []
+  'item-click': [item: SidebarItem]
+}>()
 
 const colorTokenAliases: Record<string, string> = {
   primary: 'var(--ntk-primary)',

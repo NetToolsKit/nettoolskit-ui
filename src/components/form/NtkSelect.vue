@@ -56,7 +56,7 @@
         <q-item-section>
           <div class="row q-gutter-sm q-px-sm">
             <q-btn 
-              label="Marcar todos" 
+              label="Select all"
               size="sm" 
               flat 
               dense
@@ -64,7 +64,7 @@
               @click="selectAll"
             />
             <q-btn 
-              label="Desmarcar todos" 
+              label="Deselect all"
               size="sm" 
               flat 
               dense
@@ -134,7 +134,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: unknown]
+}>()
 
 const { internalValue, handleUpdate } = useNtkField(props, emit)
 

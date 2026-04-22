@@ -1,8 +1,8 @@
 /**
- * QuasarNotificationAdapter - Implementação Infrastructure para Quasar
+ * QuasarNotificationAdapter - Quasar infrastructure implementation.
  * 
- * Adapta o NotificationService para usar Quasar Notify.
- * Esta camada contém dependências de framework (Quasar).
+ * Adapts NotificationService to Quasar Notify.
+ * This layer contains framework dependencies.
  * 
  * @layer Infrastructure
  */
@@ -16,7 +16,7 @@ import {
 } from '../services/NotificationService'
 
 /**
- * Mapeamento de tipos para cores Quasar
+ * Maps service notification types to Quasar notification types.
  */
 const TYPE_TO_QUASAR_TYPE: Record<NotificationType, QNotifyCreateOptions['type']> = {
   success: 'positive',
@@ -26,11 +26,11 @@ const TYPE_TO_QUASAR_TYPE: Record<NotificationType, QNotifyCreateOptions['type']
 }
 
 /**
- * Adapter que implementa NotificationService usando Quasar Notify
+ * Adapter that implements NotificationService with Quasar Notify.
  */
 export class QuasarNotificationAdapter extends NotificationService {
   /**
-   * Sobrescreve método notify para usar Quasar
+   * Overrides notify to use Quasar.
    */
   notify(options: NotificationOptions): void {
     const {
@@ -76,9 +76,9 @@ export class QuasarNotificationAdapter extends NotificationService {
   }
 
   /**
-   * Implementa loading usando Quasar Notify
+   * Implements loading feedback with Quasar Notify.
    */
-  loading(message: string = 'Carregando...'): NotificationHandle {
+  loading(message: string = 'Loading...'): NotificationHandle {
     const notifyInstance = Notify.create({
       type: 'ongoing',
       message,
@@ -98,7 +98,7 @@ export class QuasarNotificationAdapter extends NotificationService {
   }
 
   /**
-   * Retorna ícone padrão por tipo
+   * Returns the default icon for each notification type.
    */
   private getDefaultIcon(type: NotificationType): string {
     const icons: Record<NotificationType, string> = {
@@ -112,7 +112,7 @@ export class QuasarNotificationAdapter extends NotificationService {
 }
 
 /**
- * Instância singleton do adapter Quasar
+ * Singleton Quasar adapter instance.
  */
 let quasarNotificationInstance: QuasarNotificationAdapter | null = null
 

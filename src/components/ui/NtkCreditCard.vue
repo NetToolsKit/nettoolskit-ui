@@ -66,7 +66,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  creditLabel: 'créditos',
+  creditLabel: 'credits',
   variant: 'default',
   hoverable: true,
 });
@@ -127,7 +127,7 @@ const amountStyle = computed(() => ({
 }));
 
 const formattedCredits = computed(() => {
-  return props.credits.toLocaleString('pt-BR');
+  return props.credits.toLocaleString('en-US');
 });
 </script>
 

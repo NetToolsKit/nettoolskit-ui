@@ -102,8 +102,7 @@ import { computed } from 'vue'
 import { QIcon } from 'quasar'
 import { useBranding } from '../../composables/ui/useBranding'
 
-// ✅ NUNCA usar default export (frontend.instructions.md)
-// ✅ TypeScript interface para props
+// Do not use default script exports; keep props typed through interfaces.
 
 interface LinkItem {
   label: string
@@ -138,18 +137,18 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'dark',
   linkSections: () => [],
   socialLinks: () => [],
-  socialTitle: 'Redes Sociais',
+  socialTitle: 'Social links',
   minimal: false,
   useBrandingData: false,
 })
 
 const branding = useBranding()
 
-// Valores computados com fallback para props ou tema
+// Computed values with prop or theme fallback.
 const brandName = computed(() => props.brandName || branding.appName?.value || '')
 const brandDescription = computed(() => props.brandDescription || branding.tagline?.value || '')
 const copyrightText = computed(() =>
-  props.copyrightText || `© ${new Date().getFullYear()} ${brandName.value}. Todos os direitos reservados.`
+  props.copyrightText || `© ${new Date().getFullYear()} ${brandName.value}. All rights reserved.`
 )
 
 // Maps theme social links to the component format.
@@ -175,7 +174,7 @@ const themeSocialLinks = computed<SocialLink[]>(() => {
     }))
 })
 
-// Usa socialLinks das props ou do tema
+// Uses prop social links first and falls back to the active theme.
 const finalSocialLinks = computed(() =>
   props.socialLinks.length > 0 ? props.socialLinks : themeSocialLinks.value
 )

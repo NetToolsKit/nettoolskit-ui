@@ -126,10 +126,10 @@ export interface ContactInfo {
  * @example
  * ```typescript
  * const section: FooterSection = {
- *   title: 'Produto',
+ *   title: 'Product',
  *   links: [
- *     { label: 'Funcionalidades', href: '#features' },
- *     { label: 'Preços', href: '#pricing' }
+ *     { label: 'Features', href: '#features' },
+ *     { label: 'Pricing', href: '#pricing' }
  *   ]
  * }
  * ```
@@ -207,34 +207,34 @@ export interface BrandContent {
  */
 export const sentinelaContent: BrandContent = {
   footerDescription:
-    'Sentinela é um sistema de busca profissional que ajuda empresas e pesquisadores a encontrar informações relevantes com rapidez e precisão.',
+    'Sentinela is a professional search system that helps companies and researchers find relevant information quickly and accurately.',
   
   footerSections: [
     {
-      title: 'Produto',
+      title: 'Product',
       links: [
-        { label: 'Funcionalidades', href: '#funcionalidades' },
-        { label: 'Planos', href: '#planos' },
-        { label: 'Integrações', href: '/integrations' },
+        { label: 'Features', href: '#features' },
+        { label: 'Pricing', href: '#pricing' },
+        { label: 'Integrations', href: '/integrations' },
         { label: 'API', href: '/api-docs', external: true },
       ],
     },
     {
-      title: 'Empresa',
+      title: 'Company',
       links: [
-        { label: 'Sobre', href: '/about' },
+        { label: 'About', href: '/about' },
         { label: 'Blog', href: '/blog' },
-        { label: 'Carreira', href: '/careers' },
-        { label: 'Contato', href: '#contato' },
+        { label: 'Careers', href: '/careers' },
+        { label: 'Contact', href: '#contact' },
       ],
     },
     {
-      title: 'Suporte',
+      title: 'Support',
       links: [
-        { label: 'Documentação', href: '/docs', external: true },
+        { label: 'Documentation', href: '/docs', external: true },
         { label: 'FAQ', href: '/faq' },
         { label: 'Status', href: 'https://status.sentinela.com', external: true },
-        { label: 'Contato', href: 'mailto:support@sentinela.com' },
+        { label: 'Contact', href: 'mailto:support@sentinela.com' },
       ],
     },
   ],
@@ -245,26 +245,26 @@ export const sentinelaContent: BrandContent = {
       url: 'https://linkedin.com/company/sentinela',
       icon: 'mdi-linkedin',
       username: '@sentinela',
-      ariaLabel: 'Siga-nos no LinkedIn',
+      ariaLabel: 'Follow us on LinkedIn',
     },
     {
       platform: 'Twitter',
       url: 'https://twitter.com/sentinela',
       icon: 'mdi-twitter',
       username: '@sentinela',
-      ariaLabel: 'Siga-nos no Twitter',
+      ariaLabel: 'Follow us on Twitter',
     },
     {
       platform: 'GitHub',
       url: 'https://github.com/sentinela',
       icon: 'mdi-github',
       username: '@sentinela',
-      ariaLabel: 'Veja nosso código no GitHub',
+      ariaLabel: 'View our code on GitHub',
     },
   ],
   
   contact: {
-    email: 'contato@sentinela.com',
+    email: 'contact@sentinela.com',
     phone: '+55 (11) 3000-0000',
     whatsapp: '+5511999999999',
     supportUrl: '/support',
@@ -282,34 +282,34 @@ export const sentinelaContent: BrandContent = {
  */
 export const plateaContent: BrandContent = {
   footerDescription:
-    'PlaTEA é uma agenda visual assistida que facilita o planejamento e organização do dia a dia de forma acessível e inclusiva.',
+    'PlaTEA is an assisted visual planner that makes everyday planning and organization more accessible and inclusive.',
   
   footerSections: [
     {
-      title: 'Funcionalidades',
+      title: 'Features',
       links: [
-        { label: 'Agenda Visual', href: '#agenda' },
-        { label: 'Modo Acessível', href: '/acessibilidade' },
-        { label: 'Rotinas', href: '#rotinas' },
-        { label: 'Lembretes', href: '#lembretes' },
+        { label: 'Visual Planner', href: '#planner' },
+        { label: 'Accessible Mode', href: '/accessibility' },
+        { label: 'Routines', href: '#routines' },
+        { label: 'Reminders', href: '#reminders' },
       ],
     },
     {
-      title: 'Recursos',
+      title: 'Resources',
       links: [
         { label: 'Tutorial', href: '#tutorial' },
-        { label: 'Dicas de Uso', href: '/dicas' },
+        { label: 'Usage Tips', href: '/tips' },
         { label: 'FAQ', href: '/faq' },
-        { label: 'Suporte', href: '/suporte' },
+        { label: 'Support', href: '/support' },
       ],
     },
     {
-      title: 'Sobre',
+      title: 'About',
       links: [
-        { label: 'Nossa História', href: '/sobre' },
-        { label: 'Depoimentos', href: '#depoimentos' },
+        { label: 'Our Story', href: '/about' },
+        { label: 'Testimonials', href: '#testimonials' },
         { label: 'Blog', href: '/blog' },
-        { label: 'Contato', href: '#contato' },
+        { label: 'Contact', href: '#contact' },
       ],
     },
   ],
@@ -320,32 +320,32 @@ export const plateaContent: BrandContent = {
       url: 'https://instagram.com/platea.app',
       icon: 'mdi-instagram',
       username: '@platea.app',
-      ariaLabel: 'Siga-nos no Instagram',
+      ariaLabel: 'Follow us on Instagram',
     },
     {
       platform: 'Facebook',
       url: 'https://facebook.com/plateaapp',
       icon: 'mdi-facebook',
       username: '@plateaapp',
-      ariaLabel: 'Curta nossa página no Facebook',
+      ariaLabel: 'Like our Facebook page',
     },
     {
       platform: 'YouTube',
       url: 'https://youtube.com/@platea',
       icon: 'mdi-youtube',
       username: '@platea',
-      ariaLabel: 'Veja nossos tutoriais no YouTube',
+      ariaLabel: 'Watch our tutorials on YouTube',
     },
   ],
   
   contact: {
-    email: 'contato@platea.app',
+    email: 'contact@platea.app',
     whatsapp: '+5511988888888',
-    supportUrl: '/suporte',
+    supportUrl: '/support',
   },
   
-  privacyPolicyUrl: '/privacidade',
-  termsOfServiceUrl: '/termos',
+  privacyPolicyUrl: '/privacy',
+  termsOfServiceUrl: '/terms',
 }
 
 /**
@@ -360,7 +360,7 @@ export const nettoolskitContent: BrandContent = {
   
   footerSections: [
     {
-      title: 'Documentação',
+      title: 'Documentation',
       links: [
         { label: 'Getting Started', href: '#installation' },
         { label: 'Components', href: '#components' },
@@ -369,7 +369,7 @@ export const nettoolskitContent: BrandContent = {
       ],
     },
     {
-      title: 'Comunidade',
+      title: 'Community',
       links: [
         { label: 'GitHub', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue', external: true },
         { label: 'Issues', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/issues', external: true },
@@ -378,7 +378,7 @@ export const nettoolskitContent: BrandContent = {
       ],
     },
     {
-      title: 'Recursos',
+      title: 'Resources',
       links: [
         { label: 'Changelog', href: '/CHANGELOG.md', external: true },
         { label: 'Examples', href: '/samples' },

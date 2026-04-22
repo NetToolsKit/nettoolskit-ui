@@ -1,17 +1,17 @@
 /**
- * FilterService - Serviço para gerenciamento de filtros
+ * FilterService - filter management service.
  * 
- * Serviço puro de lógica de negócio para filtros de busca/relatórios.
- * Sem dependências de frameworks (Vue, Quasar, etc.).
+ * Pure business logic service for search/report filters.
+ * No framework dependencies (Vue, Quasar, etc.).
  * 
  * Responsabilidades:
  * - Manage reactive state
  * - Integrate with URL (query params)
  * - Validate and transform values
  * - Save user preferences
- * - Contar filtros ativos
- * - Reset de filtros
- * - Serialização/deserialização para URL
+ * - Count active filters
+ * - Reset filters
+ * - Serialize/deserialize URL state
  * 
  * @example
  * const service = new FilterService({ category: null, status: null })
@@ -22,7 +22,7 @@
  */
 
 /**
- * Estado genérico de filtros
+ * Generic filter state
  */
 export interface FiltersState {
   [key: string]: any
@@ -68,7 +68,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Define o estado completo dos filtros
+   * Sets the complete filter state
    */
   setFilters(filters: T): void {
     this.currentFilters = { ...filters }
@@ -107,12 +107,12 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Verifica se há algum filtro ativo
+   * Checks whether any filters are active
    * 
-   * Um filtro é considerado ativo se:
-   * - Não é null, undefined ou string vazia
-   * - Não é array vazio
-   * - É diferente do valor inicial
+   * A filter is considered active when:
+   * - It is not null, undefined, or an empty string
+   * - It is not an empty array
+   * - It differs from its initial value
    */
   hasActiveFilters(): boolean {
     return Object.keys(this.currentFilters).some(key => {
@@ -121,7 +121,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Verifica se um filtro específico está ativo
+   * Checks whether a specific filter is active
    */
   isFilterActive<K extends keyof T>(key: K): boolean {
     const value = this.currentFilters[key]
@@ -135,7 +135,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Conta quantos filtros estão ativos
+   * Counts active filters
    */
   getActiveFilterCount(): number {
     return Object.keys(this.currentFilters).filter(key => {
@@ -144,7 +144,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Lista as chaves dos filtros ativos
+   * Lists active filter keys
    */
   getActiveFilterKeys(): (keyof T)[] {
     return Object.keys(this.currentFilters).filter(key => {
@@ -153,12 +153,12 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Serializa filtros para query params de URL
+   * Serializes filters to URL query params
    * 
-   * Converte o estado atual dos filtros em um objeto
-   * adequado para query parameters de URL.
+   * Converts current filter state into an object suitable
+   * for URL query parameters.
    * 
-   * @returns Objeto com pares chave-valor (string)
+   * @returns Object with string key-value pairs
    */
   serializeToQueryParams(): Record<string, string> {
     const query: Record<string, string> = {}
@@ -175,12 +175,12 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Deserializa query params de URL para filtros
+   * Deserializes URL query params into filters
    * 
-   * Converte query parameters de URL para o formato
-   * adequado dos filtros, respeitando os tipos iniciais.
+   * Converts URL query parameters into the expected filter
+   * shape while respecting initial value types.
    * 
-   * @param queryParams - Objeto com query parameters
+   * @param queryParams - Query parameter object
    */
   deserializeFromQueryParams(queryParams: Record<string, string | string[]>): void {
     const newFilters: any = { ...this.currentFilters }
@@ -232,7 +232,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Verifica se um valor é considerado vazio
+   * Checks whether a value is considered empty
    */
   private isEmptyValue(value: any): boolean {
     if (value === null || value === undefined || value === '') return true
@@ -241,7 +241,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Converte um valor para string (para URL)
+   * Converts a value to a string for URL state
    */
   private valueToString(value: any): string {
     if (Array.isArray(value)) {
@@ -251,7 +251,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Parseia valor de query param para tipo apropriado
+   * Parses a query param value into the expected type
    */
   private parseQueryValue(
     value: string | string[],
@@ -278,7 +278,7 @@ export class FilterService<T extends FiltersState> {
   }
 
   /**
-   * Notifica mudança nos filtros
+   * Notifies filter changes
    */
   private notifyChange(): void {
     if (this.options.onFilterChange) {
@@ -288,20 +288,19 @@ export class FilterService<T extends FiltersState> {
 }
 
 /**
- * Factory singleton para FilterService
+ * FilterService singleton factory.
  * 
- * Permite criar e gerenciar instâncias de FilterService
- * de forma centralizada.
+ * Creates and manages FilterService instances centrally.
  */
 export class FilterServiceFactory {
   private static instances: Map<string, FilterService<any>> = new Map()
 
   /**
-   * Cria ou retorna instância existente de FilterService
+   * Creates or returns an existing FilterService instance
    * 
-   * @param key - Chave única para identificar a instância
-   * @param initialFilters - Estado inicial dos filtros
-   * @param options - Opções de configuração
+   * @param key - Unique key that identifies the instance
+   * @param initialFilters - Initial filter state
+   * @param options - Configuration options
    */
   static getInstance<T extends FiltersState>(
     key: string,
@@ -315,14 +314,14 @@ export class FilterServiceFactory {
   }
 
   /**
-   * Remove instância do cache
+   * Removes an instance from the cache
    */
   static removeInstance(key: string): void {
     this.instances.delete(key)
   }
 
   /**
-   * Limpa todas as instâncias
+   * Clears all instances
    */
   static clearAll(): void {
     this.instances.clear()

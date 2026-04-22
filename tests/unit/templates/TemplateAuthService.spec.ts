@@ -48,7 +48,7 @@ describe('templateAuthService', () => {
 
     const resultPromise = templateAuthService.login('unknown@nettoolskit.dev', 'demo-password')
     const assertion = expect(resultPromise).rejects.toThrow(
-      'Credenciais locais inválidas. Use uma conta seeded do runtime.'
+      'Invalid local credentials. Use a seeded runtime account.'
     )
     await vi.advanceTimersByTimeAsync(250)
 
@@ -60,7 +60,7 @@ describe('templateAuthService', () => {
 
     const resultPromise = templateAuthService.login('ops@nettoolskit.dev', 'wrong-password')
     const assertion = expect(resultPromise).rejects.toThrow(
-      'Credenciais locais inválidas. Use uma conta seeded do runtime.'
+      'Invalid local credentials. Use a seeded runtime account.'
     )
     await vi.advanceTimersByTimeAsync(250)
 

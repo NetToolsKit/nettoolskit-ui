@@ -11,7 +11,7 @@ import type { ThemeConfig, ThemeName } from '../../config/theme/theme.config';
 import { themes, defaultTheme } from '../../config/theme/theme.config';
 import { applySemanticColors } from '../../config/colors/semantic.config';
 
-// Estado global do tema
+// Global theme state.
 const currentTheme = ref<ThemeConfig>(defaultTheme);
 const themeName = ref<ThemeName>(defaultTheme.name as ThemeName);
 
@@ -40,7 +40,7 @@ function applyThemeToCSS(theme: ThemeConfig): void {
     ? theme.colors.border
     : `color-mix(in srgb, ${theme.colors.background} 16%, transparent)`;
   
-  // Cores principais
+  // Main colors.
   root.style.setProperty('--theme-primary', theme.colors.primary);
   root.style.setProperty('--theme-primary-dark', theme.colors.primaryDark);
   root.style.setProperty('--theme-primary-light', theme.colors.primaryLight);
@@ -51,12 +51,12 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--theme-background', theme.colors.background);
   root.style.setProperty('--theme-background-light', theme.colors.backgroundLight);
   
-  // Texto
+  // Text.
   root.style.setProperty('--theme-text', theme.colors.text);
   root.style.setProperty('--theme-text-light', theme.colors.textLight);
   root.style.setProperty('--theme-text-muted', theme.colors.textMuted);
   
-  // Bordas
+  // Borders.
   root.style.setProperty('--theme-border', theme.colors.border);
   
   // Feedback
@@ -65,12 +65,12 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--theme-error', theme.colors.error);
   root.style.setProperty('--theme-info', theme.colors.info);
   
-  // Gradientes
+  // Gradients.
   root.style.setProperty('--theme-gradient-hero', theme.gradients.hero);
   root.style.setProperty('--theme-gradient-primary', theme.gradients.primary);
   root.style.setProperty('--theme-gradient-loading', theme.gradients.loading);
   
-  // Fontes
+  // Fonts.
   root.style.setProperty('--theme-font-display', theme.fonts.display);
   root.style.setProperty('--theme-font-body', theme.fonts.body);
 
@@ -121,11 +121,11 @@ function applyThemeToCSS(theme: ThemeConfig): void {
 }
 
 /**
- * Composable para gerenciar temas
+ * Composable for managing legacy themes.
  */
 export function useTheme() {
   /**
-   * Define o tema atual
+   * Sets the current theme.
    */
   const setTheme = (name: ThemeName): void => {
     const theme = themes[name];
@@ -144,7 +144,7 @@ export function useTheme() {
   };
 
   /**
-   * Define um tema customizado
+   * Sets a custom theme.
    */
   const setCustomTheme = (theme: ThemeConfig): void => {
     currentTheme.value = theme;
@@ -168,26 +168,26 @@ export function useTheme() {
   };
 
   /**
-   * Retorna a cor primária atual
+   * Returns the current primary color.
    */
   const primaryColor = computed(() => currentTheme.value.colors.primary);
 
   /**
-   * Retorna as configurações do logo
+   * Returns the logo settings.
    */
   const logo = computed(() => currentTheme.value.identity.logo);
 
   /**
-   * Retorna o nome do tema atual
+   * Returns the current theme name.
    */
   const name = computed(() => currentTheme.value.name);
 
   /**
-   * Verifica se é um tema escuro
+   * Checks whether the current theme is dark.
    */
   const isDark = computed(() => {
     const bg = currentTheme.value.colors.background;
-    // Verifica se o background é escuro (hex < 50%)
+    // Treat backgrounds below 50% brightness as dark.
     const hex = bg.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
@@ -197,12 +197,12 @@ export function useTheme() {
   });
 
   /**
-   * Lista de temas disponíveis
+   * Lists available themes.
    */
   const availableThemes = computed(() => Object.keys(themes) as ThemeName[]);
 
   return {
-    // Estado (readonly para evitar mutações diretas)
+    // State is readonly to avoid direct mutations.
     theme: readonly(currentTheme),
     themeName: readonly(themeName),
     
@@ -213,7 +213,7 @@ export function useTheme() {
     isDark,
     availableThemes,
     
-    // Métodos
+    // Methods.
     setTheme,
     setCustomTheme,
     loadSavedTheme,
@@ -221,8 +221,8 @@ export function useTheme() {
 }
 
 /**
- * Inicializa o tema no carregamento da aplicação
- * Chamar no main.ts ou App.vue
+ * Initializes the theme during application startup.
+ * Call from main.ts or App.vue.
  */
 export function initTheme(defaultThemeName: ThemeName = defaultTheme.name as ThemeName): void {
   const { setTheme } = useTheme();

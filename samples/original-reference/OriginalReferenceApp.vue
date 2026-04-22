@@ -36,13 +36,13 @@
           profile-name="Admin NetToolsKit"
           profile-initials="AN"
           large-avatar-size="64px"
-          sign-out-label="Abrir landing"
-          account-label="Voltar ao dashboard"
-          preferences-label="Preferências"
-          horizontal-menu-label="Menu horizontal"
-          horizontal-menu-caption="Alterna entre menu lateral e horizontal"
-          mini-labels-label="Labels no mini menu"
-          mini-labels-caption="Exibe texto abaixo dos ícones"
+          sign-out-label="Open landing"
+          account-label="Back to dashboard"
+          preferences-label="Preferences"
+          horizontal-menu-label="Horizontal menu"
+          horizontal-menu-caption="Switches between side and horizontal menus"
+          mini-labels-label="Mini menu labels"
+          mini-labels-caption="Shows text below icons"
           :show-side-menu-style-toggle="false"
           @update:model-value="layoutControls.setHorizontalMode($event)"
           @update:show-labels-in-mini="layoutControls.setShowLabelsInMini($event)"
@@ -97,7 +97,7 @@
             anchor="top middle"
             self="bottom middle"
           >
-            Abrir assistente
+            Open assistant
           </q-tooltip>
         </q-btn>
 
@@ -105,10 +105,10 @@
           <q-card class="ntk-original-reference__assistant-dialog">
             <q-card-section>
               <div class="ntk-original-reference__assistant-title">
-                Assistente do sample
+                Sample assistant
               </div>
               <p class="ntk-original-reference__assistant-copy">
-                Acesse rapidamente o dashboard principal, abra configurações ou volte para a landing sem sair do shell aprovado.
+                Quickly open the main dashboard, settings, or landing page without leaving the approved shell.
               </p>
             </q-card-section>
             <q-card-actions align="right">
@@ -122,7 +122,7 @@
               <q-btn
                 flat
                 no-caps
-                label="Configurações"
+                label="Settings"
                 class="ntk-original-reference__accent-btn"
                 @click="openAssistantAction('configurations')"
               />
@@ -167,17 +167,17 @@ const menuItems: TemplateMenuItem[] = [
   },
   {
     id: 'clients',
-    text: 'Clientes',
+    text: 'Clients',
     icon: 'people',
   },
   {
     id: 'orders',
-    text: 'Pedidos',
+    text: 'Orders',
     icon: 'shopping_cart',
   },
   {
     id: 'configurations',
-    text: 'Configurações',
+    text: 'Settings',
     icon: 'settings',
     stickyBottom: true,
   },
@@ -206,40 +206,40 @@ interface PlaceholderState {
 const activePlaceholder = computed<PlaceholderState>(() => {
   const bySection: Record<Exclude<OriginalReferenceSectionId, 'dashboard'>, PlaceholderState> = {
     clients: {
-      title: 'Clientes em preparação',
-      subtitle: 'A área de clientes permanece conectada ao shell aprovado da referência.',
-      description: 'Este placeholder existe apenas para manter a navegação funcional enquanto a tela definitiva é acoplada aos mesmos componentes reutilizáveis do dashboard base.',
-      statusLabel: 'Conectado',
+      title: 'Clients in preparation',
+      subtitle: 'The clients area remains connected to the approved reference shell.',
+      description: 'This placeholder keeps navigation functional while the final screen is attached to the same reusable components as the base dashboard.',
+      statusLabel: 'Connected',
       hints: [
-        { id: 'clients-hint-1', text: 'A navegação lateral segue o layout aprovado.', icon: 'check_circle' },
-        { id: 'clients-hint-2', text: 'O dashboard continua como base visual canônica do sample.', icon: 'dashboard' },
+        { id: 'clients-hint-1', text: 'Side navigation follows the approved layout.', icon: 'check_circle' },
+        { id: 'clients-hint-2', text: 'The dashboard remains the canonical visual base for the sample.', icon: 'dashboard' },
       ],
-      primaryAction: { id: 'open-dashboard', label: 'Voltar ao dashboard', icon: 'dashboard' },
-      secondaryAction: { id: 'open-landing', label: 'Abrir landing', icon: 'home', outline: true, unelevated: false },
+      primaryAction: { id: 'open-dashboard', label: 'Back to dashboard', icon: 'dashboard' },
+      secondaryAction: { id: 'open-landing', label: 'Open landing', icon: 'home', outline: true, unelevated: false },
     },
     orders: {
-      title: 'Pedidos em preparação',
-      subtitle: 'O fluxo de pedidos continua dentro do mesmo shell e da mesma linguagem do baseline aprovado.',
-      description: 'A navegação já está funcional e a tela final de pedidos será derivada a partir deste mesmo runtime, sem depender de um showcase separado.',
-      statusLabel: 'Conectado',
+      title: 'Orders in preparation',
+      subtitle: 'The order flow stays inside the same shell and visual language as the approved baseline.',
+      description: 'Navigation is already functional and the final orders screen will be derived from this same runtime, without a separate showcase.',
+      statusLabel: 'Connected',
       hints: [
-        { id: 'orders-hint-1', text: 'O menu superior horizontal continua disponível via preferência do usuário.', icon: 'view_stream' },
-        { id: 'orders-hint-2', text: 'O dashboard principal permanece como referência do produto.', icon: 'insights' },
+        { id: 'orders-hint-1', text: 'The horizontal top menu remains available through user preferences.', icon: 'view_stream' },
+        { id: 'orders-hint-2', text: 'The main dashboard remains the product reference.', icon: 'insights' },
       ],
-      primaryAction: { id: 'open-dashboard', label: 'Voltar ao dashboard', icon: 'dashboard' },
-      secondaryAction: { id: 'open-landing', label: 'Abrir landing', icon: 'home', outline: true, unelevated: false },
+      primaryAction: { id: 'open-dashboard', label: 'Back to dashboard', icon: 'dashboard' },
+      secondaryAction: { id: 'open-landing', label: 'Open landing', icon: 'home', outline: true, unelevated: false },
     },
     configurations: {
-      title: 'Configurações em preparação',
-      subtitle: 'A parametrização continua ligada ao mesmo shell único do sample aprovado.',
-      description: 'A tela final de configurações será conectada em cima da mesma arquitetura reutilizável, sem catálogo paralelo de famílias visuais no runtime público.',
-      statusLabel: 'Ativo',
+      title: 'Settings in preparation',
+      subtitle: 'Configuration remains attached to the same single shell as the approved sample.',
+      description: 'The final settings screen will be connected on top of the same reusable architecture, without a parallel public runtime catalog.',
+      statusLabel: 'Active',
       hints: [
-        { id: 'config-hint-1', text: 'O sample público agora foi reduzido a uma única base aprovada.', icon: 'task_alt' },
-        { id: 'config-hint-2', text: 'A referência local continua sendo a comparação principal.', icon: 'open_in_new' },
+        { id: 'config-hint-1', text: 'The public sample is now reduced to a single approved base.', icon: 'task_alt' },
+        { id: 'config-hint-2', text: 'The local reference remains the main comparison target.', icon: 'open_in_new' },
       ],
-      primaryAction: { id: 'open-dashboard', label: 'Voltar ao dashboard', icon: 'dashboard' },
-      secondaryAction: { id: 'open-landing', label: 'Abrir landing', icon: 'home', outline: true, unelevated: false },
+      primaryAction: { id: 'open-dashboard', label: 'Back to dashboard', icon: 'dashboard' },
+      secondaryAction: { id: 'open-landing', label: 'Open landing', icon: 'home', outline: true, unelevated: false },
     },
   }
 

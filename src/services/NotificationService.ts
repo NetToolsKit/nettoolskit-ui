@@ -1,21 +1,21 @@
 /**
- * NotificationService - Serviço de Application Layer para notificações
+ * NotificationService - application-layer service for notifications.
  * 
- * Este serviço encapsula a lógica de notificações sem dependência direta
- * de frameworks de UI. A implementação concreta (Quasar) fica na infraestrutura.
+ * This service encapsulates notification behavior without a direct dependency
+ * on UI frameworks. Concrete implementations live in infrastructure adapters.
  * 
- * Segue Clean Architecture: Application Layer não deve depender de Presentation.
+ * Clean Architecture rule: the application layer does not depend on presentation.
  * 
  * @layer Application
  */
 
 /**
- * Tipos de notificação suportados
+ * Supported notification types.
  */
 export type NotificationType = 'success' | 'error' | 'warning' | 'info'
 
 /**
- * Posições disponíveis para notificações
+ * Available notification positions.
  */
 export type NotificationPosition = 
   | 'top' 
@@ -42,7 +42,7 @@ export interface NotificationOptions {
 }
 
 /**
- * Ação customizada em notificação
+ * Custom notification action.
  */
 export interface NotificationAction {
   label?: string
@@ -52,10 +52,10 @@ export interface NotificationAction {
 }
 
 /**
- * Interface do serviço de notificações (Port)
+ * Notification service port.
  * 
- * Permite inversão de dependência: Application define contrato,
- * Infrastructure implementa detalhes (Quasar, Toastify, etc)
+ * Enables dependency inversion: application defines the contract while
+ * infrastructure implements concrete details such as Quasar or Toastify.
  */
 export interface INotificationService {
   /**
@@ -106,10 +106,9 @@ export const DEFAULT_NOTIFICATION_CONFIG = {
 }
 
 /**
- * Implementação concreta do NotificationService
+ * Base NotificationService implementation.
  * 
- * Esta é uma implementação base. Para usar com Quasar, Angular Material, etc,
- * criar adapters específicos em infrastructure/adapters/
+ * Specific UI frameworks should provide adapters in infrastructure/adapters.
  */
 export class NotificationService implements INotificationService {
   private config: typeof DEFAULT_NOTIFICATION_CONFIG
@@ -133,7 +132,7 @@ export class NotificationService implements INotificationService {
       message,
       type: 'error',
       icon: 'error',
-      timeout: 5000, // Erros ficam mais tempo
+      timeout: 5000,
       ...options
     })
   }
@@ -166,7 +165,7 @@ export class NotificationService implements INotificationService {
     log(`[${type.toUpperCase()}] ${icon ? icon + ' ' : ''}${message}`)
   }
 
-  loading(message: string = 'Carregando...'): NotificationHandle {
+  loading(message: string = 'Loading...'): NotificationHandle {
     console.warn(`[LOADING] ${message}`)
     
     return {
@@ -176,7 +175,7 @@ export class NotificationService implements INotificationService {
 }
 
 /**
- * Factory para criar instância singleton do serviço
+ * Singleton service instance.
  */
 let notificationServiceInstance: NotificationService | null = null
 
@@ -191,7 +190,7 @@ export function getNotificationService(): NotificationService {
 }
 
 /**
- * Permite configurar instância customizada (útil para testes e DI)
+ * Allows tests and dependency injection to provide a custom instance.
  */
 export function setNotificationService(service: NotificationService): void {
   notificationServiceInstance = service

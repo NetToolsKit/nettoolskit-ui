@@ -28,7 +28,7 @@ async function resetRuntimeState(page: Page): Promise<void> {
 
 async function loginToRuntime(page: Page): Promise<void> {
   await page.goto(RUNTIME_LOGIN_URL)
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -76,7 +76,7 @@ test.describe('template runtime workspace reset', () => {
     await resetRuntimeState(page)
   })
 
-  test('resetar runtime clears runtime data customizations, auth, chat, theme and layout persistence', async ({ page }) => {
+  test('reset runtime clears runtime data customizations, auth, chat, theme and layout persistence', async ({ page }) => {
     await loginToRuntime(page)
 
     await page.getByRole('button', { name: 'Switch to Kraken theme' }).click()
@@ -94,21 +94,21 @@ test.describe('template runtime workspace reset', () => {
     await toggleUserMenuPreference(page, 'Horizontal menu')
     await expect(page.locator('.ntk-template-main-layout__horizontal-nav')).toBeVisible()
 
-    await page.getByRole('button', { name: 'Abrir assistente' }).click()
+    await page.getByRole('button', { name: 'Open assistant' }).click()
     const drawer = page.getByRole('dialog', { name: /assistant drawer/i })
     await expect(drawer).toBeVisible()
-    await drawer.locator('.ntk-template-wiki-chat-drawer__input').fill('Como resetar o workspace local?')
+    await drawer.locator('.ntk-template-wiki-chat-drawer__input').fill('How do I reset the local workspace?')
     await drawer.getByRole('button', { name: 'Send question' }).click()
-    await expect(drawer).toContainText('Como resetar o workspace local?')
+    await expect(drawer).toContainText('How do I reset the local workspace?')
     await expect.poll(async () => {
       const snapshot = await readWorkspaceStorage(page)
       return snapshot.wikiChat
     }).not.toBeNull()
 
     await page.goto(`${RUNTIME_BASE}#/settings`)
-    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
     await page.locator('input[name="runtime-workspace-name"]').fill('Workspace Reset Test')
-    await page.getByRole('button', { name: 'Salvar alterações' }).click()
+    await page.getByRole('button', { name: 'Save changes' }).click()
     await expect(page.locator('.ntk-template-runtime-settings__summary-card').first()).toContainText('Workspace Reset Test')
 
     await expect.poll(async () => {
@@ -128,10 +128,10 @@ test.describe('template runtime workspace reset', () => {
       runtimeTokenPresent: true,
     })
 
-    await page.getByRole('button', { name: 'Resetar runtime' }).click()
+    await page.getByRole('button', { name: 'Reset runtime' }).click()
 
     await expect(page).toHaveURL(/template-runtime=1#\/auth\/login$/)
-    await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
     await expect.poll(async () => {
       const snapshot = await readWorkspaceStorage(page)
@@ -164,7 +164,7 @@ test.describe('template runtime workspace reset', () => {
     await expect(page.locator('.ntk-template-main-layout__drawer')).toBeVisible()
     await expect(page.locator('.ntk-template-main-layout__horizontal-nav')).toHaveCount(0)
 
-    await page.getByRole('button', { name: 'Abrir assistente' }).click()
+    await page.getByRole('button', { name: 'Open assistant' }).click()
     await expect(page.getByRole('dialog', { name: /assistant drawer/i })).toContainText('Ask your first question')
     await expect(page.locator('.ntk-template-dashboard__title')).toBeVisible()
   })

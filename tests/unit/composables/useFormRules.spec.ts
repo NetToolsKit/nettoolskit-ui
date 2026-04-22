@@ -45,8 +45,8 @@ describe('useFormRules', () => {
       const rule = required()
 
       expect(rule('value')).toBe(true)
-      expect(rule('')).toBe('Campo obrigatório')
-      expect(rule(null)).toBe('Campo obrigatório')
+      expect(rule('')).toBe('Required field')
+      expect(rule(null)).toBe('Required field')
     })
 
     it('should accept custom message', () => {
@@ -63,7 +63,7 @@ describe('useFormRules', () => {
       const rule = email()
 
       expect(rule('test@example.com')).toBe(true)
-      expect(rule('invalid')).toBe('E-mail inválido')
+      expect(rule('invalid')).toBe('Invalid email')
       expect(rule('')).toBe(true)
     })
   })
@@ -74,7 +74,7 @@ describe('useFormRules', () => {
       const rule = minLength(5)
 
       expect(rule('12345')).toBe(true)
-      expect(rule('1234')).toBe('Mínimo de 5 caracteres')
+      expect(rule('1234')).toBe('Minimum 5 characters')
     })
   })
 
@@ -84,7 +84,7 @@ describe('useFormRules', () => {
       const rule = maxLength(5)
 
       expect(rule('12345')).toBe(true)
-      expect(rule('123456')).toBe('Máximo de 5 caracteres')
+      expect(rule('123456')).toBe('Maximum 5 characters')
     })
   })
 
@@ -94,7 +94,7 @@ describe('useFormRules', () => {
       const rule = numeric()
 
       expect(rule('12345')).toBe(true)
-      expect(rule('123abc')).toBe('Apenas números são permitidos')
+      expect(rule('123abc')).toBe('Only numbers are allowed')
     })
   })
 
@@ -104,7 +104,7 @@ describe('useFormRules', () => {
       const rule = cpf()
 
       expect(rule('529.982.247-25')).toBe(true)
-      expect(rule('11111111111')).toBe('CPF inválido')
+      expect(rule('11111111111')).toBe('Invalid CPF')
     })
   })
 
@@ -114,7 +114,7 @@ describe('useFormRules', () => {
       const rule = cnpj()
 
       expect(rule('11.222.333/0001-81')).toBe(true)
-      expect(rule('11111111111111')).toBe('CNPJ inválido')
+      expect(rule('11111111111111')).toBe('Invalid CNPJ')
     })
   })
 
@@ -124,7 +124,7 @@ describe('useFormRules', () => {
       const rule = phone()
 
       expect(rule('11999998888')).toBe(true)
-      expect(rule('123456789')).toBe('Telefone inválido')
+      expect(rule('123456789')).toBe('Invalid phone number')
     })
   })
 
@@ -134,7 +134,7 @@ describe('useFormRules', () => {
       const rule = url()
 
       expect(rule('https://example.com')).toBe(true)
-      expect(rule('not-a-url')).toBe('URL inválida')
+      expect(rule('not-a-url')).toBe('Invalid URL')
     })
   })
 
@@ -144,8 +144,8 @@ describe('useFormRules', () => {
       const rule = between(1, 10)
 
       expect(rule(5)).toBe(true)
-      expect(rule(0)).toBe('Valor deve estar entre 1 e 10')
-      expect(rule(11)).toBe('Valor deve estar entre 1 e 10')
+      expect(rule(0)).toBe('Value must be between 1 and 10')
+      expect(rule(11)).toBe('Value must be between 1 and 10')
     })
   })
 
@@ -155,7 +155,7 @@ describe('useFormRules', () => {
       const rule = strongPassword()
 
       expect(rule('Abc123!@#')).toBe(true)
-      expect(rule('weak')).toContain('Senha fraca')
+      expect(rule('weak')).toContain('Weak password')
     })
   })
 
@@ -169,9 +169,9 @@ describe('useFormRules', () => {
       )
 
       expect(rule('hello')).toBe(true)
-      expect(rule('')).toBe('Campo obrigatório')
-      expect(rule('hi')).toBe('Mínimo de 3 caracteres')
-      expect(rule('hello world!')).toBe('Máximo de 10 caracteres')
+      expect(rule('')).toBe('Required field')
+      expect(rule('hi')).toBe('Minimum 3 characters')
+      expect(rule('hello world!')).toBe('Maximum 10 characters')
     })
   })
 
@@ -192,7 +192,7 @@ describe('useFormRules', () => {
       const rule = match(password, 'password')
 
       expect(rule('secret123')).toBe(true)
-      expect(rule('different')).toBe('Deve corresponder a password')
+      expect(rule('different')).toBe('Must match password')
     })
   })
 })

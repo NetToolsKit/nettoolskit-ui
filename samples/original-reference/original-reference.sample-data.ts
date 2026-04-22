@@ -4,9 +4,9 @@
 
 function getGreetingText(): string {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Bom dia'
-  if (hour < 18) return 'Boa tarde'
-  return 'Boa noite'
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
 }
 
 function getGreetingIcon(): string {
@@ -18,7 +18,7 @@ function getGreetingIcon(): string {
 }
 
 function getFormattedDate(): string {
-  return new Date().toLocaleDateString('pt-BR', {
+  return new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -30,34 +30,34 @@ export const originalReferenceDashboardSample = {
   title: `${getGreetingText()}, Admin`,
   subtitle: getFormattedDate(),
   chips: [
-    { id: 'chip-clients', text: '247 clientes', icon: 'people' },
-    { id: 'chip-orders', text: '18 pedidos hoje', icon: 'shopping_cart' },
+    { id: 'chip-clients', text: '247 clients', icon: 'people' },
+    { id: 'chip-orders', text: '18 orders today', icon: 'shopping_cart' },
   ],
   metrics: [
-    { id: 'metric-total-orders', label: 'Total Pedidos', value: 1847, icon: 'shopping_cart', tone: 'neutral' as const },
-    { id: 'metric-pending-orders', label: 'Pendentes', value: 34, icon: 'inbox', tone: 'info' as const },
-    { id: 'metric-progress-orders', label: 'Em Progresso', value: 52, icon: 'pending_actions', tone: 'warning' as const },
-    { id: 'metric-completed-orders', label: 'Concluídos', value: 1680, icon: 'task_alt', tone: 'success' as const },
-    { id: 'metric-cancelled-orders', label: 'Cancelados', value: 81, icon: 'cancel', tone: 'danger' as const },
+    { id: 'metric-total-orders', label: 'Total Orders', value: 1847, icon: 'shopping_cart', tone: 'neutral' as const },
+    { id: 'metric-pending-orders', label: 'Pending', value: 34, icon: 'inbox', tone: 'info' as const },
+    { id: 'metric-progress-orders', label: 'In Progress', value: 52, icon: 'pending_actions', tone: 'warning' as const },
+    { id: 'metric-completed-orders', label: 'Completed', value: 1680, icon: 'task_alt', tone: 'success' as const },
+    { id: 'metric-cancelled-orders', label: 'Cancelled', value: 81, icon: 'cancel', tone: 'danger' as const },
   ],
   statusSegments: [
-    { id: 'status-pending', label: 'Pendentes', value: 34, color: 'var(--ntk-info)' },
-    { id: 'status-progress', label: 'Em Progresso', value: 52, color: 'var(--ntk-warning)' },
-    { id: 'status-completed', label: 'Concluídos', value: 1680, color: 'var(--ntk-success)' },
-    { id: 'status-cancelled', label: 'Cancelados', value: 81, color: 'var(--ntk-text-muted)' },
+    { id: 'status-pending', label: 'Pending', value: 34, color: 'var(--ntk-info)' },
+    { id: 'status-progress', label: 'In Progress', value: 52, color: 'var(--ntk-warning)' },
+    { id: 'status-completed', label: 'Completed', value: 1680, color: 'var(--ntk-success)' },
+    { id: 'status-cancelled', label: 'Cancelled', value: 81, color: 'var(--ntk-text-muted)' },
   ],
   categorySeries: [
-    { id: 'category-electronics', label: 'Eletrônicos', value: 523, color: 'var(--ntk-info)' },
-    { id: 'category-food', label: 'Alimentos', value: 412, color: 'var(--ntk-accent)' },
-    { id: 'category-fashion', label: 'Vestuário', value: 287, color: 'var(--ntk-warning)' },
-    { id: 'category-hygiene', label: 'Higiene', value: 198, color: 'var(--ntk-success)' },
+    { id: 'category-electronics', label: 'Electronics', value: 523, color: 'var(--ntk-info)' },
+    { id: 'category-food', label: 'Food', value: 412, color: 'var(--ntk-accent)' },
+    { id: 'category-fashion', label: 'Fashion', value: 287, color: 'var(--ntk-warning)' },
+    { id: 'category-hygiene', label: 'Hygiene', value: 198, color: 'var(--ntk-success)' },
   ],
   activities: [
-    { id: 'activity-today', label: 'Pedidos hoje', value: 18, icon: 'today', iconTone: 'blue' as const },
-    { id: 'activity-week', label: 'Pedidos na semana', value: 87, icon: 'date_range', iconTone: 'indigo' as const },
-    { id: 'activity-month', label: 'Pedidos no mês', value: 342, icon: 'calendar_month', iconTone: 'violet' as const },
-    { id: 'activity-revenue', label: 'Faturamento do mês', value: 'R$ 156.780', icon: 'attach_money', iconTone: 'green' as const },
-    { id: 'activity-clients', label: 'Novos clientes no mês', value: 23, icon: 'person_add', iconTone: 'amber' as const },
+    { id: 'activity-today', label: 'Orders today', value: 18, icon: 'today', iconTone: 'blue' as const },
+    { id: 'activity-week', label: 'Orders this week', value: 87, icon: 'date_range', iconTone: 'indigo' as const },
+    { id: 'activity-month', label: 'Orders this month', value: 342, icon: 'calendar_month', iconTone: 'violet' as const },
+    { id: 'activity-revenue', label: 'Monthly revenue', value: '$156,780', icon: 'attach_money', iconTone: 'green' as const },
+    { id: 'activity-clients', label: 'New clients this month', value: 23, icon: 'person_add', iconTone: 'amber' as const },
   ],
   topItems: [
     {
@@ -65,9 +65,9 @@ export const originalReferenceDashboardSample = {
       name: 'Distribuidora Alfa Ltda',
       avatar: 'DA',
       value: 45,
-      valueCaption: 'pedidos',
-      secondaryValue: 'R$ 32.500',
-      secondaryCaption: 'fatur.',
+      valueCaption: 'orders',
+      secondaryValue: '$32,500',
+      secondaryCaption: 'revenue',
       barPercent: 100,
     },
     {
@@ -75,9 +75,9 @@ export const originalReferenceDashboardSample = {
       name: 'Comércio Beta SA',
       avatar: 'CB',
       value: 38,
-      valueCaption: 'pedidos',
-      secondaryValue: 'R$ 28.900',
-      secondaryCaption: 'fatur.',
+      valueCaption: 'orders',
+      secondaryValue: '$28,900',
+      secondaryCaption: 'revenue',
       barPercent: 84,
     },
     {
@@ -85,9 +85,9 @@ export const originalReferenceDashboardSample = {
       name: 'Indústria Gamma ME',
       avatar: 'IG',
       value: 32,
-      valueCaption: 'pedidos',
-      secondaryValue: 'R$ 24.100',
-      secondaryCaption: 'fatur.',
+      valueCaption: 'orders',
+      secondaryValue: '$24,100',
+      secondaryCaption: 'revenue',
       barPercent: 71,
     },
     {
@@ -95,9 +95,9 @@ export const originalReferenceDashboardSample = {
       name: 'Atacado Delta Eireli',
       avatar: 'AD',
       value: 27,
-      valueCaption: 'pedidos',
-      secondaryValue: 'R$ 19.800',
-      secondaryCaption: 'fatur.',
+      valueCaption: 'orders',
+      secondaryValue: '$19,800',
+      secondaryCaption: 'revenue',
       barPercent: 60,
     },
     {
@@ -105,9 +105,9 @@ export const originalReferenceDashboardSample = {
       name: 'Varejo Epsilon Ltda',
       avatar: 'VE',
       value: 21,
-      valueCaption: 'pedidos',
-      secondaryValue: 'R$ 15.600',
-      secondaryCaption: 'fatur.',
+      valueCaption: 'orders',
+      secondaryValue: '$15,600',
+      secondaryCaption: 'revenue',
       barPercent: 47,
     },
   ],

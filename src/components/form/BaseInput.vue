@@ -105,11 +105,11 @@ withDefaults(defineProps<Props>(), {
   showPasswordToggle: false,
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'blur',
-  'focus',
-])
+const emit = defineEmits<{
+  'update:modelValue': [value: unknown]
+  blur: [event: Event]
+  focus: [event: Event]
+}>()
 
 const emitModelValue = (value: unknown) => {
   emit('update:modelValue', value)

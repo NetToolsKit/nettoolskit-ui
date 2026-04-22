@@ -36,14 +36,14 @@
           >
             <div class="row items-center justify-end q-gutter-xs">
               <q-btn
-                label="Hoje"
+                label="Today"
                 flat
                 class="base-date-picker__action base-date-picker__action--accent"
                 @click="setToday"
               />
               <q-btn
                 v-bind="{ 'v-close-popup': true }"
-                label="Fechar"
+                label="Close"
                 flat
                 class="base-date-picker__action"
               />
@@ -80,7 +80,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   label: '',
-  placeholder: 'DD/MM/YYYY',
+  placeholder: 'YYYY/MM/DD',
   outlined: true,
   filled: false,
   dense: false,
@@ -91,9 +91,9 @@ const props = withDefaults(defineProps<Props>(), {
   customClass: '',
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-])
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
 
 const internalValue = ref(props.modelValue)
 
@@ -110,23 +110,23 @@ const emitModelValue = (value: unknown) => {
 }
 
 const dateLocale = {
-  days: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-  daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+  days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   months: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ],
-  monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+  monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 }
 
 const setToday = () => {

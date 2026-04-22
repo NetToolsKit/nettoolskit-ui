@@ -96,9 +96,9 @@ const runtimeWikiChatStore = createTemplateWikiChatStore({
 
 function getGreetingText(): string {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Bom dia'
-  if (hour < 18) return 'Boa tarde'
-  return 'Boa noite'
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
 }
 
 function getGreetingIcon(): string {
@@ -110,7 +110,7 @@ function getGreetingIcon(): string {
 }
 
 function getFirstName(): string {
-  const name = runtimeAuthStore.state.user?.name ?? 'Usuário'
+  const name = runtimeAuthStore.state.user?.name ?? 'User'
   const first = name.split(' ')[0] ?? name
   return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase()
 }
@@ -129,12 +129,12 @@ function ensureRuntimeConversationsLoaded(): void {
 
 function buildRuntimeDocumentBody(documentName: string, documentDescription: string): string {
   return [
-    `Documento: ${documentName}`,
+    `Document: ${documentName}`,
     '',
     documentDescription,
     '',
     `Workspace: ${templateRuntimeData.state.settings.workspaceName}`,
-    `Operador: ${templateRuntimeData.state.settings.operatorName}`,
+    `Operator: ${templateRuntimeData.state.settings.operatorName}`,
   ].join('\n')
 }
 
@@ -253,7 +253,7 @@ const RuntimeDashboardPage = defineComponent({
     const subtitle = computed(() => {
       const d = new Date()
       const opts: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' }
-      return d.toLocaleDateString('pt-BR', opts)
+      return d.toLocaleDateString('en-US', opts)
     })
     const icon = computed(() => getGreetingIcon())
 
@@ -265,9 +265,9 @@ const RuntimeDashboardPage = defineComponent({
       metrics: dashboardSnapshot.value.metrics,
       activities: dashboardSnapshot.value.activities,
       topItems: dashboardSnapshot.value.topItems,
-      activityTitle: 'Atividade',
+      activityTitle: 'Activity',
       activityTitleIcon: 'insights',
-      topItemsTitle: 'Top Clientes',
+      topItemsTitle: 'Top Clients',
       topItemsTitleIcon: 'star',
     }, {
       charts: () => h(ReferenceDashboardCharts, {
@@ -286,8 +286,8 @@ const RuntimeClientsPage = defineComponent({
     const viewMode = ref<TemplateCrudViewMode>(getDefaultCrudViewMode())
 
     return () => h(CrudListTemplate, {
-      title: 'Clientes',
-      subtitle: 'Carteira ativa, onboarding e reativação com persistência local.',
+      title: 'Clients',
+      subtitle: 'Active portfolio, onboarding, and reactivation with local persistence.',
       columns: templateRuntimeData.clientColumns,
       records: templateRuntimeData.clientRecords.value,
       filters: templateRuntimeData.clientFilters.value,
@@ -295,7 +295,7 @@ const RuntimeClientsPage = defineComponent({
       actions: [
         {
           id: 'create-client',
-          label: 'Novo cliente',
+          label: 'New client',
           icon: 'person_add',
         },
       ],
@@ -303,14 +303,14 @@ const RuntimeClientsPage = defineComponent({
         {
           id: 'duplicate-client',
           icon: 'content_copy',
-          label: 'Duplicar cliente',
-          ariaLabel: 'Duplicar cliente',
+          label: 'Duplicate client',
+          ariaLabel: 'Duplicate client',
         },
         {
           id: 'cycle-client-status',
           icon: 'sync_alt',
-          label: 'Atualizar status',
-          ariaLabel: 'Atualizar status do cliente',
+          label: 'Update status',
+          ariaLabel: 'Update client status',
         },
       ],
       searchValue: searchValue.value,
@@ -318,17 +318,17 @@ const RuntimeClientsPage = defineComponent({
       viewMode: viewMode.value,
       selectable: false,
       showBulkActions: false,
-      searchPlaceholder: 'Buscar cliente, segmento ou cidade...',
-      searchAriaLabel: 'Buscar clientes',
-      tableAriaLabel: 'Tabela de clientes',
-      cardsAriaLabel: 'Cards de clientes',
-      metricsAriaLabel: 'Indicadores de clientes',
-      tableViewAriaLabel: 'Alternar para tabela de clientes',
-      cardsViewAriaLabel: 'Alternar para cards de clientes',
+      searchPlaceholder: 'Search client, segment, or city...',
+      searchAriaLabel: 'Search clients',
+      tableAriaLabel: 'Clients table',
+      cardsAriaLabel: 'Client cards',
+      metricsAriaLabel: 'Client indicators',
+      tableViewAriaLabel: 'Switch to clients table',
+      cardsViewAriaLabel: 'Switch to client cards',
       tableStatusLabel: 'Status',
-      tableActionsLabel: 'Atalhos',
-      emptyTitle: 'Nenhum cliente encontrado',
-      emptySubtitle: 'Ajuste os filtros ou crie um novo cliente local.',
+      tableActionsLabel: 'Shortcuts',
+      emptyTitle: 'No clients found',
+      emptySubtitle: 'Adjust filters or create a new local client.',
       emptyIcon: 'people',
       'onUpdate:searchValue': (value: string) => { searchValue.value = value },
       'onUpdate:activeFilterId': (value: string) => { activeFilterId.value = value },
@@ -359,8 +359,8 @@ const RuntimeOrdersPage = defineComponent({
     const selectedIds = ref<string[]>([])
 
     return () => h(CrudListTemplate, {
-      title: 'Pedidos',
-      subtitle: 'Pipeline operacional com mudanças de status e ações em lote persistidas.',
+      title: 'Orders',
+      subtitle: 'Operational pipeline with persisted status changes and bulk actions.',
       columns: templateRuntimeData.orderColumns,
       records: templateRuntimeData.orderRecords.value,
       filters: templateRuntimeData.orderFilters.value,
@@ -368,7 +368,7 @@ const RuntimeOrdersPage = defineComponent({
       actions: [
         {
           id: 'create-order',
-          label: 'Novo pedido',
+          label: 'New order',
           icon: 'add_shopping_cart',
         },
       ],
@@ -376,32 +376,32 @@ const RuntimeOrdersPage = defineComponent({
         {
           id: 'advance-order',
           icon: 'arrow_forward',
-          label: 'Avançar pedido',
-          ariaLabel: 'Avançar status do pedido',
+          label: 'Advance order',
+          ariaLabel: 'Advance order status',
         },
         {
           id: 'cancel-order',
           icon: 'block',
-          label: 'Cancelar pedido',
-          ariaLabel: 'Cancelar pedido',
+          label: 'Cancel order',
+          ariaLabel: 'Cancel order',
         },
       ],
       bulkActions: [
         {
           id: 'bulk-progress',
-          label: 'Em progresso',
+          label: 'In progress',
           icon: 'pending_actions',
           outline: true,
         },
         {
           id: 'bulk-complete',
-          label: 'Concluir',
+          label: 'Complete',
           icon: 'task_alt',
           outline: true,
         },
         {
           id: 'bulk-cancel',
-          label: 'Cancelar',
+          label: 'Cancel',
           icon: 'cancel',
           outline: true,
         },
@@ -412,19 +412,19 @@ const RuntimeOrdersPage = defineComponent({
       selectedIds: selectedIds.value,
       selectable: true,
       showBulkActions: true,
-      searchPlaceholder: 'Buscar pedido, cliente ou categoria...',
-      searchAriaLabel: 'Buscar pedidos',
-      tableAriaLabel: 'Tabela de pedidos',
-      cardsAriaLabel: 'Cards de pedidos',
-      metricsAriaLabel: 'Indicadores de pedidos',
-      bulkAriaLabel: 'Ações em lote para pedidos',
-      tableViewAriaLabel: 'Alternar para tabela de pedidos',
-      cardsViewAriaLabel: 'Alternar para cards de pedidos',
+      searchPlaceholder: 'Search order, client, or category...',
+      searchAriaLabel: 'Search orders',
+      tableAriaLabel: 'Orders table',
+      cardsAriaLabel: 'Order cards',
+      metricsAriaLabel: 'Order indicators',
+      bulkAriaLabel: 'Bulk actions for orders',
+      tableViewAriaLabel: 'Switch to orders table',
+      cardsViewAriaLabel: 'Switch to order cards',
       tableStatusLabel: 'Status',
-      tableActionsLabel: 'Atalhos',
-      selectedCountLabel: '{count} pedidos selecionados',
-      emptyTitle: 'Nenhum pedido encontrado',
-      emptySubtitle: 'Ajuste a busca ou gere um novo pedido local.',
+      tableActionsLabel: 'Shortcuts',
+      selectedCountLabel: '{count} selected orders',
+      emptyTitle: 'No orders found',
+      emptySubtitle: 'Adjust the search or generate a new local order.',
       emptyIcon: 'shopping_cart',
       'onUpdate:searchValue': (value: string) => { searchValue.value = value },
       'onUpdate:activeFilterId': (value: string) => { activeFilterId.value = value },
@@ -472,8 +472,8 @@ const RuntimeWikiPage = defineComponent({
     ensureRuntimeConversationsLoaded()
 
     return () => h(WikiTemplate, {
-      title: 'Base de conhecimento',
-      subtitle: 'Documentação local, playbooks e materiais operacionais persistidos no runtime.',
+      title: 'Knowledge base',
+      subtitle: 'Local documentation, playbooks, and operational materials persisted in the runtime.',
       categories: templateRuntimeData.wikiCategories.value,
       documents: templateRuntimeData.wikiDocuments.value,
       onAskDocument: (documentItem: { name: string; description?: string }) => {
@@ -481,13 +481,13 @@ const RuntimeWikiPage = defineComponent({
       },
       onViewDocument: (documentItem: { name: string; description?: string }) => {
         previewRuntimeTextDocument(
-          buildRuntimeDocumentBody(documentItem.name, documentItem.description ?? 'Sem descrição adicional.')
+          buildRuntimeDocumentBody(documentItem.name, documentItem.description ?? 'No additional description.')
         )
       },
       onDownloadDocument: (documentItem: { name: string; description?: string }) => {
         downloadRuntimeTextDocument(
           `${documentItem.name.replace(/[^\w.-]+/g, '_')}.txt`,
-          buildRuntimeDocumentBody(documentItem.name, documentItem.description ?? 'Sem descrição adicional.')
+          buildRuntimeDocumentBody(documentItem.name, documentItem.description ?? 'No additional description.')
         )
       },
       onBulkDownload: (documents: Array<{ name: string; description?: string }>) => {
@@ -495,10 +495,10 @@ const RuntimeWikiPage = defineComponent({
           ? documents
               .map(documentItem => buildRuntimeDocumentBody(
                 documentItem.name,
-                documentItem.description ?? 'Sem descrição adicional.'
+                documentItem.description ?? 'No additional description.'
               ))
               .join('\n\n---\n\n')
-          : 'Nenhum documento selecionado.'
+          : 'No documents selected.'
 
         downloadRuntimeTextDocument('atlas-flow-knowledge-bundle.txt', content)
       },
@@ -517,8 +517,8 @@ const RuntimeWikiChatPage = defineComponent({
     })
 
     return () => h(WikiChatTemplate, {
-      title: 'Assistente de conhecimento',
-      subtitle: 'Converse com a base local para acelerar suporte, playbooks e atendimento.',
+      title: 'Knowledge assistant',
+      subtitle: 'Chat with the local base to accelerate support, playbooks, and service workflows.',
       conversations: runtimeWikiChatStore.sortedConversations.value,
       messages: getRuntimeChatMessages(),
       activeConversationId: runtimeWikiChatStore.state.activeConversationId,
@@ -621,7 +621,7 @@ const RuntimeProfilePage = defineComponent({
     const profile = computed(() => ({
       name: runtimeAuthStore.state.user?.name ?? templateRuntimeData.state.settings.operatorName,
       email: runtimeAuthStore.state.user?.email ?? templateRuntimeData.state.settings.supportEmail,
-      role: runtimeAuthStore.state.user?.role ?? 'Operações',
+      role: runtimeAuthStore.state.user?.role ?? 'Operations',
       initials: runtimeAuthStore.userInitials.value,
     }))
     const groups = computed<TemplateProfileGroup[]>(() => [
@@ -631,24 +631,24 @@ const RuntimeProfilePage = defineComponent({
         fields: [
           {
             id: 'workspace-name',
-            label: 'Nome do workspace',
+            label: 'Workspace name',
             value: templateRuntimeData.state.settings.workspaceName,
           },
           {
             id: 'operator-name',
-            label: 'Operador padrão',
+            label: 'Default operator',
             value: templateRuntimeData.state.settings.operatorName,
           },
           {
             id: 'support-email',
-            label: 'Contato de suporte',
+            label: 'Support contact',
             value: templateRuntimeData.state.settings.supportEmail,
           },
         ],
       },
       {
         id: 'preferences',
-        title: 'Preferências locais',
+        title: 'Local preferences',
         fields: [
           {
             id: 'locale',
@@ -662,8 +662,8 @@ const RuntimeProfilePage = defineComponent({
           },
           {
             id: 'notifications',
-            label: 'Notificações',
-            value: templateRuntimeData.state.settings.notificationsEnabled ? 'Habilitadas' : 'Desabilitadas',
+            label: 'Notifications',
+            value: templateRuntimeData.state.settings.notificationsEnabled ? 'Enabled' : 'Disabled',
           },
         ],
       },
@@ -672,7 +672,7 @@ const RuntimeProfilePage = defineComponent({
     return () => h(ProfileTemplate, {
       profile: profile.value,
       groups: groups.value,
-      sectionTitle: 'Perfil e preferências',
+      sectionTitle: 'Profile and preferences',
       showLogoutAction: true,
       onLogoutClick: () => {
         clearRuntimeAuthSession()
@@ -695,16 +695,16 @@ const RuntimeLoginPage = defineComponent({
       email: email.value,
       password: password.value,
       loading: loading.value,
-      formTitle: 'Entrar no sistema',
-      formSubtitle: 'Use suas credenciais para acessar a plataforma.',
-      submitLabel: 'Continuar',
+      formTitle: 'Sign in',
+      formSubtitle: 'Use your credentials to access the platform.',
+      submitLabel: 'Continue',
       emailLabel: 'E-mail',
-      passwordLabel: 'Senha',
-      brandTitle: `Bem-vindo ao ${templateRuntimeData.workspaceName.value}`,
-      brandSubtitle: 'Acesse operações, dashboards e conhecimento local com persistência no navegador.',
-      emailRequiredMessage: 'E-mail é obrigatório.',
-      emailInvalidMessage: 'E-mail inválido.',
-      passwordRequiredMessage: 'Senha é obrigatória.',
+      passwordLabel: 'Password',
+      brandTitle: `Welcome to ${templateRuntimeData.workspaceName.value}`,
+      brandSubtitle: 'Access operations, dashboards, and local knowledge with browser persistence.',
+      emailRequiredMessage: 'E-mail is required.',
+      emailInvalidMessage: 'Invalid e-mail.',
+      passwordRequiredMessage: 'Password is required.',
       'onUpdate:email': (v: string) => { email.value = v },
       'onUpdate:password': (v: string) => { password.value = v },
       onSubmit: async (payload: { email: string; password: string }) => {
@@ -733,11 +733,11 @@ const RuntimeNotFoundPage = defineComponent({
   name: 'TemplateRuntimeNotFoundPage',
   setup() {
     return () => h(ErrorNotFoundTemplate, {
-      title: 'Página não encontrada',
-      description: 'Use o menu lateral para navegar pelas funcionalidades disponíveis.',
+      title: 'Page not found',
+      description: 'Use the side menu to navigate the available features.',
       primaryAction: {
         id: 'go-dashboard',
-        label: 'Voltar ao dashboard',
+        label: 'Back to dashboard',
         icon: 'home',
         to: '/',
       },
@@ -769,7 +769,7 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
     component: RuntimeClientsPage,
     layoutId: 'main',
     menu: {
-      text: 'Clientes',
+      text: 'Clients',
       icon: 'people',
       order: 20,
     },
@@ -781,7 +781,7 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
     component: RuntimeOrdersPage,
     layoutId: 'main',
     menu: {
-      text: 'Pedidos',
+      text: 'Orders',
       icon: 'shopping_cart',
       order: 30,
     },
@@ -805,7 +805,7 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
     component: RuntimeWikiChatPage,
     layoutId: 'main',
     menu: {
-      text: 'Assistente',
+      text: 'Assistant',
       icon: 'chat',
       order: 41,
     },
@@ -818,7 +818,7 @@ const templateRuntimeRouteNodes: TemplateScaffoldRouteNode[] = [
     alias: 'configurations',
     layoutId: 'main',
     menu: {
-      text: 'Configurações',
+      text: 'Settings',
       icon: 'settings',
       order: 90,
       stickyBottom: true,
@@ -929,15 +929,15 @@ const TemplateRuntimeMainLayoutShell = defineComponent({
         floating: () => [
           h('button', {
             class: 'ntk-runtime-chat-fab',
-            'aria-label': 'Abrir assistente',
+            'aria-label': 'Open assistant',
             onClick: () => { runtimeWikiChatStore.toggleDrawer() },
           }, [
             h('span', { class: 'material-icons', style: 'font-size:22px;color:var(--ntk-template-runtime-chat-fab-icon, var(--ntk-text-on-primary, currentColor))' }, runtimeWikiChatStore.state.drawerOpen ? 'close' : 'smart_toy'),
           ]),
           h(WikiChatDrawerTemplate, {
             modelValue: runtimeWikiChatStore.state.drawerOpen,
-            title: 'Assistente',
-            contextHint: runtimeWikiChatStore.state.contextHint || 'Base de conhecimento',
+            title: 'Assistant',
+            contextHint: runtimeWikiChatStore.state.contextHint || 'Knowledge base',
             messages: getRuntimeChatMessages(),
             suggestions: templateRuntimeData.wikiSuggestions.value,
             sending: runtimeWikiChatStore.state.sending,

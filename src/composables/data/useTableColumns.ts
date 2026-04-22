@@ -1,12 +1,11 @@
 /**
- * useTableColumns - Composable para configuração de colunas de tabelas
+ * useTableColumns - Composable for table column configuration.
  * 
- * Gerencia colunas de QTable com ordenação, visibilidade e persistência
- * de configurações do usuário.
+ * Manages QTable columns with sorting, visibility, and persisted user settings.
  * 
  * @example
  * const { columns, visibleColumns, toggleColumn, resetColumns } = useTableColumns([
- *   { name: 'name', label: 'Nome', field: 'name', align: 'left', sortable: true }
+ *   { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true }
  * ])
  */
 
@@ -31,9 +30,9 @@ export interface UseTableColumnsOptions {
 /**
  * Composable useTableColumns
  * 
- * @param initialColumns - Configuração inicial das colunas
- * @param options - Opções de configuração
- * @returns Objeto com colunas e métodos de gerenciamento
+ * @param initialColumns - Initial column configuration
+ * @param options - Configuration options
+ * @returns Object with columns and management methods
  */
 export function useTableColumns(
   initialColumns: TableColumn[],
@@ -44,7 +43,7 @@ export function useTableColumns(
     defaultVisibleColumns
   } = options
 
-  // Carrega visibilidade salva do localStorage
+  // Loads saved visibility from localStorage.
   const loadSavedVisibility = (): Record<string, boolean> => {
     if (persistKey && typeof window !== 'undefined') {
       const saved = localStorage.getItem(persistKey)
@@ -64,7 +63,7 @@ export function useTableColumns(
   // Initialize columns with visibility
   const columnsWithVisibility = initialColumns.map(col => ({
     ...col,
-    // Colunas obrigatórias nunca podem ficar ocultas, mesmo se houver estado persistido
+    // Required columns cannot be hidden, even when persisted state exists.
     visible: col.required ? true : (savedVisibility[col.name] ?? col.visible ?? true)
   }))
 
@@ -72,28 +71,28 @@ export function useTableColumns(
   const columns: Ref<TableColumn[]> = ref(columnsWithVisibility)
 
   /**
-   * Computed: Colunas visíveis
+   * Computed: visible columns.
    */
   const visibleColumns = computed(() => {
     return columns.value.filter(col => col.visible !== false)
   })
 
   /**
-   * Computed: Nomes das colunas visíveis (para QTable)
+   * Computed: visible column names for QTable.
    */
   const visibleColumnNames = computed(() => {
     return visibleColumns.value.map(col => col.name)
   })
 
   /**
-   * Computed: Colunas que podem ser ocultadas
+   * Computed: columns that can be hidden.
    */
   const toggleableColumns = computed(() => {
     return columns.value.filter(col => !col.required)
   })
 
   /**
-   * Computed: Mapa de visibilidade das colunas
+   * Computed: column visibility map.
    */
   const columnVisibility = computed(() => {
     const visibility: Record<string, boolean> = {}
@@ -104,7 +103,7 @@ export function useTableColumns(
   })
 
   /**
-   * Alterna visibilidade de uma coluna
+   * Toggles column visibility.
    */
   const toggleColumn = (columnName: string) => {
     const column = columns.value.find(col => col.name === columnName)
@@ -114,7 +113,7 @@ export function useTableColumns(
   }
 
   /**
-   * Mostra uma coluna específica
+   * Shows a specific column.
    */
   const showColumn = (columnName: string) => {
     const column = columns.value.find(col => col.name === columnName)
@@ -124,7 +123,7 @@ export function useTableColumns(
   }
 
   /**
-   * Oculta uma coluna específica
+   * Hides a specific column.
    */
   const hideColumn = (columnName: string) => {
     const column = columns.value.find(col => col.name === columnName)
@@ -134,7 +133,7 @@ export function useTableColumns(
   }
 
   /**
-   * Mostra todas as colunas
+   * Shows all columns.
    */
   const showAllColumns = () => {
     columns.value.forEach(col => {
@@ -143,7 +142,7 @@ export function useTableColumns(
   }
 
   /**
-   * Oculta todas as colunas não obrigatórias
+   * Hides all non-required columns.
    */
   const hideAllColumns = () => {
     columns.value.forEach(col => {
@@ -169,7 +168,7 @@ export function useTableColumns(
   }
 
   /**
-   * Reordena colunas
+   * Reorders columns.
    */
   const reorderColumns = (newOrder: string[]) => {
     const reordered: TableColumn[] = []

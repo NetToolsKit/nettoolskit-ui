@@ -42,7 +42,7 @@
  * @example
  * ```typescript
  * const link: NavLink = {
- *   label: 'Componentes',
+ *   label: 'Components',
  *   href: '#components',
  *   icon: 'mdi-view-dashboard',
  *   external: false
@@ -172,35 +172,35 @@ export interface BrandNavigation {
 export const sentinelaNavigation: BrandNavigation = {
   header: [
     {
-      label: 'Funcionalidades',
-      href: '#funcionalidades',
+      label: 'Features',
+      href: '#features',
       icon: 'mdi-feature-search',
     },
     {
-      label: 'Planos',
-      href: '#planos',
+      label: 'Pricing',
+      href: '#pricing',
       icon: 'mdi-currency-usd',
     },
     {
-      label: 'Contato',
-      href: '#contato',
+      label: 'Contact',
+      href: '#contact',
       icon: 'mdi-email',
     },
     {
-      label: 'Documentação',
+      label: 'Documentation',
       href: '/docs',
       icon: 'mdi-book-open-variant',
       external: true,
     },
   ],
   primaryCTA: {
-    text: 'Começar Agora',
+    text: 'Get Started',
     href: '/search',
     variant: 'primary',
     icon: 'mdi-arrow-right',
   },
   secondaryCTA: {
-    text: 'Ver Demo',
+    text: 'View Demo',
     href: '#demo',
     variant: 'outline',
     icon: 'mdi-play-circle-outline',
@@ -216,34 +216,34 @@ export const sentinelaNavigation: BrandNavigation = {
 export const plateaNavigation: BrandNavigation = {
   header: [
     {
-      label: 'Funcionalidades',
-      href: '#funcionalidades',
+      label: 'Features',
+      href: '#features',
       icon: 'mdi-view-dashboard',
     },
     {
-      label: 'Planos',
-      href: '#planos',
+      label: 'Pricing',
+      href: '#pricing',
       icon: 'mdi-wallet',
     },
     {
-      label: 'Acessibilidade',
-      href: '/acessibilidade',
+      label: 'Accessibility',
+      href: '/accessibility',
       icon: 'mdi-human',
     },
     {
-      label: 'Contato',
-      href: '#contato',
+      label: 'Contact',
+      href: '#contact',
       icon: 'mdi-message',
     },
   ],
   primaryCTA: {
-    text: 'Começar Grátis',
+    text: 'Start Free',
     href: '/app',
     variant: 'primary',
     icon: 'mdi-calendar-check',
   },
   secondaryCTA: {
-    text: 'Ver Tutorial',
+    text: 'View Tutorial',
     href: '#tutorial',
     variant: 'outline',
     icon: 'mdi-school',
@@ -259,7 +259,7 @@ export const plateaNavigation: BrandNavigation = {
 export const nettoolskitNavigation: BrandNavigation = {
   header: [
     {
-      label: 'Componentes',
+      label: 'Components',
       href: '#components',
       icon: 'mdi-puzzle',
       children: [
@@ -269,12 +269,12 @@ export const nettoolskitNavigation: BrandNavigation = {
       ],
     },
     {
-      label: 'Temas',
+      label: 'Themes',
       href: '#themes',
       icon: 'mdi-palette-swatch',
     },
     {
-      label: 'Instalação',
+      label: 'Installation',
       href: '#installation',
       icon: 'mdi-download',
     },
@@ -352,7 +352,7 @@ export function getNavigation(name: NavigationName): BrandNavigation {
  * import { flattenNavLinks, nettoolskitNavigation } from '@/config/brand/navigation.config'
  * 
  * const allLinks = flattenNavLinks(nettoolskitNavigation.header)
- * // Returns all links including children of 'Componentes'
+ * // Returns all links including children of 'Components'
  * ```
  */
 export function flattenNavLinks(links: NavLink[]): NavLink[] {

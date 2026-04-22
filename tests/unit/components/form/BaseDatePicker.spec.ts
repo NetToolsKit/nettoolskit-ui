@@ -60,7 +60,7 @@ describe('BaseDatePicker', () => {
       expect(input.props('placeholder')).toBe(placeholder)
     })
 
-    it('should have default placeholder DD/MM/YYYY', () => {
+    it('should have default placeholder YYYY/MM/DD', () => {
       // Arrange
 
       // Act
@@ -68,7 +68,7 @@ describe('BaseDatePicker', () => {
 
       // Assert
       const input = wrapper.findComponent({ name: 'QInput' })
-      expect(input.props('placeholder')).toBe('DD/MM/YYYY')
+      expect(input.props('placeholder')).toBe('YYYY/MM/DD')
     })
 
     it('should apply outlined style', () => {
@@ -169,7 +169,7 @@ describe('BaseDatePicker', () => {
       expect(wrapper.findComponent({ name: 'QDate' }).exists()).toBe(true)
     })
 
-    it('should apply Brazilian Portuguese locale', () => {
+    it('should apply English locale', () => {
       // Arrange
 
       // Act
@@ -179,8 +179,8 @@ describe('BaseDatePicker', () => {
 
       // Assert
       expect(locale).toBeDefined()
-      expect(locale.days).toContain('Domingo')
-      expect(locale.months).toContain('Janeiro')
+      expect(locale.days).toContain('Sunday')
+      expect(locale.months).toContain('January')
     })
 
     it('should have minimal calendar style', () => {
@@ -219,32 +219,32 @@ describe('BaseDatePicker', () => {
   })
 
   describe('Calendar Actions', () => {
-    it('should have "Hoje" (Today) button', () => {
+    it('should have "Today" button', () => {
       // Arrange
 
       // Act
       const wrapper = mount(BaseDatePicker)
 
       // Assert
-      expect(wrapper.text()).toContain('Hoje')
+      expect(wrapper.text()).toContain('Today')
     })
 
-    it('should have "Fechar" (Close) button', () => {
+    it('should have "Close" button', () => {
       // Arrange
 
       // Act
       const wrapper = mount(BaseDatePicker)
 
       // Assert
-      expect(wrapper.text()).toContain('Fechar')
+      expect(wrapper.text()).toContain('Close')
     })
 
-    it('should set today date when "Hoje" button clicked', async () => {
+    it('should set today date when "Today" button clicked', async () => {
       // Arrange
       const wrapper = mount(BaseDatePicker, {
         props: { modelValue: '' }
       })
-      const todayBtn = wrapper.findAll('button').find(btn => btn.text() === 'Hoje')
+      const todayBtn = wrapper.findAll('button').find(btn => btn.text() === 'Today')
 
       // Act
       await todayBtn?.trigger('click')
@@ -321,7 +321,7 @@ describe('BaseDatePicker', () => {
     it('should format today date correctly (YYYY/MM/DD)', async () => {
       // Arrange
       const wrapper = mount(BaseDatePicker)
-      const todayBtn = wrapper.findAll('button').find(btn => btn.text() === 'Hoje')
+      const todayBtn = wrapper.findAll('button').find(btn => btn.text() === 'Today')
 
       // Act
       await todayBtn?.trigger('click')
@@ -334,7 +334,7 @@ describe('BaseDatePicker', () => {
     it('should pad single digit months and days with zero', async () => {
       // Arrange
       const wrapper = mount(BaseDatePicker)
-      const todayBtn = wrapper.findAll('button').find(btn => btn.text() === 'Hoje')
+      const todayBtn = wrapper.findAll('button').find(btn => btn.text() === 'Today')
 
       // Act
       await todayBtn?.trigger('click')

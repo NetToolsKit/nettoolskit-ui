@@ -46,23 +46,23 @@ const TEMPLATE_WIKI_CHAT_STORAGE_KEY = 'ntk_template_runtime_wiki_chat_v1'
 
 const SOURCE_CATALOG: TemplateWikiSourceReference[] = [
   {
-    documentName: 'Manual Operacional.md',
-    chunkContent: 'Fluxo local de atendimento para clientes, pedidos e tarefas do workspace.',
+    documentName: 'Operational Manual.md',
+    chunkContent: 'Local service flow for clients, orders, and workspace tasks.',
     relevance: 0.96,
   },
   {
-    documentName: 'Guia de Configuracoes.md',
-    chunkContent: 'Preferencias persistidas localmente sao reaplicadas ao recarregar o runtime.',
+    documentName: 'Settings Guide.md',
+    chunkContent: 'Locally persisted preferences are reapplied when the runtime reloads.',
     relevance: 0.91,
   },
   {
-    documentName: 'Playbook Comercial.md',
-    chunkContent: 'Valide o status atual, confirme o proximo passo e registre o responsavel.',
+    documentName: 'Commercial Playbook.md',
+    chunkContent: 'Validate the current status, confirm the next step, and record the owner.',
     relevance: 0.89,
   },
   {
-    documentName: 'Base de Conhecimento.md',
-    chunkContent: 'Documente a decisao tomada e compartilhe o contexto relevante da conversa.',
+    documentName: 'Knowledge Base.md',
+    chunkContent: 'Document the decision and share the relevant conversation context.',
     relevance: 0.87,
   },
 ]
@@ -190,7 +190,7 @@ function normalizeConversation(value: unknown, index: number): TemplateWikiConve
     new Date().toISOString()
   )
   const id = normalizeText((value as { id?: unknown }).id, `conv-hydrated-${index + 1}`)
-  const title = normalizeText((value as { title?: unknown }).title, 'Nova conversa')
+  const title = normalizeText((value as { title?: unknown }).title, 'New conversation')
   const messages = normalizeMessages((value as { messages?: unknown }).messages, createdAt)
 
   return {
@@ -307,7 +307,7 @@ function summarizeConversation(
 function buildConversationTitle(question: string): string {
   const cleaned = normalizeText(question).replace(/[!?.,;:]+$/g, '')
   if (!cleaned) {
-    return 'Nova conversa'
+    return 'New conversation'
   }
 
   const title = cleaned.length > 56
@@ -335,10 +335,10 @@ function buildAnswer(question: string, turnNumber: number, sources: TemplateWiki
     : normalizedQuestion
 
   const prefix = turnNumber <= 1
-    ? 'Resumo local salvo para esta conversa'
-    : 'Atualizacao local desta conversa'
+    ? 'Local summary saved for this conversation'
+    : 'Local update for this conversation'
 
-  return `${prefix}: ${subject}. Consulte ${sources[0]?.documentName ?? 'a base'} e confirme o proximo passo antes de concluir a acao.`
+  return `${prefix}: ${subject}. Review ${sources[0]?.documentName ?? 'the knowledge base'} and confirm the next step before completing the action.`
 }
 
 function createUserMessage(

@@ -72,7 +72,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string | number | null]
+}>()
 
 const { internalValue, handleUpdate } = useNtkField(props, emit)
 </script>

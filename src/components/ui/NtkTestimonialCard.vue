@@ -76,32 +76,32 @@
 import { computed } from 'vue';
 
 /**
- * NtkTestimonialCard - Card de depoimento/testemunho
+ * NtkTestimonialCard - testimonial card.
  * 
- * Usado em landing pages para exibir avaliações de clientes:
- * - Depoimentos
+ * Used in landing pages to display customer proof:
+ * - Testimonials
  * - Reviews
- * - Casos de sucesso
+ * - Success stories
  */
 
 interface Props {
-  /** Texto do depoimento */
+  /** Testimonial text */
   quote: string;
-  /** Nome do autor */
+  /** Author name */
   author: string;
-  /** Cargo/função do autor */
+  /** Author role */
   role?: string;
-  /** Empresa do autor */
+  /** Author company */
   company?: string;
-  /** URL do avatar */
+  /** Avatar URL */
   avatar?: string;
-  /** Avaliação (1-5 estrelas) */
+  /** Rating from 1 to 5 stars */
   rating?: number;
-  /** Variante visual */
+  /** Visual variant */
   variant?: 'default' | 'featured' | 'minimal' | 'bordered';
-  /** Tamanho */
+  /** Size */
   size?: 'sm' | 'md' | 'lg';
-  /** Mostrar ícone de aspas */
+  /** Whether to show the quote icon */
   showQuoteIcon?: boolean;
 }
 

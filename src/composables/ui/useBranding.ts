@@ -13,8 +13,8 @@ type ThemeLogo = LogoConfig;
 const KNOWN_BRANDS: BrandName[] = ['sentinela', 'platea', 'nettoolskit'];
 
 /**
- * Composable centralizado para acessar informações de branding
- * (logo, cores, app info, contatos, etc.)
+ * Centralized composable for accessing branding data.
+ * Includes logo, colors, app information, contacts, and navigation.
  *
  * @example
  * ```vue

@@ -80,8 +80,7 @@ import { computed } from 'vue'
 import { QIcon } from 'quasar'
 import NtkButton from './NtkButton.vue'
 
-// ✅ NUNCA usar default export (frontend.instructions.md)
-// ✅ TypeScript interface para props
+// Do not use default script exports; keep props typed through interfaces.
 
 interface Feature {
   text: string
@@ -106,11 +105,13 @@ const props = withDefaults(defineProps<Props>(), {
   description: '',
   features: () => [],
   featured: false,
-  badgeText: 'Mais Popular',
-  actionText: 'Escolher Plano'
+  badgeText: 'Most Popular',
+  actionText: 'Choose Plan'
 })
 
-defineEmits(['select'])
+defineEmits<{
+  select: []
+}>()
 
 const cardClasses = computed(() => ({
   'pricing-card--featured': props.featured

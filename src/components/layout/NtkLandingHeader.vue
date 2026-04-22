@@ -57,7 +57,7 @@
       <!-- Mobile Menu Button -->
       <button
         class="header-mobile-btn"
-        aria-label="Abrir menu"
+        aria-label="Open menu"
         @click="toggleMobileMenu"
       >
         <svg
@@ -119,40 +119,40 @@ import { useBranding } from '../../composables/ui/useBranding';
 import type { NavLink } from '../../config/brand/navigation.config';
 
 /**
- * NtkLandingHeader - Header padronizado para landing pages
+ * NtkLandingHeader - standardized landing page header.
  *
- * Funcionalidades:
- * - Logo configurável (usa NtkLogo internamente)
- * - Menu de navegação responsivo
- * - Botão CTA com variantes
- * - Menu hambúrguer no mobile
- * - Drawer lateral com botão "Comprimir"
- * - Sombra e altura padronizadas
+ * Features:
+ * - Configurable logo through NtkLogo.
+ * - Responsive navigation menu.
+ * - CTA button variants.
+ * - Mobile hamburger menu.
+ * - Side drawer with a collapse button.
+ * - Standardized shadow and height.
  */
 
 interface Props {
   // Logo
-  /** Letra do logo */
+  /** Logo letter */
   logoLetter?: string;
-  /** Texto do logo */
+  /** Logo text */
   logoText?: string;
-  /** Link do logo */
+  /** Logo link */
   logoLink?: string;
-  /** Tamanho do logo */
+  /** Logo size */
   logoSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Cor do ícone do logo */
+  /** Logo icon color */
   logoIconColor?: string;
-  /** Cor do texto do logo */
+  /** Logo text color */
   logoTextColor?: string;
-  /** Usar gradiente no logo */
+  /** Whether to use the logo gradient */
   logoGradient?: boolean;
 
-  // Navegação
-  /** Itens de navegação */
+  // Navigation
+  /** Navigation items */
   navItems?: NavLink[];
 
   // CTA
-  /** Texto do botão CTA */
+  /** CTA button text */
   ctaText?: string;
   /** CTA button link */
   ctaLink?: string;
@@ -174,13 +174,13 @@ interface Props {
   paddingX?: string;
 
   // Mobile
-  /** Breakpoint para mobile */
+  /** Mobile breakpoint */
   mobileBreakpoint?: number;
-  /** Lado do drawer mobile */
+  /** Mobile drawer side */
   mobileDrawerSide?: 'left' | 'right';
   /** Mobile drawer width */
   mobileDrawerWidth?: number;
-  /** Texto do botão comprimir */
+  /** Collapse button text */
   compressLabel?: string;
 }
 
@@ -201,7 +201,7 @@ const props = withDefaults(defineProps<Props>(), {
   mobileBreakpoint: 768,
   mobileDrawerSide: 'right',
   mobileDrawerWidth: 280,
-  compressLabel: 'Comprimir',
+  compressLabel: 'Collapse',
 });
 
 const emit = defineEmits<{
@@ -214,7 +214,7 @@ const { logo, appUrl, primaryColor } = useBranding();
 
 const mobileMenuOpen = ref(false);
 
-// Valores computados com fallback para tema
+// Computed values with theme fallback.
 const logoLetter = computed(() => props.logoLetter || (logo.value.type === 'letter' ? logo.value.value : ''));
 const logoText = computed(() => props.logoText || logo.value.alt);
 const logoLink = computed(() => props.logoLink || appUrl.value || '/');

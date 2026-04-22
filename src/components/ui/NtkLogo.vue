@@ -63,11 +63,11 @@ interface Props {
   iconColor?: string;
   /** Text color override */
   textColor?: string;
-  /** Link para navegação */
+  /** Navigation link */
   linkTo?: string;
-  /** Usar gradiente no ícone */
+  /** Whether to use a gradient in the icon */
   gradient?: boolean;
-  /** Font weight do texto: normal, medium, semibold, bold */
+  /** Text font weight: normal, medium, semibold, bold */
   fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
 }
 
@@ -127,15 +127,15 @@ const resolveTokenColor = (value?: string): string => {
   return COLOR_TOKEN_ALIASES[alias] ?? (QUASAR_NEUTRAL_ALIAS_PATTERN.test(alias) ? COLOR_TOKEN_ALIASES.neutral : '');
 };
 
-// Valores do tema ou props
+// Values from theme or props
 const letter = computed(() => props.letter || themeLogo.value.value);
 const text = computed(() => props.text || appName.value);
 const tagline = computed(() => props.tagline || themeTagline.value);
 
-// Estilos dinâmicos
+// Dynamic styles
 const iconStyle = computed(() => {
   const color = resolveTokenColor(props.iconColor) || primaryColor.value;
-  // Para o gradient, vamos usar a cor secundária como fallback
+  // Gradient uses the secondary color as its fallback stop.
   const colorDark = secondaryColor.value;
 
   return {

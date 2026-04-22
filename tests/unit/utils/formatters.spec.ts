@@ -17,18 +17,18 @@ import {
 } from '../../../src/utils/formatters'
 
 describe('formatCurrency', () => {
-  it('formats BRL by default', () => {
-    expect(formatCurrency(1234.56)).toContain('1.234,56')
+  it('formats USD by default', () => {
+    expect(formatCurrency(1234.56)).toContain('1,234.56')
   })
 
   it('includes currency symbol', () => {
-    expect(formatCurrency(100)).toContain('R$')
+    expect(formatCurrency(100)).toContain('$')
   })
 })
 
 describe('formatNumber', () => {
-  it('formats with thousand separators (pt-BR)', () => {
-    expect(formatNumber(1234567)).toBe('1.234.567')
+  it('formats with thousand separators', () => {
+    expect(formatNumber(1234567)).toBe('1,234,567')
   })
 
   it('handles zero', () => {
@@ -37,17 +37,17 @@ describe('formatNumber', () => {
 })
 
 describe('formatPercent', () => {
-  it('formats 0.1234 as 12,34%', () => {
-    expect(formatPercent(0.1234)).toContain('12,34')
+  it('formats 0.1234 as 12.34%', () => {
+    expect(formatPercent(0.1234)).toContain('12.34')
   })
 
   it('respects decimals parameter', () => {
-    expect(formatPercent(0.5, 0)).not.toContain(',')
+    expect(formatPercent(0.5, 0)).not.toContain('.')
   })
 })
 
 describe('formatDate', () => {
-  it('formats date as DD/MM/YYYY', () => {
+  it('formats date with the default en-US locale', () => {
     const date = new Date('2026-04-01T00:00:00Z')
     const result = formatDate(date)
     expect(result).toMatch(/\d{2}\/\d{2}\/2026/)
@@ -64,7 +64,7 @@ describe('formatDateTime', () => {
     const date = new Date('2026-04-01T14:30:00')
     const result = formatDateTime(date)
     expect(result).toContain('2026')
-    expect(result).toMatch(/14:30|14h/)
+    expect(result).toMatch(/14:30|14h|02:30 PM/)
   })
 })
 

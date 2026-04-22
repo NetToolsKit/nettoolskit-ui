@@ -73,8 +73,8 @@ describe('template runtime wiki chat persistence', () => {
       'user',
       'assistant',
     ])
-    expect(detail.messages[1]?.content).toContain('Resumo local salvo para esta conversa')
-    expect(detail.messages[3]?.content).toContain('Atualizacao local desta conversa')
+    expect(detail.messages[1]?.content).toContain('Local summary saved for this conversation')
+    expect(detail.messages[3]?.content).toContain('Local update for this conversation')
     expect(hydrated.activeConversationId).toBe(firstReply.conversationId)
     expect(hydrated.messages).toHaveLength(4)
     expect(persisted.selectedConversationId).toBe(firstReply.conversationId)
@@ -88,7 +88,7 @@ describe('template runtime wiki chat persistence', () => {
     await store.sendMessage('Quais pedidos precisam de atencao?')
 
     vi.setSystemTime(new Date('2026-04-16T15:03:00.000Z'))
-    await store.sendMessage('Qual o proximo passo?')
+    await store.sendMessage('What is the next step?')
 
     const activeConversationId = store.state.activeConversationId
 

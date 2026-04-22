@@ -92,19 +92,19 @@ const CLIENT_STATUS_META: Record<
   TemplateRuntimeClientStatus,
   { label: string; tone: 'success' | 'warning' | 'neutral' }
 > = {
-  active: { label: 'Ativo', tone: 'success' },
+  active: { label: 'Active', tone: 'success' },
   onboarding: { label: 'Onboarding', tone: 'warning' },
-  inactive: { label: 'Inativo', tone: 'neutral' },
+  inactive: { label: 'Inactive', tone: 'neutral' },
 }
 
 const ORDER_STATUS_META: Record<
   TemplateRuntimeOrderStatus,
   { label: string; tone: 'info' | 'warning' | 'success' | 'danger' }
 > = {
-  pending: { label: 'Pendente', tone: 'warning' },
-  in_progress: { label: 'Em progresso', tone: 'info' },
-  completed: { label: 'Concluído', tone: 'success' },
-  cancelled: { label: 'Cancelado', tone: 'danger' },
+  pending: { label: 'Pending', tone: 'warning' },
+  in_progress: { label: 'In progress', tone: 'info' },
+  completed: { label: 'Completed', tone: 'success' },
+  cancelled: { label: 'Cancelled', tone: 'danger' },
 }
 
 const ORDER_STATUS_COLORS: Record<TemplateRuntimeOrderStatus, string> = {
@@ -123,23 +123,23 @@ const CATEGORY_COLORS = [
 ]
 
 const CLIENT_COLUMNS: TemplateCrudListColumn[] = [
-  { id: 'name', label: 'Cliente', emphasize: true },
-  { id: 'owner', label: 'Responsável' },
-  { id: 'segment', label: 'Segmento' },
-  { id: 'city', label: 'Cidade' },
-  { id: 'monthlyRevenue', label: 'Receita mensal', align: 'right' },
+  { id: 'name', label: 'Client', emphasize: true },
+  { id: 'owner', label: 'Owner' },
+  { id: 'segment', label: 'Segment' },
+  { id: 'city', label: 'City' },
+  { id: 'monthlyRevenue', label: 'Monthly revenue', align: 'right' },
 ]
 
 const ORDER_COLUMNS: TemplateCrudListColumn[] = [
-  { id: 'number', label: 'Pedido', emphasize: true },
-  { id: 'clientName', label: 'Cliente' },
-  { id: 'category', label: 'Categoria' },
-  { id: 'updatedAt', label: 'Atualizado em' },
+  { id: 'number', label: 'Order', emphasize: true },
+  { id: 'clientName', label: 'Client' },
+  { id: 'category', label: 'Category' },
+  { id: 'updatedAt', label: 'Updated at' },
   { id: 'total', label: 'Total', align: 'right' },
 ]
 
 function formatCurrency(value: number): string {
-  return `R$ ${value.toLocaleString('pt-BR')}`
+  return `$${value.toLocaleString('en-US')}`
 }
 
 function isWithinLastDays(value: string, days: number): boolean {
@@ -198,9 +198,9 @@ function buildDashboardSnapshot(snapshot: TemplateRuntimeDataSnapshot): Template
           .map(word => word.charAt(0).toUpperCase())
           .join(''),
         value: clientOrders.length,
-        valueCaption: 'pedidos',
+        valueCaption: 'orders',
         secondaryValue: formatCurrency(revenue),
-        secondaryCaption: 'fatur.',
+        secondaryCaption: 'revenue',
         barPercent: Math.round((revenue / Math.max(totalRevenue, 1)) * 100),
       }
     })
@@ -220,29 +220,29 @@ function buildDashboardSnapshot(snapshot: TemplateRuntimeDataSnapshot): Template
 
   return {
     chips: [
-      { id: 'clients', text: `${snapshot.clients.length} clientes`, icon: 'people' },
-      { id: 'revenue', text: `${formatCurrency(totalRevenue)} no período`, icon: 'payments' },
+      { id: 'clients', text: `${snapshot.clients.length} clients`, icon: 'people' },
+      { id: 'revenue', text: `${formatCurrency(totalRevenue)} in period`, icon: 'payments' },
     ],
     metrics: [
-      { id: 'orders-total', label: 'Total pedidos', value: snapshot.orders.length, icon: 'shopping_cart', tone: 'neutral' },
-      { id: 'orders-pending', label: 'Pendentes', value: statusCount.pending, icon: 'pending_actions', tone: 'warning' },
-      { id: 'orders-progress', label: 'Em progresso', value: statusCount.inProgress, icon: 'autorenew', tone: 'info' },
-      { id: 'orders-completed', label: 'Concluídos', value: statusCount.completed, icon: 'task_alt', tone: 'success' },
-      { id: 'orders-cancelled', label: 'Cancelados', value: statusCount.cancelled, icon: 'cancel', tone: 'danger' },
+      { id: 'orders-total', label: 'Total orders', value: snapshot.orders.length, icon: 'shopping_cart', tone: 'neutral' },
+      { id: 'orders-pending', label: 'Pending', value: statusCount.pending, icon: 'pending_actions', tone: 'warning' },
+      { id: 'orders-progress', label: 'In progress', value: statusCount.inProgress, icon: 'autorenew', tone: 'info' },
+      { id: 'orders-completed', label: 'Completed', value: statusCount.completed, icon: 'task_alt', tone: 'success' },
+      { id: 'orders-cancelled', label: 'Cancelled', value: statusCount.cancelled, icon: 'cancel', tone: 'danger' },
     ],
     activities: [
-      { id: 'activity-today', label: 'Pedidos hoje', value: activityToday, icon: 'today', iconTone: 'blue' },
-      { id: 'activity-week', label: 'Pedidos na semana', value: activityWeek, icon: 'date_range', iconTone: 'indigo' },
-      { id: 'activity-month', label: 'Pedidos no mês', value: activityMonth, icon: 'calendar_month', iconTone: 'violet' },
-      { id: 'activity-revenue', label: 'Receita ativa', value: formatCurrency(totalRevenue), icon: 'payments', iconTone: 'green' },
-      { id: 'activity-clients', label: 'Clientes ativos', value: activeClients, icon: 'person_add', iconTone: 'amber' },
+      { id: 'activity-today', label: 'Orders today', value: activityToday, icon: 'today', iconTone: 'blue' },
+      { id: 'activity-week', label: 'Orders this week', value: activityWeek, icon: 'date_range', iconTone: 'indigo' },
+      { id: 'activity-month', label: 'Orders this month', value: activityMonth, icon: 'calendar_month', iconTone: 'violet' },
+      { id: 'activity-revenue', label: 'Active revenue', value: formatCurrency(totalRevenue), icon: 'payments', iconTone: 'green' },
+      { id: 'activity-clients', label: 'Active clients', value: activeClients, icon: 'person_add', iconTone: 'amber' },
     ],
     topItems: topClients,
     statusSegments: [
-      { id: 'status-pending', label: 'Pendentes', value: statusCount.pending, color: ORDER_STATUS_COLORS.pending },
-      { id: 'status-progress', label: 'Em progresso', value: statusCount.inProgress, color: ORDER_STATUS_COLORS.in_progress },
-      { id: 'status-completed', label: 'Concluídos', value: statusCount.completed, color: ORDER_STATUS_COLORS.completed },
-      { id: 'status-cancelled', label: 'Cancelados', value: statusCount.cancelled, color: ORDER_STATUS_COLORS.cancelled },
+      { id: 'status-pending', label: 'Pending', value: statusCount.pending, color: ORDER_STATUS_COLORS.pending },
+      { id: 'status-progress', label: 'In progress', value: statusCount.inProgress, color: ORDER_STATUS_COLORS.in_progress },
+      { id: 'status-completed', label: 'Completed', value: statusCount.completed, color: ORDER_STATUS_COLORS.completed },
+      { id: 'status-cancelled', label: 'Cancelled', value: statusCount.cancelled, color: ORDER_STATUS_COLORS.cancelled },
     ],
     categorySeries: categoryEntries,
   }
@@ -276,15 +276,15 @@ export const templateRuntimeData = {
     }))
   ),
   clientFilters: computed<TemplateCrudFilterOption[]>(() => [
-    { id: 'all', label: 'Todos', count: runtimeState.clients.length },
-    { id: 'active', label: 'Ativos', count: runtimeState.clients.filter(client => client.status === 'active').length },
+    { id: 'all', label: 'All', count: runtimeState.clients.length },
+    { id: 'active', label: 'Active', count: runtimeState.clients.filter(client => client.status === 'active').length },
     { id: 'onboarding', label: 'Onboarding', count: runtimeState.clients.filter(client => client.status === 'onboarding').length },
-    { id: 'inactive', label: 'Inativos', count: runtimeState.clients.filter(client => client.status === 'inactive').length },
+    { id: 'inactive', label: 'Inactive', count: runtimeState.clients.filter(client => client.status === 'inactive').length },
   ]),
   clientMetrics: computed<TemplateCrudMetricChip[]>(() => [
-    { id: 'clients-total', label: 'Clientes', value: runtimeState.clients.length, icon: 'people', tone: 'info' },
-    { id: 'clients-active', label: 'Ativos', value: runtimeState.clients.filter(client => client.status === 'active').length, icon: 'verified_user', tone: 'success' },
-    { id: 'clients-revenue', label: 'Receita potencial', value: formatCurrency(runtimeState.clients.reduce((sum, client) => sum + client.monthlyRevenue, 0)), icon: 'payments', tone: 'primary' },
+    { id: 'clients-total', label: 'Clients', value: runtimeState.clients.length, icon: 'people', tone: 'info' },
+    { id: 'clients-active', label: 'Active', value: runtimeState.clients.filter(client => client.status === 'active').length, icon: 'verified_user', tone: 'success' },
+    { id: 'clients-revenue', label: 'Potential revenue', value: formatCurrency(runtimeState.clients.reduce((sum, client) => sum + client.monthlyRevenue, 0)), icon: 'payments', tone: 'primary' },
   ]),
   orderRecords: computed<TemplateCrudListRecord[]>(() =>
     runtimeState.orders.map(order => ({
@@ -308,16 +308,16 @@ export const templateRuntimeData = {
     }))
   ),
   orderFilters: computed<TemplateCrudFilterOption[]>(() => [
-    { id: 'all', label: 'Todos', count: runtimeState.orders.length },
-    { id: 'pending', label: 'Pendentes', count: runtimeState.orders.filter(order => order.status === 'pending').length },
-    { id: 'in_progress', label: 'Em progresso', count: runtimeState.orders.filter(order => order.status === 'in_progress').length },
-    { id: 'completed', label: 'Concluídos', count: runtimeState.orders.filter(order => order.status === 'completed').length },
-    { id: 'cancelled', label: 'Cancelados', count: runtimeState.orders.filter(order => order.status === 'cancelled').length },
+    { id: 'all', label: 'All', count: runtimeState.orders.length },
+    { id: 'pending', label: 'Pending', count: runtimeState.orders.filter(order => order.status === 'pending').length },
+    { id: 'in_progress', label: 'In progress', count: runtimeState.orders.filter(order => order.status === 'in_progress').length },
+    { id: 'completed', label: 'Completed', count: runtimeState.orders.filter(order => order.status === 'completed').length },
+    { id: 'cancelled', label: 'Cancelled', count: runtimeState.orders.filter(order => order.status === 'cancelled').length },
   ]),
   orderMetrics: computed<TemplateCrudMetricChip[]>(() => [
-    { id: 'orders-total', label: 'Pedidos', value: runtimeState.orders.length, icon: 'shopping_cart', tone: 'info' },
-    { id: 'orders-open', label: 'Em aberto', value: runtimeState.orders.filter(order => order.status === 'pending' || order.status === 'in_progress').length, icon: 'pending_actions', tone: 'warning' },
-    { id: 'orders-revenue', label: 'Receita ativa', value: formatCurrency(runtimeState.orders.filter(order => order.status !== 'cancelled').reduce((sum, order) => sum + order.total, 0)), icon: 'paid', tone: 'success' },
+    { id: 'orders-total', label: 'Orders', value: runtimeState.orders.length, icon: 'shopping_cart', tone: 'info' },
+    { id: 'orders-open', label: 'Open', value: runtimeState.orders.filter(order => order.status === 'pending' || order.status === 'in_progress').length, icon: 'pending_actions', tone: 'warning' },
+    { id: 'orders-revenue', label: 'Active revenue', value: formatCurrency(runtimeState.orders.filter(order => order.status !== 'cancelled').reduce((sum, order) => sum + order.total, 0)), icon: 'paid', tone: 'success' },
   ]),
   wikiCategories: computed(() => runtimeState.wiki.categories),
   wikiDocuments: computed(() => runtimeState.wiki.documents),
@@ -327,14 +327,14 @@ export const templateRuntimeData = {
     const suffix = draft.clients.length + 1
     const client: TemplateRuntimeClient = {
       id: nextTemplateRuntimeClientId(draft),
-      name: `Novo Cliente ${suffix}`,
+      name: `New Client ${suffix}`,
       owner: draft.settings.operatorName,
-      segment: 'Expansão',
-      city: 'Remoto',
+      segment: 'Expansion',
+      city: 'Remote',
       status: 'onboarding',
       monthlyRevenue: 12500 + suffix * 320,
       lastOrderAt: new Date().toISOString(),
-      tags: ['novo'],
+      tags: ['new'],
     }
 
     draft.clients.unshift(client)
@@ -353,7 +353,7 @@ export const templateRuntimeData = {
       id: nextTemplateRuntimeClientId(draft),
       name: `${source.name} Copy`,
       status: 'onboarding',
-      tags: [...source.tags, 'copia'],
+      tags: [...source.tags, 'copy'],
       lastOrderAt: new Date().toISOString(),
     }
 
@@ -391,7 +391,7 @@ export const templateRuntimeData = {
       number: nextTemplateRuntimeOrderNumber(draft),
       clientId: client.id,
       clientName: client.name,
-      category: 'Operações',
+      category: 'Operations',
       total: 4800 + draft.orders.length * 190,
       status: 'pending',
       createdAt: new Date().toISOString(),

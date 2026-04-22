@@ -190,7 +190,7 @@ describe('validators', () => {
     it('should return invalid for empty password', () => {
       const result = validatePassword('')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Senha é obrigatória')
+      expect(result.errors).toContain('Password is required')
     })
 
     it('should return invalid for null/undefined', () => {
@@ -207,31 +207,31 @@ describe('validators', () => {
     it('should return error for password too short', () => {
       const result = validatePassword('Ab1!')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Senha deve ter no mínimo 8 caracteres')
+      expect(result.errors).toContain('Password must have at least 8 characters')
     })
 
     it('should return error for password without lowercase', () => {
       const result = validatePassword('ABC123!@#')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Senha deve conter letras minúsculas')
+      expect(result.errors).toContain('Password must contain lowercase letters')
     })
 
     it('should return error for password without uppercase', () => {
       const result = validatePassword('abc123!@#')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Senha deve conter letras maiúsculas')
+      expect(result.errors).toContain('Password must contain uppercase letters')
     })
 
     it('should return error for password without numbers', () => {
       const result = validatePassword('Abcdefgh!@#')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Senha deve conter números')
+      expect(result.errors).toContain('Password must contain numbers')
     })
 
     it('should return error for password without special chars', () => {
       const result = validatePassword('Abcdefgh123')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Senha deve conter caracteres especiais (@$!%*?&#)')
+      expect(result.errors).toContain('Password must contain special characters (@$!%*?&#)')
     })
 
     it('should accept custom minimum length', () => {

@@ -12,7 +12,7 @@ async function resetRuntimeState(page: Page): Promise<void> {
 }
 
 async function submitRuntimeLogin(page: Page): Promise<void> {
-  await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
   await page.locator('input[aria-label="Email input"]').fill('ops@nettoolskit.dev')
   await page.locator('input[aria-label="Password input"]').fill('demo-password')
@@ -31,7 +31,7 @@ test.describe('template runtime auth flow', () => {
     await submitRuntimeLogin(page)
 
     await expect(page).toHaveURL(/template-runtime=1#\/orders$/)
-    await expect(page.getByRole('heading', { name: 'Pedidos' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible()
   })
 
   test('redirects authenticated users away from login using the requested target or dashboard fallback', async ({ page }) => {
@@ -43,21 +43,21 @@ test.describe('template runtime auth flow', () => {
 
     await page.goto(`${RUNTIME_BASE}#/auth/login?redirect=/settings`)
     await expect(page).toHaveURL(/template-runtime=1#\/settings$/)
-    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
     await page.goto(RUNTIME_LOGIN_URL)
     await expect(page).toHaveURL(/template-runtime=1#\/?$/)
     await expect(page.locator('.ntk-template-dashboard__title')).toBeVisible()
   })
 
-  test('resetar runtime clears auth and keeps protected routes blocked afterwards', async ({ page }) => {
+  test('reset runtime clears auth and keeps protected routes blocked afterwards', async ({ page }) => {
     await page.goto(RUNTIME_LOGIN_URL)
     await submitRuntimeLogin(page)
 
     await page.goto(`${RUNTIME_BASE}#/settings`)
-    await expect(page.getByRole('heading', { name: 'Configurações' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
-    await page.getByRole('button', { name: 'Resetar runtime' }).click()
+    await page.getByRole('button', { name: 'Reset runtime' }).click()
 
     await expect(page).toHaveURL(/template-runtime=1#\/auth\/login$/)
     await expect.poll(async () => {
@@ -72,10 +72,10 @@ test.describe('template runtime auth flow', () => {
 
     await page.goBack()
     await expect(page).toHaveURL(/template-runtime=1#\/auth\/login(?:\?redirect=.*)?$/)
-    await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 
     await page.reload()
     await expect(page).toHaveURL(/template-runtime=1#\/auth\/login(?:\?redirect=.*)?$/)
-    await expect(page.getByRole('heading', { name: 'Entrar no sistema' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
   })
 })
