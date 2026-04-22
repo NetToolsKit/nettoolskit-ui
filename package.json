@@ -92,6 +92,7 @@
     "vue-tsc": "^2.0.0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.17.0"
+    "@quasar/extras": "^1.17.0",
+    "highcharts": "12.5.0"
   }
 }
