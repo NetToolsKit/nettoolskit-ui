@@ -74,6 +74,111 @@ export interface ThemeConfig {
 // Theme Configurations
 // ============================
 
+const revolutPalette: BrandPalette = {
+  primary: {
+    50: '#f0fdfa',
+    100: '#ccfbf1',
+    200: '#99f6e4',
+    300: '#5eead4',
+    400: '#2dd4bf',
+    500: '#14b8a6',
+    600: '#0f766e',
+    700: '#115e59',
+    800: '#134e4a',
+    900: '#0f3f3c',
+  },
+  secondary: {
+    50: '#f0fdfa',
+    100: '#ccfbf1',
+    200: '#99f6e4',
+    300: '#5eead4',
+    400: '#2dd4bf',
+    500: '#14b8a6',
+    600: '#0f766e',
+    700: '#115e59',
+    800: '#134e4a',
+    900: '#0f3f3c',
+  },
+  accent: {
+    50: '#ecfeff',
+    100: '#cffafe',
+    200: '#a5f3fc',
+    300: '#67e8f9',
+    400: '#22d3ee',
+    500: '#14b8a6',
+    600: '#0f766e',
+    700: '#115e59',
+    800: '#134e4a',
+    900: '#0f3f3c',
+  },
+  neutral: {
+    50: '#f8fafc',
+    100: '#f1f5f9',
+    200: '#e2e8f0',
+    300: '#cbd5e1',
+    400: '#94a3b8',
+    500: '#64748b',
+    600: '#475569',
+    700: '#334155',
+    800: '#1e293b',
+    900: '#0f172a',
+  },
+};
+
+const revolutIdentity: BrandIdentity = {
+  name: 'revolut',
+  displayName: 'Revolut',
+  tagline: 'Financial operating system',
+  logo: {
+    type: 'letter',
+    value: 'R',
+    alt: 'Revolut Logo',
+    size: 'md',
+  },
+  description: 'Revolut-inspired neutral fintech baseline for preset-driven white-label interfaces.',
+  url: 'https://www.revolut.com',
+  version: '1.0.0',
+  copyright: 'NetToolsKit UI',
+  license: 'MIT',
+};
+
+/**
+ * Revolut Theme
+ *
+ * Default teal fintech baseline used when no host theme is selected.
+ */
+export const revolutTheme: ThemeConfig = {
+  name: 'revolut',
+  identity: revolutIdentity,
+  palette: revolutPalette,
+  colors: {
+    primary: revolutPalette.primary[600],
+    primaryDark: revolutPalette.primary[700],
+    primaryLight: revolutPalette.primary[400],
+    secondary: revolutPalette.primary[600],
+    accent: revolutPalette.accent[500],
+    background: revolutPalette.neutral[100],
+    backgroundLight: revolutPalette.neutral[50],
+    text: revolutPalette.neutral[900],
+    textLight: revolutPalette.neutral[700],
+    textMuted: revolutPalette.neutral[500],
+    border: revolutPalette.neutral[200],
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: semanticColors.errorPrimary,
+    info: revolutPalette.accent[500],
+  },
+  fonts: {
+    display: 'Sora',
+    body: 'Plus Jakarta Sans',
+  },
+  gradients: {
+    hero: `linear-gradient(135deg, ${revolutPalette.neutral[100]} 0%, #ffffff 100%)`,
+    primary: `linear-gradient(135deg, ${revolutPalette.primary[800]} 0%, ${revolutPalette.accent[500]} 100%)`,
+    loading: `linear-gradient(90deg, ${revolutPalette.neutral[100]} 0%, ${revolutPalette.neutral[50]} 50%, ${revolutPalette.neutral[100]} 100%)`,
+  },
+};
+
 /**
  * Sentinela Theme
  * 
@@ -195,6 +300,7 @@ export const nettoolskitTheme: ThemeConfig = {
  * Registry of all theme configurations.
  */
 export const themes = {
+  revolut: revolutTheme,
   sentinela: sentinelaTheme,
   platea: plateaTheme,
   nettoolskit: nettoolskitTheme,
@@ -212,7 +318,7 @@ export type ThemeName = keyof typeof themes;
  * 
  * Theme used when no specific theme is selected.
  */
-export const defaultTheme = nettoolskitTheme;
+export const defaultTheme = revolutTheme;
 
 /**
  * Get Theme by Name

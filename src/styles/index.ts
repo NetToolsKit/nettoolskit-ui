@@ -26,24 +26,24 @@
 export const DESIGN_TOKENS = {
   colors: {
     // Primary
-    primary: '#512BD4',
-    primaryDark: '#3B1F9E',
-    primaryLight: '#7B74D4',
+    primary: '#0f766e',
+    primaryDark: '#115e59',
+    primaryLight: '#2dd4bf',
     
     // Secondary
-    secondary: '#64748b',
-    secondaryDark: '#475569',
-    secondaryLight: '#94a3b8',
+    secondary: '#0f766e',
+    secondaryDark: '#115e59',
+    secondaryLight: '#2dd4bf',
     
     // Backgrounds
     bgPrimary: '#ffffff',
-    bgSecondary: '#f8fafc',
-    bgTertiary: '#f1f5f9',
+    bgSecondary: '#f1f5f9',
+    bgTertiary: '#f8fafc',
     
     // Text
-    textPrimary: '#1e293b',
-    textSecondary: '#64748b',
-    textMuted: '#94a3b8',
+    textPrimary: '#0f172a',
+    textSecondary: '#334155',
+    textMuted: '#64748b',
     textInverse: '#ffffff',
     textOnPrimary: '#ffffff',
     
@@ -53,20 +53,20 @@ export const DESIGN_TOKENS = {
     borderDark: '#cbd5e1',
     
     // Feedback
-    success: '#22c55e',
+    success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    info: '#3b82f6',
+    info: '#14b8a6',
     
     // Footer
-    footerBg: '#1a1a2e',
-    footerText: '#e0e0e0',
+    footerBg: '#0f172a',
+    footerText: '#f8fafc',
   },
   
   gradients: {
-    primary: 'linear-gradient(135deg, #512BD4 0%, #7B74D4 100%)',
-    hero: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-    loading: 'linear-gradient(90deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%)',
+    primary: 'linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)',
+    hero: 'linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%)',
+    loading: 'linear-gradient(90deg, #f1f5f9 0%, #f8fafc 50%, #f1f5f9 100%)',
   },
   
   borderRadius: {

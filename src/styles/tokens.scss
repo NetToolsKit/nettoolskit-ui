@@ -9,9 +9,9 @@
  * 
  * EXEMPLO DE CUSTOMIZAÇÃO:
  * :root {
- *   --ntk-primary: #0D47A1;
- *   --ntk-primary-gradient-start: #0D47A1;
- *   --ntk-primary-gradient-end: #7B74D4;
+ *   --ntk-primary: #0f766e;
+ *   --ntk-primary-gradient-start: #134e4a;
+ *   --ntk-primary-gradient-end: #14b8a6;
  * }
  */
 
@@ -20,10 +20,14 @@
    * Primary Colors
    * Cor principal da aplicação
    * ============================================ */
-  --ntk-primary: #512BD4;
-  --ntk-primary-dark: #3B1F9E;
-  --ntk-primary-light: #7B74D4;
-  --ntk-primary-rgb: 81, 43, 212;
+  --ntk-primary: #0f766e;
+  --ntk-primary-dark: #115e59;
+  --ntk-primary-light: #2dd4bf;
+  --ntk-primary-rgb: 15, 118, 110;
+  --ntk-accent: var(--ntk-primary);
+  --ntk-accent-hover: var(--ntk-primary-dark);
+  --ntk-accent-soft: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-accent-rgb: var(--ntk-primary-rgb);
   
   /* Gradiente Primário */
   --ntk-primary-gradient-start: var(--ntk-primary);
@@ -35,9 +39,9 @@
    * Secondary Colors
    * Cor secundária/accent
    * ============================================ */
-  --ntk-secondary: #64748b;
-  --ntk-secondary-dark: #475569;
-  --ntk-secondary-light: #94a3b8;
+  --ntk-secondary: var(--ntk-accent, #0f766e);
+  --ntk-secondary-dark: var(--ntk-accent-hover, #115e59);
+  --ntk-secondary-light: var(--ntk-primary-light, #2dd4bf);
   
   /* ============================================
    * Background Colors
@@ -53,6 +57,8 @@
   --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.08);
   --ntk-bg-light: var(--ntk-bg-secondary);
   --ntk-bg-dark: color-mix(in srgb, var(--ntk-text-primary) 92%, var(--ntk-bg-primary));
+  --ntk-dark: #0f172a;
+  --ntk-dark-page: var(--ntk-bg-secondary);
   
   /* ============================================
    * Text Colors
@@ -84,29 +90,29 @@
    * Feedback Colors
    * Cores semânticas para estados
    * ============================================ */
-  --semantic-success: #22c55e;
+  --semantic-success: #10b981;
   --semantic-success-primary: var(--semantic-success);
-  --semantic-success-border: #22c55e;
-  --semantic-success-bg: #dcfce7;
-  --semantic-success-text: #16a34a;
+  --semantic-success-border: var(--semantic-success);
+  --semantic-success-bg: #d1fae5;
+  --semantic-success-text: #047857;
 
   --semantic-warning: #f59e0b;
   --semantic-warning-primary: var(--semantic-warning);
-  --semantic-warning-border: #f59e0b;
+  --semantic-warning-border: var(--semantic-warning);
   --semantic-warning-bg: #fef3c7;
   --semantic-warning-text: #d97706;
 
   --semantic-error: #ef4444;
   --semantic-error-primary: var(--semantic-error);
-  --semantic-error-border: #ef4444;
+  --semantic-error-border: var(--semantic-error);
   --semantic-error-bg: #fee2e2;
   --semantic-error-text: #dc2626;
 
-  --semantic-info: #3b82f6;
+  --semantic-info: #14b8a6;
   --semantic-info-primary: var(--semantic-info);
-  --semantic-info-border: #3b82f6;
-  --semantic-info-bg: #dbeafe;
-  --semantic-info-text: #2563eb;
+  --semantic-info-border: var(--semantic-info);
+  --semantic-info-bg: #ccfbf1;
+  --semantic-info-text: #0f766e;
 
   --ntk-success: var(--semantic-success);
   --ntk-success-light: var(--semantic-success-bg);
@@ -347,7 +353,7 @@ html.dark:not([data-theme]),
 html[data-theme='dark'],
 body.body--dark:not([data-theme]) {
   /* Neutral primary RGB fallback */
-  --ntk-primary-rgb: 123, 116, 212;
+  --ntk-primary-rgb: 20, 184, 166;
   
   /* Neutral surface fallback */
   --ntk-bg-primary: #0f1115;
@@ -358,6 +364,8 @@ body.body--dark:not([data-theme]) {
   --ntk-bg-overlay: rgba(0, 0, 0, 0.68);
   --ntk-bg-hover: color-mix(in srgb, var(--ntk-bg-tertiary) 84%, white);
   --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.15);
+  --ntk-dark: var(--ntk-bg-secondary);
+  --ntk-dark-page: var(--ntk-bg-primary);
   
   /* Neutral text fallback */
   --ntk-text-primary: #f3f5f7;

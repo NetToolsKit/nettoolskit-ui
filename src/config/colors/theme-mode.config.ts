@@ -28,6 +28,9 @@ export interface ThemeColorPalette {
   primary: string
   primaryDark: string
   primaryLight: string
+  secondary: string
+  secondaryDark: string
+  secondaryLight: string
   
   // Background Colors (whites/blacks & grays)
   background: string
@@ -58,76 +61,82 @@ export interface ThemeColorPalette {
 
 /**
  * Predefined Light Theme Colors
- * Based on NetToolsKit tokens.scss :root values
+ * Based on the preset-driven Revolut fallback tokens.
  */
 export const lightThemeColors: ThemeColorPalette = {
   // Primary Brand Colors
-  primary: '#512BD4',
-  primaryDark: '#3B1F9E',
-  primaryLight: '#7B74D4',
+  primary: '#0f766e',
+  primaryDark: '#115e59',
+  primaryLight: '#2dd4bf',
+  secondary: '#0f766e',
+  secondaryDark: '#115e59',
+  secondaryLight: '#2dd4bf',
   
   // Background Colors (whites and light grays)
   background: '#ffffff',
-  backgroundSecondary: '#e5e7eb',
-  backgroundTertiary: '#f3f4f6',
-  backgroundCard: '#fafafa',
-  backgroundHover: '#ffffff',
+  backgroundSecondary: '#f1f5f9',
+  backgroundTertiary: '#f8fafc',
+  backgroundCard: '#ffffff',
+  backgroundHover: '#f1f5f9',
   
   // Text Colors (blacks and dark grays)
-  textPrimary: '#1e293b',
-  textSecondary: '#64748b',
-  textMuted: '#94a3b8',
+  textPrimary: '#0f172a',
+  textSecondary: '#334155',
+  textMuted: '#64748b',
   textInverse: '#ffffff',
   textOnPrimary: '#ffffff',
   
   // Border Colors
-  border: '#e5e7eb',
-  borderLight: '#e5e7eb',
-  borderDark: '#e5e7eb',
-  borderFocus: '#512BD4',
+  border: '#e2e8f0',
+  borderLight: '#f1f5f9',
+  borderDark: '#cbd5e1',
+  borderFocus: '#0f766e',
   
   // Component-Specific Colors
-  chipBackground: '#f1f5f9',
-  chipText: '#424242',
-  cardShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+  chipBackground: '#f8fafc',
+  chipText: '#334155',
+  cardShadow: '0 4px 8px rgba(15, 23, 42, 0.12)',
   menuBackground: '#ffffff',
 }
 
 /**
  * Predefined Dark Theme Colors
- * Based on NetToolsKit tokens.scss .dark values
+ * Based on the preset-driven Revolut dark fallback tokens.
  */
 export const darkThemeColors: ThemeColorPalette = {
   // Primary Brand Colors
-  primary: '#7B74D4',
-  primaryDark: '#3B1F9E',
-  primaryLight: '#9d96e6',
+  primary: '#14b8a6',
+  primaryDark: '#0f766e',
+  primaryLight: '#5eead4',
+  secondary: '#14b8a6',
+  secondaryDark: '#0f766e',
+  secondaryLight: '#5eead4',
   
   // Background Colors (blacks and dark grays)
-  background: '#0f172a',
-  backgroundSecondary: '#1e293b',
-  backgroundTertiary: '#334155',
-  backgroundCard: '#1e293b',
-  backgroundHover: '#334155',
+  background: '#0e0e0d',
+  backgroundSecondary: '#141413',
+  backgroundTertiary: '#1a1a19',
+  backgroundCard: '#1a1a19',
+  backgroundHover: '#242422',
   
   // Text Colors (whites and light grays)
-  textPrimary: '#f1f5f9',
-  textSecondary: '#cbd5e1',
-  textMuted: '#94a3b8',
-  textInverse: '#0f172a',
-  textOnPrimary: '#ffffff',
+  textPrimary: '#faf9f6',
+  textSecondary: '#c8c8c4',
+  textMuted: '#8a8a86',
+  textInverse: '#0e0e0d',
+  textOnPrimary: '#0e0e0d',
   
   // Border Colors
-  border: '#334155',
-  borderLight: '#475569',
-  borderDark: '#1e293b',
-  borderFocus: '#7B74D4',
+  border: 'rgba(226, 226, 226, 0.12)',
+  borderLight: 'rgba(226, 226, 226, 0.08)',
+  borderDark: 'rgba(226, 226, 226, 0.22)',
+  borderFocus: '#14b8a6',
   
   // Component-Specific Colors
-  chipBackground: '#334155',
-  chipText: '#f1f5f9',
+  chipBackground: '#242422',
+  chipText: '#faf9f6',
   cardShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-  menuBackground: '#1e293b',
+  menuBackground: '#1a1a19',
 }
 
 /**
@@ -155,6 +164,9 @@ export function applyThemeColors(theme: 'light' | 'dark'): void {
   root.style.setProperty('--ntk-primary', colors.primary)
   root.style.setProperty('--ntk-primary-dark', colors.primaryDark)
   root.style.setProperty('--ntk-primary-light', colors.primaryLight)
+  root.style.setProperty('--ntk-secondary', colors.secondary)
+  root.style.setProperty('--ntk-secondary-dark', colors.secondaryDark)
+  root.style.setProperty('--ntk-secondary-light', colors.secondaryLight)
   
   root.style.setProperty('--ntk-bg-primary', colors.background)
   root.style.setProperty('--ntk-bg-secondary', colors.backgroundSecondary)
