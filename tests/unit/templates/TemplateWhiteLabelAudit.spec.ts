@@ -57,12 +57,35 @@ const scannedColorGuardrailRoots = [
   '../../../src/components/layout',
   '../../../src/components/ui',
   '../../../src/components/form',
+  '../../../src/components/builders',
+  '../../../src/composables',
+  '../../../src/config',
+  '../../../src/styles',
 ]
 
 const colorGuardrailFilePattern = /\.(?:vue|ts|scss|css)$/
 const quasarPaletteNamePattern = /\b(?:primary|secondary|accent|positive|negative|warning|info|dark|grey-[0-9]|white|black)\b/
-const quasarPaletteClassPattern = /\b(?:bg|text)-(?:primary|secondary|accent|positive|negative|warning|info|dark|grey-[0-9]|white|black)\b/
+const quasarPaletteClassPattern = /(?<![\w-])(?:bg|text)-(?:primary|secondary|accent|positive|negative|warning|info|dark|grey-[0-9]|white|black)\b/
+const cssNamedColorPattern = /\b(?:white|black)\b/
 const fixedColorLiteralPattern = /#[0-9a-fA-F]{3,8}\b|(?<![a-z-])(?:rgba?|hsla?)\((?!\s*var\(--)[^)]+\)/g
+const cssColorDeclarationPattern = /\b(?:background(?:-color)?|color|border(?:-color)?|outline(?:-color)?)\s*:\s*([^;]+)/
+const objectColorLiteralPattern = /\b(?:color|textColor|bgColor|background|backgroundColor|borderColor|badgeColor|avatarColor)\s*:\s*(['"`])([^'"`]+)\1/
+const quasarColorAttributePattern = /(?:^|\s):?(?:color|text-color|bg-color)\s*=\s*(?:"([^"]+)"|'([^']+)')/g
+const dynamicQuasarUtilityClassPattern = /`(?:bg|text)-\$\{[^}]+}`/
+
+const centralizedColorSourceFiles = new Set([
+  'src/config/colors/palette.config.ts',
+  'src/config/colors/semantic.config.ts',
+  'src/config/colors/theme-mode.config.ts',
+  'src/config/presets/nettoolskit.preset.ts',
+  'src/config/theme/theme.config.ts',
+  'src/config/theme/theme.plugin.ts',
+  'src/config/visual/effects.config.ts',
+  'src/styles/index.ts',
+  'src/styles/quasar-variables.scss',
+  'src/styles/themes.css',
+  'src/styles/tokens.scss',
+])
 
 const colorLiteralAllowlist = [
   {
@@ -95,6 +118,11 @@ const quasarPaletteClassAllowlist = [
   },
   {
     file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.text-primary',
+    reason: 'Bridge selectors remap Quasar text color classes to theme tokens.',
+  },
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
     source: '.q-btn.text-primary',
     reason: 'Bridge selectors remap Quasar action classes to theme tokens.',
   },
@@ -102,6 +130,16 @@ const quasarPaletteClassAllowlist = [
     file: 'src/templates/styles/reference-app-bridge.scss',
     source: '.bg-primary',
     reason: 'Bridge selectors remap Quasar action classes to theme tokens.',
+  },
+  {
+    file: 'src/components/layout/NtkAppShell.vue',
+    source: "'text-primary': 'var(--ntk-text-primary)'",
+    reason: 'Shell aliases resolve legacy color names to white-label tokens before style application.',
+  },
+  {
+    file: 'src/components/layout/NtkAppShell.vue',
+    source: "'text-secondary': 'var(--ntk-text-secondary)'",
+    reason: 'Shell aliases resolve legacy color names to white-label tokens before style application.',
   },
 ]
 
@@ -113,6 +151,54 @@ function isAllowedViolation(
   return allowlist.some(entry => entry.file === file && source.includes(entry.source))
 }
 
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '')
+}
+
+function lineForOffset(source: string, offset: number): number {
+  return source.slice(0, offset).split(/\r?\n/).length
+}
+
+function lineAt(source: string, line: number): string {
+  return source.split(/\r?\n/)[line - 1]?.trim() ?? ''
+}
+
+function isCentralizedColorSource(file: string): boolean {
+  return centralizedColorSourceFiles.has(file)
+}
+
+function isSafeColorExpression(value: string): boolean {
+  const normalized = value.trim()
+
+  return normalized === 'transparent'
+    || normalized.startsWith('var(--')
+    || normalized.startsWith('color-mix(')
+    || normalized.startsWith('linear-gradient(')
+    || normalized.startsWith('radial-gradient(')
+}
+
+function hasFixedColorLiteral(value: string): boolean {
+  fixedColorLiteralPattern.lastIndex = 0
+  return fixedColorLiteralPattern.test(value)
+}
+
+function pushViolation(
+  violations: ColorGuardrailViolation[],
+  file: string,
+  line: number,
+  rule: string,
+  source: string
+): void {
+  violations.push({
+    file,
+    line,
+    rule,
+    source: source.trim().replace(/\s+/g, ' '),
+  })
+}
+
 function scanTemplateColorGuardrails(): ColorGuardrailViolation[] {
   const files = scannedColorGuardrailRoots
     .flatMap(root => listRepoFiles(root))
@@ -122,7 +208,10 @@ function scanTemplateColorGuardrails(): ColorGuardrailViolation[] {
 
   for (const relativePath of files) {
     const displayPath = toDisplayPath(relativePath)
-    const lines = readRepoFile(relativePath).split(/\r?\n/)
+    const rawSource = readRepoFile(relativePath)
+    const searchableSource = stripComments(rawSource)
+    const lines = searchableSource.split(/\r?\n/)
+    const isCentralSource = isCentralizedColorSource(displayPath)
 
     lines.forEach((line, lineIndex) => {
       const source = line.trim()
@@ -132,52 +221,83 @@ function scanTemplateColorGuardrails(): ColorGuardrailViolation[] {
       }
 
       if (/theme\.value\.(?:colors|gradients)/.test(source)) {
-        violations.push({
-          file: displayPath,
-          line: lineIndex + 1,
-          rule: 'legacy theme.value colors/gradients',
-          source,
-        })
+        pushViolation(violations, displayPath, lineIndex + 1, 'legacy theme.value colors/gradients', source)
       }
 
       if (
         /\b:?(?:color|text-color|bg-color)\s*=/.test(source)
         && quasarPaletteNamePattern.test(source)
       ) {
-        violations.push({
-          file: displayPath,
-          line: lineIndex + 1,
-          rule: 'direct Quasar palette prop',
-          source,
-        })
+        pushViolation(violations, displayPath, lineIndex + 1, 'direct Quasar palette prop', source)
       }
 
       if (
-        /\b:?class\s*=/.test(source)
-        && quasarPaletteClassPattern.test(source)
+        quasarPaletteClassPattern.test(source)
         && !isAllowedViolation(displayPath, source, quasarPaletteClassAllowlist)
       ) {
-        violations.push({
-          file: displayPath,
-          line: lineIndex + 1,
-          rule: 'direct Quasar palette class',
-          source,
-        })
+        pushViolation(violations, displayPath, lineIndex + 1, 'direct Quasar palette class', source)
+      }
+
+      if (
+        dynamicQuasarUtilityClassPattern.test(source)
+        && !isAllowedViolation(displayPath, source, quasarPaletteClassAllowlist)
+      ) {
+        pushViolation(violations, displayPath, lineIndex + 1, 'dynamic Quasar palette utility class', source)
+      }
+
+      const objectColorLiteralMatch = source.match(objectColorLiteralPattern)
+      if (objectColorLiteralMatch) {
+        const value = objectColorLiteralMatch[2]
+
+        if (
+          !isSafeColorExpression(value)
+          && (
+            quasarPaletteNamePattern.test(value)
+            || cssNamedColorPattern.test(value)
+            || hasFixedColorLiteral(value)
+          )
+          && !isCentralSource
+          && !isAllowedViolation(displayPath, source, colorLiteralAllowlist)
+        ) {
+          pushViolation(violations, displayPath, lineIndex + 1, `non-tokenized object color ${value}`, source)
+        }
+      }
+
+      const cssColorDeclarationMatch = source.match(cssColorDeclarationPattern)
+      if (cssColorDeclarationMatch) {
+        const value = cssColorDeclarationMatch[1]?.trim() ?? ''
+
+        if (
+          !isSafeColorExpression(value)
+          && cssNamedColorPattern.test(value)
+          && !isCentralSource
+          && !isAllowedViolation(displayPath, source, colorLiteralAllowlist)
+        ) {
+          pushViolation(violations, displayPath, lineIndex + 1, `named CSS color ${value}`, source)
+        }
       }
 
       for (const [literal] of source.matchAll(fixedColorLiteralPattern)) {
-        if (isAllowedViolation(displayPath, source, colorLiteralAllowlist)) {
+        if (isCentralSource || isAllowedViolation(displayPath, source, colorLiteralAllowlist)) {
           continue
         }
 
-        violations.push({
-          file: displayPath,
-          line: lineIndex + 1,
-          rule: `fixed color literal ${literal}`,
-          source,
-        })
+        pushViolation(violations, displayPath, lineIndex + 1, `fixed color literal ${literal}`, source)
       }
     })
+
+    for (const match of searchableSource.matchAll(quasarColorAttributePattern)) {
+      const value = (match[1] ?? match[2] ?? '').trim()
+      const line = lineForOffset(searchableSource, match.index ?? 0)
+      const source = lineAt(searchableSource, line)
+
+      if (
+        quasarPaletteNamePattern.test(value)
+        && !isAllowedViolation(displayPath, source, quasarPaletteClassAllowlist)
+      ) {
+        pushViolation(violations, displayPath, line, 'direct Quasar palette prop', source)
+      }
+    }
   }
 
   return violations
@@ -328,7 +448,7 @@ describe('template white-label audit', () => {
         label: 'NtkCreditCard',
         source: readRepoFile('../../../src/components/ui/NtkCreditCard.vue'),
         requiredSnippets: [
-          "color: props.amountColor || 'var(--ntk-primary)'",
+          "color: resolveTokenColor(props.amountColor) || 'var(--ntk-primary)'",
         ],
       },
       {
