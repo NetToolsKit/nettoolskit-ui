@@ -171,7 +171,7 @@ const heroImage = computed<string | undefined>(() => {
 
 .ntk-landing-composer__action--primary {
   background: var(--ntk-button-primary-bg, var(--ntk-primary)) !important;
-  color: var(--ntk-button-primary-text, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
+  color: var(--ntk-button-primary-text, var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse)))) !important;
 }
 
 .ntk-landing-composer__action--secondary {

@@ -426,7 +426,7 @@ const handleItemClick = (item: SidebarItem) => {
   padding: 0 var(--ntk-spacing-xs);
   border-radius: var(--ntk-radius-full, 999px);
   background: var(--ntk-sidebar-badge-bg, var(--ntk-sidebar-item-active-text-resolved, var(--ntk-accent, var(--ntk-primary))));
-  color: var(--ntk-sidebar-badge-text, var(--ntk-text-on-accent, var(--ntk-bg-card)));
+  color: var(--ntk-sidebar-badge-text, var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse))));
   font-size: var(--ntk-font-size-xs);
   font-weight: var(--ntk-font-weight-semibold);
   line-height: 1;

@@ -299,7 +299,7 @@ const handleItemClick = (item: MenuItem) => {
 
 .sidebar-profile__avatar {
   background: var(--ntk-sidebar-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary))) !important;
-  color: var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
+  color: var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse)))) !important;
   border: 1px solid var(--ntk-avatar-border, transparent);
   font-weight: 700;
 }
@@ -329,17 +329,17 @@ const handleItemClick = (item: MenuItem) => {
 
   &.q-router-link--active {
     background: var(--ntk-primary);
-    color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-bg-primary)));
+    color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse)));
 
     :deep(.q-icon) {
-      color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-bg-primary)));
+      color: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse)));
     }
   }
 }
 
 .menu-badge {
   background: var(--ntk-sidebar-badge-bg, var(--ntk-primary)) !important;
-  color: var(--ntk-sidebar-badge-text, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
+  color: var(--ntk-sidebar-badge-text, var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse)))) !important;
 }
 
 .submenu-item {

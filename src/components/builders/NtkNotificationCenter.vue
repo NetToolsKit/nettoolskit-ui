@@ -235,7 +235,7 @@ const formatTime = (timestamp: Date | string): string => {
 
 .notification-unread-badge {
   background: var(--semantic-error-primary, var(--ntk-error)) !important;
-  color: var(--ntk-text-on-accent, var(--ntk-bg-primary)) !important;
+  color: var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse))) !important;
 }
 
 .notification-panel {
@@ -283,7 +283,7 @@ const formatTime = (timestamp: Date | string): string => {
 
 .notification-avatar {
   --ntk-notification-avatar-bg: var(--ntk-primary);
-  --ntk-notification-avatar-text: var(--ntk-text-on-accent, var(--ntk-bg-primary));
+  --ntk-notification-avatar-text: var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse)));
 
   background: var(--ntk-notification-avatar-bg) !important;
   color: var(--ntk-notification-avatar-text) !important;

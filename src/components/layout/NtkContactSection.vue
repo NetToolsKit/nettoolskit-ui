@@ -187,7 +187,7 @@ function submitForm(): void {
 
 .ntk-contact__action--primary {
   background: var(--ntk-button-primary-bg, var(--ntk-primary)) !important;
-  color: var(--ntk-button-primary-text, var(--ntk-text-on-accent, var(--ntk-bg-primary))) !important;
+  color: var(--ntk-button-primary-text, var(--ntk-text-on-accent, var(--ntk-text-on-primary, var(--ntk-text-inverse)))) !important;
 }
 
 .ntk-contact__channels {
