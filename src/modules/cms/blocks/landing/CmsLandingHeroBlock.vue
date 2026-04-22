@@ -11,7 +11,7 @@
       <NtkButton
         v-if="primaryAction"
         :label="primaryAction.label"
-        color="primary"
+        color="brand"
         unelevated
         :href="primaryAction.href"
         :target="primaryAction.external ? '_blank' : undefined"
@@ -20,7 +20,7 @@
         v-if="secondaryAction"
         :label="secondaryAction.label"
         outline
-        color="primary"
+        color="brand"
         :href="secondaryAction.href"
         :target="secondaryAction.external ? '_blank' : undefined"
       />
@@ -406,7 +406,7 @@ onBeforeUnmount(() => {
   border-radius: var(--ntk-radius-xl, 20px);
   overflow: hidden;
   box-shadow: var(--ntk-shadow-lg);
-  background: var(--ntk-bg-card, #ffffff);
+  background: var(--ntk-bg-card);
   isolation: isolate;
   opacity: 0;
   transform: translate3d(0, 22px, 0) scale(0.985);
@@ -443,7 +443,7 @@ onBeforeUnmount(() => {
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background: var(--ntk-bg-card, #ffffff);
+  background: var(--ntk-bg-card);
   transform: translate3d(0, 0, 0);
   transition: transform 880ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -458,8 +458,8 @@ onBeforeUnmount(() => {
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--ntk-primary, #512bd4) 40%, transparent), transparent 55%),
-    linear-gradient(145deg, color-mix(in srgb, var(--ntk-primary, #512bd4) 18%, transparent), transparent 42%);
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--ntk-primary) 40%, transparent), transparent 55%),
+    linear-gradient(145deg, color-mix(in srgb, var(--ntk-primary) 18%, transparent), transparent 42%);
   opacity: 0.55;
   animation: cms-hero-video-overlay 8s ease-in-out infinite;
 }

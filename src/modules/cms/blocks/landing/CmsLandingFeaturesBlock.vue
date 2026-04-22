@@ -274,7 +274,7 @@ onBeforeUnmount(() => {
   opacity: var(--cms-card-glow-alpha);
   background: radial-gradient(
     circle at var(--cms-card-glow-x) var(--cms-card-glow-y),
-    color-mix(in srgb, var(--ntk-primary, #512bd4) calc(var(--cms-card-glow-strength) * 100%), transparent),
+    color-mix(in srgb, var(--ntk-primary) calc(var(--cms-card-glow-strength) * 100%), transparent),
     transparent 58%
   );
   transition: opacity 220ms ease-out;

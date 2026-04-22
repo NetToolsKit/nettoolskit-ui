@@ -60,6 +60,7 @@ const scannedColorGuardrailRoots = [
   '../../../src/components/builders',
   '../../../src/composables',
   '../../../src/config',
+  '../../../src/modules',
   '../../../src/styles',
 ]
 
@@ -81,6 +82,8 @@ const centralizedColorSourceFiles = new Set([
   'src/config/theme/theme.config.ts',
   'src/config/theme/theme.plugin.ts',
   'src/config/visual/effects.config.ts',
+  'src/modules/cms/white-label/theme-presets.ts',
+  'src/modules/cms/white-label/authoring/design-baseline.ts',
   'src/styles/index.ts',
   'src/styles/quasar-variables.scss',
   'src/styles/themes.css',
@@ -1105,7 +1108,7 @@ describe('template white-label audit', () => {
     }
   })
 
-  it('scans templates and shared Vue components for non-tokenized color regressions', () => {
+  it('scans templates, shared Vue components, and modules for non-tokenized color regressions', () => {
     const violations = scanTemplateColorGuardrails()
 
     expect(

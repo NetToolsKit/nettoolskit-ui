@@ -113,11 +113,18 @@
               size="14px"
             />
           </div>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div
-            class="ntk-template-wiki-chat-drawer__bubble"
-            v-html="formatContent(message.content)"
-          />
+          <div class="ntk-template-wiki-chat-drawer__bubble">
+            <template
+              v-for="segment in formatContentSegments(message.content)"
+              :key="segment.id"
+            >
+              <br v-if="segment.type === 'break'">
+              <strong v-else-if="segment.type === 'strong'">{{ segment.text }}</strong>
+              <em v-else-if="segment.type === 'em'">{{ segment.text }}</em>
+              <code v-else-if="segment.type === 'code'">{{ segment.text }}</code>
+              <span v-else>{{ segment.text }}</span>
+            </template>
+          </div>
           <div
             v-if="message.sources && message.sources.length > 0"
             class="ntk-template-wiki-chat-drawer__sources"
@@ -185,6 +192,12 @@
 import { computed, nextTick, ref, watch } from 'vue'
 
 import type { TemplateWikiChatMessage, TemplateWikiSuggestion } from './wiki-template.types'
+
+type FormattedMessageSegment = {
+  id: string
+  type: 'text' | 'strong' | 'em' | 'code' | 'break'
+  text?: string
+}
 
 const props = withDefaults(defineProps<{
   modelValue: boolean
@@ -283,15 +296,101 @@ watch(
   }
 )
 
-function formatContent(raw: string): string {
-  return raw
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\n/g, '<br>')
+function pushTextSegment(segments: FormattedMessageSegment[], text: string): void {
+  if (!text) {
+    return
+  }
+
+  segments.push({
+    id: `${segments.length}-text`,
+    type: 'text',
+    text,
+  })
+}
+
+function pushInlineSegment(
+  segments: FormattedMessageSegment[],
+  type: Exclude<FormattedMessageSegment['type'], 'text' | 'break'>,
+  text: string
+): void {
+  if (!text) {
+    return
+  }
+
+  segments.push({
+    id: `${segments.length}-${type}`,
+    type,
+    text,
+  })
+}
+
+function appendInlineSegments(segments: FormattedMessageSegment[], raw: string): void {
+  const markers = [
+    { marker: '**', type: 'strong' as const },
+    { marker: '`', type: 'code' as const },
+    { marker: '*', type: 'em' as const },
+  ]
+
+  let cursor = 0
+
+  while (cursor < raw.length) {
+    let nextMarker: (typeof markers)[number] | undefined
+    let nextStart = Number.POSITIVE_INFINITY
+    let nextEnd = -1
+
+    for (const marker of markers) {
+      const start = raw.indexOf(marker.marker, cursor)
+      if (start < 0) {
+        continue
+      }
+
+      const end = raw.indexOf(marker.marker, start + marker.marker.length)
+      if (end < 0) {
+        continue
+      }
+
+      const isEarlier = start < nextStart
+      const isSamePositionWithStrongerMarker = start === nextStart
+        && marker.marker.length > (nextMarker?.marker.length ?? 0)
+
+      if (isEarlier || isSamePositionWithStrongerMarker) {
+        nextMarker = marker
+        nextStart = start
+        nextEnd = end
+      }
+    }
+
+    if (!nextMarker) {
+      pushTextSegment(segments, raw.slice(cursor))
+      return
+    }
+
+    pushTextSegment(segments, raw.slice(cursor, nextStart))
+    pushInlineSegment(
+      segments,
+      nextMarker.type,
+      raw.slice(nextStart + nextMarker.marker.length, nextEnd)
+    )
+    cursor = nextEnd + nextMarker.marker.length
+  }
+}
+
+function formatContentSegments(raw: string): FormattedMessageSegment[] {
+  const segments: FormattedMessageSegment[] = []
+  const lines = raw.split(/\r?\n/)
+
+  lines.forEach((line, index) => {
+    if (index > 0) {
+      segments.push({
+        id: `${segments.length}-break`,
+        type: 'break',
+      })
+    }
+
+    appendInlineSegments(segments, line)
+  })
+
+  return segments
 }
 
 function sendQuestion(text?: string): void {

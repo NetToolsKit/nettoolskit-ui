@@ -180,10 +180,10 @@ describe('WikiChatDrawerTemplate', () => {
     })
 
     const bubble = wrapper.find('.ntk-template-wiki-chat-drawer__bubble')
-    expect(bubble?.html()).toContain('<strong>bold</strong>')
-    expect(bubble?.html()).toContain('<em>italic</em>')
-    expect(bubble?.html()).toContain('<code>code</code>')
-    expect(bubble?.html()).toContain('<br>')
+    expect(bubble.find('strong').text()).toBe('bold')
+    expect(bubble.find('em').text()).toBe('italic')
+    expect(bubble.find('code').text()).toBe('code')
+    expect(bubble.find('br').exists()).toBe(true)
   })
 
   it('escapes HTML in message content before applying markdown', () => {
