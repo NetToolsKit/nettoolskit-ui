@@ -65,17 +65,17 @@ export function useBranding() {
   /**
    * Primary brand color
    */
-  const primaryColor = computed<string>(() => theme.value.colors.primary);
+  const primaryColor = computed<string>(() => 'var(--ntk-primary)');
 
   /**
    * Secondary brand color
    */
-  const secondaryColor = computed<string>(() => theme.value.colors.secondary);
+  const secondaryColor = computed<string>(() => 'var(--ntk-secondary)');
 
   /**
    * Accent brand color
    */
-  const accentColor = computed<string>(() => theme.value.colors.accent);
+  const accentColor = computed<string>(() => 'var(--ntk-accent)');
 
   /**
    * Contact information from brand content config
