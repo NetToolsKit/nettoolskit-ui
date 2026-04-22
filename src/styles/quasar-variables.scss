@@ -1,25 +1,24 @@
 /**
  * Quasar SCSS Variables
- * Landing Page Style - Synced with tokens.scss
- * Modern design with Plus Jakarta Sans font, gradients, and rounded corners
+ * Runtime fallback palette - aligned with the default Revolut preset.
+ * Runtime themes still override visible Quasar brand colors through --q-*.
  */
 
 /* ============================================
- * Primary Colors - Landing Page Palette
- * Usando as variáveis CSS do tokens.scss
+ * Primary Colors - Default Revolut Palette
  * ============================================ */
-$primary: #512BD4 !default;
+$primary: #0f766e !default;
 $secondary: #64748b !default;
-$accent: #f8fafc !default;
+$accent: #0f766e !default;
 
 $positive: #22c55e !default;
 $negative: #ef4444 !default;
-$info: #3b82f6 !default;
+$info: #14b8a6 !default;
 $warning: #f59e0b !default;
 
 /* Dark mode */
-$dark: #1e293b !default;
-$dark-page: #0f172a !default;
+$dark: #0f172a !default;
+$dark-page: #0e0e0d !default;
 
 /* ============================================
  * Typography - Landing Page Style

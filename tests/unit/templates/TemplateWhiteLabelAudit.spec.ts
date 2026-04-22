@@ -200,6 +200,16 @@ describe('template white-label audit', () => {
     }
   })
 
+  it('keeps Quasar Sass fallbacks aligned with the default Revolut preset', () => {
+    const quasarVariablesSource = readRepoFile('../../../src/styles/quasar-variables.scss')
+
+    expect(quasarVariablesSource).toContain('$primary: #0f766e !default;')
+    expect(quasarVariablesSource).toContain('$accent: #0f766e !default;')
+    expect(quasarVariablesSource).toContain('$info: #14b8a6 !default;')
+    expect(quasarVariablesSource).not.toContain('$primary: #512BD4 !default;')
+    expect(quasarVariablesSource).not.toContain('$accent: #f8fafc !default;')
+  })
+
   it('keeps audited reference-system and cms files free from previously identified hardcoded colors', () => {
     const auditedFiles = [
       {
