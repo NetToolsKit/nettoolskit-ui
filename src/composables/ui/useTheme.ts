@@ -13,7 +13,7 @@ import { applySemanticColors } from '../../config/colors/semantic.config';
 
 // Estado global do tema
 const currentTheme = ref<ThemeConfig>(defaultTheme);
-const themeName = ref<ThemeName>('sentinela');
+const themeName = ref<ThemeName>(defaultTheme.name as ThemeName);
 
 /**
  * Apply legacy theme CSS variables to the document root.
@@ -224,7 +224,7 @@ export function useTheme() {
  * Inicializa o tema no carregamento da aplicação
  * Chamar no main.ts ou App.vue
  */
-export function initTheme(defaultThemeName: ThemeName = 'sentinela'): void {
+export function initTheme(defaultThemeName: ThemeName = defaultTheme.name as ThemeName): void {
   const { setTheme } = useTheme();
   
   // Tenta carregar tema salvo, senão usa o padrão

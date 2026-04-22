@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { useTheme } from '../../../src/composables/ui/useTheme'
+import { initTheme, useTheme } from '../../../src/composables/ui/useTheme'
 import { themes } from '../../../src/config/theme/theme.config'
 import { useNtkTheme } from '../../../src/config/theme/theme.plugin'
 
@@ -56,6 +56,16 @@ describe('useTheme', () => {
     // Different themes likely have different primary colors
     expect(typeof sentinelaColor).toBe('string')
     expect(typeof nettoolskitColor).toBe('string')
+  })
+
+  it('initializes the legacy theme adapter with the Revolut default', () => {
+    localStorage.removeItem('app-theme')
+
+    initTheme()
+
+    const { themeName } = useTheme()
+    expect(themeName.value).toBe('revolut')
+    expect(document.documentElement.style.getPropertyValue('--theme-primary')).toBe(themes.revolut.colors.primary)
   })
 
   it('isDark returns a boolean', () => {
