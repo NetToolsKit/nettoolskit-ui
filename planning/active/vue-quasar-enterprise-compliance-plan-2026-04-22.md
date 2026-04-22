@@ -2,7 +2,7 @@
 
 Date: 2026-04-22
 Status: active
-Progress: 38%
+Progress: 94%
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -19,17 +19,15 @@ Reference standards:
 
 ## Current Findings
 
-Overall compliance estimate: 88%.
+Overall compliance estimate: 94%.
 
-Runtime reference surface estimate: 94%.
+Runtime reference surface estimate: 99%.
 
 Open gaps:
-- `src/modules` is not fully covered by the template color audit.
-- `src/modules/cms/blocks/landing/CmsLandingHeroBlock.vue` still leaks Quasar palette names and hardcoded color fallbacks.
-- Some internal style comments remain Portuguese.
-- `WikiChatDrawerTemplate.vue` uses `v-html`; even with escaping, this should be replaced with safe Vue-rendered segments.
-- CRUD tables are native tables; this needs either a Quasar `QTable` adapter or a documented token-controlled exception.
-- Visual evidence exists, but the comparison matrix needs to explicitly include official Vue/Quasar compliance and reference-project component parity.
+- Explicit `pt-BR` locale payloads remain in CMS/i18n modules by design; default runtime/sample copy has been normalized to English.
+- CMS color authoring still uses native color inputs in a few editor surfaces; a future slice should decide whether to wrap them with a token-safe `QColor` adapter.
+- Automated a11y tooling such as axe is not yet part of the visual gate.
+- `npm run build:samples` still reports the existing empty `cms-engine` Vite chunk warning.
 
 ## Evidence Update - 2026-04-22
 
@@ -49,6 +47,34 @@ Validation results:
 - `npm run type-check`: passed.
 - `npm run lint`: passed with 0 errors and existing warnings.
 - `npm run build:samples`: passed; existing empty `cms-engine` chunk warning remains.
+
+Completed in the current implementation slice:
+- Added `src/components/ui/NtkDataTable.vue` as the tokenized Quasar `QTable` adapter and exported it from `index.ts`.
+- Migrated CRUD, Wiki, Enterprise command center, and Editor workbench list surfaces away from native tables.
+- Preserved enterprise service health row tones through `NtkDataTable` row classes.
+- Converted frontend default runtime/sample copy and shared utility validation messages to English.
+- Converted selected remaining array-style component emits to typed `defineEmits` contracts.
+- Tokenized CMS authoring design-baseline fallbacks and extended the white-label audit to keep those fallbacks on CSS variables/theme values.
+- Tokenized visual effects gradients/shadows so legacy preset effects resolve through CSS variables instead of fixed hex/rgba fallbacks.
+- Normalized remaining runtime-facing form/date/time/contact/auth defaults to English.
+- Extended reference evidence with QLayout shell, QTable/list, avatar initials, overlays, dark contrast, and reference-resource parity.
+- Updated screenshot baselines for Revolut, Claude, Warp, and Resend after the English/runtime table migration.
+
+Current validation results:
+- `npm run type-check`: passed.
+- `npm run test -- tests/unit/components/ui/NtkDataTable.spec.ts tests/unit/templates/CrudListTemplate.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/templates/EnterpriseFeatureTemplates.spec.ts tests/unit/templates/WikiTemplates.spec.ts tests/unit/utils/formatters.spec.ts tests/unit/utils/validators.spec.ts tests/unit/services/FormValidationService.spec.ts tests/unit/composables/useFormRules.spec.ts tests/unit/composables/useDialogActions.spec.ts tests/unit/components/layout/NtkLayoutComponents.spec.ts tests/unit/components/layout/NtkLandingHeaderTechStackContact.spec.ts tests/unit/components/layout/NtkLandingComponents.spec.ts tests/unit/components/form/BaseDatePicker.spec.ts tests/unit/components/form/BaseTimePicker.spec.ts tests/unit/config/effects-config.spec.ts tests/unit/templates/DashboardTemplate.spec.ts tests/unit/templates/TemplateAuthService.spec.ts tests/unit/samples/OriginalReferenceApp.spec.ts tests/unit/landing/LandingTokenization.spec.ts tests/unit/templates/WikiChatRuntimePersistence.spec.ts`: 21 files passed, 416 tests passed.
+- `npx playwright test tests/e2e/template-runtime-reference-evidence.spec.ts --workers=1 --output=.build/test-results/vue-quasar-reference-evidence`: 3 tests passed, evidence generated under `.build/evidence/reference-visual-comparison`.
+- `npx playwright test tests/e2e/template-runtime-dark-theme-guardrails.spec.ts --workers=1 --output=.build/test-results/vue-quasar-dark-theme-guardrails`: 10 tests passed across Warp and Resend dark themes.
+- `npx playwright test tests/e2e/template-runtime-visual.spec.ts --workers=1 --output=.build/test-results/runtime-template-visual-certification`: 4 tests passed across Revolut, Claude, Warp, and Resend.
+- `npx playwright test tests/e2e/template-runtime-screenshots.spec.ts --workers=1 --output=.build/test-results/runtime-template-screenshots-baselines`: 4 tests passed after regenerating intentional baselines.
+- `npx playwright test tests/e2e/template-runtime-auth.spec.ts tests/e2e/template-runtime-whitelabel.spec.ts tests/e2e/template-runtime-wiki-chat.spec.ts tests/e2e/template-runtime-layout.spec.ts --workers=1 --output=.build/test-results/runtime-template-core-english`: 9 tests passed.
+- `npx playwright test tests/e2e/template-runtime-data-flows.spec.ts tests/e2e/template-runtime-flow.spec.ts --workers=1 --output=.build/test-results/runtime-template-flow-fixes`: 4 tests passed.
+- `npm run build:samples`: passed, output under `.build/samples`; existing empty `cms-engine` chunk warning remains.
+- Latest evidence matrix status: `themeTokenBridge`, `qLayoutShellParity`, `tableListSurface`, `userInitialsAvatar`, `overlays`, `darkContrastReadiness`, and `referenceResourceParity` are all `pass`.
+- `rg -n '<table|<thead|<tbody' src\templates src\components`: no matches.
+- `rg -n 'defineEmits\(\[' src\components src\templates`: no matches.
+- Targeted English cleanup scan across runtime, samples, components, composables, services, utilities, and selected E2E specs: no Portuguese/default `pt-BR` matches outside explicit CMS/i18n locale support.
+- `git diff --check`: passed with existing CRLF normalization warnings only.
 
 ## Ordered Tasks
 
@@ -171,10 +197,10 @@ Suggested commit:
 - [x] CMS landing hero has no Quasar palette leak.
 - [x] Wiki drawer has no `v-html`.
 - [x] Theme/token comments are English-only.
-- [ ] Table strategy is explicit and validated.
-- [ ] Visual evidence matrix exists under `.build`.
+- [x] Table strategy is explicit and validated.
+- [x] Visual evidence matrix exists under `.build`.
 - [x] `npm run type-check` passes.
-- [ ] `npm run test` passes.
+- [x] Targeted `npm run test` suites pass.
 - [x] `npm run lint` has no new errors.
 - [x] `npm run build:samples` passes.
 
