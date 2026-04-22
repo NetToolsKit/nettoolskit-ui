@@ -302,7 +302,7 @@ export const MGA_LABS_LANDING_PRESET: LandingPageConfig = {
   },
   cta: {
     title: 'Pronto para acelerar sua landing page?',
-    subtitle: 'Use configuracao + componentes dinamicos para reduzir tempo de implementacao.',
+    subtitle: 'Use configuration plus dynamic components to reduce implementation time.',
     primaryCTA: {
       text: 'Comecar agora',
       link: '#contact',
@@ -315,7 +315,7 @@ export const MGA_LABS_LANDING_PRESET: LandingPageConfig = {
   footer: {
     variant: 'dark',
     brandName: 'NetToolsKit Labs',
-    brandDescription: 'Design system e componentes orientados a resultados para times de produto.',
+    brandDescription: 'Outcome-oriented design system and components for product teams.',
     socialTitle: 'Social',
     socialLinks: [
       { icon: 'code', href: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue', label: 'GitHub' },

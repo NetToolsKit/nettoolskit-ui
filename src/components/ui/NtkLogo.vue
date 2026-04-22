@@ -36,32 +36,32 @@ import { computed } from 'vue';
 import { useBranding } from '../../composables/ui/useBranding';
 
 /**
- * NtkLogo - Componente de logo reutilizável
+ * NtkLogo - Reusable logo component.
  *
- * Tamanhos padronizados:
- * - xs: icon 24px, text 14px (para uso em espaços compactos)
- * - sm: icon 28px, text 16px (para headers secundários)
- * - md: icon 36px, text 20px (PADRÃO - para headers principais)
- * - lg: icon 48px, text 28px (para hero sections)
- * - xl: icon 64px, text 36px (para páginas de destaque)
+ * Standard sizes:
+ * - xs: icon 24px, text 14px for compact spaces
+ * - sm: icon 28px, text 16px for secondary headers
+ * - md: icon 36px, text 20px as the default for primary headers
+ * - lg: icon 48px, text 28px for hero sections
+ * - xl: icon 64px, text 36px for showcase pages
  */
 
 interface Props {
-  /** Letra do logo (sobrescreve tema) */
+  /** Logo letter override */
   letter?: string;
-  /** Texto do logo (sobrescreve tema) */
+  /** Logo text override */
   text?: string;
-  /** Tagline do logo (sobrescreve tema) */
+  /** Logo tagline override */
   tagline?: string;
-  /** Mostrar texto ao lado do ícone */
+  /** Whether to show text beside the icon */
   showText?: boolean;
-  /** Mostrar tagline abaixo do texto */
+  /** Whether to show the tagline below the text */
   showTagline?: boolean;
-  /** Tamanho do logo: xs, sm, md (padrão), lg, xl */
+  /** Logo size: xs, sm, md (default), lg, xl */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Cor do ícone (sobrescreve tema) */
+  /** Icon color override */
   iconColor?: string;
-  /** Cor do texto (sobrescreve tema) */
+  /** Text color override */
   textColor?: string;
   /** Link para navegação */
   linkTo?: string;
@@ -205,7 +205,7 @@ const textStyle = computed(() => ({
   font-weight: 400;
 }
 
-// Tamanhos padronizados
+// Standard sizes
 .size-xs {
   gap: 0.375rem;
 

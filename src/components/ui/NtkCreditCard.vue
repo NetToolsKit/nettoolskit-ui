@@ -45,23 +45,23 @@
 import { computed } from 'vue';
 
 interface Props {
-  /** Ícone (emoji ou texto) */
+  /** Icon as emoji or text */
   icon: string;
-  /** Nome da ação */
+  /** Action name */
   name: string;
-  /** Descrição da ação */
+  /** Action description */
   description?: string;
-  /** Quantidade de créditos */
+  /** Credit amount */
   credits: number;
-  /** Label dos créditos */
+  /** Credit label */
   creditLabel?: string;
-  /** Variante visual */
+  /** Visual variant */
   variant?: 'default' | 'compact' | 'detailed';
-  /** Efeito hover */
+  /** Hover effect flag */
   hoverable?: boolean;
-  /** Cor do ícone */
+  /** Icon color */
   iconColor?: string;
-  /** Cor do valor */
+  /** Amount color */
   amountColor?: string;
 }
 
@@ -204,7 +204,7 @@ const formattedCredits = computed(() => {
   }
 }
 
-// Variantes
+// Variants
 .variant-compact {
   padding: 0.75rem 1rem;
   

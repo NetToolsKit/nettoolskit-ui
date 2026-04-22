@@ -356,7 +356,7 @@ export const plateaContent: BrandContent = {
  */
 export const nettoolskitContent: BrandContent = {
   footerDescription:
-    'NetToolsKit UI é uma biblioteca moderna de componentes Vue 3 + Quasar, desenvolvida para criar interfaces de usuário rápidas e acessíveis.',
+    'NetToolsKit UI is a modern Vue 3 + Quasar component library built to create fast and accessible user interfaces.',
   
   footerSections: [
     {

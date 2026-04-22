@@ -48,23 +48,23 @@
 import { computed } from 'vue';
 
 interface Props {
-  /** Ícone (emoji ou texto) */
+  /** Icon as emoji or text */
   icon?: string;
-  /** Título do card */
+  /** Card title */
   title: string;
-  /** Descrição do card */
+  /** Card description */
   description?: string;
-  /** Variante visual */
+  /** Visual variant */
   variant?: 'default' | 'outlined' | 'elevated' | 'accent-left' | 'accent-top';
-  /** Tamanho do card */
+  /** Card size */
   size?: 'sm' | 'md' | 'lg';
-  /** Estilo do ícone */
+  /** Icon style */
   iconStyle?: 'default' | 'circle' | 'square' | 'gradient';
-  /** Cor do ícone (sobrescreve tema) */
+  /** Icon color override */
   iconColor?: string;
-  /** Efeito hover */
+  /** Hover effect flag */
   hoverable?: boolean;
-  /** Card clicável */
+  /** Clickable card flag */
   clickable?: boolean;
 }
 
@@ -166,7 +166,7 @@ const handleClick = () => {
   }
 }
 
-// Variantes
+// Variants
 .variant-default {
   border: var(--border-width-sm) solid var(--ntk-card-border);
 }
@@ -192,7 +192,7 @@ const handleClick = () => {
   box-shadow: var(--ntk-shadow-sm);
 }
 
-// Ícone
+// Icon
 .feature-icon {
   font-size: 2rem;
   margin-bottom: 1rem;
@@ -228,7 +228,7 @@ const handleClick = () => {
   }
 }
 
-// Conteúdo
+// Content
 .feature-content {
   flex: 1;
 }
@@ -254,7 +254,7 @@ const handleClick = () => {
   border-top: 1px solid var(--ntk-card-border);
 }
 
-// Tamanhos
+// Sizes
 .size-sm {
   padding: 1rem;
   

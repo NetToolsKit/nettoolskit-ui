@@ -71,7 +71,7 @@ interface CTAButton {
 }
 
 interface Props {
-  /** Título principal */
+  /** Main title */
   title: string;
   /** Subtítulo opcional */
   subtitle?: string;
@@ -85,7 +85,7 @@ interface Props {
   size?: 'sm' | 'md' | 'lg';
   /** Layout */
   layout?: 'centered' | 'split';
-  /** Largura máxima do container */
+  /** Maximum container width */
   maxWidth?: number;
   /** Cor de fundo customizada */
   bgColor?: string;
@@ -188,7 +188,7 @@ const primaryBtnStyle = computed(() => {
   padding: 0 20px;
 }
 
-// Variantes
+// Variants
 .variant-default {
   background: var(--ntk-bg-secondary);
   
@@ -265,7 +265,7 @@ const primaryBtnStyle = computed(() => {
   }
 }
 
-// Tamanhos
+// Sizes
 .size-sm {
   padding: var(--ntk-spacing-xl) 0;
   
@@ -344,7 +344,7 @@ const primaryBtnStyle = computed(() => {
   }
 }
 
-// Conteúdo
+// Content
 .cta-title {
   font-family: var(--ntk-font-family-display);
   font-weight: var(--ntk-font-weight-bold);

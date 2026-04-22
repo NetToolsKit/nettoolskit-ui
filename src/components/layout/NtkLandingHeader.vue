@@ -154,23 +154,23 @@ interface Props {
   // CTA
   /** Texto do botão CTA */
   ctaText?: string;
-  /** Link do botão CTA */
+  /** CTA button link */
   ctaLink?: string;
-  /** Variante do botão CTA */
+  /** CTA button variant */
   ctaVariant?: 'primary' | 'secondary' | 'outline';
 
   // Layout
-  /** Altura do header em pixels */
+  /** Header height in pixels */
   height?: number;
-  /** Header fixo no topo */
+  /** Whether the header sticks to the top */
   sticky?: boolean;
-  /** Sombra do header */
+  /** Header shadow */
   shadow?: 'none' | 'sm' | 'md' | 'lg';
-  /** Cor de fundo */
+  /** Background color */
   background?: string;
-  /** Largura máxima do container */
+  /** Maximum container width */
   maxWidth?: number;
-  /** Padding horizontal */
+  /** Horizontal padding */
   paddingX?: string;
 
   // Mobile
@@ -178,7 +178,7 @@ interface Props {
   mobileBreakpoint?: number;
   /** Lado do drawer mobile */
   mobileDrawerSide?: 'left' | 'right';
-  /** Largura do drawer mobile */
+  /** Mobile drawer width */
   mobileDrawerWidth?: number;
   /** Texto do botão comprimir */
   compressLabel?: string;

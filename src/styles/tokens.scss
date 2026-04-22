@@ -1,13 +1,13 @@
 /**
  * Design Tokens - CSS Custom Properties
- * Sistema de variáveis CSS globais para temas
+ * Global CSS variable layer for themes.
  * 
- * USO:
- * - Projetos que usam nettoolskit-ui-vue podem sobrescrever estas variáveis
- * - Suporta modo claro/escuro via classe .dark ou [data-theme="dark"]
- * - Suporta gradientes customizáveis
+ * USAGE:
+ * - Projects using nettoolskit-ui-vue can override these variables.
+ * - Supports light/dark mode through the .dark class or [data-theme="dark"].
+ * - Supports customizable gradients.
  * 
- * EXEMPLO DE CUSTOMIZAÇÃO:
+ * CUSTOMIZATION EXAMPLE:
  * :root {
  *   --ntk-primary: #0f766e;
  *   --ntk-primary-gradient-start: #134e4a;
@@ -18,7 +18,7 @@
 :root {
   /* ============================================
    * Primary Colors
-   * Cor principal da aplicação
+   * Primary application color
    * ============================================ */
   --ntk-primary: #0f766e;
   --ntk-primary-dark: #115e59;
@@ -29,7 +29,7 @@
   --ntk-accent-soft: rgba(var(--ntk-primary-rgb), 0.08);
   --ntk-accent-rgb: var(--ntk-primary-rgb);
   
-  /* Gradiente Primário */
+  /* Primary gradient */
   --ntk-primary-gradient-start: var(--ntk-primary);
   --ntk-primary-gradient-end: var(--ntk-primary-light);
   --ntk-primary-gradient: linear-gradient(135deg, var(--ntk-primary-gradient-start) 0%, var(--ntk-primary-gradient-end) 100%);
@@ -37,7 +37,7 @@
   
   /* ============================================
    * Secondary Colors
-   * Cor secundária/accent
+   * Secondary/accent color
    * ============================================ */
   --ntk-secondary: var(--ntk-accent, #0f766e);
   --ntk-secondary-dark: var(--ntk-accent-hover, #115e59);
@@ -45,7 +45,7 @@
   
   /* ============================================
    * Background Colors
-   * Cores de fundo para diferentes superfícies
+   * Background colors for different surfaces
    * ============================================ */
   --ntk-bg-primary: #ffffff;
   --ntk-bg-secondary: #f8fafc;
@@ -62,7 +62,7 @@
   
   /* ============================================
    * Text Colors
-   * Cores de texto para diferentes hierarquias
+   * Text colors for different hierarchy levels
    * ============================================ */
   --ntk-text-primary: #1e293b;
   --ntk-text-secondary: #64748b;
@@ -77,7 +77,7 @@
   
   /* ============================================
    * Border Colors
-   * Cores de borda e divisores
+   * Border and divider colors
    * ============================================ */
   --ntk-border-color: #e2e8f0;
   --ntk-border-light: #f1f5f9;
@@ -88,7 +88,7 @@
   
   /* ============================================
    * Feedback Colors
-   * Cores semânticas para estados
+   * Semantic colors for states
    * ============================================ */
   --semantic-success: #10b981;
   --semantic-success-primary: var(--semantic-success);
@@ -130,14 +130,14 @@
   --ntk-info-light: var(--semantic-info-bg);
   --ntk-info-dark: var(--semantic-info-text);
   
-  /* Aliases para compatibilidade */
+  /* Compatibility aliases */
   --ntk-positive: var(--ntk-success);
   --ntk-negative: var(--ntk-error);
   --ntk-danger: var(--ntk-error);
   
   /* ============================================
    * Gradients
-   * Gradientes pré-definidos
+   * Predefined gradients
    * ============================================ */
   --ntk-gradient-hero: linear-gradient(135deg, var(--ntk-bg-primary) 0%, var(--ntk-bg-secondary) 100%);
   --ntk-gradient-loading: linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%);
@@ -145,7 +145,7 @@
   
   /* ============================================
    * Shadows
-   * Sombras para elevação
+   * Elevation shadows
    * ============================================ */
   --ntk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --ntk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -160,7 +160,7 @@
   
   /* ============================================
    * Border Radius
-   * Raios de borda padrão
+   * Standard border radii
    * ============================================ */
   --ntk-radius-sm: 4px;
   --ntk-radius-md: 8px;
@@ -171,7 +171,7 @@
 
   /* ============================================
    * Spacing
-   * Espaçamentos base para componentes
+   * Base spacing for components
    * ============================================ */
   --ntk-spacing-xs: 0.25rem;
   --ntk-spacing-sm: 0.5rem;
@@ -183,7 +183,7 @@
 
   /* ============================================
    * Line Height
-   * Alturas de linha padrão para tipografia
+   * Standard typography line heights
    * ============================================ */
   --ntk-line-height-tight: 1.2;
   --ntk-line-height-normal: 1.6;
@@ -191,7 +191,7 @@
   
   /* ============================================
    * Transitions
-   * Durações de transição
+   * Transition durations
    * ============================================ */
   --ntk-transition-fast: 150ms ease-in-out;
   --ntk-transition-base: 250ms ease-in-out;
@@ -199,7 +199,7 @@
   
   /* ============================================
    * Typography
-   * Fontes e tamanhos
+   * Fonts and sizes
    * ============================================ */
   --ntk-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --ntk-font-family-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
@@ -241,7 +241,7 @@
   
   /* ============================================
    * Footer Colors
-   * Cores específicas para rodapé escuro
+   * Dark footer-specific colors
    * ============================================ */
   --ntk-footer-bg: #1a1a2e;
   --ntk-footer-text: #e0e0e0;
@@ -252,7 +252,7 @@
   
   /* ============================================
    * Form Colors
-   * Cores específicas para formulários
+   * Form-specific colors
    * ============================================ */
   --ntk-input-bg: var(--ntk-bg-primary);
   --ntk-input-border: var(--ntk-border-input);
@@ -265,7 +265,7 @@
   
   /* ============================================
    * Component Colors
-   * Cores específicas para componentes
+   * Component-specific colors
    * ============================================ */
   --ntk-chip-bg: var(--ntk-bg-tertiary);
   --ntk-chip-text: var(--ntk-text-dark);
@@ -427,8 +427,8 @@ body.body--dark:not([data-theme]) {
 }
 
 /* ============================================
- * SCSS Variables (para uso em componentes)
- * Mapeiam para as CSS Custom Properties
+ * SCSS Variables
+ * Map to CSS custom properties for component usage.
  * ============================================ */
 
 // Primary
@@ -502,7 +502,7 @@ $ntk-popup-bg: var(--ntk-popup-bg);
 
 /* ============================================
  * Animations
- * Animações reutilizáveis
+ * Reusable animations
  * ============================================ */
 
 // Float animation - subtle up/down movement for images

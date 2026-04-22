@@ -1,16 +1,16 @@
 /**
- * useNotification - Composable Vue para notificações
+ * useNotification - Vue composable for notifications.
  * 
- * Wrapper Vue para o NotificationService (Application Layer).
- * Usa QuasarNotificationAdapter (Infrastructure) como implementação concreta.
+ * Vue wrapper for NotificationService (Application Layer).
+ * Uses QuasarNotificationAdapter (Infrastructure) as the concrete implementation.
  * 
- * Este composable agora está conforme Clean Architecture:
- * - Presentation (composable) → Application (service) → Infrastructure (adapter)
+ * This composable follows Clean Architecture boundaries:
+ * - Presentation (composable) -> Application (service) -> Infrastructure (adapter)
  * 
  * @example
  * const { success, error, warning, info } = useNotification()
- * success('Dados salvos com sucesso!')
- * error('Erro ao processar requisição')
+ * success('Data saved successfully!')
+ * error('Could not process request')
  * 
  * @layer Presentation
  */
@@ -21,9 +21,9 @@ import type { NotificationOptions, NotificationHandle } from '../../services/Not
 /**
  * Composable useNotification
  * 
- * Retorna métodos do serviço de notificação encapsulado para uso em componentes Vue.
+ * Returns typed notification service methods for Vue components.
  * 
- * @returns Objeto com métodos de notificação tipados
+ * @returns Object with typed notification methods.
  */
 export function useNotification() {
   // Get service instance (via Quasar adapter)

@@ -78,25 +78,25 @@ interface TrendData {
 }
 
 interface Props {
-  /** Valor principal (número ou string) */
+  /** Primary value as number or string */
   value: string | number;
-  /** Label descritivo */
+  /** Descriptive label */
   label: string;
-  /** Ícone (emoji ou texto) */
+  /** Icon as emoji or text */
   icon?: string;
-  /** Prefixo antes do valor (ex: R$, $) */
+  /** Prefix before the value, for example R$ or $ */
   prefix?: string;
-  /** Sufixo após o valor (ex: +, %, K) */
+  /** Suffix after the value, for example +, %, or K */
   suffix?: string;
-  /** Dados de tendência */
+  /** Trend data */
   trend?: TrendData;
-  /** Variante visual */
+  /** Visual variant */
   variant?: 'default' | 'outlined' | 'gradient' | 'minimal';
   /** Tamanho */
   size?: 'sm' | 'md' | 'lg';
-  /** Cor do valor (sobrescreve tema) */
+  /** Value color override */
   valueColor?: string;
-  /** Cor do ícone (sobrescreve tema) */
+  /** Icon color override */
   iconColor?: string;
   /** Animação de contagem */
   animated?: boolean;
@@ -218,7 +218,7 @@ const trendClass = computed(() => ({
   }
 }
 
-// Variantes
+// Variants
 .variant-default {
   background: var(--ntk-bg-primary);
   border: var(--border-width-sm) solid var(--ntk-border-color);
@@ -252,13 +252,13 @@ const trendClass = computed(() => ({
   padding: var(--ntk-spacing-md);
 }
 
-// Ícone
+// Icon
 .stat-icon {
   font-size: var(--ntk-text-2xl);
   margin-bottom: var(--ntk-spacing-md);
 }
 
-// Valor
+// Value
 .stat-value {
   display: flex;
   align-items: baseline;
@@ -314,7 +314,7 @@ const trendClass = computed(() => ({
   margin-top: var(--ntk-spacing-md);
 }
 
-// Tamanhos
+// Sizes
 .size-sm {
   padding: var(--ntk-spacing-md);
   

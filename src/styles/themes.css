@@ -1,13 +1,13 @@
 /**
  * NetToolsKit Theme System
  * ========================
- * Paletas de cores switcháveis via [data-theme] no root.
+ * Switchable color palettes through [data-theme] on the root element.
  *
- * USO:
+ * USAGE:
  *   document.documentElement.dataset.theme = 'revolut' | 'claude' | 'warp' | 'resend' | 'superhuman' | 'kraken'
  *
- * Toda variável aqui é consumida por tokens.scss, reference-app-bridge.scss
- * e diretamente por componentes via --ntk-accent, --ntk-avatar-bg etc.
+ * Every variable here is consumed by tokens.scss, reference-app-bridge.scss,
+ * or directly by components through --ntk-accent, --ntk-avatar-bg, and related tokens.
  */
 
 /* ============================================================
@@ -61,13 +61,13 @@
   --ntk-bar-fill: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
   --ntk-accent-value: #10b981;
 
-  /* Drawer / nav (reference mode — light sidebar) */
+  /* Drawer / nav (reference mode - light sidebar) */
   --ntk-drawer-text: #334155;
   --ntk-nav-hover-bg: rgba(0, 0, 0, 0.04);
   --ntk-nav-active-bg: rgba(15, 118, 110, 0.08);
   --ntk-nav-active-border: #0f766e;
 
-  /* Dark scheme flag — light themes = 0, dark themes = 1 */
+  /* Dark scheme flag - light themes = 0, dark themes = 1 */
   --ntk-dark-scheme: 0;
 }
 
@@ -364,8 +364,8 @@
 /* ============================================================
  * THEME TOKEN BRIDGE
  * ============================================================
- * Promove aliases de preset para os tokens base consumidos
- * pelos templates e por partes do Quasar.
+ * Promotes preset aliases to the base tokens consumed by templates
+ * and by Quasar bridge surfaces.
  */
 html[data-theme],
 html[data-theme] body {

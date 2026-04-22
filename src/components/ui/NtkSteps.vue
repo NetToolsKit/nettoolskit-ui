@@ -70,19 +70,19 @@ export interface Step {
 }
 
 interface Props {
-  /** Lista de passos */
+  /** Step list */
   steps: Step[];
-  /** Layout dos passos */
+  /** Step layout */
   layout?: 'horizontal' | 'vertical';
-  /** Variante visual */
+  /** Visual variant */
   variant?: 'default' | 'numbered' | 'timeline' | 'minimal';
-  /** Mostrar conectores entre passos */
+  /** Whether to show connectors between steps */
   showArrows?: boolean;
-  /** Ícone do conector */
+  /** Connector icon */
   connectorIcon?: string;
-  /** Passo ativo (para highlight) */
+  /** Active step for highlighting */
   activeStep?: number;
-  /** Cor dos números (sobrescreve tema) */
+  /** Number color override */
   numberColor?: string;
 }
 
@@ -268,7 +268,7 @@ const connectorClass = computed(() => ({
   }
 }
 
-// Variantes
+// Variants
 .variant-timeline {
   .layout-vertical & {
     .step {

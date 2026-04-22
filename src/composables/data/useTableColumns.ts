@@ -154,7 +154,7 @@ export function useTableColumns(
   }
 
   /**
-   * Reseta visibilidade para padrão
+   * Resets visibility to the default state.
    */
   const resetColumns = () => {
     if (defaultVisibleColumns) {

@@ -119,7 +119,7 @@ export function useFilters<T extends FiltersState>(
   }
 
   /**
-   * Carrega filtros da URL (ao montar componente)
+   * Loads filters from the URL when the component mounts.
    */
   const loadFiltersFromUrl = () => {
     if (!syncWithUrl) return

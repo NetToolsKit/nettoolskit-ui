@@ -134,11 +134,11 @@ export function useTheme() {
       themeName.value = name;
       applyThemeToCSS(theme);
       
-      // Salvar preferência no localStorage
+      // Save preference in localStorage.
       try {
         localStorage.setItem('app-theme', name);
       } catch (_e) {
-        console.warn('Não foi possível salvar preferência de tema');
+        console.warn('Could not save theme preference');
       }
     }
   };
@@ -152,7 +152,7 @@ export function useTheme() {
   };
 
   /**
-   * Carrega tema salvo ou usa o padrão
+   * Loads the saved theme or uses the default.
    */
   const loadSavedTheme = (): void => {
     try {
@@ -227,7 +227,7 @@ export function useTheme() {
 export function initTheme(defaultThemeName: ThemeName = defaultTheme.name as ThemeName): void {
   const { setTheme } = useTheme();
   
-  // Tenta carregar tema salvo, senão usa o padrão
+  // Tries to load the saved theme; otherwise uses the default.
   try {
     const saved = localStorage.getItem('app-theme') as ThemeName | null;
     if (saved && themes[saved]) {

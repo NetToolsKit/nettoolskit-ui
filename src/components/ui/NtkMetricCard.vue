@@ -75,7 +75,7 @@ const trendIcon = computed(() => {
     box-shadow: var(--ntk-shadow-card-hover);
   }
 
-  // Remove padding padrão do Quasar
+  // Removes Quasar default padding.
   :deep(.q-card__section) {
     padding: var(--ntk-spacing-lg);
   }

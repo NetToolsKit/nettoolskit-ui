@@ -2,7 +2,7 @@
  * useAsync - Composable Vue para gerenciar estado de operações assíncronas
  *
  * Wrapper reativo para funções assíncronas com estados de loading/error/data.
- * Simplifica o gerenciamento de chamadas API em componentes Vue.
+ * Simplifies API call management in Vue components.
  *
  * @layer Composables/Utils
  */

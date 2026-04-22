@@ -225,7 +225,7 @@ export const nettoolskitIdentity: BrandIdentity = {
     alt: 'NetToolsKit UI Logo',
     size: 'md',
   },
-  description: 'Biblioteca de componentes reutilizáveis Vue 3 + Quasar com sistema completo de temas e design tokens.',
+  description: 'Reusable Vue 3 + Quasar component library with a complete theme and design token system.',
   url: 'https://github.com/ThiagoGuislotti/nettoolskit-ui-vue',
   version: '0.1.0',
   copyright: 'Thiago Guislotti',

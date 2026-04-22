@@ -131,7 +131,7 @@ const cardClasses = computed(() => [
   }
 }
 
-// Variantes
+// Variants
 .variant-default {
   background: var(--ntk-bg-card);
   border: 1px solid var(--ntk-border-color);
@@ -244,7 +244,7 @@ const cardClasses = computed(() => [
   color: var(--ntk-text-muted);
 }
 
-// Tamanhos
+// Sizes
 .size-sm {
   padding: 1rem;
   

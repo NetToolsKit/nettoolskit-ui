@@ -152,7 +152,7 @@ const copyrightText = computed(() =>
   props.copyrightText || `© ${new Date().getFullYear()} ${brandName.value}. Todos os direitos reservados.`
 )
 
-// Mapeia redes sociais do tema para o formato do componente
+// Maps theme social links to the component format.
 const themeSocialLinks = computed<SocialLink[]>(() => {
   const socialLinks = branding.social?.value
   if (!socialLinks) return []

@@ -1,49 +1,49 @@
 /**
  * Layout Configuration
- * Configurações padronizadas de layout para todos os projetos
- * Define alturas, sombras, breakpoints e espaçamentos
+ * Standard layout settings for all projects.
+ * Defines heights, shadows, breakpoints, and spacing.
  */
 
 export interface HeaderConfig {
-  /** Altura do header em pixels */
+  /** Header height in pixels */
   height: number;
-  /** Sombra do header */
+  /** Header shadow */
   shadow: string;
-  /** Cor de fundo */
+  /** Background color */
   background: string;
-  /** Header fixo no topo */
+  /** Whether the header sticks to the top */
   sticky: boolean;
-  /** Padding horizontal */
+  /** Horizontal padding */
   paddingX: string;
 }
 
 export interface SidebarConfig {
-  /** Largura expandida em pixels */
+  /** Expanded width in pixels */
   width: number;
-  /** Largura minimizada em pixels */
+  /** Minimized width in pixels */
   miniWidth: number;
-  /** Breakpoint para colapsar */
+  /** Collapse breakpoint */
   breakpoint: number;
 }
 
 export interface FooterConfig {
-  /** Variante de cor */
+  /** Color variant */
   variant: 'dark' | 'light';
 }
 
 export interface ContainerConfig {
-  /** Largura máxima em pixels */
+  /** Maximum width in pixels */
   maxWidth: number;
-  /** Padding horizontal */
+  /** Horizontal padding */
   paddingX: string;
 }
 
 export interface MobileConfig {
-  /** Breakpoint para mobile */
+  /** Mobile breakpoint */
   breakpoint: number;
-  /** Lado do drawer */
+  /** Drawer side */
   drawerSide: 'left' | 'right';
-  /** Largura do drawer */
+  /** Drawer width */
   drawerWidth: number;
 }
 
@@ -56,8 +56,8 @@ export interface LayoutConfig {
 }
 
 /**
- * Configuração padrão de layout
- * Usado como base para todos os projetos
+ * Default layout configuration.
+ * Used as the base for all projects.
  */
 export const defaultLayoutConfig: LayoutConfig = {
   header: {
@@ -87,8 +87,8 @@ export const defaultLayoutConfig: LayoutConfig = {
 };
 
 /**
- * Configuração de layout com header fixo
- * Para landing pages que precisam de header sticky
+ * Layout configuration with a fixed header.
+ * Used for landing pages that need a sticky header.
  */
 export const stickyHeaderLayout: LayoutConfig = {
   ...defaultLayoutConfig,
@@ -100,8 +100,8 @@ export const stickyHeaderLayout: LayoutConfig = {
 };
 
 /**
- * Configuração de layout para dashboards
- * Com sidebar e header mais compacto
+ * Dashboard layout configuration.
+ * Uses a more compact sidebar and header.
  */
 export const dashboardLayout: LayoutConfig = {
   ...defaultLayoutConfig,
@@ -117,7 +117,7 @@ export const dashboardLayout: LayoutConfig = {
 };
 
 /**
- * Presets de layout disponíveis
+ * Available layout presets.
  */
 export const layoutPresets = {
   default: defaultLayoutConfig,

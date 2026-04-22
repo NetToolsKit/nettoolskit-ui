@@ -90,7 +90,7 @@ interface Props {
   modelValue: boolean;
   /** Lado do drawer */
   side?: 'left' | 'right';
-  /** Largura do drawer */
+  /** Drawer width */
   width?: number;
   /** Itens de navegação */
   navItems?: NavLink[];

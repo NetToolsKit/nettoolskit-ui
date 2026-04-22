@@ -19,7 +19,7 @@ import { FormValidationService } from '../../services/FormValidationService'
  * Composable useFormRules
  * 
  * Retorna métodos de validação do FormValidationService encapsulados para uso
- * em componentes Vue/Quasar.
+ * in Vue/Quasar components.
  * 
  * @returns Objeto com métodos de validação tipados
  */
