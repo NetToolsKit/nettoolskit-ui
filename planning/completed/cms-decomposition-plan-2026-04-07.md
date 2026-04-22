@@ -55,7 +55,10 @@
 - the repository now has a root-level visual contract in `DESIGN.md` that defines the reusable enterprise monochrome baseline for templates and CMS authoring surfaces.
 - `landing-page/CmsApp.vue` dropped further to `10495` lines.
 
-### Remaining Work
+### Historical Remaining Work (Superseded)
+
+Archive note: these tasks were the remaining CMS decomposition direction at this checkpoint. They are preserved for context only and are no longer tracked as active execution after the 2026-04-12 superseded closeout.
+
 1. extract the remaining large stateful workflows from `landing-page/CmsApp.vue` into `src/modules/cms/white-label/**` so the landing app becomes a thin runtime shell
 2. continue moving reusable preview/authoring logic from `landing-page/CmsApp.vue` into `src/templates/features/cms/authoring/modules/**`
 
@@ -91,7 +94,10 @@
 - the large authoring-shell CSS variable map now comes from a shared `src/**` helper, making the CMS design contract reusable for future editor surfaces.
 - `landing-page/CmsApp.vue` dropped further to `10250` lines.
 
-### Remaining Work After Theme Runtime
+### Historical Remaining Work After Theme Runtime (Superseded)
+
+Archive note: this list was superseded by the later closeout direction and is not an active backlog.
+
 1. extract the remaining large stateful workflows from `landing-page/CmsApp.vue` into `src/modules/cms/white-label/**` so the landing app becomes a thin runtime shell
 2. continue moving reusable preview/authoring logic from `landing-page/CmsApp.vue` into `src/templates/features/cms/authoring/modules/**`
 3. review `landing-page/**` for any other reusable system contracts that still belong in `src/**`
@@ -127,7 +133,10 @@
 - `src/templates/features/README.md` now declares grouped domain contracts as the preferred public pattern for reusable authoring modules.
 - `landing-page/CmsApp.vue` remains large at `10281` lines, but the public CMS module API is now materially smaller and more reusable for future whitelabel consumers.
 
-### Remaining Work After Grouped Module Template APIs
+### Historical Remaining Work After Grouped Module Template APIs (Superseded)
+
+Archive note: this list was superseded by the later closeout direction and is not an active backlog.
+
 1. move the grouped module prop builders out of `landing-page/CmsApp.vue` and into reusable `src/modules/cms/white-label/authoring/**` helpers so the landing app shell keeps shrinking
 2. continue wrapping `Media` and `Releases` with grouped template entry points so every CMS module follows the same low-parameter public contract
 3. keep extracting remaining stateful authoring workflows from `landing-page/CmsApp.vue` into `src/modules/cms/white-label/**`

@@ -5,6 +5,8 @@ Status: Completed / archived
 Spec: `planning/specs/completed/reference-layout-depth-2026-04-03.md`
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 
+Archive note: the unchecked task ledger below is preserved from the original execution plan for historical context. This plan is closed and archived; the checklist is not an active backlog.
+
 ## Ordered Tasks
 
 | # | Task | File(s) | Status |

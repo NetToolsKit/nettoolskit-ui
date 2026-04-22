@@ -1,7 +1,7 @@
 # Spec: Reference Source Truth Parity Audit
 
 Date: 2026-04-13
-Status: Active
+Status: completed - archived
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 
 ## Summary

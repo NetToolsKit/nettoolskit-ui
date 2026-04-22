@@ -1,7 +1,7 @@
 # Spec: Reference Layout Gap Closure
 
 Date: 2026-04-02
-Status: Active
+Status: completed - archived
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 
 ## Summary

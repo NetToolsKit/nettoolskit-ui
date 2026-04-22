@@ -1,7 +1,7 @@
 # Spec: Reference System Layout Depth
 
 Date: 2026-04-03
-Status: Active
+Status: completed - archived
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 
 ## Summary

@@ -2,7 +2,7 @@
 
 Date: 2026-04-13
 Branch: `feat/reference-full-component-parity-2026-04-13`
-Spec: `planning/specs/active/reference-full-component-parity-spec-2026-04-13.md`
+Spec: `planning/specs/completed/reference-full-component-parity-spec-2026-04-13.md`
 Status: completed
 
 ## Scope Summary

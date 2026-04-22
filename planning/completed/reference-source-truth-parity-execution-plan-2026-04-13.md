@@ -2,7 +2,7 @@
 
 Date: 2026-04-13
 Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
-Spec: `planning/specs/active/reference-source-truth-parity-audit-2026-04-13.md`
+Spec: `planning/specs/completed/reference-source-truth-parity-audit-2026-04-13.md`
 
 ## Scope Summary
 
@@ -137,7 +137,7 @@ Goal:
 Target paths:
 - `.temp/logs/`
 - `planning/completed/reference-source-truth-parity-execution-plan-2026-04-13.md`
-- `planning/specs/active/reference-source-truth-parity-audit-2026-04-13.md`
+- `planning/specs/completed/reference-source-truth-parity-audit-2026-04-13.md`
 
 Changes:
 - Capture fresh desktop/mobile screenshots for sample and reference
