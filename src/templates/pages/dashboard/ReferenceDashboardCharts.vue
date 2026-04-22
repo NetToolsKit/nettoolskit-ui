@@ -102,11 +102,11 @@ function resolveTokenColor(tokenName: string, fallback: string): string {
 }
 
 function buildChartPalette() {
-  const textColor = resolveTokenColor('--ntk-template-page-text', '#334155')
-  const mutedColor = resolveTokenColor('--ntk-template-page-subtitle', '#64748b')
-  const subtleColor = resolveTokenColor('--ntk-template-page-chip-text', '#94a3b8')
-  const borderColor = resolveTokenColor('--ntk-template-page-border', '#f1f5f9')
-  const surfaceColor = resolveTokenColor('--ntk-template-page-card-bg', '#ffffff')
+  const textColor = resolveTokenColor('--ntk-template-page-text', 'var(--ntk-text-primary)')
+  const mutedColor = resolveTokenColor('--ntk-template-page-subtitle', 'var(--ntk-text-secondary)')
+  const subtleColor = resolveTokenColor('--ntk-reference-dashboard-chart-tick', 'var(--ntk-text-tertiary)')
+  const borderColor = resolveTokenColor('--ntk-reference-dashboard-chart-guide', 'var(--ntk-border-color)')
+  const surfaceColor = resolveTokenColor('--ntk-template-page-card-bg', 'var(--ntk-bg-card)')
 
   return {
     textColor,
@@ -137,7 +137,12 @@ function createStatusChart(): void {
   }
 
   const palette = buildChartPalette()
-  const fallbackColors = ['#3b82f6', '#f59e0b', '#10b981', '#64748b']
+  const fallbackColors = [
+    'var(--semantic-info-primary, var(--ntk-info))',
+    'var(--semantic-warning-primary, var(--ntk-warning))',
+    'var(--semantic-success-primary, var(--ntk-success))',
+    'var(--ntk-text-muted)',
+  ]
   const data = props.statusSegments.map((segment, index) => ({
     name: segment.label,
     y: segment.value,
@@ -195,7 +200,12 @@ function createCategoryChart(): void {
   }
 
   const palette = buildChartPalette()
-  const fallbackColors = ['#3b82f6', '#f97316', '#eab308', '#22c55e']
+  const fallbackColors = [
+    'var(--semantic-info-primary, var(--ntk-info))',
+    'var(--ntk-accent)',
+    'var(--semantic-warning-primary, var(--ntk-warning))',
+    'var(--semantic-success-primary, var(--ntk-success))',
+  ]
   const categories = props.categorySeries.map(item => item.label)
   const data = props.categorySeries.map((item, index) => ({
     name: item.label,
@@ -310,6 +320,21 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .ntk-reference-dashboard-charts {
+  --ntk-reference-dashboard-callout-line: color-mix(
+    in srgb,
+    var(--ntk-template-page-text, var(--ntk-text-primary)) 24%,
+    var(--ntk-template-page-border, var(--ntk-border-color))
+  );
+  --ntk-reference-dashboard-chart-guide: color-mix(
+    in srgb,
+    var(--ntk-template-page-text, var(--ntk-text-primary)) 18%,
+    var(--ntk-template-page-border, var(--ntk-border-color))
+  );
+  --ntk-reference-dashboard-chart-tick: var(
+    --ntk-template-page-chip-text,
+    var(--ntk-template-page-subtitle, var(--ntk-text-tertiary, var(--ntk-text-secondary)))
+  );
+
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -335,6 +360,15 @@ onBeforeUnmount(() => {
   color: var(--ntk-template-page-text, var(--ntk-text-primary));
 }
 
+.ntk-reference-dashboard-charts__header::after {
+  content: '';
+  display: block;
+  width: 42px;
+  height: 1px;
+  margin-top: 10px;
+  background: var(--ntk-reference-dashboard-callout-line);
+}
+
 .ntk-reference-dashboard-charts__chart {
   width: 100%;
   min-height: 280px;
@@ -356,6 +390,15 @@ onBeforeUnmount(() => {
 .ntk-reference-dashboard-charts__chart :deep(.highcharts-axis-line),
 .ntk-reference-dashboard-charts__chart :deep(.highcharts-tick) {
   stroke: transparent;
+}
+
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-grid-line) {
+  stroke: var(--ntk-reference-dashboard-chart-guide);
+}
+
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-axis-labels text) {
+  color: var(--ntk-reference-dashboard-chart-tick);
+  fill: var(--ntk-reference-dashboard-chart-tick);
 }
 
 @media (max-width: 1180px) {

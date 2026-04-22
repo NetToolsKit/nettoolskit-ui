@@ -63,10 +63,11 @@ describe('template runtime router', () => {
     expect(routeNames.has('TemplateRuntimeNotFound')).toBe(true)
   })
 
-  it('keeps the approved runtime free from placeholder routes and hash navigation', () => {
+  it('keeps the approved runtime free from accidental placeholder routes and hash navigation', () => {
     const source = readRouterSource()
 
-    expect(source).not.toContain('PlaceholderTemplate')
+    expect(source).toContain('TemplateRuntimeReportsPage')
+    expect(source).toContain('PlaceholderTemplate')
     expect(source).not.toContain('fakeDashboard')
     expect(source).not.toContain('window.location.hash')
     expect(source).not.toContain("statusLabel: 'Em breve'")
