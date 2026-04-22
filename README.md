@@ -940,6 +940,7 @@ Template runtime theme work must follow the official Quasar model first, then la
    - Local CSS should express the NetToolsKit product shell, not reimplement Quasar layout behavior.
 
 Completed closeout plans:
+- `planning/completed/post-closeout-template-theme-hardening-2026-04-21.md`
 - `planning/completed/residual-template-theme-guardrail-sweep-2026-04-21.md`
 - `planning/completed/vue-quasar-visual-architecture-replatform-2026-04-16.md`
 - `planning/completed/templates-100-functional-whitelabel-plan-2026-04-15.md`
