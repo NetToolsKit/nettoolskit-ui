@@ -83,7 +83,6 @@
 
 import { computed } from 'vue';
 import { QDrawer, QIcon } from 'quasar';
-import { useTheme } from '../../composables/ui/useTheme';
 import type { NavLink } from '../../config/brand/navigation.config';
 
 interface Props {
@@ -118,15 +117,13 @@ const emit = defineEmits<{
   (e: 'cta-click'): void;
 }>();
 
-const { theme } = useTheme();
-
 const isOpen = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 });
 
 const ctaStyle = computed(() => ({
-  background: theme.value.gradients.primary,
+  background: 'var(--ntk-primary-gradient)',
 }));
 
 /**
@@ -238,7 +235,7 @@ function handleCtaClick() {
   width: 100%;
   padding: 12px 20px;
   text-align: center;
-  color: var(--ntk-text-inverse);
+  color: var(--ntk-text-on-accent);
   text-decoration: none;
   font-size: var(--ntk-font-size-sm);
   font-weight: var(--ntk-font-weight-semibold);

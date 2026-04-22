@@ -181,6 +181,14 @@ describe('template white-label audit', () => {
           "color: 'var(--ntk-text-on-accent)'",
         ],
       },
+      {
+        label: 'NtkMobileDrawer',
+        source: readRepoFile('../../../src/components/layout/NtkMobileDrawer.vue'),
+        requiredSnippets: [
+          "background: 'var(--ntk-primary-gradient)'",
+          'color: var(--ntk-text-on-accent);',
+        ],
+      },
     ]
 
     for (const { label, source, requiredSnippets } of auditedFiles) {
