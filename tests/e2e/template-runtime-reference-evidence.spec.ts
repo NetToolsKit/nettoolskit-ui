@@ -201,6 +201,9 @@ test.describe('reference based visual evidence', () => {
 
     await page.goto(`${RUNTIME_BASE}#/`)
     await expect(page.locator('.ntk-template-dashboard')).toBeVisible()
+    await expect(page.locator('.ntk-reference-dashboard-charts__chart--donut .highcharts-container')).toBeVisible()
+    await expect(page.locator('.ntk-reference-dashboard-charts__chart--bars .highcharts-container')).toBeVisible()
+    await expect(page.locator('.ntk-reference-dashboard-charts .highcharts-credits')).toHaveCount(0)
     await captureElement(page.locator('.ntk-reference-dashboard-charts'), 'template-runtime-reference-charts.png', testInfo)
 
     const userMenuTrigger = page.locator('.ntk-template-user-menu__trigger').first()

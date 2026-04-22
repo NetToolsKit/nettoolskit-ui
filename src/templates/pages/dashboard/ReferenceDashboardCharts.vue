@@ -1,31 +1,18 @@
 <template>
-  <div class="ntk-reference-dashboard-charts">
+  <div
+    ref="rootEl"
+    class="ntk-reference-dashboard-charts"
+  >
     <article class="ntk-reference-dashboard-charts__card">
       <div class="ntk-reference-dashboard-charts__header">
         <h3>Pedidos por Status</h3>
       </div>
 
-      <div class="ntk-reference-dashboard-charts__donut-layout">
-        <div class="ntk-reference-dashboard-charts__donut-stage">
-          <div
-            class="ntk-reference-dashboard-charts__donut"
-            :style="{ '--ntk-reference-dashboard-donut-background': donutBackground }"
-            aria-hidden="true"
-          >
-            <div class="ntk-reference-dashboard-charts__donut-hole" />
-          </div>
-
-          <div
-            v-for="callout in donutCallouts"
-            :key="callout.id"
-            class="ntk-reference-dashboard-charts__callout"
-            :class="`ntk-reference-dashboard-charts__callout--${callout.position}`"
-          >
-            <strong>{{ callout.label }}</strong>
-            <span>{{ callout.value }}</span>
-          </div>
-        </div>
-      </div>
+      <div
+        ref="statusChartEl"
+        class="ntk-reference-dashboard-charts__chart ntk-reference-dashboard-charts__chart--donut"
+        aria-label="Pedidos por Status"
+      />
     </article>
 
     <article class="ntk-reference-dashboard-charts__card">
@@ -33,43 +20,25 @@
         <h3>Vendas por Categoria</h3>
       </div>
 
-      <div class="ntk-reference-dashboard-charts__bars">
-          <div
-            v-for="item in categorySeries"
-            :key="item.id"
-            class="ntk-reference-dashboard-charts__bar-row"
-          >
-            <span class="ntk-reference-dashboard-charts__bar-label">{{ item.label }}</span>
-            <div class="ntk-reference-dashboard-charts__bar-track">
-              <div
-                class="ntk-reference-dashboard-charts__bar-fill"
-                :style="{
-                  '--ntk-reference-dashboard-bar-fill': item.color,
-                  width: `${Math.max((item.value / maxCategoryValue) * 100, 12)}%`,
-                }"
-              />
-          </div>
-        </div>
-
-        <div class="ntk-reference-dashboard-charts__axis">
-          <span class="ntk-reference-dashboard-charts__axis-spacer" />
-          <div class="ntk-reference-dashboard-charts__axis-track">
-            <span
-              v-for="tick in axisTicks"
-              :key="tick"
-              class="ntk-reference-dashboard-charts__axis-tick"
-            >
-              {{ tick }}
-            </span>
-          </div>
-        </div>
-      </div>
+      <div
+        ref="categoryChartEl"
+        class="ntk-reference-dashboard-charts__chart ntk-reference-dashboard-charts__chart--bars"
+        aria-label="Vendas por Categoria"
+      />
     </article>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import Highcharts from 'highcharts'
+import {
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  type Ref,
+} from 'vue'
 
 export interface ReferenceDashboardStatusSegment {
   id: string
@@ -90,72 +59,257 @@ const props = defineProps<{
   categorySeries: ReferenceDashboardCategorySeriesItem[]
 }>()
 
-const totalStatusValue = computed(() => {
-  return props.statusSegments.reduce((total, segment) => total + segment.value, 0)
-})
+const rootEl = ref<HTMLElement | null>(null)
+const statusChartEl = ref<HTMLElement | null>(null)
+const categoryChartEl = ref<HTMLElement | null>(null)
+const statusChart = ref<Highcharts.Chart | null>(null)
+const categoryChart = ref<Highcharts.Chart | null>(null)
 
-const donutBackground = computed(() => {
-  let offset = 0
+let themeObserver: MutationObserver | null = null
 
-  return `conic-gradient(${props.statusSegments
-    .map(segment => {
-      const start = offset
-      const percentage = totalStatusValue.value > 0
-        ? (segment.value / totalStatusValue.value) * 100
-        : 0
-      const end = offset + percentage
-      offset = end
-      return `${segment.color} ${start}% ${end}%`
-    })
-    .join(', ')})`
-})
+function readToken(name: string, fallback: string): string {
+  if (typeof window === 'undefined') {
+    return fallback
+  }
 
-const maxCategoryValue = computed(() => {
-  return Math.max(...props.categorySeries.map(item => item.value), 1)
-})
+  const source = rootEl.value ?? document.documentElement
+  const value = window.getComputedStyle(source).getPropertyValue(name).trim()
 
-const roundedAxisMax = computed(() => {
-  return Math.ceil(maxCategoryValue.value / 100) * 100
-})
+  return value || fallback
+}
 
-const axisTicks = computed(() => {
-  const stepCount = 6
-  const step = Math.max(Math.round(roundedAxisMax.value / stepCount), 1)
-  return Array.from({ length: stepCount + 1 }, (_, index) => index * step)
-})
+function resolveCssColor(value: string, fallback: string): string {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return fallback
+  }
 
-const donutCallouts = computed(() => {
-  const positions = ['top-right', 'right', 'bottom-left', 'top-left'] as const
+  const probe = document.createElement('span')
+  probe.style.color = value
+  probe.style.position = 'absolute'
+  probe.style.pointerEvents = 'none'
+  probe.style.visibility = 'hidden'
 
-  return props.statusSegments.map((segment, index) => ({
-    ...segment,
-    position: positions[index] ?? 'right',
+  const host = rootEl.value ?? document.body
+  host.appendChild(probe)
+  const resolved = window.getComputedStyle(probe).color
+  probe.remove()
+
+  return resolved || fallback
+}
+
+function resolveTokenColor(tokenName: string, fallback: string): string {
+  return resolveCssColor(readToken(tokenName, fallback), fallback)
+}
+
+function buildChartPalette() {
+  const textColor = resolveTokenColor('--ntk-template-page-text', '#334155')
+  const mutedColor = resolveTokenColor('--ntk-template-page-subtitle', '#64748b')
+  const subtleColor = resolveTokenColor('--ntk-template-page-chip-text', '#94a3b8')
+  const borderColor = resolveTokenColor('--ntk-template-page-border', '#f1f5f9')
+  const surfaceColor = resolveTokenColor('--ntk-template-page-card-bg', '#ffffff')
+
+  return {
+    textColor,
+    mutedColor,
+    subtleColor,
+    borderColor,
+    surfaceColor,
+  }
+}
+
+function resolveSeriesColor(value: string, fallback: string): string {
+  return resolveCssColor(value, fallback)
+}
+
+function destroyChart(chartRef: Ref<Highcharts.Chart | null>): void {
+  chartRef.value?.destroy()
+  chartRef.value = null
+}
+
+function destroyCharts(): void {
+  destroyChart(statusChart)
+  destroyChart(categoryChart)
+}
+
+function createStatusChart(): void {
+  if (!statusChartEl.value) {
+    return
+  }
+
+  const palette = buildChartPalette()
+  const fallbackColors = ['#3b82f6', '#f59e0b', '#10b981', '#64748b']
+  const data = props.statusSegments.map((segment, index) => ({
+    name: segment.label,
+    y: segment.value,
+    color: resolveSeriesColor(segment.color, fallbackColors[index] ?? palette.textColor),
   }))
+
+  statusChart.value = Highcharts.chart(statusChartEl.value, {
+    chart: {
+      type: 'pie',
+      backgroundColor: 'transparent',
+      height: 280,
+      spacing: [0, 0, 0, 0],
+      animation: false,
+      style: { fontFamily: 'Inter, sans-serif' },
+    },
+    title: { text: undefined },
+    credits: { enabled: false },
+    tooltip: {
+      pointFormat: '<b>{point.y}</b> pedidos ({point.percentage:.1f}%)',
+      style: { fontSize: '12px', color: palette.textColor },
+    },
+    plotOptions: {
+      series: {
+        animation: false,
+      },
+      pie: {
+        innerSize: '62%',
+        borderWidth: 3,
+        borderColor: palette.surfaceColor,
+        dataLabels: {
+          enabled: true,
+          format: '<b>{point.name}</b><br/>{point.y}',
+          distance: 15,
+          style: {
+            fontSize: '11px',
+            fontWeight: '500',
+            color: palette.textColor,
+            textOutline: 'none',
+          },
+        },
+        states: { hover: { brightness: 0.05 } },
+      },
+    },
+    series: [{
+      name: 'Pedidos',
+      data,
+      type: 'pie',
+    }],
+  })
+}
+
+function createCategoryChart(): void {
+  if (!categoryChartEl.value) {
+    return
+  }
+
+  const palette = buildChartPalette()
+  const fallbackColors = ['#3b82f6', '#f97316', '#eab308', '#22c55e']
+  const categories = props.categorySeries.map(item => item.label)
+  const data = props.categorySeries.map((item, index) => ({
+    name: item.label,
+    y: item.value,
+    color: resolveSeriesColor(item.color, fallbackColors[index] ?? palette.textColor),
+  }))
+
+  categoryChart.value = Highcharts.chart(categoryChartEl.value, {
+    chart: {
+      type: 'bar',
+      backgroundColor: 'transparent',
+      height: 260,
+      spacing: [10, 16, 10, 16],
+      animation: false,
+      style: { fontFamily: 'Inter, sans-serif' },
+    },
+    title: { text: undefined },
+    credits: { enabled: false },
+    xAxis: {
+      categories,
+      lineWidth: 0,
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontWeight: '500',
+          color: palette.textColor,
+        },
+      },
+    },
+    yAxis: {
+      title: { text: undefined },
+      gridLineColor: palette.borderColor,
+      labels: {
+        style: {
+          fontSize: '11px',
+          color: palette.subtleColor,
+        },
+      },
+      allowDecimals: false,
+    },
+    tooltip: {
+      pointFormat: '<b>{point.y}</b> vendas',
+      style: { fontSize: '12px', color: palette.textColor },
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      series: {
+        animation: false,
+      },
+      bar: {
+        borderRadius: 4,
+        pointWidth: 22,
+        colorByPoint: true,
+        borderWidth: 0,
+      },
+    },
+    series: [
+      {
+        name: 'Vendas',
+        data,
+        type: 'bar',
+      },
+    ],
+  })
+}
+
+async function renderCharts(): Promise<void> {
+  await nextTick()
+  destroyCharts()
+  createStatusChart()
+  createCategoryChart()
+}
+
+function reflowCharts(): void {
+  statusChart.value?.reflow()
+  categoryChart.value?.reflow()
+}
+
+watch(
+  () => [props.statusSegments, props.categorySeries],
+  () => {
+    void renderCharts()
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  void renderCharts()
+  window.addEventListener('resize', reflowCharts)
+
+  themeObserver = new MutationObserver(() => {
+    void renderCharts()
+  })
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme', 'style'],
+  })
+  if (document.body) {
+    themeObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class', 'style'],
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', reflowCharts)
+  themeObserver?.disconnect()
+  destroyCharts()
 })
 </script>
 
 <style scoped lang="scss">
 .ntk-reference-dashboard-charts {
-  --ntk-reference-dashboard-callout-text: var(--ntk-template-page-text, var(--ntk-text-primary));
-  --ntk-reference-dashboard-callout-muted: var(
-    --ntk-template-page-chip-text,
-    var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-primary)))
-  );
-  --ntk-reference-dashboard-callout-line: color-mix(
-    in srgb,
-    var(--ntk-reference-dashboard-callout-text) 24%,
-    var(--ntk-template-page-border, var(--ntk-border-color))
-  );
-  --ntk-reference-dashboard-chart-guide: color-mix(
-    in srgb,
-    var(--ntk-template-page-text, var(--ntk-text-primary)) 18%,
-    var(--ntk-template-page-border, var(--ntk-border-color))
-  );
-  --ntk-reference-dashboard-chart-tick: var(
-    --ntk-template-page-chip-text,
-    var(--ntk-template-page-subtitle, var(--ntk-text-tertiary, var(--ntk-text-secondary, var(--ntk-text-primary))))
-  );
-
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -171,6 +325,7 @@ const donutCallouts = computed(() => {
     --ntk-template-surface-shadow,
     0 1px 3px color-mix(in srgb, var(--ntk-text-primary) 5%, transparent)
   );
+  overflow: hidden;
 }
 
 .ntk-reference-dashboard-charts__header h3 {
@@ -180,232 +335,32 @@ const donutCallouts = computed(() => {
   color: var(--ntk-template-page-text, var(--ntk-text-primary));
 }
 
-.ntk-reference-dashboard-charts__donut-layout {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ntk-reference-dashboard-charts__chart {
+  width: 100%;
   min-height: 280px;
 }
 
-.ntk-reference-dashboard-charts__donut-stage {
-  position: relative;
-  width: min(360px, 100%);
-  min-height: 280px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+.ntk-reference-dashboard-charts__chart--bars {
+  min-height: 260px;
 }
 
-.ntk-reference-dashboard-charts__donut {
-  position: relative;
-  width: min(250px, 100%);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  margin: 0 auto;
-  background: var(
-    --ntk-reference-dashboard-donut-background,
-    var(--ntk-template-page-card-bg, var(--ntk-bg-card))
-  );
-  box-shadow: inset 0 0 0 3px var(--ntk-template-page-card-bg, var(--ntk-bg-card));
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-container),
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-root) {
+  width: 100% !important;
 }
 
-.ntk-reference-dashboard-charts__donut-hole {
-  position: absolute;
-  inset: 22%;
-  border-radius: 50%;
-  background: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
-  box-shadow: inset 0 0 0 1px color-mix(
-    in srgb,
-    var(--ntk-template-page-border, var(--ntk-border-color)) 72%,
-    transparent
-  );
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-background) {
+  fill: transparent;
 }
 
-.ntk-reference-dashboard-charts__callout {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 11px;
-  line-height: 1.2;
-  color: var(--ntk-reference-dashboard-callout-muted);
-}
-
-.ntk-reference-dashboard-charts__callout::before {
-  content: '';
-  position: absolute;
-  background: var(--ntk-reference-dashboard-callout-line);
-}
-
-.ntk-reference-dashboard-charts__callout strong {
-  color: var(--ntk-reference-dashboard-callout-text);
-  font-weight: 600;
-}
-
-.ntk-reference-dashboard-charts__callout span {
-  color: var(--ntk-reference-dashboard-callout-muted);
-  font-weight: 600;
-}
-
-.ntk-reference-dashboard-charts__callout--top-right {
-  top: 56px;
-  right: 8px;
-  text-align: left;
-}
-
-.ntk-reference-dashboard-charts__callout--top-right::before {
-  width: 32px;
-  height: 1px;
-  left: -36px;
-  top: 20px;
-  transform: rotate(12deg);
-}
-
-.ntk-reference-dashboard-charts__callout--right {
-  top: 128px;
-  right: -6px;
-  text-align: left;
-}
-
-.ntk-reference-dashboard-charts__callout--right::before {
-  width: 34px;
-  height: 1px;
-  left: -38px;
-  top: 16px;
-}
-
-.ntk-reference-dashboard-charts__callout--bottom-left {
-  bottom: 18px;
-  left: 38px;
-  text-align: left;
-}
-
-.ntk-reference-dashboard-charts__callout--bottom-left::before {
-  width: 32px;
-  height: 1px;
-  right: -36px;
-  top: 12px;
-  transform: rotate(12deg);
-}
-
-.ntk-reference-dashboard-charts__callout--top-left {
-  top: 62px;
-  left: 30px;
-  text-align: center;
-}
-
-.ntk-reference-dashboard-charts__callout--top-left::before {
-  width: 28px;
-  height: 1px;
-  right: -32px;
-  top: 22px;
-  transform: rotate(-18deg);
-}
-
-.ntk-reference-dashboard-charts__bars {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 280px;
-  justify-content: center;
-  padding: 6px 14px 8px 6px;
-}
-
-.ntk-reference-dashboard-charts__bar-row {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-}
-
-.ntk-reference-dashboard-charts__bar-label {
-  font-size: 12px;
-  color: var(--ntk-template-page-text, var(--ntk-text-primary));
-}
-
-.ntk-reference-dashboard-charts__bar-track {
-  height: 22px;
-  border-radius: 0;
-  background: linear-gradient(
-    90deg,
-    color-mix(
-      in srgb,
-      var(--ntk-reference-dashboard-chart-guide) 72%,
-      transparent
-    ) 0%,
-    color-mix(
-      in srgb,
-      var(--ntk-template-page-row-bg, var(--ntk-bg-secondary)) 86%,
-      var(--ntk-template-page-card-bg, var(--ntk-bg-card))
-    ) 100%
-  );
-  overflow: hidden;
-  position: relative;
-}
-
-.ntk-reference-dashboard-charts__bar-track::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--ntk-reference-dashboard-chart-guide) 0,
-    var(--ntk-reference-dashboard-chart-guide) 1px,
-    transparent 1px,
-    transparent calc(20% - 1px)
-  );
-  pointer-events: none;
-}
-
-.ntk-reference-dashboard-charts__bar-fill {
-  height: 100%;
-  border-radius: 0 4px 4px 0;
-  background: var(--ntk-reference-dashboard-bar-fill, var(--ntk-primary, var(--ntk-accent)));
-}
-
-.ntk-reference-dashboard-charts__axis {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-  padding-top: 4px;
-}
-
-.ntk-reference-dashboard-charts__axis-track {
-  display: flex;
-  justify-content: space-between;
-}
-
-.ntk-reference-dashboard-charts__axis-tick {
-  color: var(--ntk-reference-dashboard-chart-tick);
-  font-size: 11px;
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-axis-line),
+.ntk-reference-dashboard-charts__chart :deep(.highcharts-tick) {
+  stroke: transparent;
 }
 
 @media (max-width: 1180px) {
   .ntk-reference-dashboard-charts {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  .ntk-reference-dashboard-charts__donut-layout {
-    display: block;
-  }
-
-  .ntk-reference-dashboard-charts__donut-stage {
-    width: 100%;
-    min-height: 232px;
-  }
-
-  .ntk-reference-dashboard-charts__callout,
-  .ntk-reference-dashboard-charts__axis {
-    display: none;
-  }
-
-  .ntk-reference-dashboard-charts__bar-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
   }
 }
 </style>

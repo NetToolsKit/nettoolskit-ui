@@ -352,75 +352,66 @@ async function assertShellCertification(page: Page, preset: PresetCertification)
 async function assertDashboardChartReferenceStructure(page: Page, preset: PresetCertification): Promise<void> {
   const chartRoot = page.locator('.ntk-reference-dashboard-charts')
   const chartCards = chartRoot.locator('.ntk-reference-dashboard-charts__card')
-  const donutCard = page.locator('.ntk-reference-dashboard-charts__card', {
-    has: page.locator('.ntk-reference-dashboard-charts__donut'),
-  })
-  const barsCard = page.locator('.ntk-reference-dashboard-charts__card', {
-    has: page.locator('.ntk-reference-dashboard-charts__bars'),
-  })
-  const donut = donutCard.locator('.ntk-reference-dashboard-charts__donut')
-  const donutHole = donut.locator('.ntk-reference-dashboard-charts__donut-hole')
-  const callouts = donutCard.locator('.ntk-reference-dashboard-charts__callout')
-  const barRows = barsCard.locator('.ntk-reference-dashboard-charts__bar-row')
-  const barFills = barsCard.locator('.ntk-reference-dashboard-charts__bar-fill')
-  const axisTicks = barsCard.locator('.ntk-reference-dashboard-charts__axis-tick')
+  const donutCard = chartCards.first()
+  const barsCard = chartCards.nth(1)
+  const donutChart = chartRoot.locator('.ntk-reference-dashboard-charts__chart--donut')
+  const barsChart = chartRoot.locator('.ntk-reference-dashboard-charts__chart--bars')
+  const donutContainer = donutChart.locator('.highcharts-container')
+  const barsContainer = barsChart.locator('.highcharts-container')
+  const donutSlices = donutChart.locator('.highcharts-pie-series .highcharts-point')
+  const donutLabels = donutChart.locator('.highcharts-data-label')
+  const barPoints = barsChart.locator('.highcharts-bar-series .highcharts-point')
+  const axisLabels = barsChart.locator('.highcharts-axis-labels text')
 
   await expect(chartRoot).toBeVisible()
   await expect(chartCards).toHaveCount(2)
   await expect(donutCard).toBeVisible()
   await expect(barsCard).toBeVisible()
-  await expect(donut).toBeVisible()
-  await expect(donutHole).toBeVisible()
-  await expect(callouts).toHaveCount(4)
-  await expect(axisTicks).toHaveCount(7)
+  await expect(donutContainer).toBeVisible()
+  await expect(barsContainer).toBeVisible()
+  await expect(donutSlices).toHaveCount(4)
+  await expect(donutLabels.first()).toBeVisible()
+  await expect(axisLabels.first()).toBeVisible()
+  await expect(chartRoot.locator('.highcharts-credits')).toHaveCount(0)
+  expect(await barPoints.count(), `${preset.id} dashboard bars should render the full reference category series`).toBeGreaterThanOrEqual(4)
 
-  expect(await barRows.count(), `${preset.id} dashboard bars should keep multiple reference rows`).toBeGreaterThan(2)
-
-  const donutVisualContract = await donut.evaluate((element) => {
-    const style = window.getComputedStyle(element)
+  const donutVisualContract = await donutContainer.evaluate((element) => {
     const rect = element.getBoundingClientRect()
 
     return {
-      background: style.backgroundImage || style.background,
-      borderRadius: style.borderRadius,
       height: rect.height,
       width: rect.width,
     }
   })
 
-  expect(donutVisualContract.background, `${preset.id} dashboard donut should use the reference conic chart`).toContain('conic-gradient')
-  expect(donutVisualContract.borderRadius, `${preset.id} dashboard donut should stay circular`).toContain('50%')
-  expect(donutVisualContract.width, `${preset.id} dashboard donut should render with real width`).toBeGreaterThan(100)
-  expect(donutVisualContract.height, `${preset.id} dashboard donut should render with real height`).toBeGreaterThan(100)
+  expect(donutVisualContract.width, `${preset.id} dashboard donut Highcharts canvas should render with real width`).toBeGreaterThan(100)
+  expect(donutVisualContract.height, `${preset.id} dashboard donut Highcharts canvas should render with real height`).toBeGreaterThan(100)
 
-  for (const position of ['top-right', 'right', 'bottom-left', 'top-left']) {
-    const positionedCallout = donutCard.locator(`.ntk-reference-dashboard-charts__callout--${position}`)
-    await expect(positionedCallout).toBeVisible()
-    await expect(positionedCallout.locator('strong')).toBeVisible()
-    await expect(positionedCallout.locator('span')).toBeVisible()
-    await assertReadable(
-      positionedCallout,
-      positionedCallout.locator('strong'),
-      preset,
-      `dashboard donut callout ${position}`
-    )
-  }
-
-  const fillWidths = await barFills.evaluateAll((elements) => {
-    return elements.map((element) => Number.parseFloat(window.getComputedStyle(element).width))
+  const sliceFills = await donutSlices.evaluateAll((elements) => {
+    return elements.map(element => window.getComputedStyle(element).fill)
   })
 
-  expect(fillWidths.length, `${preset.id} dashboard bars should render reference fills`).toBeGreaterThan(2)
-  fillWidths.forEach((width, index) => {
+  expect(sliceFills.length, `${preset.id} dashboard donut should render reference status segments`).toBe(4)
+  sliceFills.forEach((fill, index) => {
+    expect(fill, `${preset.id} dashboard donut slice ${index + 1} should use a resolved Highcharts fill`).not.toBe('none')
+  })
+
+  const barWidths = await barPoints.evaluateAll((elements) => {
+    return elements.map((element) => element.getBoundingClientRect().width)
+  })
+
+  expect(barWidths.length, `${preset.id} dashboard bars should render reference category bars`).toBeGreaterThanOrEqual(4)
+  barWidths.forEach((width, index) => {
     expect(width, `${preset.id} dashboard bar ${index + 1} should have a visible fill`).toBeGreaterThan(0)
   })
 
-  const axisValues = await axisTicks.evaluateAll((elements) => {
+  const axisValues = await axisLabels.evaluateAll((elements) => {
     return elements.map(element => element.textContent?.trim() ?? '')
   })
 
-  expect(axisValues.every(value => /^\d+$/.test(value)), `${preset.id} dashboard axis ticks should stay numeric`).toBe(true)
-  expect(axisValues[0], `${preset.id} dashboard axis should start at zero`).toBe('0')
+  for (const category of ['Eletrônicos', 'Alimentos', 'Vestuário', 'Higiene']) {
+    expect(axisValues, `${preset.id} dashboard category axis should include ${category}`).toContain(category)
+  }
 }
 
 async function assertDashboardCertification(page: Page, preset: PresetCertification): Promise<void> {

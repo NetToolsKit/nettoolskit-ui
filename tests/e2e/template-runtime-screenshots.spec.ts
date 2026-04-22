@@ -320,10 +320,14 @@ async function assertDashboardChartsStructure(page: Page): Promise<void> {
   const charts = page.locator('.ntk-reference-dashboard-charts')
 
   await expect(charts.locator('.ntk-reference-dashboard-charts__card')).toHaveCount(2)
-  await expect(charts.locator('.ntk-reference-dashboard-charts__donut')).toBeVisible()
-  await expect(charts.locator('.ntk-reference-dashboard-charts__callout')).toHaveCount(4)
-  await expect(charts.locator('.ntk-reference-dashboard-charts__bar-row')).toHaveCount(2)
-  await expect(charts.locator('.ntk-reference-dashboard-charts__axis-tick').first()).toBeVisible()
+  await expect(charts.locator('.ntk-reference-dashboard-charts__chart--donut .highcharts-container')).toBeVisible()
+  await expect(charts.locator('.ntk-reference-dashboard-charts__chart--bars .highcharts-container')).toBeVisible()
+  await expect(charts.locator('.ntk-reference-dashboard-charts__chart--donut .highcharts-pie-series .highcharts-point')).toHaveCount(4)
+  expect(
+    await charts.locator('.ntk-reference-dashboard-charts__chart--bars .highcharts-bar-series .highcharts-point').count(),
+    'dashboard bar chart should render the seeded reference category series'
+  ).toBeGreaterThanOrEqual(2)
+  await expect(charts.locator('.highcharts-credits')).toHaveCount(0)
 }
 
 async function capturePresetMatrix(page: Page, preset: PresetMatrixEntry): Promise<void> {
