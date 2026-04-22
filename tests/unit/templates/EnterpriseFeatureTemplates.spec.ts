@@ -12,6 +12,26 @@ const globalMountOptions = {
       'q-page': {
         template: '<div><slot /></div>',
       },
+      NtkDataTable: {
+        props: ['rows'],
+        emits: ['row-click'],
+        template: `
+          <div class="ntk-data-table-test">
+            <div
+              v-for="row in rows"
+              :key="row.id"
+              class="ntk-data-table-test-row"
+              :class="row.rowClass"
+              @click="$emit('row-click', row.id)"
+            >
+              <span
+                v-for="(value, key) in row.cells"
+                :key="key"
+              >{{ value }}</span>
+            </div>
+          </div>
+        `,
+      },
     },
   },
 }
@@ -53,7 +73,7 @@ describe('EnterpriseCommandCenterTemplate', () => {
     await wrapper.get('.ntk-template-enterprise-command__activity').trigger('click')
     expect(wrapper.emitted('activity-click')).toEqual([['act-1']])
 
-    await wrapper.get('.ntk-template-enterprise-command__table tbody tr').trigger('click')
+    await wrapper.get('.ntk-data-table-test-row').trigger('click')
     expect(wrapper.emitted('service-click')).toEqual([['svc-1']])
   })
 
@@ -114,11 +134,12 @@ describe('EnterpriseCommandCenterTemplate', () => {
     })
 
     expect(wrapper.find('.ntk-template-enterprise-command__empty').text()).toBe('All clear.')
-    const rows = wrapper.findAll('.ntk-template-enterprise-command__table tbody tr')
+    const rows = wrapper.findAll('.ntk-data-table-test-row')
     expect(rows).toHaveLength(1)
     expect(rows[0]?.text()).toContain('Auth Service')
     expect(rows[0]?.text()).toContain('99.99%')
     expect(rows[0]?.text()).toContain('Platform team')
+    expect(rows[0]?.classes()).toContain('ntk-template-enterprise-command__service-row--neutral')
   })
 })
 

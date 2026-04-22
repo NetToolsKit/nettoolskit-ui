@@ -166,107 +166,21 @@
         v-else-if="viewModeModel === 'table'"
         class="ntk-template-crud-list__table-wrap"
       >
-        <table
-          class="ntk-template-crud-list__table"
+        <NtkDataTable
           :aria-label="tableAriaLabel"
-        >
-          <thead>
-            <tr>
-              <th
-                v-if="selectable"
-                class="ntk-template-crud-list__column-check"
-              >
-                <q-checkbox
-                  :model-value="allVisibleSelected"
-                  name="crud-list-select-all-visible"
-                  dense
-                  @update:model-value="toggleVisibleSelection(Boolean($event))"
-                />
-              </th>
-
-              <th
-                v-for="column in columns"
-                :key="column.id"
-                :style="{ width: column.width }"
-                :class="resolveAlignClass(column.align)"
-              >
-                {{ column.label }}
-              </th>
-
-              <th>
-                {{ tableStatusLabel }}
-              </th>
-              <th v-if="rowActions.length > 0">
-                {{ tableActionsLabel }}
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr
-              v-for="record in filteredRecords"
-              :key="record.id"
-              class="ntk-template-crud-list__row"
-              @click="emitRowClick(record.id)"
-            >
-              <td
-                v-if="selectable"
-                class="ntk-template-crud-list__column-check"
-                @click.stop
-              >
-                <q-checkbox
-                  :model-value="isSelected(record.id)"
-                  :name="`crud-list-select-${record.id}`"
-                  dense
-                  @update:model-value="toggleRecord(record.id, Boolean($event))"
-                />
-              </td>
-
-              <td
-                v-for="column in columns"
-                :key="`${record.id}-${column.id}`"
-                :class="[
-                  resolveAlignClass(column.align),
-                  { 'ntk-template-crud-list__cell--emphasis': column.emphasize },
-                ]"
-              >
-                {{ resolveCellValue(record, column.id) }}
-              </td>
-
-              <td>
-                <span
-                  v-if="record.status"
-                  class="ntk-template-crud-list__status"
-                  :class="`ntk-template-crud-list__status--${record.status.tone || 'neutral'}`"
-                >
-                  {{ record.status.label }}
-                </span>
-                <span v-else>{{ emptyValueLabel }}</span>
-              </td>
-
-              <td
-                v-if="rowActions.length > 0"
-                class="ntk-template-crud-list__row-actions"
-                @click.stop
-              >
-                <button
-                  v-for="action in rowActions"
-                  :key="`${record.id}-${action.id}`"
-                  type="button"
-                  class="ntk-template-crud-list__row-action"
-                  :disabled="action.disable"
-                  :aria-label="action.ariaLabel || action.label || action.id"
-                  @click.stop="emitRowAction(action.id, record.id)"
-                >
-                  <q-icon
-                    :name="action.icon"
-                    size="16px"
-                  />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          :columns="columns"
+          :empty-label="emptyTitle"
+          :empty-value-label="emptyValueLabel"
+          :rows="tableRows"
+          :row-actions="rowActions"
+          :selected-keys="selectedIds"
+          :selectable="selectable"
+          :status-label="tableStatusLabel"
+          :actions-label="tableActionsLabel"
+          @row-click="emitRowClick"
+          @row-action-click="handleTableRowAction"
+          @update:selected-keys="updateSelectedIds"
+        />
       </div>
 
       <div
@@ -354,6 +268,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import NtkDataTable from '../../../components/ui/NtkDataTable.vue'
 import type {
   TemplateCrudFilterOption,
   TemplateCrudListColumn,
@@ -364,6 +279,12 @@ import type {
   TemplatePageAction,
   TemplatePageTone,
 } from '../page-template.types'
+
+type CrudDataTableRow = {
+  id: string
+  cells: Record<string, string>
+  status?: TemplateCrudListRecord['status']
+}
 
 const props = withDefaults(defineProps<{
   title?: string
@@ -547,17 +468,17 @@ const resolvedMetrics = computed<TemplateCrudMetricChip[]>(() => {
   ]
 })
 
-const selectedIdSet = computed<Set<string>>(() => new Set(selectedIds.value))
-
-const allVisibleSelected = computed<boolean>(() => {
-  if (!props.selectable || filteredRecords.value.length === 0) {
-    return false
-  }
-
-  return filteredRecords.value.every(record => selectedIdSet.value.has(record.id))
-})
-
 const cardColumns = computed<TemplateCrudListColumn[]>(() => props.columns.slice(0, 3))
+
+const tableRows = computed<CrudDataTableRow[]>(() => {
+  return filteredRecords.value.map(record => ({
+    id: record.id,
+    cells: Object.fromEntries(
+      props.columns.map(column => [column.id, resolveCellValue(record, column.id)])
+    ),
+    status: record.status,
+  }))
+})
 
 const selectedSummaryLabel = computed<string>(() => {
   return props.selectedCountLabel.replace('{count}', String(selectedIds.value.length))
@@ -644,30 +565,12 @@ function emitRowAction(actionId: string, recordId: string): void {
   emit('row-action-click', { actionId, recordId })
 }
 
-function toggleVisibleSelection(value: boolean): void {
-  const next = new Set(selectedIds.value)
-  filteredRecords.value.forEach(record => {
-    if (value) {
-      next.add(record.id)
-    } else {
-      next.delete(record.id)
-    }
-  })
-  emit('update:selectedIds', [...next])
+function handleTableRowAction(payload: { actionId: string; rowId: string }): void {
+  emitRowAction(payload.actionId, payload.rowId)
 }
 
-function toggleRecord(recordId: string, value: boolean): void {
-  const next = new Set(selectedIds.value)
-  if (value) {
-    next.add(recordId)
-  } else {
-    next.delete(recordId)
-  }
-  emit('update:selectedIds', [...next])
-}
-
-function isSelected(recordId: string): boolean {
-  return selectedIdSet.value.has(recordId)
+function updateSelectedIds(ids: string[]): void {
+  emit('update:selectedIds', ids)
 }
 
 function resolveCellValue(record: TemplateCrudListRecord, columnId: string): string {
@@ -681,18 +584,6 @@ function resolveCellValue(record: TemplateCrudListRecord, columnId: string): str
   }
 
   return String(value)
-}
-
-function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
-  if (align === 'right') {
-    return 'ntk-template-crud-list__cell--right'
-  }
-
-  if (align === 'center') {
-    return 'ntk-template-crud-list__cell--center'
-  }
-
-  return 'ntk-template-crud-list__cell--left'
 }
 </script>
 
@@ -980,57 +871,6 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   overflow-x: auto;
 }
 
-.ntk-template-crud-list__table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.ntk-template-crud-list__table th {
-  text-align: left;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
-}
-
-.ntk-template-crud-list__table td {
-  padding: 10px 12px;
-  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
-  border-bottom: 1px solid var(--ntk-template-page-border, var(--ntk-border-color));
-}
-
-.ntk-template-crud-list__row {
-  cursor: pointer;
-}
-
-.ntk-template-crud-list__row:hover {
-  background: var(--ntk-template-page-row-hover-bg, var(--ntk-bg-hover, var(--ntk-template-crud-list-surface-muted)));
-}
-
-.ntk-template-crud-list__column-check {
-  width: 42px;
-}
-
-.ntk-template-crud-list__cell--left {
-  text-align: left;
-}
-
-.ntk-template-crud-list__cell--center {
-  text-align: center;
-}
-
-.ntk-template-crud-list__cell--right {
-  text-align: right;
-}
-
-.ntk-template-crud-list__cell--emphasis {
-  font-weight: 600;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
-}
-
 .ntk-template-crud-list__status {
   min-height: 24px;
   border: 1px solid transparent;
@@ -1080,7 +920,6 @@ function resolveAlignClass(align: TemplateCrudListColumn['align']): string {
   color: var(--ntk-template-crud-list-tone-danger-text);
 }
 
-.ntk-template-crud-list__row-actions,
 .ntk-template-crud-list__card-actions {
   display: inline-flex;
   align-items: center;

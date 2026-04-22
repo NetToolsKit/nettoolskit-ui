@@ -166,37 +166,22 @@
             <span>{{ filteredServices.length }}</span>
           </header>
 
-          <table class="ntk-template-enterprise-command__table">
-            <thead>
-              <tr>
-                <th>{{ serviceNameLabel }}</th>
-                <th>{{ serviceUptimeLabel }}</th>
-                <th>{{ serviceSlaLabel }}</th>
-                <th>{{ serviceOwnerLabel }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="service in filteredServices"
-                :key="service.id"
-                role="button"
-                tabindex="0"
-                :class="`ntk-template-enterprise-command__service-row--${service.tone || 'neutral'}`"
-                @click="emit('service-click', service.id)"
-                @keyup.enter.prevent="emit('service-click', service.id)"
-                @keyup.space.prevent="emit('service-click', service.id)"
-              >
-                <td>
-                  <span class="ntk-template-enterprise-command__service-name">
-                    {{ service.name }}
-                  </span>
-                </td>
-                <td>{{ service.uptime }}</td>
-                <td>{{ service.sla }}</td>
-                <td>{{ service.owner || emptyValueLabel }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <NtkDataTable
+            class="ntk-template-enterprise-command__table"
+            :aria-label="servicesAriaLabel"
+            :columns="serviceTableColumns"
+            :empty-value-label="emptyValueLabel"
+            :rows="serviceTableRows"
+            :selectable="false"
+            :show-status="false"
+            @row-click="serviceId => emit('service-click', serviceId)"
+          >
+            <template #cell-name="{ value }">
+              <span class="ntk-template-enterprise-command__service-name">
+                {{ value }}
+              </span>
+            </template>
+          </NtkDataTable>
         </q-card-section>
       </q-card>
     </section>
@@ -206,6 +191,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import NtkDataTable from '../../../components/ui/NtkDataTable.vue'
 import type {
   TemplateEnterpriseAction,
   TemplateEnterpriseActivity,
@@ -375,6 +361,26 @@ const filteredServices = computed<TemplateEnterpriseServiceHealth[]>(() => {
     const text = [item.name, item.owner, item.uptime, item.sla].filter(Boolean).join(' ').toLowerCase()
     return text.includes(search)
   })
+})
+
+const serviceTableColumns = computed(() => [
+  { id: 'name', label: props.serviceNameLabel, emphasize: true },
+  { id: 'uptime', label: props.serviceUptimeLabel },
+  { id: 'sla', label: props.serviceSlaLabel },
+  { id: 'owner', label: props.serviceOwnerLabel },
+])
+
+const serviceTableRows = computed(() => {
+  return filteredServices.value.map(service => ({
+    id: service.id,
+    rowClass: `ntk-template-enterprise-command__service-row--${service.tone || 'neutral'}`,
+    cells: {
+      name: service.name,
+      uptime: service.uptime,
+      sla: service.sla,
+      owner: service.owner || props.emptyValueLabel,
+    },
+  }))
 })
 
 function matchesFilter(

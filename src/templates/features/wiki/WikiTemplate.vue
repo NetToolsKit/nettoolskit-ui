@@ -237,110 +237,53 @@
           </div>
 
           <div class="ntk-template-wiki__body">
-            <table
+            <NtkDataTable
               v-if="viewMode === 'list'"
               class="ntk-template-wiki__table"
+              :actions-label="tableActionsLabel"
+              :aria-label="`${title} ${tableDocumentLabel}`"
+              :columns="wikiTableColumns"
+              :empty-value-label="emptyValueLabel"
+              :rows="wikiTableRows"
+              :row-actions="wikiTableRowActions"
+              :selected-keys="selectedDocumentKeys"
+              :status-label="tableStatusLabel"
+              @row-action-click="handleWikiTableAction"
+              @row-click="handleWikiTableRowClick"
+              @update:selected-keys="updateSelectedDocumentKeys"
             >
-              <thead>
-                <tr>
-                  <th class="ntk-template-wiki__column-check">
-                    <q-checkbox
-                      v-model="selectAll"
-                      dense
-                    />
-                  </th>
-                  <th>{{ tableDocumentLabel }}</th>
-                  <th>{{ tableCategoryLabel }}</th>
-                  <th>{{ tableTagsLabel }}</th>
-                  <th>{{ tableStatusLabel }}</th>
-                  <th>{{ tableUploadDateLabel }}</th>
-                  <th>{{ tableActionsLabel }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="doc in filteredDocuments"
-                  :key="doc.id"
+              <template #cell-document="{ row }">
+                <div
+                  v-if="getWikiDocument(row.id)"
+                  class="ntk-template-wiki__file"
                 >
-                  <td class="ntk-template-wiki__column-check">
-                    <q-checkbox
-                      :model-value="selectedIds.has(doc.id)"
-                      dense
-                      @update:model-value="toggleSelection(doc.id, $event)"
+                  <div class="ntk-template-wiki__file-icon">
+                    <q-icon
+                      :name="resolveFileIcon(getWikiDocument(row.id)?.fileType)"
+                      size="16px"
                     />
-                  </td>
-                  <td>
-                    <div class="ntk-template-wiki__file">
-                      <div class="ntk-template-wiki__file-icon">
-                        <q-icon
-                          :name="resolveFileIcon(doc.fileType)"
-                          size="16px"
-                        />
-                      </div>
-                      <div>
-                        <span class="ntk-template-wiki__file-name">{{ doc.name }}</span>
-                        <span class="ntk-template-wiki__file-size">{{ doc.size || emptyValueLabel }}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{{ doc.category || emptyValueLabel }}</td>
-                  <td>
-                    <div class="ntk-template-wiki__tags">
-                      <span
-                        v-for="tag in (doc.tags || []).slice(0, 3)"
-                        :key="tag"
-                        class="ntk-template-wiki__tag"
-                      >
-                        {{ tag }}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="ntk-template-wiki__status">
-                      {{ resolveStatusLabel(doc.status || 'processed') }}
+                  </div>
+                  <div>
+                    <span class="ntk-template-wiki__file-name">{{ getWikiDocument(row.id)?.name }}</span>
+                    <span class="ntk-template-wiki__file-size">
+                      {{ getWikiDocument(row.id)?.size || emptyValueLabel }}
                     </span>
-                  </td>
-                  <td>{{ doc.uploadDate || emptyValueLabel }}</td>
-                  <td>
-                    <div class="ntk-template-wiki__actions">
-                      <button
-                        type="button"
-                        class="ntk-template-wiki__action"
-                        :aria-label="viewActionAriaLabel"
-                        @click="emit('view-document', doc)"
-                      >
-                        <q-icon
-                          name="visibility"
-                          size="16px"
-                        />
-                      </button>
-                      <button
-                        type="button"
-                        class="ntk-template-wiki__action"
-                        :aria-label="downloadActionAriaLabel"
-                        @click="emit('download-document', doc)"
-                      >
-                        <q-icon
-                          name="download"
-                          size="16px"
-                        />
-                      </button>
-                      <button
-                        type="button"
-                        class="ntk-template-wiki__action"
-                        :aria-label="askActionAriaLabel"
-                        @click="emit('ask-document', doc)"
-                      >
-                        <q-icon
-                          name="smart_toy"
-                          size="16px"
-                        />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                </div>
+              </template>
+
+              <template #cell-tags="{ row }">
+                <div class="ntk-template-wiki__tags">
+                  <span
+                    v-for="tag in (getWikiDocument(row.id)?.tags || []).slice(0, 3)"
+                    :key="tag"
+                    class="ntk-template-wiki__tag"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
+              </template>
+            </NtkDataTable>
 
             <div
               v-else
@@ -402,6 +345,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 
+import NtkDataTable from '../../../components/ui/NtkDataTable.vue'
 import type {
   TemplateWikiCategoryNode,
   TemplateWikiDocument,
@@ -623,25 +567,39 @@ const filteredDocuments = computed<TemplateWikiDocument[]>(() => {
   return documents
 })
 
-const selectAll = computed<boolean>({
-  get: () => {
-    if (filteredDocuments.value.length === 0) {
-      return false
-    }
-    return filteredDocuments.value.every(doc => selectedIds.value.has(doc.id))
-  },
-  set: value => {
-    const next = new Set(selectedIds.value)
-    filteredDocuments.value.forEach(doc => {
-      if (value) {
-        next.add(doc.id)
-      } else {
-        next.delete(doc.id)
-      }
-    })
-    selectedIds.value = next
-    emit('selection-change', [...next])
-  },
+const wikiDocumentsById = computed<Map<string, TemplateWikiDocument>>(() => {
+  return new Map(filteredDocuments.value.map(documentItem => [documentItem.id, documentItem]))
+})
+
+const selectedDocumentKeys = computed<string[]>(() => [...selectedIds.value])
+
+const wikiTableColumns = computed(() => [
+  { id: 'document', label: props.tableDocumentLabel, emphasize: true },
+  { id: 'category', label: props.tableCategoryLabel },
+  { id: 'tags', label: props.tableTagsLabel },
+  { id: 'uploadDate', label: props.tableUploadDateLabel },
+])
+
+const wikiTableRowActions = computed(() => [
+  { id: 'view', icon: 'visibility', ariaLabel: props.viewActionAriaLabel },
+  { id: 'download', icon: 'download', ariaLabel: props.downloadActionAriaLabel },
+  { id: 'ask', icon: 'smart_toy', ariaLabel: props.askActionAriaLabel },
+])
+
+const wikiTableRows = computed(() => {
+  return filteredDocuments.value.map(documentItem => ({
+    id: documentItem.id,
+    cells: {
+      document: documentItem.name,
+      category: documentItem.category || props.emptyValueLabel,
+      tags: (documentItem.tags || []).join(', ') || props.emptyValueLabel,
+      uploadDate: documentItem.uploadDate || props.emptyValueLabel,
+    },
+    status: {
+      label: resolveStatusLabel(documentItem.status || 'processed'),
+      tone: resolveStatusTone(documentItem.status || 'processed'),
+    },
+  }))
 })
 
 function isExpanded(categoryId: string): boolean {
@@ -696,15 +654,55 @@ function setViewMode(mode: TemplateWikiViewMode): void {
   emit('view-mode-change', mode)
 }
 
-function toggleSelection(documentId: string, value: boolean): void {
-  const next = new Set(selectedIds.value)
-  if (value) {
-    next.add(documentId)
-  } else {
-    next.delete(documentId)
+function getWikiDocument(documentId: string): TemplateWikiDocument | undefined {
+  return wikiDocumentsById.value.get(documentId)
+}
+
+function updateSelectedDocumentKeys(ids: string[]): void {
+  selectedIds.value = new Set(ids)
+  emit('selection-change', ids)
+}
+
+function handleWikiTableRowClick(documentId: string): void {
+  const documentItem = getWikiDocument(documentId)
+  if (documentItem) {
+    emit('view-document', documentItem)
   }
-  selectedIds.value = next
-  emit('selection-change', [...next])
+}
+
+function handleWikiTableAction(payload: { actionId: string; rowId: string }): void {
+  const documentItem = getWikiDocument(payload.rowId)
+  if (!documentItem) {
+    return
+  }
+
+  if (payload.actionId === 'download') {
+    emit('download-document', documentItem)
+    return
+  }
+
+  if (payload.actionId === 'ask') {
+    emit('ask-document', documentItem)
+    return
+  }
+
+  emit('view-document', documentItem)
+}
+
+function resolveStatusTone(status: TemplateWikiDocumentStatus): 'success' | 'warning' | 'danger' | 'neutral' {
+  if (status === 'processed') {
+    return 'success'
+  }
+
+  if (status === 'pending') {
+    return 'warning'
+  }
+
+  if (status === 'error') {
+    return 'danger'
+  }
+
+  return 'neutral'
 }
 
 function emitBulkDownload(): void {

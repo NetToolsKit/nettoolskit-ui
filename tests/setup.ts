@@ -208,6 +208,8 @@ const QCheckbox = createQuasarStub('QCheckbox')
 const QBtnDropdown = createQuasarStub('QBtnDropdown')
 const QToggle = createQuasarStub('QToggle')
 const QSpinner = createQuasarStub('QSpinner')
+const QTable = createQuasarStub('QTable')
+const QTd = createQuasarStub('QTd', 'td')
 
 // Mock the `quasar` module to avoid installing the real plugin (which requires SSR/runtime globals)
 // and to keep component mounting stable.
@@ -259,7 +261,9 @@ vi.mock('quasar', () => {
     QCheckbox,
     QBtnDropdown,
     QToggle,
-    QSpinner
+    QSpinner,
+    QTable,
+    QTd
   }
 })
 
@@ -306,7 +310,9 @@ config.global.components = {
   QCheckbox,
   QBtnDropdown,
   QToggle,
-  QSpinner
+  QSpinner,
+  QTable,
+  QTd
 }
 
 config.global.directives = {

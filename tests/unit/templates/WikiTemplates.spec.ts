@@ -13,6 +13,35 @@ const wikiGlobal = {
       'q-btn': { template: '<button><slot /></button>' },
       'q-icon': { template: '<span />' },
       'q-checkbox': { template: '<span />' },
+      NtkDataTable: {
+        props: ['rows', 'rowActions'],
+        emits: ['row-click', 'row-action-click'],
+        template: `
+          <div class="ntk-data-table-test">
+            <div
+              v-for="row in rows"
+              :key="row.id"
+              class="ntk-data-table-test-row"
+              @click="$emit('row-click', row.id)"
+            >
+              <span
+                v-for="(value, key) in row.cells"
+                :key="key"
+              >{{ value }}</span>
+              <button
+                v-for="action in rowActions"
+                :key="action.id"
+                type="button"
+                class="ntk-data-table__row-action"
+                :aria-label="action.ariaLabel || action.label || action.id"
+                @click.stop="$emit('row-action-click', { actionId: action.id, rowId: row.id })"
+              >
+                {{ action.id }}
+              </button>
+            </div>
+          </div>
+        `,
+      },
       transition: false,
     },
   },
@@ -49,7 +78,7 @@ describe('WikiTemplate', () => {
       props: { documents: sampleDocuments },
     })
 
-    const rows = wrapper.findAll('tbody tr')
+    const rows = wrapper.findAll('.ntk-data-table-test-row')
     expect(rows).toHaveLength(3)
     expect(wrapper.text()).toContain('Invoice Q1')
     expect(wrapper.text()).toContain('Contract Alpha')
@@ -66,7 +95,7 @@ describe('WikiTemplate', () => {
     const pendingBtn = filterBtns.find(b => b.text() === 'Pending')
     await pendingBtn?.trigger('click')
 
-    const rows = wrapper.findAll('tbody tr')
+    const rows = wrapper.findAll('.ntk-data-table-test-row')
     expect(rows).toHaveLength(1)
     expect(wrapper.text()).toContain('Contract Alpha')
     expect(wrapper.text()).not.toContain('Invoice Q1')
@@ -83,7 +112,7 @@ describe('WikiTemplate', () => {
     const docSearch = searchInputs[1]
     await docSearch?.setValue('invoice')
 
-    const rows = wrapper.findAll('tbody tr')
+    const rows = wrapper.findAll('.ntk-data-table-test-row')
     expect(rows).toHaveLength(1)
     expect(wrapper.text()).toContain('Invoice Q1')
     expect(wrapper.text()).not.toContain('Contract Alpha')
@@ -116,7 +145,7 @@ describe('WikiTemplate', () => {
     // Click the first category (Finance)
     await categoryBtns[0]?.trigger('click')
 
-    const rows = wrapper.findAll('tbody tr')
+    const rows = wrapper.findAll('.ntk-data-table-test-row')
     expect(rows).toHaveLength(2)
     expect(wrapper.text()).toContain('Invoice Q1')
     expect(wrapper.text()).toContain('Report Annual')

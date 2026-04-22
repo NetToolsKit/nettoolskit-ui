@@ -232,37 +232,14 @@
                     class="ntk-template-editor-workbench__tab-placeholder-icon"
                   />
                   <p class="ntk-template-editor-workbench__tab-placeholder-label">Data Bindings</p>
-                  <table class="ntk-template-editor-workbench__data-table">
-                    <thead>
-                      <tr>
-                        <th>Field</th>
-                        <th>Source</th>
-                        <th>Format</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>report_id</td>
-                        <td>reports.id</td>
-                        <td>Text</td>
-                      </tr>
-                      <tr>
-                        <td>period</td>
-                        <td>reports.period</td>
-                        <td>Date range</td>
-                      </tr>
-                      <tr>
-                        <td>total_value</td>
-                        <td>metrics.total</td>
-                        <td>Currency</td>
-                      </tr>
-                      <tr>
-                        <td>assigned_to</td>
-                        <td>users.display_name</td>
-                        <td>Text</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <NtkDataTable
+                    class="ntk-template-editor-workbench__data-table"
+                    aria-label="Data bindings"
+                    :columns="dataBindingColumns"
+                    :rows="dataBindingRows"
+                    :selectable="false"
+                    :show-status="false"
+                  />
                 </div>
               </template>
 
@@ -416,6 +393,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import NtkDataTable from '../../../components/ui/NtkDataTable.vue'
 import type {
   TemplateEditorCanvasObject,
   TemplateEditorRailAction,
@@ -636,6 +614,31 @@ const resolvedCanvasObjects = computed<TemplateEditorCanvasObject[]>(() => {
     { id: 'obj-footer', label: 'Footer strip', subtitle: 'Legal + KPI row', x: 52, y: 362, width: 1180, height: 76, tone: 'warning' },
   ]
 })
+
+const dataBindingColumns = computed(() => [
+  { id: 'field', label: 'Field', emphasize: true },
+  { id: 'source', label: 'Source' },
+  { id: 'format', label: 'Format' },
+])
+
+const dataBindingRows = computed(() => [
+  {
+    id: 'report-id',
+    cells: { field: 'report_id', source: 'reports.id', format: 'Text' },
+  },
+  {
+    id: 'period',
+    cells: { field: 'period', source: 'reports.period', format: 'Date range' },
+  },
+  {
+    id: 'total-value',
+    cells: { field: 'total_value', source: 'metrics.total', format: 'Currency' },
+  },
+  {
+    id: 'assigned-to',
+    cells: { field: 'assigned_to', source: 'users.display_name', format: 'Text' },
+  },
+])
 
 const resolvedRailActions = computed<TemplateEditorRailAction[]>(() => {
   if (props.railActions.length > 0) {

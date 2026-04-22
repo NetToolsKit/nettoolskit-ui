@@ -1,10 +1,10 @@
 /**
  * NetToolsKit UI Vue - Single Entry Point
  *
- * ⭐ ÚNICO PONTO DE ENTRADA para todo o módulo
+ * Single entry point for the whole package.
  *
- * Zero repetição: Importa tudo diretamente de cada arquivo,
- * sem index.ts intermediários nas subpastas.
+ * No intermediate subfolder index files are required; everything is exported
+ * directly from its source module to keep the public API explicit.
  *
  * @example
  * ```typescript
@@ -85,6 +85,7 @@ export { default as NtkLogo } from './src/components/ui/NtkLogo.vue'
 export { default as NtkFeatureCard } from './src/components/ui/NtkFeatureCard.vue'
 export { default as NtkSteps } from './src/components/ui/NtkSteps.vue'
 export { default as NtkCreditCard } from './src/components/ui/NtkCreditCard.vue'
+export { default as NtkDataTable } from './src/components/ui/NtkDataTable.vue'
 export { default as NtkStatCard } from './src/components/ui/NtkStatCard.vue'
 export { default as NtkTestimonialCard } from './src/components/ui/NtkTestimonialCard.vue'
 export { default as BaseButton } from './src/components/ui/BaseButton.vue'

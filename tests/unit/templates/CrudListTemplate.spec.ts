@@ -1,7 +1,69 @@
+import { defineComponent } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 
 import CrudListTemplate from '../../../src/templates/pages/crud/CrudListTemplate.vue'
+
+const NtkDataTableStub = defineComponent({
+  name: 'NtkDataTable',
+  props: {
+    ariaLabel: {
+      type: String,
+      default: '',
+    },
+    columns: {
+      type: Array,
+      default: () => [],
+    },
+    rows: {
+      type: Array,
+      default: () => [],
+    },
+    rowActions: {
+      type: Array,
+      default: () => [],
+    },
+    selectedKeys: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  emits: ['row-click', 'row-action-click', 'update:selectedKeys'],
+  template: `
+    <div class="ntk-template-crud-list__table-wrap" :aria-label="ariaLabel">
+      <button
+        type="button"
+        class="ntk-data-table-stub__select-visible"
+        @click="$emit('update:selectedKeys', rows.map(row => row.id))"
+      >
+        Select visible
+      </button>
+      <div
+        v-for="row in rows"
+        :key="row.id"
+        class="ntk-data-table__row"
+        @click="$emit('row-click', row.id)"
+      >
+        <span
+          v-for="column in columns"
+          :key="column.id"
+        >
+          {{ row.cells[column.id] }}
+        </span>
+        <button
+          v-for="action in rowActions"
+          :key="action.id"
+          type="button"
+          class="ntk-data-table__row-action"
+          :aria-label="action.ariaLabel || action.label || action.id"
+          @click.stop="$emit('row-action-click', { actionId: action.id, rowId: row.id })"
+        >
+          {{ action.id }}
+        </button>
+      </div>
+    </div>
+  `,
+})
 
 const globalMountOptions = {
   global: {
@@ -11,6 +73,7 @@ const globalMountOptions = {
         template: '<div><slot /></div>',
       },
       'q-skeleton': true,
+      NtkDataTable: NtkDataTableStub,
     },
   },
 }
@@ -81,10 +144,13 @@ describe('CrudListTemplate', () => {
     await wrapper.findAll('.ntk-template-crud-list__view')[1]?.trigger('click')
     expect(wrapper.emitted('update:viewMode')?.at(-1)).toEqual(['cards'])
 
-    await wrapper.get('.ntk-template-crud-list__row-action').trigger('click')
+    await wrapper.get('.ntk-data-table__row-action').trigger('click')
     expect(wrapper.emitted('row-action-click')).toEqual([
       [{ actionId: 'edit', recordId: 'rec-1' }],
     ])
+
+    await wrapper.get('.ntk-data-table-stub__select-visible').trigger('click')
+    expect(wrapper.emitted('update:selectedIds')?.at(-1)).toEqual([['rec-1', 'rec-2']])
 
     await wrapper.get('q-btn-stub[aria-label="Archive selected"]').trigger('click')
     expect(wrapper.emitted('bulk-action-click')).toEqual([
@@ -115,10 +181,10 @@ describe('CrudListTemplate', () => {
     expect(metrics[1]?.text()).toContain('Active')
   })
 
-  it('renders record status badge with correct tone class', () => {
+  it('renders card status badge with correct tone class', () => {
     const wrapper = shallowMount(CrudListTemplate, {
       ...globalMountOptions,
-      props: { columns: baseColumns, records: baseRecords },
+      props: { columns: baseColumns, records: baseRecords, viewMode: 'cards' },
     })
 
     const statusEls = wrapper.findAll('.ntk-template-crud-list__status')
@@ -170,7 +236,7 @@ describe('CrudListTemplate', () => {
     expect(wrapper.findAll('.ntk-template-crud-list__loading-item').length).toBeGreaterThan(0)
   })
 
-  it('filters records and updates selection through checkbox events', async () => {
+  it('filters records and emits row clicks through table mode', async () => {
     const wrapper = shallowMount(CrudListTemplate, {
       ...globalMountOptions,
       props: {
@@ -182,11 +248,11 @@ describe('CrudListTemplate', () => {
       },
     })
 
-    expect(wrapper.findAll('.ntk-template-crud-list__row')).toHaveLength(1)
+    expect(wrapper.findAll('.ntk-data-table__row')).toHaveLength(1)
     expect(wrapper.text()).toContain('Acme Corp')
     expect(wrapper.text()).not.toContain('Beta Industries')
 
-    await wrapper.get('.ntk-template-crud-list__row').trigger('click')
+    await wrapper.get('.ntk-data-table__row').trigger('click')
     expect(wrapper.emitted('row-click')).toEqual([['rec-1']])
   })
 })

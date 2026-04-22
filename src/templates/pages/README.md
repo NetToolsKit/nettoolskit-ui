@@ -21,6 +21,7 @@ Keep page templates organized by domain to maximize reuse and speed:
   - `DashboardWorkspaceTemplate.vue`
 - `crud/`
   - `CrudListTemplate.vue`
+  - table mode is rendered through `src/components/ui/NtkDataTable.vue`, a tokenized adapter over Quasar `QTable`
 - `editor/`
   - `EditorWorkbenchTemplate.vue`
 - `account/`
@@ -41,6 +42,7 @@ Keep page templates organized by domain to maximize reuse and speed:
 - no direct store coupling inside shared templates
 - no hardcoded business strings tied to one tenant/domain
 - all page templates expose typed props and emits contracts
+- CRUD table mode must use the shared `NtkDataTable` adapter instead of native table markup so selection, row events, and tokenized Quasar table styling stay consistent
 
 ## Validation
 
