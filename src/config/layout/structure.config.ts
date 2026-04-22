@@ -62,8 +62,8 @@ export interface LayoutConfig {
 export const defaultLayoutConfig: LayoutConfig = {
   header: {
     height: 64,
-    shadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
-    background: '#ffffff',
+    shadow: 'var(--ntk-layout-header-shadow, var(--ntk-template-layout-header-shadow, var(--ntk-shadow-sm)))',
+    background: 'var(--ntk-layout-header-bg, var(--ntk-header-bg, var(--ntk-card-bg)))',
     sticky: false,
     paddingX: '20px',
   },
@@ -95,7 +95,7 @@ export const stickyHeaderLayout: LayoutConfig = {
   header: {
     ...defaultLayoutConfig.header,
     sticky: true,
-    shadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+    shadow: 'var(--ntk-layout-header-sticky-shadow, var(--ntk-shadow-md))',
   },
 };
 
