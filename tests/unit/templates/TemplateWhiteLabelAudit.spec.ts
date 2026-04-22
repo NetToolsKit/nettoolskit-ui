@@ -1,10 +1,31 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
 function readRepoFile(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), 'utf8')
+}
+
+function listRepoFiles(relativeDirectory: string): string[] {
+  const absoluteDirectory = fileURLToPath(new URL(relativeDirectory, import.meta.url))
+  const entries = readdirSync(absoluteDirectory)
+
+  return entries.flatMap((entry) => {
+    const childRelativePath = `${relativeDirectory}/${entry}`
+    const childAbsolutePath = fileURLToPath(new URL(childRelativePath, import.meta.url))
+    const stats = statSync(childAbsolutePath)
+
+    if (stats.isDirectory()) {
+      return listRepoFiles(childRelativePath)
+    }
+
+    return childRelativePath
+  })
+}
+
+function toDisplayPath(relativePath: string): string {
+  return relativePath.replace(/^\.\.\/\.\.\/\.\.\//, '')
 }
 
 function readCssBlock(source: string, selector: string): string {
@@ -22,6 +43,144 @@ function readCssBlock(source: string, selector: string): string {
   }
 
   return source.slice(blockStart + 1, blockEnd)
+}
+
+type ColorGuardrailViolation = {
+  file: string
+  line: number
+  rule: string
+  source: string
+}
+
+const scannedColorGuardrailRoots = [
+  '../../../src/templates',
+  '../../../src/components/layout',
+  '../../../src/components/ui',
+  '../../../src/components/form',
+]
+
+const colorGuardrailFilePattern = /\.(?:vue|ts|scss|css)$/
+const quasarPaletteNamePattern = /\b(?:primary|secondary|accent|positive|negative|warning|info|dark|grey-[0-9]|white|black)\b/
+const quasarPaletteClassPattern = /\b(?:bg|text)-(?:primary|secondary|accent|positive|negative|warning|info|dark|grey-[0-9]|white|black)\b/
+const fixedColorLiteralPattern = /#[0-9a-fA-F]{3,8}\b|(?<![a-z-])(?:rgba?|hsla?)\((?!\s*var\(--)[^)]+\)/g
+
+const colorLiteralAllowlist = [
+  {
+    file: 'src/components/ui/NtkCreditCard.vue',
+    source: 'rgba(var(--ntk-primary-rgb), 0.15)',
+    reason: 'RGB channels are tokenized through --ntk-primary-rgb.',
+  },
+]
+
+const quasarPaletteClassAllowlist = [
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.q-notification.bg-positive',
+    reason: 'Bridge selectors remap Quasar notification classes to theme tokens.',
+  },
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.q-notification.bg-negative',
+    reason: 'Bridge selectors remap Quasar notification classes to theme tokens.',
+  },
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.q-notification.bg-warning',
+    reason: 'Bridge selectors remap Quasar notification classes to theme tokens.',
+  },
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.q-notification.bg-info',
+    reason: 'Bridge selectors remap Quasar notification classes to theme tokens.',
+  },
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.q-btn.text-primary',
+    reason: 'Bridge selectors remap Quasar action classes to theme tokens.',
+  },
+  {
+    file: 'src/templates/styles/reference-app-bridge.scss',
+    source: '.bg-primary',
+    reason: 'Bridge selectors remap Quasar action classes to theme tokens.',
+  },
+]
+
+function isAllowedViolation(
+  file: string,
+  source: string,
+  allowlist: Array<{ file: string; source: string }>
+): boolean {
+  return allowlist.some(entry => entry.file === file && source.includes(entry.source))
+}
+
+function scanTemplateColorGuardrails(): ColorGuardrailViolation[] {
+  const files = scannedColorGuardrailRoots
+    .flatMap(root => listRepoFiles(root))
+    .filter(file => colorGuardrailFilePattern.test(file))
+
+  const violations: ColorGuardrailViolation[] = []
+
+  for (const relativePath of files) {
+    const displayPath = toDisplayPath(relativePath)
+    const lines = readRepoFile(relativePath).split(/\r?\n/)
+
+    lines.forEach((line, lineIndex) => {
+      const source = line.trim()
+
+      if (!source) {
+        return
+      }
+
+      if (/theme\.value\.(?:colors|gradients)/.test(source)) {
+        violations.push({
+          file: displayPath,
+          line: lineIndex + 1,
+          rule: 'legacy theme.value colors/gradients',
+          source,
+        })
+      }
+
+      if (
+        /\b:?(?:color|text-color|bg-color)\s*=/.test(source)
+        && quasarPaletteNamePattern.test(source)
+      ) {
+        violations.push({
+          file: displayPath,
+          line: lineIndex + 1,
+          rule: 'direct Quasar palette prop',
+          source,
+        })
+      }
+
+      if (
+        /\b:?class\s*=/.test(source)
+        && quasarPaletteClassPattern.test(source)
+        && !isAllowedViolation(displayPath, source, quasarPaletteClassAllowlist)
+      ) {
+        violations.push({
+          file: displayPath,
+          line: lineIndex + 1,
+          rule: 'direct Quasar palette class',
+          source,
+        })
+      }
+
+      for (const [literal] of source.matchAll(fixedColorLiteralPattern)) {
+        if (isAllowedViolation(displayPath, source, colorLiteralAllowlist)) {
+          continue
+        }
+
+        violations.push({
+          file: displayPath,
+          line: lineIndex + 1,
+          rule: `fixed color literal ${literal}`,
+          source,
+        })
+      }
+    })
+  }
+
+  return violations
 }
 
 describe('template white-label audit', () => {
@@ -824,6 +983,17 @@ describe('template white-label audit', () => {
         ).not.toContain(snippet)
       }
     }
+  })
+
+  it('scans templates and shared Vue components for non-tokenized color regressions', () => {
+    const violations = scanTemplateColorGuardrails()
+
+    expect(
+      violations,
+      violations
+        .map(violation => `${violation.file}:${violation.line} ${violation.rule} -> ${violation.source}`)
+        .join('\n')
+    ).toEqual([])
   })
 
   it('keeps audited files token-driven instead of plain semantic literals', () => {

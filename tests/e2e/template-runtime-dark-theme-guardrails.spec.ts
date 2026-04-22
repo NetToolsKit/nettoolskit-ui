@@ -319,6 +319,48 @@ function expectReadableSurface(
   ).toBeGreaterThan(4)
 }
 
+type SurfaceAssertion = (
+  metrics: Awaited<ReturnType<typeof readResolvedSurfaceMetrics>>,
+  context: string
+) => void
+
+async function expectAllVisibleSurfaces(
+  surfaces: Locator,
+  context: string,
+  assertion: SurfaceAssertion
+): Promise<number> {
+  const surfaceCount = await surfaces.count()
+  expect(surfaceCount, `${context} should render visible surfaces`).toBeGreaterThan(0)
+
+  for (let surfaceIndex = 0; surfaceIndex < surfaceCount; surfaceIndex += 1) {
+    const surface = surfaces.nth(surfaceIndex)
+    await expect(surface).toBeVisible()
+    assertion(
+      await readResolvedSurfaceMetrics(surface),
+      `${context} ${surfaceIndex + 1}`
+    )
+  }
+
+  return surfaceCount
+}
+
+async function expectOptionalVisibleSurfaces(
+  surfaces: Locator,
+  context: string,
+  assertion: SurfaceAssertion
+): Promise<void> {
+  const surfaceCount = await surfaces.count()
+
+  for (let surfaceIndex = 0; surfaceIndex < surfaceCount; surfaceIndex += 1) {
+    const surface = surfaces.nth(surfaceIndex)
+    await expect(surface).toBeVisible()
+    assertion(
+      await readResolvedSurfaceMetrics(surface),
+      `${context} ${surfaceIndex + 1}`
+    )
+  }
+}
+
 async function assertCrudDarkSurfaces(
   page: Page,
   route: string,
@@ -334,8 +376,8 @@ async function assertCrudDarkSurfaces(
   const searchSurface = page.locator('.ntk-template-crud-list__search')
   const searchInput = page.getByLabel(searchLabel)
   const tableWrap = page.locator('.ntk-template-crud-list__table-wrap')
-  const tableHeader = page.locator(`table[aria-label="${tableLabel}"] thead th`).first()
   const table = page.locator(`table[aria-label="${tableLabel}"]`)
+  const tableHeaderCells = table.locator('thead th:visible')
   const tableBodyCells = table.locator('tbody td:visible')
   const tableStatusChips = table.locator('.ntk-template-crud-list__status:visible')
   const tableRowActions = table.locator('.ntk-template-crud-list__row-action:visible')
@@ -344,12 +386,22 @@ async function assertCrudDarkSurfaces(
   const viewToggle = page.locator('.ntk-template-crud-list__view--active').first()
   const metrics = page.locator('.ntk-template-crud-list__metric:visible')
   const pagination = page.locator('.ntk-template-crud-list__pagination:visible, .q-pagination:visible')
+  const paginationControls = page.locator(
+    '.ntk-template-crud-list__pagination .q-btn:visible, .q-pagination .q-btn:visible, '
+    + '.ntk-template-crud-list__pagination button:visible, .q-pagination button:visible'
+  )
   const footer = page.locator('.ntk-template-crud-list__footer:visible, .q-table__bottom:visible')
+  const footerControls = page.locator(
+    '.ntk-template-crud-list__footer .q-btn:visible, .q-table__bottom .q-btn:visible, '
+    + '.ntk-template-crud-list__footer button:visible, .q-table__bottom button:visible, '
+    + '.ntk-template-crud-list__footer .q-field__control:visible, .q-table__bottom .q-field__control:visible, '
+    + '.ntk-template-crud-list__footer .q-table__bottom-item:visible, .q-table__bottom .q-table__bottom-item:visible'
+  )
 
   await expect(searchSurface).toBeVisible()
   await page.getByRole('button', { name: tableToggleLabel }).click()
   await expect(tableWrap).toBeVisible()
-  await expect(tableHeader).toBeVisible()
+  await expect(tableHeaderCells.first()).toBeVisible()
   await expect(tableBodyCells.first()).toBeVisible()
   await expect(activeFilter).toBeVisible()
   await expect(viewToggle).toBeVisible()
@@ -359,21 +411,21 @@ async function assertCrudDarkSurfaces(
     `${themeId} ${route} search surface`
   )
   expectDarkReadableSurface(
-    await readResolvedSurfaceMetrics(tableWrap, tableHeader),
+    await readResolvedSurfaceMetrics(tableWrap, tableHeaderCells.first()),
     `${themeId} ${route} table surface`
   )
 
-  const visibleCellCount = await tableBodyCells.count()
-  expect(visibleCellCount, `${themeId} ${route} should render visible table cells`).toBeGreaterThan(0)
+  await expectAllVisibleSurfaces(
+    tableHeaderCells,
+    `${themeId} ${route} visible table header cell`,
+    expectDarkReadableSurface
+  )
 
-  for (let cellIndex = 0; cellIndex < visibleCellCount; cellIndex += 1) {
-    const cell = tableBodyCells.nth(cellIndex)
-    await expect(cell).toBeVisible()
-    expectDarkReadableSurface(
-      await readResolvedSurfaceMetrics(cell),
-      `${themeId} ${route} visible table cell ${cellIndex + 1}`
-    )
-  }
+  await expectAllVisibleSurfaces(
+    tableBodyCells,
+    `${themeId} ${route} visible table body cell`,
+    expectDarkReadableSurface
+  )
 
   const filterCount = await visibleFilters.count()
   expect(filterCount, `${themeId} ${route} should render filter controls`).toBeGreaterThan(0)
@@ -429,16 +481,28 @@ async function assertCrudDarkSurfaces(
   )
 
   if (await pagination.count() > 0) {
-    expectDarkReadableSurface(
-      await readResolvedSurfaceMetrics(pagination.first()),
-      `${themeId} ${route} pagination`
+    await expectOptionalVisibleSurfaces(
+      pagination,
+      `${themeId} ${route} pagination surface`,
+      expectDarkReadableSurface
+    )
+    await expectOptionalVisibleSurfaces(
+      paginationControls,
+      `${themeId} ${route} pagination control`,
+      expectReadableSurface
     )
   }
 
   if (await footer.count() > 0) {
-    expectDarkReadableSurface(
-      await readResolvedSurfaceMetrics(footer.first()),
-      `${themeId} ${route} table footer`
+    await expectOptionalVisibleSurfaces(
+      footer,
+      `${themeId} ${route} table footer surface`,
+      expectDarkReadableSurface
+    )
+    await expectOptionalVisibleSurfaces(
+      footerControls,
+      `${themeId} ${route} table footer control`,
+      expectReadableSurface
     )
   }
 }
@@ -593,16 +657,16 @@ async function assertWikiDarkSurfaces(page: Page, themeId: string): Promise<void
   const firstTreeItem = page.locator('.ntk-template-wiki__tree-item').first()
   const wikiSurface = page.locator('.ntk-template-wiki__surface')
   const activeFilter = page.locator('.ntk-template-wiki__filter--active').first()
-  const tableHeader = page.locator('.ntk-template-wiki__table th').nth(1)
-  const tableBodyCell = page.locator('.ntk-template-wiki__table tbody tr').first().locator('td').nth(1)
+  const tableHeaderCells = page.locator('.ntk-template-wiki__table th:visible')
+  const tableBodyCells = page.locator('.ntk-template-wiki__table tbody td:visible')
 
   await expect(hero).toBeVisible()
   await expect(sidebar).toBeVisible()
   await expect(sidebarSearch).toBeVisible()
   await expect(contentSearch).toBeVisible()
   await expect(wikiSurface).toBeVisible()
-  await expect(tableHeader).toBeVisible()
-  await expect(tableBodyCell).toBeVisible()
+  await expect(tableHeaderCells.first()).toBeVisible()
+  await expect(tableBodyCells.first()).toBeVisible()
   await firstTreeItem.click()
 
   const activeTreeItem = page.locator('.ntk-template-wiki__tree-item--active').first()
@@ -641,12 +705,19 @@ async function assertWikiDarkSurfaces(page: Page, themeId: string): Promise<void
     `${themeId} knowledge active filter`
   )
   expectDarkReadableSurface(
-    await readResolvedSurfaceMetrics(wikiSurface, tableHeader),
+    await readResolvedSurfaceMetrics(wikiSurface, tableHeaderCells.first()),
     `${themeId} knowledge content surface`
   )
-  expectDarkReadableSurface(
-    await readResolvedSurfaceMetrics(tableBodyCell),
-    `${themeId} knowledge table body`
+
+  await expectAllVisibleSurfaces(
+    tableHeaderCells,
+    `${themeId} knowledge table header cell`,
+    expectDarkReadableSurface
+  )
+  await expectAllVisibleSurfaces(
+    tableBodyCells,
+    `${themeId} knowledge table body cell`,
+    expectDarkReadableSurface
   )
 }
 
