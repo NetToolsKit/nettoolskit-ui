@@ -451,9 +451,16 @@ function resolveActionTone(
 
 <style scoped lang="scss">
 .ntk-template-enterprise-command {
+  --ntk-template-enterprise-accent: var(--ntk-template-page-accent, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))));
+  --ntk-template-enterprise-on-accent: var(--ntk-template-page-on-accent, var(--ntk-text-on-primary, var(--ntk-on-primary, var(--ntk-text-inverse))));
+  --ntk-template-enterprise-info: var(--ntk-template-notification-info, var(--ntk-template-page-info, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-enterprise-positive: var(--ntk-template-notification-positive, var(--ntk-template-page-success, var(--semantic-success-primary, var(--ntk-success))));
+  --ntk-template-enterprise-warning: var(--ntk-template-notification-warning, var(--ntk-template-page-warning, var(--semantic-warning-primary, var(--ntk-warning))));
+  --ntk-template-enterprise-negative: var(--ntk-template-notification-negative, var(--ntk-template-page-error, var(--semantic-error-primary, var(--ntk-error))));
   --ntk-template-enterprise-surface: var(--ntk-template-page-card-bg, var(--ntk-bg-card));
   --ntk-template-enterprise-border: var(--ntk-template-page-border, var(--ntk-border-color));
   --ntk-template-enterprise-text: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-enterprise-body: var(--ntk-template-page-text, var(--ntk-template-enterprise-text));
   --ntk-template-enterprise-muted: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
   --ntk-template-enterprise-row-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
 
@@ -553,8 +560,8 @@ function resolveActionTone(
 }
 
 .ntk-template-enterprise-command__filter--active {
-  background: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
-  color: var(--ntk-text-on-primary, var(--ntk-on-primary, var(--ntk-text-inverse)));
+  background: var(--ntk-template-enterprise-accent);
+  color: var(--ntk-template-enterprise-on-accent);
 }
 
 .ntk-template-enterprise-command__kpis {
@@ -576,39 +583,39 @@ function resolveActionTone(
 
 .ntk-template-enterprise-command__kpi--primary,
 .ntk-template-enterprise-command__kpi--info {
-  border-color: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  border-color: color-mix(in srgb, var(--ntk-template-enterprise-info) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-info) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__kpi--success {
-  border-color: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  border-color: color-mix(in srgb, var(--ntk-template-enterprise-positive) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-positive) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__kpi--warning {
-  border-color: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  border-color: color-mix(in srgb, var(--ntk-template-enterprise-warning) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-warning) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__kpi--danger {
-  border-color: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
-  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  border-color: color-mix(in srgb, var(--ntk-template-enterprise-negative) 42%, var(--ntk-template-page-border, var(--ntk-border-color)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-negative) 10%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__kpi strong {
   display: block;
-  color: var(--ntk-template-page-title, var(--ntk-text-primary));
+  color: var(--ntk-template-enterprise-text);
   line-height: 1.15;
 }
 
 .ntk-template-enterprise-command__kpi span {
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
   font-size: 12px;
 }
 
 .ntk-template-enterprise-command__kpi small {
   font-size: 11px;
-  color: var(--ntk-template-page-subtitle, var(--ntk-text-secondary));
+  color: var(--ntk-template-enterprise-muted);
 }
 
 .ntk-template-enterprise-command__grid {
@@ -690,25 +697,25 @@ function resolveActionTone(
 .ntk-template-enterprise-command__activity--info,
 .ntk-template-enterprise-command__service-row--primary,
 .ntk-template-enterprise-command__service-row--info {
-  background: color-mix(in srgb, var(--ntk-template-notification-info, var(--semantic-info-primary, var(--ntk-info))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-info) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__alert--success,
 .ntk-template-enterprise-command__activity--success,
 .ntk-template-enterprise-command__service-row--success {
-  background: color-mix(in srgb, var(--ntk-template-notification-positive, var(--semantic-success-primary, var(--ntk-success))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-positive) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__alert--warning,
 .ntk-template-enterprise-command__activity--warning,
 .ntk-template-enterprise-command__service-row--warning {
-  background: color-mix(in srgb, var(--ntk-template-notification-warning, var(--semantic-warning-primary, var(--ntk-warning))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-warning) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__alert--danger,
 .ntk-template-enterprise-command__activity--danger,
 .ntk-template-enterprise-command__service-row--danger {
-  background: color-mix(in srgb, var(--ntk-template-notification-negative, var(--semantic-error-primary, var(--ntk-error))) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-negative) 8%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__alert-main strong,
@@ -757,7 +764,7 @@ function resolveActionTone(
 
 .ntk-template-enterprise-command__table td {
   font-size: 13px;
-  color: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-template-enterprise-text)));
+  color: var(--ntk-template-enterprise-body);
 }
 
 .ntk-template-enterprise-command__table tr[role='button'] {
@@ -765,7 +772,7 @@ function resolveActionTone(
 }
 
 .ntk-template-enterprise-command__table tr[role='button']:hover {
-  background: color-mix(in srgb, var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info)))) 5%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  background: color-mix(in srgb, var(--ntk-template-enterprise-accent) 5%, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
 }
 
 .ntk-template-enterprise-command__service-name {

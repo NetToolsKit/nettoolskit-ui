@@ -289,8 +289,12 @@ const showArchitecture = computed(() => {
 
 <style scoped lang="scss">
 .ntk-reference-catalog-template {
-  --ntk-reference-catalog-template-callout-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent) 12%, var(--ntk-reference-panel-bg, var(--ntk-bg-card))));
-  --ntk-reference-catalog-template-callout-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent));
+  --ntk-reference-catalog-template-accent: var(--ntk-reference-accent, var(--ntk-template-page-accent, var(--ntk-primary)));
+  --ntk-reference-catalog-template-accent-light: var(--ntk-reference-accent-light, var(--ntk-template-page-accent-light, var(--ntk-reference-catalog-template-accent)));
+  --ntk-reference-catalog-template-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-catalog-template-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  --ntk-reference-catalog-template-callout-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-catalog-template-accent) 12%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))));
+  --ntk-reference-catalog-template-callout-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-catalog-template-accent));
   --ntk-reference-catalog-template-callout-badge-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-catalog-template-callout-badge-text) 14%, transparent));
 
   display: flex;
@@ -298,8 +302,8 @@ const showArchitecture = computed(() => {
   gap: 28px;
   padding: 24px;
   background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--ntk-reference-accent) 16%, transparent) 0%, transparent 34%),
-    radial-gradient(circle at 6% 16%, color-mix(in srgb, var(--ntk-primary-light) 10%, transparent) 0%, transparent 22%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--ntk-reference-catalog-template-accent) 16%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 6% 16%, color-mix(in srgb, var(--ntk-reference-catalog-template-accent-light) 10%, transparent) 0%, transparent 22%),
     var(--ntk-reference-page-bg);
 }
 
@@ -321,20 +325,20 @@ const showArchitecture = computed(() => {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
 }
 
 .ntk-reference-catalog-template__hero h1,
 .ntk-reference-catalog-template__section-header h2,
 .ntk-reference-catalog-template__section-header h3 {
   margin: 0;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-catalog-template-text);
 }
 
 .ntk-reference-catalog-template__hero-description {
   margin: 12px 0 0;
   max-width: 680px;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
   line-height: 1.7;
   font-size: 15px;
 }
@@ -349,7 +353,7 @@ const showArchitecture = computed(() => {
   align-items: center;
   gap: 10px;
   padding: 0 16px;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
 }
 
 .ntk-reference-catalog-template__search-input {
@@ -357,7 +361,7 @@ const showArchitecture = computed(() => {
   border: 0;
   background: transparent;
   outline: 0;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-catalog-template-text);
   font-size: 14px;
 }
 
@@ -387,14 +391,14 @@ const showArchitecture = computed(() => {
   display: block;
   font-size: 26px;
   line-height: 1.1;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-catalog-template-text);
   font-family: var(--ntk-font-family-display, system-ui, sans-serif);
 }
 
 .ntk-reference-catalog-template__stat span {
   display: block;
   margin-top: 4px;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
   font-size: 13px;
 }
 
@@ -411,7 +415,7 @@ const showArchitecture = computed(() => {
 
 .ntk-reference-catalog-template__callout strong {
   font-size: 13px;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-catalog-template-text);
 }
 
 .ntk-reference-catalog-template__callout small {
@@ -473,7 +477,7 @@ const showArchitecture = computed(() => {
   display: inline-flex;
   align-items: center;
   background: var(--ntk-reference-panel-muted-bg);
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
   font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
   font-size: 12px;
   font-weight: 500;
@@ -488,7 +492,7 @@ const showArchitecture = computed(() => {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
 }
 
 .ntk-reference-catalog-template__surface-grid,
@@ -533,19 +537,19 @@ const showArchitecture = computed(() => {
 .ntk-reference-catalog-template__runtime-link p,
 .ntk-reference-catalog-template__architecture-card p {
   margin: 12px 0 0;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-catalog-template-muted);
   line-height: 1.6;
 }
 
 :global(.body--dark) .ntk-reference-catalog-template {
-  --ntk-reference-catalog-template-callout-badge-bg: color-mix(in srgb, var(--ntk-reference-accent) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary)));
-  --ntk-reference-catalog-template-callout-badge-text: var(--ntk-text-primary);
-  --ntk-reference-catalog-template-callout-badge-border: color-mix(in srgb, var(--ntk-reference-accent) 36%, var(--ntk-reference-border));
+  --ntk-reference-catalog-template-callout-badge-bg: color-mix(in srgb, var(--ntk-reference-catalog-template-accent) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-secondary))));
+  --ntk-reference-catalog-template-callout-badge-text: var(--ntk-reference-catalog-template-text);
+  --ntk-reference-catalog-template-callout-badge-border: color-mix(in srgb, var(--ntk-reference-catalog-template-accent) 36%, var(--ntk-reference-border));
 }
 
 .ntk-reference-catalog-template__architecture-card h3 {
   margin: 14px 0 0;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-catalog-template-text);
 }
 
 .ntk-reference-catalog-template__architecture-list {
@@ -553,7 +557,7 @@ const showArchitecture = computed(() => {
   padding-left: 18px;
   display: grid;
   gap: 8px;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-catalog-template-text);
 }
 
 @media (max-width: 1240px) {

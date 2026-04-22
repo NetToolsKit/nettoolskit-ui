@@ -47,6 +47,9 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .ntk-reference-tabs-bar {
+  --ntk-reference-tabs-bar-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-tabs-bar-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+
   border: 1px solid var(--ntk-reference-border);
   border-radius: 18px;
   background: var(--ntk-reference-panel-bg);
@@ -75,14 +78,14 @@ const emit = defineEmits<{
 
 .ntk-reference-tabs-bar__tab span {
   display: block;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-tabs-bar-text);
   font-weight: 700;
 }
 
 .ntk-reference-tabs-bar__tab small {
   display: block;
   margin-top: 4px;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-tabs-bar-muted);
 }
 
 .ntk-reference-tabs-bar__tab--active {
@@ -94,7 +97,7 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-tabs-bar-muted);
   font-size: 13px;
 }
 

@@ -102,15 +102,18 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .ntk-reference-detail-card {
-  --ntk-reference-detail-card-tag-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 12%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)))));
-  --ntk-reference-detail-card-tag-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))));
+  --ntk-reference-detail-card-accent: var(--ntk-reference-accent, var(--ntk-template-page-accent, var(--ntk-accent, var(--ntk-primary))));
+  --ntk-reference-detail-card-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary, var(--ntk-text-body))));
+  --ntk-reference-detail-card-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-body))));
+  --ntk-reference-detail-card-tag-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-detail-card-accent) 12%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)))));
+  --ntk-reference-detail-card-tag-text: var(--ntk-reference-badge-text, var(--ntk-reference-detail-card-accent));
   --ntk-reference-detail-card-tag-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-detail-card-tag-text) 14%, transparent));
 
   border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
   border-radius: 20px;
   background: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
   padding: 20px;
-  box-shadow: 0 18px 40px color-mix(in srgb, var(--ntk-text-primary, var(--ntk-text-body)) 5%, transparent);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--ntk-reference-detail-card-text) 5%, transparent);
 }
 
 .ntk-reference-detail-card__header {
@@ -126,16 +129,16 @@ const emit = defineEmits<{
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-detail-card-muted);
 }
 
 .ntk-reference-detail-card__header h2 {
   margin: 8px 0 0;
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-detail-card-text);
 }
 
 .ntk-reference-detail-card__description {
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-detail-card-muted);
 }
 
 .ntk-reference-detail-card__meta {
@@ -149,12 +152,12 @@ const emit = defineEmits<{
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: color-mix(in srgb, var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body))) 76%, transparent);
+  color: color-mix(in srgb, var(--ntk-reference-detail-card-muted) 76%, transparent);
 }
 
 .ntk-reference-detail-card__meta dd {
   margin: 6px 0 0;
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-detail-card-text);
   font-weight: 600;
 }
 
@@ -194,13 +197,13 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-detail-card-text);
 }
 
 .ntk-reference-detail-card__action span {
   display: block;
   margin-top: 8px;
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-detail-card-muted);
   font-size: 13px;
 }
 
@@ -211,8 +214,8 @@ const emit = defineEmits<{
 }
 
 :global(.body--dark) .ntk-reference-detail-card {
-  --ntk-reference-detail-card-tag-bg: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary)));
-  --ntk-reference-detail-card-tag-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
-  --ntk-reference-detail-card-tag-border: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 36%, var(--ntk-reference-border, var(--ntk-border-color)));
+  --ntk-reference-detail-card-tag-bg: color-mix(in srgb, var(--ntk-reference-detail-card-accent) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-secondary))));
+  --ntk-reference-detail-card-tag-text: var(--ntk-reference-detail-card-text);
+  --ntk-reference-detail-card-tag-border: color-mix(in srgb, var(--ntk-reference-detail-card-accent) 36%, var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color))));
 }
 </style>

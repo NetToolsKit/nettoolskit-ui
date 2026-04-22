@@ -248,19 +248,20 @@ const loginPassword = ref('demo-password')
 
 <style scoped lang="scss">
 .ntk-reference-catalog-preview {
-  --ntk-reference-catalog-preview-shell-border: var(--ntk-reference-shell-chrome-border, var(--ntk-border-color));
-  --ntk-reference-catalog-preview-shell-bg: var(--ntk-reference-shell-chrome-bg, color-mix(in srgb, var(--ntk-bg-card) 90%, transparent));
-  --ntk-reference-catalog-preview-shell-shadow: var(--ntk-reference-shell-glow, 0 18px 48px color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
-  --ntk-reference-catalog-preview-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-primary)));
-  --ntk-reference-catalog-preview-muted: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
-  --ntk-reference-catalog-preview-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 12%, var(--ntk-reference-panel-bg, var(--ntk-bg-card))));
-  --ntk-reference-catalog-preview-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-accent, var(--ntk-primary)));
-  --ntk-reference-catalog-preview-badge-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-badge-text) 14%, transparent));
-  --ntk-reference-catalog-preview-muted-badge-bg: var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary));
-  --ntk-reference-catalog-preview-muted-badge-border: var(--ntk-reference-border, var(--ntk-border-color));
-  --ntk-reference-catalog-preview-surface-border: var(--ntk-reference-border, var(--ntk-border-color));
-  --ntk-reference-catalog-preview-surface-bg: var(--ntk-reference-panel-bg, var(--ntk-bg-card));
-  --ntk-reference-catalog-preview-surface-shadow: var(--ntk-shadow-md, 0 24px 48px color-mix(in srgb, var(--ntk-text-primary) 12%, transparent));
+  --ntk-reference-catalog-preview-accent: var(--ntk-reference-accent, var(--ntk-template-page-accent, var(--ntk-primary)));
+  --ntk-reference-catalog-preview-shell-border: var(--ntk-reference-shell-chrome-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  --ntk-reference-catalog-preview-shell-bg: var(--ntk-reference-shell-chrome-bg, color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))) 90%, transparent));
+  --ntk-reference-catalog-preview-shell-shadow: var(--ntk-reference-shell-glow, 0 18px 48px color-mix(in srgb, var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary))) 8%, transparent));
+  --ntk-reference-catalog-preview-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-catalog-preview-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  --ntk-reference-catalog-preview-badge-bg: var(--ntk-reference-badge-bg, color-mix(in srgb, var(--ntk-reference-catalog-preview-accent) 12%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card)))));
+  --ntk-reference-catalog-preview-badge-text: var(--ntk-reference-badge-text, var(--ntk-reference-catalog-preview-accent));
+  --ntk-reference-catalog-preview-badge-border: var(--ntk-reference-badge-border, color-mix(in srgb, var(--ntk-reference-catalog-preview-badge-text) 14%, transparent));
+  --ntk-reference-catalog-preview-muted-badge-bg: var(--ntk-reference-panel-muted-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-secondary)));
+  --ntk-reference-catalog-preview-muted-badge-border: var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  --ntk-reference-catalog-preview-surface-border: var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  --ntk-reference-catalog-preview-surface-bg: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card)));
+  --ntk-reference-catalog-preview-surface-shadow: var(--ntk-reference-panel-shadow, var(--ntk-shadow-md, 0 24px 48px color-mix(in srgb, var(--ntk-reference-catalog-preview-text) 12%, transparent)));
 
   display: flex;
   flex-direction: column;
@@ -352,8 +353,8 @@ const loginPassword = ref('demo-password')
 }
 
 :global(.body--dark) .ntk-reference-catalog-preview {
-  --ntk-reference-catalog-preview-badge-bg: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary)));
-  --ntk-reference-catalog-preview-badge-text: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
-  --ntk-reference-catalog-preview-badge-border: color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary)) 36%, var(--ntk-reference-border, var(--ntk-border-color)));
+  --ntk-reference-catalog-preview-badge-bg: color-mix(in srgb, var(--ntk-reference-catalog-preview-accent) 24%, var(--ntk-reference-panel-muted-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-secondary))));
+  --ntk-reference-catalog-preview-badge-text: var(--ntk-reference-catalog-preview-text);
+  --ntk-reference-catalog-preview-badge-border: color-mix(in srgb, var(--ntk-reference-catalog-preview-accent) 36%, var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color))));
 }
 </style>

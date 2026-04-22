@@ -1164,12 +1164,12 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 
   .ntk-template-editor-workbench__widgets-panel {
     border-right: 0;
-    border-bottom: 1px solid var(--ntk-border-color);
+    border-bottom: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
   }
 
   .ntk-template-editor-workbench__right-rail {
     border-left: 0;
-    border-top: 1px solid var(--ntk-border-color);
+    border-top: 1px solid var(--ntk-template-editor-border, var(--ntk-border-color));
     flex-direction: row;
     justify-content: center;
   }
@@ -1258,18 +1258,18 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 .ntk-template-editor-workbench__document-region--header {
   height: 180px;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, transparent);
+  background: color-mix(in srgb, var(--ntk-template-editor-info, var(--semantic-info-primary, var(--ntk-info))) 18%, transparent);
 }
 
 .ntk-template-editor-workbench__document-region--body {
   flex: 1;
-  background: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 18%, transparent);
+  background: color-mix(in srgb, var(--ntk-template-editor-success, var(--semantic-success-primary, var(--ntk-success))) 18%, transparent);
 }
 
 .ntk-template-editor-workbench__document-region--footer {
   height: 100px;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 18%, transparent);
+  background: color-mix(in srgb, var(--ntk-template-editor-warning, var(--semantic-warning-primary, var(--ntk-warning))) 18%, transparent);
   border-bottom: none;
 }
 
@@ -1285,7 +1285,7 @@ function resolveCanvasObjectStyle(item: TemplateEditorCanvasObject, index: numbe
 /* ── Preview mode ──────────────────────────────────────────────────────── */
 
 .ntk-template-editor-workbench__canvas-stage--preview {
-  background: var(--ntk-bg-card);
+  background: var(--ntk-template-editor-canvas-bg, var(--ntk-template-editor-stage-bg, var(--ntk-template-editor-surface, var(--ntk-bg-card))));
 }
 
 .ntk-template-editor-workbench__canvas-stage--preview

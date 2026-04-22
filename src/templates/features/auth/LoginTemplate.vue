@@ -360,6 +360,9 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 
 <style scoped lang="scss">
 .ntk-template-login {
+  --ntk-template-login-accent: var(--ntk-template-login-brand-accent, var(--ntk-template-page-accent, var(--ntk-accent, var(--ntk-primary))));
+  --ntk-template-login-info: var(--ntk-template-login-brand-info, var(--ntk-template-page-info, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-login-on-accent: var(--ntk-template-page-on-accent, var(--ntk-text-on-accent, var(--ntk-text-primary)));
   --ntk-template-login-brand-subtitle: var(
     --ntk-login-brand-subtitle,
     color-mix(in srgb, var(--ntk-template-login-brand-text) 88%, transparent)
@@ -405,8 +408,8 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 .ntk-template-login__brand {
   position: relative;
   overflow: hidden;
-  background: var(--ntk-template-login-brand-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
-  color: var(--ntk-template-login-brand-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  background: var(--ntk-template-login-brand-bg, var(--ntk-template-page-accent-gradient, var(--ntk-primary-gradient, var(--ntk-template-login-accent))));
+  color: var(--ntk-template-login-brand-text, var(--ntk-template-login-on-accent));
 }
 
 .ntk-template-login__brand::before {
@@ -415,8 +418,8 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
   inset: 0;
   background: var(
     --ntk-template-login-brand-overlay,
-    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 16%, transparent) 0%, transparent 54%),
-    radial-gradient(circle at 80% 76%, color-mix(in srgb, var(--ntk-accent) 18%, transparent) 0%, transparent 58%)
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--ntk-template-login-info) 16%, transparent) 0%, transparent 54%),
+    radial-gradient(circle at 80% 76%, color-mix(in srgb, var(--ntk-template-login-accent) 18%, transparent) 0%, transparent 58%)
   );
 }
 
@@ -562,7 +565,7 @@ function resolveSubmitTone(color: string | undefined): TemplateLoginTone {
 
 .ntk-template-login__form :deep(.q-field--outlined.q-field--focused .q-field__control::before),
 .ntk-template-login__form :deep(.q-field--outlined.q-field--focused .q-field__control::after) {
-  border-color: var(--ntk-accent, var(--ntk-primary));
+  border-color: var(--ntk-template-login-accent);
 }
 
 .ntk-template-login__form :deep(.q-field__label),

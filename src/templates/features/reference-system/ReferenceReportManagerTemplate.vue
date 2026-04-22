@@ -113,6 +113,10 @@ const selectedReport = computed(() => {
 
 <style scoped lang="scss">
 .ntk-reference-manager {
+  --ntk-reference-manager-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-manager-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-body))));
+  --ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-template-page-card-bg, var(--ntk-text-on-accent, var(--ntk-bg-primary))));
+
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -144,20 +148,20 @@ const selectedReport = computed(() => {
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-muted);
 }
 
 .ntk-reference-manager__hero h1 {
   margin: 8px 0 0;
   font-size: clamp(28px, 4vw, 40px);
   line-height: 1.05;
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-text);
 }
 
 .ntk-reference-manager__subtitle {
   margin: 12px 0 0;
   max-width: 720px;
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-muted);
 }
 
 .ntk-reference-manager__brand-card {
@@ -176,7 +180,7 @@ const selectedReport = computed(() => {
   height: 54px;
   border-radius: 18px;
   background: var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)));
-  color: var(--ntk-text-on-accent, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
+  color: var(--ntk-reference-manager-on-accent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -187,12 +191,12 @@ const selectedReport = computed(() => {
 
 .ntk-reference-manager__brand-card strong {
   display: block;
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-text);
 }
 
 .ntk-reference-manager__brand-card p {
   margin: 4px 0 0;
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-muted);
   font-size: 13px;
 }
 
@@ -210,7 +214,7 @@ const selectedReport = computed(() => {
 }
 
 .ntk-reference-manager__stat span {
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-muted);
   font-size: 12px;
 }
 
@@ -218,7 +222,7 @@ const selectedReport = computed(() => {
   display: block;
   margin-top: 10px;
   font-size: 28px;
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-manager-text);
 }
 
 .ntk-reference-manager__grid {

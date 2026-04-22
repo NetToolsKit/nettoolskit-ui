@@ -172,6 +172,9 @@ function onCanvasObjectClick(objectId: string): void {
 
 <style scoped lang="scss">
 .ntk-reference-designer {
+  --ntk-reference-designer-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary, var(--ntk-text-body))));
+  --ntk-reference-designer-muted: var(--ntk-reference-muted, var(--ntk-template-editor-muted-text, var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-body)))));
+
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -206,7 +209,7 @@ function onCanvasObjectClick(objectId: string): void {
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-template-editor-muted-text, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  color: var(--ntk-reference-designer-muted);
   white-space: nowrap;
 }
 
@@ -223,13 +226,13 @@ function onCanvasObjectClick(objectId: string): void {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--ntk-text-secondary, var(--ntk-template-page-subtitle, var(--ntk-text-body)));
+  color: var(--ntk-reference-designer-muted);
   font-size: 12px;
   white-space: nowrap;
 }
 
 .ntk-reference-designer__doc-date {
-  color: var(--ntk-text-primary, var(--ntk-template-page-title, var(--ntk-text-body)));
+  color: var(--ntk-reference-designer-text);
 }
 
 @media (max-width: 1180px) {

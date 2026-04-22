@@ -42,17 +42,17 @@ const swatches = computed(() => {
     {
       id: 'accent',
       label: 'Accent',
-      background: 'var(--ntk-accent)',
+      background: 'var(--ntk-reference-accent, var(--ntk-template-page-accent, var(--ntk-accent)))',
     },
     {
       id: 'drawer',
       label: 'Drawer',
-      background: 'linear-gradient(180deg, var(--ntk-secondary) 0%, var(--ntk-primary-dark) 100%)',
+      background: 'linear-gradient(180deg, var(--ntk-reference-drawer-bg, var(--ntk-template-layout-drawer-bg, var(--ntk-secondary))) 0%, var(--ntk-reference-accent-dark, var(--ntk-template-page-accent-dark, var(--ntk-primary-dark))) 100%)',
     },
     {
       id: 'stage',
       label: 'Stage',
-      background: 'var(--ntk-bg-tertiary)',
+      background: 'var(--ntk-reference-panel-muted-bg, var(--ntk-template-page-surface-muted, var(--ntk-bg-tertiary)))',
     },
   ]
 })
@@ -60,6 +60,10 @@ const swatches = computed(() => {
 
 <style scoped lang="scss">
 .ntk-reference-preset-card {
+  --ntk-reference-preset-card-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-preset-card-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary)));
+  --ntk-reference-preset-card-border: var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+
   border: 1px solid var(--ntk-reference-border);
   border-radius: 20px;
   background: var(--ntk-reference-panel-bg);
@@ -73,16 +77,16 @@ const swatches = computed(() => {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-preset-card-muted);
 }
 
 .ntk-reference-preset-card h3 {
   margin: 8px 0 0;
-  color: var(--ntk-text-primary);
+  color: var(--ntk-reference-preset-card-text);
 }
 
 .ntk-reference-preset-card p {
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-preset-card-muted);
 }
 
 .ntk-reference-preset-card__swatch-grid {
@@ -103,7 +107,7 @@ const swatches = computed(() => {
 }
 
 .ntk-reference-preset-card__swatch span {
-  color: var(--ntk-text-secondary);
+  color: var(--ntk-reference-preset-card-muted);
   font-size: 13px;
 }
 
@@ -111,7 +115,7 @@ const swatches = computed(() => {
   width: 88px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid var(--ntk-border-color);
+  border: 1px solid var(--ntk-reference-preset-card-border);
 }
 
 .ntk-reference-preset-card__note {
