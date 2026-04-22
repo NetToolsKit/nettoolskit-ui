@@ -164,6 +164,11 @@ TestResult.xml
 .build/vitest/
 .build/test-results/
 .build/playwright-report/
+test-results/
+playwright-report/
+reports/
+screenshots/
+traces/
 
 # MSTest
 *.VisualState.xml
