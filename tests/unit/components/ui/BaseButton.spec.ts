@@ -77,7 +77,7 @@ describe('NtkButton', () => {
   })
 
   describe('Color Prop', () => {
-    it('should pass color prop to QBtn', () => {
+    it('should resolve primary color into a token style instead of a QBtn color prop', () => {
       // Arrange
       const color = 'primary'
 
@@ -90,10 +90,13 @@ describe('NtkButton', () => {
       })
 
       // Assert
-      expect(wrapper.findComponent({ name: 'QBtn' }).props('color')).toBe(color)
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('color')).toBeUndefined()
+      expect(qBtn.classes()).toContain('ntk-button--token-color')
+      expect(qBtn.attributes('style')).toContain('--ntk-button-color: var(--ntk-primary)')
     })
 
-    it('should support secondary color', () => {
+    it('should resolve secondary color into the brand token chain', () => {
       // Arrange
       const color = 'secondary'
 
@@ -106,10 +109,15 @@ describe('NtkButton', () => {
       })
 
       // Assert
-      expect(wrapper.findComponent({ name: 'QBtn' }).props('color')).toBe(color)
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('color')).toBeUndefined()
+      expect(qBtn.classes()).toContain('ntk-button--token-color')
+      expect(qBtn.attributes('style')).toContain(
+        '--ntk-button-color: var(--ntk-secondary, var(--ntk-accent, var(--ntk-primary)))',
+      )
     })
 
-    it('should support custom Quasar colors', () => {
+    it('should resolve semantic Quasar aliases into token fallbacks', () => {
       // Arrange
       const color = 'positive'
 
@@ -122,7 +130,12 @@ describe('NtkButton', () => {
       })
 
       // Assert
-      expect(wrapper.findComponent({ name: 'QBtn' }).props('color')).toBe(color)
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('color')).toBeUndefined()
+      expect(qBtn.classes()).toContain('ntk-button--token-color')
+      expect(qBtn.attributes('style')).toContain(
+        '--ntk-button-color: var(--ntk-success, var(--semantic-success-primary))',
+      )
     })
   })
 
@@ -582,7 +595,9 @@ describe('NtkButton', () => {
       })
 
       // Assert
-      expect(wrapper.findComponent({ name: 'QBtn' }).props('class')).toBe(customClass)
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.classes()).toContain('ntk-button')
+      expect(qBtn.classes()).toContain(customClass)
     })
   })
 
