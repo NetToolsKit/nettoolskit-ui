@@ -5,6 +5,11 @@
 import { useQuasar } from 'quasar'
 import { useNotification } from '../services/useNotification'
 
+const destructiveActionStyle = {
+  background: 'var(--ntk-dialog-action-danger-bg, var(--semantic-error-primary, var(--ntk-error)))',
+  color: 'var(--ntk-dialog-action-danger-text, var(--ntk-text-on-primary, var(--ntk-text-inverse)))'
+} as const
+
 /**
  * useDialog - Composable para diálogos de confirmação
  * 
@@ -51,7 +56,8 @@ export function useDialogActions() {
         persistent: true,
         ok: {
           label: 'Excluir',
-          color: 'negative',
+          class: 'ntk-dialog-action ntk-dialog-action--danger',
+          style: destructiveActionStyle,
           unelevated: true
         },
         cancel: {
