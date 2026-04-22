@@ -43,9 +43,9 @@
  * @example
  * ```typescript
  * const gradients: Gradients = {
- *   hero: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
- *   primary: 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)',
- *   loading: 'linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%)'
+ *   hero: 'linear-gradient(135deg, var(--ntk-bg-primary) 0%, var(--ntk-bg-secondary) 100%)',
+ *   primary: 'var(--ntk-primary-gradient)',
+ *   loading: 'linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%)'
  * }
  * ```
  */
@@ -223,22 +223,24 @@ export const defaultBlur: BlurEffects = {
 // Brand Effects Configs
 // ============================
 
+const whiteLabelGradients: Gradients = {
+  hero: 'linear-gradient(135deg, var(--ntk-bg-primary, #f1f5f9) 0%, var(--ntk-bg-secondary, #ffffff) 100%)',
+  primary: 'var(--ntk-primary-gradient, linear-gradient(135deg, #134e4a 0%, #14b8a6 100%))',
+  secondary: 'linear-gradient(135deg, var(--ntk-secondary, var(--ntk-accent, #0f766e)) 0%, var(--ntk-secondary-dark, var(--ntk-primary-dark, #115e59)) 100%)',
+  accent: 'linear-gradient(135deg, var(--ntk-primary-gradient-start, #134e4a) 0%, var(--ntk-primary-gradient-end, #14b8a6) 100%)',
+  loading: 'linear-gradient(90deg, var(--ntk-bg-secondary, #f1f5f9) 0%, var(--ntk-bg-tertiary, #f8fafc) 50%, var(--ntk-bg-secondary, #f1f5f9) 100%)',
+  overlay: 'linear-gradient(180deg, rgba(var(--ntk-primary-rgb, 15, 118, 110), 0) 0%, rgba(var(--ntk-primary-rgb, 15, 118, 110), 0.72) 100%)',
+  glass: 'linear-gradient(135deg, color-mix(in srgb, var(--ntk-surface-overlay, #ffffff) 14%, transparent), color-mix(in srgb, var(--ntk-surface-overlay, #ffffff) 6%, transparent))',
+}
+
 /**
  * Sentinela Visual Effects
  * 
- * Professional blue gradients with subtle shadows.
- * Corporate, clean aesthetic.
+ * Legacy preset that now resolves gradients through active white-label tokens.
+ * Corporate depth remains available without locking colors to the old blue brand.
  */
 export const sentinelaEffects: EffectsConfig = {
-  gradients: {
-    hero: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%)',
-    primary: 'linear-gradient(135deg, #0D47A1 0%, #1976D2 100%)',
-    secondary: 'linear-gradient(135deg, #64748B 0%, #475569 100%)',
-    accent: 'linear-gradient(135deg, #03A9F4 0%, #0288D1 100%)',
-    loading: 'linear-gradient(90deg, #f5f7fa 0%, #e4e8ec 50%, #f5f7fa 100%)',
-    overlay: 'linear-gradient(180deg, rgba(13, 71, 161, 0) 0%, rgba(13, 71, 161, 0.8) 100%)',
-    glass: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
-  },
+  gradients: { ...whiteLabelGradients },
   shadows: {
     ...defaultShadows,
     md: '0 4px 8px rgba(0, 0, 0, 0.15)',  // Slightly stronger for corporate feel
@@ -251,19 +253,11 @@ export const sentinelaEffects: EffectsConfig = {
 /**
  * PlaTEA Visual Effects
  * 
- * Warm, soft gradients with gentle shadows.
- * Accessible, calming aesthetic.
+ * Legacy preset that now resolves gradients through active white-label tokens.
+ * Accessible, calming shape and shadow choices remain independent of brand color.
  */
 export const plateaEffects: EffectsConfig = {
-  gradients: {
-    hero: 'linear-gradient(135deg, #ffffff 0%, #f5f3f0 100%)',
-    primary: 'linear-gradient(135deg, #4A9B7F 0%, #388E3C 100%)',
-    secondary: 'linear-gradient(135deg, #FFE082 0%, #F5F3F0 100%)',
-    accent: 'linear-gradient(135deg, #8BC34A 0%, #689F38 100%)',
-    loading: 'linear-gradient(90deg, #f5f3f0 0%, #e8e6e2 50%, #f5f3f0 100%)',
-    overlay: 'linear-gradient(180deg, rgba(74, 155, 127, 0) 0%, rgba(74, 155, 127, 0.6) 100%)',
-    glass: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))',
-  },
+  gradients: { ...whiteLabelGradients },
   shadows: {
     ...defaultShadows,
     md: '0 4px 6px rgba(74, 155, 127, 0.08)',  // Softer, green-tinted
@@ -280,19 +274,11 @@ export const plateaEffects: EffectsConfig = {
 /**
  * NetToolsKit Visual Effects
  * 
- * Vibrant purple gradients with modern shadows.
- * Tech-forward, dynamic aesthetic.
+ * Legacy preset that now resolves gradients through active white-label tokens.
+ * Tech-forward depth remains available without reintroducing the old purple palette.
  */
 export const nettoolskitEffects: EffectsConfig = {
-  gradients: {
-    hero: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    primary: 'linear-gradient(135deg, #512BD4 0%, #7B1FA2 100%)',
-    secondary: 'linear-gradient(135deg, #607D8B 0%, #455A64 100%)',
-    accent: 'linear-gradient(135deg, #7B74D4 0%, #5E35B1 100%)',
-    loading: 'linear-gradient(90deg, #f1f5f9 0%, #cbd5e1 50%, #f1f5f9 100%)',
-    overlay: 'linear-gradient(180deg, rgba(81, 43, 212, 0) 0%, rgba(81, 43, 212, 0.85) 100%)',
-    glass: 'linear-gradient(135deg, rgba(123, 116, 212, 0.12), rgba(123, 116, 212, 0.06))',
-  },
+  gradients: { ...whiteLabelGradients },
   shadows: {
     ...defaultShadows,
     md: '0 4px 6px rgba(81, 43, 212, 0.15)',  // Purple-tinted shadows
