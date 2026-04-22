@@ -35,12 +35,16 @@ export function createCmsAuthoringShellTheme(
   defaultTheme: AppShellTheme
 ): AppShellTheme {
   const resolved = resolveAppShellTheme(activeTheme, defaultTheme)
-  const pageBackground = resolved.pageBackground || '#fafafa'
-  const drawerBackground = resolved.drawerBackground || '#ffffff'
+  const pageBackground = resolved.pageBackground || defaultTheme.pageBackground || 'var(--ntk-cms-page-bg)'
+  const drawerBackground = resolved.drawerBackground || defaultTheme.drawerBackground || 'var(--ntk-cms-card-bg)'
   const searchBackground = resolved.searchBackground || drawerBackground
-  const accent = resolved.itemActiveColor || '#111111'
-  const hoverBackground = resolved.itemHoverBackground || 'rgba(17, 17, 17, 0.05)'
-  const activeBackground = resolved.itemActiveBackground || 'rgba(17, 17, 17, 0.08)'
+  const accent = resolved.itemActiveColor || defaultTheme.itemActiveColor || 'var(--ntk-cms-accent)'
+  const hoverBackground = resolved.itemHoverBackground
+    || defaultTheme.itemHoverBackground
+    || 'var(--ntk-cms-item-hover-bg)'
+  const activeBackground = resolved.itemActiveBackground
+    || defaultTheme.itemActiveBackground
+    || 'var(--ntk-cms-item-active-bg)'
 
   return {
     ...resolved,
@@ -49,20 +53,34 @@ export function createCmsAuthoringShellTheme(
     drawerBackground,
     drawerFooterBackground: resolved.drawerFooterBackground || drawerBackground,
     searchBackground,
-    searchBorder: resolved.searchBorder || resolved.dividerColor || '#e5e5e5',
-    searchBorderHover: resolved.searchBorderHover || resolved.dividerColor || '#d4d4d4',
+    searchBorder: resolved.searchBorder
+      || resolved.dividerColor
+      || defaultTheme.searchBorder
+      || defaultTheme.dividerColor
+      || 'var(--ntk-cms-shell-border)',
+    searchBorderHover: resolved.searchBorderHover
+      || resolved.dividerColor
+      || defaultTheme.searchBorderHover
+      || defaultTheme.dividerColor
+      || 'var(--ntk-cms-shell-border-hover)',
     itemActiveColor: accent,
     itemHoverColor: resolved.itemHoverColor || accent,
     itemIconHoverColor: resolved.itemIconHoverColor || accent,
     itemHoverBackground: hoverBackground,
     itemActiveBackground: activeBackground,
-    groupCaptionMiniBackground: resolved.groupCaptionMiniBackground || '#f5f5f5',
+    groupCaptionMiniBackground: resolved.groupCaptionMiniBackground
+      || defaultTheme.groupCaptionMiniBackground
+      || 'var(--ntk-cms-group-caption-mini-bg)',
     actionBackground: resolved.actionBackground || 'transparent',
-    actionHoverBackground: resolved.actionHoverBackground || '#f5f5f5',
-    headerShadow: resolved.headerShadow || '0 8px 24px rgba(0, 0, 0, 0.05)',
+    actionHoverBackground: resolved.actionHoverBackground
+      || defaultTheme.actionHoverBackground
+      || 'var(--ntk-cms-action-hover-bg)',
+    headerShadow: resolved.headerShadow || defaultTheme.headerShadow || 'var(--ntk-cms-header-shadow, var(--ntk-shadow-sm))',
     headerBlur: resolved.headerBlur || 'blur(0px)',
-    drawerShadow: resolved.drawerShadow || '0 8px 24px rgba(0, 0, 0, 0.04)',
-    drawerFooterShadow: resolved.drawerFooterShadow || 'inset 0 1px 0 rgba(0, 0, 0, 0.06)',
+    drawerShadow: resolved.drawerShadow || defaultTheme.drawerShadow || 'var(--ntk-cms-drawer-shadow, var(--ntk-shadow-sm))',
+    drawerFooterShadow: resolved.drawerFooterShadow
+      || defaultTheme.drawerFooterShadow
+      || 'var(--ntk-cms-drawer-footer-shadow, var(--ntk-shadow-xs))',
     radiusSm: resolved.radiusSm || '10px',
     radiusMd: resolved.radiusMd || '14px',
     radiusLg: resolved.radiusLg || '18px',

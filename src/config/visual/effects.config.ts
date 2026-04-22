@@ -181,13 +181,13 @@ export interface EffectsConfig {
  */
 export const defaultShadows: Shadows = {
   none: 'none',
-  xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-  sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-  md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-  '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-  inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+  xs: '0 1px 2px 0 color-mix(in srgb, var(--ntk-shadow-color) 5%, transparent)',
+  sm: '0 1px 3px 0 color-mix(in srgb, var(--ntk-shadow-color) 10%, transparent), 0 1px 2px 0 color-mix(in srgb, var(--ntk-shadow-color) 6%, transparent)',
+  md: '0 4px 6px -1px color-mix(in srgb, var(--ntk-shadow-color) 10%, transparent), 0 2px 4px -1px color-mix(in srgb, var(--ntk-shadow-color) 6%, transparent)',
+  lg: '0 10px 15px -3px color-mix(in srgb, var(--ntk-shadow-color) 10%, transparent), 0 4px 6px -2px color-mix(in srgb, var(--ntk-shadow-color) 5%, transparent)',
+  xl: '0 20px 25px -5px color-mix(in srgb, var(--ntk-shadow-color) 10%, transparent), 0 10px 10px -5px color-mix(in srgb, var(--ntk-shadow-color) 4%, transparent)',
+  '2xl': '0 25px 50px -12px color-mix(in srgb, var(--ntk-shadow-color) 25%, transparent)',
+  inner: 'inset 0 2px 4px 0 color-mix(in srgb, var(--ntk-shadow-color) 6%, transparent)',
 }
 
 /**
@@ -224,13 +224,13 @@ export const defaultBlur: BlurEffects = {
 // ============================
 
 const whiteLabelGradients: Gradients = {
-  hero: 'linear-gradient(135deg, var(--ntk-bg-primary, #f1f5f9) 0%, var(--ntk-bg-secondary, #ffffff) 100%)',
-  primary: 'var(--ntk-primary-gradient, linear-gradient(135deg, #134e4a 0%, #14b8a6 100%))',
-  secondary: 'linear-gradient(135deg, var(--ntk-secondary, var(--ntk-accent, #0f766e)) 0%, var(--ntk-secondary-dark, var(--ntk-primary-dark, #115e59)) 100%)',
-  accent: 'linear-gradient(135deg, var(--ntk-primary-gradient-start, #134e4a) 0%, var(--ntk-primary-gradient-end, #14b8a6) 100%)',
-  loading: 'linear-gradient(90deg, var(--ntk-bg-secondary, #f1f5f9) 0%, var(--ntk-bg-tertiary, #f8fafc) 50%, var(--ntk-bg-secondary, #f1f5f9) 100%)',
-  overlay: 'linear-gradient(180deg, rgba(var(--ntk-primary-rgb, 15, 118, 110), 0) 0%, rgba(var(--ntk-primary-rgb, 15, 118, 110), 0.72) 100%)',
-  glass: 'linear-gradient(135deg, color-mix(in srgb, var(--ntk-surface-overlay, #ffffff) 14%, transparent), color-mix(in srgb, var(--ntk-surface-overlay, #ffffff) 6%, transparent))',
+  hero: 'linear-gradient(135deg, var(--ntk-bg-primary) 0%, var(--ntk-bg-secondary) 100%)',
+  primary: 'var(--ntk-primary-gradient, linear-gradient(135deg, var(--ntk-primary) 0%, var(--ntk-accent) 100%))',
+  secondary: 'linear-gradient(135deg, var(--ntk-secondary) 0%, var(--ntk-secondary-dark) 100%)',
+  accent: 'linear-gradient(135deg, var(--ntk-primary-gradient-start, var(--ntk-primary)) 0%, var(--ntk-primary-gradient-end, var(--ntk-accent)) 100%)',
+  loading: 'linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%)',
+  overlay: 'linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--ntk-primary) 72%, transparent) 100%)',
+  glass: 'linear-gradient(135deg, color-mix(in srgb, var(--ntk-surface-overlay) 14%, transparent), color-mix(in srgb, var(--ntk-surface-overlay) 6%, transparent))',
 }
 
 /**
@@ -243,8 +243,8 @@ export const sentinelaEffects: EffectsConfig = {
   gradients: { ...whiteLabelGradients },
   shadows: {
     ...defaultShadows,
-    md: '0 4px 8px rgba(0, 0, 0, 0.15)',  // Slightly stronger for corporate feel
-    lg: '0 8px 16px rgba(0, 0, 0, 0.18)',
+    md: '0 4px 8px color-mix(in srgb, var(--ntk-shadow-color) 15%, transparent)',
+    lg: '0 8px 16px color-mix(in srgb, var(--ntk-shadow-color) 18%, transparent)',
   },
   radius: defaultRadius,
   blur: defaultBlur,
@@ -260,8 +260,8 @@ export const plateaEffects: EffectsConfig = {
   gradients: { ...whiteLabelGradients },
   shadows: {
     ...defaultShadows,
-    md: '0 4px 6px rgba(74, 155, 127, 0.08)',  // Softer, green-tinted
-    lg: '0 8px 12px rgba(74, 155, 127, 0.12)',
+    md: '0 4px 6px color-mix(in srgb, var(--ntk-success) 8%, transparent)',
+    lg: '0 8px 12px color-mix(in srgb, var(--ntk-success) 12%, transparent)',
   },
   radius: {
     ...defaultRadius,
@@ -281,9 +281,9 @@ export const nettoolskitEffects: EffectsConfig = {
   gradients: { ...whiteLabelGradients },
   shadows: {
     ...defaultShadows,
-    md: '0 4px 6px rgba(81, 43, 212, 0.15)',  // Purple-tinted shadows
-    lg: '0 8px 16px rgba(81, 43, 212, 0.2)',
-    xl: '0 20px 25px rgba(81, 43, 212, 0.25)',
+    md: '0 4px 6px color-mix(in srgb, var(--ntk-primary) 15%, transparent)',
+    lg: '0 8px 16px color-mix(in srgb, var(--ntk-primary) 20%, transparent)',
+    xl: '0 20px 25px color-mix(in srgb, var(--ntk-primary) 25%, transparent)',
   },
   radius: {
     ...defaultRadius,

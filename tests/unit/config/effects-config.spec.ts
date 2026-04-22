@@ -53,7 +53,7 @@ describe('visual effects fallback gradients', () => {
       const rootStyle = document.documentElement.style
       expect(rootStyle.getPropertyValue('--ntk-gradient-primary')).toContain('var(--ntk-primary-gradient')
       expect(rootStyle.getPropertyValue('--ntk-gradient-accent')).toContain('var(--ntk-primary-gradient-start')
-      expect(rootStyle.getPropertyValue('--ntk-gradient-overlay')).toContain('var(--ntk-primary-rgb')
+      expect(rootStyle.getPropertyValue('--ntk-gradient-overlay')).toContain('var(--ntk-primary')
       expect(rootStyle.getPropertyValue('--ntk-gradient-glass')).toContain('var(--ntk-surface-overlay')
 
       for (const key of Object.keys(config.gradients)) {

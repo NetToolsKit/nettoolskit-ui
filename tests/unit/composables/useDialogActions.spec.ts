@@ -40,7 +40,7 @@ describe('useDialogActions', () => {
     const dialogOptions = mocks.dialog.mock.calls[0]?.[0]
 
     expect(dialogOptions.ok).toMatchObject({
-      label: 'Excluir',
+      label: 'Delete',
       class: 'ntk-dialog-action ntk-dialog-action--danger',
       unelevated: true
     })

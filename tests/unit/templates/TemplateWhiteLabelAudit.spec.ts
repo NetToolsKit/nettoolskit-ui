@@ -83,7 +83,6 @@ const centralizedColorSourceFiles = new Set([
   'src/config/theme/theme.plugin.ts',
   'src/config/visual/effects.config.ts',
   'src/modules/cms/white-label/theme-presets.ts',
-  'src/modules/cms/white-label/authoring/design-baseline.ts',
   'src/styles/index.ts',
   'src/styles/quasar-variables.scss',
   'src/styles/themes.css',
@@ -307,6 +306,15 @@ function scanTemplateColorGuardrails(): ColorGuardrailViolation[] {
 }
 
 describe('template white-label audit', () => {
+  it('keeps CMS authoring design baseline fallbacks tokenized', () => {
+    const designBaselineSource = readRepoFile('../../../src/modules/cms/white-label/authoring/design-baseline.ts')
+
+    expect(designBaselineSource).not.toMatch(/#[0-9a-fA-F]{3,8}\b|(?<![a-z-])(?:rgba?|hsla?)\(/)
+    expect(designBaselineSource).toContain("defaultTheme.pageBackground || 'var(--ntk-cms-page-bg)'")
+    expect(designBaselineSource).toContain("defaultTheme.drawerBackground || 'var(--ntk-cms-card-bg)'")
+    expect(designBaselineSource).toContain("defaultTheme.itemActiveColor || 'var(--ntk-cms-accent)'")
+  })
+
   it('keeps public chrome components on white-label tokens instead of Quasar palette names', () => {
     const auditedFiles = [
       {
