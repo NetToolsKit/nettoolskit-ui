@@ -237,8 +237,6 @@
                 :no-caps="action.noCaps ?? false"
                 :icon="action.icon"
                 :label="action.showLabel ? action.label : undefined"
-                :color="resolveToolbarActionColor(action)"
-                :text-color="resolveToolbarActionTextColor(action)"
                 :aria-label="resolveToolbarActionAriaLabel(action)"
                 :href="resolveToolbarActionHref(action)"
                 :target="resolveToolbarActionTarget(action)"
@@ -676,6 +674,33 @@ const notificationActionStyle = computed<Record<string, string>>(() => ({
 
 const hoveredToolbarActionKey = ref<string | null>(null)
 
+const SHELL_COLOR_ALIASES: Record<string, string> = {
+  primary: 'var(--ntk-primary)',
+  secondary: 'var(--ntk-secondary)',
+  accent: 'var(--ntk-accent)',
+  brand: 'var(--ntk-primary)',
+  success: 'var(--ntk-success)',
+  positive: 'var(--ntk-success)',
+  warning: 'var(--ntk-warning)',
+  error: 'var(--ntk-error)',
+  danger: 'var(--ntk-error)',
+  negative: 'var(--ntk-error)',
+  info: 'var(--ntk-info)',
+  neutral: 'var(--ntk-text-secondary)',
+  muted: 'var(--ntk-text-secondary)',
+  text: 'var(--ntk-text-primary)',
+  'text-primary': 'var(--ntk-text-primary)',
+  'text-secondary': 'var(--ntk-text-secondary)',
+  inverse: 'var(--ntk-text-inverse)',
+  surface: 'var(--ntk-bg-primary)',
+  'surface-muted': 'var(--ntk-bg-secondary)',
+  border: 'var(--ntk-border-color)',
+}
+
+const QUASAR_NEUTRAL_ALIAS_PATTERN = /^(grey|gray|blue-grey)-\d+$/
+const CSS_COLOR_EXPRESSION_PATTERN = /^(var\(--|rgb\(|rgba\(|hsl\(|hsla\(|oklch\(|oklab\(|color\(|color-mix\()/i
+const UNSAFE_CSS_COLOR_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(/i
+
 const shellStyle = computed<Record<string, string>>(() => {
   const theme = resolvedTheme.value
 
@@ -807,7 +832,7 @@ function resolveNotificationTypeColor(color?: string): string {
   if (value === 'info') {
     return resolvedTheme.value.notificationInfoColor ?? ''
   }
-  return color ?? ''
+  return resolveSafeShellColorToken(color)
 }
 
 /**
@@ -842,60 +867,43 @@ function normalizeOptionalToken(value?: string): string | undefined {
  * Checks whether is css color expression.
  */
 function isCssColorExpression(value: string): boolean {
-  return /^(#|var\(|rgb\(|rgba\(|hsl\(|hsla\(|oklch\(|oklab\(|color\(|color-mix\()/i.test(value)
+  const normalized = value.trim()
+  return CSS_COLOR_EXPRESSION_PATTERN.test(normalized) && !UNSAFE_CSS_COLOR_VALUE_PATTERN.test(normalized)
 }
 
 /**
- * Checks whether is system toolbar action.
+ * Resolves Quasar neutral aliases into the shared NetToolsKit text token.
  */
-function isSystemToolbarAction(action: AppShellAction): boolean {
-  const actionId = String(action.id ?? '').trim().toLowerCase()
-  return actionId === 'notifications' || actionId === 'account' || actionId === 'go-landing'
+function resolveNeutralShellColorAlias(value: string): string {
+  return QUASAR_NEUTRAL_ALIAS_PATTERN.test(value) ? SHELL_COLOR_ALIASES.neutral : ''
 }
 
 /**
- * Resolves toolbar action color.
+ * Resolves user-provided color aliases without passing raw palette names to Quasar.
  */
-function resolveToolbarActionColor(action: AppShellAction): string | undefined {
-  const color = normalizeOptionalToken(action.color)
-  if (!color || isCssColorExpression(color)) {
-    return undefined
+function resolveSafeShellColorToken(value?: string): string {
+  const normalized = normalizeOptionalToken(value)
+  if (!normalized) {
+    return ''
   }
-  if (isSystemToolbarAction(action)) {
-    return undefined
+  if (isCssColorExpression(normalized)) {
+    return normalized
   }
-  return color
-}
 
-/**
- * Resolves toolbar action text color.
- */
-function resolveToolbarActionTextColor(action: AppShellAction): string | undefined {
-  const textColor = normalizeOptionalToken(action.textColor)
-  if (!textColor || isCssColorExpression(textColor)) {
-    return undefined
-  }
-  if (isSystemToolbarAction(action)) {
-    return undefined
-  }
-  return textColor
+  const alias = normalized.toLowerCase().replace(/_/g, '-')
+  return SHELL_COLOR_ALIASES[alias] || resolveNeutralShellColorAlias(alias)
 }
 
 /**
  * Resolves toolbar action style color.
  */
 function resolveToolbarActionStyleColor(action: AppShellAction): string | undefined {
-  const textColor = normalizeOptionalToken(action.textColor)
-  if (textColor && isCssColorExpression(textColor)) {
+  const textColor = resolveSafeShellColorToken(action.textColor)
+  if (textColor) {
     return textColor
   }
 
-  const color = normalizeOptionalToken(action.color)
-  if (color && isCssColorExpression(color)) {
-    return color
-  }
-
-  return undefined
+  return resolveSafeShellColorToken(action.color) || undefined
 }
 
 // Detects whether an action should follow the notification semantic styling.
@@ -918,10 +926,6 @@ function getToolbarActionStyle(action: AppShellAction): Record<string, string> {
     return {
       color: explicitStyleColor,
     }
-  }
-
-  if (resolveToolbarActionColor(action) || resolveToolbarActionTextColor(action)) {
-    return {}
   }
 
   if (isNotificationToolbarAction(action)) {
@@ -989,9 +993,10 @@ function getItemBadgeStyle(item: AppShellItem): Record<string, string> {
   const explicitBadgeTextColor = normalizeOptionalToken(item.badgeTextColor)
   const semanticColor = resolveNotificationTypeColor(explicitBadgeColor)
   const semanticTextColor = resolveNotificationTypeTextColor(explicitBadgeColor)
+  const explicitBadgeTextColorToken = resolveSafeShellColorToken(explicitBadgeTextColor)
   return {
-    backgroundColor: semanticColor || explicitBadgeColor || resolvedTheme.value.itemActiveColor || '',
-    color: explicitBadgeTextColor || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
+    backgroundColor: semanticColor || resolvedTheme.value.itemActiveColor || '',
+    color: explicitBadgeTextColorToken || semanticTextColor || resolvedTheme.value.notificationBadgeTextColor || '',
   }
 }
 
@@ -1003,12 +1008,13 @@ function getActionBadgeStyle(action: AppShellAction): Record<string, string> {
   const explicitBadgeTextColor = normalizeOptionalToken(action.badgeTextColor)
   const semanticColor = resolveNotificationTypeColor(explicitBadgeColor)
   const semanticTextColor = resolveNotificationTypeTextColor(explicitBadgeColor)
+  const explicitBadgeTextColorToken = resolveSafeShellColorToken(explicitBadgeTextColor)
   const fallbackTextColor = semanticTextColor
     || (isNotificationToolbarAction(action) ? notificationDefaultTextColor.value : notificationFallbackTextColor.value)
 
   return {
-    backgroundColor: semanticColor || explicitBadgeColor || notificationDefaultColor.value,
-    color: explicitBadgeTextColor || fallbackTextColor || '',
+    backgroundColor: semanticColor || notificationDefaultColor.value,
+    color: explicitBadgeTextColorToken || fallbackTextColor || '',
   }
 }
 

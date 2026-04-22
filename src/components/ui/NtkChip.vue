@@ -5,7 +5,6 @@
     :clickable="!disabled"
     :disable="disabled"
     :selected="selected"
-    :color="chipColor"
     :outline="variant === 'outlined'"
     @click="handleClick"
   >
@@ -42,11 +41,6 @@ const chipClasses = computed(() => [
   `ntk-chip--${props.variant}`,
   { 'ntk-chip--selected': props.selected }
 ])
-
-const chipColor = computed(() => {
-  if (props.variant === 'primary') return 'primary'
-  return undefined
-})
 
 const handleClick = (event: Event) => {
   emit('click', event)
