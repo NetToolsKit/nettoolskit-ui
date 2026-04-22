@@ -115,7 +115,7 @@ const selectedReport = computed(() => {
 .ntk-reference-manager {
   --ntk-reference-manager-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
   --ntk-reference-manager-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-body))));
-  --ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-template-page-card-bg, var(--ntk-text-on-accent, var(--ntk-bg-primary))));
+  --ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse))));
 
   display: flex;
   flex-direction: column;

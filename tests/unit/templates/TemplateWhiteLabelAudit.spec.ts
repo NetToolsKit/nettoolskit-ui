@@ -1475,6 +1475,7 @@ describe('template white-label audit', () => {
     const catalogPanelSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferenceReportCatalogPanel.vue')
     const presetSelectorSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferencePresetSelectorBar.vue')
     const contextRailSource = readRepoFile('../../../src/templates/features/reference-system/components/ReferenceContextRailPanel.vue')
+    const reportManagerSource = readRepoFile('../../../src/templates/features/reference-system/ReferenceReportManagerTemplate.vue')
 
     expect(wikiSource).toContain('--ntk-template-wiki-chip-info-bg: var(--semantic-info-bg')
     expect(wikiSource).toContain('--ntk-template-wiki-chip-danger-bg: var(--semantic-error-bg')
@@ -1504,6 +1505,10 @@ describe('template white-label audit', () => {
 
     expect(contextRailSource).toContain('--ntk-reference-context-rail-tone-info: var(--semantic-info-text')
     expect(contextRailSource).toContain('&--neutral { background: var(--ntk-reference-context-rail-tone-neutral); }')
+
+    expect(reportManagerSource).toContain('--ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse))));')
+    expect(reportManagerSource).not.toContain('--ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-template-page-card-bg')
+    expect(reportManagerSource).not.toContain('--ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-bg-')
   })
 
   it('keeps tokens.scss as a generic dark fallback instead of a second preset source of truth', () => {
