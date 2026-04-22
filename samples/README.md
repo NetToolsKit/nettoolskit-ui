@@ -37,6 +37,15 @@ The samples host is the canonical browser surface for validating template theme 
 - Quasar teleported surfaces (`QMenu`, `QDialog`, `QSelect`, `QPopupProxy`, `QTooltip`) must be styled through the shared overlay bridge or explicit popup classes.
 - Runtime visual artifacts, Playwright reports, and test output belong under `.build`.
 
+## Fixed Reference Brand Artwork
+
+The SVG files in `samples/assets/` are fixed reference brand artwork, not reusable white-label UI components.
+
+- `original-reference-mark.svg` preserves the approved original-reference mark colors.
+- `core-reference-logo.svg` preserves the sample brand lockup colors.
+- These assets are intentionally excluded from the component color-token policy because SVGs loaded as external image assets cannot reliably consume host-page CSS variables across runtime and build targets.
+- If an artwork needs to participate in white-label theming, inline it as a Vue/SVG component and bind the fills to the template token layer instead of reusing these fixed files.
+
 ## Structure
 
 - `main.ts`
