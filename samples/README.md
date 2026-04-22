@@ -12,15 +12,14 @@ Runtime host for a single approved sample derived from `.temp/reference`.
 
 - `/`
   - original reference-derived sample
-- `/?landing=1`
-  - legacy marketing landing mounted from `landing-page/`
 - `/?template-runtime=1`
   - router-enabled template runtime for internal composition checks
 
 ## Internal Compatibility Entry
 
 - `/internal-cms.html`
-  - internal CMS compatibility runtime kept outside the public sample flow
+  - local-only internal CMS compatibility runtime kept outside the public sample flow
+  - served by the Vite dev server for development/tests, but excluded from the public samples build entry list
 
 ## Local Preview
 
@@ -41,7 +40,7 @@ The samples host is the canonical browser surface for validating template theme 
 ## Structure
 
 - `main.ts`
-  - chooses between the single public sample, the legacy landing, and the internal template runtime
+  - chooses between the single public sample and the internal template runtime
 - `original-reference/**`
   - self-contained original sample, sample data, and chart composition derived from the approved reference
 - `shared/mountSamplesHost.ts`

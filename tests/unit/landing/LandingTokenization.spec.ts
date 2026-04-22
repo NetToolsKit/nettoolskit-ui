@@ -13,12 +13,13 @@ function readRepoFile(relativePath: string): string {
 }
 
 const landingAppSource = readRepoFile('../../../landing-page/App.vue')
-const landingLegacyHostSource = readRepoFile('../../../landing-page/LandingPublicApp.ts')
 const samplesMainSource = readRepoFile('../../../samples/main.ts')
 const samplesCmsMainSource = readRepoFile('../../../samples/cms-main.ts')
 const samplesIndexSource = readRepoFile('../../../samples/index.html')
 const samplesReadmeSource = readRepoFile('../../../samples/README.md')
 const samplesInternalCmsIndexSource = readRepoFile('../../../samples/internal-cms.html')
+const rootReadmeSource = readRepoFile('../../../README.md')
+const viteConfigSource = readRepoFile('../../../vite.config.ts')
 const originalReferenceSource = readRepoFile('../../../samples/original-reference/OriginalReferenceApp.vue')
 const originalReferenceDataSource = readRepoFile('../../../samples/original-reference/original-reference.sample-data.ts')
 const originalReferenceChartsSource = readRepoFile('../../../samples/original-reference/OriginalReferenceCharts.vue')
@@ -27,11 +28,11 @@ const specDirectory = dirname(fileURLToPath(import.meta.url))
 
 describe('Samples single reference runtime coverage', () => {
   it('uses the samples host as a single public runtime rooted in the original reference sample', () => {
-    expect(samplesMainSource).toContain("const LandingApp = defineAsyncComponent(() => import('../landing-page/LandingPublicApp'))")
     expect(samplesMainSource).toContain("const OriginalReferenceApp = defineAsyncComponent(() => import('./original-reference/OriginalReferenceApp.vue'))")
     expect(samplesMainSource).toContain("const TemplateRuntimeApp = defineAsyncComponent(() => import('../src/templates/runtime/TemplateRuntimeApp.vue'))")
-    expect(samplesMainSource).toContain("searchParams.get('landing') === '1'")
     expect(samplesMainSource).toContain("searchParams.get('template-runtime') === '1'")
+    expect(samplesMainSource).not.toContain('LandingPublicApp')
+    expect(samplesMainSource).not.toContain("searchParams.get('landing')")
     expect(samplesMainSource).not.toContain('ReferenceCatalogApp')
     expect(samplesMainSource).not.toContain('ReferenceSamplesApp')
     expect(samplesMainSource).not.toContain('TemplateShowcaseApp')
@@ -46,10 +47,10 @@ describe('Samples single reference runtime coverage', () => {
     expect(packageJsonSource).toContain('"dev:landing": "npm run dev:samples"')
   })
 
-  it('keeps the legacy landing reachable while pointing its shortcut to the single public sample', () => {
-    expect(landingLegacyHostSource).toContain("export { default } from './App.vue'")
+  it('keeps the landing source outside the public samples router', () => {
     expect(landingAppSource).toContain('href="/"')
     expect(landingAppSource).not.toContain('href="/?samples=1"')
+    expect(samplesMainSource).not.toContain('LandingPublicApp')
   })
 
   it('keeps the samples html shell as the canonical app bootstrap document', () => {
@@ -62,13 +63,14 @@ describe('Samples single reference runtime coverage', () => {
     expect(samplesCmsMainSource).toContain("import CmsApp from '../landing-page/CmsApp.vue'")
     expect(samplesCmsMainSource).toContain('mountSamplesHost(CmsApp)')
     expect(samplesInternalCmsIndexSource).toContain('<script type="module" src="./cms-main.ts"></script>')
+    expect(viteConfigSource).toContain("index: resolve(__dirname, './samples/index.html')")
+    expect(viteConfigSource).not.toContain("'internal-cms': resolve")
   })
 
   it('makes the original sample self-contained instead of depending on showcase files', () => {
     expect(originalReferenceSource).toContain("from './original-reference.sample-data'")
     expect(originalReferenceSource).toContain("from './OriginalReferenceCharts.vue'")
     expect(originalReferenceSource).toContain('Abrir assistente')
-    expect(originalReferenceSource).toContain("navigateTo('/?landing=1')")
     expect(originalReferenceSource).not.toContain('Abrir packs')
     expect(originalReferenceSource).not.toContain('/?templates=1')
     expect(originalReferenceSource).not.toContain('/?samples=1')
@@ -81,9 +83,19 @@ describe('Samples single reference runtime coverage', () => {
   it('documents the single-sample public runtime in samples/README.md', () => {
     expect(samplesReadmeSource).toContain('single approved sample')
     expect(samplesReadmeSource).toContain('- `/`')
+    expect(samplesReadmeSource).toContain('excluded from the public samples build entry list')
+    expect(samplesReadmeSource).not.toContain('/?landing=1')
     expect(samplesReadmeSource).not.toContain('showcase')
     expect(samplesReadmeSource).not.toContain('/?templates=1')
     expect(samplesReadmeSource).not.toContain('/?samples=1')
+  })
+
+  it('keeps root runtime docs aligned with current public entries', () => {
+    expect(rootReadmeSource).toContain('/?template-runtime=1')
+    expect(rootReadmeSource).toContain('excluded from the public samples build entry list')
+    expect(rootReadmeSource).not.toContain('/?landing=1')
+    expect(rootReadmeSource).not.toContain('./templates/custom-theme-template.ts')
+    expect(rootReadmeSource).not.toContain('./templates/custom-branding.scss')
   })
 
   it('removes the public showcase and multi-pack host files from the source tree', () => {

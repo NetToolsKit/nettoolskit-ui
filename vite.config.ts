@@ -1,3 +1,4 @@
+/* global __dirname */
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
@@ -5,7 +6,7 @@ import { resolve } from 'path'
 const modernSassApiOption = { api: 'modern-compiler' } as Record<string, string>
 
 /**
- * Split strategy used by the public samples host, internal CMS runtime, and template builds.
+ * Split strategy used by the public samples host and template builds.
  * Keeps framework/vendor code separated from feature-specific code
  * to reduce single-bundle size warnings and improve cacheability.
  */
@@ -60,7 +61,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, './samples/index.html'),
-        'internal-cms': resolve(__dirname, './samples/internal-cms.html'),
       },
       output: {
         manualChunks: manualChunkByModule,

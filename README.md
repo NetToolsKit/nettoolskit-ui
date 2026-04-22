@@ -883,18 +883,13 @@ interface ThemeGradients {
 - 🔌 **[CMS Provider Hydration](./docs/cms-provider-hydration.md)** - Async provider examples for content, assets and releases
 - 📦 **[CMS Review Package](./docs/cms-review-package.md)** - Export draft-vs-published review artifacts for release analysis and approvals
 
-### Templates
-
-- **[custom-theme-template.ts](./templates/custom-theme-template.ts)** - TypeScript theme configuration template
-- **[custom-branding.scss](./templates/custom-branding.scss)** - SCSS design tokens template
-
 ### Template Runtime Preview
 
 - `samples/` is the canonical runtime host that consumes the reusable libraries in `src/**`.
 - `/` renders the single public sample derived from the approved reference in `.temp/reference`.
 - `/?template-runtime=1` renders the router-enabled template runtime (layout/navigation/page/feature templates composed via scaffolded routes).
-- `/internal-cms.html` renders the internal CMS authoring runtime outside the public sample flow.
-- `/?landing=1` keeps the legacy marketing landing reachable while the samples-first runtime stabilizes.
+- `/internal-cms.html` is a local-only internal compatibility page for development and tests; it is intentionally excluded from the public samples build entry list.
+- The legacy marketing landing is no longer exposed through the public samples router.
 - Local preview command:
 
 ```bash
