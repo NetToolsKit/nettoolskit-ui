@@ -76,7 +76,7 @@ describe('BaseSidebar', () => {
       })
 
       // Assert
-      expect(wrapper.findComponent({ name: 'QBadge' }).exists()).toBe(true)
+      expect(wrapper.find('.ntk-sidebar__badge').exists()).toBe(true)
       expect(wrapper.text()).toContain('3')
     })
 

@@ -152,12 +152,12 @@ describe('white-label.storage', () => {
       },
     })
 
-    expect(normalized.theme.titleAppColor).toBe('#f1f5f9')
-    expect(normalized.theme.drawerTextColor).toBe('#cbd5e1')
-    expect(normalized.theme.itemTextColor).toBe('#cbd5e1')
-    expect(normalized.theme.itemIconColor).toBe('#cbd5e1')
-    expect(normalized.theme.searchTextColor).toBe('#f1f5f9')
-    expect(normalized.theme.pageTextColor).toBe('#f1f5f9')
+    expect(normalized.theme.titleAppColor).toBe('#faf9f6')
+    expect(normalized.theme.drawerTextColor).toBe('#c8c8c4')
+    expect(normalized.theme.itemTextColor).toBe('#c8c8c4')
+    expect(normalized.theme.itemIconColor).toBe('#c8c8c4')
+    expect(normalized.theme.searchTextColor).toBe('#faf9f6')
+    expect(normalized.theme.pageTextColor).toBe('#faf9f6')
   })
 
   it('normalizes dark preset overrides that still use legacy runtime token expressions', () => {
@@ -171,9 +171,9 @@ describe('white-label.storage', () => {
       },
     })
 
-    expect(normalized.themePresetOverrides.dark?.titleAppColor).toBe('#f1f5f9')
-    expect(normalized.themePresetOverrides.dark?.itemTextColor).toBe('#cbd5e1')
-    expect(normalized.themePresetOverrides.dark?.itemIconColor).toBe('#cbd5e1')
+    expect(normalized.themePresetOverrides.dark?.titleAppColor).toBe('#faf9f6')
+    expect(normalized.themePresetOverrides.dark?.itemTextColor).toBe('#c8c8c4')
+    expect(normalized.themePresetOverrides.dark?.itemIconColor).toBe('#c8c8c4')
   })
 
   it('normalizes dark landing preset overrides that still use legacy runtime token expressions', () => {
