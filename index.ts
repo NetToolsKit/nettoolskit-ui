@@ -20,7 +20,7 @@
  *
  *   // Utils
  *   validateEmail, validateCPF, retry, timeout
- * } from '@nettoolskit/ui-vue'
+ * } from 'nettoolskit'
  * ```
  */
 

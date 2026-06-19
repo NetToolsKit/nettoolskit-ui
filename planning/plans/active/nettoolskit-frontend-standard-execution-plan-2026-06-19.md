@@ -2,9 +2,9 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 16:00
+LastUpdated: 2026-06-19 16:28
 Status: active
-Progress: 0% (0/10 checked)
+Progress: 10% (1/10 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -12,7 +12,7 @@ Release closeout: mandatory
 
 ## Progress Checklist
 
-- [ ] Package and command surface spec accepted.
+- [x] Package and command surface spec accepted.
 - [ ] DTCG token/resolver implementation planned and delivered.
 - [ ] Theme, density, tenant validation, and Quasar adapter planned and delivered.
 - [ ] Component contracts, recipes, and compatibility exports planned and delivered.
@@ -172,9 +172,22 @@ Checkpoint:
 - `npm run test:e2e`
 - `npm run verify` after the verify script exists
 
+## Validation Evidence
+
+### 2026-06-19 16:28 - Package Surface And Baseline Governance Slice
+
+- Stale package identifiers and stale dist entrypoints check returned no matches in the package/docs surface.
+- `npm run lint` passed with existing warnings and no errors.
+- `npm run type-check` passed.
+- `npm run build` passed after moving layout persistence helpers from the Vue SFC to `src/templates/layouts/main-layout-persistence.ts`.
+- `npm run test:architecture` passed.
+- `npm pack --dry-run` passed and reported `nettoolskit@1.1.0`.
+- Package export path check passed for `main`, `module`, `types`, `nettoolskit/styles`, and style subpaths.
+
 ## Closeout Expectations
 
 - README update is required when package surface, commands, or public API changes.
 - CHANGELOG update is required when user-visible package behavior changes.
 - Commit suggestion for the planning reset: `docs(planning): reset frontend standard specs`
+- Commit suggestion for the package surface slice: `feat(package): align nettoolskit package surface`
 - Do not move specs or this plan to completed until validation, review, and closeout evidence are recorded.

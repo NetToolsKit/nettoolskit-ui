@@ -7,7 +7,10 @@ import vue from 'esbuild-plugin-vue3'
  * declaration build warnings and keep the package usable across runtimes.
  */
 export default defineConfig({
-  entry: ['index.ts'],
+  entry: {
+    index: 'index.ts',
+    styles: 'src/styles/index.ts',
+  },
   format: ['cjs', 'esm'],
   outDir: '.build/dist',
   dts: false,

@@ -1,17 +1,25 @@
 {
-  "name": "@nettoolskit/ui-vue",
+  "name": "nettoolskit",
   "version": "1.1.0",
   "description": "Shared Vue 3 + Quasar component library with theme system, composables, and design tokens",
-  "main": "./.build/dist/index.cjs",
+  "main": "./.build/dist/index.js",
   "module": "./.build/dist/index.mjs",
   "types": "./.build/dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./.build/dist/index.d.ts",
       "import": "./.build/dist/index.mjs",
-      "require": "./.build/dist/index.cjs"
+      "require": "./.build/dist/index.js"
     },
-    "./styles": "./src/styles/index.ts",
+    "./styles": {
+      "types": "./.build/dist/src/styles/index.d.ts",
+      "import": "./.build/dist/styles.mjs",
+      "require": "./.build/dist/styles.js"
+    },
+    "./styles/tokens.scss": "./src/styles/tokens.scss",
+    "./styles/global.scss": "./src/styles/global.scss",
+    "./styles/themes.css": "./src/styles/themes.css",
+    "./styles/quasar-variables.scss": "./src/styles/quasar-variables.scss",
     "./package.json": "./package.json"
   },
   "files": [
@@ -37,6 +45,7 @@
     "dev:lib": "tsup --watch",
     "prepublishOnly": "npm run build",
     "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts",
+    "test:architecture": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/architecture",
     "test:watch": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --config tests/vitest.config.ts",
     "test:coverage": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --coverage --config tests/vitest.config.ts",
     "test:ui": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --ui --config tests/vitest.config.ts",
@@ -58,7 +67,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git"
+    "url": "https://github.com/ThiagoGuislotti/nettoolskit-ui.git"
   },
   "peerDependencies": {
     "quasar": "^2.0.0",

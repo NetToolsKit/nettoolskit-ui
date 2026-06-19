@@ -9,8 +9,8 @@
  * 
  * PROJECT USAGE:
  * 1. Import the styles in main.ts or App.vue:
- *    @import 'nettoolskit-ui-vue/src/styles/tokens.scss';
- *    @import 'nettoolskit-ui-vue/src/styles/global.scss';
+ *    @import 'nettoolskit/styles/tokens.scss';
+ *    @import 'nettoolskit/styles/global.scss';
  * 
  * 2. Prefer preset/theme CSS variables for runtime branding:
  *    :root { --ntk-primary: var(--brand-primary); }

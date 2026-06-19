@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **NetToolsKit package surface alignment**
+  - Renamed the package surface to `nettoolskit`, updated install/import examples, and added a source lock for the frontend standard workstream.
+  - Added a `nettoolskit/styles` export with explicit SCSS/CSS style subpaths and package path validation through `npm pack --dry-run`.
+  - Added a baseline architecture test that prevents new unmanaged Quasar tags/selectors, `:deep()`, `!important`, and raw hex color usage in governed frontend paths.
 - **Template-first release closeout with visual regression showcase**
   - Added a dedicated template showcase runtime mode at `/?templates=1`, wired through `landing-page/main.ts`, to render reusable template surfaces with deterministic fixture data for release validation.
   - Added `landing-page/TemplateShowcaseApp.vue` covering layout, auth/login, dashboard workspace, CRUD list, profile/placeholder, enterprise command/approval/audit, and wiki/chat template surfaces in one enterprise-oriented preview.

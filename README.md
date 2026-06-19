@@ -85,22 +85,22 @@ npm run test:e2e -- --project=chromium
 ### NPM Package (Recommended)
 
 ```bash
-npm install @nettoolskit/ui-vue
+npm install nettoolskit
 ```
 
 ### From Source
 
-Clone the repository and copy the `nettoolskit-ui-vue` folder to your project's `shared` directory:
+Clone the repository and copy the `nettoolskit-ui` folder to your project's `shared` directory:
 
 ```bash
-git clone https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git
-cp -r nettoolskit-ui-vue your-project/src/shared/
+git clone https://github.com/ThiagoGuislotti/nettoolskit-ui.git
+cp -r nettoolskit-ui your-project/src/shared/
 ```
 
 Or add as a Git submodule:
 
 ```bash
-git submodule add https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git src/shared/nettoolskit-ui-vue
+git submodule add https://github.com/ThiagoGuislotti/nettoolskit-ui.git src/shared/nettoolskit-ui
 ```
 
 ### Peer Dependencies
@@ -134,7 +134,9 @@ import { Quasar, Dark } from 'quasar'
 // Import styles
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
-import '@nettoolskit/ui-vue/dist/index.css'
+import 'nettoolskit/styles/tokens.scss'
+import 'nettoolskit/styles/global.scss'
+import 'nettoolskit/styles/themes.css'
 
 const app = createApp(App)
 app.use(Quasar, {
@@ -168,7 +170,7 @@ app.mount('#app')
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { BaseInput, BaseButton, useFormRules } from '@nettoolskit/ui-vue'
+import { BaseInput, BaseButton, useFormRules } from 'nettoolskit'
 
 const email = ref('')
 const { required } = useFormRules()
@@ -180,7 +182,7 @@ const handleSubmit = () => console.log('Submitted:', email.value)
 
 ```vue
 <script setup lang="ts">
-import { useBranding } from '@nettoolskit/ui-vue'
+import { useBranding } from 'nettoolskit'
 
 const { logo, appName, primaryColor, contact, social } = useBranding()
 </script>
@@ -254,7 +256,7 @@ import {
   BaseTextarea,
   BaseButton,
   useFormRules,
-} from '@/shared/nettoolskit-ui-vue';
+} from '@/shared/nettoolskit-ui';
 
 const { rules } = useFormRules();
 const form = reactive({
@@ -371,7 +373,7 @@ const onSubmit = () => console.log('Form:', form);
 #### useBranding - Centralized Branding Access
 
 ```ts
-import { useBranding } from '@nettoolskit/ui-vue'
+import { useBranding } from 'nettoolskit'
 
 const {
   logo,           // { letter, text, url } - Logo configuration
@@ -396,7 +398,7 @@ const {
 `useTheme` remains available for existing consumers, but new template runtime work should prefer CSS custom properties, active preset tokens, and Quasar Dark Plugin state.
 
 ```ts
-import { useTheme } from '@nettoolskit/ui-vue'
+import { useTheme } from 'nettoolskit'
 
 const {
   theme,           // Current theme config (readonly)
@@ -417,7 +419,7 @@ setTheme('dark')  // Dark mode
 #### useFormRules - Form Validation
 
 ```ts
-import { useFormRules } from '@nettoolskit/ui-vue'
+import { useFormRules } from 'nettoolskit'
 
 const { required, email, minLength, maxLength, numeric, cpf, cnpj, phone } = useFormRules()
 
@@ -429,7 +431,7 @@ const { required, email, minLength, maxLength, numeric, cpf, cnpj, phone } = use
 #### useNotification - Toast Notifications
 
 ```ts
-import { useNotification } from '@/shared/nettoolskit-ui-vue';
+import { useNotification } from '@/shared/nettoolskit-ui';
 
 const { notify, success, error, warning, info } = useNotification();
 
@@ -452,7 +454,7 @@ notify({
 #### useDialog - Modal Dialogs
 
 ```ts
-import { useDialog } from '@/shared/nettoolskit-ui-vue';
+import { useDialog } from '@/shared/nettoolskit-ui';
 
 const { confirm, alert, prompt } = useDialog();
 
@@ -486,7 +488,7 @@ const name = await prompt({
 #### useResponsive - Breakpoint Detection
 
 ```ts
-import { useResponsive } from '@/shared/nettoolskit-ui-vue';
+import { useResponsive } from '@/shared/nettoolskit-ui';
 
 const { isMobile, isTablet, isDesktop, breakpoint } = useResponsive();
 
@@ -498,7 +500,7 @@ const { isMobile, isTablet, isDesktop, breakpoint } = useResponsive();
 #### useDebounce - Debounced Values
 
 ```ts
-import { useDebounce } from '@/shared/nettoolskit-ui-vue';
+import { useDebounce } from '@/shared/nettoolskit-ui';
 
 const searchQuery = ref('');
 const debouncedQuery = useDebounce(searchQuery, 300);
@@ -512,7 +514,7 @@ watch(debouncedQuery, (query) => {
 #### useAsync - Async Operation Handler
 
 ```ts
-import { useAsync } from '@/shared/nettoolskit-ui-vue';
+import { useAsync } from '@/shared/nettoolskit-ui';
 
 const { execute, loading, error, data } = useAsync(async (id: string) => {
   const response = await api.get(`/users/${id}`);
@@ -547,8 +549,8 @@ The template runtime model is preset-driven: Quasar brand variables (`--q-*`) an
 The `ThemeConfig` / `useTheme()` path is preserved for existing apps. Prefer CSS variables and presets for new template-runtime white-label work so brand values can change without plugin-side writes.
 
 ```ts
-import type { ThemeConfig } from '@/shared/nettoolskit-ui-vue';
-import { useTheme } from '@/shared/nettoolskit-ui-vue';
+import type { ThemeConfig } from '@/shared/nettoolskit-ui';
+import { useTheme } from '@/shared/nettoolskit-ui';
 
 const customTheme: ThemeConfig = {
   name: 'MyBrand',
@@ -1039,7 +1041,7 @@ NetToolsKit UI Vue is intentionally layered so the project stays simple to consu
 **Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
 
 ```
-nettoolskit-ui-vue/
+nettoolskit-ui/
 ├── adapters/                    # Infrastructure adapters
 │   └── QuasarNotificationAdapter.ts
 ├── components/                  # Vue components

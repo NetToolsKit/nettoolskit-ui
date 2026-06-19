@@ -26,8 +26,7 @@ import {
 } from '../features'
 import { templateWikiChatService } from '../features/wiki/wiki-chat-service.template'
 import { createTemplateWikiChatStore } from '../features/wiki/wiki-chat-store.template'
-import { AuthLayoutTemplate, MainLayoutTemplate } from '../layouts'
-import { clearTemplateLayoutPersistence } from '../layouts/MainLayoutTemplate.vue'
+import { AuthLayoutTemplate, MainLayoutTemplate, clearTemplateLayoutPersistence } from '../layouts'
 import {
   CrudListTemplate,
   DashboardTemplate,
