@@ -2,9 +2,9 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 16:28
+LastUpdated: 2026-06-19 18:13
 Status: active
-Progress: 10% (1/10 checked)
+Progress: 60% (6/10 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -13,14 +13,14 @@ Release closeout: mandatory
 ## Progress Checklist
 
 - [x] Package and command surface spec accepted.
-- [ ] DTCG token/resolver implementation planned and delivered.
-- [ ] Theme, density, tenant validation, and Quasar adapter planned and delivered.
-- [ ] Component contracts, recipes, and compatibility exports planned and delivered.
+- [x] DTCG token/resolver implementation planned and delivered.
+- [x] Theme, density, tenant validation, and Quasar adapter planned and delivered.
+- [x] Component contracts, recipes, and compatibility exports planned and delivered.
 - [ ] CSS governance and enforcement planned and delivered.
 - [ ] CMS/template migration planned and delivered in thin slices.
 - [ ] Quality gates and generated docs planned and delivered.
-- [ ] README and changelog decisions recorded.
-- [ ] Validation evidence recorded in this plan.
+- [x] README and changelog decisions recorded.
+- [x] Validation evidence recorded in this plan.
 - [ ] Review and closeout completed.
 
 ## Scope Summary
@@ -73,14 +73,13 @@ Checkpoint:
 
 Target paths:
 - `src/design-system/tokens/**`
-- `scripts/validate-tokens.mjs`
-- `scripts/build-tokens.mjs`
+- `scripts/token-build.mjs`
 - `src/styles/**`
 
 Commands:
-- `npm run tokens:validate`
+- `npm run tokens:check`
 - `npm run tokens:build`
-- `npm run test -- tests/unit/styles`
+- `npm run test:tokens`
 
 Checkpoint:
 - Tokens generate CSS and TypeScript while preserving `--ntk-*` compatibility.
@@ -105,7 +104,7 @@ Checkpoint:
 Target paths:
 - `src/design-system/core/contracts/**`
 - `src/design-system/core/recipes/**`
-- `src/design-system/vue/components/**`
+- `src/design-system/vue/**`
 - `src/components/**`
 - `index.ts`
 
@@ -185,10 +184,29 @@ Checkpoint:
 - Package export path check passed for `main`, `module`, `types`, `nettoolskit/styles`, and style subpaths.
 - `.github/workflows/ci-tests.yml` dist verification now checks the generated `index.js`, `index.mjs`, `index.d.ts`, `styles.js`, and `styles.mjs` package outputs.
 
+### 2026-06-19 18:11 - Design System Foundation Slice
+
+- Added DTCG-style token source, resolver, generated CSS, generated TypeScript maps, and stale-output checks under `src/design-system/tokens/**` plus `scripts/token-build.mjs`.
+- Added theme runtime validation, density/tenant normalization, and Quasar CSS variable adapter coverage under `src/design-system/theme/**` and `src/design-system/adapters/quasar/**`.
+- Added button, field, and card contracts/class recipes plus `Ntk*` compatibility helpers under `src/design-system/core/**` and `src/design-system/vue/**`.
+- Added public exports from `index.ts` and package export `nettoolskit/design-system/tokens.css`.
+- Updated README and CHANGELOG for the new public design system surface and foundation gates.
+- `git diff --check` passed.
+- `npm run tokens:check` passed and reported 119 tokens.
+- `npm run test:tokens` passed with 5 tests.
+- `npm test -- tests/unit/design-system/theme tests/unit/design-system/components` passed with 3 files and 16 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed after replacing the theme control-character regex with a `charCodeAt` check.
+- `npm run test:architecture` passed.
+- `npm run build` passed.
+- `npm run verify` passed.
+- `npm pack --dry-run` passed and included `.build/dist/src/design-system/**` declarations plus `src/design-system/tokens/generated.css`.
+
 ## Closeout Expectations
 
 - README update is required when package surface, commands, or public API changes.
 - CHANGELOG update is required when user-visible package behavior changes.
 - Commit suggestion for the planning reset: `docs(planning): reset frontend standard specs`
 - Commit suggestion for the package surface slice: `feat(package): align nettoolskit package surface`
+- Commit suggestion for the design system foundation slice: `feat(design-system): add token theme and recipe foundation`
 - Do not move specs or this plan to completed until validation, review, and closeout evidence are recorded.

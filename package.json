@@ -20,18 +20,21 @@
     "./styles/global.scss": "./src/styles/global.scss",
     "./styles/themes.css": "./src/styles/themes.css",
     "./styles/quasar-variables.scss": "./src/styles/quasar-variables.scss",
+    "./design-system/tokens.css": "./src/design-system/tokens/generated.css",
     "./package.json": "./package.json"
   },
   "files": [
     ".build/dist",
     "src/styles",
+    "src/design-system/tokens/generated.css",
     "README.md",
     "LICENSE"
   ],
   "sideEffects": [
     "*.css",
     "*.scss",
-    "src/styles/**"
+    "src/styles/**",
+    "src/design-system/tokens/generated.css"
   ],
   "scripts": {
     "build": "npm run build:js && npm run build:dts",
@@ -44,15 +47,19 @@
     "dev:landing": "npm run dev:samples",
     "dev:lib": "tsup --watch",
     "prepublishOnly": "npm run build",
+    "tokens:build": "node scripts/token-build.mjs",
+    "tokens:check": "node scripts/token-build.mjs --check",
     "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts",
     "test:architecture": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/architecture",
+    "test:tokens": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system/tokens/token-build.spec.ts --environment=node --pool=forks --maxWorkers=1 --no-file-parallelism",
     "test:watch": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --config tests/vitest.config.ts",
     "test:coverage": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --coverage --config tests/vitest.config.ts",
     "test:ui": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --ui --config tests/vitest.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "lint": "eslint src samples --ext .ts,.vue",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "verify": "npm run tokens:check && npm run lint -- --quiet && npm run type-check && npm run test:tokens && npm run test:architecture && npm run build"
   },
   "keywords": [
     "vue",

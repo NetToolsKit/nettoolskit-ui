@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Design system foundation**
+  - Added a DTCG-style token source and token builder under `src/design-system/tokens`, generating committed CSS custom properties and typed token maps with `--ntk-*` naming.
+  - Added theme runtime validation for theme ids, tenant ids, density, and controlled CSS variables, plus a Quasar adapter that emits validated CSS variable patches.
+  - Added button, field, and card component contracts/class recipes with public `nettoolskit` exports, focused unit coverage, and a `verify` script for the foundation gates.
 - **NetToolsKit package surface alignment**
   - Renamed the package surface to `nettoolskit`, updated install/import examples, and added a source lock for the frontend standard workstream.
   - Added a `nettoolskit/styles` export with explicit SCSS/CSS style subpaths and package path validation through `npm pack --dry-run`.

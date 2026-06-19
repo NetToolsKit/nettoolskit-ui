@@ -28,6 +28,7 @@ For frontend changes, use this mandatory baseline:
 npm run lint
 npm run type-check
 npm run test
+npm run tokens:check
 ```
 
 For visual/template and CMS slices, also run:
@@ -134,6 +135,7 @@ import { Quasar, Dark } from 'quasar'
 // Import styles
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css'
+import 'nettoolskit/design-system/tokens.css'
 import 'nettoolskit/styles/tokens.scss'
 import 'nettoolskit/styles/global.scss'
 import 'nettoolskit/styles/themes.css'
@@ -975,41 +977,44 @@ npm run test:e2e -- tests/e2e/template-runtime-screenshots.spec.ts --project=chr
 
 ## Design System
 
-### Typography
+The design system foundation lives under `src/design-system` and is exported from `nettoolskit`.
 
-| Element | Font | Weight | Size |
-|---------|------|--------|------|
-| Display/Titles | Poppins | Bold (700) | 24-48px |
-| Body Text | Inter | Regular (400) | 14-16px |
-| Captions | Inter | Regular (400) | 12px |
+### Public Surface
 
-### Spacing Scale
+```ts
+import {
+  designTokenCssVariables,
+  designTokenValues,
+  getNtkButtonClassName,
+  validateThemeRuntimeModel,
+} from 'nettoolskit'
+
+import 'nettoolskit/design-system/tokens.css'
+```
+
+### Token Pipeline
+
+Tokens are authored in DTCG-style JSON at `src/design-system/tokens/source.json`. Generated outputs are committed so package consumers can use both typed token maps and CSS custom properties.
+
+```bash
+npm run tokens:build
+npm run tokens:check
+```
+
+### Core Token Examples
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--spacing-xs` | 4px | Dense elements |
-| `--spacing-sm` | 8px | Tight spacing |
-| `--spacing-md` | 16px | Default spacing |
-| `--spacing-lg` | 24px | Section padding |
-| `--spacing-xl` | 32px | Large gaps |
-| `--spacing-2xl` | 48px | Section margins |
-| `--spacing-3xl` | 64px | Page sections |
+| `--ntk-primary` | `#0f766e` | Main product action color |
+| `--ntk-bg-primary` | `#ffffff` | Base app surface |
+| `--ntk-text-primary` | `#1e293b` | Primary text |
+| `--ntk-border-color` | `#e2e8f0` | Default borders |
+| `--ntk-spacing-md` | `1rem` | Default layout rhythm |
+| `--ntk-radius-md` | `8px` | Standard control radius |
 
-### Shadows
+### Runtime Contracts
 
-| Level | Opacity | Usage |
-|-------|---------|-------|
-| Soft | 0.05 | Cards, subtle elevation |
-| Medium | 0.08 | Dropdowns, popovers |
-| Strong | 0.1 | Modals, dialogs |
-
-### Transitions
-
-| Duration | Easing | Usage |
-|----------|--------|-------|
-| 200ms | ease-in-out | Hover states |
-| 300ms | ease-in-out | Expand/collapse |
-| 500ms | ease-in-out | Page transitions |
+Theme inputs go through `validateThemeRuntimeModel()` before adapters emit CSS variables. Component recipes expose class contracts for shared UI primitives such as button, field, and card while keeping existing `Ntk*` compatibility paths available.
 
 ---
 
