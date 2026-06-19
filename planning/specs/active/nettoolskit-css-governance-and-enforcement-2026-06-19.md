@@ -1,0 +1,76 @@
+# NetToolsKit CSS Governance And Enforcement - Spec
+
+Date: 2026-06-19
+Status: active
+Priority: P1
+Sequence: 05
+Source Standard: `.temp/NETTOOLSKIT_FRONTEND_DESIGN_SYSTEM_STANDARD.md`
+
+## Design Intent
+
+Stop CSS drift by defining allowed CSS scopes, cascade layers, low-specificity selectors, controlled `:deep()` usage, controlled `!important` usage, and automated lint rules.
+
+## Current Evidence
+
+Current scans found high-volume usage of direct Quasar selectors, `:deep()`, `!important`, inline styles, and raw values, concentrated in templates and bridge styles.
+
+High-risk files include:
+
+- `src/templates/styles/reference-app-bridge.scss`
+- `src/templates/styles/cms-authoring-reference.css`
+- `src/templates/features/cms/authoring/modules/**`
+- `src/components/layout/NtkAppShell.vue`
+- `src/styles/global.scss`
+
+## Decisions
+
+1. Global CSS is limited to tokens, reset, typography, base layout, controlled utilities, and documented overrides.
+2. Component CSS may use BEM-style classes and local token variables.
+3. Page/template CSS must not override Quasar internals.
+4. `:deep()` is allowed only inside design-system wrappers/adapters or documented exceptions.
+5. `!important` requires a short justification and must be rejected outside approved files.
+6. Stylelint and ESLint must enforce the policy.
+
+## Target Paths
+
+- future `src/design-system/styles/layers.css`
+- future `src/design-system/policies/css.policy.yaml`
+- future `stylelint.config.*`
+- future `eslint` rules or local architecture tests
+- existing `src/styles/global.scss`
+- existing `src/templates/styles/reference-app-bridge.scss`
+- existing `src/templates/styles/cms-authoring-reference.css`
+- existing `tests/unit/templates/TemplateWhiteLabelAudit.spec.ts`
+
+## Design Slice Matrix
+
+| Slice | Target | Validation |
+|---|---|---|
+| CSS layers | reset, tokens, base, components, utilities, overrides | CSS import order test |
+| Selector policy | max specificity, no IDs, no page-local Quasar internals | Stylelint |
+| `:deep()` policy | wrapper-only usage | ESLint or architecture test |
+| `!important` policy | exception-only usage | Stylelint and grep gate |
+| Raw value policy | no hardcoded color/shadow/motion outside tokens | Stylelint and token audit |
+
+## Acceptance Criteria
+
+1. CSS policy file exists and is enforced.
+2. Stylelint runs in the verify flow.
+3. ESLint or architecture tests block direct Quasar usage in features.
+4. Existing exceptions are listed with owners and target removal specs.
+5. New CSS cannot add raw colors, unmanaged `:deep()`, or unmanaged `!important`.
+
+## Risks
+
+- Enforcing rules before wrappers exist will create noisy failures.
+- Existing bridge files may need temporary exception windows.
+- Overly broad regex rules can block valid token expressions.
+
+## Planning Readiness
+
+Ready for planning after component wrappers and token generation exist.
+
+## Recommended Specialist
+
+- Primary: `dev-frontend-vue-quasar-engineer`
+- Support: `test-engineer`
