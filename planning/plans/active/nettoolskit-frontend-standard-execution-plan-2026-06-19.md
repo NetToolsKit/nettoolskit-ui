@@ -183,6 +183,7 @@ Checkpoint:
 - `npm run test:architecture` passed.
 - `npm pack --dry-run` passed and reported `nettoolskit@1.1.0`.
 - Package export path check passed for `main`, `module`, `types`, `nettoolskit/styles`, and style subpaths.
+- `.github/workflows/ci-tests.yml` dist verification now checks the generated `index.js`, `index.mjs`, `index.d.ts`, `styles.js`, and `styles.mjs` package outputs.
 
 ## Closeout Expectations
 

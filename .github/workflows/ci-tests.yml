@@ -111,9 +111,11 @@ jobs:
 
       - name: Verify dist output exists
         run: |
-          test -f .build/dist/index.cjs || (echo "Missing CJS output" && exit 1)
+          test -f .build/dist/index.js || (echo "Missing CJS output" && exit 1)
           test -f .build/dist/index.mjs || (echo "Missing ESM output" && exit 1)
           test -f .build/dist/index.d.ts || (echo "Missing type declarations" && exit 1)
+          test -f .build/dist/styles.js || (echo "Missing styles CJS output" && exit 1)
+          test -f .build/dist/styles.mjs || (echo "Missing styles ESM output" && exit 1)
           echo "All expected outputs present"
 
   e2e:
