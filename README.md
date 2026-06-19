@@ -26,9 +26,12 @@ For frontend changes, use this mandatory baseline:
 
 ```bash
 npm run lint
+npm run lint:css
 npm run type-check
 npm run test
 npm run tokens:check
+npm run docs:check
+npm run verify
 ```
 
 For visual/template and CMS slices, also run:
@@ -999,7 +1002,11 @@ Tokens are authored in DTCG-style JSON at `src/design-system/tokens/source.json`
 ```bash
 npm run tokens:build
 npm run tokens:check
+npm run docs:build
+npm run docs:check
 ```
+
+Generated design-system references are committed at [DESIGN.md](./DESIGN.md), [TOKENS.md](./TOKENS.md), and [COMPONENTS.md](./COMPONENTS.md).
 
 ### Core Token Examples
 

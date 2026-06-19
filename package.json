@@ -47,10 +47,13 @@
     "dev:landing": "npm run dev:samples",
     "dev:lib": "tsup --watch",
     "prepublishOnly": "npm run build",
+    "docs:build": "node scripts/design-system-docs.mjs",
+    "docs:check": "node scripts/design-system-docs.mjs --check",
     "tokens:build": "node scripts/token-build.mjs",
     "tokens:check": "node scripts/token-build.mjs --check",
     "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts",
     "test:architecture": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/architecture",
+    "test:design-system": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system --pool=forks --maxWorkers=1 --no-file-parallelism",
     "test:tokens": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system/tokens/token-build.spec.ts --environment=node --pool=forks --maxWorkers=1 --no-file-parallelism",
     "test:watch": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --config tests/vitest.config.ts",
     "test:coverage": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --coverage --config tests/vitest.config.ts",
@@ -58,8 +61,9 @@
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "lint": "eslint src samples --ext .ts,.vue",
+    "lint:css": "node scripts/lint-css-governance.mjs",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run tokens:check && npm run lint -- --quiet && npm run type-check && npm run test:tokens && npm run test:architecture && npm run build"
+    "verify": "npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:css && npm run type-check && npm run test:design-system && npm run test:architecture && npm run build"
   },
   "keywords": [
     "vue",

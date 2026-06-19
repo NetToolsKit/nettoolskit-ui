@@ -249,7 +249,7 @@ export function generateCssCustomProperties(source, options = {}) {
     lines.push(`  ${token.cssVariable}: ${token.cssValue};`)
   }
 
-  lines.push('}', '')
+  lines.push('}')
   return lines.join('\n')
 }
 
@@ -289,7 +289,6 @@ export function generateTsTokenMap(source) {
     '',
     'export type DesignTokenPath = keyof typeof designTokens',
     'export type DesignTokenCssVariable = keyof typeof designTokensByCssVariable',
-    '',
   ].join('\n')
 }
 

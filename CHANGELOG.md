@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Design system quality gates and generated docs**
+  - Added generated `DESIGN.md`, `TOKENS.md`, and `COMPONENTS.md` references built from the token source and component recipe contracts.
+  - Added `docs:build`, `docs:check`, `lint:css`, and `test:design-system` scripts, plus importable documentation and CSS governance CLIs.
+  - Expanded `verify` to include token drift, generated documentation drift, CSS governance, design-system unit coverage, architecture checks, type-check, lint, and build.
 - **Design system foundation**
   - Added a DTCG-style token source and token builder under `src/design-system/tokens`, generating committed CSS custom properties and typed token maps with `--ntk-*` naming.
   - Added theme runtime validation for theme ids, tenant ids, density, and controlled CSS variables, plus a Quasar adapter that emits validated CSS variable patches.

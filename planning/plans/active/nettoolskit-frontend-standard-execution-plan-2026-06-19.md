@@ -2,9 +2,9 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 18:27
+LastUpdated: 2026-06-19 18:54
 Status: active
-Progress: 70% (7/10 checked)
+Progress: 90% (9/10 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -16,9 +16,9 @@ Release closeout: mandatory
 - [x] DTCG token/resolver implementation planned and delivered.
 - [x] Theme, density, tenant validation, and Quasar adapter planned and delivered.
 - [x] Component contracts, recipes, and compatibility exports planned and delivered.
-- [ ] CSS governance and enforcement planned and delivered.
+- [x] CSS governance and enforcement planned and delivered.
 - [x] CMS/template migration planned and delivered in thin slices.
-- [ ] Quality gates and generated docs planned and delivered.
+- [x] Quality gates and generated docs planned and delivered.
 - [x] README and changelog decisions recorded.
 - [x] Validation evidence recorded in this plan.
 - [ ] Review and closeout completed.
@@ -215,6 +215,23 @@ Checkpoint:
 - `npm run build` passed.
 - `git diff --check` passed.
 
+### 2026-06-19 18:54 - Quality Gates And Generated Docs Slice
+
+- Added generated root docs from source artifacts: `DESIGN.md`, `TOKENS.md`, and `COMPONENTS.md`.
+- Added `scripts/design-system-docs.mjs` with build and drift-check modes.
+- Added `scripts/lint-css-governance.mjs` with baseline-aware CSS governance checks and JSON output.
+- Added focused docs and CSS governance unit tests under `tests/unit/design-system/**`.
+- Added package scripts: `docs:build`, `docs:check`, `lint:css`, and `test:design-system`.
+- Expanded `npm run verify` to run token drift, generated-doc drift, ESLint, CSS governance, type-check, design-system tests, architecture tests, and build.
+- Adjusted `scripts/token-build.mjs` so generated token files stay stable after the repository EOF hygiene hook.
+- README and CHANGELOG were updated for the new gates and generated docs.
+- `npm run docs:check` passed.
+- `npm run lint:css` passed and scanned 178 files.
+- `npm test -- tests/unit/design-system/docs/design-system-docs.spec.ts tests/unit/design-system/governance/css-governance-lint.spec.ts --environment=node --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 2 files and 6 tests.
+- `npm run verify` passed with 6 design-system test files, 27 design-system tests, architecture tests, and build.
+- `git diff --check` passed.
+- Full Playwright visual/E2E remains a separate gate for slices that change visual runtime behavior.
+
 ## Closeout Expectations
 
 - README update is required when package surface, commands, or public API changes.
@@ -223,4 +240,5 @@ Checkpoint:
 - Commit suggestion for the package surface slice: `feat(package): align nettoolskit package surface`
 - Commit suggestion for the design system foundation slice: `feat(design-system): add token theme and recipe foundation`
 - Commit suggestion for the CMS template migration slice: `refactor(cms): migrate editor toolbar actions to ntk button`
+- Commit suggestion for the quality gates and docs slice: `feat(design-system): add generated docs and governance gates`
 - Do not move specs or this plan to completed until validation, review, and closeout evidence are recorded.
