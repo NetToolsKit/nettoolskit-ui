@@ -2,9 +2,9 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 18:13
+LastUpdated: 2026-06-19 18:27
 Status: active
-Progress: 60% (6/10 checked)
+Progress: 70% (7/10 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -17,7 +17,7 @@ Release closeout: mandatory
 - [x] Theme, density, tenant validation, and Quasar adapter planned and delivered.
 - [x] Component contracts, recipes, and compatibility exports planned and delivered.
 - [ ] CSS governance and enforcement planned and delivered.
-- [ ] CMS/template migration planned and delivered in thin slices.
+- [x] CMS/template migration planned and delivered in thin slices.
 - [ ] Quality gates and generated docs planned and delivered.
 - [x] README and changelog decisions recorded.
 - [x] Validation evidence recorded in this plan.
@@ -202,6 +202,19 @@ Checkpoint:
 - `npm run verify` passed.
 - `npm pack --dry-run` passed and included `.build/dist/src/design-system/**` declarations plus `src/design-system/tokens/generated.css`.
 
+### 2026-06-19 18:27 - CMS Template Toolbar Migration Slice
+
+- Migrated only the top editor toolbar action buttons in `CmsSettingsModuleSurface.vue`, `CmsBlocksModuleSurface.vue`, and `CmsPagesModuleSurface.vue` from direct `q-btn` usage to `NtkButton`.
+- Kept primary preview buttons, styled body actions, destructive actions, round icon controls, tooltip-slot controls, and `@click.stop` actions unchanged for this thin slice.
+- README was not changed because this slice does not add a public command or package API.
+- CHANGELOG was updated under `[Unreleased]`.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- `npm test -- tests/unit/templates/CmsAuthoringModuleTemplates.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 3 files and 21 tests.
+- `npm run test:architecture` passed.
+- `npm run build` passed.
+- `git diff --check` passed.
+
 ## Closeout Expectations
 
 - README update is required when package surface, commands, or public API changes.
@@ -209,4 +222,5 @@ Checkpoint:
 - Commit suggestion for the planning reset: `docs(planning): reset frontend standard specs`
 - Commit suggestion for the package surface slice: `feat(package): align nettoolskit package surface`
 - Commit suggestion for the design system foundation slice: `feat(design-system): add token theme and recipe foundation`
+- Commit suggestion for the CMS template migration slice: `refactor(cms): migrate editor toolbar actions to ntk button`
 - Do not move specs or this plan to completed until validation, review, and closeout evidence are recorded.

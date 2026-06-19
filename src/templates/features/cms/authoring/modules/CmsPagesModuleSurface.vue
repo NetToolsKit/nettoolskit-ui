@@ -16,7 +16,7 @@
       <template #header>
         <CmsAuthoringToolbar :info-items="cmsPagesToolbarInfoItems">
           <template #actions>
-            <q-btn
+            <NtkButton
               flat
               dense
               no-caps
@@ -26,7 +26,7 @@
               :aria-label="tr('Open pages workspace', 'Abrir workspace de páginas')"
               @click="focusWorkbench()"
             />
-            <q-btn
+            <NtkButton
               flat
               dense
               no-caps
@@ -36,7 +36,7 @@
               :aria-label="cmsUiText.addPageLabel"
               @click="addCmsPage()"
             />
-            <q-btn
+            <NtkButton
               flat
               dense
               no-caps
@@ -46,7 +46,7 @@
               :aria-label="cmsUiText.saveAriaLabel"
               @click="saveNow()"
             />
-            <q-btn
+            <NtkButton
               flat
               dense
               no-caps
@@ -57,7 +57,7 @@
               :aria-label="tr('Undo', 'Desfazer')"
               @click="undoCmsAuthoringChange()"
             />
-            <q-btn
+            <NtkButton
               flat
               dense
               no-caps
@@ -1201,6 +1201,7 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 import { computed } from 'vue'
+import NtkButton from '../../../../../components/ui/NtkButton.vue'
 import type { CmsBlockRegistry, CmsRecord, CmsPageSchema } from '../../../../../modules/cms/core'
 import type { CmsContentValidationIssue } from '../../../../../modules/cms/white-label/content-validation'
 import type {

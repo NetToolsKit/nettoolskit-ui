@@ -420,6 +420,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Confirmed `build:landing`, `type-check`, `lint`, and `npm audit --omit=dev` all pass at close.
   - Closed the CMS Engine Enterprise Plan (2026-03-13) after tester and reviewer gate criteria were satisfied.
 
+### Changed
+
+- **CMS authoring toolbar migration**
+  - Migrated the top editor toolbar actions in Settings, Pages, and Blocks module surfaces from direct `q-btn` usage to the shared `NtkButton` wrapper.
+  - Preserved the primary preview buttons and styled/destructive body actions on direct Quasar buttons for this thin slice.
+
 ### Fixed
 
 - **Vercel production build module resolution for CMS releases**

@@ -17,13 +17,13 @@
       <template #header>
         <CmsAuthoringToolbar :info-items="cmsSettingsToolbarInfoItems">
           <template #actions>
-            <q-btn flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open settings workspace', 'Abrir workspace de configurações')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
-            <q-btn flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt()" />
-            <q-btn flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow()" />
-            <q-btn flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange()" />
-            <q-btn flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange()" />
-            <q-btn flat dense no-caps icon="download" class="cms-designer-card__toolbar-action" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile()" />
-            <q-btn flat dense no-caps icon="upload_file" class="cms-designer-card__toolbar-action" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog()" />
+            <NtkButton flat dense no-caps icon="folder_open" class="cms-designer-card__toolbar-action" :label="tr('Open', 'Abrir')" :aria-label="tr('Open settings workspace', 'Abrir workspace de configurações')" @click="scrollCmsDesignerSurface('.cms-designer-card--settings .cms-designer-card__workbench')" />
+            <NtkButton flat dense no-caps icon="note_add" class="cms-designer-card__toolbar-action" :label="tr('New', 'Novo')" :aria-label="cmsUiText.tenantCreateAriaLabel" @click="createTenantProfileFromPrompt()" />
+            <NtkButton flat dense no-caps icon="save" class="cms-designer-card__toolbar-action" :label="cmsUiText.saveLabel" :aria-label="cmsUiText.saveAriaLabel" @click="saveNow()" />
+            <NtkButton flat dense no-caps icon="undo" class="cms-designer-card__toolbar-action" :label="tr('Undo', 'Desfazer')" :disable="!canUndoCmsAuthoringHistory" :aria-label="tr('Undo', 'Desfazer')" @click="undoCmsAuthoringChange()" />
+            <NtkButton flat dense no-caps icon="redo" class="cms-designer-card__toolbar-action" :label="tr('Redo', 'Refazer')" :disable="!canRedoCmsAuthoringHistory" :aria-label="tr('Redo', 'Refazer')" @click="redoCmsAuthoringChange()" />
+            <NtkButton flat dense no-caps icon="download" class="cms-designer-card__toolbar-action" :label="cmsUiText.exportLabel" :aria-label="cmsUiText.exportAriaLabel" @click="exportActiveTenantProfile()" />
+            <NtkButton flat dense no-caps icon="upload_file" class="cms-designer-card__toolbar-action" :label="cmsUiText.importLabel" :aria-label="cmsUiText.importAriaLabel" @click="openTenantImportDialog()" />
           </template>
           <template #trailing>
             <q-btn no-caps unelevated icon="visibility" :label="tr('Preview', 'Preview')" :style="primaryActionStyle" @click="showCmsDesignerPreview('settings')" />
@@ -1685,6 +1685,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
+import NtkButton from '../../../../../components/ui/NtkButton.vue'
 import type { CmsWhiteLabelSettings } from '../../../../../modules/cms/white-label/types'
 import type { CmsAuthoringToolbarInfoItem } from '../CmsAuthoringToolbar.vue'
 import type { CmsAuthoringMetricItem } from '../CmsAuthoringMetricsList.vue'
