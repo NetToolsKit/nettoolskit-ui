@@ -159,6 +159,20 @@ Existing issue examples:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
+### 2026-06-20 01:53 - NtkSelect Compatibility Slice
+
+- Kept `src/components/form/NtkSelect.vue` as a Quasar-backed compatibility adapter.
+- Added design-system compatibility props for `variant`, `size`, `intent`, `disabled`, `invalid`, and `required` without replacing `QSelect` or changing multiple/chips/menu behavior.
+- Recognized field contract values now add `resolveNtkFieldRecipe()` classes while preserving the legacy `.ntk-select` selector.
+- Preserved explicit legacy prop precedence for `outlined`, `filled`, `dense`, and `disable`; `outlined`/`filled` are treated as one visual group so partial legacy input wins over `variant`.
+- Kept `size="lg"` as class-only compatibility and `required` as ARIA/state-only for this slice to avoid changing Quasar validation behavior.
+- Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-select.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 41 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run test:design-system` passed with 11 files and 55 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: broader CMS direct Quasar migration and final PR/CI/review closeout.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.

@@ -66,7 +66,14 @@ describe('NtkSelect', () => {
       props: { label: 'Status', options },
     })
 
-    expect(wrapper.find('q-select-stub.ntk-select').exists()).toBe(true)
+    const select = wrapper.find('q-select-stub.ntk-select')
+    expect(select.exists()).toBe(true)
+    expect(select.classes()).toEqual(expect.arrayContaining([
+      'ntk-field',
+      'ntk-field--variant-outlined',
+      'ntk-field--size-md',
+      'ntk-field--intent-neutral',
+    ]))
   })
 
   it('passes label and options to q-select stub', () => {
@@ -93,6 +100,106 @@ describe('NtkSelect', () => {
     })
 
     expect(wrapper.find('q-select-stub').attributes('disable')).toBe('true')
+  })
+
+  it('maps design-system compatibility props onto the q-select stub', () => {
+    const wrapper = shallowMount(NtkSelect, {
+      props: {
+        label: 'Status',
+        options,
+        variant: 'filled',
+        size: 'sm',
+        intent: 'success',
+        disabled: true,
+        invalid: true,
+        required: true,
+        readonly: true,
+      },
+    })
+
+    const select = wrapper.find('q-select-stub')
+
+    expect(select.attributes('filled')).toBe('true')
+    expect(select.attributes('outlined')).toBe('false')
+    expect(select.attributes('dense')).toBe('true')
+    expect(select.attributes('disable')).toBe('true')
+    expect(select.attributes('error')).toBe('true')
+    expect(select.attributes('aria-invalid')).toBe('true')
+    expect(select.attributes('aria-required')).toBe('true')
+    expect(select.classes()).toEqual(expect.arrayContaining([
+      'ntk-field--variant-filled',
+      'ntk-field--size-sm',
+      'ntk-field--intent-success',
+      'ntk-field--is-disabled',
+      'ntk-field--is-invalid',
+      'ntk-field--is-readonly',
+      'ntk-field--is-required',
+    ]))
+  })
+
+  it('lets explicit legacy visual and disabled props win over compatibility aliases', () => {
+    const wrapper = shallowMount(NtkSelect, {
+      props: {
+        label: 'Status',
+        options,
+        variant: 'filled',
+        size: 'sm',
+        disabled: true,
+        disable: false,
+        outlined: true,
+        filled: false,
+        dense: false,
+      },
+    })
+
+    const select = wrapper.find('q-select-stub')
+
+    expect(select.attributes('outlined')).toBe('true')
+    expect(select.attributes('filled')).toBe('false')
+    expect(select.attributes('dense')).toBe('false')
+    expect(select.attributes('disable')).toBe('false')
+    expect(select.classes()).toEqual(expect.arrayContaining([
+      'ntk-field--variant-outlined',
+      'ntk-field--size-md',
+    ]))
+    expect(select.classes()).not.toContain('ntk-field--is-disabled')
+  })
+
+  it('treats outlined and filled as one legacy visual group when only one is explicit', () => {
+    const wrapper = shallowMount(NtkSelect, {
+      props: {
+        label: 'Status',
+        options,
+        variant: 'filled',
+        outlined: true,
+      },
+    })
+
+    const select = wrapper.find('q-select-stub')
+
+    expect(select.attributes('outlined')).toBe('true')
+    expect(select.attributes('filled')).toBe('false')
+    expect(select.classes()).toContain('ntk-field--variant-outlined')
+  })
+
+  it('falls back to the default field recipe for unknown compatibility values', () => {
+    const wrapper = shallowMount(NtkSelect, {
+      props: {
+        label: 'Status',
+        options,
+        variant: 'soft',
+        size: 'xl',
+        intent: 'brand',
+      },
+    })
+
+    const select = wrapper.find('q-select-stub')
+
+    expect(select.classes()).toEqual(expect.arrayContaining([
+      'ntk-field--variant-outlined',
+      'ntk-field--size-md',
+      'ntk-field--intent-neutral',
+    ]))
   })
 })
 
