@@ -1,11 +1,12 @@
 <template>
   <div class="cms-designer-card__ruler-shell">
     <div class="cms-designer-card__ruler-gutter">
-      <q-btn
-        flat
-        dense
-        round
+      <DsButton
+        variant="ghost"
+        size="sm"
+        intent="neutral"
         icon="chevron_left"
+        class="cms-designer-card__ruler-focus"
         :aria-label="focusAriaLabel"
         @click="$emit('focus')"
       />
@@ -24,10 +25,10 @@
     <div class="cms-designer-card__ruler-meta">
       <slot name="meta-prefix" />
       <span class="cms-designer-card__ruler-zoom">{{ zoomLabel }}</span>
-      <q-btn
-        flat
-        dense
-        no-caps
+      <DsButton
+        variant="ghost"
+        size="sm"
+        intent="neutral"
         icon="grid_4x4"
         class="cms-designer-card__ruler-mode"
         :label="modeLabel"
@@ -38,6 +39,8 @@
 </template>
 
 <script setup lang="ts">
+import { DsButton } from '../../../../design-system/vue'
+
 withDefaults(defineProps<{
   marks?: Array<string | number>
   zoomLabel?: string

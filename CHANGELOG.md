@@ -457,6 +457,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS authoring ruler button migration**
+  - Replaced the authoring ruler focus and grid-mode `q-btn` controls with the rendered `DsButton` wrapper while preserving focus/toggle events and compact ruler styling.
+  - Added focused unit coverage for the ruler controls and refreshed the affected Windows CMS visual baselines.
 - **CMS pages preview header action migration**
   - Replaced the pages preview `Open in new window` header action with the rendered `DsButton` wrapper.
   - Added focused unit coverage for the `openInWindow` action and refreshed the affected Windows visual baseline.

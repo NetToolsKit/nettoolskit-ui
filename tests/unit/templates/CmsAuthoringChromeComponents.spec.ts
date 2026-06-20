@@ -276,30 +276,52 @@ describe('CmsPanelListSection', () => {
 describe('CmsAuthoringRulerBar', () => {
   it('renders marks and zoom label', () => {
     const wrapper = shallowMount(CmsAuthoringRulerBar, {
-      global: { stubs: { 'q-btn': { template: '<button @click="$emit(\'click\')"><slot /></button>' } } },
+      global: { stubs: { DsButton: false } },
       props: { marks: [0, 100, 200, 300], zoomLabel: '125%', modeLabel: 'Snap' },
     })
 
     const rulerMarks = wrapper.findAll('.cms-designer-card__ruler-mark')
     expect(rulerMarks).toHaveLength(4)
     expect(wrapper.find('.cms-designer-card__ruler-zoom').text()).toBe('125%')
+    expect(wrapper.findAll('button.ntk-button')).toHaveLength(2)
   })
 
   it('emits focus when gutter button is clicked', async () => {
     const wrapper = shallowMount(CmsAuthoringRulerBar, {
+      global: { stubs: { DsButton: false } },
       props: { focusAriaLabel: 'Focus workbench', modeLabel: 'Grid' },
     })
 
-    await wrapper.find('q-btn-stub[aria-label="Focus workbench"]').trigger('click')
+    const button = wrapper.get('button[aria-label="Focus workbench"]')
+
+    expect(button.classes()).toEqual(expect.arrayContaining([
+      'cms-designer-card__ruler-focus',
+      'ntk-button--variant-ghost',
+      'ntk-button--size-sm',
+      'ntk-button--intent-neutral',
+    ]))
+
+    await button.trigger('click')
     expect(wrapper.emitted('focus')).toHaveLength(1)
   })
 
   it('emits toggle-mode when mode button is clicked', async () => {
     const wrapper = shallowMount(CmsAuthoringRulerBar, {
+      global: { stubs: { DsButton: false } },
       props: { focusAriaLabel: 'Focus workbench', modeLabel: 'Grid' },
     })
 
-    await wrapper.find('.cms-designer-card__ruler-mode').trigger('click')
+    const button = wrapper.get('button.cms-designer-card__ruler-mode')
+
+    expect(button.classes()).toEqual(expect.arrayContaining([
+      'ntk-button--variant-ghost',
+      'ntk-button--size-sm',
+      'ntk-button--intent-neutral',
+    ]))
+    expect(button.text()).toContain('grid_4x4')
+    expect(button.text()).toContain('Grid')
+
+    await button.trigger('click')
     expect(wrapper.emitted('toggle-mode')).toHaveLength(1)
   })
 })

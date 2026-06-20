@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 00:47
+LastUpdated: 2026-06-20 01:06
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -60,6 +60,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #12 is open as a draft stacked PR from `feat/nettoolskit-ds-table-wrapper-2026-06-20` into `feat/nettoolskit-ds-select-wrapper-2026-06-20`.
 - PR #13 is open as a draft stacked PR from `feat/nettoolskit-ds-page-section-wrappers-2026-06-20` into `feat/nettoolskit-ds-table-wrapper-2026-06-20`.
 - PR #14 is open as a draft stacked PR from `feat/nettoolskit-ntk-button-compat-2026-06-20` into `feat/nettoolskit-ds-page-section-wrappers-2026-06-20`.
+- The next local slice is in progress on `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20` to migrate the CMS authoring ruler controls to `DsButton`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -430,6 +431,19 @@ Checkpoint:
 - Commit `a59a57a` created the NtkButton compatibility slice.
 - PR #14 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/14`.
 - PR #14 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
+- Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
+### 2026-06-20 01:06 - CMS Authoring Ruler DsButton Slice
+
+- Replaced `CmsAuthoringRulerBar` focus and grid-mode direct `q-btn` controls with the rendered `DsButton` wrapper.
+- Preserved focus and mode-toggle event behavior while adding ruler-specific compact styles for `ntk-button` icon/label structure.
+- Added focused rendered-control coverage in `CmsAuthoringChromeComponents.spec.ts`.
+- Refreshed the affected Windows visual baselines for settings light/dark/monochrome shells and the phase 3 pages quick-start command surface.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 28 tests.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures settings shell in light preset|captures settings shell in dark preset|captures settings shell in monochrome preset|captures phase 3 pages quick-start and command surface" --workers=1 --update-snapshots` passed with 4 tests and regenerated only affected snapshots.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations

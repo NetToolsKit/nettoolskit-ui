@@ -73,6 +73,19 @@ The largest direct Quasar usage appears in:
 - `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: broader `q-btn`, `q-input`, and `q-select` migration across CMS module surfaces, bridge selector reduction, and wrappers for select/table/page surfaces.
 
+### 2026-06-20 01:06 - CMS Authoring Ruler DsButton Slice
+
+- Replaced the `CmsAuthoringRulerBar` focus and grid-mode direct `q-btn` controls with `DsButton`.
+- Kept the existing `focus` and `toggle-mode` event contract and added compact ruler-specific styling for the rendered design-system button structure.
+- Added focused unit coverage for rendered `button.ntk-button` controls, recipe classes, focus emission, and mode-toggle emission in `CmsAuthoringChromeComponents.spec.ts`.
+- Refreshed the affected Windows visual baselines for settings light/dark/monochrome shells and the phase 3 pages quick-start command surface.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 28 tests.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures settings shell in light preset|captures settings shell in dark preset|captures settings shell in monochrome preset|captures phase 3 pages quick-start and command surface" --workers=1 --update-snapshots` passed with 4 tests and regenerated only affected snapshots.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.

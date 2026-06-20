@@ -2176,9 +2176,52 @@
 }
 
 .cms-designer-card__ruler-mode {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--ntk-cms-space-xs) * 0.5);
+  min-height: 2rem;
+  padding: 0 calc(var(--ntk-cms-space-xs) * 0.75);
   border: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 82%, var(--ntk-cms-card-surface));
   border-radius: calc(var(--ntk-cms-radius-md) - 0.125rem);
   background: var(--ntk-cms-bg-card);
+  color: var(--ntk-cms-text-primary);
+  font-size: var(--ntk-cms-font-size-item-label);
+  font-weight: var(--ntk-cms-font-weight-bold);
+  white-space: nowrap;
+}
+
+.cms-designer-card__ruler-focus {
+  min-width: 2rem;
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ntk-cms-text-muted);
+}
+
+.cms-designer-card__ruler-focus .ntk-button__icon,
+.cms-designer-card__ruler-mode .ntk-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Material Symbols Outlined', 'Material Icons';
+  font-feature-settings: 'liga';
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.cms-designer-card__ruler-mode .ntk-button__icon {
+  margin-right: calc(var(--ntk-cms-space-xs) * 0.5);
+}
+
+.cms-designer-card__ruler-mode .ntk-button__label {
+  display: inline-flex;
+  align-items: center;
 }
 
 .cms-designer-card__ruler {
