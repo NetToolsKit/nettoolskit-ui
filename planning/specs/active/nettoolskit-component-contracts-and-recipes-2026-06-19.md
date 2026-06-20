@@ -131,6 +131,20 @@ Existing issue examples:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: `NtkDataTable` compatibility decisions, `NtkButton` open-string compatibility migration, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
+### 2026-06-20 00:36 - NtkButton Compatibility Slice
+
+- Kept `src/components/ui/NtkButton.vue` as a Quasar-backed compatibility adapter.
+- Added design-system compatibility aliases for `variant`, `intent`, and `disabled`.
+- Preserved open legacy props by keeping public `variant` and `intent` string-compatible and leaving `size`, `padding`, `color`, `flat`, `outline`, `unelevated`, navigation, and layout props intact.
+- Unknown legacy `variant` strings continue to pass through to the Quasar adapter instead of being narrowed to design-system variants.
+- `disable` remains the primary legacy disabled prop; `disabled` maps to Quasar `disable` only when `disable` is not explicitly provided.
+- Recognized button contract values now add `resolveNtkButtonRecipe()` classes, including variant, size, intent, disabled, and loading classes.
+- Focused validation passed: `npm run test -- tests/unit/components/ui/BaseButton.spec.ts tests/unit/components/ui/NtkUiComponents.spec.ts tests/unit/components/ui/NtkPublicColorInputSanitization.spec.ts tests/unit/design-system/components/component-recipes.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 4 files and 100 tests.
+- `npm run type-check` passed.
+- `npm run test:design-system` passed with 11 files and 55 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.

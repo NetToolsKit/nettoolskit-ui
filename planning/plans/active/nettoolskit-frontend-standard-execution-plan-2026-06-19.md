@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 00:26
+LastUpdated: 2026-06-20 00:40
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -416,6 +416,18 @@ Checkpoint:
 - PR #13 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/13`.
 - PR #13 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: compatibility migration decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
+### 2026-06-20 00:36 - NtkButton Compatibility Slice
+
+- Kept `NtkButton` as the Quasar-backed compatibility adapter while adding design-system aliases for `variant`, `intent`, and `disabled`.
+- Preserved legacy open string props, unknown variant pass-through, and explicit Quasar style flags; `disable` takes precedence over the new `disabled` alias.
+- Recognized contract values now add button recipe classes for variant, size, intent, disabled, and loading states.
+- Focused validation passed: `npm run test -- tests/unit/components/ui/BaseButton.spec.ts tests/unit/components/ui/NtkUiComponents.spec.ts tests/unit/components/ui/NtkPublicColorInputSanitization.spec.ts tests/unit/design-system/components/component-recipes.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 4 files and 100 tests.
+- `npm run type-check` passed.
+- `npm run test:design-system` passed with 11 files and 55 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit, PR, and Vercel evidence remain pending for this slice.
+- Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

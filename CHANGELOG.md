@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **NtkButton design-system compatibility aliases**
+  - Added `variant`, `intent`, and `disabled` compatibility handling to the Quasar-backed `NtkButton` without narrowing existing open string props.
+  - Added recipe classes for recognized button contract values while preserving legacy `disable`, `flat`, `outline`, `unelevated`, `size`, `padding`, and tokenized `color` behavior.
 - **Rendered design-system page and section wrappers**
   - Added `NtkPageContract`, `NtkSectionContract`, page/section recipe classes, and rendered `DsPage`/`DsSection` landmark wrappers.
   - Added focused render tests for headings, accessible names, slots, heading levels, and recipe classes.

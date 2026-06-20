@@ -78,6 +78,41 @@ describe('NtkButton', () => {
     expect(btn.attributes('icon')).toBe('save')
     expect(btn.attributes('flat')).toBeDefined()
   })
+
+  it('maps design-system compatibility props on the q-btn stub', () => {
+    const wrapper = shallowMount(NtkButton, {
+      props: {
+        label: 'Archive',
+        variant: 'outline',
+        intent: 'warning',
+        disabled: true,
+      },
+    })
+
+    const btn = wrapper.find('q-btn-stub')
+
+    expect(btn.attributes('disable')).toBe('true')
+    expect(btn.attributes('outline')).toBe('true')
+    expect(btn.classes()).toEqual(expect.arrayContaining([
+      'ntk-button--variant-outline',
+      'ntk-button--intent-warning',
+      'ntk-button--is-disabled',
+    ]))
+  })
+
+  it('keeps legacy unknown variant strings as q-btn attributes', () => {
+    const wrapper = shallowMount(NtkButton, {
+      props: {
+        label: 'Choose',
+        variant: 'secondary',
+      },
+    })
+
+    const btn = wrapper.find('q-btn-stub')
+
+    expect(btn.attributes('variant')).toBe('secondary')
+    expect(btn.classes()).toContain('ntk-button--variant-solid')
+  })
 })
 
 // ─── NtkCard ───────────────────────────────────────────────────────────────

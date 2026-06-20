@@ -156,6 +156,36 @@ describe('NtkButton', () => {
       expect(wrapper.findComponent({ name: 'QBtn' }).props('disable')).toBe(true)
     })
 
+    it('should map disabled alias to QBtn disable and recipe class', () => {
+      // Act
+      const wrapper = mount(NtkButton, {
+        props: { disabled: true },
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('disable')).toBe(true)
+      expect(qBtn.classes()).toContain('ntk-button--is-disabled')
+    })
+
+    it('should let explicit disable prop override disabled alias', () => {
+      // Act
+      const wrapper = mount(NtkButton, {
+        props: { disable: false, disabled: true },
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('disable')).toBe(false)
+      expect(qBtn.classes()).not.toContain('ntk-button--is-disabled')
+    })
+
     it('should pass loading prop to QBtn', () => {
       // Arrange
       const loading = true
@@ -170,6 +200,19 @@ describe('NtkButton', () => {
 
       // Assert
       expect(wrapper.findComponent({ name: 'QBtn' }).props('loading')).toBe(true)
+    })
+
+    it('should add loading recipe class when loading', () => {
+      // Act
+      const wrapper = mount(NtkButton, {
+        props: { loading: true },
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      expect(wrapper.findComponent({ name: 'QBtn' }).classes()).toContain('ntk-button--is-loading')
     })
 
     it('should not be disabled by default', () => {
@@ -298,6 +341,38 @@ describe('NtkButton', () => {
       expect(wrapper.findComponent({ name: 'QBtn' }).props('outline')).toBe(true)
     })
 
+    it('should map design-system variant to recipe classes and Quasar flags', () => {
+      // Act
+      const wrapper = mount(BaseButton, {
+        props: { variant: 'ghost' },
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('flat')).toBe(true)
+      expect(qBtn.classes()).toEqual(expect.arrayContaining([
+        'ntk-button--variant-ghost',
+        'ntk-button--size-md',
+        'ntk-button--intent-primary',
+      ]))
+    })
+
+    it('should let explicit Quasar style flags override design-system variant aliases', () => {
+      // Act
+      const wrapper = mount(BaseButton, {
+        props: { variant: 'ghost', flat: false },
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      expect(wrapper.findComponent({ name: 'QBtn' }).props('flat')).toBe(false)
+    })
+
     it('should pass unelevated prop to QBtn', () => {
       // Arrange
       const unelevated = true
@@ -330,6 +405,24 @@ describe('NtkButton', () => {
 
       // Assert
       expect(wrapper.findComponent({ name: 'QBtn' }).props('size')).toBe(size)
+    })
+
+    it('should keep open Quasar size strings without claiming a design-system size class', () => {
+      // Arrange
+      const size = '12px'
+
+      // Act
+      const wrapper = mount(BaseButton, {
+        props: { size },
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      const qBtn = wrapper.findComponent({ name: 'QBtn' })
+      expect(qBtn.props('size')).toBe(size)
+      expect(qBtn.classes()).not.toContain('ntk-button--size-md')
     })
 
     it('should support md size', () => {
@@ -598,6 +691,23 @@ describe('NtkButton', () => {
       const qBtn = wrapper.findComponent({ name: 'QBtn' })
       expect(qBtn.classes()).toContain('ntk-button')
       expect(qBtn.classes()).toContain(customClass)
+    })
+
+    it('should add default design-system recipe classes', () => {
+      // Act
+      const wrapper = mount(BaseButton, {
+        global: {
+          components: { QBtn }
+        }
+      })
+
+      // Assert
+      expect(wrapper.findComponent({ name: 'QBtn' }).classes()).toEqual(expect.arrayContaining([
+        'ntk-button',
+        'ntk-button--variant-solid',
+        'ntk-button--size-md',
+        'ntk-button--intent-primary',
+      ]))
     })
   })
 

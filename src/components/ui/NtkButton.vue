@@ -2,14 +2,14 @@
   <q-btn
     v-bind="$attrs"
     :label="label"
-    :disable="disable"
+    :disable="resolvedDisable"
     :loading="loading"
     :icon="icon"
     :icon-right="iconRight"
     :round="round"
-    :flat="flat"
-    :outline="outline"
-    :unelevated="unelevated"
+    :flat="resolvedFlat"
+    :outline="resolvedOutline"
+    :unelevated="resolvedUnelevated"
     :size="size"
     :dense="dense"
     :padding="padding"
@@ -23,6 +23,7 @@
     :ripple="ripple"
     :stack="stack"
     :type="type"
+    :variant="legacyVariant"
     :class="buttonClasses"
     :style="buttonStyle"
     @click="$emit('click', $event)"
@@ -53,12 +54,26 @@
  * Src/components/ui/Ntk Button module.
  */
 
-import { computed } from 'vue'
+import { computed, getCurrentInstance } from 'vue'
+import {
+  ntkButtonDefaults,
+  ntkButtonRecipeClassMap,
+  ntkButtonVariants,
+  ntkComponentIntents,
+  ntkComponentSizes,
+  resolveNtkButtonRecipe,
+  type NtkButtonIntent,
+  type NtkButtonSize,
+  type NtkButtonVariant,
+} from '../../design-system/core'
 
 interface Props {
   label?: string
   color?: string
+  intent?: string
+  variant?: string
   disable?: boolean
+  disabled?: boolean
   loading?: boolean
   icon?: string
   iconRight?: string
@@ -83,6 +98,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const instance = getCurrentInstance()
 
 defineEmits<{
   click: [event: Event]
@@ -108,6 +124,17 @@ const COLOR_TOKEN_ALIASES: Record<string, string> = {
   'surface-muted': 'var(--ntk-bg-secondary)',
   border: 'var(--ntk-border-color)',
 }
+
+const BUTTON_VARIANT_QUASAR_FLAGS = {
+  solid: { unelevated: true },
+  outline: { outline: true },
+  ghost: { flat: true },
+  link: { flat: true, unelevated: true },
+} as const satisfies Record<NtkButtonVariant, {
+  flat?: boolean
+  outline?: boolean
+  unelevated?: boolean
+}>
 
 const QUASAR_NEUTRAL_ALIAS_PATTERN = /^(grey|gray|blue-grey)-\d+$/i
 const UNSAFE_CSS_VALUE_PATTERN = /[;{}<>]|url\s*\(|expression\s*\(|javascript:/i
@@ -140,10 +167,46 @@ const resolveTokenColor = (value?: string): string => {
   return COLOR_TOKEN_ALIASES[alias] ?? (QUASAR_NEUTRAL_ALIAS_PATTERN.test(alias) ? COLOR_TOKEN_ALIASES.neutral : '')
 }
 
-const resolvedButtonColor = computed(() => resolveTokenColor(props.color))
+const isNtkButtonVariant = (value: unknown): value is NtkButtonVariant =>
+  typeof value === 'string' && ntkButtonVariants.includes(value as NtkButtonVariant)
+
+const isNtkButtonSize = (value: unknown): value is NtkButtonSize =>
+  typeof value === 'string' && ntkComponentSizes.includes(value as NtkButtonSize)
+
+const isNtkButtonIntent = (value: unknown): value is NtkButtonIntent =>
+  typeof value === 'string' && ntkComponentIntents.includes(value as NtkButtonIntent)
+
+const hasRawProp = (name: string): boolean => {
+  const vnodeProps = instance?.vnode.props ?? {}
+  return Object.prototype.hasOwnProperty.call(vnodeProps, name)
+}
+
+const resolvedDisable = computed(() => hasRawProp('disable') ? props.disable : props.disabled)
+const resolvedVariant = computed(() => isNtkButtonVariant(props.variant) ? props.variant : undefined)
+const legacyVariant = computed(() => props.variant && !resolvedVariant.value ? props.variant : undefined)
+const resolvedIntent = computed(() => isNtkButtonIntent(props.intent) ? props.intent : undefined)
+const resolvedRecipe = computed(() => resolveNtkButtonRecipe({
+  variant: resolvedVariant.value,
+  size: isNtkButtonSize(props.size) ? props.size : undefined,
+  intent: resolvedIntent.value,
+  disabled: resolvedDisable.value,
+  loading: props.loading,
+}))
+
+const resolvedVariantFlags = computed<Partial<Record<'flat' | 'outline' | 'unelevated', boolean>>>(() => (
+  resolvedVariant.value && props.variant
+    ? BUTTON_VARIANT_QUASAR_FLAGS[resolvedVariant.value]
+    : {}
+))
+const resolvedFlat = computed(() => hasRawProp('flat') ? props.flat : resolvedVariantFlags.value.flat)
+const resolvedOutline = computed(() => hasRawProp('outline') ? props.outline : resolvedVariantFlags.value.outline)
+const resolvedUnelevated = computed(() => hasRawProp('unelevated') ? props.unelevated : resolvedVariantFlags.value.unelevated)
+const resolvedButtonColor = computed(() => resolveTokenColor(props.color ?? (props.intent ? resolvedIntent.value : undefined)))
 
 const buttonClasses = computed(() => [
-  'ntk-button',
+  ...resolvedRecipe.value.classes.filter(className => (
+    !(props.size && !isNtkButtonSize(props.size) && className === ntkButtonRecipeClassMap.sizes[ntkButtonDefaults.size])
+  )),
   { 'ntk-button--token-color': Boolean(resolvedButtonColor.value) },
   props.customClass,
 ])

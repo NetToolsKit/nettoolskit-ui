@@ -63,6 +63,42 @@ describe('public UI color input sanitization', () => {
     expect(button.attributes('style') ?? '').not.toContain('#ffffff')
   })
 
+  it('maps NtkButton intent to token styles without forwarding Quasar color', () => {
+    const wrapper = mount(NtkButton, {
+      props: { label: 'Delete', intent: 'danger' },
+      global: {
+        stubs: {
+          'q-btn': { template: '<button data-test="q-btn" v-bind="$attrs"><slot /></button>' },
+        },
+      },
+    })
+
+    const button = wrapper.find('[data-test="q-btn"]')
+
+    expect(button.attributes('color')).toBeUndefined()
+    expect(button.classes()).toEqual(expect.arrayContaining([
+      'ntk-button--intent-danger',
+      'ntk-button--token-color',
+    ]))
+    expect(button.attributes('style')).toContain('--ntk-button-color: var(--ntk-error, var(--semantic-error-primary))')
+  })
+
+  it('keeps explicit NtkButton color precedence over intent token styles', () => {
+    const wrapper = mount(NtkButton, {
+      props: { label: 'Archive', color: 'warning', intent: 'danger' },
+      global: {
+        stubs: {
+          'q-btn': { template: '<button data-test="q-btn" v-bind="$attrs"><slot /></button>' },
+        },
+      },
+    })
+
+    const button = wrapper.find('[data-test="q-btn"]')
+
+    expect(button.attributes('style')).toContain('--ntk-button-color: var(--ntk-warning, var(--semantic-warning-primary))')
+    expect(button.classes()).toContain('ntk-button--intent-danger')
+  })
+
   it('sanitizes card color props while preserving CSS variable expressions', () => {
     const feature = shallowMount(NtkFeatureCard, {
       props: { title: 'Feature', iconColor: 'hotpink' },
