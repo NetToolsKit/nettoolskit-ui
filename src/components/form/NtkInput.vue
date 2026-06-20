@@ -80,7 +80,7 @@ const props = defineProps({
     default: ''
   },
   type: {
-    type: String as () => 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' | 'search' | 'textarea',
+    type: String as () => 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' | 'search' | 'textarea' | 'datetime-local',
     default: 'text'
   },
   variant: {

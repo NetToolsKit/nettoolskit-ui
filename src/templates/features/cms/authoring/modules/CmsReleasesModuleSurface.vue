@@ -15,54 +15,54 @@
       </template>
 
       <div class="cms-form-grid">
-        <q-select
+        <NtkSelect
           :model-value="activeReleaseEnvironment"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
-          :options="releaseEnvironmentOptions"
+          :options="releaseEnvironmentSelectOptions"
           :label="t('Environment', 'Ambiente')"
           popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:activeReleaseEnvironment', normalizeReleaseEnvironment($event))"
         />
-        <q-select
+        <NtkSelect
           :model-value="selectedReleaseId"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
-          :options="releaseOptions"
+          :options="releaseSelectOptions"
           :label="t('Active release', 'Release ativo')"
           popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:selectedReleaseId', normalizeSelectValue($event))"
         />
-        <q-input
+        <NtkInput
           :model-value="releaseScheduleAt"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           type="datetime-local"
           :label="t('Schedule publish at', 'Agendar publicação para')"
           @update:model-value="emit('update:releaseScheduleAt', normalizeSelectValue($event))"
         />
-        <q-select
+        <NtkSelect
           :model-value="releaseRollbackTargetId"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
-          :options="rollbackTargetOptions"
+          :options="rollbackTargetSelectOptions"
           :label="t('Rollback target', 'Alvo do rollback')"
           popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:releaseRollbackTargetId', normalizeSelectValue($event))"
         />
-        <q-select
+        <NtkSelect
           :model-value="releasePromotionTargetEnvironment"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
-          :options="promotionTargetEnvironmentOptions"
+          :options="promotionTargetEnvironmentSelectOptions"
           :label="t('Promote to environment', 'Promover para ambiente')"
           popup-content-class="cms-releases-module-surface__popup"
           @update:model-value="emit('update:releasePromotionTargetEnvironment', normalizePromotionTargetEnvironment($event))"
@@ -399,22 +399,22 @@
         </CmsSectionHeaderSummary>
 
         <div class="cms-release-acknowledgements__form">
-          <q-select
+          <NtkSelect
             :model-value="releaseAcknowledgementDecision"
-            outlined
-            dense
+            variant="outlined"
+            size="sm"
             emit-value
             map-options
-            :options="releaseAcknowledgementDecisionOptions"
+            :options="releaseAcknowledgementDecisionSelectOptions"
             :label="t('Decision', 'Decisão')"
             :aria-label="t('Review acknowledgement decision', 'Decisão do reconhecimento de revisão')"
             popup-content-class="cms-releases-module-surface__popup"
             @update:model-value="emit('update:releaseAcknowledgementDecision', normalizeDecision($event))"
           />
-          <q-input
+          <NtkInput
             :model-value="releaseAcknowledgementNote"
-            outlined
-            dense
+            variant="outlined"
+            size="sm"
             autogrow
             type="textarea"
             :label="t('Acknowledgement note', 'Nota do reconhecimento')"
@@ -701,7 +701,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CSSProperties } from 'vue'
+import { computed, type CSSProperties } from 'vue'
 import type { CmsReleaseCandidateChecklist, CmsReleaseCandidateChecklistItem, CmsReleaseCandidateChecklistItemId, CmsReleaseCandidateChecklistStatus } from '../../../../../modules/cms/releases/orchestration'
 import type { CmsGovernanceHubSummary } from '../../../../../modules/cms/white-label/governance-hub'
 import type { CmsReleaseChecklistDrilldownAction } from '../../../../../modules/cms/white-label/release-drilldown'
@@ -714,6 +714,8 @@ import CmsSectionHeaderSummary from '../CmsSectionHeaderSummary.vue'
 import CmsShellCard from '../CmsShellCard.vue'
 import type { CmsStatusMetricCardItem } from '../CmsStatusMetricCardGrid.vue'
 import CmsStatusMetricCardGrid from '../CmsStatusMetricCardGrid.vue'
+import NtkInput from '../../../../../components/form/NtkInput.vue'
+import NtkSelect from '../../../../../components/form/NtkSelect.vue'
 import { DsButton } from '../../../../../design-system/vue'
 
 interface CmsSelectOption {
@@ -721,7 +723,7 @@ interface CmsSelectOption {
   value: string
 }
 
-defineProps<{
+const props = defineProps<{
   releaseOrchestrationTitle: string
   releaseTimelineTitle: string
   releaseCalendarTitle: string
@@ -800,6 +802,12 @@ const emit = defineEmits<{
   runChecklistValidationShortcut: [item: Pick<CmsReleaseCandidateChecklistItem, 'id' | 'issues'>]
   runChecklistDrilldown: [action: CmsReleaseChecklistDrilldownAction]
 }>()
+
+const releaseEnvironmentSelectOptions = computed(() => [...props.releaseEnvironmentOptions])
+const releaseSelectOptions = computed(() => [...props.releaseOptions])
+const rollbackTargetSelectOptions = computed(() => [...props.rollbackTargetOptions])
+const promotionTargetEnvironmentSelectOptions = computed(() => [...props.promotionTargetEnvironmentOptions])
+const releaseAcknowledgementDecisionSelectOptions = computed(() => [...props.releaseAcknowledgementDecisionOptions])
 
 function normalizeSelectValue(value: unknown): string {
   return String(value ?? '')

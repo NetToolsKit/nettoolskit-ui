@@ -62,6 +62,14 @@ describe('NtkInput', () => {
     expect(wrapper.find('q-input-stub').attributes('type')).toBe('password')
   })
 
+  it('passes datetime-local type for scheduling fields', () => {
+    const wrapper = shallowMount(NtkInput, {
+      props: { label: 'Schedule', type: 'datetime-local' },
+    })
+
+    expect(wrapper.find('q-input-stub').attributes('type')).toBe('datetime-local')
+  })
+
   it('maps design-system compatibility props onto the q-input stub', () => {
     const wrapper = shallowMount(NtkInput, {
       props: {

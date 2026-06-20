@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS releases module field migration**
+  - Replaced the remaining direct `q-input` and `q-select` controls in the CMS Releases authoring module with `NtkInput` and `NtkSelect` compatibility wrappers.
+  - Added `datetime-local` support to `NtkInput` for scheduled release publishing and refreshed the affected Windows release visual baselines.
 - **CMS shell card native markup**
   - Replaced the shared CMS shell card and authoring workbench `q-card` roots with native `section` markup while preserving classes, slots, separators, and visual coverage.
   - Refreshed the dark CMS shell visual baseline where the workbench now uses the CMS dark surface instead of the Quasar card default.

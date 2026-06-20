@@ -1486,8 +1486,14 @@ describe('template white-label audit', () => {
     const cmsReleasesModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsReleasesModuleSurface.vue')
 
     expect(cmsReleasesModuleSource).toContain("import { DsButton } from '../../../../../design-system/vue'")
+    expect(cmsReleasesModuleSource).toContain("import NtkInput from '../../../../../components/form/NtkInput.vue'")
+    expect(cmsReleasesModuleSource).toContain("import NtkSelect from '../../../../../components/form/NtkSelect.vue'")
     expect(cmsReleasesModuleSource).toContain('<DsButton')
+    expect(cmsReleasesModuleSource).toContain('<NtkInput')
+    expect(cmsReleasesModuleSource).toContain('<NtkSelect')
     expect(cmsReleasesModuleSource).not.toContain('<q-btn')
+    expect(cmsReleasesModuleSource).not.toContain('<q-input')
+    expect(cmsReleasesModuleSource).not.toContain('<q-select')
   })
 
   it('keeps shared CMS shell cards on native markup', () => {
