@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:23
+LastUpdated: 2026-06-19 22:25
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -309,6 +309,7 @@ Checkpoint:
 - `npm run verify` passed, including 31 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `ab2379564` created the theme density and known token validation slice.
 - PR #7 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/7`.
+- PR #7 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: DOM theme manager, legacy theme API restriction/deprecation, dark-mode sync, and non-brand Quasar behavior adapters.
 
 ## Closeout Expectations
