@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:25
+LastUpdated: 2026-06-20 02:43
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -66,6 +66,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #18 is open as a draft stacked PR from `feat/nettoolskit-ntk-select-compat-2026-06-20` into `refactor/nettoolskit-cms-media-ds-button-2026-06-20`.
 - PR #19 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-ds-button-2026-06-20` into `feat/nettoolskit-ntk-select-compat-2026-06-20`.
 - PR #20 is open as a draft stacked PR from `feat/nettoolskit-ntk-input-compat-2026-06-20` into `refactor/nettoolskit-cms-releases-ds-button-2026-06-20`.
+- PR #21 is open as a draft stacked PR from `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20` into `feat/nettoolskit-ntk-input-compat-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -535,8 +536,26 @@ Checkpoint:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `8994da6` created the NtkInput compatibility slice.
 - PR #20 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/20`.
-- PR #20 initial remote checks at 2026-06-20 02:25: Vercel Preview Comments passed, Vercel deployment pending, and GitHub Actions are still not present in `gh pr checks`.
-- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `CmsPreviewToolbar` select migration, and final PR/CI/review closeout.
+- PR #20 remote checks passed after the final push: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, and final PR/CI/review closeout.
+
+### 2026-06-20 02:43 - CMS Preview Toolbar NtkSelect Slice
+
+- Replaced the three direct `q-select` controls in `CmsPreviewToolbar.vue` with the `NtkSelect` compatibility wrapper.
+- Preserved draft/published preview source, locale, viewport, toolbar `data-*` attributes, emitted update contracts, and the `cms-preview-toolbar__popup` class.
+- Added focused unit coverage for the shared toolbar wrapper props and template audit coverage proving the toolbar imports `NtkSelect` and no longer contains direct `<q-select>` usage.
+- Refreshed affected Windows visual baselines for the Blocks published mobile preview and the phase 6 Pages/Blocks review summary surfaces.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 49 tests.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- Focused visual validation passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures pages preview in published tablet pt-BR mode|captures blocks preview in published mobile pt-BR mode" --workers=1` with 2 tests.
+- Focused visual update passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures phase 6 pages review summary surface|captures phase 6 blocks review summary surface" --workers=1 --update-snapshots` with 2 tests.
+- `git diff --check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- The focused `cms-settings-flow` draft/published viewport test was re-run with this slice stashed and still failed on the parent branch before this toolbar migration; the failure is tracked as an inherited Blocks runtime preview text issue, not as a `NtkSelect` migration regression.
+- Commit `422873e` created the CMS Preview Toolbar NtkSelect slice.
+- PR #21 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/21`.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

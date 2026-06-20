@@ -116,6 +116,20 @@ The largest direct Quasar usage appears in:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `CmsPreviewToolbar` select migration, `NtkInput` compatibility parity, and final PR/CI/review closeout.
 
+### 2026-06-20 02:43 - CMS Preview Toolbar NtkSelect Slice
+
+- Replaced the three direct `q-select` controls in the shared `CmsPreviewToolbar.vue` with `NtkSelect`.
+- Preserved preview source, locale, viewport, toolbar `data-*` attributes, emitted update contracts, and popup styling class behavior.
+- Added focused component coverage for the wrapper props and template audit coverage preventing direct `<q-select>` regression in the toolbar.
+- Refreshed affected Windows visual baselines for Blocks published mobile preview and phase 6 Pages/Blocks review summary surfaces.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 49 tests.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- `git diff --check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Focused `cms-settings-flow` draft/published viewport coverage still fails on the parent branch with this slice stashed, before any toolbar migration code runs; this remains an inherited Blocks runtime preview text issue for a separate triage slice.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
