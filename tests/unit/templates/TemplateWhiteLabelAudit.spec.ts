@@ -1486,6 +1486,18 @@ describe('template white-label audit', () => {
     expect(cmsReleasesModuleSource).not.toContain('<q-btn')
   })
 
+  it('keeps the CMS media module fields on Ntk form compatibility wrappers', () => {
+    const cmsMediaModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue')
+
+    expect(cmsMediaModuleSource).toContain("import NtkInput from '../../../../../components/form/NtkInput.vue'")
+    expect(cmsMediaModuleSource).toContain("import NtkSelect from '../../../../../components/form/NtkSelect.vue'")
+    expect(cmsMediaModuleSource).toContain('<NtkInput')
+    expect(cmsMediaModuleSource).toContain('<NtkSelect')
+    expect(cmsMediaModuleSource).toContain('popup-content-class="cms-media-module-surface__popup"')
+    expect(cmsMediaModuleSource).not.toContain('<q-input')
+    expect(cmsMediaModuleSource).not.toContain('<q-select')
+  })
+
   it('keeps the CMS preview toolbar on the NtkSelect compatibility wrapper', () => {
     const cmsPreviewToolbarSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue')
 

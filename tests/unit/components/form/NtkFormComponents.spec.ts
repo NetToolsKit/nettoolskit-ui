@@ -179,13 +179,20 @@ describe('NtkSelect', () => {
     ]))
   })
 
-  it('passes label and options to q-select stub', () => {
+  it('passes label, hint, aria description, and options to q-select stub', () => {
     const wrapper = shallowMount(NtkSelect, {
-      props: { label: 'Status', options },
+      props: {
+        label: 'Status',
+        hint: 'Choose one status',
+        ariaDescribedBy: 'status-help',
+        options,
+      },
     })
 
     const select = wrapper.find('q-select-stub')
     expect(select.attributes('label')).toBe('Status')
+    expect(select.attributes('hint')).toBe('Choose one status')
+    expect(select.attributes('aria-describedby')).toBe('status-help')
   })
 
   it('emits update:modelValue via handleUpdate', () => {

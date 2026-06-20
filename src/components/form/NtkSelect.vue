@@ -4,6 +4,7 @@
     :options="options"
     :label="label"
     :placeholder="placeholder"
+    :hint="hint"
     :outlined="resolvedOutlined"
     :filled="resolvedFilled"
     :dense="resolvedDense"
@@ -18,6 +19,7 @@
     :error="invalid"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-required="required ? 'true' : undefined"
+    :aria-describedby="ariaDescribedBy"
     stack-label
     :class="selectClasses"
     @update:model-value="handleUpdate"

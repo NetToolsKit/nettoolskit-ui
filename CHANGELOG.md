@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS media module field migration**
+  - Replaced the remaining direct `q-input` and `q-select` controls in the CMS Media authoring module with `NtkInput` and `NtkSelect` compatibility wrappers.
+  - Preserved media field labels, hints, numeric bounds, textarea autogrow, replace-target clearing, and popup styling while adding audit coverage against direct form-control regressions.
 - **CMS preview toolbar select migration**
   - Replaced the three direct `q-select` controls in the shared CMS preview toolbar with the `NtkSelect` compatibility wrapper.
   - Preserved draft/published source, locale, viewport, toolbar data attributes, and popup styling while adding audit coverage against direct `q-select` regression.
@@ -487,6 +490,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **NtkSelect hint forwarding**
+  - Forwarded `hint` and `aria-describedby` through the Quasar-backed `NtkSelect` wrapper so migrated select fields keep their helper text and accessible descriptions.
 - **Vercel production build module resolution for CMS releases**
   - Replaced the implicit `../src/modules/cms/releases` directory import in `landing-page/CmsApp.vue` with the explicit barrel entrypoint to avoid Rollup resolution failures during `vite build` on Vercel.
   - Revalidated the landing production build locally after the import fix to keep the deployment path aligned with the Vercel build environment.

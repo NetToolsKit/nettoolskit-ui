@@ -15,101 +15,101 @@
       </template>
 
       <div class="cms-form-grid">
-        <q-select
+        <NtkSelect
           :model-value="selectedMediaAssetId"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
-          :options="mediaAssetOptions"
+          :options="mediaAssetSelectOptions"
           :label="t('Media library asset', 'Asset da biblioteca de mídia')"
           :hint="t('Select an asset to edit it or start a blank draft.', 'Selecione um asset para editar ou inicie um rascunho em branco.')"
           popup-content-class="cms-media-module-surface__popup"
           @update:model-value="emit('update:selectedMediaAssetId', String($event ?? ''))"
         />
-        <q-select
+        <NtkSelect
           :model-value="mediaAssetDraft.kind"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
-          :options="mediaAssetKindOptions"
+          :options="mediaAssetKindSelectOptions"
           :label="t('Asset kind', 'Tipo do asset')"
           popup-content-class="cms-media-module-surface__popup"
           @update:model-value="updateDraft({ kind: normalizeKind($event) })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.name"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           :label="t('Asset name', 'Nome do asset')"
           @update:model-value="updateDraft({ name: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.alt"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           :label="t('Asset alt text', 'Texto alternativo do asset')"
           @update:model-value="updateDraft({ alt: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.url"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           :label="t('Asset URL', 'URL do asset')"
           @update:model-value="updateDraft({ url: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.focalPointX"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           type="number"
           min="0"
           max="100"
           :label="t('Focal point X (0-100)', 'Ponto focal X (0-100)')"
           @update:model-value="updateDraft({ focalPointX: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.focalPointY"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           type="number"
           min="0"
           max="100"
           :label="t('Focal point Y (0-100)', 'Ponto focal Y (0-100)')"
           @update:model-value="updateDraft({ focalPointY: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.tags"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           :label="t('Tags (comma separated)', 'Tags (separadas por virgula)')"
           @update:model-value="updateDraft({ tags: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.usage"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           :label="t('Usage tags (comma separated)', 'Tags de uso (separadas por virgula)')"
           @update:model-value="updateDraft({ usage: String($event ?? '') })"
         />
-        <q-select
+        <NtkSelect
           :model-value="mediaAssetDraft.replaceTargetAssetId"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           emit-value
           map-options
           clearable
-          :options="mediaReplacementOptions"
+          :options="mediaReplacementSelectOptions"
           :label="t('Replace target asset', 'Asset alvo da substituição')"
           :hint="t('Optional. Use with Replace references to swap runtime bindings safely.', 'Opcional. Use com Substituir referências para trocar vínculos de runtime com segurança.')"
           popup-content-class="cms-media-module-surface__popup"
           @update:model-value="updateDraft({ replaceTargetAssetId: String($event ?? '') })"
         />
-        <q-input
+        <NtkInput
           :model-value="mediaAssetDraft.description"
-          outlined
-          dense
+          variant="outlined"
+          size="sm"
           type="textarea"
           autogrow
           :label="t('Asset description', 'Descrição do asset')"
@@ -336,9 +336,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { CmsDiagnosticsListItem } from '../CmsDiagnosticsListSection.vue'
 import CmsDiagnosticsListSection from '../CmsDiagnosticsListSection.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import NtkInput from '../../../../../components/form/NtkInput.vue'
+import NtkSelect from '../../../../../components/form/NtkSelect.vue'
 import { DsButton } from '../../../../../design-system/vue'
 import type { CmsMediaDiagnostic } from '../../../../../modules/cms/white-label/media-library'
 import type { CmsMediaAssetKind, CmsMediaAssetSettings } from '../../../../../modules/cms/white-label/types'
@@ -406,6 +409,10 @@ const emit = defineEmits<{
   'replace-selected-asset-references': []
   'apply-selected-asset-to-branding': [slot: 'brandLogo' | 'faviconUrl' | 'userAvatar']
 }>()
+
+const mediaAssetSelectOptions = computed(() => [...props.mediaAssetOptions])
+const mediaAssetKindSelectOptions = computed(() => [...props.mediaAssetKindOptions])
+const mediaReplacementSelectOptions = computed(() => [...props.mediaReplacementOptions])
 
 function normalizeKind(value: unknown): CmsMediaAssetKind {
   return String(value ?? 'image') as CmsMediaAssetKind
