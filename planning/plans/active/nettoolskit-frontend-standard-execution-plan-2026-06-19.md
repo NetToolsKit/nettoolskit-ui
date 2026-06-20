@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:43
+LastUpdated: 2026-06-19 22:45
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -53,6 +53,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #5 is open as a draft stacked PR from `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19` into `feat/nettoolskit-quality-gates-docs-2026-06-19`.
 - PR #6 is open as a draft stacked PR from `feat/nettoolskit-token-css-policy-2026-06-19` into `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19`.
 - PR #7 is open as a draft stacked PR from `feat/nettoolskit-theme-density-contracts-2026-06-19` into `feat/nettoolskit-token-css-policy-2026-06-19`.
+- PR #8 is open as a draft stacked PR from `feat/nettoolskit-ds-button-wrapper-2026-06-19` into `feat/nettoolskit-theme-density-contracts-2026-06-19`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -321,6 +322,8 @@ Checkpoint:
 - Focused validation passed: `npm test -- tests/unit/design-system/components --pool=forks --maxWorkers=1 --no-file-parallelism`.
 - `npm run type-check` passed.
 - `npm run verify` passed, including 33 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `b8153976` created the DsButton wrapper slice.
+- PR #8 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/8`.
 - Remaining gaps: additional `Ds*` wrappers, compatibility migration for open `NtkButton` visual strings, and broader rendered behavior coverage.
 
 ## Closeout Expectations
