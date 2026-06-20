@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS shared native status chips**
+  - Added a native `CmsStatusChip` for CMS authoring status badges and migrated shared authoring chrome, preview toolbar, locale coverage, usage drawer and media picker badges away from direct `q-chip` usage.
+  - Preserved token-driven chip styling and refreshed affected Windows CMS release review visual baselines.
 - **CMS releases module field migration**
   - Replaced the remaining direct `q-input` and `q-select` controls in the CMS Releases authoring module with `NtkInput` and `NtkSelect` compatibility wrappers.
   - Added `datetime-local` support to `NtkInput` for scheduled release publishing and refreshed the affected Windows release visual baselines.
@@ -507,6 +510,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Design-system verify worker startup stability**
+  - Reused a single Vitest fork worker for `test:design-system` to avoid Windows worker startup timeouts inside the full `npm run verify` gate.
 - **NtkSelect hint forwarding**
   - Forwarded `hint` and `aria-describedby` through the Quasar-backed `NtkSelect` wrapper so migrated select fields keep their helper text and accessible descriptions.
 - **Vercel production build module resolution for CMS releases**

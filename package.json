@@ -58,7 +58,7 @@
     "tokens:check": "node scripts/token-build.mjs --check",
     "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts",
     "test:architecture": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/architecture",
-    "test:design-system": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system --pool=forks --maxWorkers=1 --no-file-parallelism",
+    "test:design-system": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
     "test:tokens": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system/tokens/token-build.spec.ts --environment=node --pool=forks --maxWorkers=1 --no-file-parallelism",
     "test:a11y": "playwright test tests/e2e/design-system-a11y.spec.ts --workers=1",
     "test:visual": "playwright test tests/e2e/template-runtime-visual.spec.ts tests/e2e/cms-visual-regression.spec.ts --workers=1",

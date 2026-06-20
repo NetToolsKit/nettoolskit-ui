@@ -39,17 +39,15 @@
           </q-item-section>
           <q-item-section side>
             <div class="cms-media-asset-picker__option-badges">
-              <q-chip dense square class="cms-media-asset-picker__chip">
+              <CmsStatusChip class="cms-media-asset-picker__chip">
                 {{ scope.opt.kindLabel }}
-              </q-chip>
-              <q-chip
+              </CmsStatusChip>
+              <CmsStatusChip
                 v-if="scope.opt.incompatible"
-                dense
-                square
                 class="cms-media-asset-picker__chip cms-media-asset-picker__chip--incompatible"
               >
                 {{ incompatibleLabel }}
-              </q-chip>
+              </CmsStatusChip>
             </div>
           </q-item-section>
         </q-item>
@@ -88,7 +86,7 @@
             <strong>{{ option.label }}</strong>
             <small>{{ option.description || noSelectionLabel }}</small>
             <div class="cms-media-asset-picker__option-badges">
-              <q-chip dense square>{{ option.kindLabel }}</q-chip>
+              <CmsStatusChip class="cms-media-asset-picker__chip">{{ option.kindLabel }}</CmsStatusChip>
             </div>
             <code class="cms-media-asset-picker__selection-url">{{ option.url || noSelectionLabel }}</code>
           </div>
@@ -111,6 +109,7 @@ import {
   resolveCmsMediaPickerSelectedOptions,
   type CmsMediaPickerOption,
 } from '../../../../modules/cms/white-label/media-picker'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 const props = defineProps({
   modelValue: {

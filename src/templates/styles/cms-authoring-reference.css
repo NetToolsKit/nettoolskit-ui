@@ -800,6 +800,27 @@
   gap: var(--ntk-cms-space-sm);
 }
 
+.cms-status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5em;
+  min-height: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 4px;
+  padding: 0 0.4em;
+  border: var(--ntk-cms-border-width) solid var(--ntk-cms-accent);
+  border-radius: var(--ntk-cms-radius-sm);
+  background: var(--ntk-cms-accent-soft);
+  color: var(--ntk-cms-accent-text);
+  font-size: var(--ntk-cms-font-size-chip, 14px);
+  font-weight: var(--ntk-cms-font-weight-semibold);
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .cms-diagnostics-item {
   border: var(--ntk-cms-border-width) solid var(--ntk-cms-border-color);
   border-radius: var(--ntk-cms-radius-md);

@@ -39,12 +39,12 @@
       @update:model-value="emitViewportUpdate"
     />
     <div class="cms-preview-toolbar__chips">
-      <q-chip dense square :style="statusChipStyle">{{ source }}</q-chip>
-      <q-chip dense square :style="statusChipStyle">{{ viewport }}</q-chip>
-      <q-chip dense square :style="statusChipStyle">{{ locale }}</q-chip>
-      <q-chip v-if="publishedReleaseLabel" dense square :style="statusChipStyle">
+      <CmsStatusChip :style="statusChipStyle">{{ source }}</CmsStatusChip>
+      <CmsStatusChip :style="statusChipStyle">{{ viewport }}</CmsStatusChip>
+      <CmsStatusChip :style="statusChipStyle">{{ locale }}</CmsStatusChip>
+      <CmsStatusChip v-if="publishedReleaseLabel" :style="statusChipStyle">
         {{ publishedReleaseLabel }}
-      </q-chip>
+      </CmsStatusChip>
     </div>
   </div>
 </template>
@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import NtkSelect from '../../../../components/form/NtkSelect.vue'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 interface SelectOption {
   label: string

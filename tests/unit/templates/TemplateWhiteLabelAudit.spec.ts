@@ -1516,9 +1516,36 @@ describe('template white-label audit', () => {
     expect(cmsDrawerSource).toContain('<DsButton')
     expect(cmsDrawerSource).toContain(':aria-label="closeLabel"')
     expect(cmsDrawerSource).toContain('<q-dialog')
-    expect(cmsDrawerSource).toContain('<q-chip')
+    expect(cmsDrawerSource).toContain('<CmsStatusChip')
     expect(cmsDrawerSource).not.toContain('<q-card')
     expect(cmsDrawerSource).not.toContain('<q-btn')
+    expect(cmsDrawerSource).not.toContain('<q-chip')
+  })
+
+  it('keeps shared CMS status chips on native markup', () => {
+    const cmsStatusChipSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsStatusChip.vue')
+    const cmsAuthoringStylesSource = readRepoFile('../../../src/templates/styles/cms-authoring-reference.css')
+    const migratedChipFiles = [
+      '../../../src/templates/features/cms/authoring/CmsAuthoringStatusBar.vue',
+      '../../../src/templates/features/cms/authoring/CmsDiagnosticsListSection.vue',
+      '../../../src/templates/features/cms/authoring/CmsEntityUsageDrawer.vue',
+      '../../../src/templates/features/cms/authoring/CmsLocaleCoverageMatrix.vue',
+      '../../../src/templates/features/cms/authoring/CmsMediaAssetPicker.vue',
+      '../../../src/templates/features/cms/authoring/CmsPanelListSection.vue',
+      '../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue',
+      '../../../src/templates/features/cms/authoring/CmsStatusMetricCardGrid.vue',
+    ]
+
+    expect(cmsStatusChipSource).toContain('<span class="cms-status-chip">')
+    expect(cmsStatusChipSource).not.toContain('<q-chip')
+    expect(cmsAuthoringStylesSource).toContain('.cms-status-chip')
+
+    for (const filePath of migratedChipFiles) {
+      const source = readRepoFile(filePath)
+
+      expect(source, toDisplayPath(filePath)).toContain('<CmsStatusChip')
+      expect(source, toDisplayPath(filePath)).not.toContain('<q-chip')
+    }
   })
 
   it('keeps CMS authoring separators on native markup', () => {
@@ -1550,8 +1577,10 @@ describe('template white-label audit', () => {
 
     expect(cmsPreviewToolbarSource).toContain("import NtkSelect from '../../../../components/form/NtkSelect.vue'")
     expect(cmsPreviewToolbarSource).toContain('<NtkSelect')
+    expect(cmsPreviewToolbarSource).toContain('<CmsStatusChip')
     expect(cmsPreviewToolbarSource).toContain('popup-content-class="cms-preview-toolbar__popup"')
     expect(cmsPreviewToolbarSource).not.toContain('<q-select')
+    expect(cmsPreviewToolbarSource).not.toContain('<q-chip')
   })
 
   it('keeps wiki and reference dark-contrast fixes routed through stable tokens', () => {

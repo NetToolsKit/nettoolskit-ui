@@ -12,13 +12,9 @@
           <small>{{ item.description }}</small>
         </div>
 
-        <q-chip
-          dense
-          square
-          :style="item.statusStyle"
-        >
+        <CmsStatusChip :style="item.statusStyle">
           {{ item.statusLabel }}
-        </q-chip>
+        </CmsStatusChip>
       </div>
 
       <div :class="metricsClass">
@@ -37,6 +33,7 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 export interface CmsStatusMetricCardMetric {
   id: string

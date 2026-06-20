@@ -7,14 +7,12 @@
       v-for="item in items"
       :key="item.id"
     >
-      <q-chip
+      <CmsStatusChip
         v-if="item.kind === 'chip'"
-        dense
-        square
         :style="item.style"
       >
         {{ item.label }}
-      </q-chip>
+      </CmsStatusChip>
 
       <span
         v-else
@@ -29,6 +27,7 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 export interface CmsAuthoringStatusItem {
   id: string

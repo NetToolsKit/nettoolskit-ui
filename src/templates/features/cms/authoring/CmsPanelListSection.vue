@@ -6,13 +6,9 @@
       :summary-class="summaryClass"
     >
       <template #summary>
-        <q-chip
-          dense
-          square
-          :style="chipStyle"
-        >
+        <CmsStatusChip :style="chipStyle">
           {{ summaryLabel }}
-        </q-chip>
+        </CmsStatusChip>
       </template>
     </CmsSectionHeaderSummary>
 
@@ -42,6 +38,7 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 import CmsSectionHeaderSummary from './CmsSectionHeaderSummary.vue'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 export interface CmsPanelListSectionItem {
   id: string

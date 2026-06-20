@@ -7,11 +7,13 @@ import CmsAuthoringToolbar from '../../../src/templates/features/cms/authoring/C
 import CmsAuthoringStatusBar from '../../../src/templates/features/cms/authoring/CmsAuthoringStatusBar.vue'
 import CmsDiagnosticsListSection from '../../../src/templates/features/cms/authoring/CmsDiagnosticsListSection.vue'
 import CmsSectionHeaderSummary from '../../../src/templates/features/cms/authoring/CmsSectionHeaderSummary.vue'
+import CmsStatusChip from '../../../src/templates/features/cms/authoring/CmsStatusChip.vue'
 import CmsStatusMetricCardGrid from '../../../src/templates/features/cms/authoring/CmsStatusMetricCardGrid.vue'
 import CmsPanelListSection from '../../../src/templates/features/cms/authoring/CmsPanelListSection.vue'
 import CmsAuthoringWorkbench from '../../../src/templates/features/cms/authoring/CmsAuthoringWorkbench.vue'
 import CmsAuthoringRulerBar from '../../../src/templates/features/cms/authoring/CmsAuthoringRulerBar.vue'
 import CmsPreviewToolbar from '../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue'
+import CmsMediaAssetPicker from '../../../src/templates/features/cms/authoring/CmsMediaAssetPicker.vue'
 import CmsPagesPreviewSurface from '../../../src/templates/features/cms/authoring/modules/CmsPagesPreviewSurface.vue'
 import CmsEntityUsageDrawer from '../../../src/templates/features/cms/authoring/CmsEntityUsageDrawer.vue'
 
@@ -148,10 +150,28 @@ describe('CmsAuthoringToolbar', () => {
   })
 })
 
+describe('CmsStatusChip', () => {
+  it('renders native status markup with inherited attrs and slot content', () => {
+    const wrapper = shallowMount(CmsStatusChip, {
+      attrs: {
+        'aria-label': 'Draft status',
+        style: 'background: var(--ntk-cms-accent-soft);',
+      },
+      slots: { default: 'Draft' },
+    })
+
+    expect(wrapper.element.tagName).toBe('SPAN')
+    expect(wrapper.classes()).toContain('cms-status-chip')
+    expect(wrapper.attributes('aria-label')).toBe('Draft status')
+    expect(wrapper.attributes('style')).toContain('background')
+    expect(wrapper.text()).toBe('Draft')
+  })
+})
+
 describe('CmsAuthoringStatusBar', () => {
   it('renders chip and text items with emphasis', () => {
     const wrapper = shallowMount(CmsAuthoringStatusBar, {
-      global: { stubs: { 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: {
         items: [
           { id: 'i1', label: 'Saved', kind: 'chip' },
@@ -161,7 +181,7 @@ describe('CmsAuthoringStatusBar', () => {
       },
     })
 
-    expect(wrapper.findAll('.chip')).toHaveLength(1)
+    expect(wrapper.findAll('.cms-status-chip')).toHaveLength(1)
     expect(wrapper.findAll('.cms-designer-card__status-text')).toHaveLength(2)
     const emphasisEl = wrapper.findAll('.cms-designer-card__status-text')[1]
     expect(emphasisEl?.find('strong').text()).toBe('Published')
@@ -171,7 +191,7 @@ describe('CmsAuthoringStatusBar', () => {
 describe('CmsDiagnosticsListSection', () => {
   it('renders items with severity chip, code and message', () => {
     const wrapper = shallowMount(CmsDiagnosticsListSection, {
-      global: { stubs: { 'q-chip': { template: '<span class="chip">{{ $attrs.label }}<slot /></span>' } } },
+      global: { stubs: { CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: {
         title: 'Validation Issues',
         showCount: true,
@@ -188,6 +208,7 @@ describe('CmsDiagnosticsListSection', () => {
     expect(diagItems[0]?.text()).toContain('MISSING_ALT')
     expect(diagItems[0]?.text()).toContain('Image alt text is missing')
     expect(diagItems[1]?.text()).toContain('BROKEN_LINK')
+    expect(wrapper.findAll('.cms-status-chip')).toHaveLength(3)
   })
 
   it('does not render when items array is empty', () => {
@@ -245,7 +266,7 @@ describe('CmsStatusMetricCardGrid', () => {
 
   it('renders item cards with title, description, status and metrics', () => {
     const wrapper = shallowMount(CmsStatusMetricCardGrid, {
-      global: { stubs: { 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: { items },
     })
 
@@ -256,6 +277,7 @@ describe('CmsStatusMetricCardGrid', () => {
     expect(cards[0]?.text()).toContain('Published')
     expect(cards[0]?.text()).toContain('Blocks')
     expect(cards[0]?.text()).toContain('8')
+    expect(wrapper.findAll('.cms-status-chip')).toHaveLength(2)
   })
 })
 
@@ -267,7 +289,12 @@ describe('CmsPanelListSection', () => {
 
   it('renders section title, summary label and items', () => {
     const wrapper = shallowMount(CmsPanelListSection, {
-      global: { stubs: { 'q-chip': { template: '<span class="chip"><slot /></span>' }, CmsSectionHeaderSummary: { template: '<div><slot /><slot name="summary" /></div>' } } },
+      global: {
+        stubs: {
+          CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' },
+          CmsSectionHeaderSummary: { template: '<div><slot /><slot name="summary" /></div>' },
+        },
+      },
       props: { title: 'Blocks', summaryLabel: '2 blocks', items },
     })
 
@@ -275,6 +302,43 @@ describe('CmsPanelListSection', () => {
     expect(wrapper.text()).toContain('hero')
     expect(wrapper.text()).toContain('Color: #1e293b')
     expect(wrapper.text()).toContain('Footer Block')
+    expect(wrapper.find('.cms-status-chip').text()).toBe('2 blocks')
+  })
+})
+
+describe('CmsMediaAssetPicker', () => {
+  it('renders selected asset badges through the native CMS status chip', () => {
+    const wrapper = shallowMount(CmsMediaAssetPicker, {
+      global: {
+        stubs: {
+          'q-select': true,
+          'q-icon': true,
+          CmsStatusChip: { template: '<span class="cms-status-chip" :class="$attrs.class"><slot /></span>' },
+        },
+      },
+      props: {
+        modelValue: 'hero-image',
+        label: 'Hero media',
+        options: [
+          {
+            value: 'hero-image',
+            label: 'Hero image',
+            kind: 'image',
+            kindLabel: 'Image',
+            description: 'Primary visual',
+            url: '/hero.png',
+            alt: 'Hero',
+            disable: false,
+            incompatible: false,
+          },
+        ],
+      },
+    })
+
+    expect(wrapper.find('.cms-media-asset-picker__selection').text()).toContain('Hero image')
+    const badge = wrapper.get('.cms-status-chip.cms-media-asset-picker__chip')
+
+    expect(badge.text()).toBe('Image')
   })
 })
 
@@ -345,7 +409,7 @@ describe('CmsPreviewToolbar', () => {
 
   it('renders with data attributes reflecting source and viewport', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: baseProps,
     })
 
@@ -355,7 +419,7 @@ describe('CmsPreviewToolbar', () => {
 
   it('renders preview fields through NtkSelect compatibility wrappers', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: baseProps,
     })
 
@@ -371,11 +435,11 @@ describe('CmsPreviewToolbar', () => {
 
   it('shows publishedReleaseLabel chip when provided', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: { ...baseProps, publishedReleaseLabel: 'v2.1.0' },
     })
 
-    const chips = wrapper.findAll('.chip')
+    const chips = wrapper.findAll('.cms-status-chip')
     expect(chips.length).toBeGreaterThan(3)
     const chipTexts = chips.map(c => c.text())
     expect(chipTexts).toContain('v2.1.0')
@@ -383,11 +447,11 @@ describe('CmsPreviewToolbar', () => {
 
   it('hides publishedReleaseLabel chip when null', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, CmsStatusChip: { template: '<span class="cms-status-chip"><slot /></span>' } } },
       props: { ...baseProps, publishedReleaseLabel: null },
     })
 
-    const chips = wrapper.findAll('.chip')
+    const chips = wrapper.findAll('.cms-status-chip')
     expect(chips).toHaveLength(3)
   })
 })
@@ -478,12 +542,12 @@ describe('CmsEntityUsageDrawer', () => {
     template: '<div v-if="modelValue" class="dialog"><button class="dialog-close" @click="$emit(\'update:modelValue\', false)">Close</button><slot /></div>',
     props: ['modelValue'],
   }
-  const chipStub = { template: '<span class="chip"><slot /></span>' }
+  const statusChipStub = { template: '<span class="cms-status-chip"><slot /></span>' }
   const drawerGlobalOpts = {
     global: {
       stubs: {
         'q-dialog': dialogStub,
-        'q-chip': chipStub,
+        CmsStatusChip: statusChipStub,
         DsButton: false,
       },
     },

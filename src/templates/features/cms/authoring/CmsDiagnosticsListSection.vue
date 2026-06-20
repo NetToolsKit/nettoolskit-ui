@@ -5,14 +5,12 @@
   >
     <div class="cms-diagnostics-list__header">
       <strong>{{ title }}</strong>
-      <q-chip
+      <CmsStatusChip
         v-if="showCount"
-        dense
-        square
         :style="countStyle"
       >
         {{ items.length }}
-      </q-chip>
+      </CmsStatusChip>
     </div>
 
     <article
@@ -20,13 +18,9 @@
       :key="item.id"
       class="cms-diagnostics-item"
     >
-      <q-chip
-        dense
-        square
-        :style="item.severityStyle"
-      >
+      <CmsStatusChip :style="item.severityStyle">
         {{ item.severity }}
-      </q-chip>
+      </CmsStatusChip>
 
       <div class="cms-diagnostics-item__body">
         <strong>{{ item.code }}</strong>
@@ -38,6 +32,7 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 export interface CmsDiagnosticsListItem {
   id: string

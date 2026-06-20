@@ -3,17 +3,15 @@
     <div class="cms-review-summary__header">
       <strong>{{ tr('Locale coverage matrix', 'Matriz de cobertura por locale') }}</strong>
       <div class="cms-page-preview__chips">
-        <q-chip dense square :style="statusChipStyle">
+        <CmsStatusChip :style="statusChipStyle">
           {{ tr('Active preview', 'Preview ativo') }} · {{ getLocaleLabel(activeLocale) }}
-        </q-chip>
-        <q-chip
+        </CmsStatusChip>
+        <CmsStatusChip
           v-if="activeLocaleCoverage"
-          dense
-          square
           :style="getStatusStyle(activeLocaleCoverage.status)"
         >
           {{ getSummaryLabel(activeLocaleCoverage) }}
-        </q-chip>
+        </CmsStatusChip>
       </div>
     </div>
     <div class="cms-locale-coverage-grid">
@@ -23,10 +21,10 @@
         class="cms-locale-coverage-card"
       >
         <div class="cms-locale-coverage-card__header">
-          <q-chip dense square :style="statusChipStyle">{{ getLocaleLabel(summary.locale) }}</q-chip>
-          <q-chip dense square :style="getStatusStyle(summary.status)">
+          <CmsStatusChip :style="statusChipStyle">{{ getLocaleLabel(summary.locale) }}</CmsStatusChip>
+          <CmsStatusChip :style="getStatusStyle(summary.status)">
             {{ getStatusLabel(summary.status) }}
-          </q-chip>
+          </CmsStatusChip>
         </div>
         <small>{{ getSummaryLabel(summary) }}</small>
         <div class="cms-blocks-summary-grid">
@@ -46,9 +44,9 @@
             :key="entry.id"
             class="cms-review-summary__item"
           >
-            <q-chip dense square :style="getStatusStyle('empty')">
+            <CmsStatusChip :style="getStatusStyle('empty')">
               {{ getCategoryLabel(entry.category) }}
-            </q-chip>
+            </CmsStatusChip>
             <div class="cms-review-summary__body">
               <strong>{{ entry.label }}</strong>
               <small>{{ entry.fieldLabel }}</small>
@@ -68,6 +66,7 @@ import type {
   CmsLocaleCoverageSummary,
 } from '../../../../modules/cms/white-label/locale-coverage'
 import type { CmsLocale } from '../../../../modules/cms/white-label/types'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 const props = defineProps({
   matrix: {

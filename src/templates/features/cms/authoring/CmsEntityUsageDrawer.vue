@@ -27,9 +27,9 @@
           {{ subtitle }}
         </p>
         <div class="cms-usage-drawer__summary">
-          <q-chip dense square :style="statusChipStyle">
+          <CmsStatusChip :style="statusChipStyle">
             {{ referenceCount }} {{ refsLabel }}
-          </q-chip>
+          </CmsStatusChip>
           <small>{{ summaryLabel }}</small>
         </div>
         <div v-if="references.length === 0" class="cms-block-item__empty">
@@ -44,9 +44,9 @@
           >
             <div class="cms-usage-drawer__reference-header">
               <strong>{{ reference.label }}</strong>
-              <q-chip dense square :style="statusChipStyle">
+              <CmsStatusChip :style="statusChipStyle">
                 {{ reference.sourceLabel }}
-              </q-chip>
+              </CmsStatusChip>
             </div>
             <small>{{ reference.description }}</small>
             <small v-if="reference.locationLabel">
@@ -61,6 +61,7 @@
 
 <script setup lang="ts">
 import { DsButton } from '../../../../design-system/vue'
+import CmsStatusChip from './CmsStatusChip.vue'
 
 export interface CmsEntityUsageDrawerReferenceView {
   key: string
