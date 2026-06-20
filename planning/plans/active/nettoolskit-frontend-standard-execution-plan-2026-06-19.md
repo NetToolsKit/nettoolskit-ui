@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 13:24
+LastUpdated: 2026-06-20 13:52
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -80,6 +80,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #32 is open as a draft stacked PR from `refactor/nettoolskit-cms-blocks-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-preview-native-chips-2026-06-20`.
 - PR #33 is open as a draft stacked PR from `refactor/nettoolskit-cms-pages-native-chips-2026-06-20` into `refactor/nettoolskit-cms-blocks-native-chips-2026-06-20`.
 - PR #34 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-native-chips-2026-06-20`.
+- PR #35 is open as a draft stacked PR from `refactor/nettoolskit-cms-settings-native-chips-2026-06-20` into `refactor/nettoolskit-cms-releases-native-chips-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -819,6 +820,26 @@ Checkpoint:
 - PR #34 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/34`.
 - PR #34 remote checks passed at 2026-06-20 13:24: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS direct `q-chip` migration in Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
+
+### 2026-06-20 13:52 - CMS Settings Module Native Status Chip Slice
+
+- Replaced the twenty-seven direct `q-chip` status badges in `CmsSettingsModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved autosave, notification, foundation preview, notification preview, content tab label, content-model preset count, tenant, active workbench tab, and preview autosave badge styling through existing token-driven chip styles.
+- Preserved the two former `icon="notifications"` chips by rendering `q-icon name="notifications"` inside the native status chip and added shared `cms-status-chip__icon` spacing.
+- Updated the Settings autosave visual stabilizer from `.q-chip` to `.cms-status-chip` and added template audit coverage proving the Settings module imports `CmsStatusChip` and no longer contains direct `<q-chip>`.
+- Subagent `Locke` completed read-only audit and confirmed all former Settings module chips were passive status badges without `clickable`, `removable`, click, or remove behavior.
+- Focused audit passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 25 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run lint:style` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 813` and no exceeded metrics.
+- Direct CMS authoring chip audit passed: `rg -n "<q-chip\\b" src/templates/features/cms/authoring -g "*.vue"` returned no matches.
+- Focused Settings visuals passed without snapshot updates for light, dark, monochrome, content-model authoring, and autosave recovery toolbar captures.
+- Focused notification-token E2E was checked as a risk control and still fails on the parent branch with the same `q-badge` color assertion (`#ef4444` expected, `#dc2626` received), so it remains inherited and outside this slice.
+- `npm run verify` passed, including token/doc drift, lint, Stylelint, CSS governance, type-check, 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `00b1bfadb` created the CMS Settings module native status chip slice.
+- PR #35 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/35`.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, inherited notification-token E2E badge color failure, and final PR/review closeout.
 
 ## Closeout Expectations
 

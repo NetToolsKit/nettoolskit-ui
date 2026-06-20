@@ -302,6 +302,22 @@ The largest direct Quasar usage appears in:
 - PR #34 remote checks passed at 2026-06-20 13:24: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 13:52 - CMS Settings Module Native Status Chip Slice
+
+- Replaced the twenty-seven direct `q-chip` status badges in `CmsSettingsModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved autosave, notification, foundation preview, notification preview, content tab label, content-model preset count, tenant, active workbench tab, and preview autosave badge behavior and styling.
+- Preserved the two former notification icon chips by rendering `q-icon name="notifications"` inside `CmsStatusChip` and adding shared icon spacing.
+- Updated the Settings autosave visual stabilizer from `.q-chip` to `.cms-status-chip` and added template audit coverage proving the Settings module imports `CmsStatusChip` and rejects direct `<q-chip>` regressions.
+- Subagent audit confirmed every former Settings module chip was passive status markup without `clickable`, `removable`, click, or remove behavior.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 25 tests.
+- `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
+- Direct CMS authoring chip audit passed: `rg -n "<q-chip\\b" src/templates/features/cms/authoring -g "*.vue"` returned no matches.
+- Focused Settings visuals passed without snapshot updates for light, dark, monochrome, content-model authoring, and autosave recovery toolbar captures.
+- Focused notification-token E2E was checked and still fails on the parent branch with the same `q-badge` color assertion (`#ef4444` expected, `#dc2626` received), so it remains inherited and outside this slice.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #35 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/35`.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, inherited notification-token E2E badge color failure, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
