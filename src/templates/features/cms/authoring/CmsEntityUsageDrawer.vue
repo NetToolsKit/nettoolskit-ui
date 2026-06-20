@@ -5,18 +5,19 @@
     class="cms-usage-drawer-dialog"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <q-card class="cms-usage-drawer">
+    <section class="cms-usage-drawer">
       <div class="cms-usage-drawer__header">
         <div>
           <strong>{{ headerLabel }}</strong>
           <small>{{ title || detailsLabel }}</small>
         </div>
-        <q-btn
-          flat
-          round
-          dense
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="close"
           class="cms-usage-drawer__close"
+          :aria-label="closeLabel"
           @click="$emit('update:modelValue', false)"
         />
       </div>
@@ -54,11 +55,13 @@
           </article>
         </div>
       </div>
-    </q-card>
+    </section>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
+import { DsButton } from '../../../../design-system/vue'
+
 export interface CmsEntityUsageDrawerReferenceView {
   key: string
   label: string
@@ -79,10 +82,12 @@ withDefaults(defineProps<{
   references: CmsEntityUsageDrawerReferenceView[]
   emptyTitle: string
   emptyDescription: string
+  closeLabel?: string
   statusChipStyle?: Record<string, string>
 }>(), {
   title: '',
   subtitle: '',
+  closeLabel: 'Close usage drawer',
   statusChipStyle: () => ({}),
 })
 

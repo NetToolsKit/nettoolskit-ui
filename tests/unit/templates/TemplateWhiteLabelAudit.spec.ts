@@ -1508,6 +1508,19 @@ describe('template white-label audit', () => {
     expect(cmsAuthoringWorkbenchSource).not.toContain('<q-card')
   })
 
+  it('keeps the CMS usage drawer shell on native markup and design-system actions', () => {
+    const cmsDrawerSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsEntityUsageDrawer.vue')
+
+    expect(cmsDrawerSource).toContain("import { DsButton } from '../../../../design-system/vue'")
+    expect(cmsDrawerSource).toContain('<section class="cms-usage-drawer">')
+    expect(cmsDrawerSource).toContain('<DsButton')
+    expect(cmsDrawerSource).toContain(':aria-label="closeLabel"')
+    expect(cmsDrawerSource).toContain('<q-dialog')
+    expect(cmsDrawerSource).toContain('<q-chip')
+    expect(cmsDrawerSource).not.toContain('<q-card')
+    expect(cmsDrawerSource).not.toContain('<q-btn')
+  })
+
   it('keeps CMS authoring separators on native markup', () => {
     const cmsAuthoringVueFiles = listRepoFiles('../../../src/templates/features/cms/authoring')
       .filter((filePath) => filePath.endsWith('.vue'))

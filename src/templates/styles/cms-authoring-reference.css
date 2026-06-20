@@ -385,6 +385,7 @@
   box-shadow: var(--ntk-cms-drawer-shadow, var(--ntk-template-popup-shadow, var(--ntk-shadow-lg)));
   display: flex;
   flex-direction: column;
+  pointer-events: auto;
 }
 
 .cms-usage-drawer-dialog :deep(.q-dialog__inner) {
@@ -407,7 +408,35 @@
 }
 
 .cms-usage-drawer__close {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ntk-radius-pill, 999px);
+  background: transparent;
   color: var(--ntk-cms-usage-drawer-muted);
+  cursor: pointer;
+}
+
+.cms-usage-drawer__close:hover {
+  background: color-mix(in srgb, var(--ntk-cms-usage-drawer-text) 8%, transparent);
+  color: var(--ntk-cms-usage-drawer-text);
+}
+
+.cms-usage-drawer__close:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+
+.cms-usage-drawer__close .ntk-button__icon {
+  margin: 0;
+  font-family: 'Material Symbols Outlined', 'Material Icons';
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
 }
 
 .cms-usage-drawer__body {

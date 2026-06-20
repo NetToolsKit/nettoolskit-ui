@@ -477,6 +477,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CMS authoring native separators**
   - Replaced the remaining direct `q-separator` controls in CMS authoring surfaces with tokenized native `hr` separators.
   - Added audit coverage preventing direct `q-separator` regressions in CMS authoring Vue files and refreshed the reusable block impact drawer visual baseline.
+- **CMS usage drawer native shell**
+  - Replaced the usage drawer `q-card` shell and direct close `q-btn` with native shell markup and the rendered `DsButton` wrapper.
+  - Added translated close-label wiring, role-based E2E close coverage, pointer-event handling for the native dialog child, and focused unit/audit coverage.
 - **CMS field bridge token aliases**
   - Removed duplicated broad Quasar field overrides from the CMS authoring stylesheet and routed field colors/borders through scoped token aliases consumed by the shared template bridge.
   - Refreshed the dark CMS shell visual baseline so dark preset fields now follow the tokenized CMS surface instead of Quasar's default light field surface.

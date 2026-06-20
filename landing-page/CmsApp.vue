@@ -337,6 +337,7 @@
     :references="cmsUsageDrawerReferenceItems"
     :empty-title="tr('No usage references found.', 'Nenhuma referencia de uso encontrada.')"
     :empty-description="tr('This entity can be changed or deleted safely.', 'Esta entidade pode ser alterada ou removida com seguranca.')"
+    :close-label="tr('Close usage drawer', 'Fechar painel de uso')"
     :status-chip-style="statusChipStyle"
   />
 </template>

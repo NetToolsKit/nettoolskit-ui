@@ -474,12 +474,24 @@ describe('CmsPagesPreviewSurface', () => {
 })
 
 describe('CmsEntityUsageDrawer', () => {
-  const dialogStub = { template: '<div v-if="modelValue" class="dialog"><slot /></div>', props: ['modelValue'] }
+  const dialogStub = {
+    template: '<div v-if="modelValue" class="dialog"><button class="dialog-close" @click="$emit(\'update:modelValue\', false)">Close</button><slot /></div>',
+    props: ['modelValue'],
+  }
   const chipStub = { template: '<span class="chip"><slot /></span>' }
+  const drawerGlobalOpts = {
+    global: {
+      stubs: {
+        'q-dialog': dialogStub,
+        'q-chip': chipStub,
+        DsButton: false,
+      },
+    },
+  }
 
   it('renders header, references and count when open', () => {
     const wrapper = shallowMount(CmsEntityUsageDrawer, {
-      global: { stubs: { 'q-dialog': dialogStub, 'q-card': { template: '<div><slot /></div>' }, 'q-separator': true, 'q-btn': true, 'q-chip': chipStub } },
+      ...drawerGlobalOpts,
       props: {
         modelValue: true,
         headerLabel: 'Usage',
@@ -498,6 +510,7 @@ describe('CmsEntityUsageDrawer', () => {
     })
 
     expect(wrapper.find('.dialog').exists()).toBe(true)
+    expect(wrapper.get('.cms-usage-drawer').element.tagName).toBe('SECTION')
     expect(wrapper.text()).toContain('Usage')
     expect(wrapper.text()).toContain('Hero Banner')
     const refs = wrapper.findAll('.cms-usage-drawer__reference')
@@ -508,7 +521,7 @@ describe('CmsEntityUsageDrawer', () => {
 
   it('does not render dialog content when modelValue is false', () => {
     const wrapper = shallowMount(CmsEntityUsageDrawer, {
-      global: { stubs: { 'q-dialog': dialogStub, 'q-card': { template: '<div><slot /></div>' }, 'q-separator': true, 'q-btn': true, 'q-chip': chipStub } },
+      ...drawerGlobalOpts,
       props: {
         modelValue: false,
         headerLabel: 'Usage',
@@ -527,7 +540,7 @@ describe('CmsEntityUsageDrawer', () => {
 
   it('shows empty state when references array is empty', () => {
     const wrapper = shallowMount(CmsEntityUsageDrawer, {
-      global: { stubs: { 'q-dialog': dialogStub, 'q-card': { template: '<div><slot /></div>' }, 'q-separator': true, 'q-btn': true, 'q-chip': chipStub } },
+      ...drawerGlobalOpts,
       props: {
         modelValue: true,
         headerLabel: 'Usage',
@@ -543,6 +556,53 @@ describe('CmsEntityUsageDrawer', () => {
 
     expect(wrapper.find('.cms-block-item__empty').exists()).toBe(true)
     expect(wrapper.text()).toContain('Not used anywhere')
+  })
+
+  it('emits close from the native design-system close button', async () => {
+    const wrapper = shallowMount(CmsEntityUsageDrawer, {
+      ...drawerGlobalOpts,
+      props: {
+        modelValue: true,
+        headerLabel: 'Usage',
+        detailsLabel: 'Details',
+        closeLabel: 'Close usage',
+        referenceCount: 0,
+        refsLabel: 'refs',
+        summaryLabel: '',
+        emptyTitle: 'No usage',
+        emptyDescription: '',
+        references: [],
+      },
+    })
+
+    const closeButton = wrapper.get('button.cms-usage-drawer__close')
+    expect(closeButton.classes()).toContain('ntk-button')
+    expect(closeButton.attributes('aria-label')).toBe('Close usage')
+
+    await closeButton.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([[false]])
+  })
+
+  it('forwards q-dialog model updates', async () => {
+    const wrapper = shallowMount(CmsEntityUsageDrawer, {
+      ...drawerGlobalOpts,
+      props: {
+        modelValue: true,
+        headerLabel: 'Usage',
+        detailsLabel: 'Details',
+        referenceCount: 0,
+        refsLabel: 'refs',
+        summaryLabel: '',
+        emptyTitle: 'No usage',
+        emptyDescription: '',
+        references: [],
+      },
+    })
+
+    await wrapper.get('.dialog-close').trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([[false]])
   })
 })
 

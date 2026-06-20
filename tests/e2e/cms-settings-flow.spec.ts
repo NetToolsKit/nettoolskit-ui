@@ -3013,13 +3013,13 @@ test.describe('CMS settings white-label flow', () => {
     await expect(usageDrawer).toBeVisible()
     await expect(usageDrawer).toContainText(/(Launch hero block|Bloco hero de lançamento)/)
     await expect(usageDrawer).toContainText(/(No usage references found|Nenhuma referência de uso encontrada)/)
-    await usageDrawer.locator('.cms-usage-drawer__close').click()
+    await usageDrawer.getByRole('button', { name: /^(Close usage drawer|Fechar painel de uso)$/ }).click()
     await expect(usageDialog).toBeHidden()
 
     await starterReusableBlockRow.getByRole('button', { name: /^(Archive|Arquivar)$/ }).click()
     await expect(reusableBlockLibrary.locator('.cms-reusable-block-row', { hasText: /(Launch hero block|Bloco hero de lançamento)/ })).toHaveCount(0)
 
-    await reusableBlockLibrary.getByLabel(/^(Show archived|Mostrar arquivados)$/).click()
+    await reusableBlockLibrary.getByRole('switch', { name: /^(Show archived|Mostrar arquivados)$/ }).first().click()
     await expect(starterReusableBlockRow).toBeVisible()
     await expect(starterReusableBlockRow.locator('small').filter({ hasText: /^(Archived|Arquivado)$/ })).toBeVisible()
     await expect(starterReusableBlockRow.getByRole('button', { name: /^(Use|Usar)$/ })).toBeDisabled()
