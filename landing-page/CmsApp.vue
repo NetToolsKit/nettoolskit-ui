@@ -1846,6 +1846,7 @@ const cmsSettingsModuleTemplateProps = computed(() => ({
     removeToolbarAction,
     onCmsLocaleChange,
     createNewAuthoredContentModelDraft,
+    saveCmsAuthoredContentModelDraft,
     exportCmsSchemaPackage,
     insertSelectedAuthoredContentModelFieldPreset,
     addAuthoredContentModelFieldDraft,

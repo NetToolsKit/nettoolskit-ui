@@ -31,9 +31,13 @@ async function resetCmsState(page: Page): Promise<void> {
  * Opens one drawer module using the visible module title.
  */
 async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
+  const moduleText = new RegExp(moduleName.source.replace(/^\^/, '').replace(/\$$/, ''), moduleName.flags)
   const moduleItem = await resolveVisible(page
-    .locator('.ntk-app-shell__drawer .ntk-app-shell__item', {
-      has: page.locator('.q-item__label', { hasText: moduleName }),
+    .getByRole('complementary')
+    .first()
+    .getByRole('listitem')
+    .filter({
+      hasText: moduleText,
     })
   )
 
@@ -380,6 +384,7 @@ async function authorPhase4VisualContentModel(page: Page, contentModelName: stri
   await openSettingsModule(page)
   await openSettingsTab(page, /^(Content|Conteúdo)$/)
 
+  await page.getByRole('button', { name: /^(New content model|Novo modelo de conteúdo)$/ }).first().click()
   await fillTextInputDirect(cmsInputByLabel(page, 'Content model name'), contentModelName)
   await fillTextInputDirect(cmsInputByLabel(page, 'Content model description'), 'Phase 4 schema authoring regression')
   await fillTextInputDirect(cmsInputByLabel(page, 'Migration notes'), 'Phase 4 baseline')
@@ -662,7 +667,7 @@ test.describe('CMS engine visual regression', () => {
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
 
     await selectOptionByFieldLabel(page, 'Quick command', 'Create and open blocks')
-    await page.getByRole('textbox', { name: 'Search modules' }).fill('landing')
+    await page.getByRole('textbox', { name: /^Search modules?$/ }).first().fill('landing')
 
     await stabilizeVisualState(page)
     await expect(page).toHaveScreenshot('cms-engine-phase3-pages-quickstart-command-surface.png', { caret: 'hide' })
@@ -785,7 +790,7 @@ test.describe('CMS engine visual regression', () => {
       .first()
 
     await starterPresetRow.getByRole('button', { name: /^(Archive|Arquivar)$/ }).click()
-    await presetLibrary.getByLabel(/^(Show archived|Mostrar arquivados)$/).click()
+    await presetLibrary.getByRole('switch', { name: /^(Show archived|Mostrar arquivados)$/ }).first().click()
     await stabilizeVisualState(page)
     await expect(presetLibrary).toHaveScreenshot(
       'cms-engine-phase5-authored-preset-archive-library.png',

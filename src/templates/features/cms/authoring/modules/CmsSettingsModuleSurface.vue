@@ -941,6 +941,13 @@
                         <q-btn
                           flat
                           no-caps
+                          icon="save"
+                          :label="tr('Save content model', 'Salvar modelo de conteúdo')"
+                          @click="saveCmsAuthoredContentModelDraft()"
+                        />
+                        <q-btn
+                          flat
+                          no-caps
                           icon="file_download"
                           :label="tr('Export schema package', 'Exportar pacote de schema')"
                           @click="exportCmsSchemaPackage()"
@@ -1846,6 +1853,7 @@ const props = defineProps<{
   removeToolbarAction: Function
   onCmsLocaleChange: Function
   createNewAuthoredContentModelDraft: Function
+  saveCmsAuthoredContentModelDraft: Function
   exportCmsSchemaPackage: Function
   insertSelectedAuthoredContentModelFieldPreset: Function
   addAuthoredContentModelFieldDraft: Function

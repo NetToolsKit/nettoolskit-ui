@@ -25,10 +25,13 @@ Minimum contract covered in this file:
 For frontend changes, use this mandatory baseline:
 
 ```bash
-npm run lint
+npm run lint -- --quiet
+npm run lint:style
 npm run lint:css
 npm run type-check
-npm run test
+npm run test:design-system
+npm run test:architecture
+npm run test:a11y
 npm run tokens:check
 npm run docs:check
 npm run verify
@@ -37,7 +40,8 @@ npm run verify
 For visual/template and CMS slices, also run:
 
 ```bash
-npm run test:e2e -- --project=chromium
+npm run test:visual
+npm run test:browser-gates
 ```
 
 ---

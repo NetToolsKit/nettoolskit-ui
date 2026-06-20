@@ -2,9 +2,9 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 19:05
+LastUpdated: 2026-06-19 21:08
 Status: active
-Progress: 90% (9/10 checked)
+Progress: 73% (11/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -13,15 +13,20 @@ Release closeout: mandatory
 ## Progress Checklist
 
 - [x] Package and command surface spec accepted.
-- [x] DTCG token/resolver implementation planned and delivered.
-- [x] Theme, density, tenant validation, and Quasar adapter planned and delivered.
-- [x] Component contracts, recipes, and compatibility exports planned and delivered.
-- [x] CSS governance and enforcement planned and delivered.
-- [x] CMS/template migration planned and delivered in thin slices.
-- [x] Quality gates and generated docs planned and delivered.
+- [x] DTCG token/resolver initial implementation planned and delivered.
+- [x] Theme, density, tenant validation, and Quasar adapter initial implementation planned and delivered.
+- [x] Component contracts, recipes, and compatibility exports initial implementation planned and delivered.
+- [x] CSS governance and enforcement initial implementation planned and delivered.
+- [x] CMS/template migration initial implementation planned and delivered in thin slices.
+- [x] Quality gates and generated docs initial implementation planned and delivered.
 - [x] README and changelog decisions recorded.
 - [x] Validation evidence recorded in this plan.
-- [ ] Review and closeout completed.
+- [x] Completion audit against active specs recorded.
+- [x] Browser/stylelint gate slice validated locally.
+- [ ] Browser/stylelint gate committed, pushed, and opened as a stacked PR.
+- [ ] Remaining spec gaps converted into the next implementation slices.
+- [ ] CI result inspection and PR stack review completed.
+- [ ] Final review and closeout completed.
 
 ## Scope Summary
 
@@ -39,6 +44,14 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 6. `planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md`
 7. `planning/specs/active/nettoolskit-template-migration-and-cleanup-2026-06-19.md`
 8. `planning/specs/active/nettoolskit-quality-gates-and-documentation-2026-06-19.md`
+
+## Current Planning Status
+
+- All 8 linked specs remain under `planning/specs/active` after completion audit.
+- The earlier 90% status reflected completed implementation slices, not final spec acceptance.
+- PR #1 through PR #4 are open as draft PRs in a stacked chain; Vercel checks are green, but no GitHub Actions run was found for those heads during the audit.
+- The current working branch is `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19` and prepares the browser/stylelint gate slice as the next stacked PR.
+- Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
 
@@ -241,6 +254,29 @@ Checkpoint:
 - Local milestone implementation, validation, documentation, changelog, and planning evidence are committed and pushed in the stacked PR chain.
 - Remaining acceptance: review, CI result inspection, PR merge, branch cleanup, and final archive movement after merge approval.
 
+### 2026-06-19 20:54 - Completion Audit Rebaseline
+
+- Active plan status was rebalanced from implementation-slice progress to spec-acceptance progress.
+- All 8 linked specs remain active and are not ready for archive movement.
+- Subagent audit confirmed gaps still remain in token resolver output shape, density application, component contracts, CSS policy depth, CMS direct Quasar migration, and CI/browser gate coverage.
+- GitHub audit confirmed PR #1 through PR #4 are draft, stacked, and Vercel-green; no GitHub Actions run was found for those branch heads.
+- Current closure path is to keep adding thin stacked PRs with validation evidence until every active spec has review and closeout evidence.
+
+### 2026-06-19 20:54 - Browser Style And Visual Gate Slice
+
+- Added Stylelint configuration and `lint:style`.
+- Added a focused Playwright/axe a11y gate for the template-runtime login surface.
+- Added `test:a11y`, `test:visual`, and `test:browser-gates`, and expanded `verify` to include Stylelint plus browser gates.
+- Added the internal CMS preview page to the Vite multi-entry build so Playwright preview targets the CMS runtime.
+- Exposed the `Save content model` command in the CMS settings content-model surface and used it in the visual regression flow.
+- Stabilized CMS visual selectors for drawer modules, quick search, content model authoring, and archived preset toggles.
+- Regenerated affected Windows CMS visual baselines.
+- `npm run lint:style` passed.
+- `npm run type-check` passed.
+- `npm run test:a11y` passed with 1 Playwright test.
+- `npm run test:visual` passed with 24 Playwright tests.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and the package build.
+
 ## Closeout Expectations
 
 - README update is required when package surface, commands, or public API changes.
@@ -250,4 +286,5 @@ Checkpoint:
 - Commit suggestion for the design system foundation slice: `feat(design-system): add token theme and recipe foundation`
 - Commit suggestion for the CMS template migration slice: `refactor(cms): migrate editor toolbar actions to ntk button`
 - Commit suggestion for the quality gates and docs slice: `feat(design-system): add generated docs and governance gates`
+- Commit suggestion for the browser style and visual gate slice: `test(design-system): add browser style and cms visual gates`
 - Do not move specs or this plan to completed until validation, review, and closeout evidence are recorded.

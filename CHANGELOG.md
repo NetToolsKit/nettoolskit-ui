@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Browser style and visual quality gates**
+  - Added Stylelint coverage through `lint:style` and a focused Playwright axe gate for the template-runtime login surface.
+  - Expanded `verify` to include Stylelint plus browser gates for a11y, template-runtime visual baselines, and CMS visual regression baselines.
+  - Added the internal CMS preview as a Vite build input, stabilized CMS visual selectors, exposed the `Save content model` action in the settings surface, and regenerated the affected Windows visual baselines.
 - **Design system quality gates and generated docs**
   - Added generated `DESIGN.md`, `TOKENS.md`, and `COMPONENTS.md` references built from the token source and component recipe contracts.
   - Added `docs:build`, `docs:check`, `lint:css`, and `test:design-system` scripts, plus importable documentation and CSS governance CLIs.

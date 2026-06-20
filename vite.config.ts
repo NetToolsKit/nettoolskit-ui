@@ -61,6 +61,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, './samples/index.html'),
+        internalCms: resolve(__dirname, './samples/internal-cms.html'),
       },
       output: {
         manualChunks: manualChunkByModule,
