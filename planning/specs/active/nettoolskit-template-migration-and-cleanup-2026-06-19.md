@@ -86,6 +86,21 @@ The largest direct Quasar usage appears in:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, and final PR/CI/review closeout.
 
+### 2026-06-20 01:42 - CMS Media Module DsButton Slice
+
+- Replaced the seven direct `q-btn` controls in `CmsMediaModuleSurface.vue` with rendered `DsButton` controls.
+- Preserved create, save, delete, replace-references, and branding-slot event contracts while moving disable bindings from Quasar `disable` to native `disabled`.
+- Added media action styles for the rendered `ntk-button` icon/label structure and removed the direct button styles from the migrated primary/danger actions.
+- Updated media E2E selectors from `.q-btn` to role/name based button lookup and made `openDrawerModule` tolerate the current listitem-based drawer markup.
+- Confirmed `CmsMediaModuleSurface.vue` no longer contains direct `<q-btn>` usage.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 2 files and 18 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run test:architecture` passed.
+- Focused media E2E subset was attempted: `manages media library assets and applies branding bindings` passed; the three block-preview media flows still fail after asset selection because `img.cms-landing-hero-media__image` is not rendered in the Blocks preview, outside the migrated Media button surface.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, full `NtkSelect` parity decisions, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.

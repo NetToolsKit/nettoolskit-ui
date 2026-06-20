@@ -73,6 +73,22 @@ function normalizeMediaPickerOptionLabel(optionLabel: string): string {
   return optionLabel.replace(/\s+\([^)]+\)\s*$/, '').trim()
 }
 
+function cmsMediaPrimaryAction(page: Page, name: string): Locator {
+  return page
+    .locator('.cms-media__actions:not(.cms-media__actions--secondary)')
+    .first()
+    .getByRole('button', { name, exact: true })
+    .first()
+}
+
+function cmsMediaSecondaryAction(page: Page, name: string): Locator {
+  return page
+    .locator('.cms-media__actions--secondary')
+    .first()
+    .getByRole('button', { name, exact: true })
+    .first()
+}
+
 /**
  * Expands known English option labels into bilingual candidates used by
  * runtime selectors that can render in either locale.
@@ -538,11 +554,28 @@ function settingsActionButton(page: Page, label: string): Locator {
 }
 
 async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
-  const moduleItem = await resolveVisible(page
-    .locator('.ntk-app-shell__drawer .ntk-app-shell__item', {
+  const drawer = page.locator('.ntk-app-shell__drawer')
+  const drawerItems = drawer.locator('.ntk-app-shell__item')
+  let moduleItemLocator = drawerItems
+    .filter({
       has: page.locator('.q-item__label', { hasText: moduleName }),
     })
-  )
+    .first()
+
+  if (await moduleItemLocator.count() === 0) {
+    moduleItemLocator = page
+      .getByRole('listitem')
+      .filter({ has: page.getByText(moduleName) })
+      .first()
+  }
+
+  if (await moduleItemLocator.count() === 0) {
+    moduleItemLocator = page
+      .getByText(moduleName)
+      .first()
+  }
+
+  const moduleItem = await resolveVisible(moduleItemLocator)
 
   await clickVisible(moduleItem)
 
@@ -3251,18 +3284,18 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Media$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Media')
 
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'New asset').click()
     await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Docs Cover')
     await fillTextInput(cmsInputByLabel(page, 'Asset URL'), 'https://example.com/assets/docs-cover.png')
     await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Docs cover preview')
     await fillTextInput(cmsInputByLabel(page, 'Tags (comma separated)'), 'docs, hero')
     await fillTextInput(cmsInputByLabel(page, 'Usage tags (comma separated)'), 'branding.favicon, content.hero')
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'Save asset').click()
 
     const createdAssetRow = page.locator('.cms-media-preview-item', { hasText: 'Docs Cover' }).first()
     await expect(createdAssetRow).toBeVisible()
 
-    await page.locator('.cms-media__actions--secondary .q-btn', { hasText: 'Apply as favicon' }).first().click()
+    await cmsMediaSecondaryAction(page, 'Apply as favicon').click()
     const faviconBinding = page.locator('.cms-media-preview-item--binding', { hasText: 'Favicon binding' }).first()
     await expect(faviconBinding).toContainText('Docs Cover')
     await expect(faviconBinding).toContainText('https://example.com/assets/docs-cover.png')
@@ -3280,11 +3313,11 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Media$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Media')
 
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'New asset').click()
     await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Hero Image Asset')
     await fillTextInput(cmsInputByLabel(page, 'Asset URL'), assetUrl)
     await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Hero image asset alt')
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'Save asset').click()
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Hero Image Asset' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Blocks$/)
@@ -3313,11 +3346,11 @@ test.describe('CMS settings white-label flow', () => {
 
     await page.goto(CMS_URL)
     await openDrawerModule(page, /^Media$/)
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'New asset').click()
     await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Deleted Hero Asset')
     await fillTextInput(cmsInputByLabel(page, 'Asset URL'), assetUrl)
     await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Deleted hero asset alt')
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'Save asset').click()
 
     await openDrawerModule(page, /^Blocks$/)
     const heroRow = page.locator('.cms-block-row', { hasText: 'landing.hero' }).first()
@@ -3328,7 +3361,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^Media$/)
     await selectOptionByFieldLabel(page, 'Media library asset', 'Deleted Hero Asset (Image)')
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Delete asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'Delete asset').click()
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Deleted Hero Asset' })).toHaveCount(0)
 
     await openDrawerModule(page, /^Blocks$/)
@@ -3345,11 +3378,11 @@ test.describe('CMS settings white-label flow', () => {
     await page.goto(CMS_URL)
     await openDrawerModule(page, /^Media$/)
 
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'New asset').click()
     await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Original Managed Hero')
     await fillTextInput(cmsInputByLabel(page, 'Asset URL'), originalAssetUrl)
     await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Original managed hero alt')
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'Save asset').click()
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Original Managed Hero' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Blocks$/)
@@ -3361,14 +3394,14 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^Media$/)
     await selectOptionByFieldLabel(page, 'Media library asset', 'Original Managed Hero (Image)')
-    await page.locator('.cms-media__actions--secondary .q-btn', { hasText: 'Apply as brand logo' }).first().click()
+    await cmsMediaSecondaryAction(page, 'Apply as brand logo').click()
     await expect(page.locator('.cms-media-preview-item--binding', { hasText: 'Brand logo binding' }).first()).toContainText('Original Managed Hero')
 
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'New asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'New asset').click()
     await fillTextInput(cmsInputByLabel(page, 'Asset name'), 'Replacement Managed Hero')
     await fillTextInput(cmsInputByLabel(page, 'Asset URL'), replacementAssetUrl)
     await fillTextInput(cmsInputByLabel(page, 'Asset alt text'), 'Replacement managed hero alt')
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Save asset' }).first().click()
+    await cmsMediaPrimaryAction(page, 'Save asset').click()
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Replacement Managed Hero' }).first()).toBeVisible()
 
     await selectOptionByFieldLabel(page, 'Media library asset', 'Original Managed Hero (Image)')
@@ -3378,8 +3411,8 @@ test.describe('CMS settings white-label flow', () => {
     await replaceTargetField.scrollIntoViewIfNeeded()
     await selectOptionByFieldLabel(page, 'Replace target asset', 'Replacement Managed Hero (Image)')
     await commitFocusedSelect(page)
-    await expect(page.locator('.cms-media__actions .q-btn', { hasText: 'Replace references' }).first()).toBeEnabled()
-    await page.locator('.cms-media__actions .q-btn', { hasText: 'Replace references' }).first().click()
+    await expect(cmsMediaPrimaryAction(page, 'Replace references')).toBeEnabled()
+    await cmsMediaPrimaryAction(page, 'Replace references').click()
 
     await expect(page.locator('.cms-media-preview-item', { hasText: 'Original Managed Hero' })).toHaveCount(0)
     await expect(page.locator('.cms-media-preview-item--binding', { hasText: 'Brand logo binding' }).first()).toContainText('Replacement Managed Hero')

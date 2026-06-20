@@ -460,6 +460,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS media module button migration**
+  - Replaced the seven direct `q-btn` controls in the CMS Media authoring module with the rendered `DsButton` wrapper.
+  - Added media-action styles for `ntk-button` icon/label rendering and moved media E2E selectors from `.q-btn` to role/name based button selectors.
 - **CMS authoring ruler button migration**
   - Replaced the authoring ruler focus and grid-mode `q-btn` controls with the rendered `DsButton` wrapper while preserving focus/toggle events and compact ruler styling.
   - Added focused unit coverage for the ruler controls and refreshed the affected Windows CMS visual baselines.

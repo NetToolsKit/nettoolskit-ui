@@ -118,66 +118,71 @@
       </div>
 
       <div class="cms-media__actions">
-        <q-btn
-          flat
-          no-caps
+        <DsButton
+          variant="ghost"
+          intent="neutral"
           icon="add_photo_alternate"
+          class="cms-media__action"
           :label="t('New asset', 'Novo asset')"
           @click="emit('create-new-asset')"
         />
-        <q-btn
-          no-caps
-          unelevated
+        <DsButton
+          variant="solid"
+          intent="primary"
           icon="save"
+          class="cms-media__action"
           :label="t('Save asset', 'Salvar asset')"
-          :style="primaryActionStyle"
           @click="emit('save-asset')"
         />
-        <q-btn
-          flat
-          no-caps
+        <DsButton
+          variant="ghost"
+          intent="danger"
           icon="delete"
+          class="cms-media__action"
           :label="t('Delete asset', 'Excluir asset')"
-          :disable="!selectedMediaAssetId"
-          :style="dangerActionStyle"
+          :disabled="!selectedMediaAssetId"
           @click="emit('remove-selected-asset')"
         />
-        <q-btn
-          flat
-          no-caps
+        <DsButton
+          variant="ghost"
+          intent="neutral"
           icon="swap_horiz"
+          class="cms-media__action"
           :label="t('Replace references', 'Substituir referências')"
-          :disable="!selectedMediaAssetId || !mediaAssetDraft.replaceTargetAssetId"
+          :disabled="!selectedMediaAssetId || !mediaAssetDraft.replaceTargetAssetId"
           @click="emit('replace-selected-asset-references')"
         />
       </div>
 
       <div class="cms-media__actions cms-media__actions--secondary">
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="branding_watermark"
+          class="cms-media__action"
           :label="t('Apply as brand logo', 'Aplicar como logo da marca')"
-          :disable="!selectedMediaAssetId"
+          :disabled="!selectedMediaAssetId"
           @click="emit('apply-selected-asset-to-branding', 'brandLogo')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="web"
+          class="cms-media__action"
           :label="t('Apply as favicon', 'Aplicar como favicon')"
-          :disable="!selectedMediaAssetId"
+          :disabled="!selectedMediaAssetId"
           @click="emit('apply-selected-asset-to-branding', 'faviconUrl')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="account_circle"
+          class="cms-media__action"
           :label="t('Apply as user avatar', 'Aplicar como avatar do usuario')"
-          :disable="!selectedMediaAssetId"
+          :disabled="!selectedMediaAssetId"
           @click="emit('apply-selected-asset-to-branding', 'userAvatar')"
         />
       </div>
@@ -334,6 +339,7 @@
 import type { CmsDiagnosticsListItem } from '../CmsDiagnosticsListSection.vue'
 import CmsDiagnosticsListSection from '../CmsDiagnosticsListSection.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import { DsButton } from '../../../../../design-system/vue'
 import type { CmsMediaDiagnostic } from '../../../../../modules/cms/white-label/media-library'
 import type { CmsMediaAssetKind, CmsMediaAssetSettings } from '../../../../../modules/cms/white-label/types'
 
