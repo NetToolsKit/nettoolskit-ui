@@ -250,6 +250,8 @@ The largest direct Quasar usage appears in:
 - `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
 - Focused CMS visuals passed without snapshot updates for the published tablet Pages preview and phase 6 pages review summary surfaces.
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #31 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/31`.
+- PR #31 remote checks passed at 2026-06-20 12:13: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Blocks, Pages, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
