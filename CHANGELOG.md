@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rendered design-system select wrapper**
+  - Added `DsSelect` as a rendered Vue wrapper backed by the field contract and recipe classes.
+  - Added focused render tests for options, placeholder, model updates, invalid, disabled, readonly, and required states.
 - **Rendered design-system card and input wrappers**
   - Added `DsCard` and `DsInput` as rendered Vue wrappers backed by the card and field contracts and recipe classes.
   - Added focused render tests for card titles, slots, selectable/clickable states, input labels, messages, model updates, invalid, disabled, and readonly states.

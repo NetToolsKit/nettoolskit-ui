@@ -78,6 +78,12 @@ const VUE_WRAPPER_CONFIGS = [
     sourcePath: 'src/design-system/vue/components/DsInput.vue',
     purpose: 'Native Vue input wrapper backed by the field contract and class recipe.',
   },
+  {
+    name: 'DsSelect',
+    contractName: 'NtkFieldContract',
+    sourcePath: 'src/design-system/vue/components/DsSelect.vue',
+    purpose: 'Native Vue select wrapper backed by the field contract and class recipe.',
+  },
 ]
 
 const DOC_ORDER = ['design', 'tokens', 'components']

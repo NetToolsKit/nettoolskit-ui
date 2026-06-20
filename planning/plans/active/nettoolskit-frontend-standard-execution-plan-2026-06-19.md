@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 23:30
+LastUpdated: 2026-06-19 23:44
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -363,6 +363,19 @@ Checkpoint:
 - PR #10 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/10`.
 - PR #10 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `DsSelect`, `DsTable`, and page wrapper work.
+
+### 2026-06-19 23:44 - DsSelect Wrapper Slice
+
+- Added `DsSelect` as a rendered Vue component wrapper backed by the field contract and recipe classes.
+- Exported `DsSelect` from the design-system Vue component surface.
+- Generated component docs now list `DsButton`, `DsCard`, `DsInput`, and `DsSelect`.
+- Added focused rendered component tests under `tests/unit/design-system/components/ds-select.spec.ts`.
+- Readonly select state avoids model updates and resets the DOM value to the controlled model value.
+- Focused validation passed: `npm test -- tests/unit/design-system/components/ds-select.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 4 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- `npm run verify` passed, including 43 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: `DsTable`, page wrappers, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

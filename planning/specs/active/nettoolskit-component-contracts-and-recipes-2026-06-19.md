@@ -87,6 +87,20 @@ Existing issue examples:
 - `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: `DsSelect`, `DsTable`, page wrappers, `NtkButton` open-string compatibility migration, and broader focus/keyboard behavior coverage.
 
+### 2026-06-19 23:44 - DsSelect Wrapper Slice
+
+- Added `src/design-system/vue/components/DsSelect.vue`.
+- Exported `DsSelect` from the design-system Vue component surface.
+- `DsSelect` renders native select markup from `NtkFieldContract` and `resolveNtkFieldRecipe()` without direct Quasar usage.
+- Component tests cover options, placeholder, model updates, invalid, disabled, readonly, required, label, and message states.
+- Readonly select state now avoids model updates and resets the DOM value to the controlled model value.
+- Generated component docs now list `DsButton`, `DsCard`, `DsInput`, and `DsSelect` wrapper sources.
+- `npm test -- tests/unit/design-system/components/ds-select.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 1 file and 4 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- `npm run verify` passed, including 43 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: `DsTable`, page wrappers, `NtkButton` open-string compatibility migration, full `NtkSelect` parity decisions, and broader focus/keyboard behavior coverage.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.
