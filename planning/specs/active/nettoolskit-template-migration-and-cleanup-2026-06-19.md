@@ -266,6 +266,8 @@ The largest direct Quasar usage appears in:
 - Focused Blocks visuals passed without snapshot updates for Blocks preview published mobile, phase 5 reusable block impact drawer, phase 5 archived authored preset library, and phase 6 blocks review summary.
 - Focused Blocks E2E passed for linked reusable block readonly authoring and variant branching after rerunning alone; the first parallel run failed before tests started because Vite hit a `.build/samples/favicon.png` cleanup `EPERM`.
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #32 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/32`.
+- PR #32 remote checks passed at 2026-06-20 12:34: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Pages, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
