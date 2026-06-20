@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 11:18
+LastUpdated: 2026-06-20 11:20
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -709,6 +709,8 @@ Checkpoint:
 - CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests after refreshing the expected Releases chip baselines.
 - `npm run verify` passed, including token/doc drift, lint, Stylelint, CSS governance, type-check, 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `480691f` created the CMS shared native status chip slice.
+- PR #29 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/29`.
+- PR #29 remote checks are pending.
 - Remaining gaps: module-local CMS direct `q-chip` migration, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations

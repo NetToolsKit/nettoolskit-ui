@@ -222,7 +222,8 @@ The largest direct Quasar usage appears in:
 - Confirmed no direct `<q-chip>` usage remains in top-level `src/templates/features/cms/authoring/*.vue`; remaining direct chip tags are module-local work for later slices.
 - Stabilized the design-system verify gate by reusing a single Vitest fork worker for `test:design-system`, avoiding repeated Windows worker startup timeouts.
 - CMS visual regression passed with 20 tests after refreshing three affected Releases Windows baselines, and `npm run verify` passed with 25 browser-gate Playwright tests and package build.
-- PR evidence is pending for the stacked shared native status chip branch.
+- PR #29 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/29`.
+- PR #29 remote checks are pending.
 - Remaining gaps: module-local CMS `q-chip` migration, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
