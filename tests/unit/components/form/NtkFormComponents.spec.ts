@@ -16,7 +16,14 @@ describe('NtkInput', () => {
       props: { label: 'Name' },
     })
 
-    expect(wrapper.find('q-input-stub.ntk-input').exists()).toBe(true)
+    const input = wrapper.find('q-input-stub.ntk-input')
+    expect(input.exists()).toBe(true)
+    expect(input.classes()).toEqual(expect.arrayContaining([
+      'ntk-field',
+      'ntk-field--variant-outlined',
+      'ntk-field--size-md',
+      'ntk-field--intent-neutral',
+    ]))
   })
 
   it('passes label and disable to q-input stub', () => {
@@ -53,6 +60,102 @@ describe('NtkInput', () => {
     })
 
     expect(wrapper.find('q-input-stub').attributes('type')).toBe('password')
+  })
+
+  it('maps design-system compatibility props onto the q-input stub', () => {
+    const wrapper = shallowMount(NtkInput, {
+      props: {
+        label: 'Email',
+        variant: 'filled',
+        size: 'sm',
+        intent: 'danger',
+        disabled: true,
+        invalid: true,
+        required: true,
+        readonly: true,
+      },
+    })
+
+    const input = wrapper.find('q-input-stub')
+
+    expect(input.attributes('filled')).toBe('true')
+    expect(input.attributes('outlined')).toBe('false')
+    expect(input.attributes('dense')).toBe('true')
+    expect(input.attributes('disable')).toBe('true')
+    expect(input.attributes('error')).toBe('true')
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('aria-required')).toBe('true')
+    expect(input.classes()).toEqual(expect.arrayContaining([
+      'ntk-field--variant-filled',
+      'ntk-field--size-sm',
+      'ntk-field--intent-danger',
+      'ntk-field--is-disabled',
+      'ntk-field--is-invalid',
+      'ntk-field--is-readonly',
+      'ntk-field--is-required',
+    ]))
+  })
+
+  it('lets explicit legacy visual and disabled props win over compatibility aliases', () => {
+    const wrapper = shallowMount(NtkInput, {
+      props: {
+        label: 'Email',
+        variant: 'filled',
+        size: 'sm',
+        disabled: true,
+        disable: false,
+        outlined: true,
+        filled: false,
+        dense: false,
+      },
+    })
+
+    const input = wrapper.find('q-input-stub')
+
+    expect(input.attributes('outlined')).toBe('true')
+    expect(input.attributes('filled')).toBe('false')
+    expect(input.attributes('dense')).toBe('false')
+    expect(input.attributes('disable')).toBe('false')
+    expect(input.classes()).toEqual(expect.arrayContaining([
+      'ntk-field--variant-outlined',
+      'ntk-field--size-md',
+    ]))
+    expect(input.classes()).not.toContain('ntk-field--is-disabled')
+  })
+
+  it('treats outlined and filled as one legacy visual group when only one is explicit', () => {
+    const wrapper = shallowMount(NtkInput, {
+      props: {
+        label: 'Email',
+        variant: 'filled',
+        outlined: true,
+      },
+    })
+
+    const input = wrapper.find('q-input-stub')
+
+    expect(input.attributes('outlined')).toBe('true')
+    expect(input.attributes('filled')).toBe('false')
+    expect(input.classes()).toContain('ntk-field--variant-outlined')
+  })
+
+  it('falls back to the default field recipe for unknown compatibility values', () => {
+    const wrapper = shallowMount(NtkInput, {
+      props: {
+        label: 'Email',
+        variant: 'soft',
+        size: 'xl',
+        intent: 'brand',
+      },
+    })
+
+    const input = wrapper.find('q-input-stub')
+
+    expect(input.classes()).toEqual(expect.arrayContaining([
+      'ntk-field--variant-outlined',
+      'ntk-field--size-md',
+      'ntk-field--intent-neutral',
+    ]))
   })
 })
 

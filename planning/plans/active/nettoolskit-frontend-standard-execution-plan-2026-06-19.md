@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:17
+LastUpdated: 2026-06-20 02:24
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -520,6 +520,19 @@ Checkpoint:
 - PR #19 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/19`.
 - PR #19 remote checks passed at 2026-06-20 02:17: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `CmsPreviewToolbar` select migration, `NtkInput` compatibility parity, and final PR/CI/review closeout.
+
+### 2026-06-20 02:20 - NtkInput Compatibility Slice
+
+- Kept `NtkInput` as a Quasar-backed compatibility adapter while adding design-system props for `variant`, `size`, `intent`, `disabled`, `invalid`, and `required`.
+- Recognized field contract values now add `resolveNtkFieldRecipe()` classes while preserving `.ntk-input`, QInput, v-model behavior, prepend/append slots, hints, and rules.
+- Preserved explicit legacy prop precedence for `outlined`, `filled`, `dense`, and `disable`; `outlined`/`filled` are treated as one visual group so partial legacy input wins over `variant`.
+- Kept `size="lg"` as class-only compatibility and `required` as ARIA/state-only for this slice to avoid changing Quasar validation behavior.
+- Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/design-system/components/component-recipes.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 2 files and 41 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run test:design-system` passed with 11 files and 55 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `CmsPreviewToolbar` select migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

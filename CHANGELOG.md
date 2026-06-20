@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **NtkInput design-system compatibility aliases**
+  - Added `variant`, `size`, `intent`, `disabled`, `invalid`, and `required` compatibility props to the Quasar-backed `NtkInput`.
+  - Added field recipe classes for recognized contract values while preserving `QInput` behavior and explicit legacy `outlined`, `filled`, `dense`, and `disable` precedence.
 - **NtkSelect design-system compatibility aliases**
   - Added `variant`, `size`, `intent`, `disabled`, `invalid`, and `required` compatibility props to the Quasar-backed `NtkSelect`.
   - Added field recipe classes for recognized contract values while preserving `QSelect`, multiple/chips behavior, select-all actions, and explicit legacy `outlined`, `filled`, `dense`, and `disable` precedence.
