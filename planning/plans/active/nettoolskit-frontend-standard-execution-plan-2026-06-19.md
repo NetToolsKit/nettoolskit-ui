@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 01:58
+LastUpdated: 2026-06-20 02:00
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -498,7 +498,7 @@ Checkpoint:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `6460318` created the NtkSelect compatibility slice.
 - PR #18 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/18`.
-- PR #18 Vercel check is pending immediately after opening; GitHub Actions are still not present in `gh pr checks`.
+- PR #18 Vercel check passed; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, and final PR/CI/review closeout.
 
 ## Closeout Expectations
