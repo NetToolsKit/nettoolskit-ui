@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:14
+LastUpdated: 2026-06-20 02:16
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -64,6 +64,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #16 is open as a draft stacked PR from `feat/nettoolskit-ntk-datatable-compat-2026-06-20` into `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20`.
 - PR #17 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-ds-button-2026-06-20` into `feat/nettoolskit-ntk-datatable-compat-2026-06-20`.
 - PR #18 is open as a draft stacked PR from `feat/nettoolskit-ntk-select-compat-2026-06-20` into `refactor/nettoolskit-cms-media-ds-button-2026-06-20`.
+- PR #19 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-ds-button-2026-06-20` into `feat/nettoolskit-ntk-select-compat-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -515,6 +516,9 @@ Checkpoint:
 - Focused release visual update passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures phase 6 releases review surface|captures phase 7 review acknowledgements surface|captures phase 7 review package history surface|captures phase 7 release checklist drill-down surface" --workers=1 --update-snapshots` with 4 tests.
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Subagent audit identified the next low-conflict slices as `CmsPreviewToolbar` `q-select` to `NtkSelect` migration and `NtkInput` field compatibility parity.
+- Commit `f00de39` created the CMS Releases Module DsButton slice.
+- PR #19 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/19`.
+- PR #19 initial remote checks at 2026-06-20 02:16: Vercel Preview Comments passed, Vercel deployment pending, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `CmsPreviewToolbar` select migration, `NtkInput` compatibility parity, and final PR/CI/review closeout.
 
 ## Closeout Expectations
