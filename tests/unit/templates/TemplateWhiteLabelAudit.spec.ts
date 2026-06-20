@@ -1501,7 +1501,9 @@ describe('template white-label audit', () => {
     const cmsAuthoringWorkbenchSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsAuthoringWorkbench.vue')
 
     expect(cmsShellCardSource).toContain('<section class="cms-shell-card">')
+    expect(cmsShellCardSource).toContain('class="cms-shell-card__separator"')
     expect(cmsShellCardSource).not.toContain('<q-card')
+    expect(cmsShellCardSource).not.toContain('<q-separator')
     expect(cmsAuthoringWorkbenchSource).toContain('<section class="cms-shell-card cms-authoring-workbench">')
     expect(cmsAuthoringWorkbenchSource).not.toContain('<q-card')
   })

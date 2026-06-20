@@ -95,7 +95,10 @@ describe('CmsShellCard', () => {
       props: { title: 'Card' },
     })
 
-    expect(wrapper.find('q-separator-stub').exists()).toBe(true)
+    const separator = wrapper.find('.cms-shell-card__separator')
+    expect(separator.exists()).toBe(true)
+    expect(separator.element.tagName).toBe('HR')
+    expect(separator.attributes('aria-hidden')).toBe('true')
   })
 
   it('hides separator when showSeparator is false', () => {
@@ -104,7 +107,7 @@ describe('CmsShellCard', () => {
       props: { title: 'Card', showSeparator: false },
     })
 
-    expect(wrapper.find('q-separator-stub').exists()).toBe(false)
+    expect(wrapper.find('.cms-shell-card__separator').exists()).toBe(false)
   })
 })
 

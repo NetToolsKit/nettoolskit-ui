@@ -472,6 +472,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CMS shell card native markup**
   - Replaced the shared CMS shell card and authoring workbench `q-card` roots with native `section` markup while preserving classes, slots, separators, and visual coverage.
   - Refreshed the dark CMS shell visual baseline where the workbench now uses the CMS dark surface instead of the Quasar card default.
+- **CMS shell card native separator**
+  - Replaced the shared CMS shell card `q-separator` with a tokenized native `hr` separator while preserving the `showSeparator` contract and visual coverage.
 - **CMS field bridge token aliases**
   - Removed duplicated broad Quasar field overrides from the CMS authoring stylesheet and routed field colors/borders through scoped token aliases consumed by the shared template bridge.
   - Refreshed the dark CMS shell visual baseline so dark preset fields now follow the tokenized CMS surface instead of Quasar's default light field surface.
