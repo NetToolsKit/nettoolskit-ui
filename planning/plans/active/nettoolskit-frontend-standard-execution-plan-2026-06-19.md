@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 11:20
+LastUpdated: 2026-06-20 11:23
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -710,7 +710,7 @@ Checkpoint:
 - `npm run verify` passed, including token/doc drift, lint, Stylelint, CSS governance, type-check, 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `480691f` created the CMS shared native status chip slice.
 - PR #29 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/29`.
-- PR #29 remote checks are pending.
+- PR #29 remote checks passed at 2026-06-20 11:23: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS direct `q-chip` migration, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations
