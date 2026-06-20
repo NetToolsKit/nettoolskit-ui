@@ -1615,6 +1615,24 @@ describe('template white-label audit', () => {
     expect(cmsSettingsModuleSource).not.toContain('<q-chip')
   })
 
+  it('keeps the CMS settings content copy fields on Ntk wrappers', () => {
+    const cmsSettingsModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsSettingsModuleSurface.vue')
+    const contentCopyModelStart = cmsSettingsModuleSource.indexOf('v-model="settings.content.locale"')
+    const contentCopyStart = cmsSettingsModuleSource.lastIndexOf('<', contentCopyModelStart)
+    const contentModelModelStart = cmsSettingsModuleSource.indexOf('v-model="selectedAuthoredContentModelIdModel"', contentCopyStart)
+    const contentModelStart = cmsSettingsModuleSource.lastIndexOf('<', contentModelModelStart)
+    const contentCopySource = cmsSettingsModuleSource.slice(contentCopyStart, contentModelStart)
+
+    expect(cmsSettingsModuleSource).toContain("import NtkInput from '../../../../../components/form/NtkInput.vue'")
+    expect(cmsSettingsModuleSource).toContain("import NtkSelect from '../../../../../components/form/NtkSelect.vue'")
+    expect(contentCopySource).toContain('<NtkInput')
+    expect(contentCopySource).toContain('<NtkSelect')
+    expect(contentCopySource).toContain('<NtkButton')
+    expect(contentCopySource).not.toContain('<q-input')
+    expect(contentCopySource).not.toContain('<q-select')
+    expect(contentCopySource).not.toContain('<q-btn')
+  })
+
   it('keeps the CMS preview toolbar on the NtkSelect compatibility wrapper', () => {
     const cmsPreviewToolbarSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue')
 

@@ -109,7 +109,7 @@
  * Src/components/form/Ntk Select module.
  */
 
-import { computed, getCurrentInstance } from 'vue'
+import { computed, getCurrentInstance, type PropType } from 'vue'
 import { ntkFieldPropsDefaults, useNtkField } from '../../composables/forms/useNtkField'
 import {
   ntkComponentIntents,
@@ -128,7 +128,7 @@ const props = defineProps({
     default: null
   },
   options: {
-    type: Array,
+    type: Array as PropType<readonly unknown[]>,
     required: true
   },
   multiple: {

@@ -844,7 +844,7 @@
                   <div class="cms-config-section">
                     <div class="cms-config-section__form">
                       <div class="cms-form-grid">
-                        <q-select
+                        <NtkSelect
                           v-model="settings.content.locale"
                           outlined
                           dense
@@ -855,36 +855,36 @@
                           :label="tr('Language', 'Idioma')"
                           @update:model-value="onCmsLocaleChange($event)"
                         />
-                        <q-btn
+                        <NtkButton
                           flat
                           no-caps
                           icon="translate"
                           :label="tr('Apply locale preset', 'Aplicar preset de idioma')"
                           @click="onCmsLocaleChange(settings.content.locale)"
                         />
-                        <q-input v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow :label="tr('Module fallback description', 'Descrição fallback do módulo')" />
-                        <q-input v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow :label="tr('Branding banner text', 'Texto do banner de branding')" />
-                        <q-input v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow :label="tr('Colors banner text', 'Texto do banner de cores')" />
-                        <q-input v-model="settings.content.statusTitle" outlined dense :label="tr('Status card title', 'Título do card de status')" />
-                        <q-input v-model="settings.content.statusChipLabel" outlined dense :label="tr('Status chip label', 'Label do chip de status')" />
-                        <q-input v-model="settings.content.statusThemeText" outlined dense :label="tr('Status: theme line', 'Status: linha de tema')" />
-                        <q-input v-model="settings.content.statusBrandingText" outlined dense :label="tr('Status: branding line', 'Status: linha de branding')" />
-                        <q-input v-model="settings.content.statusMenuText" outlined dense :label="tr('Status: menu line', 'Status: linha de menu')" />
-                        <q-input v-model="settings.content.statusTopbarText" outlined dense :label="tr('Status: topbar line', 'Status: linha de topbar')" />
-                        <q-input v-model="settings.content.howToTitle" outlined dense :label="tr('How-to title', 'Título de como usar')" />
-                        <q-input v-model="settings.content.howToBody" outlined dense type="textarea" autogrow :label="tr('How-to body', 'Texto de como usar')" />
-                        <q-input v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow :label="tr('How-to next step', 'Próximo passo de como usar')" />
-                        <q-input v-model="settings.content.previewSuccessLabel" outlined dense :label="tr('Preview success label', 'Label de preview de sucesso')" />
-                        <q-input v-model="settings.content.previewWarningLabel" outlined dense :label="tr('Preview warning label', 'Label de preview de aviso')" />
-                        <q-input v-model="settings.content.previewErrorLabel" outlined dense :label="tr('Preview error label', 'Label de preview de erro')" />
-                        <q-input v-model="settings.content.previewInfoLabel" outlined dense :label="tr('Preview info label', 'Label de preview de info')" />
-                        <q-input v-model="settings.content.tabBrandingLabel" outlined dense :label="tr('Tab: branding label', 'Aba: label de branding')" />
-                        <q-input v-model="settings.content.tabTypographyLabel" outlined dense :label="tr('Tab: typography label', 'Aba: label de tipografia')" />
-                        <q-input v-model="settings.content.tabLayoutLabel" outlined dense :label="tr('Tab: layout label', 'Aba: label de layout')" />
-                        <q-input v-model="settings.content.tabColorsLabel" outlined dense :label="tr('Tab: colors label', 'Aba: label de cores')" />
-                        <q-input v-model="settings.content.tabMenuLabel" outlined dense :label="tr('Tab: menu label', 'Aba: label de menu')" />
-                        <q-input v-model="settings.content.tabTopbarLabel" outlined dense :label="tr('Tab: topbar label', 'Aba: label de topbar')" />
-                        <q-input v-model="settings.content.tabContentLabel" outlined dense :label="tr('Tab: content label', 'Aba: label de conteúdo')" />
+                        <NtkInput v-model="settings.content.moduleFallbackDescription" outlined dense type="textarea" autogrow :label="tr('Module fallback description', 'Descrição fallback do módulo')" />
+                        <NtkInput v-model="settings.content.brandingBannerText" outlined dense type="textarea" autogrow :label="tr('Branding banner text', 'Texto do banner de branding')" />
+                        <NtkInput v-model="settings.content.colorsBannerText" outlined dense type="textarea" autogrow :label="tr('Colors banner text', 'Texto do banner de cores')" />
+                        <NtkInput v-model="settings.content.statusTitle" outlined dense :label="tr('Status card title', 'Título do card de status')" />
+                        <NtkInput v-model="settings.content.statusChipLabel" outlined dense :label="tr('Status chip label', 'Label do chip de status')" />
+                        <NtkInput v-model="settings.content.statusThemeText" outlined dense :label="tr('Status: theme line', 'Status: linha de tema')" />
+                        <NtkInput v-model="settings.content.statusBrandingText" outlined dense :label="tr('Status: branding line', 'Status: linha de branding')" />
+                        <NtkInput v-model="settings.content.statusMenuText" outlined dense :label="tr('Status: menu line', 'Status: linha de menu')" />
+                        <NtkInput v-model="settings.content.statusTopbarText" outlined dense :label="tr('Status: topbar line', 'Status: linha de topbar')" />
+                        <NtkInput v-model="settings.content.howToTitle" outlined dense :label="tr('How-to title', 'Título de como usar')" />
+                        <NtkInput v-model="settings.content.howToBody" outlined dense type="textarea" autogrow :label="tr('How-to body', 'Texto de como usar')" />
+                        <NtkInput v-model="settings.content.howToNextStep" outlined dense type="textarea" autogrow :label="tr('How-to next step', 'Próximo passo de como usar')" />
+                        <NtkInput v-model="settings.content.previewSuccessLabel" outlined dense :label="tr('Preview success label', 'Label de preview de sucesso')" />
+                        <NtkInput v-model="settings.content.previewWarningLabel" outlined dense :label="tr('Preview warning label', 'Label de preview de aviso')" />
+                        <NtkInput v-model="settings.content.previewErrorLabel" outlined dense :label="tr('Preview error label', 'Label de preview de erro')" />
+                        <NtkInput v-model="settings.content.previewInfoLabel" outlined dense :label="tr('Preview info label', 'Label de preview de info')" />
+                        <NtkInput v-model="settings.content.tabBrandingLabel" outlined dense :label="tr('Tab: branding label', 'Aba: label de branding')" />
+                        <NtkInput v-model="settings.content.tabTypographyLabel" outlined dense :label="tr('Tab: typography label', 'Aba: label de tipografia')" />
+                        <NtkInput v-model="settings.content.tabLayoutLabel" outlined dense :label="tr('Tab: layout label', 'Aba: label de layout')" />
+                        <NtkInput v-model="settings.content.tabColorsLabel" outlined dense :label="tr('Tab: colors label', 'Aba: label de cores')" />
+                        <NtkInput v-model="settings.content.tabMenuLabel" outlined dense :label="tr('Tab: menu label', 'Aba: label de menu')" />
+                        <NtkInput v-model="settings.content.tabTopbarLabel" outlined dense :label="tr('Tab: topbar label', 'Aba: label de topbar')" />
+                        <NtkInput v-model="settings.content.tabContentLabel" outlined dense :label="tr('Tab: content label', 'Aba: label de conteúdo')" />
                       </div>
                     </div>
 
@@ -1694,6 +1694,8 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
+import NtkInput from '../../../../../components/form/NtkInput.vue'
+import NtkSelect from '../../../../../components/form/NtkSelect.vue'
 import NtkButton from '../../../../../components/ui/NtkButton.vue'
 import type { CmsWhiteLabelSettings } from '../../../../../modules/cms/white-label/types'
 import type { CmsAuthoringToolbarInfoItem } from '../CmsAuthoringToolbar.vue'

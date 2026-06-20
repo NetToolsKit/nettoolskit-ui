@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS settings content field migration**
+  - Replaced the Settings content-copy tab `q-input` and `q-select` controls with `NtkInput` and `NtkSelect` compatibility wrappers.
+  - Replaced the content locale preset action with `NtkButton` while preserving locale selection, translated copy fields, textarea autogrow behavior, and preview text bindings.
 - **CMS settings module native status chips**
   - Replaced the remaining direct `q-chip` status badges in the CMS Settings module with the native `CmsStatusChip`.
   - Preserved autosave, notification, preview, tab label, content-model preset count, tenant, and workbench status badge styling through existing token-driven chip styles.
