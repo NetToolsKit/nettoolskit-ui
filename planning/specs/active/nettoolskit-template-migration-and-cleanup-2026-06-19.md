@@ -214,6 +214,17 @@ The largest direct Quasar usage appears in:
 - PR #28 remote checks passed at 2026-06-20 09:54: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 11:15 - CMS Shared Native Status Chip Slice
+
+- Added native `CmsStatusChip` markup for passive CMS status badges instead of reusing the Quasar-backed, clickable-by-default `NtkChip`.
+- Migrated shared CMS authoring chrome, diagnostics, locale coverage, preview toolbar, usage drawer and media picker badges away from direct `<q-chip>` usage.
+- Added unit and template audit coverage proving the migrated shared components use `<CmsStatusChip>` and reject direct `<q-chip>` regressions.
+- Confirmed no direct `<q-chip>` usage remains in top-level `src/templates/features/cms/authoring/*.vue`; remaining direct chip tags are module-local work for later slices.
+- Stabilized the design-system verify gate by reusing a single Vitest fork worker for `test:design-system`, avoiding repeated Windows worker startup timeouts.
+- CMS visual regression passed with 20 tests after refreshing three affected Releases Windows baselines, and `npm run verify` passed with 25 browser-gate Playwright tests and package build.
+- PR evidence is pending for the stacked shared native status chip branch.
+- Remaining gaps: module-local CMS `q-chip` migration, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
