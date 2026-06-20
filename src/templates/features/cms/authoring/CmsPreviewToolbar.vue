@@ -2,6 +2,7 @@
   <div
     class="cms-preview-toolbar"
     :data-cms-preview-source="source"
+    :data-cms-preview-locale="locale"
     :data-cms-preview-viewport="viewport"
   >
     <q-select

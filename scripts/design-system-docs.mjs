@@ -5,6 +5,11 @@ import ts from 'typescript'
 
 import {
   assertValidTokenSource,
+  createTokenResolver,
+  DEFAULT_GENERATED_TOKEN_CSS_OUTPUT_PATH,
+  DEFAULT_GENERATED_TOKEN_DTS_OUTPUT_PATH,
+  DEFAULT_GENERATED_TOKEN_TS_OUTPUT_PATH,
+  DEFAULT_RESOLVER_OUTPUT_PATH,
   readTokenSource,
   resolveTokens,
 } from './token-build.mjs'
@@ -366,6 +371,10 @@ export async function readDesignSystemSources(options = {}) {
   const tokens = resolveTokens(tokenSource)
   const sourcePaths = {
     tokenSource: toRepoPath(tokenSourcePath, repoRoot),
+    tokenResolver: toRepoPath(DEFAULT_RESOLVER_OUTPUT_PATH, repoRoot),
+    tokenCss: toRepoPath(DEFAULT_GENERATED_TOKEN_CSS_OUTPUT_PATH, repoRoot),
+    tokenTs: toRepoPath(DEFAULT_GENERATED_TOKEN_TS_OUTPUT_PATH, repoRoot),
+    tokenDts: toRepoPath(DEFAULT_GENERATED_TOKEN_DTS_OUTPUT_PATH, repoRoot),
     contracts: toRepoPath(componentSourcePaths.contracts, repoRoot),
     components: Object.fromEntries(
       COMPONENT_CONFIGS.map(config => [config.key, toRepoPath(componentSourcePaths[config.key], repoRoot)]),
@@ -376,6 +385,7 @@ export async function readDesignSystemSources(options = {}) {
     repoRoot,
     sourcePaths,
     tokenSource,
+    tokenResolver: createTokenResolver(tokenSource),
     tokens,
     tokenGroups: groupTokensByTopLevel(tokens),
     tokenGroupDescriptions: getTokenGroupDescriptions(tokenSource),
@@ -397,16 +407,22 @@ function generateDesignOverviewDoc(model) {
     '| Area | Source |',
     '| --- | --- |',
     `| Tokens | ${code(model.sourcePaths.tokenSource)} |`,
+    `| Token resolver | ${code(model.sourcePaths.tokenResolver)} |`,
+    `| Token CSS output | ${code(model.sourcePaths.tokenCss)} |`,
+    `| Token TypeScript output | ${code(model.sourcePaths.tokenTs)} |`,
+    `| Token declaration output | ${code(model.sourcePaths.tokenDts)} |`,
     `| Shared component primitives | ${code(model.sourcePaths.contracts)} |`,
     ...model.components.map(component => `| ${component.name} recipe | ${code(component.sourcePath)} |`),
     '',
     '## Token Model',
     '',
     `- Total tokens: ${model.tokens.length}.`,
+    `- Resolver entries: ${Object.keys(model.tokenResolver.tokens).length}.`,
     `- Token groups: ${[...model.tokenGroups.keys()].map(group => code(group)).join(', ')}.`,
     `- Token types: ${model.tokenTypeCounts.map(([type, count]) => `${code(type)} (${count})`).join(', ')}.`,
     '- Public CSS variables use the `--ntk-*` namespace.',
     '- Token references are resolved for documentation while CSS output keeps `var(--ntk-*)` links where possible.',
+    '- `resolver.json` maps token paths, groups, types, references, and CSS variables for runtime adapters.',
     '',
     '## Component Recipe Model',
     '',
@@ -462,6 +478,8 @@ function generateTokensDoc(model) {
   }
 
   lines.push(
+    '',
+    `Resolver: ${code(model.sourcePaths.tokenResolver)}.`,
     '',
     '## Token Reference',
     '',

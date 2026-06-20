@@ -4,14 +4,17 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 import {
+  designTokenResolver,
   designTokenCssVariables,
   designTokenValues,
   designTokens,
   designTokensByCssVariable,
-} from '../../../../src/design-system/tokens/generated'
+} from '../../../../src/design-system/tokens/generated/tokens'
 import tokenSource from '../../../../src/design-system/tokens/source.json'
 import {
+  generateDtsTokenMap,
   generateCssCustomProperties,
+  generateResolverJson,
   generateTsTokenMap,
   resolveTokens,
   validateTokenSource,
@@ -75,6 +78,16 @@ describe('DTCG token build pipeline', () => {
       value: 'rgba(15, 118, 110, 0.08)',
       cssValue: 'rgba(var(--ntk-primary-rgb), 0.08)',
     })
+    expect(designTokenResolver.tokens['surface.bgActive']).toMatchObject({
+      group: 'surface',
+      references: ['color.primaryRgb'],
+      cssVariable: '--ntk-bg-active',
+    })
+    expect(designTokenResolver.cssVariables['--ntk-bg-active']).toBe('surface.bgActive')
+    expect(designTokenResolver.contexts.theme.tokens).toContain('color.primary')
+    expect(designTokenResolver.contexts.density.tokens).toContain('spacing.md')
+    expect(designTokenResolver.contexts.contrast.tokens).toContain('text.primary')
+    expect(designTokenResolver.contexts.motion.tokens).toContain('motion.fast')
   })
 
   it('rejects missing references, circular references, and non-ntk CSS names', () => {
@@ -115,5 +128,9 @@ describe('DTCG token build pipeline', () => {
   it('keeps generated CSS and TypeScript outputs synchronized with the source', () => {
     expect(generateCssCustomProperties(tokenSource)).toBe(readRepoFile('../../../../src/design-system/tokens/generated.css'))
     expect(generateTsTokenMap(tokenSource)).toBe(readRepoFile('../../../../src/design-system/tokens/generated.ts'))
+    expect(generateCssCustomProperties(tokenSource)).toBe(readRepoFile('../../../../src/design-system/tokens/generated/tokens.css'))
+    expect(generateTsTokenMap(tokenSource)).toBe(readRepoFile('../../../../src/design-system/tokens/generated/tokens.ts'))
+    expect(generateDtsTokenMap(tokenSource)).toBe(readRepoFile('../../../../src/design-system/tokens/generated/tokens.d.ts'))
+    expect(generateResolverJson(tokenSource)).toBe(readRepoFile('../../../../src/design-system/tokens/resolver.json'))
   })
 })

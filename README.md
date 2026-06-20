@@ -1001,7 +1001,7 @@ import 'nettoolskit/design-system/tokens.css'
 
 ### Token Pipeline
 
-Tokens are authored in DTCG-style JSON at `src/design-system/tokens/source.json`. Generated outputs are committed so package consumers can use both typed token maps and CSS custom properties.
+Tokens are authored in DTCG-style JSON at `src/design-system/tokens/source.json`. Generated outputs are committed so package consumers can use typed token maps, a resolver JSON contract, declaration output, and CSS custom properties.
 
 ```bash
 npm run tokens:build
@@ -1010,7 +1010,19 @@ npm run docs:build
 npm run docs:check
 ```
 
+Token outputs are written to:
+
+- `src/design-system/tokens/generated.css`
+- `src/design-system/tokens/resolver.json`
+- `src/design-system/tokens/generated/tokens.css`
+- `src/design-system/tokens/generated/tokens.ts`
+- `src/design-system/tokens/generated/tokens.d.ts`
+
 Generated design-system references are committed at [DESIGN.md](./DESIGN.md), [TOKENS.md](./TOKENS.md), and [COMPONENTS.md](./COMPONENTS.md).
+
+### CSS Governance Policy
+
+CSS and template governance is enforced by `npm run lint:css` using [policies/design-system-css-governance.yaml](./policies/design-system-css-governance.yaml) plus the architecture baseline at [tests/architecture/design-system-governance.baseline.json](./tests/architecture/design-system-governance.baseline.json). Existing exception counts require owner, removal spec, and reason metadata and cannot increase over the committed baseline.
 
 ### Core Token Examples
 

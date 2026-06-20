@@ -56,6 +56,16 @@ Current package scripts include build, type-check, lint, Vitest, coverage, and P
 5. CI fails on policy violations and build/test failures.
 6. Final Definition of Done is documented and used by execution plans.
 
+## Implementation Evidence
+
+### 2026-06-19 21:29 - CI Static Gate Slice
+
+- GitHub Actions `quality` job now runs token drift, generated-doc drift, Stylelint, CSS governance, type-check, architecture governance, and unit tests explicitly.
+- GitHub Actions `e2e` job now runs the focused a11y gate after Chromium installation.
+- GitHub Actions Windows visual job now runs `npm run test:visual` to cover template-runtime visual baselines and CMS visual regression baselines.
+- README and generated design docs now document resolver outputs and CSS governance policy entry points.
+- Remaining gap: PR stack is still draft and needs GitHub Actions evidence after the stacked branch is pushed.
+
 ## Risks
 
 - Full verification may be slow; targeted commands can remain available but cannot replace the full gate.

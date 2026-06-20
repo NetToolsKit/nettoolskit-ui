@@ -1,0 +1,47 @@
+schemaVersion: 1
+name: design-system-css-governance
+description: Baseline-aware CSS and template governance for the NetToolsKit frontend standard.
+governedRoots:
+  - src/components
+  - src/templates
+sourceExtensions:
+  - .css
+  - .scss
+  - .ts
+  - .vue
+metrics:
+  directQuasarTags:
+    severity: error
+    description: New unmanaged q-* component tags must not be introduced in governed frontend paths.
+  quasarClassSelectors:
+    severity: error
+    description: New direct .q-* selector coupling must not be introduced in governed frontend paths.
+  unmanagedDeepSelectors:
+    severity: error
+    description: New unmanaged :deep() selectors must not be introduced in governed frontend paths.
+  importantDeclarations:
+    severity: error
+    description: New !important declarations must not be introduced in governed frontend paths.
+  rawHexColors:
+    severity: error
+    description: New raw hex colors must use design tokens instead of literal values.
+baseline:
+  file: tests/architecture/design-system-governance.baseline.json
+  mode: no-increase
+exceptions:
+  - metric: directQuasarTags
+    owner: frontend-standard-migration
+    removalSpec: planning/specs/active/nettoolskit-template-migration-and-cleanup-2026-06-19.md
+    reason: Legacy CMS/template surfaces still expose direct Quasar components while Ds/Ntk wrappers are migrated in thin PRs.
+  - metric: quasarClassSelectors
+    owner: frontend-standard-migration
+    removalSpec: planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md
+    reason: Existing bridge styles retain Quasar class selectors until wrapper recipes cover the affected controls.
+  - metric: unmanagedDeepSelectors
+    owner: frontend-standard-migration
+    removalSpec: planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md
+    reason: Existing deep selectors remain as compatibility bridges and cannot increase over the baseline.
+  - metric: importantDeclarations
+    owner: frontend-standard-migration
+    removalSpec: planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md
+    reason: Existing important declarations remain as compatibility bridges and cannot increase over the baseline.

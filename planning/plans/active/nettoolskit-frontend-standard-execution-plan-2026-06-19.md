@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 21:13
+LastUpdated: 2026-06-19 21:57
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -279,6 +279,20 @@ Checkpoint:
 - Commit `b3a295ff` created the browser/stylelint gate slice.
 - PR #5 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/5`.
 - PR #5 Vercel check passed; GitHub Actions were still not present for the PR stack.
+
+### 2026-06-19 21:57 - Token Resolver, CSS Policy, And CI Gate Slice
+
+- Added committed token resolver output at `src/design-system/tokens/resolver.json`.
+- Added generated token folder outputs at `src/design-system/tokens/generated/tokens.css`, `tokens.ts`, and `tokens.d.ts`.
+- Preserved compatibility token outputs at `src/design-system/tokens/generated.css` and `generated.ts`.
+- Exported `designTokenResolver` from the public design-system token index.
+- Added `policies/design-system-css-governance.yaml` with owner, removal spec, and reason metadata for current baseline exceptions.
+- `scripts/lint-css-governance.mjs` now requires the CSS policy and validates traceable baseline exception metadata.
+- `tests/architecture/design-system-governance.spec.ts` now uses the same governance script path as the CLI.
+- GitHub Actions now runs token drift, generated-doc drift, Stylelint, CSS governance, architecture governance, a11y, and full visual gates explicitly.
+- Stabilized the published pages preview screenshot by asserting preview toolbar state and capturing the runtime preview frame.
+- `npm run verify` passed, including 29 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: full density/theme application, broader CSS governed roots with generated-token excludes, component `Ds*` wrappers, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

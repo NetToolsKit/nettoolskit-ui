@@ -12,6 +12,11 @@ const repoRoot = path.resolve(scriptDirectory, '..')
 export const DEFAULT_SOURCE_PATH = path.join(repoRoot, 'src/design-system/tokens/source.json')
 export const DEFAULT_CSS_OUTPUT_PATH = path.join(repoRoot, 'src/design-system/tokens/generated.css')
 export const DEFAULT_TS_OUTPUT_PATH = path.join(repoRoot, 'src/design-system/tokens/generated.ts')
+export const DEFAULT_RESOLVER_OUTPUT_PATH = path.join(repoRoot, 'src/design-system/tokens/resolver.json')
+export const DEFAULT_GENERATED_TOKEN_CSS_OUTPUT_PATH = path.join(repoRoot, 'src/design-system/tokens/generated/tokens.css')
+export const DEFAULT_GENERATED_TOKEN_TS_OUTPUT_PATH = path.join(repoRoot, 'src/design-system/tokens/generated/tokens.ts')
+export const DEFAULT_GENERATED_TOKEN_DTS_OUTPUT_PATH = path.join(repoRoot, 'src/design-system/tokens/generated/tokens.d.ts')
+export const TOKEN_SOURCE_REPO_PATH = 'src/design-system/tokens/source.json'
 
 function isObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -159,6 +164,7 @@ export function resolveTokens(source) {
     rawValue: stringifyTokenValue(token.value),
     cssValue: toCssValue(token),
     cssVariable: token.cssVariable,
+    references: extractReferences(token.value),
     description: token.description,
   }))
 }
@@ -253,9 +259,183 @@ export function generateCssCustomProperties(source, options = {}) {
   return lines.join('\n')
 }
 
+function createContextTokenPaths(resolvedTokens, groupNames) {
+  const groups = new Set(groupNames)
+  return resolvedTokens
+    .filter(token => groups.has(token.pathSegments[0] ?? 'other'))
+    .map(token => token.path)
+}
+
+export function createTokenResolver(source) {
+  assertValidTokenSource(source)
+
+  const groups = {}
+  const types = {}
+  const tokens = {}
+  const cssVariables = {}
+  const resolvedTokens = resolveTokens(source)
+
+  for (const token of resolvedTokens) {
+    const groupName = token.pathSegments[0] ?? 'other'
+
+    groups[groupName] ??= {
+      name: groupName,
+      tokens: [],
+    }
+    groups[groupName].tokens.push(token.path)
+
+    types[token.type] ??= {
+      name: token.type,
+      tokens: [],
+    }
+    types[token.type].tokens.push(token.path)
+
+    tokens[token.path] = {
+      path: token.path,
+      group: groupName,
+      type: token.type,
+      value: token.value,
+      rawValue: token.rawValue,
+      cssValue: token.cssValue,
+      cssVariable: token.cssVariable,
+      references: token.references,
+      ...(typeof token.description === 'string' ? { description: token.description } : {}),
+    }
+    cssVariables[token.cssVariable] = token.path
+  }
+
+  const contexts = {
+    theme: {
+      name: 'theme',
+      status: 'compatibility-bridge',
+      tokens: createContextTokenPaths(resolvedTokens, [
+        'color',
+        'surface',
+        'text',
+        'border',
+        'feedback',
+        'gradient',
+        'shadow',
+      ]),
+    },
+    density: {
+      name: 'density',
+      status: 'compatibility-bridge',
+      tokens: createContextTokenPaths(resolvedTokens, [
+        'radius',
+        'spacing',
+        'typography',
+      ]),
+    },
+    contrast: {
+      name: 'contrast',
+      status: 'compatibility-bridge',
+      tokens: createContextTokenPaths(resolvedTokens, [
+        'color',
+        'surface',
+        'text',
+        'border',
+        'feedback',
+      ]),
+    },
+    motion: {
+      name: 'motion',
+      status: 'token-source',
+      tokens: createContextTokenPaths(resolvedTokens, ['motion']),
+    },
+  }
+
+  return {
+    schemaVersion: 1,
+    namespace: TOKEN_EXTENSION_NAMESPACE,
+    source: TOKEN_SOURCE_REPO_PATH,
+    tokenCount: resolvedTokens.length,
+    groups,
+    types,
+    contexts,
+    tokens,
+    cssVariables,
+  }
+}
+
+export function generateResolverJson(source) {
+  return JSON.stringify(createTokenResolver(source), null, 2)
+}
+
+function toLiteralUnion(values) {
+  return values.map(value => `  | ${JSON.stringify(value)}`).join('\n')
+}
+
+export function generateDtsTokenMap(source) {
+  assertValidTokenSource(source)
+  const resolvedTokens = resolveTokens(source)
+  const tokenPaths = resolvedTokens.map(token => token.path)
+  const cssVariables = resolvedTokens.map(token => token.cssVariable)
+  const groups = [...new Set(resolvedTokens.map(token => token.pathSegments[0] ?? 'other'))]
+  const types = [...new Set(resolvedTokens.map(token => token.type))].sort((left, right) => left.localeCompare(right))
+
+  return [
+    '/**',
+    ' * Generated from src/design-system/tokens/source.json.',
+    ' * Do not edit manually.',
+    ' */',
+    'export type DesignTokenPath =',
+    toLiteralUnion(tokenPaths),
+    '',
+    'export type DesignTokenCssVariable =',
+    toLiteralUnion(cssVariables),
+    '',
+    'export type DesignTokenGroup =',
+    toLiteralUnion(groups),
+    '',
+    'export type DesignTokenType =',
+    toLiteralUnion(types),
+    '',
+    'export type DesignTokenResolverContext =',
+    toLiteralUnion(['theme', 'density', 'contrast', 'motion']),
+    '',
+    'export interface DesignTokenDefinition {',
+    '  readonly path: DesignTokenPath',
+    '  readonly group: DesignTokenGroup',
+    '  readonly type: DesignTokenType',
+    '  readonly value: string',
+    '  readonly rawValue: string',
+    '  readonly cssValue: string',
+    '  readonly cssVariable: DesignTokenCssVariable',
+    '  readonly references: readonly DesignTokenPath[]',
+    '  readonly description?: string',
+    '}',
+    '',
+    'export interface DesignTokenResolver {',
+    '  readonly schemaVersion: 1',
+    `  readonly namespace: ${JSON.stringify(TOKEN_EXTENSION_NAMESPACE)}`,
+    `  readonly source: ${JSON.stringify(TOKEN_SOURCE_REPO_PATH)}`,
+    `  readonly tokenCount: ${resolvedTokens.length}`,
+    '  readonly groups: Readonly<Record<DesignTokenGroup, { readonly name: DesignTokenGroup; readonly tokens: readonly DesignTokenPath[] }>>',
+    '  readonly types: Readonly<Record<DesignTokenType, { readonly name: DesignTokenType; readonly tokens: readonly DesignTokenPath[] }>>',
+    '  readonly contexts: Readonly<Record<DesignTokenResolverContext, { readonly name: DesignTokenResolverContext; readonly status: string; readonly tokens: readonly DesignTokenPath[] }>>',
+    '  readonly tokens: Readonly<Record<DesignTokenPath, DesignTokenDefinition>>',
+    '  readonly cssVariables: Readonly<Record<DesignTokenCssVariable, DesignTokenPath>>',
+    '}',
+    '',
+    'export declare const designTokens: Readonly<Record<DesignTokenPath, {',
+    '  readonly type: DesignTokenType',
+    '  readonly value: string',
+    '  readonly rawValue: string',
+    '  readonly cssValue: string',
+    '  readonly cssVariable: DesignTokenCssVariable',
+    '}>>',
+    'export declare const designTokenValues: Readonly<Record<DesignTokenPath, string>>',
+    'export declare const designTokenCssVariables: Readonly<Record<DesignTokenPath, DesignTokenCssVariable>>',
+    'export declare const designTokensByCssVariable: Readonly<Record<DesignTokenCssVariable, DesignTokenPath>>',
+    'export declare const designTokenResolver: DesignTokenResolver',
+  ].join('\n')
+}
+
 export function generateTsTokenMap(source) {
   assertValidTokenSource(source)
   const resolvedTokens = resolveTokens(source)
+  const designTokenResolver = createTokenResolver(source)
   const designTokens = {}
   const designTokenValues = {}
   const designTokenCssVariables = {}
@@ -287,6 +467,8 @@ export function generateTsTokenMap(source) {
     '',
     `export const designTokensByCssVariable = ${JSON.stringify(designTokensByCssVariable, null, 2)} as const`,
     '',
+    `export const designTokenResolver = ${JSON.stringify(designTokenResolver, null, 2)} as const`,
+    '',
     'export type DesignTokenPath = keyof typeof designTokens',
     'export type DesignTokenCssVariable = keyof typeof designTokensByCssVariable',
   ].join('\n')
@@ -296,18 +478,37 @@ export async function writeGeneratedTokens(options = {}) {
   const sourcePath = options.sourcePath ?? DEFAULT_SOURCE_PATH
   const cssOutputPath = options.cssOutputPath ?? DEFAULT_CSS_OUTPUT_PATH
   const tsOutputPath = options.tsOutputPath ?? DEFAULT_TS_OUTPUT_PATH
+  const resolverOutputPath = options.resolverOutputPath ?? DEFAULT_RESOLVER_OUTPUT_PATH
+  const generatedTokenCssOutputPath = options.generatedTokenCssOutputPath ?? DEFAULT_GENERATED_TOKEN_CSS_OUTPUT_PATH
+  const generatedTokenTsOutputPath = options.generatedTokenTsOutputPath ?? DEFAULT_GENERATED_TOKEN_TS_OUTPUT_PATH
+  const generatedTokenDtsOutputPath = options.generatedTokenDtsOutputPath ?? DEFAULT_GENERATED_TOKEN_DTS_OUTPUT_PATH
   const source = await readTokenSource(sourcePath)
   const cssOutput = generateCssCustomProperties(source)
   const tsOutput = generateTsTokenMap(source)
+  const resolverOutput = generateResolverJson(source)
+  const dtsOutput = generateDtsTokenMap(source)
 
-  await mkdir(path.dirname(cssOutputPath), { recursive: true })
-  await mkdir(path.dirname(tsOutputPath), { recursive: true })
-  await writeFile(cssOutputPath, cssOutput, 'utf8')
-  await writeFile(tsOutputPath, tsOutput, 'utf8')
+  const outputs = [
+    [cssOutputPath, cssOutput],
+    [tsOutputPath, tsOutput],
+    [resolverOutputPath, resolverOutput],
+    [generatedTokenCssOutputPath, cssOutput],
+    [generatedTokenTsOutputPath, tsOutput],
+    [generatedTokenDtsOutputPath, dtsOutput],
+  ]
+
+  await Promise.all(outputs.map(async ([outputPath, output]) => {
+    await mkdir(path.dirname(outputPath), { recursive: true })
+    await writeFile(outputPath, output, 'utf8')
+  }))
 
   return {
     cssOutputPath,
     tsOutputPath,
+    resolverOutputPath,
+    generatedTokenCssOutputPath,
+    generatedTokenTsOutputPath,
+    generatedTokenDtsOutputPath,
     tokenCount: resolveTokens(source).length,
   }
 }
@@ -316,21 +517,30 @@ export async function checkGeneratedTokens(options = {}) {
   const sourcePath = options.sourcePath ?? DEFAULT_SOURCE_PATH
   const cssOutputPath = options.cssOutputPath ?? DEFAULT_CSS_OUTPUT_PATH
   const tsOutputPath = options.tsOutputPath ?? DEFAULT_TS_OUTPUT_PATH
+  const resolverOutputPath = options.resolverOutputPath ?? DEFAULT_RESOLVER_OUTPUT_PATH
+  const generatedTokenCssOutputPath = options.generatedTokenCssOutputPath ?? DEFAULT_GENERATED_TOKEN_CSS_OUTPUT_PATH
+  const generatedTokenTsOutputPath = options.generatedTokenTsOutputPath ?? DEFAULT_GENERATED_TOKEN_TS_OUTPUT_PATH
+  const generatedTokenDtsOutputPath = options.generatedTokenDtsOutputPath ?? DEFAULT_GENERATED_TOKEN_DTS_OUTPUT_PATH
   const source = await readTokenSource(sourcePath)
   const expectedCss = generateCssCustomProperties(source)
   const expectedTs = generateTsTokenMap(source)
-  const [actualCss, actualTs] = await Promise.all([
-    readFile(cssOutputPath, 'utf8'),
-    readFile(tsOutputPath, 'utf8'),
-  ])
+  const expectedResolver = generateResolverJson(source)
+  const expectedDts = generateDtsTokenMap(source)
+  const expectedOutputs = [
+    [cssOutputPath, expectedCss],
+    [tsOutputPath, expectedTs],
+    [resolverOutputPath, expectedResolver],
+    [generatedTokenCssOutputPath, expectedCss],
+    [generatedTokenTsOutputPath, expectedTs],
+    [generatedTokenDtsOutputPath, expectedDts],
+  ]
+  const actualOutputs = await Promise.all(expectedOutputs.map(([outputPath]) => readFile(outputPath, 'utf8')))
   const mismatches = []
 
-  if (actualCss !== expectedCss) {
-    mismatches.push(path.relative(repoRoot, cssOutputPath))
-  }
-
-  if (actualTs !== expectedTs) {
-    mismatches.push(path.relative(repoRoot, tsOutputPath))
+  for (const [index, [outputPath, expectedOutput]] of expectedOutputs.entries()) {
+    if (actualOutputs[index] !== expectedOutput) {
+      mismatches.push(path.relative(repoRoot, outputPath))
+    }
   }
 
   return {
@@ -363,6 +573,10 @@ async function runCli() {
   console.log(`Generated ${result.tokenCount} tokens.`)
   console.log(path.relative(repoRoot, result.cssOutputPath))
   console.log(path.relative(repoRoot, result.tsOutputPath))
+  console.log(path.relative(repoRoot, result.resolverOutputPath))
+  console.log(path.relative(repoRoot, result.generatedTokenCssOutputPath))
+  console.log(path.relative(repoRoot, result.generatedTokenTsOutputPath))
+  console.log(path.relative(repoRoot, result.generatedTokenDtsOutputPath))
 }
 
 const invokedPath = process.argv[1] ? pathToFileURL(path.resolve(process.argv[1])).href : ''

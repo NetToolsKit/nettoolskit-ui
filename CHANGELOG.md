@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Token resolver and CSS governance policy**
+  - Added committed token resolver outputs at `src/design-system/tokens/resolver.json` and `src/design-system/tokens/generated/tokens.*` while preserving the existing `nettoolskit/design-system/tokens.css` compatibility export.
+  - Added a traceable CSS governance policy with owner/removal metadata for current baseline exceptions and made the architecture test use the same governance CLI path as `lint:css`.
+  - Expanded GitHub Actions CI to run token drift, generated-doc drift, Stylelint, CSS governance, architecture governance, a11y, and full Windows visual gates.
 - **Browser style and visual quality gates**
   - Added Stylelint coverage through `lint:style` and a focused Playwright axe gate for the template-runtime login surface.
   - Expanded `verify` to include Stylelint plus browser gates for a11y, template-runtime visual baselines, and CMS visual regression baselines.

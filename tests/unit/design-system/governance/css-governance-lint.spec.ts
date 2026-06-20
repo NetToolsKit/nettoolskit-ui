@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import {
   lintCssGovernance,
+  readGovernancePolicy,
   runCli,
 } from '../../../../scripts/lint-css-governance.mjs'
 
@@ -71,6 +72,7 @@ describe('CSS governance lint', () => {
         directQuasarTags: 1,
         rawHexColors: 1,
       }),
+      policy: false,
       repoRoot,
     })
 
@@ -87,6 +89,7 @@ describe('CSS governance lint', () => {
 
     const result = await lintCssGovernance({
       baseline: createBaseline(),
+      policy: false,
       repoRoot,
     })
 
@@ -107,6 +110,15 @@ describe('CSS governance lint', () => {
     const repoRoot = await createFixture({
       'src/components/NewButton.vue': '<template><q-btn /></template>\n',
       'tests/baseline.json': JSON.stringify(createBaseline(), null, 2),
+      'tests/policy.yaml': [
+        'metrics:',
+        '  directQuasarTags:',
+        '  quasarClassSelectors:',
+        '  unmanagedDeepSelectors:',
+        '  importantDeclarations:',
+        '  rawHexColors:',
+        'exceptions:',
+      ].join('\n'),
     })
     const stdout: string[] = []
     const exitCode = await runCli([
@@ -115,6 +127,8 @@ describe('CSS governance lint', () => {
       repoRoot,
       '--baseline',
       'tests/baseline.json',
+      '--policy',
+      'tests/policy.yaml',
     ], {
       stdout: line => stdout.push(line),
     })
@@ -125,5 +139,35 @@ describe('CSS governance lint', () => {
     expect(payload.ok).toBe(false)
     expect(payload.metrics.directQuasarTags).toBe(1)
     expect(payload.exceededMetrics).toContain('directQuasarTags')
+  })
+
+  it('requires the policy file to declare every governed metric', async () => {
+    const repoRoot = await createFixture({
+      'tests/policy.yaml': 'metrics:\n  directQuasarTags:\n',
+    })
+
+    await expect(readGovernancePolicy(path.join(repoRoot, 'tests/policy.yaml'))).rejects.toThrow(
+      'CSS governance policy is missing metric entries',
+    )
+  })
+
+  it('requires baseline exceptions to include owner, removal spec, and reason', async () => {
+    const repoRoot = await createFixture({
+      'tests/policy.yaml': [
+        'metrics:',
+        '  directQuasarTags:',
+        '  quasarClassSelectors:',
+        '  unmanagedDeepSelectors:',
+        '  importantDeclarations:',
+        '  rawHexColors:',
+        'exceptions:',
+        '  - metric: directQuasarTags',
+        '    owner: frontend-standard-migration',
+      ].join('\n'),
+    })
+
+    await expect(readGovernancePolicy(path.join(repoRoot, 'tests/policy.yaml'), {
+      baseline: createBaseline({ directQuasarTags: 1 }),
+    })).rejects.toThrow('CSS governance policy is missing traceable exceptions')
   })
 })

@@ -21,12 +21,16 @@
     "./styles/themes.css": "./src/styles/themes.css",
     "./styles/quasar-variables.scss": "./src/styles/quasar-variables.scss",
     "./design-system/tokens.css": "./src/design-system/tokens/generated.css",
+    "./design-system/resolver.json": "./src/design-system/tokens/resolver.json",
     "./package.json": "./package.json"
   },
   "files": [
     ".build/dist",
     "src/styles",
     "src/design-system/tokens/generated.css",
+    "src/design-system/tokens/generated",
+    "src/design-system/tokens/resolver.json",
+    "policies/design-system-css-governance.yaml",
     "README.md",
     "LICENSE"
   ],
@@ -34,7 +38,8 @@
     "*.css",
     "*.scss",
     "src/styles/**",
-    "src/design-system/tokens/generated.css"
+    "src/design-system/tokens/generated.css",
+    "src/design-system/tokens/generated/tokens.css"
   ],
   "scripts": {
     "build": "npm run build:js && npm run build:dts",

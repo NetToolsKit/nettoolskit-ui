@@ -60,6 +60,17 @@ These files remain useful inputs, but they should stop being the only manually e
 5. Token build is part of the verify flow.
 6. Existing manual token files either become generated files or documented compatibility bridges.
 
+## Implementation Evidence
+
+### 2026-06-19 21:29 - Resolver And Generated Output Slice
+
+- Added generated resolver output at `src/design-system/tokens/resolver.json`.
+- Added generated folder outputs at `src/design-system/tokens/generated/tokens.css`, `tokens.ts`, and `tokens.d.ts`.
+- Preserved compatibility output at `src/design-system/tokens/generated.css` and existing package export `nettoolskit/design-system/tokens.css`.
+- Resolver now records token paths, groups, types, references, CSS variables, and context buckets for theme, density, contrast, and motion.
+- Token tests validate resolver references, context buckets, generated CSS, generated TypeScript, generated declarations, and resolver drift.
+- Remaining gap: context buckets are compatibility-bridge metadata; full density/theme application still belongs to the theme adapter spec.
+
 ## Risks
 
 - Generated CSS can change visual output broadly.

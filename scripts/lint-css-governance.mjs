@@ -9,6 +9,10 @@ export const DEFAULT_BASELINE_PATH = path.join(
   DEFAULT_REPO_ROOT,
   'tests/architecture/design-system-governance.baseline.json',
 )
+export const DEFAULT_POLICY_PATH = path.join(
+  DEFAULT_REPO_ROOT,
+  'policies/design-system-css-governance.yaml',
+)
 
 export const GOVERNANCE_METRICS = Object.freeze([
   'directQuasarTags',
@@ -42,6 +46,55 @@ export const GOVERNANCE_POLICIES = Object.freeze({
     pattern: /(^|[^\w-])(?<value>#[0-9a-fA-F]{3,8})(?![\w-])/g,
   },
 })
+
+function parsePolicyExceptionBlocks(source) {
+  const matches = [...source.matchAll(/^\s*-\s+metric:\s*([A-Za-z0-9]+)\s*$/gm)]
+  return matches.map((match, index) => {
+    const nextMatch = matches[index + 1]
+    const start = match.index
+    const end = nextMatch ? nextMatch.index : source.length
+
+    return {
+      metric: match[1],
+      source: source.slice(start, end),
+    }
+  })
+}
+
+function hasTraceableException(block) {
+  return /^\s+owner:\s*\S+/m.test(block.source)
+    && /^\s+removalSpec:\s*\S+/m.test(block.source)
+    && /^\s+reason:\s*\S+/m.test(block.source)
+}
+
+export async function readGovernancePolicy(policyPath = DEFAULT_POLICY_PATH, options = {}) {
+  const source = await readFile(policyPath, 'utf8')
+  const missingMetrics = GOVERNANCE_METRICS.filter(metric => !source.includes(`${metric}:`))
+
+  if (missingMetrics.length > 0) {
+    throw new Error(`CSS governance policy is missing metric entries: ${missingMetrics.join(', ')}`)
+  }
+
+  const baseline = options.baseline ? normalizeBaseline(options.baseline) : undefined
+  const exceptionBlocks = parsePolicyExceptionBlocks(source)
+  const missingExceptions = baseline
+    ? GOVERNANCE_METRICS.filter(metric => (
+      baseline.metrics[metric] > 0
+      && !exceptionBlocks.some(block => block.metric === metric && hasTraceableException(block))
+    ))
+    : []
+
+  if (missingExceptions.length > 0) {
+    throw new Error(`CSS governance policy is missing traceable exceptions: ${missingExceptions.join(', ')}`)
+  }
+
+  return {
+    path: policyPath,
+    metrics: GOVERNANCE_METRICS,
+    exceptions: exceptionBlocks.map(block => block.metric),
+    source,
+  }
+}
 
 function createEmptyMetrics() {
   return Object.fromEntries(GOVERNANCE_METRICS.map(metric => [metric, 0]))
@@ -216,6 +269,10 @@ export async function lintCssGovernance(options = {}) {
   const baseline = normalizeBaseline(
     options.baseline ?? await readGovernanceBaseline(options.baselinePath ?? DEFAULT_BASELINE_PATH),
   )
+
+  if (options.policy !== false) {
+    await readGovernancePolicy(options.policyPath ?? DEFAULT_POLICY_PATH, { baseline })
+  }
   const scannedRoots = options.scannedRoots ?? baseline.scannedRoots
   const current = await collectCssGovernanceMetrics({
     ...options,
@@ -283,6 +340,7 @@ export function parseCliArgs(argv) {
     baselinePath: DEFAULT_BASELINE_PATH,
     format: 'text',
     help: false,
+    policyPath: DEFAULT_POLICY_PATH,
     repoRoot: DEFAULT_REPO_ROOT,
     scannedRoots: [],
   }
@@ -306,6 +364,13 @@ export function parseCliArgs(argv) {
     if (baseline) {
       args.baselinePath = baseline.value
       index = baseline.nextIndex
+      continue
+    }
+
+    const policy = readArgValue(argv, index, '--policy')
+    if (policy) {
+      args.policyPath = policy.value
+      index = policy.nextIndex
       continue
     }
 
@@ -340,6 +405,7 @@ function getUsage() {
     'Options:',
     '  --format=text|json     Output format. Default: text.',
     '  --baseline <path>      Baseline JSON path.',
+    '  --policy <path>        Policy YAML path.',
     '  --repo-root <path>     Repository root. Default: current script root.',
     '  --root <path>          Governed root to scan. Can be repeated.',
     '  --help                 Show this help.',
@@ -359,6 +425,7 @@ export async function runCli(argv = process.argv.slice(2), io = {}) {
   const baselinePath = path.resolve(repoRoot, args.baselinePath)
   const result = await lintCssGovernance({
     baselinePath,
+    policyPath: path.resolve(repoRoot, args.policyPath),
     repoRoot,
     scannedRoots: args.scannedRoots.length > 0 ? args.scannedRoots : undefined,
   })

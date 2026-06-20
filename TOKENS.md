@@ -19,6 +19,8 @@ Do not edit by hand.
 | `typography` | 34 | Font families, sizes, weights, and line heights. |
 | `motion` | 3 | Shared transition values. |
 
+Resolver: `src/design-system/tokens/resolver.json`.
+
 ## Token Reference
 
 Values are resolved. CSS values keep token references as CSS custom properties when a token points to another token.

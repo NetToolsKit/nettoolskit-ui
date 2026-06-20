@@ -593,7 +593,11 @@ test.describe('CMS engine visual regression', () => {
     await selectOptionByFieldLabel(page, 'Preview locale', 'Portuguese (Brazil)')
     await selectOptionByFieldLabel(page, 'Preview viewport', 'Tablet')
     await stabilizeVisualState(page)
-    await expect(page.locator('.cms-pages__preview').first()).toHaveScreenshot(
+    const previewToolbar = page.locator('.cms-pages__preview .cms-preview-toolbar').first()
+    await expect(previewToolbar).toHaveAttribute('data-cms-preview-source', 'published')
+    await expect(previewToolbar).toHaveAttribute('data-cms-preview-locale', 'pt-BR')
+    await expect(previewToolbar).toHaveAttribute('data-cms-preview-viewport', 'tablet')
+    await expect(page.locator('.cms-pages__preview .cms-runtime-preview__frame[data-preview-viewport="tablet"]').first()).toHaveScreenshot(
       'cms-engine-pages-preview-published-tablet-ptbr.png',
       { caret: 'hide' }
     )

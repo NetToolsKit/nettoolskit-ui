@@ -1,6 +1,7 @@
 export default {
   ignoreFiles: [
     'src/design-system/tokens/generated.css',
+    'src/design-system/tokens/generated/tokens.css',
   ],
   rules: {
     'block-no-empty': true,

@@ -8,6 +8,10 @@ Do not edit by hand.
 | Area | Source |
 | --- | --- |
 | Tokens | `src/design-system/tokens/source.json` |
+| Token resolver | `src/design-system/tokens/resolver.json` |
+| Token CSS output | `src/design-system/tokens/generated/tokens.css` |
+| Token TypeScript output | `src/design-system/tokens/generated/tokens.ts` |
+| Token declaration output | `src/design-system/tokens/generated/tokens.d.ts` |
 | Shared component primitives | `src/design-system/core/components/contracts.ts` |
 | Button recipe | `src/design-system/core/components/button.ts` |
 | Field recipe | `src/design-system/core/components/field.ts` |
@@ -16,10 +20,12 @@ Do not edit by hand.
 ## Token Model
 
 - Total tokens: 119.
+- Resolver entries: 119.
 - Token groups: `color`, `surface`, `text`, `border`, `feedback`, `gradient`, `shadow`, `radius`, `spacing`, `typography`, `motion`.
 - Token types: `color` (53), `dimension` (29), `fontFamily` (5), `fontWeight` (10), `gradient` (5), `number` (4), `shadow` (10), `transition` (3).
 - Public CSS variables use the `--ntk-*` namespace.
 - Token references are resolved for documentation while CSS output keeps `var(--ntk-*)` links where possible.
+- `resolver.json` maps token paths, groups, types, references, and CSS variables for runtime adapters.
 
 ## Component Recipe Model
 

@@ -60,6 +60,16 @@ High-risk files include:
 4. Existing exceptions are listed with owners and target removal specs.
 5. New CSS cannot add raw colors, unmanaged `:deep()`, or unmanaged `!important`.
 
+## Implementation Evidence
+
+### 2026-06-19 21:29 - Policy And Shared Enforcement Slice
+
+- Added `policies/design-system-css-governance.yaml`.
+- `scripts/lint-css-governance.mjs` now requires the policy file and validates traceable owner, removal spec, and reason metadata for baseline exceptions.
+- `tests/architecture/design-system-governance.spec.ts` now uses the same governance script path as `npm run lint:css`.
+- CSS governance unit coverage validates missing metrics, missing exception metadata, machine-readable CLI output, and baseline enforcement.
+- Remaining gap: governed roots still focus on `src/components` and `src/templates`; expanding to `src/styles` and `src/design-system` requires targeted excludes/allowlists for token-generated artifacts and legacy raw values.
+
 ## Risks
 
 - Enforcing rules before wrappers exist will create noisy failures.
