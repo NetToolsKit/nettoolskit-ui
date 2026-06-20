@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS settings module native status chips**
+  - Replaced the remaining direct `q-chip` status badges in the CMS Settings module with the native `CmsStatusChip`.
+  - Preserved autosave, notification, preview, tab label, content-model preset count, tenant, and workbench status badge styling through existing token-driven chip styles.
 - **CMS releases module native status chips**
   - Replaced the remaining direct `q-chip` status badges in the CMS Releases module with the native `CmsStatusChip`.
   - Preserved release count, review hub, review package history, governance, acknowledgement, checklist, timeline, calendar, and conflict badge styling through existing token-driven chip styles.

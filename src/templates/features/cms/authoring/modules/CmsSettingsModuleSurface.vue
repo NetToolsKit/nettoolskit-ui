@@ -147,9 +147,9 @@
                     </div>
                   </div>
                   <div class="cms-toolbar-card__autosave">
-                    <q-chip dense square :style="cmsAutosaveStatusStyle">
+                    <CmsStatusChip :style="cmsAutosaveStatusStyle">
                       {{ cmsAutosaveStatusLabel }}
-                    </q-chip>
+                    </CmsStatusChip>
                     <span v-if="latestDraftRecoverySavedAt" class="cms-toolbar-card__autosave-meta">
                       {{ cmsUiText.autoSaveLatestLabel }}: {{ latestDraftRecoverySavedAt }}
                     </span>
@@ -276,10 +276,11 @@
                                 <small>{{ settings.branding.userTooltip }}</small>
                               </div>
                             </div>
-                            <q-chip dense square icon="notifications" :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
+                            <CmsStatusChip :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
+                              <q-icon name="notifications" class="cms-status-chip__icon" aria-hidden="true" />
                               <q-tooltip v-if="settings.branding.notificationsTooltip" class="cms-settings-module-surface__tooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
                               {{ settings.branding.notificationCount }}
-                            </q-chip>
+                            </CmsStatusChip>
                           </div>
                         </div>
                       </div>
@@ -497,7 +498,7 @@
                                   <div class="cms-preview-card cms-preview-card--foundation">
                                     <strong>{{ tr('Editable shell foundation', 'Base editavel do shell') }}</strong>
                                     <p>{{ tr('This card uses the same base tokens as the shell page and CMS cards.', 'Este card usa os mesmos tokens base da página shell e dos cards CMS.') }}</p>
-                                    <q-chip dense square class="cms-preview-chip">{{ settings.content.statusChipLabel }}</q-chip>
+                                    <CmsStatusChip class="cms-preview-chip">{{ settings.content.statusChipLabel }}</CmsStatusChip>
                                   </div>
                                 </template>
 
@@ -573,14 +574,14 @@
                                     <small>{{ tr('Success, warning, error and info chips in real time.', 'Chips de sucesso, aviso, erro e info em tempo real.') }}</small>
                                   </div>
                                   <div class="cms-notification-preview">
-                                    <q-chip dense square :style="notificationChipStyles.success">{{ settings.content.previewSuccessLabel }}</q-chip>
-                                    <q-chip dense square :style="notificationChipStyles.warning">{{ settings.content.previewWarningLabel }}</q-chip>
-                                    <q-chip dense square :style="notificationChipStyles.error">{{ settings.content.previewErrorLabel }}</q-chip>
-                                    <q-chip dense square :style="notificationChipStyles.info">{{ settings.content.previewInfoLabel }}</q-chip>
+                                    <CmsStatusChip :style="notificationChipStyles.success">{{ settings.content.previewSuccessLabel }}</CmsStatusChip>
+                                    <CmsStatusChip :style="notificationChipStyles.warning">{{ settings.content.previewWarningLabel }}</CmsStatusChip>
+                                    <CmsStatusChip :style="notificationChipStyles.error">{{ settings.content.previewErrorLabel }}</CmsStatusChip>
+                                    <CmsStatusChip :style="notificationChipStyles.info">{{ settings.content.previewInfoLabel }}</CmsStatusChip>
                                   </div>
                                   <div class="cms-notification-bell-preview">
                                     <q-icon name="notifications" class="cms-icon cms-icon--md" :style="notificationBellPreviewStyle" />
-                                    <q-chip dense square :style="notificationCounterPreviewStyle">2</q-chip>
+                                    <CmsStatusChip :style="notificationCounterPreviewStyle">2</CmsStatusChip>
                                   </div>
                                   <div class="cms-notification-actions-preview">
                                     <button type="button" class="cms-notification-actions-preview__action" :aria-label="tr('Account hover preview', 'Preview de hover da conta')">
@@ -895,13 +896,13 @@
                         </div>
                         <div class="cms-preview-card cms-preview-card--content">
                           <div class="cms-preview-content-tabs">
-                            <q-chip dense square>{{ settings.content.tabBrandingLabel }}</q-chip>
-                            <q-chip dense square>{{ settings.content.tabTypographyLabel }}</q-chip>
-                            <q-chip dense square>{{ settings.content.tabLayoutLabel }}</q-chip>
-                            <q-chip dense square>{{ settings.content.tabColorsLabel }}</q-chip>
-                            <q-chip dense square>{{ settings.content.tabMenuLabel }}</q-chip>
-                            <q-chip dense square>{{ settings.content.tabTopbarLabel }}</q-chip>
-                            <q-chip dense square>{{ settings.content.tabContentLabel }}</q-chip>
+                            <CmsStatusChip>{{ settings.content.tabBrandingLabel }}</CmsStatusChip>
+                            <CmsStatusChip>{{ settings.content.tabTypographyLabel }}</CmsStatusChip>
+                            <CmsStatusChip>{{ settings.content.tabLayoutLabel }}</CmsStatusChip>
+                            <CmsStatusChip>{{ settings.content.tabColorsLabel }}</CmsStatusChip>
+                            <CmsStatusChip>{{ settings.content.tabMenuLabel }}</CmsStatusChip>
+                            <CmsStatusChip>{{ settings.content.tabTopbarLabel }}</CmsStatusChip>
+                            <CmsStatusChip>{{ settings.content.tabContentLabel }}</CmsStatusChip>
                           </div>
                           <p class="cms-preview-content-text">{{ settings.content.moduleFallbackDescription }}</p>
                           <q-banner rounded class="cms-banner" :style="bannerStyle">
@@ -1383,7 +1384,7 @@
                                   :label="tr('Show archived', 'Mostrar arquivados')"
                                   @update:model-value="emit('update:showArchivedFieldPresets', Boolean($event))"
                                 />
-                                <q-chip dense square :style="statusChipStyle">{{ cmsAuthoredContentModelFieldPresetLibrary.length }}/{{ settings.authoredContentModelFieldPresets.length }}</q-chip>
+                                <CmsStatusChip :style="statusChipStyle">{{ cmsAuthoredContentModelFieldPresetLibrary.length }}/{{ settings.authoredContentModelFieldPresets.length }}</CmsStatusChip>
                               </div>
                             </div>
 
@@ -1546,9 +1547,9 @@
     >
       <template #header-actions>
         <div class="cms-preview-toolbar__chips">
-          <q-chip dense square :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrão') }}</q-chip>
-          <q-chip dense square :style="statusChipStyle">{{ activeSettingsWorkbenchTabLabel }}</q-chip>
-          <q-chip dense square :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</q-chip>
+          <CmsStatusChip :style="statusChipStyle">{{ activeTenantProfileName || tr('Default tenant', 'Tenant padrão') }}</CmsStatusChip>
+          <CmsStatusChip :style="statusChipStyle">{{ activeSettingsWorkbenchTabLabel }}</CmsStatusChip>
+          <CmsStatusChip :style="cmsAutosaveStatusStyle">{{ cmsAutosaveStatusLabel }}</CmsStatusChip>
         </div>
       </template>
       <div class="cms-settings__preview-grid">
@@ -1578,10 +1579,11 @@
                   <small>{{ settings.branding.userTooltip }}</small>
                 </div>
               </div>
-              <q-chip dense square icon="notifications" :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
+              <CmsStatusChip :style="statusChipStyle" :aria-label="settings.branding.notificationsTooltip">
+                <q-icon name="notifications" class="cms-status-chip__icon" aria-hidden="true" />
                 <q-tooltip v-if="settings.branding.notificationsTooltip" class="cms-settings-module-surface__tooltip">{{ settings.branding.notificationsTooltip }}</q-tooltip>
                 {{ settings.branding.notificationCount }}
-              </q-chip>
+              </CmsStatusChip>
             </div>
           </div>
         </section>
@@ -1665,13 +1667,13 @@
           </div>
           <div class="cms-preview-card cms-preview-card--content">
             <div class="cms-preview-content-tabs">
-              <q-chip dense square>{{ settings.content.tabBrandingLabel }}</q-chip>
-              <q-chip dense square>{{ settings.content.tabTypographyLabel }}</q-chip>
-              <q-chip dense square>{{ settings.content.tabLayoutLabel }}</q-chip>
-              <q-chip dense square>{{ settings.content.tabColorsLabel }}</q-chip>
-              <q-chip dense square>{{ settings.content.tabMenuLabel }}</q-chip>
-              <q-chip dense square>{{ settings.content.tabTopbarLabel }}</q-chip>
-              <q-chip dense square>{{ settings.content.tabContentLabel }}</q-chip>
+              <CmsStatusChip>{{ settings.content.tabBrandingLabel }}</CmsStatusChip>
+              <CmsStatusChip>{{ settings.content.tabTypographyLabel }}</CmsStatusChip>
+              <CmsStatusChip>{{ settings.content.tabLayoutLabel }}</CmsStatusChip>
+              <CmsStatusChip>{{ settings.content.tabColorsLabel }}</CmsStatusChip>
+              <CmsStatusChip>{{ settings.content.tabMenuLabel }}</CmsStatusChip>
+              <CmsStatusChip>{{ settings.content.tabTopbarLabel }}</CmsStatusChip>
+              <CmsStatusChip>{{ settings.content.tabContentLabel }}</CmsStatusChip>
             </div>
             <p class="cms-preview-content-text">{{ settings.content.moduleFallbackDescription }}</p>
             <q-banner rounded class="cms-banner" :style="bannerStyle">
@@ -1706,6 +1708,7 @@ import CmsAuthoringToolbar from '../CmsAuthoringToolbar.vue'
 import CmsAuthoringWorkbench from '../CmsAuthoringWorkbench.vue'
 import CmsMediaAssetPicker from '../CmsMediaAssetPicker.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import CmsStatusChip from '../CmsStatusChip.vue'
 import CmsWorkspaceTabs from '../CmsWorkspaceTabs.vue'
 
 const props = defineProps<{

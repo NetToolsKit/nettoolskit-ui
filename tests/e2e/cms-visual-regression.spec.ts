@@ -535,7 +535,7 @@ async function stabilizeVisualState(page: Page, options: { readonly closeFloatin
     document.querySelectorAll('.cms-toolbar-card__saved-at, .cms-settings__saved-at').forEach(element => {
       element.textContent = 'Saved at 00:00:00'
     })
-    document.querySelectorAll('.cms-toolbar-card__autosave .q-chip').forEach(element => {
+    document.querySelectorAll('.cms-toolbar-card__autosave .cms-status-chip').forEach(element => {
       element.textContent = 'Auto-save state'
     })
     document.querySelectorAll('.cms-toolbar-card__autosave-meta').forEach((element, index) => {

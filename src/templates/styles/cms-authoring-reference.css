@@ -804,6 +804,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.25em;
   height: 1.5em;
   min-height: 0;
   max-width: 100%;
@@ -819,6 +820,11 @@
   line-height: 1.25;
   text-align: center;
   white-space: nowrap;
+}
+
+.cms-status-chip__icon {
+  font-size: 1em;
+  line-height: 1;
 }
 
 .cms-diagnostics-item {

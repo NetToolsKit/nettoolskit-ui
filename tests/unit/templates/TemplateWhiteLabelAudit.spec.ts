@@ -1607,6 +1607,14 @@ describe('template white-label audit', () => {
     expect(cmsReleasesModuleSource).not.toContain('<q-chip')
   })
 
+  it('keeps the CMS settings module status chips on native markup', () => {
+    const cmsSettingsModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsSettingsModuleSurface.vue')
+
+    expect(cmsSettingsModuleSource).toContain("import CmsStatusChip from '../CmsStatusChip.vue'")
+    expect(cmsSettingsModuleSource).toContain('<CmsStatusChip')
+    expect(cmsSettingsModuleSource).not.toContain('<q-chip')
+  })
+
   it('keeps the CMS preview toolbar on the NtkSelect compatibility wrapper', () => {
     const cmsPreviewToolbarSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue')
 
