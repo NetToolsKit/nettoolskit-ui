@@ -180,7 +180,9 @@ Existing issue examples:
 - Recognized field contract values now add `resolveNtkFieldRecipe()` classes while preserving the legacy `.ntk-input` selector.
 - Preserved explicit legacy prop precedence for `outlined`, `filled`, `dense`, and `disable`; `outlined`/`filled` are treated as one visual group so partial legacy input wins over `variant`.
 - Kept `size="lg"` as class-only compatibility and `required` as ARIA/state-only for this slice to avoid changing Quasar validation behavior.
+- Extended the compatibility type surface on 2026-06-20 03:34 to pass `type="datetime-local"` through to the underlying `QInput` for CMS release scheduling fields.
 - Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/design-system/components/component-recipes.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 2 files and 41 tests.
+- Additional release scheduling validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 52 tests.
 - `npm run type-check` passed.
 - `npm run lint -- --quiet` passed.
 - `npm run test:design-system` passed with 11 files and 55 tests.

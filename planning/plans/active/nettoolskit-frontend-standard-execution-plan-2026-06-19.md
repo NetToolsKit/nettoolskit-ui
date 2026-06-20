@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 03:21
+LastUpdated: 2026-06-20 03:34
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -70,6 +70,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #22 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20`.
 - PR #23 is open as a draft stacked PR from `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20` into `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20`.
 - PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
+- PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`; remote check inspection is pending.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -614,6 +615,26 @@ Checkpoint:
 - PR #24 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/24`.
 - PR #24 remote checks passed at 2026-06-20 03:21: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
+### 2026-06-20 03:34 - CMS Releases Module Ntk Form Field Slice
+
+- Replaced the remaining direct `q-input` and `q-select` controls in `CmsReleasesModuleSurface.vue` with `NtkInput` and `NtkSelect`.
+- Preserved release environment, active release, schedule, rollback target, promotion target, acknowledgement decision, and acknowledgement note event contracts and popup styling.
+- Added `datetime-local` support to `NtkInput` for scheduled release publishing.
+- Added focused form component coverage and template audit coverage preventing direct `<q-input>`/`<q-select>` regression in the Releases module.
+- Refreshed the affected Windows visual baselines for the release review surface, review acknowledgements, and release checklist drill-down.
+- Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 52 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 1050` and no exceeded metrics.
+- Direct tag audit passed: `rg -n "<q-(input|select|btn)" src/templates/features/cms/authoring/modules/CmsReleasesModuleSurface.vue` returned no matches.
+- Focused release E2E passed: `npx playwright test tests/e2e/cms-settings-flow.spec.ts -g "executes release orchestration flow|surfaces a release candidate checklist and updates it after validation|records release review acknowledgements|exports review package history" --workers=1` with the three matching release tests.
+- Focused release visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures phase 6 releases review surface|captures phase 7 review acknowledgements surface|captures phase 7 review package history surface|captures phase 7 release checklist drill-down surface" --workers=1` with 4 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `31e00b3` created the CMS releases form field slice.
+- PR #25 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/25`.
+- Remote check inspection remains pending for PR #25.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/review closeout.
 
 ## Closeout Expectations
 

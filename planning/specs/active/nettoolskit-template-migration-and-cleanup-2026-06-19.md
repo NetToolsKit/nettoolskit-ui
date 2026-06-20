@@ -164,6 +164,19 @@ The largest direct Quasar usage appears in:
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 03:34 - CMS Releases Module Ntk Form Field Slice
+
+- Replaced the remaining direct `q-input` and `q-select` controls in `CmsReleasesModuleSurface.vue` with `NtkInput` and `NtkSelect`.
+- Preserved release orchestration and acknowledgement field contracts, including popup styling, textarea autogrow, `aria-label`, and update emissions.
+- Added `datetime-local` support to `NtkInput` for scheduled release publishing and unit coverage for that field type.
+- Added template audit coverage proving `CmsReleasesModuleSurface.vue` imports `NtkInput`/`NtkSelect` and no longer contains direct `<q-input>`/`<q-select>`/`<q-btn>` usage.
+- Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 52 tests.
+- Focused release E2E passed for release orchestration, checklist validation, and review acknowledgements.
+- Focused release visual regression passed for release review, acknowledgements, package history, and checklist drill-down surfaces after refreshing the affected Windows baselines.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #25 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/25`.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
