@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered class="cms-shell-card cms-authoring-workbench">
+  <section class="cms-shell-card cms-authoring-workbench">
     <EditorWorkbenchTemplate
       class="cms-authoring-workbench__template"
       :page-aria-label="pageAriaLabel"
@@ -40,7 +40,7 @@
         <slot name="status-right" />
       </template>
     </EditorWorkbenchTemplate>
-  </q-card>
+  </section>
 </template>
 
 <script setup lang="ts">

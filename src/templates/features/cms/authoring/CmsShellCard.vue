@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered class="cms-shell-card">
+  <section class="cms-shell-card">
     <div class="cms-shell-card__header" :class="headerClass">
       <slot name="title">
         <strong v-if="title">{{ title }}</strong>
@@ -18,7 +18,7 @@
     <div class="cms-shell-card__body" :class="bodyClass">
       <slot />
     </div>
-  </q-card>
+  </section>
 </template>
 
 <script setup lang="ts">

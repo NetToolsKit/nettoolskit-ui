@@ -1490,6 +1490,16 @@ describe('template white-label audit', () => {
     expect(cmsReleasesModuleSource).not.toContain('<q-btn')
   })
 
+  it('keeps shared CMS shell cards on native markup', () => {
+    const cmsShellCardSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsShellCard.vue')
+    const cmsAuthoringWorkbenchSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsAuthoringWorkbench.vue')
+
+    expect(cmsShellCardSource).toContain('<section class="cms-shell-card">')
+    expect(cmsShellCardSource).not.toContain('<q-card')
+    expect(cmsAuthoringWorkbenchSource).toContain('<section class="cms-shell-card cms-authoring-workbench">')
+    expect(cmsAuthoringWorkbenchSource).not.toContain('<q-card')
+  })
+
   it('keeps the CMS media module fields on Ntk form compatibility wrappers', () => {
     const cmsMediaModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue')
 

@@ -73,6 +73,8 @@ describe('CmsShellCard', () => {
       slots: { default: '<p class="body-content">Content here</p>' },
     })
 
+    expect(wrapper.element.tagName).toBe('SECTION')
+    expect(wrapper.classes()).toContain('cms-shell-card')
     expect(wrapper.text()).toContain('Media Assets')
     expect(wrapper.find('.body-content').exists()).toBe(true)
   })
@@ -552,6 +554,7 @@ describe('CmsAuthoringWorkbench', () => {
       },
     })
 
+    expect(wrapper.element.tagName).toBe('SECTION')
     expect(wrapper.find('editor-workbench-template-stub').exists()).toBe(true)
     expect(wrapper.classes()).toContain('cms-authoring-workbench')
   })
