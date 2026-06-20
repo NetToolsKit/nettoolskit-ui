@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 09:26
+LastUpdated: 2026-06-20 09:28
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -72,7 +72,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
 - PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`.
 - PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`.
-- PR #27 is open as a draft stacked PR from `refactor/nettoolskit-cms-native-separators-2026-06-20` into `refactor/nettoolskit-cms-shell-native-separator-2026-06-20`; remote check inspection is pending.
+- PR #27 is open as a draft stacked PR from `refactor/nettoolskit-cms-native-separators-2026-06-20` into `refactor/nettoolskit-cms-shell-native-separator-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -671,8 +671,8 @@ Checkpoint:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `41697ca` created the CMS authoring native separator slice.
 - PR #27 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/27`.
-- Remote check inspection remains pending for PR #27.
-- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/review closeout.
+- PR #27 remote checks passed at 2026-06-20 09:28: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations
 

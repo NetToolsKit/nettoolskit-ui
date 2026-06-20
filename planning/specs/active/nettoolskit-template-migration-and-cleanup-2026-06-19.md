@@ -198,7 +198,8 @@ The largest direct Quasar usage appears in:
 - Direct tag audit passed: `rg -n "<q-separator\\b" src/templates/features/cms/authoring` returned no matches.
 - CMS visual regression passed with 20 tests, and `npm run verify` passed with 25 browser-gate Playwright tests and package build.
 - PR #27 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/27`.
-- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/CI/review closeout.
+- PR #27 remote checks passed at 2026-06-20 09:28: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
 
