@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS pages preview native status chips**
+  - Replaced the remaining direct `q-chip` status badges in the CMS Pages preview module with the native `CmsStatusChip`.
+  - Preserved draft/published diff, page metadata, page status, page diff, and section badge styling through existing token-driven chip styles.
 - **CMS media module native status chips**
   - Replaced the remaining direct `q-chip` status badges in the CMS Media authoring module with the native `CmsStatusChip`.
   - Preserved media counts, diagnostics, binding metadata, asset refs, focal point, replacement, tag, and diagnostic-code badge styling through the existing token-driven chip styles.

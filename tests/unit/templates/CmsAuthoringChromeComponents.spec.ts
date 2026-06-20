@@ -457,6 +457,7 @@ describe('CmsPreviewToolbar', () => {
 })
 
 describe('CmsPagesPreviewSurface', () => {
+  const statusChipStub = { template: '<span class="cms-status-chip"><slot /></span>' }
   const createProps = () => ({
     source: 'draft',
     locale: 'en',
@@ -516,8 +517,8 @@ describe('CmsPagesPreviewSurface', () => {
           CmsSectionHeaderSummary: true,
           CmsDiagnosticsListSection: true,
           CmsRenderer: true,
+          CmsStatusChip: statusChipStub,
           'q-banner': true,
-          'q-chip': true,
           DsButton: false,
         },
       },

@@ -49,16 +49,10 @@
           summary-class="cms-page-preview__chips"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
-              :style="statusChipStyle"
-            >
+            <CmsStatusChip :style="statusChipStyle">
               {{ draftPublishedDiff.releaseName }} · {{ draftPublishedDiff.releaseEnvironment }}
-            </q-chip>
-            <q-chip
-              dense
-              square
+            </CmsStatusChip>
+            <CmsStatusChip
               :style="draftPublishedDiff.hasChanges ? getPreviewDiffStatusStyle('changed') : getPreviewDiffStatusStyle('unchanged')"
             >
               {{
@@ -66,7 +60,7 @@
                   ? t('Changes detected', 'Mudanças detectadas')
                   : t('No changes against published', 'Sem mudanças contra o publicado')
               }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
 
@@ -94,13 +88,9 @@
             :key="`page-review-${pageDiff.pageId}`"
             class="cms-review-summary__item"
           >
-            <q-chip
-              dense
-              square
-              :style="getPreviewDiffStatusStyle(pageDiff.status)"
-            >
+            <CmsStatusChip :style="getPreviewDiffStatusStyle(pageDiff.status)">
               {{ getPreviewDiffStatusLabel(pageDiff.status) }}
-            </q-chip>
+            </CmsStatusChip>
 
             <div class="cms-review-summary__body">
               <strong>{{ getPreviewDiffPageLabel(pageDiff) }}</strong>
@@ -140,35 +130,21 @@
         <div class="cms-page-preview__header">
           <strong>{{ getPageTitleValue(page) }}</strong>
           <div class="cms-page-preview__chips">
-            <q-chip
-              dense
-              square
-              :style="statusChipStyle"
-            >
+            <CmsStatusChip :style="statusChipStyle">
               {{ getContentModelLabel(locale, page.contentModelId, previewAuthoredContentModels) }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="statusChipStyle"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="statusChipStyle">
               {{ `schema v${page.contentModelVersion ?? '?'} / v${getPageCurrentSchemaVersion(page, previewAuthoredContentModels)}` }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getPageStatusStyle(page.status)"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getPageStatusStyle(page.status)">
               {{ page.status }}
-            </q-chip>
-            <q-chip
+            </CmsStatusChip>
+            <CmsStatusChip
               v-if="previewPageDiffMap.get(page.id)"
-              dense
-              square
               :style="getPreviewDiffStatusStyle(previewPageDiffMap.get(page.id)?.status ?? 'unchanged')"
             >
               {{ getPreviewDiffStatusLabel(previewPageDiffMap.get(page.id)?.status ?? 'unchanged') }}
-            </q-chip>
+            </CmsStatusChip>
           </div>
         </div>
 
@@ -195,15 +171,13 @@
         />
 
         <div class="cms-page-preview__sections">
-          <q-chip
+          <CmsStatusChip
             v-for="section in page.sections"
             :key="`${page.id}-${section.id}`"
-            dense
-            square
             :style="getPageSectionStyle(section.enabled)"
           >
             {{ getSectionLabelValue(section) }}
-          </q-chip>
+          </CmsStatusChip>
         </div>
       </article>
     </template>
@@ -239,6 +213,7 @@ import CmsLocaleCoverageMatrix from '../CmsLocaleCoverageMatrix.vue'
 import CmsPreviewToolbar from '../CmsPreviewToolbar.vue'
 import CmsSectionHeaderSummary from '../CmsSectionHeaderSummary.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import CmsStatusChip from '../CmsStatusChip.vue'
 
 interface SelectOption {
   label: string
