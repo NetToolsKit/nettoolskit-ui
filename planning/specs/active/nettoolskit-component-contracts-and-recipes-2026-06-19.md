@@ -145,6 +145,20 @@ Existing issue examples:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
+### 2026-06-20 01:21 - NtkDataTable Compatibility Slice
+
+- Kept `src/components/ui/NtkDataTable.vue` as a Quasar-backed compatibility adapter.
+- Added design-system compatibility props for `variant`, `size`, and `intent` without replacing `QTable` or narrowing existing row/column/action contracts.
+- Recognized table contract values now add `resolveNtkTableRecipe()` classes while preserving the legacy `.ntk-data-table` selector used by template runtime tests.
+- Preserved Quasar selection updates, row-click behavior, row actions, status cells, custom cell slots, row classes, and empty/status labels.
+- Focused validation passed: `npm test -- tests/unit/components/ui/NtkDataTable.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 8 tests.
+- Focused recipe/table validation passed: `npm run test -- tests/unit/components/ui/NtkDataTable.spec.ts tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-table.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 24 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run test:design-system` passed with 11 files and 55 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.

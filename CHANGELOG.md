@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **NtkDataTable design-system compatibility classes**
+  - Added `variant`, `size`, and `intent` compatibility props to the Quasar-backed `NtkDataTable`.
+  - Added table recipe classes for recognized contract values while preserving the legacy `.ntk-data-table` selector, Quasar table behavior, row actions, status cells, slots, and selection events.
 - **NtkButton design-system compatibility aliases**
   - Added `variant`, `intent`, and `disabled` compatibility handling to the Quasar-backed `NtkButton` without narrowing existing open string props.
   - Added recipe classes for recognized button contract values while preserving legacy `disable`, `flat`, `outline`, `unelevated`, `size`, `padding`, and tokenized `color` behavior.

@@ -164,6 +164,14 @@ describe('NtkDataTable', () => {
       },
     })
 
+    expect(wrapper.classes()).toEqual(expect.arrayContaining([
+      'ntk-data-table',
+      'ntk-table',
+      'ntk-table--variant-default',
+      'ntk-table--size-md',
+      'ntk-table--intent-neutral',
+      'ntk-table--has-clickable-rows',
+    ]))
     expect(wrapper.attributes('aria-label')).toBe('Clients table')
     expect(wrapper.attributes('data-selection')).toBe('multiple')
     expect(wrapper.text()).toContain('Name')
@@ -189,6 +197,49 @@ describe('NtkDataTable', () => {
     await wrapper.get('.q-table-stub__select-first').trigger('click')
 
     expect(wrapper.emitted('update:selectedKeys')).toEqual([[['rec-1']]])
+  })
+
+  it('maps design-system table recipe props while preserving the legacy selector', () => {
+    const wrapper = mount(NtkDataTable, {
+      ...globalMountOptions,
+      props: {
+        rows,
+        columns,
+        selectedKeys: ['rec-2'],
+        variant: 'striped',
+        size: 'lg',
+        intent: 'info',
+      },
+    })
+
+    expect(wrapper.classes()).toEqual(expect.arrayContaining([
+      'ntk-data-table',
+      'ntk-table',
+      'ntk-table--variant-striped',
+      'ntk-table--size-lg',
+      'ntk-table--intent-info',
+      'ntk-table--has-clickable-rows',
+      'ntk-table--has-selection',
+    ]))
+  })
+
+  it('falls back to the default recipe for unknown compatibility values', () => {
+    const wrapper = mount(NtkDataTable, {
+      ...globalMountOptions,
+      props: {
+        rows,
+        columns,
+        variant: 'dense-striped',
+        size: 'xl',
+        intent: 'brand',
+      },
+    })
+
+    expect(wrapper.classes()).toEqual(expect.arrayContaining([
+      'ntk-table--variant-default',
+      'ntk-table--size-md',
+      'ntk-table--intent-neutral',
+    ]))
   })
 
   it('renders custom column slots while keeping the QTable contract', () => {

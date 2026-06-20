@@ -1,6 +1,6 @@
 <template>
   <QTable
-    class="ntk-data-table"
+    :class="tableClasses"
     flat
     :aria-label="ariaLabel"
     :columns="quasarColumns"
@@ -86,6 +86,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { QIcon, QTable, QTd, type QTableColumn } from 'quasar'
+import {
+  ntkComponentIntents,
+  ntkComponentSizes,
+  ntkTableVariants,
+  resolveNtkTableRecipe,
+  type NtkComponentIntent,
+  type NtkComponentSize,
+  type NtkTableVariant,
+} from '../../design-system/core'
 
 defineOptions({
   name: 'NtkDataTable',
@@ -137,6 +146,9 @@ const props = withDefaults(defineProps<{
   rowKey?: string
   selectable?: boolean
   showStatus?: boolean
+  variant?: string
+  size?: string
+  intent?: string
   ariaLabel?: string
   statusLabel?: string
   actionsLabel?: string
@@ -166,6 +178,15 @@ const emit = defineEmits<{
 const tablePagination = {
   rowsPerPage: 0,
 }
+
+const isNtkTableVariant = (value: unknown): value is NtkTableVariant =>
+  typeof value === 'string' && ntkTableVariants.includes(value as NtkTableVariant)
+
+const isNtkTableSize = (value: unknown): value is NtkComponentSize =>
+  typeof value === 'string' && ntkComponentSizes.includes(value as NtkComponentSize)
+
+const isNtkTableIntent = (value: unknown): value is NtkComponentIntent =>
+  typeof value === 'string' && ntkComponentIntents.includes(value as NtkComponentIntent)
 
 const quasarColumns = computed<QTableColumn<NtkDataTableRow>[]>(() => {
   const dataColumns = props.columns.map((column): QTableColumn<NtkDataTableRow> => ({
@@ -213,6 +234,15 @@ const selectedKeySet = computed<Set<string>>(() => new Set(props.selectedKeys))
 const selectedRows = computed<NtkDataTableRow[]>(() => {
   return props.rows.filter(row => selectedKeySet.value.has(row.id))
 })
+
+const tableClasses = computed(() => resolveNtkTableRecipe({
+  variant: isNtkTableVariant(props.variant) ? props.variant : undefined,
+  size: isNtkTableSize(props.size) ? props.size : undefined,
+  intent: isNtkTableIntent(props.intent) ? props.intent : undefined,
+  clickable: props.rows.length > 0,
+  selected: selectedRows.value.length > 0,
+  class: 'ntk-data-table',
+}).classes)
 
 function resolveCellValue(row: NtkDataTableRow, columnId: string): string | number | boolean {
   const value = row.cells[columnId]

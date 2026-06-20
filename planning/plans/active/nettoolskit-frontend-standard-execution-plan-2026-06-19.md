@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 01:10
+LastUpdated: 2026-06-20 01:25
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -448,6 +448,18 @@ Checkpoint:
 - PR #15 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/15`.
 - PR #15 Vercel check passed; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
+### 2026-06-20 01:21 - NtkDataTable Compatibility Slice
+
+- Kept `NtkDataTable` as a Quasar-backed compatibility adapter while adding design-system props for `variant`, `size`, and `intent`.
+- Recognized table contract values now add `resolveNtkTableRecipe()` classes while preserving `.ntk-data-table`, QTable row selection, row-click behavior, row actions, status cells, and custom cell slots.
+- Focused validation passed: `npm test -- tests/unit/components/ui/NtkDataTable.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 8 tests.
+- Focused recipe/table validation passed: `npm run test -- tests/unit/components/ui/NtkDataTable.spec.ts tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-table.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 24 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run test:design-system` passed with 11 files and 55 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 
