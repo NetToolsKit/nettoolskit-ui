@@ -240,6 +240,18 @@ The largest direct Quasar usage appears in:
 - PR #30 remote checks passed at 2026-06-20 11:52: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Blocks, Pages, Pages Preview, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 12:10 - CMS Pages Preview Native Status Chip Slice
+
+- Replaced the eight direct `q-chip` status badges in `CmsPagesPreviewSurface.vue` with the native `CmsStatusChip`.
+- Preserved draft/published diff, page metadata, page status, page diff, and section badge behavior and styling.
+- Added unit stub coverage and template audit coverage proving the Pages preview module imports `CmsStatusChip` and rejects direct `<q-chip>` regressions.
+- Subagent audit confirmed every former Pages preview chip was passive status markup without `icon`, `clickable`, `removable`, or click behavior.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 54 tests.
+- `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
+- Focused CMS visuals passed without snapshot updates for the published tablet Pages preview and phase 6 pages review summary surfaces.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- Remaining gaps: module-local CMS `q-chip` migration in Blocks, Pages, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
