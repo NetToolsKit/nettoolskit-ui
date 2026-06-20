@@ -130,6 +130,20 @@ The largest direct Quasar usage appears in:
 - Focused `cms-settings-flow` draft/published viewport coverage still fails on the parent branch with this slice stashed, before any toolbar migration code runs; this remains an inherited Blocks runtime preview text issue for a separate triage slice.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 02:57 - CMS Media Module Ntk Form Field Slice
+
+- Replaced the remaining eight direct `q-input` fields and three direct `q-select` fields in `CmsMediaModuleSurface.vue` with `NtkInput` and `NtkSelect`.
+- Preserved labels, hints, numeric bounds, textarea autogrow, replace-target clearing, update emissions, and media popup styling.
+- Forwarded `hint` and `aria-describedby` through `NtkSelect` to preserve the migrated select helper text contract.
+- Added focused form component coverage and template audit coverage preventing direct `<q-input>`/`<q-select>` regression in the Media module.
+- Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 50 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `git diff --check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Focused media replacement E2E still fails on the parent branch with this slice stashed at the known Blocks runtime preview image assertion; the create/apply media binding flow passes with this slice.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.

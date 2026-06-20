@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:45
+LastUpdated: 2026-06-20 02:57
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -67,6 +67,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #19 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-ds-button-2026-06-20` into `feat/nettoolskit-ntk-select-compat-2026-06-20`.
 - PR #20 is open as a draft stacked PR from `feat/nettoolskit-ntk-input-compat-2026-06-20` into `refactor/nettoolskit-cms-releases-ds-button-2026-06-20`.
 - PR #21 is open as a draft stacked PR from `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20` into `feat/nettoolskit-ntk-input-compat-2026-06-20`.
+- PR #22 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -556,6 +557,24 @@ Checkpoint:
 - Commit `422873e` created the CMS Preview Toolbar NtkSelect slice.
 - PR #21 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/21`.
 - PR #21 remote checks passed at 2026-06-20 02:45: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
+### 2026-06-20 02:57 - CMS Media Module Ntk Form Field Slice
+
+- Replaced the remaining eight direct `q-input` fields and three direct `q-select` fields in `CmsMediaModuleSurface.vue` with `NtkInput` and `NtkSelect` compatibility wrappers.
+- Preserved media field labels, hints, numeric bounds, textarea autogrow, replace-target clearing, emitted update contracts, and `cms-media-module-surface__popup` menu styling.
+- Forwarded `hint` and `aria-describedby` through `NtkSelect` so migrated select fields keep helper text and accessible descriptions.
+- Added form component coverage for `NtkSelect` hint/description forwarding and template audit coverage proving the Media module imports `NtkInput`/`NtkSelect` and no longer contains direct `<q-input>` or `<q-select>` usage.
+- Focused validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 50 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- Focused media E2E passed for `manages media library assets and applies branding bindings`.
+- Focused media replacement E2E was re-run with this slice stashed and still failed on the parent branch at the known Blocks runtime preview image assertion, before returning to the migrated Media fields.
+- `git diff --check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Subagent audits confirmed this field slice is viable and identified a separate future bridge cleanup slice in `cms-authoring-reference.css`.
+- Commit `3573e46` created the CMS Media Module Ntk form field slice.
+- PR #22 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/22`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Closeout Expectations
