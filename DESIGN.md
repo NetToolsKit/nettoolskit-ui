@@ -17,6 +17,8 @@ Do not edit by hand.
 | Field recipe | `src/design-system/core/components/field.ts` |
 | Card recipe | `src/design-system/core/components/card.ts` |
 | Table recipe | `src/design-system/core/components/table.ts` |
+| Page recipe | `src/design-system/core/components/page.ts` |
+| Section recipe | `src/design-system/core/components/section.ts` |
 
 ## Token Model
 
@@ -36,6 +38,8 @@ Do not edit by hand.
 | Field | `outlined` | `md` | `neutral` | `outlined`, `filled`, `plain` | `disabled`, `invalid`, `readonly`, `required` |
 | Card | `default` | `md` | `neutral` | `default`, `outlined`, `elevated`, `accent-left`, `accent-top` | `clickable`, `selected` |
 | Table | `default` | `md` | `neutral` | `default`, `bordered`, `striped` | `selected`, `clickable` |
+| Page | `default` | `md` | `neutral` | `default`, `surface`, `dashboard` | None |
+| Section | `default` | `md` | `neutral` | `default`, `surface`, `muted`, `accent` | None |
 
 ## Usage Rules
 

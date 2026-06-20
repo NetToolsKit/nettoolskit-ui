@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 00:05
+LastUpdated: 2026-06-20 00:23
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -58,6 +58,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #10 is open as a draft stacked PR from `feat/nettoolskit-cms-preview-ds-button-2026-06-19` into `feat/nettoolskit-ds-card-input-wrappers-2026-06-19`.
 - PR #11 is open as a draft stacked PR from `feat/nettoolskit-ds-select-wrapper-2026-06-20` into `feat/nettoolskit-cms-preview-ds-button-2026-06-19`.
 - PR #12 is open as a draft stacked PR from `feat/nettoolskit-ds-table-wrapper-2026-06-20` into `feat/nettoolskit-ds-select-wrapper-2026-06-20`.
+- The active implementation branch is `feat/nettoolskit-ds-page-section-wrappers-2026-06-20` for the `DsPage` and `DsSection` wrapper slice.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -398,6 +399,21 @@ Checkpoint:
 - PR #12 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/12`.
 - PR #12 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: page wrappers, `NtkDataTable` compatibility decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
+### 2026-06-20 00:14 - DsPage And DsSection Wrapper Slice
+
+- Added `NtkPageContract`, `NtkSectionContract`, page/section variants/defaults, and recipe classes.
+- Added rendered native `DsPage` and `DsSection` Vue landmark wrappers.
+- Exported the page and section core contracts and the Vue wrappers.
+- Generated component docs now list button, field, card, table, page, and section contracts plus seven Vue wrappers.
+- Addressed the page/section audit's immediate a11y risks by avoiding default generic landmark labels and preventing `aria-labelledby` from targeting replaced header-slot content.
+- Added optional `actions` slots and focused rendered component tests under `tests/unit/design-system/components/ds-page-section.spec.ts`.
+- Focused validation passed: `npx vitest run --config tests/vitest.config.ts tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-page-section.spec.ts tests/unit/design-system/docs/design-system-docs.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 21 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit, PR, and Vercel evidence remain pending for this slice.
+- Remaining gaps: compatibility migration decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

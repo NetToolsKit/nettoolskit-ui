@@ -1,6 +1,6 @@
 # Component Recipes
 
-Generated from `src/design-system/core/components/contracts.ts`, `src/design-system/core/components/button.ts`, `src/design-system/core/components/field.ts`, `src/design-system/core/components/card.ts`, `src/design-system/core/components/table.ts`.
+Generated from `src/design-system/core/components/contracts.ts`, `src/design-system/core/components/button.ts`, `src/design-system/core/components/field.ts`, `src/design-system/core/components/card.ts`, `src/design-system/core/components/table.ts`, `src/design-system/core/components/page.ts`, `src/design-system/core/components/section.ts`.
 Do not edit by hand.
 
 ## Shared Primitives
@@ -17,6 +17,8 @@ Do not edit by hand.
 | DsInput | `NtkFieldContract` | `src/design-system/vue/components/DsInput.vue` | Native Vue input wrapper backed by the field contract and class recipe. |
 | DsSelect | `NtkFieldContract` | `src/design-system/vue/components/DsSelect.vue` | Native Vue select wrapper backed by the field contract and class recipe. |
 | DsTable | `NtkTableContract` | `src/design-system/vue/components/DsTable.vue` | Native Vue table wrapper backed by the table contract and class recipe. |
+| DsPage | `NtkPageContract` | `src/design-system/vue/components/DsPage.vue` | Native Vue page landmark backed by the page contract and class recipe. |
+| DsSection | `NtkSectionContract` | `src/design-system/vue/components/DsSection.vue` | Native Vue section landmark backed by the section contract and class recipe. |
 
 ## Button
 
@@ -230,3 +232,98 @@ Source: `src/design-system/core/components/table.ts`.
 | `intent info` | `ntk-table--intent-info` |
 | `state selected` | `ntk-table--has-selection` |
 | `state clickable` | `ntk-table--has-clickable-rows` |
+
+## Page
+
+Page landmark recipe for primary content layouts and page headers.
+
+Source: `src/design-system/core/components/page.ts`.
+
+| Setting | Values |
+| --- | --- |
+| Defaults | variant `default`, size `md`, intent `neutral` |
+| Variants | `default`, `surface`, `dashboard` |
+| Sizes | `sm`, `md`, `lg` |
+| Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
+| States | None |
+
+### Contract Props
+
+| Prop | Optional | Type | Source |
+| --- | --- | --- | --- |
+| `id` | Yes | `string` | `base` |
+| `testId` | Yes | `string` | `base` |
+| `class` | Yes | `NtkClassValue` | `base` |
+| `title` | Yes | `string` | `NtkPageContract` |
+| `subtitle` | Yes | `string` | `NtkPageContract` |
+| `ariaLabel` | Yes | `string` | `NtkPageContract` |
+| `variant` | Yes | `NtkPageVariant` | `NtkPageContract` |
+| `size` | Yes | `NtkPageSize` | `NtkPageContract` |
+| `intent` | Yes | `NtkPageIntent` | `NtkPageContract` |
+
+### Class Map
+
+| Slot | Class |
+| --- | --- |
+| `root` | `ntk-page` |
+| `variant default` | `ntk-page--variant-default` |
+| `variant surface` | `ntk-page--variant-surface` |
+| `variant dashboard` | `ntk-page--variant-dashboard` |
+| `size sm` | `ntk-page--size-sm` |
+| `size md` | `ntk-page--size-md` |
+| `size lg` | `ntk-page--size-lg` |
+| `intent neutral` | `ntk-page--intent-neutral` |
+| `intent primary` | `ntk-page--intent-primary` |
+| `intent success` | `ntk-page--intent-success` |
+| `intent warning` | `ntk-page--intent-warning` |
+| `intent danger` | `ntk-page--intent-danger` |
+| `intent info` | `ntk-page--intent-info` |
+
+## Section
+
+Section landmark recipe for grouped content, headings, and nested layout bands.
+
+Source: `src/design-system/core/components/section.ts`.
+
+| Setting | Values |
+| --- | --- |
+| Defaults | variant `default`, size `md`, intent `neutral` |
+| Variants | `default`, `surface`, `muted`, `accent` |
+| Sizes | `sm`, `md`, `lg` |
+| Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
+| States | None |
+
+### Contract Props
+
+| Prop | Optional | Type | Source |
+| --- | --- | --- | --- |
+| `id` | Yes | `string` | `base` |
+| `testId` | Yes | `string` | `base` |
+| `class` | Yes | `NtkClassValue` | `base` |
+| `title` | Yes | `string` | `NtkSectionContract` |
+| `subtitle` | Yes | `string` | `NtkSectionContract` |
+| `eyebrow` | Yes | `string` | `NtkSectionContract` |
+| `ariaLabel` | Yes | `string` | `NtkSectionContract` |
+| `headingLevel` | Yes | `NtkSectionHeadingLevel` | `NtkSectionContract` |
+| `variant` | Yes | `NtkSectionVariant` | `NtkSectionContract` |
+| `size` | Yes | `NtkSectionSize` | `NtkSectionContract` |
+| `intent` | Yes | `NtkSectionIntent` | `NtkSectionContract` |
+
+### Class Map
+
+| Slot | Class |
+| --- | --- |
+| `root` | `ntk-section` |
+| `variant default` | `ntk-section--variant-default` |
+| `variant surface` | `ntk-section--variant-surface` |
+| `variant muted` | `ntk-section--variant-muted` |
+| `variant accent` | `ntk-section--variant-accent` |
+| `size sm` | `ntk-section--size-sm` |
+| `size md` | `ntk-section--size-md` |
+| `size lg` | `ntk-section--size-lg` |
+| `intent neutral` | `ntk-section--intent-neutral` |
+| `intent primary` | `ntk-section--intent-primary` |
+| `intent success` | `ntk-section--intent-success` |
+| `intent warning` | `ntk-section--intent-warning` |
+| `intent danger` | `ntk-section--intent-danger` |
+| `intent info` | `ntk-section--intent-info` |

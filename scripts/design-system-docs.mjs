@@ -24,6 +24,8 @@ export const DEFAULT_COMPONENT_SOURCE_PATHS = {
   field: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/field.ts'),
   card: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/card.ts'),
   table: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/table.ts'),
+  page: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/page.ts'),
+  section: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/section.ts'),
 }
 export const DEFAULT_DOC_FILENAMES = {
   design: 'DESIGN.md',
@@ -68,6 +70,24 @@ const COMPONENT_CONFIGS = [
     classMapExport: 'ntkTableRecipeClassMap',
     purpose: 'Data table recipe for row lists, selectable records, and empty states.',
   },
+  {
+    key: 'page',
+    name: 'Page',
+    contractName: 'NtkPageContract',
+    variantsExport: 'ntkPageVariants',
+    defaultsExport: 'ntkPageDefaults',
+    classMapExport: 'ntkPageRecipeClassMap',
+    purpose: 'Page landmark recipe for primary content layouts and page headers.',
+  },
+  {
+    key: 'section',
+    name: 'Section',
+    contractName: 'NtkSectionContract',
+    variantsExport: 'ntkSectionVariants',
+    defaultsExport: 'ntkSectionDefaults',
+    classMapExport: 'ntkSectionRecipeClassMap',
+    purpose: 'Section landmark recipe for grouped content, headings, and nested layout bands.',
+  },
 ]
 const VUE_WRAPPER_CONFIGS = [
   {
@@ -99,6 +119,18 @@ const VUE_WRAPPER_CONFIGS = [
     contractName: 'NtkTableContract',
     sourcePath: 'src/design-system/vue/components/DsTable.vue',
     purpose: 'Native Vue table wrapper backed by the table contract and class recipe.',
+  },
+  {
+    name: 'DsPage',
+    contractName: 'NtkPageContract',
+    sourcePath: 'src/design-system/vue/components/DsPage.vue',
+    purpose: 'Native Vue page landmark backed by the page contract and class recipe.',
+  },
+  {
+    name: 'DsSection',
+    contractName: 'NtkSectionContract',
+    sourcePath: 'src/design-system/vue/components/DsSection.vue',
+    purpose: 'Native Vue section landmark backed by the section contract and class recipe.',
   },
 ]
 

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rendered design-system page and section wrappers**
+  - Added `NtkPageContract`, `NtkSectionContract`, page/section recipe classes, and rendered `DsPage`/`DsSection` landmark wrappers.
+  - Added focused render tests for headings, accessible names, slots, heading levels, and recipe classes.
 - **Rendered design-system table wrapper**
   - Added `NtkTableContract`, table recipe classes, and `DsTable` as a rendered Vue wrapper for native table markup.
   - Added focused render tests for headers, rows, selected keys, row clicks, empty state, custom cells, and recipe classes.

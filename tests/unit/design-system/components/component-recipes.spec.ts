@@ -10,11 +10,17 @@ import {
   ntkComponentIntents,
   ntkComponentSizes,
   ntkFieldVariants,
+  ntkPageRecipeClassMap,
+  ntkPageVariants,
+  ntkSectionRecipeClassMap,
+  ntkSectionVariants,
   ntkTableRecipeClassMap,
   ntkTableVariants,
   resolveNtkButtonRecipe,
   resolveNtkCardRecipe,
   resolveNtkFieldRecipe,
+  resolveNtkPageRecipe,
+  resolveNtkSectionRecipe,
   resolveNtkTableRecipe,
   type NtkButtonContract,
   type NtkButtonVariant,
@@ -34,6 +40,8 @@ describe('design-system component recipes', () => {
     expect(ntkButtonVariants).toEqual(['solid', 'outline', 'ghost', 'link'])
     expect(ntkFieldVariants).toEqual(['outlined', 'filled', 'plain'])
     expect(ntkTableVariants).toEqual(['default', 'bordered', 'striped'])
+    expect(ntkPageVariants).toEqual(['default', 'surface', 'dashboard'])
+    expect(ntkSectionVariants).toEqual(['default', 'surface', 'muted', 'accent'])
     expect(ntkComponentSizes).toEqual(['sm', 'md', 'lg'])
     expect(ntkComponentIntents).toEqual(['neutral', 'primary', 'success', 'warning', 'danger', 'info'])
 
@@ -140,6 +148,34 @@ describe('design-system component recipes', () => {
       'ntk-table--intent-info',
       'ntk-table--has-clickable-rows',
       'ntk-table--has-selection',
+    ])
+  })
+
+  it('maps page and section recipes to landmark classes', () => {
+    const pageRecipe = resolveNtkPageRecipe({
+      variant: 'dashboard',
+      size: 'lg',
+      intent: 'primary',
+    })
+    const sectionRecipe = resolveNtkSectionRecipe({
+      variant: 'accent',
+      size: 'sm',
+      intent: 'info',
+    })
+
+    expect(ntkPageRecipeClassMap.variants.dashboard).toBe('ntk-page--variant-dashboard')
+    expect(pageRecipe.classes).toEqual([
+      'ntk-page',
+      'ntk-page--variant-dashboard',
+      'ntk-page--size-lg',
+      'ntk-page--intent-primary',
+    ])
+    expect(ntkSectionRecipeClassMap.variants.accent).toBe('ntk-section--variant-accent')
+    expect(sectionRecipe.classes).toEqual([
+      'ntk-section',
+      'ntk-section--variant-accent',
+      'ntk-section--size-sm',
+      'ntk-section--intent-info',
     ])
   })
 

@@ -115,6 +115,22 @@ Existing issue examples:
 - `npm run verify` passed, including 48 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: page wrappers, `NtkDataTable` compatibility decisions, `NtkButton` open-string compatibility migration, full `NtkSelect` parity decisions, and broader CMS direct Quasar migration.
 
+### 2026-06-20 00:14 - DsPage And DsSection Wrapper Slice
+
+- Added `src/design-system/core/components/page.ts` with `NtkPageContract`, page variants, defaults, and recipe classes.
+- Added `src/design-system/core/components/section.ts` with `NtkSectionContract`, section variants, heading-level control, defaults, and recipe classes.
+- Added `src/design-system/vue/components/DsPage.vue` and `src/design-system/vue/components/DsSection.vue`.
+- Exported the page and section contracts/recipes from the core component surface and the Vue wrappers from the design-system Vue component surface.
+- `DsPage` renders a native `main` landmark and `DsSection` renders a native `section` without extra landmark roles or direct Quasar usage.
+- The wrappers apply `aria-labelledby` only when the internal title is rendered with a stable id; custom header slots require consumer-owned labelling through `ariaLabel` or custom markup.
+- Added optional `actions` slots plus header, body, and footer slot coverage.
+- Generated component docs now list button, field, card, table, page, and section contracts plus seven Vue wrapper sources.
+- Focused validation passed: `npx vitest run --config tests/vitest.config.ts tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-page-section.spec.ts tests/unit/design-system/docs/design-system-docs.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 21 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: `NtkDataTable` compatibility decisions, `NtkButton` open-string compatibility migration, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.
