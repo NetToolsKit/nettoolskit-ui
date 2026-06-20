@@ -237,6 +237,7 @@ The largest direct Quasar usage appears in:
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
 - Focused media E2E create/apply binding flow passed; the three block-preview media flows still fail on the parent branch with this slice stashed at the inherited Blocks runtime preview image assertion.
 - PR #30 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/30`.
+- PR #30 remote checks passed at 2026-06-20 11:52: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Blocks, Pages, Pages Preview, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
