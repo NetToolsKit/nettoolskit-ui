@@ -298,6 +298,8 @@ The largest direct Quasar usage appears in:
 - Focused Releases visuals passed after refreshing the phase 7 acknowledgements and review package history Windows baselines; phase 6 release review and phase 7 checklist drill-down passed without refresh.
 - Focused Releases E2E passed for release orchestration, checklist validation/drill-down, accessibility/content QA, unified review hub, governance signals, review acknowledgements, and review package export.
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #34 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/34`.
+- PR #34 remote checks passed at 2026-06-20 13:24: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
