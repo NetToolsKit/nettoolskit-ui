@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 03:55
+LastUpdated: 2026-06-20 03:57
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -71,7 +71,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #23 is open as a draft stacked PR from `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20` into `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20`.
 - PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
 - PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`.
-- PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`; remote check inspection is pending.
+- PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -651,7 +651,7 @@ Checkpoint:
 - `npm run verify` passed after re-running the affected visual checks; no snapshot files remained changed in the final diff.
 - Commit `2bd0f06` created the CMS shell native separator slice.
 - PR #26 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/26`.
-- Remote check inspection remains pending for PR #26.
+- PR #26 remote checks passed at 2026-06-20 03:57: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations

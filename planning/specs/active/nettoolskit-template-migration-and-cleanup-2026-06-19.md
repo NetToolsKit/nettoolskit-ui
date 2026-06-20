@@ -186,7 +186,8 @@ The largest direct Quasar usage appears in:
 - Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 51 tests.
 - CMS visual regression passed with 20 tests, and `npm run verify` passed after re-running affected visual checks.
 - PR #26 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/26`.
-- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/CI/review closeout.
+- PR #26 remote checks passed at 2026-06-20 03:57: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
 
