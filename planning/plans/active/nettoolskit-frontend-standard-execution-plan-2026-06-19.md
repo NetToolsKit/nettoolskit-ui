@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 01:09
+LastUpdated: 2026-06-20 01:10
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -446,7 +446,7 @@ Checkpoint:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `fc249cf` created the CMS authoring ruler DsButton slice.
 - PR #15 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/15`.
-- PR #15 Vercel check is pending immediately after opening; GitHub Actions are still not present in `gh pr checks`.
+- PR #15 Vercel check passed; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
