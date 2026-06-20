@@ -10,13 +10,17 @@ import {
   ntkComponentIntents,
   ntkComponentSizes,
   ntkFieldVariants,
+  ntkTableRecipeClassMap,
+  ntkTableVariants,
   resolveNtkButtonRecipe,
   resolveNtkCardRecipe,
   resolveNtkFieldRecipe,
+  resolveNtkTableRecipe,
   type NtkButtonContract,
   type NtkButtonVariant,
   type NtkComponentIntent,
   type NtkComponentSize,
+  type NtkTableContract,
 } from '@/design-system/core'
 import {
   ntkVueCompatibilityAdapters,
@@ -29,11 +33,17 @@ describe('design-system component recipes', () => {
   it('exposes typed button, field, size, and intent primitives', () => {
     expect(ntkButtonVariants).toEqual(['solid', 'outline', 'ghost', 'link'])
     expect(ntkFieldVariants).toEqual(['outlined', 'filled', 'plain'])
+    expect(ntkTableVariants).toEqual(['default', 'bordered', 'striped'])
     expect(ntkComponentSizes).toEqual(['sm', 'md', 'lg'])
     expect(ntkComponentIntents).toEqual(['neutral', 'primary', 'success', 'warning', 'danger', 'info'])
 
     expectTypeOf<NtkButtonContract>().toMatchTypeOf<{
       variant?: NtkButtonVariant
+      size?: NtkComponentSize
+      intent?: NtkComponentIntent
+    }>()
+    expectTypeOf<NtkTableContract>().toMatchTypeOf<{
+      variant?: 'default' | 'bordered' | 'striped'
       size?: NtkComponentSize
       intent?: NtkComponentIntent
     }>()
@@ -110,6 +120,26 @@ describe('design-system component recipes', () => {
       'ntk-card--intent-success',
       'ntk-card--is-clickable',
       'ntk-card--is-selected',
+    ])
+  })
+
+  it('maps table recipes to variant, size, intent, and selection classes', () => {
+    const recipe = resolveNtkTableRecipe({
+      variant: 'striped',
+      size: 'lg',
+      intent: 'info',
+      selected: true,
+      clickable: true,
+    })
+
+    expect(ntkTableRecipeClassMap.variants.striped).toBe('ntk-table--variant-striped')
+    expect(recipe.classes).toEqual([
+      'ntk-table',
+      'ntk-table--variant-striped',
+      'ntk-table--size-lg',
+      'ntk-table--intent-info',
+      'ntk-table--has-clickable-rows',
+      'ntk-table--has-selection',
     ])
   })
 

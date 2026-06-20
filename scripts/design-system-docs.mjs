@@ -23,6 +23,7 @@ export const DEFAULT_COMPONENT_SOURCE_PATHS = {
   button: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/button.ts'),
   field: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/field.ts'),
   card: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/card.ts'),
+  table: path.join(DEFAULT_REPO_ROOT, 'src/design-system/core/components/table.ts'),
 }
 export const DEFAULT_DOC_FILENAMES = {
   design: 'DESIGN.md',
@@ -58,6 +59,15 @@ const COMPONENT_CONFIGS = [
     classMapExport: 'ntkCardRecipeClassMap',
     purpose: 'Content container recipe for panels, selectable rows, and accent treatments.',
   },
+  {
+    key: 'table',
+    name: 'Table',
+    contractName: 'NtkTableContract',
+    variantsExport: 'ntkTableVariants',
+    defaultsExport: 'ntkTableDefaults',
+    classMapExport: 'ntkTableRecipeClassMap',
+    purpose: 'Data table recipe for row lists, selectable records, and empty states.',
+  },
 ]
 const VUE_WRAPPER_CONFIGS = [
   {
@@ -83,6 +93,12 @@ const VUE_WRAPPER_CONFIGS = [
     contractName: 'NtkFieldContract',
     sourcePath: 'src/design-system/vue/components/DsSelect.vue',
     purpose: 'Native Vue select wrapper backed by the field contract and class recipe.',
+  },
+  {
+    name: 'DsTable',
+    contractName: 'NtkTableContract',
+    sourcePath: 'src/design-system/vue/components/DsTable.vue',
+    purpose: 'Native Vue table wrapper backed by the table contract and class recipe.',
   },
 ]
 

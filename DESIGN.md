@@ -16,6 +16,7 @@ Do not edit by hand.
 | Button recipe | `src/design-system/core/components/button.ts` |
 | Field recipe | `src/design-system/core/components/field.ts` |
 | Card recipe | `src/design-system/core/components/card.ts` |
+| Table recipe | `src/design-system/core/components/table.ts` |
 
 ## Token Model
 
@@ -34,6 +35,7 @@ Do not edit by hand.
 | Button | `solid` | `md` | `primary` | `solid`, `outline`, `ghost`, `link` | `disabled`, `loading` |
 | Field | `outlined` | `md` | `neutral` | `outlined`, `filled`, `plain` | `disabled`, `invalid`, `readonly`, `required` |
 | Card | `default` | `md` | `neutral` | `default`, `outlined`, `elevated`, `accent-left`, `accent-top` | `clickable`, `selected` |
+| Table | `default` | `md` | `neutral` | `default`, `bordered`, `striped` | `selected`, `clickable` |
 
 ## Usage Rules
 

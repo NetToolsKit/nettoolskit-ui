@@ -101,6 +101,20 @@ Existing issue examples:
 - `npm run verify` passed, including 43 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Remaining gaps: `DsTable`, page wrappers, `NtkButton` open-string compatibility migration, full `NtkSelect` parity decisions, and broader focus/keyboard behavior coverage.
 
+### 2026-06-20 00:02 - DsTable Wrapper Slice
+
+- Added `src/design-system/core/components/table.ts` with `NtkTableContract`, typed columns/rows, table variants, defaults, and recipe classes.
+- Added `src/design-system/vue/components/DsTable.vue`.
+- Exported the table contract/recipe from the core component surface and `DsTable` from the design-system Vue component surface.
+- `DsTable` renders native table markup without direct Quasar usage.
+- Component tests cover table recipe output, caption/accessibility label behavior, headers, rows, selected keys, select-all state, row clicks, keyboard row activation, empty state, custom cells, and recipe classes.
+- Generated component docs now list button, field, card, and table contracts plus `DsButton`, `DsCard`, `DsInput`, `DsSelect`, and `DsTable` wrapper sources.
+- `npm test -- tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-table.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 2 files and 15 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- `npm run verify` passed, including 48 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: page wrappers, `NtkDataTable` compatibility decisions, `NtkButton` open-string compatibility migration, full `NtkSelect` parity decisions, and broader CMS direct Quasar migration.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.

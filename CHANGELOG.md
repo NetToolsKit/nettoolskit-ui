@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rendered design-system table wrapper**
+  - Added `NtkTableContract`, table recipe classes, and `DsTable` as a rendered Vue wrapper for native table markup.
+  - Added focused render tests for headers, rows, selected keys, row clicks, empty state, custom cells, and recipe classes.
 - **Rendered design-system select wrapper**
   - Added `DsSelect` as a rendered Vue wrapper backed by the field contract and recipe classes.
   - Added focused render tests for options, placeholder, model updates, invalid, disabled, readonly, and required states.

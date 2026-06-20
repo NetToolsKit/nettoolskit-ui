@@ -1,6 +1,6 @@
 # Component Recipes
 
-Generated from `src/design-system/core/components/contracts.ts`, `src/design-system/core/components/button.ts`, `src/design-system/core/components/field.ts`, `src/design-system/core/components/card.ts`.
+Generated from `src/design-system/core/components/contracts.ts`, `src/design-system/core/components/button.ts`, `src/design-system/core/components/field.ts`, `src/design-system/core/components/card.ts`, `src/design-system/core/components/table.ts`.
 Do not edit by hand.
 
 ## Shared Primitives
@@ -16,6 +16,7 @@ Do not edit by hand.
 | DsCard | `NtkCardContract` | `src/design-system/vue/components/DsCard.vue` | Native Vue card wrapper backed by the card contract and class recipe. |
 | DsInput | `NtkFieldContract` | `src/design-system/vue/components/DsInput.vue` | Native Vue input wrapper backed by the field contract and class recipe. |
 | DsSelect | `NtkFieldContract` | `src/design-system/vue/components/DsSelect.vue` | Native Vue select wrapper backed by the field contract and class recipe. |
+| DsTable | `NtkTableContract` | `src/design-system/vue/components/DsTable.vue` | Native Vue table wrapper backed by the table contract and class recipe. |
 
 ## Button
 
@@ -176,3 +177,56 @@ Source: `src/design-system/core/components/card.ts`.
 | `intent info` | `ntk-card--intent-info` |
 | `state clickable` | `ntk-card--is-clickable` |
 | `state selected` | `ntk-card--is-selected` |
+
+## Table
+
+Data table recipe for row lists, selectable records, and empty states.
+
+Source: `src/design-system/core/components/table.ts`.
+
+| Setting | Values |
+| --- | --- |
+| Defaults | variant `default`, size `md`, intent `neutral` |
+| Variants | `default`, `bordered`, `striped` |
+| Sizes | `sm`, `md`, `lg` |
+| Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
+| States | `selected`, `clickable` |
+
+### Contract Props
+
+| Prop | Optional | Type | Source |
+| --- | --- | --- | --- |
+| `id` | Yes | `string` | `base` |
+| `testId` | Yes | `string` | `base` |
+| `class` | Yes | `NtkClassValue` | `base` |
+| `caption` | Yes | `string` | `NtkTableContract` |
+| `ariaLabel` | Yes | `string` | `NtkTableContract` |
+| `columns` | Yes | `readonly NtkTableColumn[]` | `NtkTableContract` |
+| `rows` | Yes | `readonly NtkTableRow[]` | `NtkTableContract` |
+| `selectedKeys` | Yes | `readonly string[]` | `NtkTableContract` |
+| `variant` | Yes | `NtkTableVariant` | `NtkTableContract` |
+| `size` | Yes | `NtkTableSize` | `NtkTableContract` |
+| `intent` | Yes | `NtkTableIntent` | `NtkTableContract` |
+| `selectable` | Yes | `boolean` | `NtkTableContract` |
+| `emptyLabel` | Yes | `string` | `NtkTableContract` |
+| `emptyValueLabel` | Yes | `string` | `NtkTableContract` |
+
+### Class Map
+
+| Slot | Class |
+| --- | --- |
+| `root` | `ntk-table` |
+| `variant default` | `ntk-table--variant-default` |
+| `variant bordered` | `ntk-table--variant-bordered` |
+| `variant striped` | `ntk-table--variant-striped` |
+| `size sm` | `ntk-table--size-sm` |
+| `size md` | `ntk-table--size-md` |
+| `size lg` | `ntk-table--size-lg` |
+| `intent neutral` | `ntk-table--intent-neutral` |
+| `intent primary` | `ntk-table--intent-primary` |
+| `intent success` | `ntk-table--intent-success` |
+| `intent warning` | `ntk-table--intent-warning` |
+| `intent danger` | `ntk-table--intent-danger` |
+| `intent info` | `ntk-table--intent-info` |
+| `state selected` | `ntk-table--has-selection` |
+| `state clickable` | `ntk-table--has-clickable-rows` |

@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 23:47
+LastUpdated: 2026-06-20 00:02
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -380,6 +380,20 @@ Checkpoint:
 - PR #11 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/11`.
 - PR #11 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: `DsTable`, page wrappers, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
+
+### 2026-06-20 00:02 - DsTable Wrapper Slice
+
+- Added `NtkTableContract`, table variants/defaults, and table recipe classes.
+- Added `DsTable` as a rendered native table wrapper.
+- Exported the table core contract and `DsTable` Vue wrapper.
+- Generated component docs now list button, field, card, and table contracts plus five Vue wrappers.
+- Added focused rendered component tests under `tests/unit/design-system/components/ds-table.spec.ts`.
+- Addressed the table audit's immediate a11y risks with a fallback accessible table name, keyboard row activation, select-all mixed state, and row selection labels based on readable cell values.
+- Focused validation passed: `npm test -- tests/unit/design-system/components/component-recipes.spec.ts tests/unit/design-system/components/ds-table.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 2 files and 15 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- `npm run verify` passed, including 48 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: page wrappers, `NtkDataTable` compatibility decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 
