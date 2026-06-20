@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 01:42
+LastUpdated: 2026-06-20 01:43
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -62,6 +62,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #14 is open as a draft stacked PR from `feat/nettoolskit-ntk-button-compat-2026-06-20` into `feat/nettoolskit-ds-page-section-wrappers-2026-06-20`.
 - PR #15 is open as a draft stacked PR from `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20` into `feat/nettoolskit-ntk-button-compat-2026-06-20`.
 - PR #16 is open as a draft stacked PR from `feat/nettoolskit-ntk-datatable-compat-2026-06-20` into `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20`.
+- PR #17 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-ds-button-2026-06-20` into `feat/nettoolskit-ntk-datatable-compat-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -478,6 +479,9 @@ Checkpoint:
 - `npm run test:architecture` passed.
 - Focused media E2E subset was attempted: `manages media library assets and applies branding bindings` passed; the three block-preview media flows still fail after asset selection because `img.cms-landing-hero-media__image` is not rendered in the Blocks preview, outside the migrated Media button surface.
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `37f90ff` created the CMS Media Module DsButton slice.
+- PR #17 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/17`.
+- PR #17 Vercel check is pending immediately after opening; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, full `NtkSelect` parity decisions, and final PR/CI/review closeout.
 
 ## Closeout Expectations
