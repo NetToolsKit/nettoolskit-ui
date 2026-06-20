@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 01:25
+LastUpdated: 2026-06-20 01:26
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -61,6 +61,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #13 is open as a draft stacked PR from `feat/nettoolskit-ds-page-section-wrappers-2026-06-20` into `feat/nettoolskit-ds-table-wrapper-2026-06-20`.
 - PR #14 is open as a draft stacked PR from `feat/nettoolskit-ntk-button-compat-2026-06-20` into `feat/nettoolskit-ds-page-section-wrappers-2026-06-20`.
 - PR #15 is open as a draft stacked PR from `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20` into `feat/nettoolskit-ntk-button-compat-2026-06-20`.
+- PR #16 is open as a draft stacked PR from `feat/nettoolskit-ntk-datatable-compat-2026-06-20` into `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -459,6 +460,9 @@ Checkpoint:
 - `npm run lint -- --quiet` passed.
 - `npm run test:design-system` passed with 11 files and 55 tests.
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `493bee1` created the NtkDataTable compatibility slice.
+- PR #16 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/16`.
+- PR #16 Vercel check is pending immediately after opening; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
