@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 01:06
+LastUpdated: 2026-06-20 01:09
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -60,7 +60,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #12 is open as a draft stacked PR from `feat/nettoolskit-ds-table-wrapper-2026-06-20` into `feat/nettoolskit-ds-select-wrapper-2026-06-20`.
 - PR #13 is open as a draft stacked PR from `feat/nettoolskit-ds-page-section-wrappers-2026-06-20` into `feat/nettoolskit-ds-table-wrapper-2026-06-20`.
 - PR #14 is open as a draft stacked PR from `feat/nettoolskit-ntk-button-compat-2026-06-20` into `feat/nettoolskit-ds-page-section-wrappers-2026-06-20`.
-- The next local slice is in progress on `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20` to migrate the CMS authoring ruler controls to `DsButton`.
+- PR #15 is open as a draft stacked PR from `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20` into `feat/nettoolskit-ntk-button-compat-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -444,6 +444,9 @@ Checkpoint:
 - `npm run type-check` passed.
 - `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures settings shell in light preset|captures settings shell in dark preset|captures settings shell in monochrome preset|captures phase 3 pages quick-start and command surface" --workers=1 --update-snapshots` passed with 4 tests and regenerated only affected snapshots.
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `fc249cf` created the CMS authoring ruler DsButton slice.
+- PR #15 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/15`.
+- PR #15 Vercel check is pending immediately after opening; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: `NtkDataTable` compatibility decisions, full `NtkSelect` parity decisions, broader CMS direct Quasar migration, and final PR/CI/review closeout.
 
 ## Closeout Expectations
