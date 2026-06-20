@@ -1981,6 +1981,18 @@
   padding: var(--ntk-cms-space-lg);
 }
 
+.cms-native-separator {
+  inline-size: 100%;
+  block-size: 0;
+  margin: 0;
+  border: 0;
+  border-block-start: var(--ntk-cms-border-width) solid color-mix(in srgb, var(--ntk-cms-border-color) 68%, transparent);
+}
+
+.cms-native-separator--spaced {
+  margin-block: var(--ntk-cms-space-md);
+}
+
 .cms-designer-card__body {
   display: flex;
   flex-direction: column;

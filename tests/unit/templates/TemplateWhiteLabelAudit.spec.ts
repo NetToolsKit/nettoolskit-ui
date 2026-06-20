@@ -1508,6 +1508,18 @@ describe('template white-label audit', () => {
     expect(cmsAuthoringWorkbenchSource).not.toContain('<q-card')
   })
 
+  it('keeps CMS authoring separators on native markup', () => {
+    const cmsAuthoringVueFiles = listRepoFiles('../../../src/templates/features/cms/authoring')
+      .filter((filePath) => filePath.endsWith('.vue'))
+    const cmsAuthoringStylesSource = readRepoFile('../../../src/templates/styles/cms-authoring-reference.css')
+
+    expect(cmsAuthoringStylesSource).toContain('.cms-native-separator')
+
+    for (const filePath of cmsAuthoringVueFiles) {
+      expect(readRepoFile(filePath), toDisplayPath(filePath)).not.toContain('<q-separator')
+    }
+  })
+
   it('keeps the CMS media module fields on Ntk form compatibility wrappers', () => {
     const cmsMediaModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue')
 

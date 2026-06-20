@@ -840,7 +840,7 @@
                   </q-chip>
                 </template>
               </CmsSectionHeaderSummary>
-              <q-separator />
+              <hr class="cms-native-separator" aria-hidden="true">
               <div class="cms-pages__reusable-list">
                 <div
                   v-if="filteredCmsReusableSectionLibrary.length === 0"

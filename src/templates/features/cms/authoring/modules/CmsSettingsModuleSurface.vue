@@ -671,7 +671,7 @@
                         </div>
                       </div>
 
-                      <q-separator class="q-my-md" />
+                      <hr class="cms-native-separator cms-native-separator--spaced" aria-hidden="true">
 
                       <div class="cms-section-header">
                         <strong>{{ tr('Menu items', 'Itens do menu') }}</strong>
@@ -764,7 +764,7 @@
                         <q-toggle v-model="settings.layout.defaultMini" :label="tr('Mini mode by default', 'Modo mini por padrão')" />
                       </div>
 
-                      <q-separator class="q-my-md" />
+                      <hr class="cms-native-separator cms-native-separator--spaced" aria-hidden="true">
 
                       <div class="cms-section-header">
                         <strong>{{ tr('Topbar actions', 'Ações da topbar') }}</strong>

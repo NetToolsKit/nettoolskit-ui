@@ -20,7 +20,7 @@
           @click="$emit('update:modelValue', false)"
         />
       </div>
-      <q-separator />
+      <hr class="cms-native-separator" aria-hidden="true">
       <div class="cms-usage-drawer__body">
         <p v-if="subtitle" class="cms-preview-content-text">
           {{ subtitle }}

@@ -474,6 +474,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Refreshed the dark CMS shell visual baseline where the workbench now uses the CMS dark surface instead of the Quasar card default.
 - **CMS shell card native separator**
   - Replaced the shared CMS shell card `q-separator` with a tokenized native `hr` separator while preserving the `showSeparator` contract and visual coverage.
+- **CMS authoring native separators**
+  - Replaced the remaining direct `q-separator` controls in CMS authoring surfaces with tokenized native `hr` separators.
+  - Added audit coverage preventing direct `q-separator` regressions in CMS authoring Vue files and refreshed the reusable block impact drawer visual baseline.
 - **CMS field bridge token aliases**
   - Removed duplicated broad Quasar field overrides from the CMS authoring stylesheet and routed field colors/borders through scoped token aliases consumed by the shared template bridge.
   - Refreshed the dark CMS shell visual baseline so dark preset fields now follow the tokenized CMS surface instead of Quasar's default light field surface.

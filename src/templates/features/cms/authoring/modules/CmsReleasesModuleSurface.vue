@@ -674,7 +674,7 @@
         {{ noScheduledReleasesMessage }}
       </p>
 
-      <q-separator spaced />
+      <hr class="cms-native-separator cms-native-separator--spaced" aria-hidden="true">
 
       <article
         v-for="conflict in releaseCalendarConflicts"
