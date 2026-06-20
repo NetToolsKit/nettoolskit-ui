@@ -5,13 +5,9 @@
       body-class="cms-media__editor"
     >
       <template #header-actions>
-        <q-chip
-          dense
-          square
-          :style="statusChipStyle"
-        >
+        <CmsStatusChip :style="statusChipStyle">
           {{ assetCount }}
-        </q-chip>
+        </CmsStatusChip>
       </template>
 
       <div class="cms-form-grid">
@@ -200,14 +196,12 @@
       body-class="cms-media__preview"
     >
       <template #header-actions>
-        <q-chip
+        <CmsStatusChip
           v-if="mediaDiagnostics.length > 0"
-          dense
-          square
           :style="getCmsDiagnosticStyle('warning')"
         >
           {{ mediaDiagnostics.length }} {{ t('diagnostics', 'diagnosticos') }}
-        </q-chip>
+        </CmsStatusChip>
       </template>
 
       <CmsDiagnosticsListSection
@@ -231,21 +225,15 @@
           <small>{{ binding.description }}</small>
         </div>
         <div class="cms-media-preview-item__tags">
-          <q-chip
-            dense
-            square
-            :style="statusChipStyle"
-          >
+          <CmsStatusChip :style="statusChipStyle">
             {{ binding.assetName }}
-          </q-chip>
-          <q-chip
+          </CmsStatusChip>
+          <CmsStatusChip
             v-if="binding.assetId"
-            dense
-            square
             :style="previewChipStyle"
           >
             {{ binding.assetId }}
-          </q-chip>
+          </CmsStatusChip>
         </div>
         <code class="cms-media-preview-item__url">{{ binding.url || t('No URL configured', 'Nenhuma URL configurada') }}</code>
       </article>
@@ -273,61 +261,41 @@
           />
         </div>
         <div class="cms-media-preview-item__tags">
-          <q-chip
-            dense
-            square
-            :style="statusChipStyle"
-          >
+          <CmsStatusChip :style="statusChipStyle">
             {{ getCmsMediaKindLabel(asset.kind) }}
-          </q-chip>
-          <q-chip
-            dense
-            square
-            :style="previewChipStyle"
-          >
+          </CmsStatusChip>
+          <CmsStatusChip :style="previewChipStyle">
             {{ getCmsMediaUsageCount(asset.id) }} {{ t('refs', 'refs') }}
-          </q-chip>
-          <q-chip
-            dense
-            square
-            :style="previewChipStyle"
-          >
+          </CmsStatusChip>
+          <CmsStatusChip :style="previewChipStyle">
             {{ getCmsMediaUsageSummaryLabel(asset.id) }}
-          </q-chip>
-          <q-chip
+          </CmsStatusChip>
+          <CmsStatusChip
             v-if="asset.focalPoint"
-            dense
-            square
             :style="previewChipStyle"
           >
             FP {{ asset.focalPoint.x }}, {{ asset.focalPoint.y }}
-          </q-chip>
-          <q-chip
+          </CmsStatusChip>
+          <CmsStatusChip
             v-if="asset.replaceTargetAssetId"
-            dense
-            square
             :style="previewChipStyle"
           >
             {{ t('replaces to', 'substitui para') }} {{ asset.replaceTargetAssetId }}
-          </q-chip>
-          <q-chip
+          </CmsStatusChip>
+          <CmsStatusChip
             v-for="tag in asset.tags"
             :key="`${asset.id}-${tag}`"
-            dense
-            square
             :style="previewChipStyle"
           >
             {{ tag }}
-          </q-chip>
-          <q-chip
+          </CmsStatusChip>
+          <CmsStatusChip
             v-for="diagnostic in getCmsMediaDiagnosticsForAsset(asset.id)"
             :key="diagnostic.id"
-            dense
-            square
             :style="getCmsDiagnosticStyle(diagnostic.severity)"
           >
             {{ diagnostic.code }}
-          </q-chip>
+          </CmsStatusChip>
         </div>
         <code class="cms-media-preview-item__url">{{ asset.url || t('No URL configured', 'Nenhuma URL configurada') }}</code>
       </article>
@@ -340,6 +308,7 @@ import { computed } from 'vue'
 import type { CmsDiagnosticsListItem } from '../CmsDiagnosticsListSection.vue'
 import CmsDiagnosticsListSection from '../CmsDiagnosticsListSection.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import CmsStatusChip from '../CmsStatusChip.vue'
 import NtkInput from '../../../../../components/form/NtkInput.vue'
 import NtkSelect from '../../../../../components/form/NtkSelect.vue'
 import { DsButton } from '../../../../../design-system/vue'

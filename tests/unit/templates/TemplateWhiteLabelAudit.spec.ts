@@ -1560,14 +1560,17 @@ describe('template white-label audit', () => {
     }
   })
 
-  it('keeps the CMS media module fields on Ntk form compatibility wrappers', () => {
+  it('keeps the CMS media module fields on Ntk wrappers and status chips on native markup', () => {
     const cmsMediaModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue')
 
+    expect(cmsMediaModuleSource).toContain("import CmsStatusChip from '../CmsStatusChip.vue'")
     expect(cmsMediaModuleSource).toContain("import NtkInput from '../../../../../components/form/NtkInput.vue'")
     expect(cmsMediaModuleSource).toContain("import NtkSelect from '../../../../../components/form/NtkSelect.vue'")
+    expect(cmsMediaModuleSource).toContain('<CmsStatusChip')
     expect(cmsMediaModuleSource).toContain('<NtkInput')
     expect(cmsMediaModuleSource).toContain('<NtkSelect')
     expect(cmsMediaModuleSource).toContain('popup-content-class="cms-media-module-surface__popup"')
+    expect(cmsMediaModuleSource).not.toContain('<q-chip')
     expect(cmsMediaModuleSource).not.toContain('<q-input')
     expect(cmsMediaModuleSource).not.toContain('<q-select')
   })

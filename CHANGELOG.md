@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS media module native status chips**
+  - Replaced the remaining direct `q-chip` status badges in the CMS Media authoring module with the native `CmsStatusChip`.
+  - Preserved media counts, diagnostics, binding metadata, asset refs, focal point, replacement, tag, and diagnostic-code badge styling through the existing token-driven chip styles.
 - **CMS shared native status chips**
   - Added a native `CmsStatusChip` for CMS authoring status badges and migrated shared authoring chrome, preview toolbar, locale coverage, usage drawer and media picker badges away from direct `q-chip` usage.
   - Preserved token-driven chip styling and refreshed affected Windows CMS release review visual baselines.
