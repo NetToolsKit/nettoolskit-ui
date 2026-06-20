@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 23:27
+LastUpdated: 2026-06-19 23:30
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -55,6 +55,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #7 is open as a draft stacked PR from `feat/nettoolskit-theme-density-contracts-2026-06-19` into `feat/nettoolskit-token-css-policy-2026-06-19`.
 - PR #8 is open as a draft stacked PR from `feat/nettoolskit-ds-button-wrapper-2026-06-19` into `feat/nettoolskit-theme-density-contracts-2026-06-19`.
 - PR #9 is open as a draft stacked PR from `feat/nettoolskit-ds-card-input-wrappers-2026-06-19` into `feat/nettoolskit-ds-button-wrapper-2026-06-19`.
+- PR #10 is open as a draft stacked PR from `feat/nettoolskit-cms-preview-ds-button-2026-06-19` into `feat/nettoolskit-ds-card-input-wrappers-2026-06-19`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -358,6 +359,9 @@ Checkpoint:
 - `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 2 files and 18 tests.
 - `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures pages preview in published tablet pt-BR mode" --workers=1` passed.
 - `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `bd79f7d` created the CMS pages preview DsButton slice.
+- PR #10 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/10`.
+- PR #10 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `DsSelect`, `DsTable`, and page wrapper work.
 
 ## Closeout Expectations
