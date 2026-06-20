@@ -270,6 +270,20 @@ The largest direct Quasar usage appears in:
 - PR #32 remote checks passed at 2026-06-20 12:34: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Pages, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 12:53 - CMS Pages Module Native Status Chip Slice
+
+- Replaced the sixteen direct `q-chip` status badges in `CmsPagesModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved page template, schema migration, reusable section, starter-kit, quick-start, and linked/detached section badge behavior and styling.
+- Updated Pages-specific E2E selectors from `.q-chip` to `.cms-status-chip` while leaving Releases selectors unchanged.
+- Added template audit coverage proving the Pages module imports `CmsStatusChip` and rejects direct `<q-chip>` regressions.
+- Subagent audit confirmed every former Pages module chip was passive status markup without `icon`, `clickable`, `removable`, or click behavior.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 23 tests.
+- `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
+- Focused Pages visuals passed without snapshot updates for phase 3 pages quick-start, phase 4 schema authoring, phase 4 page custom fields, phase 5 starter-kit bundles, and phase 6 pages review summary; full verify browser gates later passed cleanly after one focused visual run printed a post-run `UV_HANDLE_CLOSING` assertion.
+- Focused Pages E2E passed for linked reusable section readonly authoring and variant branching.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- Remaining gaps: module-local CMS `q-chip` migration in Releases and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
