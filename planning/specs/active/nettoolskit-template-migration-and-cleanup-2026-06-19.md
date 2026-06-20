@@ -286,6 +286,20 @@ The largest direct Quasar usage appears in:
 - PR #33 remote checks passed at 2026-06-20 12:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Releases and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 13:21 - CMS Releases Module Native Status Chip Slice
+
+- Replaced the twenty-three direct `q-chip` status badges in `CmsReleasesModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved release count, review hub, review package history, governance, acknowledgement, checklist, timeline, calendar, and conflict badge behavior and styling.
+- Updated Releases-specific E2E/visual selectors from `.q-chip` to `.cms-status-chip` while leaving the Settings autosave selector unchanged for the final Settings slice.
+- Added template audit coverage proving the Releases module imports `CmsStatusChip` and rejects direct `<q-chip>` regressions.
+- Subagent audit confirmed every former Releases module chip was passive status markup without `icon`, `clickable`, `removable`, or click behavior.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 24 tests.
+- `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
+- Focused Releases visuals passed after refreshing the phase 7 acknowledgements and review package history Windows baselines; phase 6 release review and phase 7 checklist drill-down passed without refresh.
+- Focused Releases E2E passed for release orchestration, checklist validation/drill-down, accessibility/content QA, unified review hub, governance signals, review acknowledgements, and review package export.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- Remaining gaps: module-local CMS `q-chip` migration in Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
