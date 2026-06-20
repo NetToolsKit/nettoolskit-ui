@@ -282,6 +282,8 @@ The largest direct Quasar usage appears in:
 - Focused Pages visuals passed without snapshot updates for phase 3 pages quick-start, phase 4 schema authoring, phase 4 page custom fields, phase 5 starter-kit bundles, and phase 6 pages review summary; full verify browser gates later passed cleanly after one focused visual run printed a post-run `UV_HANDLE_CLOSING` assertion.
 - Focused Pages E2E passed for linked reusable section readonly authoring and variant branching.
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #33 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/33`.
+- PR #33 remote checks passed at 2026-06-20 12:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration in Releases and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
