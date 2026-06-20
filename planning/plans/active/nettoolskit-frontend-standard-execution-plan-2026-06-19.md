@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 03:57
+LastUpdated: 2026-06-20 09:26
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -72,6 +72,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
 - PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`.
 - PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`.
+- PR #27 is open as a draft stacked PR from `refactor/nettoolskit-cms-native-separators-2026-06-20` into `refactor/nettoolskit-cms-shell-native-separator-2026-06-20`; remote check inspection is pending.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -653,6 +654,25 @@ Checkpoint:
 - PR #26 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/26`.
 - PR #26 remote checks passed at 2026-06-20 03:57: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
+
+### 2026-06-20 09:26 - CMS Authoring Native Separator Slice
+
+- Replaced the remaining direct `q-separator` controls in CMS authoring Vue files with tokenized native `hr` separators.
+- Added shared `.cms-native-separator` and `.cms-native-separator--spaced` styles in `cms-authoring-reference.css`.
+- Added template audit coverage preventing direct `<q-separator>` regressions under `src/templates/features/cms/authoring`.
+- Refreshed the reusable block impact drawer Windows visual baseline because its drawer divider now uses native markup.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 52 tests.
+- Direct tag audit passed: `rg -n "<q-separator\\b" src/templates/features/cms/authoring` returned no matches.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- Focused Stylelint passed: `npx stylelint "src/templates/styles/cms-authoring-reference.css"`.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 1044` and no exceeded metrics.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `41697ca` created the CMS authoring native separator slice.
+- PR #27 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/27`.
+- Remote check inspection remains pending for PR #27.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/review closeout.
 
 ## Closeout Expectations
 
