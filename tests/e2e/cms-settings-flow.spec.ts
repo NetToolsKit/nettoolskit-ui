@@ -1568,7 +1568,7 @@ test.describe('CMS settings white-label flow', () => {
     const linkedSectionRow = page
       .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
       .first()
-    await expect(linkedSectionRow.locator('.q-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
+    await expect(linkedSectionRow.locator('.cms-status-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
 
     await linkedSectionRow.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-blocks-section-fields, .cms-banner').first()).toContainText(/linked|vinculad|read-only|somente leitura/i)
@@ -1582,7 +1582,7 @@ test.describe('CMS settings white-label flow', () => {
     const detachedSectionRowAfterDetach = page
       .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
       .first()
-    await expect(detachedSectionRowAfterDetach.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
+    await expect(detachedSectionRowAfterDetach.locator('.cms-status-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
 
     await detachedSectionRowAfterDetach.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
     await expect(page.locator('.cms-banner')).toHaveCount(0)
@@ -1624,7 +1624,7 @@ test.describe('CMS settings white-label flow', () => {
       .first()
 
     await linkedSectionRow.getByRole('button', { name: /^(Branch variant|Ramificar variante)$/ }).first().click({ force: true })
-    await expect(linkedSectionRow.locator('.q-chip', { hasText: /Variant|Variante/i })).toBeVisible()
+    await expect(linkedSectionRow.locator('.cms-status-chip', { hasText: /Variant|Variante/i })).toBeVisible()
     await expect(
       page.locator('.cms-pages__reusable-library .cms-reusable-block-row', { hasText: 'Main Landing · Hero Variant' }).first()
     ).toContainText(/Variant of Main Landing · Hero|Variante de Main Landing · Hero/i)
@@ -1634,7 +1634,7 @@ test.describe('CMS settings white-label flow', () => {
     const detachedVariantSectionRow = page
       .locator('.cms-page-section-row', { has: page.locator('input[value="hero-2"]') })
       .first()
-    await expect(detachedVariantSectionRow.locator('.q-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
+    await expect(detachedVariantSectionRow.locator('.cms-status-chip', { hasText: /^(Detached|Desvinculado)/ })).toBeVisible()
     await detachedVariantSectionRow.getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
 
     await fillTextInput(cmsInputByLabel(page, 'Reusable block name'), reusableBlockName)

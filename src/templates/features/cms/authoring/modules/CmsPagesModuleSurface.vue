@@ -90,13 +90,9 @@
           @toggle-mode="toggleCmsDesignerStageGrid()"
         >
           <template #meta-prefix>
-            <q-chip
-              dense
-              square
-              :style="statusChipStyle"
-            >
+            <CmsStatusChip :style="statusChipStyle">
               {{ selectedPageTemplateId }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsAuthoringRulerBar>
       </template>
@@ -172,36 +168,24 @@
                 summary-class="cms-page-migration-summary__chips"
               >
                 <template #summary>
-                  <q-chip
-                    dense
-                    square
-                    :style="warningActionStyle"
-                  >
+                  <CmsStatusChip :style="warningActionStyle">
                     {{ tr('Pending', 'Pendentes') }}: {{ cmsSchemaMigrationBatchReport.summary.upgradeRequiredCount + cmsSchemaMigrationBatchReport.summary.versionMissingCount }}
-                  </q-chip>
-                  <q-chip
+                  </CmsStatusChip>
+                  <CmsStatusChip
                     v-if="cmsSchemaMigrationBatchReport.summary.invalidModelCount > 0"
-                    dense
-                    square
                     :style="dangerActionStyle"
                   >
                     {{ tr('Invalid', 'Invalidos') }}: {{ cmsSchemaMigrationBatchReport.summary.invalidModelCount }}
-                  </q-chip>
-                  <q-chip
+                  </CmsStatusChip>
+                  <CmsStatusChip
                     v-if="cmsSchemaMigrationBatchReport.summary.aheadCount > 0"
-                    dense
-                    square
                     :style="dangerActionStyle"
                   >
                     {{ tr('Ahead', 'A frente') }}: {{ cmsSchemaMigrationBatchReport.summary.aheadCount }}
-                  </q-chip>
-                  <q-chip
-                    dense
-                    square
-                    :style="statusChipStyle"
-                  >
+                  </CmsStatusChip>
+                  <CmsStatusChip :style="statusChipStyle">
                     {{ getCmsSchemaMigrationBatchSummaryLabel() }}
-                  </q-chip>
+                  </CmsStatusChip>
                 </template>
               </CmsSectionHeaderSummary>
             </div>
@@ -584,22 +568,14 @@
                     summary-class="cms-page-item__schema-migration-chips"
                   >
                     <template #summary>
-                      <q-chip
-                        dense
-                        square
-                        :style="getCmsSchemaMigrationStatusStyle(getCmsPageSchemaMigrationReport(page.id)?.status ?? 'current')"
-                      >
+                      <CmsStatusChip :style="getCmsSchemaMigrationStatusStyle(getCmsPageSchemaMigrationReport(page.id)?.status ?? 'current')">
                         {{ getCmsSchemaMigrationStatusLabel(getCmsPageSchemaMigrationReport(page.id)?.status ?? 'current') }}
-                      </q-chip>
-                      <q-chip
-                        dense
-                        square
-                        :style="statusChipStyle"
-                      >
+                      </CmsStatusChip>
+                      <CmsStatusChip :style="statusChipStyle">
                         {{
                           `v${getCmsPageSchemaMigrationReport(page.id)?.appliedVersion ?? '?'} -> v${getCmsPageSchemaMigrationReport(page.id)?.targetVersion ?? '?'}`
                         }}
-                      </q-chip>
+                      </CmsStatusChip>
                     </template>
                   </CmsSectionHeaderSummary>
                   <small v-if="getCmsPageSchemaMigrationReport(page.id)?.migrationNotes">
@@ -620,13 +596,9 @@
                       :key="change?.id"
                       class="cms-review-summary__item"
                     >
-                      <q-chip
-                        dense
-                        square
-                        :style="getCmsSchemaMigrationChangeStyle(change?.kind ?? 'update')"
-                      >
+                      <CmsStatusChip :style="getCmsSchemaMigrationChangeStyle(change?.kind ?? 'update')">
                         {{ getCmsSchemaMigrationChangeKindLabel(change?.kind ?? 'update') }}
-                      </q-chip>
+                      </CmsStatusChip>
                       <div class="cms-review-summary__body">
                         <strong>{{ change?.label }}</strong>
                         <small>{{ change?.path }}</small>
@@ -650,13 +622,11 @@
                   >
                     <div class="cms-page-item__starter-card-header">
                       <strong>{{ variant.label }}</strong>
-                      <q-chip
-                        dense
-                        square
+                      <CmsStatusChip
                         :style="isCmsSectionStarterPresetSelected(pageIndex, variant.value) ? primaryActionStyle : statusChipStyle"
                       >
                         {{ getCmsStarterPresetSourceLabel(variant) }}
-                      </q-chip>
+                      </CmsStatusChip>
                     </div>
                     <small>{{ variant.description }}</small>
                   </button>
@@ -701,10 +671,8 @@
                     v-model="section.enabled"
                     :label="tr('Enabled', 'Ativado')"
                   />
-                  <q-chip
+                  <CmsStatusChip
                     v-if="section.reusableMode"
-                    dense
-                    square
                     :style="statusChipStyle"
                   >
                     {{
@@ -712,7 +680,7 @@
                         ? `${tr('Linked', 'Vinculado')} · ${getCmsReusableSourceLabel(section.reusableSourceId, 'section')}`
                         : `${tr('Detached', 'Desvinculado')} · ${getCmsReusableSourceLabel(section.reusableSourceId, 'section')}`
                     }}
-                  </q-chip>
+                  </CmsStatusChip>
                   <div class="cms-page-section-row__actions">
                     <q-btn
                       :key="`${section.id}-duplicate`"
@@ -831,13 +799,9 @@
                     dense
                     :label="tr('Show archived', 'Mostrar arquivados')"
                   />
-                  <q-chip
-                    dense
-                    square
-                    :style="statusChipStyle"
-                  >
+                  <CmsStatusChip :style="statusChipStyle">
                     {{ filteredCmsReusableSectionLibrary.length }}/{{ settings.reusableSections.length }}
-                  </q-chip>
+                  </CmsStatusChip>
                 </template>
               </CmsSectionHeaderSummary>
               <hr class="cms-native-separator" aria-hidden="true">
@@ -860,13 +824,9 @@
                   <div class="cms-reusable-block-row__meta">
                     <div class="cms-blocks-library__header">
                       <strong>{{ reusableSection.name }}</strong>
-                      <q-chip
-                        dense
-                        square
-                        :style="statusChipStyle"
-                      >
+                      <CmsStatusChip :style="statusChipStyle">
                         {{ getCmsReusableSectionUsageCount(reusableSection.id) }} {{ tr('uses', 'usos') }}
-                      </q-chip>
+                      </CmsStatusChip>
                     </div>
                     <small>{{ getCmsContentModelLabel(settings.content.locale, reusableSection.contentModelId, settings.authoredContentModels) }} · {{ getCmsSectionPresetLabel(reusableSection.presetId) }}</small>
                     <small>{{ getCmsReusableSectionLabelValue(reusableSection) }} · {{ reusableSection.blocks.length }} {{ tr('blocks', 'blocos') }}</small>
@@ -982,13 +942,9 @@
                     }}
                   </small>
                 </div>
-                <q-chip
-                  dense
-                  square
-                  :style="statusChipStyle"
-                >
+                <CmsStatusChip :style="statusChipStyle">
                   {{ hasCmsBuilderSearch ? `${filteredCmsStarterKitOptions.length}/${cmsStarterKitOptions.length}` : cmsStarterKitOptions.length }}
-                </q-chip>
+                </CmsStatusChip>
               </div>
               <div class="cms-pages__quick-start-grid">
                 <article
@@ -998,13 +954,9 @@
                 >
                   <div class="cms-page-quick-start-card__header">
                     <strong>{{ starterKit.label }}</strong>
-                    <q-chip
-                      dense
-                      square
-                      :style="statusChipStyle"
-                    >
+                    <CmsStatusChip :style="statusChipStyle">
                       {{ starterKit.sectionCount }}
-                    </q-chip>
+                    </CmsStatusChip>
                   </div>
                   <small class="cms-page-quick-start-card__description">{{ starterKit.description }}</small>
                   <div class="cms-page-quick-start-card__meta">
@@ -1073,13 +1025,9 @@
                     }}
                   </small>
                 </div>
-                <q-chip
-                  dense
-                  square
-                  :style="statusChipStyle"
-                >
+                <CmsStatusChip :style="statusChipStyle">
                   {{ hasCmsBuilderSearch ? `${filteredCmsPageQuickStartOptions.length}/${cmsPageQuickStartOptions.length}` : cmsPageQuickStartOptions.length }}
-                </q-chip>
+                </CmsStatusChip>
               </div>
               <div class="cms-pages__quick-start-grid">
                 <article
@@ -1089,13 +1037,9 @@
                 >
                   <div class="cms-page-quick-start-card__header">
                     <strong>{{ quickStart.label }}</strong>
-                    <q-chip
-                      dense
-                      square
-                      :style="statusChipStyle"
-                    >
+                    <CmsStatusChip :style="statusChipStyle">
                       {{ quickStart.sectionCount }}
-                    </q-chip>
+                    </CmsStatusChip>
                   </div>
                   <small class="cms-page-quick-start-card__description">{{ quickStart.description }}</small>
                   <div class="cms-page-quick-start-card__meta">
@@ -1237,6 +1181,7 @@ import type { CmsDiagnosticsListItem } from '../CmsDiagnosticsListSection.vue'
 import CmsMediaAssetPicker from '../CmsMediaAssetPicker.vue'
 import CmsPagesPreviewSurface from './CmsPagesPreviewSurface.vue'
 import CmsSectionHeaderSummary from '../CmsSectionHeaderSummary.vue'
+import CmsStatusChip from '../CmsStatusChip.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from '../CmsWorkspaceTabs.vue'
 
 interface CmsSelectOption<TValue extends string = string> {
