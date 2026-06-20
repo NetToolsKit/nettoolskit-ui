@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS preview toolbar select migration**
+  - Replaced the three direct `q-select` controls in the shared CMS preview toolbar with the `NtkSelect` compatibility wrapper.
+  - Preserved draft/published source, locale, viewport, toolbar data attributes, and popup styling while adding audit coverage against direct `q-select` regression.
 - **CMS releases module button migration**
   - Replaced the eleven direct `q-btn` controls in the CMS Releases authoring module with the rendered `DsButton` wrapper.
   - Moved release E2E action selectors from `.q-btn` to role/name based button selectors and refreshed the affected Windows release visual baselines.

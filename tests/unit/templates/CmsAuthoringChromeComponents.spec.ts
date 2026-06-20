@@ -340,7 +340,7 @@ describe('CmsPreviewToolbar', () => {
 
   it('renders with data attributes reflecting source and viewport', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { 'q-select': true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
       props: baseProps,
     })
 
@@ -348,9 +348,25 @@ describe('CmsPreviewToolbar', () => {
     expect(wrapper.attributes('data-cms-preview-viewport')).toBe('desktop')
   })
 
+  it('renders preview fields through NtkSelect compatibility wrappers', () => {
+    const wrapper = shallowMount(CmsPreviewToolbar, {
+      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      props: baseProps,
+    })
+
+    const fields = wrapper.findAll('ntk-select-stub')
+
+    expect(fields).toHaveLength(3)
+    for (const field of fields) {
+      expect(field.attributes('variant')).toBe('outlined')
+      expect(field.attributes('size')).toBe('sm')
+      expect(field.attributes('popup-content-class')).toBe('cms-preview-toolbar__popup')
+    }
+  })
+
   it('shows publishedReleaseLabel chip when provided', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { 'q-select': true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
       props: { ...baseProps, publishedReleaseLabel: 'v2.1.0' },
     })
 
@@ -362,7 +378,7 @@ describe('CmsPreviewToolbar', () => {
 
   it('hides publishedReleaseLabel chip when null', () => {
     const wrapper = shallowMount(CmsPreviewToolbar, {
-      global: { stubs: { 'q-select': true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
+      global: { stubs: { NtkSelect: true, 'q-chip': { template: '<span class="chip"><slot /></span>' } } },
       props: { ...baseProps, publishedReleaseLabel: null },
     })
 

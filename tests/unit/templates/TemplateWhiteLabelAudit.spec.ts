@@ -1486,6 +1486,15 @@ describe('template white-label audit', () => {
     expect(cmsReleasesModuleSource).not.toContain('<q-btn')
   })
 
+  it('keeps the CMS preview toolbar on the NtkSelect compatibility wrapper', () => {
+    const cmsPreviewToolbarSource = readRepoFile('../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue')
+
+    expect(cmsPreviewToolbarSource).toContain("import NtkSelect from '../../../../components/form/NtkSelect.vue'")
+    expect(cmsPreviewToolbarSource).toContain('<NtkSelect')
+    expect(cmsPreviewToolbarSource).toContain('popup-content-class="cms-preview-toolbar__popup"')
+    expect(cmsPreviewToolbarSource).not.toContain('<q-select')
+  })
+
   it('keeps wiki and reference dark-contrast fixes routed through stable tokens', () => {
     const wikiSource = readRepoFile('../../../src/templates/features/wiki/WikiTemplate.vue')
     const wikiChatSource = readRepoFile('../../../src/templates/features/wiki/WikiChatTemplate.vue')
