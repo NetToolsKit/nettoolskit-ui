@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS blocks module native status chips**
+  - Replaced the remaining direct `q-chip` status badges in the CMS Blocks module with the native `CmsStatusChip`.
+  - Preserved ruler counts, reusable library counts, usage badges, block status badges, linked/detached state, and preview diff badge styling through existing token-driven chip styles.
 - **CMS pages preview native status chips**
   - Replaced the remaining direct `q-chip` status badges in the CMS Pages preview module with the native `CmsStatusChip`.
   - Preserved draft/published diff, page metadata, page status, page diff, and section badge styling through existing token-driven chip styles.

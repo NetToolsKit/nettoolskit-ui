@@ -36,7 +36,7 @@
           @toggle-mode="toggleCmsDesignerStageGrid()"
         >
           <template #meta-prefix>
-            <q-chip dense square :style="statusChipStyle">{{ cmsSectionBlocks.length }} {{ tr('blocks', 'blocos') }}</q-chip>
+            <CmsStatusChip :style="statusChipStyle">{{ cmsSectionBlocks.length }} {{ tr('blocks', 'blocos') }}</CmsStatusChip>
           </template>
         </CmsAuthoringRulerBar>
       </template>
@@ -550,9 +550,9 @@
                     :label="tr('Show archived', 'Mostrar arquivados')"
                     @update:model-value="emit('update:showArchivedReusableBlocks', Boolean($event))"
                   />
-                  <q-chip dense square :style="statusChipStyle">
+                  <CmsStatusChip :style="statusChipStyle">
                     {{ filteredCmsReusableBlockLibrary.length }}/{{ settings.reusableBlocks.length }}
-                  </q-chip>
+                  </CmsStatusChip>
                 </div>
               </div>
 
@@ -579,9 +579,9 @@
                 <div class="cms-reusable-block-row__meta">
                   <div class="cms-blocks-library__header">
                     <strong>{{ reusableBlock.name }}</strong>
-                    <q-chip dense square :style="statusChipStyle">
+                    <CmsStatusChip :style="statusChipStyle">
                       {{ getCmsReusableBlockUsageCount(reusableBlock.id) }} {{ tr('uses', 'usos') }}
-                    </q-chip>
+                    </CmsStatusChip>
                   </div>
                   <small>{{ resolveCmsBlockDisplayName(reusableBlock.type) }} · {{ reusableBlock.category }}</small>
                   <small v-if="isCmsArchivedEntity(reusableBlock)">{{ tr('Archived', 'Arquivado') }}</small>
@@ -710,9 +710,9 @@
                       :label="tr('Show archived', 'Mostrar arquivados')"
                       @update:model-value="emit('update:showArchivedAuthoredBlockPresets', Boolean($event))"
                     />
-                    <q-chip dense square :style="statusChipStyle">
+                    <CmsStatusChip :style="statusChipStyle">
                       {{ filteredCmsAuthoredBlockPresetLibrary.length }}/{{ settings.authoredBlockPresets.length }}
-                    </q-chip>
+                    </CmsStatusChip>
                   </div>
                 </div>
 
@@ -739,9 +739,9 @@
                   <div class="cms-reusable-block-row__meta">
                     <div class="cms-blocks-library__header">
                       <strong>{{ getCmsAuthoredBlockPresetNameValue(preset) }}</strong>
-                      <q-chip dense square :style="statusChipStyle">
+                      <CmsStatusChip :style="statusChipStyle">
                         {{ getCmsAuthoredBlockPresetUsageCount(preset.id) }} {{ tr('uses', 'usos') }}
-                      </q-chip>
+                      </CmsStatusChip>
                     </div>
                     <small>{{ resolveCmsBlockDisplayName(preset.type) }} · {{ preset.category }}</small>
                     <small>{{ getCmsAuthoredPresetStarterSectionsLabel(preset) }}</small>
@@ -945,13 +945,11 @@
                     @drop.stop="onCmsBuilderBlockDrop(block, $event)"
                   >
                     <div class="cms-block-row__meta">
-                      <q-chip dense square :style="getCmsPageSectionStyle(block.enabled)">
+                      <CmsStatusChip :style="getCmsPageSectionStyle(block.enabled)">
                         {{ resolveCmsBlockDisplayName(block.type) }}
-                      </q-chip>
-                      <q-chip
+                      </CmsStatusChip>
+                      <CmsStatusChip
                         v-if="block.reusableMode"
-                        dense
-                        square
                         :style="statusChipStyle"
                       >
                         {{
@@ -959,7 +957,7 @@
                             ? `${tr('Linked', 'Vinculado')} · ${getCmsReusableSourceLabel(block.reusableSourceId, 'block')}`
                             : `${tr('Detached', 'Desvinculado')} · ${getCmsReusableSourceLabel(block.reusableSourceId, 'block')}`
                         }}
-                      </q-chip>
+                      </CmsStatusChip>
                       <small>{{ block.id }}</small>
                       <small>{{ block.type }}</small>
                     </div>
@@ -1119,9 +1117,7 @@
           summary-class="cms-page-preview__chips"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
+            <CmsStatusChip
               :style="cmsPreviewDraftPublishedDiff.hasChanges ? getCmsPreviewDiffStatusStyle('changed') : getCmsPreviewDiffStatusStyle('unchanged')"
             >
               {{
@@ -1129,7 +1125,7 @@
                   ? tr('Changes detected', 'Mudanças detectadas')
                   : tr('No changes against published', 'Sem mudanças contra o publicado')
               }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
         <div class="cms-blocks-summary-grid">
@@ -1148,9 +1144,9 @@
         </div>
         <div class="cms-review-summary__list">
           <article v-if="activeBlocksPageDiff" class="cms-review-summary__item">
-            <q-chip dense square :style="getCmsPreviewDiffStatusStyle(activeBlocksPageDiff.status)">
+            <CmsStatusChip :style="getCmsPreviewDiffStatusStyle(activeBlocksPageDiff.status)">
               {{ getCmsPreviewDiffStatusLabel(activeBlocksPageDiff.status) }}
-            </q-chip>
+            </CmsStatusChip>
             <div class="cms-review-summary__body">
               <strong>{{ getCmsPreviewDiffPageLabel(activeBlocksPageDiff) }}</strong>
               <small v-if="getCmsPreviewDiffPagePath(activeBlocksPageDiff)">{{ getCmsPreviewDiffPagePath(activeBlocksPageDiff) }}</small>
@@ -1165,9 +1161,9 @@
             </div>
           </article>
           <article v-if="activeBlocksSectionDiff" class="cms-review-summary__item">
-            <q-chip dense square :style="getCmsPreviewDiffStatusStyle(activeBlocksSectionDiff.status)">
+            <CmsStatusChip :style="getCmsPreviewDiffStatusStyle(activeBlocksSectionDiff.status)">
               {{ getCmsPreviewDiffStatusLabel(activeBlocksSectionDiff.status) }}
-            </q-chip>
+            </CmsStatusChip>
             <div class="cms-review-summary__body">
               <strong>{{ activeBlocksSectionDiff.draftLabel || activeBlocksSectionDiff.publishedLabel || activeBlocksSectionDiff.sectionId }}</strong>
               <small>
@@ -1181,9 +1177,9 @@
             </div>
           </article>
           <article v-if="activeBlocksBlockDiff" class="cms-review-summary__item">
-            <q-chip dense square :style="getCmsPreviewDiffStatusStyle(activeBlocksBlockDiff.status)">
+            <CmsStatusChip :style="getCmsPreviewDiffStatusStyle(activeBlocksBlockDiff.status)">
               {{ getCmsPreviewDiffStatusLabel(activeBlocksBlockDiff.status) }}
-            </q-chip>
+            </CmsStatusChip>
             <div class="cms-review-summary__body">
               <strong>{{ activeBlocksBlockDiff.draftType || activeBlocksBlockDiff.publishedType || activeBlocksBlockDiff.blockId }}</strong>
               <small>{{ activeBlocksBlockDiff.blockId }}</small>
@@ -1458,6 +1454,7 @@ import CmsMediaAssetPicker from '../CmsMediaAssetPicker.vue'
 import CmsPreviewToolbar from '../CmsPreviewToolbar.vue'
 import CmsSectionHeaderSummary from '../CmsSectionHeaderSummary.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import CmsStatusChip from '../CmsStatusChip.vue'
 import CmsWorkspaceTabs, { type CmsWorkspaceTabOption } from '../CmsWorkspaceTabs.vue'
 
 interface CmsSelectOption<TValue extends string = string> {

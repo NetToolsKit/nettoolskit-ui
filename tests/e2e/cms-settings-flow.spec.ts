@@ -1600,7 +1600,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-block-row')).toHaveCount(initialBlockCount + 1)
 
     const linkedBlockRow = page.locator('.cms-block-row', { hasText: reusableBlockName }).first()
-    await expect(linkedBlockRow.locator('.q-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
+    await expect(linkedBlockRow.locator('.cms-status-chip', { hasText: /^(Linked|Vinculado)/ })).toBeVisible()
     await linkedBlockRow.getByRole('button', { name: /^(Select|Selecionar)$/ }).first().click({ force: true })
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
     await expect(await resolveBlockPropsJsonInput(page)).toBeDisabled()
@@ -1646,7 +1646,7 @@ test.describe('CMS settings white-label flow', () => {
 
     const variantReusableBlockRow = page.locator('.cms-blocks-library .cms-reusable-block-row', { hasText: `${reusableBlockName} Variant` }).first()
     await expect(variantReusableBlockRow).toContainText(/Variant of Variant Hero Block QA|Variante de Variant Hero Block QA/i)
-    await expect(linkedBlockRow.locator('.q-chip', { hasText: /Variant|Variante/i })).toBeVisible()
+    await expect(linkedBlockRow.locator('.cms-status-chip', { hasText: /Variant|Variante/i })).toBeVisible()
   })
 
   test('surfaces usage summaries and blocks deletes for in-use reusable entities', async ({ page }) => {
