@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 23:13
+LastUpdated: 2026-06-19 23:16
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -54,6 +54,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #6 is open as a draft stacked PR from `feat/nettoolskit-token-css-policy-2026-06-19` into `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19`.
 - PR #7 is open as a draft stacked PR from `feat/nettoolskit-theme-density-contracts-2026-06-19` into `feat/nettoolskit-token-css-policy-2026-06-19`.
 - PR #8 is open as a draft stacked PR from `feat/nettoolskit-ds-button-wrapper-2026-06-19` into `feat/nettoolskit-theme-density-contracts-2026-06-19`.
+- PR #9 is open as a draft stacked PR from `feat/nettoolskit-ds-card-input-wrappers-2026-06-19` into `feat/nettoolskit-ds-button-wrapper-2026-06-19`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -340,6 +341,9 @@ Checkpoint:
 - Stabilized CMS visual regression selectors around Quasar menus and drawer screenshots; regenerated the previously blank reusable-block impact drawer baseline.
 - `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures pages preview in published tablet pt-BR mode|captures phase 5 reusable block impact drawer" --workers=1` passed with 2 tests.
 - `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `0ad377d` created the DsCard and DsInput wrapper slice.
+- PR #9 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/9`.
+- PR #9 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: `DsSelect`, `DsTable`, page wrappers, compatibility migration for open `NtkButton` visual strings, and broader focus/keyboard behavior coverage.
 
 ## Closeout Expectations
