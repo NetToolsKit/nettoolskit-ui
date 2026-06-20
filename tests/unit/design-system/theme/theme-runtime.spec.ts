@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  createDensityCssVariableAssignmentMap,
+  createDensityCssVariableAssignments,
   DEFAULT_THEME_DENSITY,
   DEFAULT_THEME_ID,
   normalizeResolvedTokenMap,
@@ -15,7 +17,7 @@ describe('theme runtime validation model', () => {
       tenantId: 'Tenant_A',
       tokens: {
         '--ntk-primary': ' #0f766e ',
-        '--ntk-control-height': '32px',
+        '--ntk-spacing-md': '0.75rem',
       },
     })
 
@@ -27,7 +29,7 @@ describe('theme runtime validation model', () => {
       tenantId: 'tenant_a',
       tokens: {
         '--ntk-primary': '#0f766e',
-        '--ntk-control-height': '32px',
+        '--ntk-spacing-md': '0.75rem',
       },
     })
   })
@@ -55,6 +57,7 @@ describe('theme runtime validation model', () => {
     const result = normalizeResolvedTokenMap({
       '--ntk-primary': '#0f766e',
       '--Ntk-Primary': '#ef4444',
+      '--ntk-control-height': '32px',
       '--ntk-danger': 'red; background: blue',
       '--ntk-bg-primary': null,
       '--ntk-spacing-md': '1rem',
@@ -67,7 +70,26 @@ describe('theme runtime validation model', () => {
     })
     expect(result.issues.map(issue => issue.code)).toEqual([
       'invalid_token_name',
+      'unknown_token_name',
       'invalid_token_value',
     ])
+  })
+
+  it('creates deterministic density assignments from generated token names', () => {
+    expect(createDensityCssVariableAssignments('compact')).toEqual([
+      { name: '--ntk-spacing-sm', value: '0.375rem', source: '--ntk-spacing-sm' },
+      { name: '--ntk-spacing-md', value: '0.75rem', source: '--ntk-spacing-md' },
+      { name: '--ntk-spacing-lg', value: '1rem', source: '--ntk-spacing-lg' },
+      { name: '--ntk-radius-md', value: '6px', source: '--ntk-radius-md' },
+      { name: '--ntk-line-height-normal', value: '1.4', source: '--ntk-line-height-normal' },
+    ])
+
+    expect(createDensityCssVariableAssignmentMap('comfortable')).toMatchObject({
+      '--ntk-spacing-sm': '0.5rem',
+      '--ntk-spacing-md': '1rem',
+      '--ntk-spacing-lg': '1.5rem',
+      '--ntk-radius-md': '8px',
+      '--ntk-line-height-normal': '1.6',
+    })
   })
 })

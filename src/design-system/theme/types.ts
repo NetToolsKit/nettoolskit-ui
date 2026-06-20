@@ -31,6 +31,7 @@ export type ThemeValidationIssueCode =
   | 'invalid_tenant_id'
   | 'invalid_token_map'
   | 'invalid_token_name'
+  | 'unknown_token_name'
   | 'invalid_token_value'
 
 export interface ThemeValidationIssue {

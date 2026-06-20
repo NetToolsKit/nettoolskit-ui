@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:02
+LastUpdated: 2026-06-19 22:20
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -297,6 +297,16 @@ Checkpoint:
 - PR #6 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/6`.
 - PR #6 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: full density/theme application, broader CSS governed roots with generated-token excludes, component `Ds*` wrappers, and final PR/CI/review closeout.
+
+### 2026-06-19 22:09 - Theme Density And Known Token Validation Slice
+
+- Added deterministic density CSS variable assignments for compact, comfortable, and spacious modes.
+- Theme validation now rejects token CSS variables that are not present in the generated token resolver.
+- Quasar adapter tests now cover generated-token value inputs.
+- Focused validation passed: `npm test -- tests/unit/design-system/theme --pool=forks --maxWorkers=1 --no-file-parallelism`.
+- `npm run type-check` passed.
+- `npm run verify` passed, including 31 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: DOM theme manager, legacy theme API restriction/deprecation, dark-mode sync, and non-brand Quasar behavior adapters.
 
 ## Closeout Expectations
 

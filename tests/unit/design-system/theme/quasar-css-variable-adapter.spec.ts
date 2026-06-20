@@ -4,6 +4,9 @@ import {
   createQuasarCssVariableAssignmentMap,
   createQuasarCssVariableAssignments,
 } from '../../../../src/design-system/adapters/quasar'
+import {
+  designTokenValues,
+} from '../../../../src/design-system/tokens'
 
 describe('Quasar CSS variable adapter', () => {
   it('emits controlled Quasar assignments from resolved design tokens', () => {
@@ -59,5 +62,23 @@ describe('Quasar CSS variable adapter', () => {
       { name: '--q-secondary', value: '#0f766e', source: '--ntk-primary' },
     ])
     expect(root.style.getPropertyValue('--q-primary')).toBe('#ffffff')
+  })
+
+  it('accepts values sourced from the generated token map', () => {
+    const assignmentMap = createQuasarCssVariableAssignmentMap({
+      '--ntk-primary': designTokenValues['color.primary'],
+      '--ntk-success': designTokenValues['feedback.success'],
+      '--ntk-warning': designTokenValues['feedback.warning'],
+      '--ntk-error': designTokenValues['feedback.error'],
+      '--ntk-info': designTokenValues['feedback.info'],
+    })
+
+    expect(assignmentMap).toMatchObject({
+      '--q-primary': '#0f766e',
+      '--q-positive': '#10b981',
+      '--q-warning': '#f59e0b',
+      '--q-negative': '#ef4444',
+      '--q-info': '#14b8a6',
+    })
   })
 })

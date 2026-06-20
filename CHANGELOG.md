@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Theme density and token validation contracts**
+  - Added density assignment helpers for compact, comfortable, and spacious contexts using generated design-token CSS variable names.
+  - Tightened tenant theme validation so token maps reject unknown CSS variable names that are not present in the generated token resolver.
+  - Extended Quasar adapter tests to verify assignments sourced from generated token values.
 - **Token resolver and CSS governance policy**
   - Added committed token resolver outputs at `src/design-system/tokens/resolver.json` and `src/design-system/tokens/generated/tokens.*` while preserving the existing `nettoolskit/design-system/tokens.css` compatibility export.
   - Added a traceable CSS governance policy with owner/removal metadata for current baseline exceptions and made the architecture test use the same governance CLI path as `lint:css`.

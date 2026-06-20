@@ -1,4 +1,8 @@
 import {
+  designTokensByCssVariable,
+  type DesignTokenCssVariable,
+} from '../tokens/generated/tokens'
+import {
   themeDensities,
   type CssVariableName,
   type ResolvedTokenMap,
@@ -70,6 +74,11 @@ export function isControlledCssVariableName(value: unknown): value is CssVariabl
   return typeof value === 'string' && CSS_VARIABLE_NAME_PATTERN.test(value.trim())
 }
 
+export function isKnownDesignTokenCssVariableName(value: unknown): value is DesignTokenCssVariable {
+  return isControlledCssVariableName(value)
+    && Object.prototype.hasOwnProperty.call(designTokensByCssVariable, value.trim())
+}
+
 export function isControlledCssVariableValue(value: unknown): value is string {
   if (typeof value !== 'string') {
     return false
@@ -116,6 +125,11 @@ export function normalizeResolvedTokenMap(
 
     if (!isControlledCssVariableName(name)) {
       issues.push(createIssue('invalid_token_name', tokenPath, 'Token names must be lowercase CSS custom properties.'))
+      continue
+    }
+
+    if (!isKnownDesignTokenCssVariableName(name)) {
+      issues.push(createIssue('unknown_token_name', tokenPath, 'Token name is not part of the generated design-token resolver.'))
       continue
     }
 

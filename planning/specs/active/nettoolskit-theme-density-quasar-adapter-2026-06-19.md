@@ -59,6 +59,17 @@ These files should be folded into the new adapter model or documented as compati
 4. Tenant input validation rejects unsafe CSS and unknown token keys.
 5. Legacy theme APIs either call the new manager or are deprecated with tests.
 
+## Implementation Evidence
+
+### 2026-06-19 22:09 - Density Assignment And Known Token Validation Slice
+
+- Added `src/design-system/theme/density.ts`.
+- `createDensityCssVariableAssignments()` and `createDensityCssVariableAssignmentMap()` expose compact, comfortable, and spacious assignments using generated token CSS variable names.
+- Theme validation now rejects unknown tenant token keys that are not present in `designTokensByCssVariable`.
+- Theme tests now reject `--ntk-control-height` until it exists in the generated resolver and validate deterministic density assignment output.
+- Quasar adapter tests now verify assignments sourced from generated token values.
+- Remaining gaps: full DOM theme manager, legacy `setVar(name, value)` restriction/deprecation path, dark-mode plugin sync, and Notification/Dialog/Menu/Table/Input adapter routing.
+
 ## Risks
 
 - Runtime theme changes can affect samples and visual snapshots.
