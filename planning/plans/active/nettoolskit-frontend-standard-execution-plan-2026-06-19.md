@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 12:13
+LastUpdated: 2026-06-20 12:32
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -77,6 +77,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #29 is open as a draft stacked PR from `refactor/nettoolskit-cms-shared-native-chips-2026-06-20` into `refactor/nettoolskit-cms-usage-drawer-native-shell-2026-06-20`.
 - PR #30 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-native-chips-2026-06-20` into `refactor/nettoolskit-cms-shared-native-chips-2026-06-20`.
 - PR #31 is open as a draft stacked PR from `refactor/nettoolskit-cms-pages-preview-native-chips-2026-06-20` into `refactor/nettoolskit-cms-media-native-chips-2026-06-20`.
+- PR #32 is pending for `refactor/nettoolskit-cms-blocks-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-preview-native-chips-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -753,6 +754,25 @@ Checkpoint:
 - PR #31 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/31`.
 - PR #31 remote checks passed at 2026-06-20 12:13: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS direct `q-chip` migration in Blocks, Pages, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
+
+### 2026-06-20 12:32 - CMS Blocks Module Native Status Chip Slice
+
+- Replaced the eleven direct `q-chip` status badges in `CmsBlocksModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved ruler counts, reusable block library counts, reusable block usage, authored preset library counts, authored preset usage, block enabled/type status, linked/detached state, and preview diff badge styling through existing token-driven chip styles.
+- Updated the two Blocks E2E assertions that previously targeted `.cms-block-row .q-chip` to target `.cms-status-chip`; Pages and Releases `.q-chip` selectors remain untouched for modules not yet migrated.
+- Added template audit coverage proving the Blocks module imports `CmsStatusChip` and no longer contains direct `<q-chip>`.
+- Subagent `Kuhn` completed read-only audit and confirmed all former Blocks module chips were passive status badges without `icon`, `clickable`, `removable`, or click behavior.
+- Focused audit passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 22 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run lint:style` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 943` and no exceeded metrics.
+- Direct Blocks module chip audit passed: `rg -n "<q-chip\\b" src/templates/features/cms/authoring/modules/CmsBlocksModuleSurface.vue` returned no matches.
+- Focused Blocks visuals passed without snapshot updates for Blocks preview published mobile, phase 5 reusable block impact drawer, phase 5 archived authored preset library, and phase 6 blocks review summary.
+- Focused Blocks E2E passed for linked reusable block readonly authoring and variant branching; an initial parallel run hit a webServer `EPERM` cleanup race on `.build/samples/favicon.png`, then the same E2E passed when rerun alone.
+- `npm run verify` passed, including token/doc drift, lint, Stylelint, CSS governance, type-check, 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `ddf7ea2` created the CMS Blocks module native status chip slice.
+- Remaining gaps: module-local CMS direct `q-chip` migration in Pages, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations
 
