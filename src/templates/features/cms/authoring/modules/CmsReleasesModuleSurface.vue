@@ -70,76 +70,74 @@
       </div>
 
       <div class="cms-releases__actions">
-        <q-btn
-          no-caps
-          unelevated
+        <DsButton
+          variant="solid"
+          intent="primary"
           icon="add"
           :label="t('New draft', 'Novo rascunho')"
-          :style="primaryActionStyle"
           @click="emit('createDraft')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="fact_check"
           :label="t('Validate', 'Validar')"
-          :disable="!selectedReleaseId"
+          :disabled="!selectedReleaseId"
           @click="emit('validateSelected')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="schedule"
           :label="t('Schedule', 'Agendar')"
-          :disable="!selectedReleaseId || !releaseScheduleAt"
+          :disabled="!selectedReleaseId || !releaseScheduleAt"
           @click="emit('scheduleSelected')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="publish"
           :label="t('Publish now', 'Publicar agora')"
-          :disable="!selectedReleaseId"
+          :disabled="!selectedReleaseId"
           @click="emit('publishSelected')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="event_available"
           :label="t('Run scheduled', 'Executar agendados')"
-          :disable="!hasScheduledReleases"
+          :disabled="!hasScheduledReleases"
           @click="emit('runScheduled')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="north_east"
           :label="t('Promote', 'Promover')"
-          :disable="!selectedReleaseId || !releasePromotionTargetEnvironment || releasePromotionTargetEnvironment === activeReleaseEnvironment"
+          :disabled="!selectedReleaseId || !releasePromotionTargetEnvironment || releasePromotionTargetEnvironment === activeReleaseEnvironment"
           @click="emit('promoteSelected')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="danger"
           icon="restore"
           :label="t('Rollback', 'Rollback')"
-          :style="dangerActionStyle"
-          :disable="!selectedReleaseId || !releaseRollbackTargetId"
+          :disabled="!selectedReleaseId || !releaseRollbackTargetId"
           @click="emit('rollbackSelected')"
         />
-        <q-btn
-          flat
-          dense
-          no-caps
+        <DsButton
+          variant="ghost"
+          size="sm"
+          intent="neutral"
           icon="download"
           :label="t('Export review package', 'Exportar pacote de revisão')"
-          :disable="!canExportReviewPackage"
+          :disabled="!canExportReviewPackage"
           @click="emit('exportReviewPackage')"
         />
       </div>
@@ -424,12 +422,11 @@
             :placeholder="t('Optional context for the review decision.', 'Contexto opcional para a decisão de revisão.')"
             @update:model-value="emit('update:releaseAcknowledgementNote', normalizeSelectValue($event))"
           />
-          <q-btn
-            no-caps
-            unelevated
+          <DsButton
+            variant="solid"
+            intent="primary"
             icon="fact_check"
             :label="t('Add acknowledgement', 'Adicionar reconhecimento')"
-            :style="primaryActionStyle"
             @click="emit('addAcknowledgement')"
           />
         </div>
@@ -551,21 +548,21 @@
               v-if="getReleaseChecklistDrilldownActions(item).length > 0 || hasReleaseChecklistValidationShortcut(item)"
               class="cms-release-checklist__actions"
             >
-              <q-btn
+              <DsButton
                 v-if="hasReleaseChecklistValidationShortcut(item)"
-                flat
-                dense
-                no-caps
+                variant="ghost"
+                size="sm"
+                intent="neutral"
                 icon="fact_check"
                 :label="t('Run Validate', 'Executar validar')"
                 @click="emit('runChecklistValidationShortcut', item)"
               />
-              <q-btn
+              <DsButton
                 v-for="action in getReleaseChecklistDrilldownActions(item)"
                 :key="action.id"
-                flat
-                dense
-                no-caps
+                variant="ghost"
+                size="sm"
+                intent="neutral"
                 icon="open_in_new"
                 :label="getReleaseChecklistDrilldownLabel(action)"
                 :aria-label="getReleaseChecklistDrilldownLabel(action)"
@@ -717,6 +714,7 @@ import CmsSectionHeaderSummary from '../CmsSectionHeaderSummary.vue'
 import CmsShellCard from '../CmsShellCard.vue'
 import type { CmsStatusMetricCardItem } from '../CmsStatusMetricCardGrid.vue'
 import CmsStatusMetricCardGrid from '../CmsStatusMetricCardGrid.vue'
+import { DsButton } from '../../../../../design-system/vue'
 
 interface CmsSelectOption {
   label: string

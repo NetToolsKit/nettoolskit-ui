@@ -498,6 +498,14 @@ async function expectDraftRecoverySnapshot(page: Page, expectedAppName: string):
   })).toBe(expectedAppName)
 }
 
+const RELEASE_NEW_DRAFT_BUTTON = /^(New draft|Novo rascunho)$/i
+const RELEASE_VALIDATE_BUTTON = /^(Validate|Validar)$/i
+const RELEASE_PUBLISH_NOW_BUTTON = /^(Publish now|Publicar agora)$/i
+
+function releaseActionButton(releasesEditor: Locator, name: RegExp): Locator {
+  return releasesEditor.getByRole('button', { name }).first()
+}
+
 /**
  * Publishes one deterministic release so published preview mode has a stable
  * snapshot source.
@@ -507,9 +515,9 @@ async function publishRelease(page: Page): Promise<void> {
   await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Releases$/)
 
   const releasesEditor = page.locator('.cms-releases__editor').first()
-  await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-  await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-  await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+  await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+  await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+  await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
   await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 }
 
@@ -837,8 +845,8 @@ test.describe('CMS engine visual regression', () => {
 
     await openDrawerModule(page, /^Releases$/)
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     await stabilizeVisualState(page)
     await expect(releasesEditor).toHaveScreenshot(
@@ -902,8 +910,8 @@ test.describe('CMS engine visual regression', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     await selectOptionByFieldLabel(page, 'Decision', 'Approved')
     await fillTextInputDirect(cmsInputByLabel(page, 'Acknowledgement note'), 'Reviewed for release readiness')
@@ -934,8 +942,8 @@ test.describe('CMS engine visual regression', () => {
 
     await openDrawerModule(page, /^Releases$/)
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     await page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisão)$/ }).first().click()
 
     await stabilizeVisualState(page)
@@ -951,8 +959,8 @@ test.describe('CMS engine visual regression', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     await stabilizeVisualState(page)
     await expect(releasesEditor).toHaveScreenshot(

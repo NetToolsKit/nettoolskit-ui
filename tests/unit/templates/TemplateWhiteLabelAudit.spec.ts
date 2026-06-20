@@ -1478,6 +1478,14 @@ describe('template white-label audit', () => {
     expect(cmsStylesSource).toContain('.cms-usage-drawer-dialog :deep(.q-dialog__inner)')
   })
 
+  it('keeps migrated CMS release actions on the design-system button wrapper', () => {
+    const cmsReleasesModuleSource = readRepoFile('../../../src/templates/features/cms/authoring/modules/CmsReleasesModuleSurface.vue')
+
+    expect(cmsReleasesModuleSource).toContain("import { DsButton } from '../../../../../design-system/vue'")
+    expect(cmsReleasesModuleSource).toContain('<DsButton')
+    expect(cmsReleasesModuleSource).not.toContain('<q-btn')
+  })
+
   it('keeps wiki and reference dark-contrast fixes routed through stable tokens', () => {
     const wikiSource = readRepoFile('../../../src/templates/features/wiki/WikiTemplate.vue')
     const wikiChatSource = readRepoFile('../../../src/templates/features/wiki/WikiChatTemplate.vue')

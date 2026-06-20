@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:00
+LastUpdated: 2026-06-20 02:14
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -500,6 +500,22 @@ Checkpoint:
 - PR #18 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/18`.
 - PR #18 Vercel check passed; GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, and final PR/CI/review closeout.
+
+### 2026-06-20 02:14 - CMS Releases Module DsButton Slice
+
+- Replaced the eleven direct `q-btn` controls in `CmsReleasesModuleSurface.vue` with rendered `DsButton` controls.
+- Preserved release orchestration, acknowledgement, checklist shortcut, and checklist drill-down event contracts while moving disable bindings from Quasar `disable` to native `disabled`.
+- Updated release E2E selectors from `.q-btn` to role/name based button lookup in `cms-settings-flow.spec.ts` and `cms-visual-regression.spec.ts`.
+- Added template audit coverage proving the Releases surface imports `DsButton` and no longer contains direct `<q-btn>` usage.
+- Refreshed the affected Windows visual baselines for release review, acknowledgements, review package history, and checklist drill-down.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 2 files and 19 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- Focused release E2E passed: `npx playwright test tests/e2e/cms-settings-flow.spec.ts -g "executes release orchestration flow|surfaces a release candidate checklist and updates it after validation|records release review acknowledgements" --workers=1` with 3 tests.
+- Focused release visual update passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures phase 6 releases review surface|captures phase 7 review acknowledgements surface|captures phase 7 review package history surface|captures phase 7 release checklist drill-down surface" --workers=1 --update-snapshots` with 4 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Subagent audit identified the next low-conflict slices as `CmsPreviewToolbar` `q-select` to `NtkSelect` migration and `NtkInput` field compatibility parity.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `CmsPreviewToolbar` select migration, `NtkInput` compatibility parity, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

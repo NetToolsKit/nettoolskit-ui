@@ -553,6 +553,15 @@ function settingsActionButton(page: Page, label: string): Locator {
     .first()
 }
 
+const RELEASE_NEW_DRAFT_BUTTON = /^(New draft|Novo rascunho)$/i
+const RELEASE_VALIDATE_BUTTON = /^(Validate|Validar)$/i
+const RELEASE_PUBLISH_NOW_BUTTON = /^(Publish now|Publicar agora)$/i
+const RELEASE_ROLLBACK_BUTTON = /^(Rollback)$/i
+
+function releaseActionButton(releasesEditor: Locator, name: RegExp): Locator {
+  return releasesEditor.getByRole('button', { name }).first()
+}
+
 async function openDrawerModule(page: Page, moduleName: RegExp): Promise<void> {
   const drawer = page.locator('.ntk-app-shell__drawer')
   const drawerItems = drawer.locator('.ntk-app-shell__item')
@@ -3431,9 +3440,9 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Releases')
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openSettingsModule(page)
@@ -3441,12 +3450,12 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(cmsInputByLabel(page, 'Product name'), 'Release Candidate B')
 
     await openDrawerModule(page, /^Releases$/)
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
 
     await selectFirstOptionByFieldLabel(page, 'Rollback target')
-    await releasesEditor.locator('.q-btn', { hasText: 'Rollback' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_ROLLBACK_BUTTON).click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'rolled_back' }).first()).toBeVisible()
   })
 
@@ -3456,7 +3465,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText('Releases')
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
 
     const checklist = page.locator('.cms-release-checklist').first()
     const validationItem = checklist.locator('[data-cms-checklist-item="validation"]').first()
@@ -3466,7 +3475,7 @@ test.describe('CMS settings white-label flow', () => {
     await expect(validationItem).toHaveAttribute('data-cms-checklist-status', 'blocking')
     await expect(workflowItem).toHaveAttribute('data-cms-checklist-status', 'warning')
 
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     await expect(validationItem).toHaveAttribute('data-cms-checklist-status', 'ready')
     await expect(checklist).toContainText('Release candidate checklist')
@@ -3477,7 +3486,7 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
 
     const checklist = page.locator('.cms-release-checklist').first()
     const validationItem = checklist.locator('[data-cms-checklist-item="validation"]').first()
@@ -3497,7 +3506,7 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(pageTitleInput, '')
 
     await openDrawerModule(page, /^Releases$/)
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
 
     const contentIntegrityItem = checklist.locator('[data-cms-checklist-item="content_integrity"]').first()
     await expect(contentIntegrityItem).toHaveAttribute('data-cms-checklist-status', 'blocking')
@@ -3519,8 +3528,8 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^Releases$/)
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     const checklist = page.locator('.cms-release-checklist').first()
     const contentQaItem = checklist.locator('[data-cms-checklist-item="content_qa"]').first()
@@ -3537,9 +3546,9 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
@@ -3552,8 +3561,8 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(pageTitleInput, 'Landing release hub')
 
     await openDrawerModule(page, /^Releases$/)
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     const reviewHub = page.locator('[data-cms-release-review-hub]').first()
     await expect(reviewHub).toBeVisible()
@@ -3615,9 +3624,9 @@ test.describe('CMS settings white-label flow', () => {
 
     await openDrawerModule(page, /^Releases$/)
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
@@ -3684,9 +3693,9 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
@@ -3725,9 +3734,9 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Publish now' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
     await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
@@ -3740,8 +3749,8 @@ test.describe('CMS settings white-label flow', () => {
     await fillTextInput(pageTitleInput, 'Review package diff')
 
     await openDrawerModule(page, /^Releases$/)
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     const exportReviewButton = page.getByRole('button', { name: /^(Export review package|Exportar pacote de revisão)$/ }).first()
     await expect(exportReviewButton).toBeVisible()
     await exportReviewButton.click()
@@ -3791,8 +3800,8 @@ test.describe('CMS settings white-label flow', () => {
     await openDrawerModule(page, /^Releases$/)
 
     const releasesEditor = page.locator('.cms-releases__editor').first()
-    await releasesEditor.locator('.q-btn', { hasText: 'New draft' }).first().click()
-    await releasesEditor.locator('.q-btn', { hasText: 'Validate' }).first().click()
+    await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
+    await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
 
     await selectOptionByFieldLabel(page, 'Decision', 'Approved')
     await fillTextInput(

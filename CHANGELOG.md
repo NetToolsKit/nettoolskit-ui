@@ -463,6 +463,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS releases module button migration**
+  - Replaced the eleven direct `q-btn` controls in the CMS Releases authoring module with the rendered `DsButton` wrapper.
+  - Moved release E2E action selectors from `.q-btn` to role/name based button selectors and refreshed the affected Windows release visual baselines.
 - **CMS media module button migration**
   - Replaced the seven direct `q-btn` controls in the CMS Media authoring module with the rendered `DsButton` wrapper.
   - Added media-action styles for `ntk-button` icon/label rendering and moved media E2E selectors from `.q-btn` to role/name based button selectors.
