@@ -211,7 +211,8 @@ The largest direct Quasar usage appears in:
 - Focused usage drawer E2E and starter-kit impact drawer E2E passed.
 - CMS visual regression passed with 20 tests, and `npm run verify` passed with 25 browser-gate Playwright tests and package build.
 - PR #28 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/28`.
-- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/CI/review closeout.
+- PR #28 remote checks passed at 2026-06-20 09:54: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Risks
 
