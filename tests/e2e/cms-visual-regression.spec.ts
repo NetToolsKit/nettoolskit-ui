@@ -238,28 +238,39 @@ async function applyThemePresetInStorage(page: Page, presetName: string): Promis
  * Selects one option in a Quasar select field identified by label.
  */
 async function selectOptionByFieldLabel(page: Page, label: string, optionLabel: string): Promise<void> {
+  await page.keyboard.press('Escape').catch(() => undefined)
+  await expect(page.locator('.q-menu:visible')).toHaveCount(0)
+
   const selectField = await resolveVisible(
     page.locator('.q-field:visible', { has: page.locator('.q-field__label', { hasText: label }) })
   )
   await clickVisible(selectField)
-  await page.locator('.q-menu:visible').first().waitFor({ state: 'visible', timeout: 4000 }).catch(() => undefined)
+  const menu = page.locator('.q-menu:visible').first()
+  const menuWasOpened = await menu.isVisible().catch(() => false)
+  if (!menuWasOpened) {
+    await page.keyboard.press('ArrowDown').catch(() => undefined)
+  }
+  await menu.waitFor({ state: 'visible', timeout: 4000 }).catch(() => undefined)
 
   const optionCandidates = resolveOptionLabelCandidates(optionLabel)
   for (const candidate of optionCandidates) {
     const optionByRole = page.locator('.q-menu:visible [role="option"]', { hasText: candidate }).first()
     if (await optionByRole.count() > 0) {
       await clickVisible(optionByRole)
+      await expect(page.locator('.q-menu:visible')).toHaveCount(0)
       return
     }
 
     const menuItem = page.locator('.q-menu:visible .q-item', { hasText: candidate }).first()
     if (await menuItem.count() > 0) {
       await clickVisible(menuItem)
+      await expect(page.locator('.q-menu:visible')).toHaveCount(0)
       return
     }
   }
 
   await clickVisible(page.locator('.q-menu:visible [role="option"], .q-menu:visible .q-item').first())
+  await expect(page.locator('.q-menu:visible')).toHaveCount(0)
 }
 
 /**
@@ -506,8 +517,10 @@ async function publishRelease(page: Page): Promise<void> {
  * Removes volatile UI details such as timestamps and active focus before a
  * screenshot is captured.
  */
-async function stabilizeVisualState(page: Page): Promise<void> {
-  await page.keyboard.press('Escape').catch(() => undefined)
+async function stabilizeVisualState(page: Page, options: { readonly closeFloatingOverlays?: boolean } = {}): Promise<void> {
+  if (options.closeFloatingOverlays ?? true) {
+    await page.keyboard.press('Escape').catch(() => undefined)
+  }
   await page.mouse.move(0, 0)
   await page.evaluate(() => {
     window.scrollTo(0, 0)
@@ -589,11 +602,12 @@ test.describe('CMS engine visual regression', () => {
     await openDrawerModule(page, /^(Pages|Páginas)$/)
     await expect(page.locator('.cms-shell-page__hero h1')).toHaveText(/^Pages$/)
     await openCmsWorkspaceTab(page, /^(Preview)$/i)
+    const previewToolbar = page.locator('.cms-pages__preview .cms-preview-toolbar').first()
     await selectOptionByFieldLabel(page, 'Preview source', 'Published')
     await selectOptionByFieldLabel(page, 'Preview locale', 'Portuguese (Brazil)')
+    await expect(previewToolbar).toHaveAttribute('data-cms-preview-locale', 'pt-BR')
     await selectOptionByFieldLabel(page, 'Preview viewport', 'Tablet')
     await stabilizeVisualState(page)
-    const previewToolbar = page.locator('.cms-pages__preview .cms-preview-toolbar').first()
     await expect(previewToolbar).toHaveAttribute('data-cms-preview-source', 'published')
     await expect(previewToolbar).toHaveAttribute('data-cms-preview-locale', 'pt-BR')
     await expect(previewToolbar).toHaveAttribute('data-cms-preview-viewport', 'tablet')
@@ -774,8 +788,11 @@ test.describe('CMS engine visual regression', () => {
       .first()
 
     await starterReusableBlockRow.getByRole('button', { name: /^(Inspect reusable block usage|Inspecionar uso do bloco reutilizável)$/ }).click()
-    await stabilizeVisualState(page)
-    await expect(page.locator('.cms-usage-drawer').first()).toHaveScreenshot(
+    await stabilizeVisualState(page, { closeFloatingOverlays: false })
+    const usageDrawer = page.locator('.cms-usage-drawer').first()
+    await expect(usageDrawer).toBeVisible()
+    await usageDrawer.scrollIntoViewIfNeeded()
+    await expect(usageDrawer).toHaveScreenshot(
       'cms-engine-phase5-reusable-block-impact-drawer.png',
       { caret: 'hide' }
     )

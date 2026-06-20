@@ -13,6 +13,8 @@ Do not edit by hand.
 | Component | Contract | Source | Purpose |
 | --- | --- | --- | --- |
 | DsButton | `NtkButtonContract` | `src/design-system/vue/components/DsButton.vue` | Native Vue button wrapper backed by the button contract and class recipe. |
+| DsCard | `NtkCardContract` | `src/design-system/vue/components/DsCard.vue` | Native Vue card wrapper backed by the card contract and class recipe. |
+| DsInput | `NtkFieldContract` | `src/design-system/vue/components/DsInput.vue` | Native Vue input wrapper backed by the field contract and class recipe. |
 
 ## Button
 

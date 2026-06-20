@@ -991,6 +991,8 @@ The design system foundation lives under `src/design-system` and is exported fro
 ```ts
 import {
   DsButton,
+  DsCard,
+  DsInput,
   designTokenCssVariables,
   designTokenValues,
   getNtkButtonClassName,
@@ -1038,7 +1040,7 @@ CSS and template governance is enforced by `npm run lint:css` using [policies/de
 
 ### Runtime Contracts
 
-Theme inputs go through `validateThemeRuntimeModel()` before adapters emit CSS variables. Tenant token maps are restricted to generated design-token CSS variables, and `createDensityCssVariableAssignments()` exposes compact, comfortable, and spacious density contexts without touching DOM state. Component recipes expose class contracts for shared UI primitives such as button, field, and card. `DsButton` is the first rendered `Ds*` wrapper, while existing `Ntk*` compatibility paths stay available.
+Theme inputs go through `validateThemeRuntimeModel()` before adapters emit CSS variables. Tenant token maps are restricted to generated design-token CSS variables, and `createDensityCssVariableAssignments()` exposes compact, comfortable, and spacious density contexts without touching DOM state. Component recipes expose class contracts for shared UI primitives such as button, field, and card. `DsButton`, `DsCard`, and `DsInput` provide the first rendered `Ds*` wrappers, while existing `Ntk*` compatibility paths stay available.
 
 ---
 

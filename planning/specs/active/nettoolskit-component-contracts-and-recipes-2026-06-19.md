@@ -75,6 +75,18 @@ Existing issue examples:
 - Generated component docs now list Vue wrapper sources.
 - Remaining gaps: `DsCard`, `DsInput`, `DsSelect`, `DsTable`, page wrappers, `NtkButton` open-string compatibility migration, and broader rendered behavior coverage.
 
+### 2026-06-19 22:58 - DsCard And DsInput Wrapper Slice
+
+- Added `src/design-system/vue/components/DsCard.vue`.
+- Added `src/design-system/vue/components/DsInput.vue`.
+- `DsCard` renders native card markup from `NtkCardContract` and `resolveNtkCardRecipe()` without direct Quasar usage.
+- `DsInput` renders native input markup from `NtkFieldContract` and `resolveNtkFieldRecipe()` without direct Quasar usage.
+- Component tests cover card title/subtitle/slots/clickable/selected states, non-clickable activation guards, and input label/message/model/invalid/disabled/readonly states.
+- Generated component docs now list `DsButton`, `DsCard`, and `DsInput` wrapper sources.
+- `npm test -- tests/unit/design-system/components --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 3 files and 18 tests.
+- `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: `DsSelect`, `DsTable`, page wrappers, `NtkButton` open-string compatibility migration, and broader focus/keyboard behavior coverage.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rendered design-system card and input wrappers**
+  - Added `DsCard` and `DsInput` as rendered Vue wrappers backed by the card and field contracts and recipe classes.
+  - Added focused render tests for card titles, slots, selectable/clickable states, input labels, messages, model updates, invalid, disabled, and readonly states.
 - **Rendered design-system button wrapper**
   - Added `DsButton` as the first rendered `Ds*` Vue wrapper backed by the button contract and recipe classes.
   - Exported `DsButton` through the design-system Vue surface and added focused render tests for labels, icons, recipe classes, disabled, and loading states.

@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:52
+LastUpdated: 2026-06-19 23:13
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -326,6 +326,21 @@ Checkpoint:
 - PR #8 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/8`.
 - PR #8 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: additional `Ds*` wrappers, compatibility migration for open `NtkButton` visual strings, and broader rendered behavior coverage.
+
+### 2026-06-19 22:58 - DsCard And DsInput Wrapper Slice
+
+- Added rendered `DsCard` and `DsInput` Vue component wrappers.
+- Exported both wrappers from the design-system Vue component surface.
+- Added focused rendered component tests under `tests/unit/design-system/components/ds-card-input.spec.ts`.
+- `DsCard` now gates pointer and keyboard activation behind the `clickable` contract and avoids standalone selected ARIA without a selectable widget context.
+- Generated component docs now list `DsButton`, `DsCard`, and `DsInput`.
+- Focused validation passed: `npm test -- tests/unit/design-system/components --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 18 tests.
+- `npm run type-check` passed.
+- `npm run docs:check` passed.
+- Stabilized CMS visual regression selectors around Quasar menus and drawer screenshots; regenerated the previously blank reusable-block impact drawer baseline.
+- `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures pages preview in published tablet pt-BR mode|captures phase 5 reusable block impact drawer" --workers=1` passed with 2 tests.
+- `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: `DsSelect`, `DsTable`, page wrappers, compatibility migration for open `NtkButton` visual strings, and broader focus/keyboard behavior coverage.
 
 ## Closeout Expectations
 
