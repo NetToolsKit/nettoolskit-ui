@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 11:23
+LastUpdated: 2026-06-20 11:49
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -74,6 +74,8 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`.
 - PR #27 is open as a draft stacked PR from `refactor/nettoolskit-cms-native-separators-2026-06-20` into `refactor/nettoolskit-cms-shell-native-separator-2026-06-20`.
 - PR #28 is open as a draft stacked PR from `refactor/nettoolskit-cms-usage-drawer-native-shell-2026-06-20` into `refactor/nettoolskit-cms-native-separators-2026-06-20`.
+- PR #29 is open as a draft stacked PR from `refactor/nettoolskit-cms-shared-native-chips-2026-06-20` into `refactor/nettoolskit-cms-usage-drawer-native-shell-2026-06-20`.
+- PR #30 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-native-chips-2026-06-20` into `refactor/nettoolskit-cms-shared-native-chips-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -712,6 +714,24 @@ Checkpoint:
 - PR #29 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/29`.
 - PR #29 remote checks passed at 2026-06-20 11:23: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS direct `q-chip` migration, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
+
+### 2026-06-20 11:49 - CMS Media Module Native Status Chip Slice
+
+- Replaced the eleven remaining direct `q-chip` status badges in `CmsMediaModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved media counts, diagnostics, branding binding metadata, asset kind, reference count, usage summary, focal point, replacement target, tags, and diagnostic-code badge styling through existing token-driven chip styles.
+- Added template audit coverage proving the Media module imports `CmsStatusChip` and no longer contains direct `<q-chip>`, while retaining the prior `NtkInput`/`NtkSelect` field regression guards.
+- Subagent `Pascal` completed read-only audit and confirmed all former Media module chips were passive status badges without `icon`, `clickable`, `removable`, or click behavior.
+- Focused audit passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 20 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run lint:style` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 981` and no exceeded metrics.
+- Direct Media module chip audit passed: `rg -n "<q-chip\\b" src/templates/features/cms/authoring/modules/CmsMediaModuleSurface.vue` returned no matches.
+- Focused media E2E create/apply binding flow passed; the three block-preview media flows still fail at the inherited `img.cms-landing-hero-media__image` assertion and the isolated test fails with this slice stashed on the parent branch.
+- `npm run verify` passed, including token/doc drift, lint, Stylelint, CSS governance, type-check, 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `44b0b61` created the CMS Media module native status chip slice.
+- PR #30 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/30`.
+- Remaining gaps: module-local CMS direct `q-chip` migration in Blocks, Pages, Pages Preview, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations
 

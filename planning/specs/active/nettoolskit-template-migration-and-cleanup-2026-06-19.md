@@ -226,6 +226,19 @@ The largest direct Quasar usage appears in:
 - PR #29 remote checks passed at 2026-06-20 11:23: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: module-local CMS `q-chip` migration, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 11:49 - CMS Media Module Native Status Chip Slice
+
+- Replaced the eleven direct `q-chip` status badges in `CmsMediaModuleSurface.vue` with the native `CmsStatusChip`.
+- Preserved the media module status badge contracts for asset counts, diagnostics, binding metadata, asset kind, references, usage summary, focal point, replacement target, tags, and diagnostic codes.
+- Added template audit coverage proving the Media module imports `CmsStatusChip` and rejects direct `<q-chip>` regressions alongside the existing `NtkInput`/`NtkSelect` field guards.
+- Subagent audit confirmed every former Media module chip was passive status markup without `icon`, `clickable`, `removable`, or click behavior.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 20 tests.
+- `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- Focused media E2E create/apply binding flow passed; the three block-preview media flows still fail on the parent branch with this slice stashed at the inherited Blocks runtime preview image assertion.
+- PR #30 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/30`.
+- Remaining gaps: module-local CMS `q-chip` migration in Blocks, Pages, Pages Preview, Releases, and Settings, broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
