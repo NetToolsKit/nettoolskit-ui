@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 03:34
+LastUpdated: 2026-06-20 03:36
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -70,7 +70,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #22 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20`.
 - PR #23 is open as a draft stacked PR from `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20` into `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20`.
 - PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
-- PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`; remote check inspection is pending.
+- PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -633,8 +633,8 @@ Checkpoint:
 - `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `31e00b3` created the CMS releases form field slice.
 - PR #25 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/25`.
-- Remote check inspection remains pending for PR #25.
-- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/review closeout.
+- PR #25 remote checks passed at 2026-06-20 03:36: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
 
 ## Closeout Expectations
 
