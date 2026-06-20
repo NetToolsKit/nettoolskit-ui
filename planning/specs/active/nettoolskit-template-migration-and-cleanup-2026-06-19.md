@@ -316,6 +316,7 @@ The largest direct Quasar usage appears in:
 - Focused notification-token E2E was checked and still fails on the parent branch with the same `q-badge` color assertion (`#ef4444` expected, `#dc2626` received), so it remains inherited and outside this slice.
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
 - PR #35 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/35`.
+- PR #35 remote checks passed at 2026-06-20 13:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, inherited notification-token E2E badge color failure, and final PR/CI/review closeout.
 
 ## Risks

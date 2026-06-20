@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 13:52
+LastUpdated: 2026-06-20 13:55
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -81,6 +81,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #33 is open as a draft stacked PR from `refactor/nettoolskit-cms-pages-native-chips-2026-06-20` into `refactor/nettoolskit-cms-blocks-native-chips-2026-06-20`.
 - PR #34 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-native-chips-2026-06-20`.
 - PR #35 is open as a draft stacked PR from `refactor/nettoolskit-cms-settings-native-chips-2026-06-20` into `refactor/nettoolskit-cms-releases-native-chips-2026-06-20`.
+- PR #35 remote checks passed at 2026-06-20 13:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -839,6 +840,7 @@ Checkpoint:
 - `npm run verify` passed, including token/doc drift, lint, Stylelint, CSS governance, type-check, 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `00b1bfadb` created the CMS Settings module native status chip slice.
 - PR #35 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/35`.
+- PR #35 remote checks passed at 2026-06-20 13:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, inherited notification-token E2E badge color failure, and final PR/review closeout.
 
 ## Closeout Expectations
