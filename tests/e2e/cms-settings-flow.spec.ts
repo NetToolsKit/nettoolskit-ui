@@ -3443,7 +3443,7 @@ test.describe('CMS settings white-label flow', () => {
     await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
-    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+    await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openSettingsModule(page)
     await openSettingsTab(page, /branding/i)
@@ -3456,7 +3456,7 @@ test.describe('CMS settings white-label flow', () => {
 
     await selectFirstOptionByFieldLabel(page, 'Rollback target')
     await releaseActionButton(releasesEditor, RELEASE_ROLLBACK_BUTTON).click()
-    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'rolled_back' }).first()).toBeVisible()
+    await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'rolled_back' }).first()).toBeVisible()
   })
 
   test('surfaces a release candidate checklist and updates it after validation', async ({ page }) => {
@@ -3549,7 +3549,7 @@ test.describe('CMS settings white-label flow', () => {
     await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
-    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+    await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
@@ -3627,7 +3627,7 @@ test.describe('CMS settings white-label flow', () => {
     await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
-    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+    await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
     await page.locator('.cms-page-item').first().getByRole('button', { name: /open blocks|abrir blocos/i }).first().click({ force: true })
@@ -3696,7 +3696,7 @@ test.describe('CMS settings white-label flow', () => {
     await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
-    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+    await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()
@@ -3737,7 +3737,7 @@ test.describe('CMS settings white-label flow', () => {
     await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
     await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
-    await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+    await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'published' }).first()).toBeVisible()
 
     await openDrawerModule(page, /^Pages$/)
     const firstPage = page.locator('.cms-page-item').first()

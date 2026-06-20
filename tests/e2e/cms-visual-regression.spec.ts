@@ -518,7 +518,7 @@ async function publishRelease(page: Page): Promise<void> {
   await releaseActionButton(releasesEditor, RELEASE_NEW_DRAFT_BUTTON).click()
   await releaseActionButton(releasesEditor, RELEASE_VALIDATE_BUTTON).click()
   await releaseActionButton(releasesEditor, RELEASE_PUBLISH_NOW_BUTTON).click()
-  await expect(page.locator('.cms-release-item .q-chip', { hasText: 'published' }).first()).toBeVisible()
+  await expect(page.locator('.cms-release-item .cms-status-chip', { hasText: 'published' }).first()).toBeVisible()
 }
 
 /**

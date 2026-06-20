@@ -5,13 +5,9 @@
       body-class="cms-releases__editor"
     >
       <template #header-actions>
-        <q-chip
-          dense
-          square
-          :style="statusChipStyle"
-        >
+        <CmsStatusChip :style="statusChipStyle">
           {{ releaseCountLabel }}
-        </q-chip>
+        </CmsStatusChip>
       </template>
 
       <div class="cms-form-grid">
@@ -168,29 +164,17 @@
           summary-class="cms-release-review-hub__summary"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.status)"
-            >
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.status)">
               {{ getReleaseChecklistStatusLabel(selectedReleaseReviewHub.status) }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.diff.status)"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.diff.status)">
               {{ selectedReleaseReviewHub.diff.changedPages + selectedReleaseReviewHub.diff.changedSections + selectedReleaseReviewHub.diff.changedBlocks }}
               {{ t('change signals', 'sinais de mudança') }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.locales.status)"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle(selectedReleaseReviewHub.locales.status)">
               {{ selectedReleaseReviewHub.locales.missingEntries }}
               {{ t('locale gaps', 'lacunas de locale') }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
 
@@ -219,14 +203,10 @@
           copy-class="cms-release-history__copy"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
-              :style="bannerStyle"
-            >
+            <CmsStatusChip :style="bannerStyle">
               {{ releaseReviewPackageHistoryEntries.length }}
               {{ t('recent exports', 'exports recentes') }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
 
@@ -243,21 +223,15 @@
                 <small>{{ getReviewPackageHistoryDescription(entry) }}</small>
               </div>
               <div class="cms-release-history__item-summary">
-                <q-chip
-                  dense
-                  square
-                  :style="getReleaseChecklistStatusStyle(getReviewPackageHistoryStatus(entry))"
-                >
+                <CmsStatusChip :style="getReleaseChecklistStatusStyle(getReviewPackageHistoryStatus(entry))">
                   {{ getReleaseChecklistStatusLabel(getReviewPackageHistoryStatus(entry)) }}
-                </q-chip>
-                <q-chip
+                </CmsStatusChip>
+                <CmsStatusChip
                   v-if="selectedRelease && entry.releaseId === selectedRelease.id"
-                  dense
-                  square
                   :style="primaryActionStyle"
                 >
                   {{ t('Current release', 'Release atual') }}
-                </q-chip>
+                </CmsStatusChip>
               </div>
             </div>
 
@@ -283,29 +257,17 @@
           summary-class="cms-governance-hub__summary"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle(cmsGovernanceHubSummary.status)"
-            >
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle(cmsGovernanceHubSummary.status)">
               {{ getReleaseChecklistStatusLabel(cmsGovernanceHubSummary.status) }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="bannerStyle"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="bannerStyle">
               v{{ cmsGovernanceHubSummary.workflow.version }}
               {{ t('draft version', 'versão draft') }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="bannerStyle"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="bannerStyle">
               {{ cmsGovernanceHubSummary.audit.count }}
               {{ t('audit entries', 'entradas de auditoria') }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
 
@@ -374,27 +336,15 @@
           summary-class="cms-release-acknowledgements__summary"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
-              :style="getReleaseAcknowledgementDecisionStyle('approved')"
-            >
+            <CmsStatusChip :style="getReleaseAcknowledgementDecisionStyle('approved')">
               {{ selectedReleaseAcknowledgementSummary.approvedCount }} {{ t('approved', 'aprovados') }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getReleaseAcknowledgementDecisionStyle('noted')"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getReleaseAcknowledgementDecisionStyle('noted')">
               {{ selectedReleaseAcknowledgementSummary.notedCount }} {{ t('noted', 'registrados') }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getReleaseAcknowledgementDecisionStyle('changes_requested')"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getReleaseAcknowledgementDecisionStyle('changes_requested')">
               {{ selectedReleaseAcknowledgementSummary.changesRequestedCount }} {{ t('changes requested', 'mudanças solicitadas') }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
 
@@ -447,13 +397,9 @@
                 <strong>{{ getReleaseAcknowledgementDecisionLabel(entry.decision) }}</strong>
                 <small>{{ getReleaseAcknowledgementDescription(entry) }}</small>
               </div>
-              <q-chip
-                dense
-                square
-                :style="getReleaseAcknowledgementDecisionStyle(entry.decision)"
-              >
+              <CmsStatusChip :style="getReleaseAcknowledgementDecisionStyle(entry.decision)">
                 {{ getReleaseAcknowledgementDecisionLabel(entry.decision) }}
-              </q-chip>
+              </CmsStatusChip>
             </div>
             <p
               v-if="entry.note"
@@ -486,27 +432,15 @@
           summary-class="cms-release-checklist__summary"
         >
           <template #summary>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle('ready')"
-            >
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle('ready')">
               {{ selectedReleaseCandidateChecklist.summary.readyCount }} {{ t('ready', 'prontos') }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle('warning')"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle('warning')">
               {{ selectedReleaseCandidateChecklist.summary.warningCount }} {{ t('review', 'revisar') }}
-            </q-chip>
-            <q-chip
-              dense
-              square
-              :style="getReleaseChecklistStatusStyle('blocking')"
-            >
+            </CmsStatusChip>
+            <CmsStatusChip :style="getReleaseChecklistStatusStyle('blocking')">
               {{ selectedReleaseCandidateChecklist.summary.blockingCount }} {{ t('blocking', 'bloqueando') }}
-            </q-chip>
+            </CmsStatusChip>
           </template>
         </CmsSectionHeaderSummary>
 
@@ -523,13 +457,9 @@
                 <strong>{{ getReleaseChecklistItemLabel(item.id) }}</strong>
                 <small>{{ getReleaseChecklistItemDescription(item) }}</small>
               </div>
-              <q-chip
-                dense
-                square
-                :style="getReleaseChecklistStatusStyle(item.status)"
-              >
+              <CmsStatusChip :style="getReleaseChecklistStatusStyle(item.status)">
                 {{ getReleaseChecklistStatusLabel(item.status) }}
-              </q-chip>
+              </CmsStatusChip>
             </div>
 
             <ul
@@ -599,13 +529,9 @@
       >
         <div class="cms-release-item__header">
           <strong>{{ release.name }}</strong>
-          <q-chip
-            dense
-            square
-            :style="getReleaseStatusStyle(release.status)"
-          >
+          <CmsStatusChip :style="getReleaseStatusStyle(release.status)">
             {{ release.status }}
-          </q-chip>
+          </CmsStatusChip>
         </div>
         <small class="cms-release-item__meta">
           {{ release.id }} · {{ t('workflow', 'workflow') }} v{{ release.sourceVersion }} · {{ release.environment }}
@@ -614,20 +540,12 @@
           {{ release.summary || t('No summary provided.', 'Nenhum resumo informado.') }}
         </p>
         <div class="cms-release-item__metrics">
-          <q-chip
-            dense
-            square
-            :style="release.validation.errorCount > 0 ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('validated')"
-          >
+          <CmsStatusChip :style="release.validation.errorCount > 0 ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('validated')">
             {{ t('Errors', 'Erros') }}: {{ release.validation.errorCount }}
-          </q-chip>
-          <q-chip
-            dense
-            square
-            :style="getReleaseStatusStyle('draft')"
-          >
+          </CmsStatusChip>
+          <CmsStatusChip :style="getReleaseStatusStyle('draft')">
             {{ t('Warnings', 'Avisos') }}: {{ release.validation.warningCount }}
-          </q-chip>
+          </CmsStatusChip>
         </div>
         <div class="cms-release-item__dates">
           <span>{{ t('Created', 'Criado') }}: {{ formatReleaseTimestamp(release.createdAt) }}</span>
@@ -650,13 +568,9 @@
       body-class="cms-releases__calendar"
     >
       <template #header-actions>
-        <q-chip
-          dense
-          square
-          :style="statusChipStyle"
-        >
+        <CmsStatusChip :style="statusChipStyle">
           {{ t(`${scheduledReleaseCalendarEntries.length} scheduled`, `${scheduledReleaseCalendarEntries.length} agendados`) }}
-        </q-chip>
+        </CmsStatusChip>
       </template>
 
       <article
@@ -681,13 +595,9 @@
         :key="conflict.id"
         class="cms-release-calendar-conflict"
       >
-        <q-chip
-          dense
-          square
-          :style="conflict.severity === 'error' ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('draft')"
-        >
+        <CmsStatusChip :style="conflict.severity === 'error' ? getReleaseStatusStyle('rolled_back') : getReleaseStatusStyle('draft')">
           {{ conflict.type }}
-        </q-chip>
+        </CmsStatusChip>
         <p>{{ conflict.message }}</p>
       </article>
       <p
@@ -712,6 +622,7 @@ import type { CmsPanelListSectionItem } from '../CmsPanelListSection.vue'
 import CmsPanelListSection from '../CmsPanelListSection.vue'
 import CmsSectionHeaderSummary from '../CmsSectionHeaderSummary.vue'
 import CmsShellCard from '../CmsShellCard.vue'
+import CmsStatusChip from '../CmsStatusChip.vue'
 import type { CmsStatusMetricCardItem } from '../CmsStatusMetricCardGrid.vue'
 import CmsStatusMetricCardGrid from '../CmsStatusMetricCardGrid.vue'
 import NtkInput from '../../../../../components/form/NtkInput.vue'
