@@ -1476,6 +1476,10 @@ describe('template white-label audit', () => {
     expect(cmsMediaModuleSource).toContain('popup-content-class="cms-media-module-surface__popup"')
     expect(cmsReleasesModuleSource).toContain('popup-content-class="cms-releases-module-surface__popup"')
     expect(cmsStylesSource).toContain('.cms-usage-drawer-dialog :deep(.q-dialog__inner)')
+    expect(cmsStylesSource).toContain('--ntk-template-form-control-bg: var(--ntk-cms-shell-bg);')
+    expect(cmsStylesSource).toContain('--ntk-input-text: var(--ntk-cms-text-primary);')
+    expect(cmsStylesSource).not.toContain('.cms-shell-page :deep(.q-field__native)')
+    expect(cmsStylesSource).not.toContain('.cms-shell-page :deep(.q-field--outlined .q-field__control)')
   })
 
   it('keeps migrated CMS release actions on the design-system button wrapper', () => {

@@ -13,6 +13,16 @@
   --ntk-cms-ruler-grid-color: var(--ntk-cms-ruler-grid, color-mix(in srgb, var(--ntk-cms-shell-text-secondary) 14%, transparent));
   --ntk-cms-nav-button-bg: var(--ntk-cms-nav-surface, color-mix(in srgb, var(--ntk-cms-card-surface) 62%, var(--ntk-cms-shell-surface)));
   --ntk-cms-rail-action-bg: var(--ntk-cms-action-surface, color-mix(in srgb, var(--ntk-cms-card-surface) 92%, var(--ntk-cms-shell-surface)));
+  --ntk-input-text: var(--ntk-cms-text-primary);
+  --ntk-input-label: var(--ntk-cms-text-secondary);
+  --ntk-input-placeholder: var(--ntk-cms-text-secondary);
+  --ntk-input-icon: var(--ntk-cms-text-secondary);
+  --ntk-template-form-control-bg: var(--ntk-cms-shell-bg);
+  --ntk-template-form-control-border: var(--ntk-cms-border-color);
+  --ntk-template-form-control-border-hover: var(--ntk-cms-focus-color);
+  --ntk-template-form-label-color: var(--ntk-cms-text-secondary);
+  --ntk-template-form-icon-color: var(--ntk-cms-text-secondary);
+  --ntk-border-focus: var(--ntk-cms-focus-color);
   display: flex;
   flex-direction: column;
   gap: var(--ntk-cms-space-md);
@@ -32,58 +42,6 @@
 
 .cms-shell-page {
   min-height: calc(var(--ntk-shell-viewport-height) - var(--ntk-shell-header-height));
-}
-
-.cms-shell-page :deep(.q-field__native),
-.cms-shell-page :deep(.q-field__input),
-.cms-shell-page :deep(.q-item__label),
-.cms-shell-page :deep(.q-tab__label),
-.cms-shell-page :deep(.q-btn__content),
-.cms-shell-page :deep(.q-chip) {
-  font-family: var(--ntk-cms-font-family);
-  font-style: var(--ntk-cms-font-style-base);
-}
-
-.cms-shell-page :deep(.q-field__native),
-.cms-shell-page :deep(.q-field__input),
-.cms-shell-page :deep(.q-field__append),
-.cms-shell-page :deep(.q-field__prepend),
-.cms-shell-page :deep(.q-field__suffix),
-.cms-shell-page :deep(.q-field__prefix),
-.cms-shell-page :deep(.q-select__dropdown-icon) {
-  color: var(--ntk-cms-text-primary) !important;
-  -webkit-text-fill-color: var(--ntk-cms-text-primary);
-}
-
-.cms-shell-page :deep(.q-field__native::placeholder),
-.cms-shell-page :deep(.q-field__input::placeholder) {
-  color: var(--ntk-cms-text-secondary) !important;
-  -webkit-text-fill-color: var(--ntk-cms-text-secondary);
-}
-
-.cms-shell-page :deep(.q-field),
-.cms-shell-page :deep(.q-item),
-.cms-shell-page :deep(.q-toggle),
-.cms-shell-page :deep(.q-toggle__label) {
-  color: var(--ntk-cms-text-primary);
-}
-
-.cms-shell-page :deep(.q-field__label),
-.cms-shell-page :deep(.q-field__marginal) {
-  color: var(--ntk-cms-text-secondary) !important;
-}
-
-.cms-shell-page :deep(.q-field--outlined .q-field__control) {
-  background: var(--ntk-cms-shell-bg) !important;
-  color: var(--ntk-cms-text-primary) !important;
-}
-
-.cms-shell-page :deep(.q-field--outlined .q-field__control:before) {
-  border-color: var(--ntk-cms-border-color) !important;
-}
-
-.cms-shell-page :deep(.q-field--outlined.q-field--focused .q-field__control:after) {
-  border-color: var(--ntk-cms-focus-color) !important;
 }
 
 .cms-shell-page__workspace {

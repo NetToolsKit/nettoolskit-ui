@@ -466,6 +466,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS field bridge token aliases**
+  - Removed duplicated broad Quasar field overrides from the CMS authoring stylesheet and routed field colors/borders through scoped token aliases consumed by the shared template bridge.
+  - Refreshed the dark CMS shell visual baseline so dark preset fields now follow the tokenized CMS surface instead of Quasar's default light field surface.
 - **CMS media module field migration**
   - Replaced the remaining direct `q-input` and `q-select` controls in the CMS Media authoring module with `NtkInput` and `NtkSelect` compatibility wrappers.
   - Preserved media field labels, hints, numeric bounds, textarea autogrow, replace-target clearing, and popup styling while adding audit coverage against direct form-control regressions.
