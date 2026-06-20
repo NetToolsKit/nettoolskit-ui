@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 21:57
+LastUpdated: 2026-06-19 22:00
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -51,6 +51,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - The earlier 90% status reflected completed implementation slices, not final spec acceptance.
 - PR #1 through PR #4 are open as draft PRs in a stacked chain; Vercel checks are green, but no GitHub Actions run was found for those heads during the audit.
 - PR #5 is open as a draft stacked PR from `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19` into `feat/nettoolskit-quality-gates-docs-2026-06-19`.
+- PR #6 is open as a draft stacked PR from `feat/nettoolskit-token-css-policy-2026-06-19` into `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -292,6 +293,8 @@ Checkpoint:
 - GitHub Actions now runs token drift, generated-doc drift, Stylelint, CSS governance, architecture governance, a11y, and full visual gates explicitly.
 - Stabilized the published pages preview screenshot by asserting preview toolbar state and capturing the runtime preview frame.
 - `npm run verify` passed, including 29 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `9b8509f0` created the token resolver, CSS policy, and CI gate slice.
+- PR #6 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/6`.
 - Remaining gaps: full density/theme application, broader CSS governed roots with generated-token excludes, component `Ds*` wrappers, and final PR/CI/review closeout.
 
 ## Closeout Expectations
