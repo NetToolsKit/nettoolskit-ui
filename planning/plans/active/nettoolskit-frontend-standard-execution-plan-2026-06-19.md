@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:43
+LastUpdated: 2026-06-20 02:45
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -555,6 +555,7 @@ Checkpoint:
 - The focused `cms-settings-flow` draft/published viewport test was re-run with this slice stashed and still failed on the parent branch before this toolbar migration; the failure is tracked as an inherited Blocks runtime preview text issue, not as a `NtkSelect` migration regression.
 - Commit `422873e` created the CMS Preview Toolbar NtkSelect slice.
 - PR #21 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/21`.
+- PR #21 remote checks passed at 2026-06-20 02:45: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Closeout Expectations
