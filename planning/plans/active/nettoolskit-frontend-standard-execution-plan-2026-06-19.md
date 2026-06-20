@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:45
+LastUpdated: 2026-06-19 22:52
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -324,6 +324,7 @@ Checkpoint:
 - `npm run verify` passed, including 33 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `b8153976` created the DsButton wrapper slice.
 - PR #8 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/8`.
+- PR #8 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: additional `Ds*` wrappers, compatibility migration for open `NtkButton` visual strings, and broader rendered behavior coverage.
 
 ## Closeout Expectations
