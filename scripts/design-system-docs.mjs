@@ -59,6 +59,14 @@ const COMPONENT_CONFIGS = [
     purpose: 'Content container recipe for panels, selectable rows, and accent treatments.',
   },
 ]
+const VUE_WRAPPER_CONFIGS = [
+  {
+    name: 'DsButton',
+    contractName: 'NtkButtonContract',
+    sourcePath: 'src/design-system/vue/components/DsButton.vue',
+    purpose: 'Native Vue button wrapper backed by the button contract and class recipe.',
+  },
+]
 
 const DOC_ORDER = ['design', 'tokens', 'components']
 const FORBIDDEN_DOC_WORDS = [
@@ -445,6 +453,7 @@ function generateDesignOverviewDoc(model) {
     '- Use design tokens through `var(--ntk-*)` CSS custom properties in component styles.',
     '- Use recipe resolvers when wrappers need stable class names for variants, sizes, intents, and states.',
     '- Keep component defaults aligned with the exported recipe defaults.',
+    '- Use `Ds*` Vue wrappers when a feature needs a rendered design-system primitive instead of a pure recipe.',
     '- Keep generated markdown synchronized with `node scripts/design-system-docs.mjs --check`.',
     '',
     '## Documentation Outputs',
@@ -529,6 +538,17 @@ function generateComponentsDoc(model) {
     '',
     `- Sizes: ${listCode(model.shared.sizes)}.`,
     `- Intents: ${listCode(model.shared.intents)}.`,
+    '',
+    '## Vue Wrappers',
+    '',
+    '| Component | Contract | Source | Purpose |',
+    '| --- | --- | --- | --- |',
+    ...VUE_WRAPPER_CONFIGS.map(wrapper => [
+      `| ${wrapper.name}`,
+      codeCell(wrapper.contractName),
+      codeCell(wrapper.sourcePath),
+      textCell(wrapper.purpose),
+    ].join(' | ') + ' |'),
     '',
   ]
 

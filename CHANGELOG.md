@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rendered design-system button wrapper**
+  - Added `DsButton` as the first rendered `Ds*` Vue wrapper backed by the button contract and recipe classes.
+  - Exported `DsButton` through the design-system Vue surface and added focused render tests for labels, icons, recipe classes, disabled, and loading states.
+  - Updated generated component documentation to list Vue wrapper sources.
 - **Theme density and token validation contracts**
   - Added density assignment helpers for compact, comfortable, and spacious contexts using generated design-token CSS variable names.
   - Tightened tenant theme validation so token maps reject unknown CSS variable names that are not present in the generated token resolver.

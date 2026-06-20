@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:25
+LastUpdated: 2026-06-19 22:43
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -311,6 +311,17 @@ Checkpoint:
 - PR #7 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/7`.
 - PR #7 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: DOM theme manager, legacy theme API restriction/deprecation, dark-mode sync, and non-brand Quasar behavior adapters.
+
+### 2026-06-19 22:30 - DsButton Wrapper Slice
+
+- Added `DsButton` as the first rendered `Ds*` Vue component wrapper.
+- Exported `DsButton` from the design-system Vue surface.
+- Added focused rendered component tests under `tests/unit/design-system/components/ds-button.spec.ts`.
+- Generated component docs now list Vue wrapper sources.
+- Focused validation passed: `npm test -- tests/unit/design-system/components --pool=forks --maxWorkers=1 --no-file-parallelism`.
+- `npm run type-check` passed.
+- `npm run verify` passed, including 33 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: additional `Ds*` wrappers, compatibility migration for open `NtkButton` visual strings, and broader rendered behavior coverage.
 
 ## Closeout Expectations
 

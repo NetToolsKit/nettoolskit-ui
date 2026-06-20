@@ -40,6 +40,7 @@ Do not edit by hand.
 - Use design tokens through `var(--ntk-*)` CSS custom properties in component styles.
 - Use recipe resolvers when wrappers need stable class names for variants, sizes, intents, and states.
 - Keep component defaults aligned with the exported recipe defaults.
+- Use `Ds*` Vue wrappers when a feature needs a rendered design-system primitive instead of a pure recipe.
 - Keep generated markdown synchronized with `node scripts/design-system-docs.mjs --check`.
 
 ## Documentation Outputs

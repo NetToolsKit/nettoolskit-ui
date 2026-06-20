@@ -8,6 +8,12 @@ Do not edit by hand.
 - Sizes: `sm`, `md`, `lg`.
 - Intents: `neutral`, `primary`, `success`, `warning`, `danger`, `info`.
 
+## Vue Wrappers
+
+| Component | Contract | Source | Purpose |
+| --- | --- | --- | --- |
+| DsButton | `NtkButtonContract` | `src/design-system/vue/components/DsButton.vue` | Native Vue button wrapper backed by the button contract and class recipe. |
+
 ## Button
 
 Action trigger recipe for command, navigation, and submit buttons.

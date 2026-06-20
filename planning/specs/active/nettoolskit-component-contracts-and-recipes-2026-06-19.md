@@ -64,6 +64,17 @@ Existing issue examples:
 4. Open visual strings are replaced by controlled enums or named escape hatches.
 5. Component tests prove recipe output and rendered Quasar behavior.
 
+## Implementation Evidence
+
+### 2026-06-19 22:30 - DsButton Wrapper Slice
+
+- Added `src/design-system/vue/components/DsButton.vue`.
+- Added `src/design-system/vue/components/index.ts` and exported wrappers from `src/design-system/vue/index.ts`.
+- `DsButton` renders native button markup from `NtkButtonContract` and `resolveNtkButtonRecipe()` without direct `q-btn` usage.
+- Component tests cover labels, slots, icons, data attributes, recipe classes, disabled state, and loading state.
+- Generated component docs now list Vue wrapper sources.
+- Remaining gaps: `DsCard`, `DsInput`, `DsSelect`, `DsTable`, page wrappers, `NtkButton` open-string compatibility migration, and broader rendered behavior coverage.
+
 ## Risks
 
 - Dual `Ds*` and `Ntk*` surfaces can confuse consumers unless exports and docs are explicit.
