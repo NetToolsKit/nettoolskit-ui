@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 03:09
+LastUpdated: 2026-06-20 03:19
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -69,6 +69,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #21 is open as a draft stacked PR from `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20` into `feat/nettoolskit-ntk-input-compat-2026-06-20`.
 - PR #22 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20`.
 - PR #23 is open as a draft stacked PR from `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20` into `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20`.
+- PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -594,6 +595,23 @@ Checkpoint:
 - Commit `4b5a620` created the CMS field bridge token alias slice.
 - PR #23 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/23`.
 - PR #23 remote checks passed at 2026-06-20 03:09: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
+### 2026-06-20 03:19 - CMS Shell Native Card Slice
+
+- Replaced the shared `q-card` roots in `CmsShellCard.vue` and `CmsAuthoringWorkbench.vue` with native `section` markup.
+- Preserved `.cms-shell-card` classes, slots, existing separator behavior, and workbench delegation.
+- Added focused unit coverage for native section roots and template audit coverage preventing direct `<q-card>` regression in the shared shell components.
+- Refreshed the dark CMS shell Windows visual baseline because the workbench no longer inherits Quasar's card default surface.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 51 tests.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 1057` and no exceeded metrics.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests.
+- `git diff --check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `257473b` created the CMS shell native card slice.
+- PR #24 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/24`.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Closeout Expectations

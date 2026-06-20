@@ -153,6 +153,17 @@ The largest direct Quasar usage appears in:
 - `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 03:19 - CMS Shell Native Card Slice
+
+- Replaced the shared `q-card` roots in `CmsShellCard.vue` and `CmsAuthoringWorkbench.vue` with native `section` markup.
+- Preserved shell classes, slots, separator behavior, and workbench delegation.
+- Added focused unit and audit coverage proving the shell roots stay native and do not regress to `<q-card>`.
+- Refreshed the dark settings shell visual baseline because the workbench no longer inherits Quasar's card default surface.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 51 tests.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
