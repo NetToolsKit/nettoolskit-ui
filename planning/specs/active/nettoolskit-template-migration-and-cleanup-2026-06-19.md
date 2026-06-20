@@ -178,6 +178,16 @@ The largest direct Quasar usage appears in:
 - PR #25 remote checks passed at 2026-06-20 03:36: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 03:55 - CMS Shell Native Separator Slice
+
+- Replaced the shared `q-separator` in `CmsShellCard.vue` with a native `hr` separator styled by CMS tokens.
+- Preserved `showSeparator` behavior while removing direct Quasar separator usage from the shared shell card.
+- Added component and template audit coverage proving the separator stays native and direct `<q-separator>` does not return to `CmsShellCard.vue`.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 3 files and 51 tests.
+- CMS visual regression passed with 20 tests, and `npm run verify` passed after re-running affected visual checks.
+- PR #26 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/26`.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
