@@ -57,6 +57,22 @@ The largest direct Quasar usage appears in:
 4. CMS color authoring validates token-safe input.
 5. Visual behavior stays covered by targeted unit and Playwright tests.
 
+## Implementation Evidence
+
+### 2026-06-19 23:27 - CMS Pages Preview Header Action Slice
+
+- Replaced the single `q-btn` header action in `CmsPagesPreviewSurface.vue` with `DsButton`.
+- Added focused unit coverage for the pages preview `openInWindow` header action in `CmsAuthoringChromeComponents.spec.ts`.
+- Confirmed `CmsPagesPreviewSurface.vue` no longer contains direct `<q-btn>` usage.
+- Refreshed the affected Windows visual baseline for the published tablet `pt-BR` pages preview frame.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 28 tests.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 2 files and 18 tests.
+- `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures pages preview in published tablet pt-BR mode" --workers=1` passed.
+- `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: broader `q-btn`, `q-input`, and `q-select` migration across CMS module surfaces, bridge selector reduction, and wrappers for select/table/page surfaces.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.

@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 23:16
+LastUpdated: 2026-06-19 23:27
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -345,6 +345,20 @@ Checkpoint:
 - PR #9 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/9`.
 - PR #9 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: `DsSelect`, `DsTable`, page wrappers, compatibility migration for open `NtkButton` visual strings, and broader focus/keyboard behavior coverage.
+
+### 2026-06-19 23:27 - CMS Pages Preview DsButton Slice
+
+- Replaced the single pages preview `Open in new window` `q-btn` header action with `DsButton`.
+- Added focused unit coverage for the pages preview `openInWindow` header action.
+- Confirmed `CmsPagesPreviewSurface.vue` no longer contains direct `<q-btn>` usage.
+- Refreshed the affected Windows visual baseline for the published tablet `pt-BR` pages preview frame.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 1 file and 28 tests.
+- `npm run lint -- --quiet` passed.
+- `npm run type-check` passed.
+- `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` passed with 2 files and 18 tests.
+- `npx playwright test tests/e2e/cms-visual-regression.spec.ts -g "captures pages preview in published tablet pt-BR mode" --workers=1` passed.
+- `npm run verify` passed, including 39 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, `DsSelect`, `DsTable`, and page wrapper work.
 
 ## Closeout Expectations
 

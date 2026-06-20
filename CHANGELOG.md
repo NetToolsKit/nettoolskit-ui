@@ -445,6 +445,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CMS pages preview header action migration**
+  - Replaced the pages preview `Open in new window` header action with the rendered `DsButton` wrapper.
+  - Added focused unit coverage for the `openInWindow` action and refreshed the affected Windows visual baseline.
 - **CMS authoring toolbar migration**
   - Migrated the top editor toolbar actions in Settings, Pages, and Blocks module surfaces from direct `q-btn` usage to the shared `NtkButton` wrapper.
   - Preserved the primary preview buttons and styled/destructive body actions on direct Quasar buttons for this thin slice.

@@ -4,10 +4,10 @@
     body-class="cms-pages__preview"
   >
     <template #header-actions>
-      <q-btn
-        flat
-        dense
-        no-caps
+      <DsButton
+        variant="ghost"
+        size="sm"
+        intent="neutral"
         icon="open_in_new"
         :label="t('Open in new window', 'Abrir em nova janela')"
         @click="emit('openInWindow')"
@@ -233,6 +233,7 @@ import type {
   CmsPreviewSource,
   CmsPreviewViewport,
 } from '../../../../../modules/cms/white-label/types'
+import { DsButton } from '../../../../../design-system/vue'
 import CmsDiagnosticsListSection, { type CmsDiagnosticsListItem } from '../CmsDiagnosticsListSection.vue'
 import CmsLocaleCoverageMatrix from '../CmsLocaleCoverageMatrix.vue'
 import CmsPreviewToolbar from '../CmsPreviewToolbar.vue'

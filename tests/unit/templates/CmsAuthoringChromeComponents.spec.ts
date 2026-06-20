@@ -12,6 +12,7 @@ import CmsPanelListSection from '../../../src/templates/features/cms/authoring/C
 import CmsAuthoringWorkbench from '../../../src/templates/features/cms/authoring/CmsAuthoringWorkbench.vue'
 import CmsAuthoringRulerBar from '../../../src/templates/features/cms/authoring/CmsAuthoringRulerBar.vue'
 import CmsPreviewToolbar from '../../../src/templates/features/cms/authoring/CmsPreviewToolbar.vue'
+import CmsPagesPreviewSurface from '../../../src/templates/features/cms/authoring/modules/CmsPagesPreviewSurface.vue'
 import CmsEntityUsageDrawer from '../../../src/templates/features/cms/authoring/CmsEntityUsageDrawer.vue'
 
 const globalOpts = {
@@ -345,6 +346,87 @@ describe('CmsPreviewToolbar', () => {
 
     const chips = wrapper.findAll('.chip')
     expect(chips).toHaveLength(3)
+  })
+})
+
+describe('CmsPagesPreviewSurface', () => {
+  const createProps = () => ({
+    source: 'draft',
+    locale: 'en',
+    viewport: 'desktop',
+    sourceOptions: [{ label: 'Draft', value: 'draft' }],
+    localeOptions: [{ label: 'English', value: 'en' }],
+    viewportOptions: [{ label: 'Desktop', value: 'desktop' }],
+    publishedReleaseLabel: null,
+    statusChipStyle: {},
+    bannerStyle: {},
+    isPtBr: false,
+    emptyMessage: '',
+    draftPublishedDiff: null,
+    changedPageDiffs: [],
+    localeCoverageMatrix: [],
+    activeLocaleCoverage: null,
+    localeCoverageCategories: [],
+    pagesForRender: [],
+    previewPageDiffMap: new Map(),
+    previewAuthoredContentModels: [],
+    registry: {},
+    previewRenderContext: {},
+    t: (en: string) => en,
+    getPreviewDiffStatusStyle: () => ({}),
+    getPreviewDiffStatusLabel: () => '',
+    getPreviewDiffChangeCount: () => 0,
+    getPreviewDiffPageLabel: () => '',
+    getPreviewDiffPagePath: () => '',
+    getLocaleCoverageStatusStyle: () => ({}),
+    getLocaleCoverageSummaryLabel: () => '',
+    getLocaleCoverageStatusLabel: () => '',
+    getLocaleCoverageCategoryLabel: () => '',
+    getLocaleCoverageLocaleLabel: () => '',
+    getPageTitleValue: () => '',
+    getPageDescriptionValue: () => '',
+    getContentModelLabel: () => '',
+    getPageCurrentSchemaVersion: () => 1,
+    getPageStatusStyle: () => ({}),
+    toPreviewPageSchema: () => ({ sections: [] }),
+    getPreviewPageDiagnostics: () => [],
+    toDiagnosticsListItems: () => [],
+    getPageSectionStyle: () => ({}),
+    getSectionLabelValue: () => '',
+  })
+
+  it('emits openInWindow from the design-system header action', async () => {
+    const wrapper = shallowMount(CmsPagesPreviewSurface, {
+      props: createProps(),
+      global: {
+        stubs: {
+          CmsShellCard: {
+            props: ['bodyClass'],
+            template: '<section :class="bodyClass"><div class="header-actions"><slot name="header-actions" /></div><slot /></section>',
+          },
+          CmsPreviewToolbar: true,
+          CmsLocaleCoverageMatrix: true,
+          CmsSectionHeaderSummary: true,
+          CmsDiagnosticsListSection: true,
+          CmsRenderer: true,
+          'q-banner': true,
+          'q-chip': true,
+          DsButton: false,
+        },
+      },
+    })
+
+    const button = wrapper.get('button.ntk-button')
+    expect(button.classes()).toEqual(expect.arrayContaining([
+      'ntk-button--variant-ghost',
+      'ntk-button--size-sm',
+      'ntk-button--intent-neutral',
+    ]))
+    expect(button.text()).toContain('Open in new window')
+
+    await button.trigger('click')
+
+    expect(wrapper.emitted('openInWindow')).toHaveLength(1)
   })
 })
 
