@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-19 22:00
+LastUpdated: 2026-06-19 22:02
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -295,6 +295,7 @@ Checkpoint:
 - `npm run verify` passed, including 29 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
 - Commit `9b8509f0` created the token resolver, CSS policy, and CI gate slice.
 - PR #6 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/6`.
+- PR #6 Vercel check passed; GitHub Actions were still not present in `gh pr checks`.
 - Remaining gaps: full density/theme application, broader CSS governed roots with generated-token excludes, component `Ds*` wrappers, and final PR/CI/review closeout.
 
 ## Closeout Expectations
