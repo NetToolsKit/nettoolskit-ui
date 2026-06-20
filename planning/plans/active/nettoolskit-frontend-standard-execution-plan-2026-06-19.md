@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 02:58
+LastUpdated: 2026-06-20 03:07
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -68,6 +68,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #20 is open as a draft stacked PR from `feat/nettoolskit-ntk-input-compat-2026-06-20` into `refactor/nettoolskit-cms-releases-ds-button-2026-06-20`.
 - PR #21 is open as a draft stacked PR from `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20` into `feat/nettoolskit-ntk-input-compat-2026-06-20`.
 - PR #22 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20`.
+- PR #23 is open as a draft stacked PR from `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20` into `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20`.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -577,6 +578,22 @@ Checkpoint:
 - PR #22 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/22`.
 - PR #22 remote checks passed at 2026-06-20 02:58: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
+### 2026-06-20 03:07 - CMS Field Bridge Token Alias Slice
+
+- Removed duplicated broad Quasar field overrides from `src/templates/styles/cms-authoring-reference.css`.
+- Routed CMS field text, label, placeholder, icon, control background, border, hover, and focus behavior through scoped token aliases consumed by the shared template bridge.
+- Added template audit coverage proving the aliases exist and the removed `.cms-shell-page :deep(.q-field...)` overrides do not return.
+- Refreshed the dark CMS shell Windows visual baseline because fields now follow the tokenized CMS dark surface instead of Quasar default light field styling.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `quasarClassSelectors: 241`, `unmanagedDeepSelectors: 91`, `importantDeclarations: 134`, and no exceeded metrics.
+- Focused Stylelint passed: `npx stylelint "src/templates/styles/reference-app-bridge.scss" "src/templates/styles/cms-authoring-reference.css"`.
+- Focused audit passed: `npx vitest run --config tests/vitest.config.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 16 tests.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests.
+- `git diff --check` passed.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `4b5a620` created the CMS field bridge token alias slice.
+- PR #23 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/23`.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
 ## Closeout Expectations
 

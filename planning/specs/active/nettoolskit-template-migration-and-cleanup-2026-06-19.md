@@ -144,6 +144,15 @@ The largest direct Quasar usage appears in:
 - Focused media replacement E2E still fails on the parent branch with this slice stashed at the known Blocks runtime preview image assertion; the create/apply media binding flow passes with this slice.
 - Remaining gaps: broader CMS direct Quasar migration, bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 03:07 - CMS Field Bridge Token Alias Slice
+
+- Removed duplicated broad Quasar field overrides from the CMS authoring stylesheet and routed field styling through scoped token aliases consumed by the shared template bridge.
+- Added audit coverage so the token aliases remain present and the broad `.cms-shell-page :deep(.q-field...)` selectors stay removed.
+- Refreshed the dark settings shell visual baseline because fields now use the tokenized CMS dark surface.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- Remaining gaps: broader CMS direct Quasar migration, remaining bridge selector reduction, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.

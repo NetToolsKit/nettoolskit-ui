@@ -70,6 +70,17 @@ High-risk files include:
 - CSS governance unit coverage validates missing metrics, missing exception metadata, machine-readable CLI output, and baseline enforcement.
 - Remaining gap: governed roots still focus on `src/components` and `src/templates`; expanding to `src/styles` and `src/design-system` requires targeted excludes/allowlists for token-generated artifacts and legacy raw values.
 
+### 2026-06-20 03:07 - CMS Field Bridge Token Alias Slice
+
+- Removed duplicated broad Quasar field overrides from `src/templates/styles/cms-authoring-reference.css`.
+- Routed CMS field styling through scoped token aliases consumed by `src/templates/styles/reference-app-bridge.scss`.
+- Added template audit coverage for the token aliases and removed broad `.cms-shell-page :deep(.q-field...)` selectors.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with no exceeded metrics.
+- Focused Stylelint passed: `npx stylelint "src/templates/styles/reference-app-bridge.scss" "src/templates/styles/cms-authoring-reference.css"`.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests after refreshing only the dark settings shell baseline.
+- `npm run verify` passed, including CSS governance, architecture governance, browser gates, and package build.
+- Remaining gap: bridge files still contain documented Quasar exceptions; continue shrinking selectors in narrow visual slices.
+
 ## Risks
 
 - Enforcing rules before wrappers exist will create noisy failures.
