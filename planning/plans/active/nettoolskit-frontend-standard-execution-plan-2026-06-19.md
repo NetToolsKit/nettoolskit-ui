@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 09:28
+LastUpdated: 2026-06-20 09:52
 Status: active
 Progress: 80% (12/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -73,6 +73,7 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`.
 - PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`.
 - PR #27 is open as a draft stacked PR from `refactor/nettoolskit-cms-native-separators-2026-06-20` into `refactor/nettoolskit-cms-shell-native-separator-2026-06-20`.
+- PR #28 is open as a draft stacked PR from `refactor/nettoolskit-cms-usage-drawer-native-shell-2026-06-20` into `refactor/nettoolskit-cms-native-separators-2026-06-20`; remote check inspection is pending.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
 
 ## Sub-Slice Matrix
@@ -673,6 +674,26 @@ Checkpoint:
 - PR #27 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/27`.
 - PR #27 remote checks passed at 2026-06-20 09:28: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/review closeout.
+
+### 2026-06-20 09:52 - CMS Usage Drawer Native Shell Slice
+
+- Replaced the CMS usage drawer `q-card` shell with native `section` markup while preserving the `q-dialog` portal.
+- Replaced the direct close `q-btn` with `DsButton`, added translated `closeLabel` wiring from `CmsApp`, and moved E2E close coverage to role/name lookup.
+- Added pointer-event handling for the native dialog child, focus-visible styling for the close button, and audit coverage proving the drawer no longer contains direct `<q-card>` or `<q-btn>`.
+- Subagent audit completed read-only and flagged the i18n close label plus native dialog pointer-event risks; both were addressed in this slice.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts tests/unit/design-system/components/ds-button.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 4 files and 57 tests.
+- Focused usage E2E passed: `npx playwright test tests/e2e/cms-settings-flow.spec.ts -g "surfaces usage summaries and blocks deletes for in-use reusable entities" --workers=1`.
+- Focused starter-kit drawer E2E passed: `npx playwright test tests/e2e/cms-settings-flow.spec.ts -g "surfaces starter-kit impact analysis and archive restore flows for seeded reusable blocks" --workers=1`.
+- `npm run type-check` passed.
+- `npm run lint -- --quiet` passed.
+- `npm run lint:style` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 1041` and no exceeded metrics.
+- CMS visual regression passed: `npx playwright test tests/e2e/cms-visual-regression.spec.ts --workers=1` with 20 tests.
+- `npm run verify` passed, including 55 design-system tests, architecture governance, 25 browser-gate Playwright tests, and package build.
+- Commit `c566d0c` created the CMS usage drawer native shell slice.
+- PR #28 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/28`.
+- Remote check inspection remains pending for PR #28.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/review closeout.
 
 ## Closeout Expectations
 

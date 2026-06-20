@@ -201,6 +201,18 @@ The largest direct Quasar usage appears in:
 - PR #27 remote checks passed at 2026-06-20 09:28: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, and final PR/CI/review closeout.
 
+### 2026-06-20 09:52 - CMS Usage Drawer Native Shell Slice
+
+- Replaced the CMS usage drawer `q-card` shell with native `section` markup while preserving `q-dialog` and `q-chip` as documented remaining Quasar internals.
+- Replaced the direct close `q-btn` with `DsButton`, added translated close-label wiring, and updated E2E coverage to close the drawer by role/name.
+- Added native dialog child pointer-event handling and close-button focus-visible styling.
+- Added unit and template audit coverage proving the drawer shell and close action stay on native/design-system markup.
+- Focused validation passed: `npm test -- tests/unit/templates/CmsAuthoringChromeComponents.spec.ts tests/unit/templates/TemplateWhiteLabelAudit.spec.ts tests/unit/modules/cms/CmsConfigCoverage.spec.ts tests/unit/design-system/components/ds-button.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 4 files and 57 tests.
+- Focused usage drawer E2E and starter-kit impact drawer E2E passed.
+- CMS visual regression passed with 20 tests, and `npm run verify` passed with 25 browser-gate Playwright tests and package build.
+- PR #28 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/28`.
+- Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, remote check inspection, and final PR/CI/review closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
