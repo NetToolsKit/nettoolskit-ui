@@ -2,9 +2,9 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-20 13:55
+LastUpdated: 2026-06-20 14:25
 Status: active
-Progress: 80% (12/15 checked)
+Progress: 87% (13/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
 Reviewer: mandatory before closeout
@@ -24,7 +24,7 @@ Release closeout: mandatory
 - [x] Completion audit against active specs recorded.
 - [x] Browser/stylelint gate slice validated locally.
 - [x] Browser/stylelint gate committed, pushed, and opened as a stacked PR.
-- [ ] Remaining spec gaps converted into the next implementation slices.
+- [x] Remaining spec gaps converted into the next implementation slices.
 - [ ] CI result inspection and PR stack review completed.
 - [ ] Final review and closeout completed.
 
@@ -82,7 +82,20 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - PR #34 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-native-chips-2026-06-20`.
 - PR #35 is open as a draft stacked PR from `refactor/nettoolskit-cms-settings-native-chips-2026-06-20` into `refactor/nettoolskit-cms-releases-native-chips-2026-06-20`.
 - PR #35 remote checks passed at 2026-06-20 13:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- PR #36 is open as a draft stacked PR from `refactor/nettoolskit-cms-settings-content-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-settings-native-chips-2026-06-20`.
+- PR #36 remote checks passed at 2026-06-20 14:25: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining spec gaps have been converted into the next implementation-slice queue; CI/PR stack inspection is now the next checklist item.
 - Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
+
+## Remaining Gap Slice Queue
+
+These slices are recorded for later implementation/review and should not be started until stage 14 status is reported to the operator.
+
+1. Settings admin toolbar controls: migrate the admin/tenant/action/autosave toolbar `q-select` and `q-btn` controls in `CmsSettingsModuleSurface.vue` lines 73-177 to `NtkSelect`/`NtkButton`; preserve file inputs and icon-only preview CTA for separate review.
+2. Pages and Blocks command strips: migrate the Pages command strip selectors/actions and Blocks quick-command selector/action to `NtkSelect`/`NtkButton`; validate with `uses shared builder search and quick commands across Pages and Blocks` plus phase 3 quick-start visual coverage.
+3. Settings content-model authoring fields: migrate the content-model library, field preset, conditional visibility, replacement, and preset library fields after the content-copy tab migration is reviewed.
+4. Remaining Pages/Blocks field and action clusters: migrate page fields, dynamic page custom fields, section actions, reusable library actions, block list actions, and props editor in thin module-local slices.
+5. Residual banners/dialog/icons/toggles: keep Quasar structural/interactive internals documented until wrapper contracts exist or an explicit exception is accepted.
 
 ## Sub-Slice Matrix
 

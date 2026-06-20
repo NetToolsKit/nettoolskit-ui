@@ -319,6 +319,23 @@ The largest direct Quasar usage appears in:
 - PR #35 remote checks passed at 2026-06-20 13:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
 - Remaining gaps: broader CMS direct Quasar migration, inherited Blocks preview runtime content failure triage, inherited notification-token E2E badge color failure, and final PR/CI/review closeout.
 
+### 2026-06-20 14:25 - CMS Settings Content Copy Field Slice And Gap Queue
+
+- Replaced the Settings content-copy tab `q-input` controls with `NtkInput`.
+- Replaced the content locale `q-select` with `NtkSelect` and the locale preset action with `NtkButton`.
+- Updated `NtkSelect` to accept readonly option arrays so readonly CMS catalog constants can use the compatibility wrapper without local array casts.
+- Added template audit coverage proving the content-copy field slice imports `NtkInput`/`NtkSelect`, uses `NtkInput`/`NtkSelect`/`NtkButton`, and keeps direct `<q-input>`, `<q-select>`, and `<q-btn>` out of that scoped copy block.
+- Subagent audits converted remaining direct Quasar gaps into later thin slices: Settings admin toolbar controls, Pages/Blocks command strips, Settings content-model authoring fields, remaining Pages/Blocks field/action clusters, and residual banners/dialog/icons/toggles that need wrapper contracts or explicit exceptions.
+- Focused validation passed: `npm test -- tests/unit/templates/TemplateWhiteLabelAudit.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 26 tests.
+- Focused form wrapper validation passed: `npm test -- tests/unit/components/form/NtkFormComponents.spec.ts tests/unit/design-system/components/ds-select.spec.ts --pool=forks --maxWorkers=1 --no-file-parallelism` with 34 tests.
+- `npm run type-check`, `npm run lint -- --quiet`, `npm run lint:style`, CSS governance, and `git diff --check` passed.
+- Focused governance passed: `node scripts/lint-css-governance.mjs --root src/templates --format=json` with `directQuasarTags: 788` and no exceeded metrics.
+- Focused Settings content-model visual passed without snapshot updates.
+- `npm run verify` passed, including 25 browser-gate Playwright tests and package build.
+- PR #36 opened as draft: `https://github.com/ThiagoGuislotti/nettoolskit-ui-vue/pull/36`.
+- PR #36 remote checks passed at 2026-06-20 14:25: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
+- Remaining acceptance has moved to PR/CI stack inspection, final review, and closeout.
+
 ## Risks
 
 - CMS module files are large and high-change; migrations must be sliced.
