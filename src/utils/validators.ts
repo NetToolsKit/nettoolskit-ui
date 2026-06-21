@@ -12,8 +12,31 @@
  */
 export function validateEmail(email: string): boolean {
   if (!email) return false
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
+  if (typeof email !== 'string') return false
+
+  const trimmed = email.trim()
+  if (!trimmed || trimmed.length > 254 || trimmed !== email) return false
+
+  const atIndex = trimmed.indexOf('@')
+  if (atIndex <= 0 || atIndex !== trimmed.lastIndexOf('@')) return false
+
+  const localPart = trimmed.slice(0, atIndex)
+  const domain = trimmed.slice(atIndex + 1)
+  if (!localPart || !domain || domain.length > 253) return false
+  if (hasWhitespace(localPart) || hasWhitespace(domain)) return false
+
+  const dotIndex = domain.lastIndexOf('.')
+  return dotIndex > 0 && dotIndex < domain.length - 1
+}
+
+function hasWhitespace(value: string): boolean {
+  for (const character of value) {
+    if (character.charCodeAt(0) <= 32) {
+      return true
+    }
+  }
+
+  return false
 }
 
 /**

@@ -364,4 +364,39 @@ describe('media-library', () => {
     expect(replacedFavicon.replacedBrandingReferences).toBe(1)
     expect(replacedFavicon.branding.faviconUrl).toBe('https://example.com/assets/next-favicon.png')
   })
+
+  it('ignores unsafe media binding target paths', () => {
+    const props = {
+      imageAssetId: 'hero-image',
+    }
+
+    const resolved = resolveCmsMediaBindingProps({
+      props,
+      bindings: [
+        {
+          sourcePath: 'imageAssetId',
+          targetPath: '__proto__.polluted',
+          altTargetPath: 'constructor.prototype.pollutedAlt',
+        },
+      ],
+      mediaAssets: [
+        {
+          id: 'hero-image',
+          name: 'Hero image',
+          description: '',
+          kind: 'image',
+          url: 'https://example.com/assets/hero-image.png',
+          alt: 'Hero image alt',
+          focalPoint: null,
+          replaceTargetAssetId: null,
+          tags: [],
+          usage: [],
+        },
+      ],
+    })
+
+    expect(resolved).toEqual(props)
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined()
+    expect(({} as Record<string, unknown>).pollutedAlt).toBeUndefined()
+  })
 })

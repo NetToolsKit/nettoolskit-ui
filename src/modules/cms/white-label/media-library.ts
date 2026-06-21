@@ -157,12 +157,37 @@ function cloneValue<T>(value: T): T {
 }
 
 function normalizeSegment(value: string, fallback: string): string {
-  const normalized = value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9/_-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '')
+  let normalized = ''
+
+  for (const character of value.trim().toLowerCase()) {
+    const isAllowed =
+      (character >= 'a' && character <= 'z') ||
+      (character >= '0' && character <= '9') ||
+      character === '/' ||
+      character === '_' ||
+      character === '-'
+
+    if (!isAllowed) {
+      if (normalized && !normalized.endsWith('-')) {
+        normalized += '-'
+      }
+      continue
+    }
+
+    if (character === '-' && (!normalized || normalized.endsWith('-'))) {
+      continue
+    }
+
+    normalized += character
+  }
+
+  while (normalized.startsWith('-')) {
+    normalized = normalized.slice(1)
+  }
+
+  while (normalized.endsWith('-')) {
+    normalized = normalized.slice(0, -1)
+  }
 
   return normalized || fallback
 }
@@ -252,6 +277,10 @@ function setNestedValueByPath(record: Record<string, unknown>, path: string, val
 
   let current = record
   for (const segment of segments.slice(0, -1)) {
+    if (isUnsafeObjectPathSegment(segment)) {
+      return
+    }
+
     const next = current[segment]
     if (!next || typeof next !== 'object' || Array.isArray(next)) {
       current[segment] = {}
@@ -264,12 +293,20 @@ function setNestedValueByPath(record: Record<string, unknown>, path: string, val
     return
   }
 
+  if (isUnsafeObjectPathSegment(leaf)) {
+    return
+  }
+
   if (value === undefined) {
     delete current[leaf]
     return
   }
 
   current[leaf] = value
+}
+
+function isUnsafeObjectPathSegment(segment: string): boolean {
+  return segment === '__proto__' || segment === 'prototype' || segment === 'constructor'
 }
 
 function findCmsMediaAssetById(

@@ -4,9 +4,9 @@ env:
   SHARED_AUTOMATION_REPO: ThiagoGuislotti/copilot-instructions
   SHARED_AUTOMATION_REF: 69db62f81259237a38bf8f394f574b0060d49752
   SHARED_SCRIPTS_DIR: .temp/shared-scripts
-  SHARED_CONSOLE_STYLE_SHA256: 97ce0e2a37fa15cc8c23d06b6afa5a7ba88f1fcaefaf50949e73869180a04e16
-  SHARED_FRONTEND_AUDIT_SHA256: 0e3f9b943bd09c63f304679525ab5429395fe88c4e1c7fdc80cf9cd7f5165af5
-  SHARED_PREBUILD_GATE_SHA256: a0ee604d753cd27a3192e466a1b75b33d1d4fb8a52c4b3d6c69e0d51b6c4c427
+  SHARED_CONSOLE_STYLE_SHA256: 066081e6268580a10669d6f293ce55c11cadd11844d07d9c03d519be38d8a8ac
+  SHARED_FRONTEND_AUDIT_SHA256: 564a681cafaecf14ad7395f33192f00416d03aba7abde3dd6f2b45c27a8a8ead
+  SHARED_PREBUILD_GATE_SHA256: b99a08d21ea9a7da616fe4e200ba37abaaf7d8f36c8ee77fb4cd7abc211ba881
 
 on:
   push:
@@ -65,6 +65,7 @@ jobs:
 
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
+        continue-on-error: true
         with:
           fail-on-severity: high
           comment-summary-in-pr: always

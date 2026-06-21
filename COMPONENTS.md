@@ -49,7 +49,7 @@ Source: `src/design-system/core/components/button.ts`.
 | `loading` | Yes | `boolean` | `NtkButtonContract` |
 | `icon` | Yes | `string` | `NtkButtonContract` |
 | `iconRight` | Yes | `string` | `NtkButtonContract` |
-| `type` | Yes | `'button' \| 'submit' \| 'reset'` | `NtkButtonContract` |
+| `type` | Yes | `'button' \\| 'submit' \\| 'reset'` | `NtkButtonContract` |
 
 ### Class Map
 

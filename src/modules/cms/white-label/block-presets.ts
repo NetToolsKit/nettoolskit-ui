@@ -555,12 +555,38 @@ function resolveLocalizedText(text: CmsLocalizedText, locale: CmsLocale): string
 }
 
 function normalizeSegment(value: string, fallback: string): string {
-  const normalized = value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9/_-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '')
+  let normalized = ''
+
+  for (const character of value.trim().toLowerCase()) {
+    const isAllowed =
+      (character >= 'a' && character <= 'z') ||
+      (character >= '0' && character <= '9') ||
+      character === '/' ||
+      character === '_' ||
+      character === '-'
+
+    if (!isAllowed) {
+      if (normalized && !normalized.endsWith('-')) {
+        normalized += '-'
+      }
+      continue
+    }
+
+    if (character === '-' && (!normalized || normalized.endsWith('-'))) {
+      continue
+    }
+
+    normalized += character
+  }
+
+  while (normalized.startsWith('-')) {
+    normalized = normalized.slice(1)
+  }
+
+  while (normalized.endsWith('-')) {
+    normalized = normalized.slice(0, -1)
+  }
+
   return normalized || fallback
 }
 

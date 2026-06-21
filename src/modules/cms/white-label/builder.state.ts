@@ -93,7 +93,7 @@ function findSectionIndexById(page: CmsPageSchema, sectionId: string): number {
  * Ensures a unique block id based on type and current page content.
  */
 function createUniqueBlockId(page: CmsPageSchema, blockType: string): string {
-  const normalized = blockType.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'block'
+  const normalized = normalizeBlockIdSegment(blockType, 'block')
   const ids = new Set(
     page.sections.flatMap(section => section.blocks.map(block => block.id))
   )
@@ -105,6 +105,35 @@ function createUniqueBlockId(page: CmsPageSchema, blockType: string): string {
     candidate = `${normalized}-${suffix}`
   }
   return candidate
+}
+
+function normalizeBlockIdSegment(value: string, fallback: string): string {
+  let normalized = ''
+
+  for (const character of value.trim().toLowerCase()) {
+    const isAllowed =
+      (character >= 'a' && character <= 'z') ||
+      (character >= '0' && character <= '9')
+
+    if (!isAllowed) {
+      if (normalized && !normalized.endsWith('-')) {
+        normalized += '-'
+      }
+      continue
+    }
+
+    normalized += character
+  }
+
+  while (normalized.startsWith('-')) {
+    normalized = normalized.slice(1)
+  }
+
+  while (normalized.endsWith('-')) {
+    normalized = normalized.slice(0, -1)
+  }
+
+  return normalized || fallback
 }
 
 /**

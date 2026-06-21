@@ -159,11 +159,11 @@ function toDisplayPath(filePath, repoRoot) {
 }
 
 function code(value) {
-  return `\`${String(value).replace(/`/g, '\\`')}\``
+  return `\`${String(value).replace(/\\/g, '\\\\').replace(/`/g, '\\`')}\``
 }
 
 function textCell(value) {
-  return String(value ?? '').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
+  return String(value ?? '').replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
 }
 
 function codeCell(value) {
