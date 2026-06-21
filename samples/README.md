@@ -1,25 +1,12 @@
-# Samples Runtime
+# Library Sample
 
-Runtime host for a single approved sample derived from `.temp/reference`.
+This folder contains the local Vite preview for the `nettoolskit` UI library.
 
 ## Purpose
 
-- keep `samples/` as the canonical public runtime for the approved reference-derived sample
-- consume reusable layouts, pages, navigation, and styles from `src/**`
-- keep the public host focused on one clean implementation instead of a multi-gallery flow
-
-## Entry Modes
-
-- `/`
-  - original reference-derived sample
-- `/?template-runtime=1`
-  - router-enabled template runtime for internal composition checks
-
-## Internal Compatibility Entry
-
-- `/internal-cms.html`
-  - local-only internal CMS compatibility runtime kept outside the public sample flow
-  - served by the Vite dev server for development/tests, but excluded from the public samples build entry list
+- exercise reusable `Ds*` and `Ntk*` components;
+- load the shared token and global style stack;
+- keep local preview independent from product runtime code.
 
 ## Local Preview
 
@@ -27,30 +14,10 @@ Runtime host for a single approved sample derived from `.temp/reference`.
 npm run dev:samples
 ```
 
-## Theme Runtime Contract
+## Build
 
-The samples host is the canonical browser surface for validating template theme behavior.
+```bash
+npm run build:samples
+```
 
-- `/?template-runtime=1` must exercise the same token stack used by reusable templates.
-- Theme presets should update Quasar-compatible `--q-*` brand variables, NetToolsKit `--ntk-*` aliases, and template contracts together.
-- Dark presets must synchronize with Quasar dark-mode behavior and expose `body--dark` for CSS selectors and E2E assertions.
-- Quasar teleported surfaces (`QMenu`, `QDialog`, `QSelect`, `QPopupProxy`, `QTooltip`) must be styled through the shared overlay bridge or explicit popup classes.
-- Runtime visual artifacts, Playwright reports, and test output belong under `.build`.
-
-## Fixed Reference Brand Artwork
-
-The SVG files in `samples/assets/` are fixed reference brand artwork, not reusable white-label UI components.
-
-- `original-reference-mark.svg` preserves the approved original-reference mark colors.
-- `core-reference-logo.svg` preserves the sample brand lockup colors.
-- These assets are intentionally excluded from the component color-token policy because SVGs loaded as external image assets cannot reliably consume host-page CSS variables across runtime and build targets.
-- If an artwork needs to participate in white-label theming, inline it as a Vue/SVG component and bind the fills to the template token layer instead of reusing these fixed files.
-
-## Structure
-
-- `main.ts`
-  - chooses between the single public sample and the internal template runtime
-- `original-reference/**`
-  - self-contained original sample, sample data, and chart composition derived from the approved reference
-- `shared/mountSamplesHost.ts`
-  - sample host bootstrap helper
+Generated preview artifacts belong under `.build/samples`.

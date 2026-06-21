@@ -7,11 +7,18 @@ import NtkContactSection from '../../../../src/components/layout/NtkContactSecti
 
 vi.mock('../../../../src/composables/ui/useBranding', () => ({
   useBranding: () => ({
-    appName: { value: 'TestApp' },
-    tagline: { value: '' },
-    logo: { value: { type: 'letter', value: 'T', alt: 'TestApp' } },
+    appName: { value: 'BrandApp' },
+    tagline: { value: 'Brand tagline' },
+    logo: { value: { type: 'letter', value: 'N', alt: 'NetToolsKit' } },
     appUrl: { value: '/' },
-    primaryColor: { value: '#3b82f6' },
+    primaryColor: { value: 'var(--ntk-primary)' },
+    secondaryColor: { value: 'var(--ntk-secondary)' },
+    social: {
+      value: {
+        github: 'https://github.com/test',
+        linkedin: 'https://linkedin.com/company/test',
+      },
+    },
   }),
 }))
 

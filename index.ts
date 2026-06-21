@@ -58,14 +58,12 @@ export { default as NtkSidebar } from './src/components/layout/NtkSidebar.vue'
 export { default as NtkFooter } from './src/components/layout/NtkFooter.vue'
 export { default as NtkSection } from './src/components/layout/NtkSection.vue'
 export { default as NtkHero } from './src/components/layout/NtkHero.vue'
-export { default as NtkLandingHeader } from './src/components/layout/NtkLandingHeader.vue'
 export { default as NtkMobileDrawer } from './src/components/layout/NtkMobileDrawer.vue'
 export { default as NtkCTASection } from './src/components/layout/NtkCTASection.vue'
 export { default as NtkStatsSection } from './src/components/layout/NtkStatsSection.vue'
 export { default as NtkServiceGrid } from './src/components/layout/NtkServiceGrid.vue'
 export { default as NtkTechStack } from './src/components/layout/NtkTechStack.vue'
 export { default as NtkContactSection } from './src/components/layout/NtkContactSection.vue'
-export { default as NtkLandingComposer } from './src/components/layout/NtkLandingComposer.vue'
 export { default as NtkAppShell } from './src/components/layout/NtkAppShell.vue'
 export { default as BaseHeader } from './src/components/layout/BaseHeader.vue'
 export { default as BaseSidebar } from './src/components/layout/BaseSidebar.vue'
@@ -167,7 +165,6 @@ export * from './src/config/theme/theme.plugin'
 export * from './src/config/brand/identity.config'
 export * from './src/config/brand/navigation.config'
 export * from './src/config/brand/content.config'
-export * from './src/config/landing/landing-page.config'
 
 // ============================================================================
 // CONFIG - Presets
@@ -182,18 +179,3 @@ export * from './src/config/colors/semantic.config'
 // Legacy compatibility export. Prefer preset/theme CSS custom properties for
 // runtime white-label work so tokens can be swapped without plugin writes.
 export * from './src/config/colors/theme-mode.config'
-
-// ============================================================================
-// MODULES - CMS
-// ============================================================================
-export * from './src/modules/cms'
-
-// ============================================================================
-// WHITELABEL - Reference Samples
-// ============================================================================
-export * from './src/whitelabel'
-
-// ============================================================================
-// TEMPLATES - Visual Template Catalog
-// ============================================================================
-export * from './src/templates'

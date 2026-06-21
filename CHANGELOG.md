@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-03-01
 
+### Removed
+
+- **Library-only package surface cleanup**
+  - Removed CMS engine, CMS authoring, landing runtime, product template runtime, reference whitelabel, Playwright product fixtures, and related product documentation from the `nettoolskit` package surface.
+  - Removed public exports for `src/modules/cms`, `src/templates`, `src/whitelabel`, and landing-page configuration so this repository stays focused on reusable UI library contracts.
+  - Replaced product/browser gates with library-focused validation gates for tokens, generated docs, CSS governance, design-system tests, architecture tests, type-check, and package build.
+
 ### Changed
 
 - **Unified npm major dependency upgrade**

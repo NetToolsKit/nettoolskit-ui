@@ -8,7 +8,11 @@ import BaseFooter from '../../../../src/components/layout/BaseFooter.vue'
 
 vi.mock('../../../../src/composables/ui/useBranding', () => ({
   useBranding: () => ({
-    logo: { value: { letter: 'T', text: 'TestApp' } },
+    logo: { value: { type: 'letter', value: 'N', alt: 'NetToolsKit' } },
+    appName: { value: 'BrandApp' },
+    tagline: { value: 'Brand tagline' },
+    primaryColor: { value: 'var(--ntk-primary)' },
+    secondaryColor: { value: 'var(--ntk-secondary)' },
     colors: { value: { primary: '#007bff' } },
     contact: { value: { email: 'test@example.com', whatsapp: '5511999999999' } },
     social: {

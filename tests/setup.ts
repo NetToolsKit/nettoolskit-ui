@@ -210,6 +210,9 @@ const QToggle = createQuasarStub('QToggle')
 const QSpinner = createQuasarStub('QSpinner')
 const QTable = createQuasarStub('QTable')
 const QTd = createQuasarStub('QTd', 'td')
+const Dark = {
+  set: vi.fn()
+}
 
 // Mock the `quasar` module to avoid installing the real plugin (which requires SSR/runtime globals)
 // and to keep component mounting stable.
@@ -263,7 +266,8 @@ vi.mock('quasar', () => {
     QToggle,
     QSpinner,
     QTable,
-    QTd
+    QTd,
+    Dark
   }
 })
 
@@ -333,23 +337,84 @@ vi.mock('@/composables/ui/useBranding', () => ({
     logo: {
       value: {
         type: 'letter',
-        value: 'S',
-        alt: 'Mock Logo'
+        value: 'N',
+        alt: 'NetToolsKit'
       }
     },
 
-    appName: { value: 'MockApp' },
-    tagline: { value: 'Mock Tagline' },
+    appName: { value: 'BrandApp' },
+    tagline: { value: 'Brand tagline' },
     appUrl: { value: 'https://example.com' },
 
-    primaryColor: { value: '#1976D2' },
-    secondaryColor: { value: '#42A5F5' },
-    accentColor: { value: '#FFC107' },
+    primaryColor: { value: 'var(--ntk-primary)' },
+    secondaryColor: { value: 'var(--ntk-secondary)' },
+    accentColor: { value: 'var(--ntk-accent)' },
 
     contact: { value: {} },
-    social: { value: {} }
+    social: {
+      value: {
+        github: 'https://github.com/test',
+        linkedin: 'https://linkedin.com/company/test'
+      }
+    }
   })
 }))
+
+class MemoryStorage implements Storage {
+  private readonly entries = new Map<string, string>()
+
+  get length(): number {
+    return this.entries.size
+  }
+
+  clear(): void {
+    this.entries.clear()
+  }
+
+  getItem(key: string): string | null {
+    return this.entries.get(key) ?? null
+  }
+
+  key(index: number): string | null {
+    return Array.from(this.entries.keys())[index] ?? null
+  }
+
+  removeItem(key: string): void {
+    this.entries.delete(key)
+  }
+
+  setItem(key: string, value: string): void {
+    this.entries.set(key, value)
+  }
+}
+
+const resolveLocalStorage = (): Storage => {
+  if (typeof window === 'undefined') {
+    return new MemoryStorage()
+  }
+
+  try {
+    const storage = window.localStorage
+    const probeKey = '__ntk_storage_probe__'
+    storage.setItem(probeKey, '1')
+    storage.removeItem(probeKey)
+    return storage
+  } catch {
+    return new MemoryStorage()
+  }
+}
+
+const testLocalStorage = resolveLocalStorage()
+Object.defineProperty(globalThis, 'localStorage', {
+  value: testLocalStorage,
+  configurable: true
+})
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'localStorage', {
+    value: testLocalStorage,
+    configurable: true
+  })
+}
 
 // Note: Vue reactivity mock removed - was interfering with component tests
 // ref and computed should use actual Vue implementation for proper rendering

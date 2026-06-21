@@ -1,15 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useQuasar } from 'quasar'
 
 const mocks = vi.hoisted(() => ({
   dialog: vi.fn(),
   success: vi.fn(),
   info: vi.fn()
-}))
-
-vi.mock('quasar', () => ({
-  useQuasar: () => ({
-    dialog: mocks.dialog
-  })
 }))
 
 vi.mock('../../../src/composables/services/useNotification', () => ({
@@ -24,6 +19,8 @@ describe('useDialogActions', () => {
     mocks.dialog.mockReset()
     mocks.success.mockReset()
     mocks.info.mockReset()
+    const quasar = useQuasar() as { dialog: typeof mocks.dialog }
+    quasar.dialog = mocks.dialog
 
     mocks.dialog.mockReturnValue({
       onOk: vi.fn().mockReturnThis(),

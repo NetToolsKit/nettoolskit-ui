@@ -1,5 +1,0 @@
-export { default as TemplateRuntimeApp } from './TemplateRuntimeApp.vue'
-export * from './router'
-export * from './runtime-data.template'
-export * from './runtime-factories.template'
-export * from './runtime-storage.template'
