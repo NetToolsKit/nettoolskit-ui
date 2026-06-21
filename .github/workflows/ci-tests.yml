@@ -1,5 +1,7 @@
 name: CI Tests
 
+# Routine pull request gates run in GitRiver. This workflow remains as a manual
+# GitHub fallback for runner-specific evidence and emergency validation.
 env:
   SHARED_AUTOMATION_REPO: ThiagoGuislotti/copilot-instructions
   SHARED_AUTOMATION_REF: 69db62f81259237a38bf8f394f574b0060d49752
@@ -8,15 +10,7 @@ env:
   SHARED_FRONTEND_AUDIT_SHA256: 564a681cafaecf14ad7395f33192f00416d03aba7abde3dd6f2b45c27a8a8ead
 
 on:
-  push:
-    branches:
-      - main
-      - master
-      - develop
-      - 'feature/**'
-  pull_request:
-    branches:
-      - '*'
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}

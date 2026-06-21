@@ -1,0 +1,351 @@
+# Provider-visible River contexts use canonical stage names.
+# GitHub remains the source of truth; this metadata repository only triggers gates.
+name: UI CI Stages
+
+"on":
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: nettoolskit-ui-ci-stages-$GITHUB_SOURCE_REF
+  cancel_in_progress: true
+
+jobs:
+  prepare:
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 12m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/prepare
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: prepare
+      npm_config_cache: .build/npm-cache-river
+      PLAYWRIGHT_BROWSERS_PATH: .build/playwright-browsers
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          base_ref="${INPUT_GITHUB_BASE_REF:-${GITHUB_BASE_REF:-main}}"
+          base_sha="${INPUT_GITHUB_BASE_SHA:-${GITHUB_BASE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          export GITHUB_BASE_REF="$base_ref"
+          export GITHUB_BASE_SHA="$base_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
+
+  standard:
+    needs: prepare
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 25m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/standard
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: standard
+      npm_config_cache: .build/npm-cache-river
+      PLAYWRIGHT_BROWSERS_PATH: .build/playwright-browsers
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          base_ref="${INPUT_GITHUB_BASE_REF:-${GITHUB_BASE_REF:-main}}"
+          base_sha="${INPUT_GITHUB_BASE_SHA:-${GITHUB_BASE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          export GITHUB_BASE_REF="$base_ref"
+          export GITHUB_BASE_SHA="$base_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
+
+  security:
+    needs: standard
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 15m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/security
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: security
+      npm_config_cache: .build/npm-cache-river
+      PLAYWRIGHT_BROWSERS_PATH: .build/playwright-browsers
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          base_ref="${INPUT_GITHUB_BASE_REF:-${GITHUB_BASE_REF:-main}}"
+          base_sha="${INPUT_GITHUB_BASE_SHA:-${GITHUB_BASE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          export GITHUB_BASE_REF="$base_ref"
+          export GITHUB_BASE_SHA="$base_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
+
+  build:
+    needs: security
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 25m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/build
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: build
+      npm_config_cache: .build/npm-cache-river
+      PLAYWRIGHT_BROWSERS_PATH: .build/playwright-browsers
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          base_ref="${INPUT_GITHUB_BASE_REF:-${GITHUB_BASE_REF:-main}}"
+          base_sha="${INPUT_GITHUB_BASE_SHA:-${GITHUB_BASE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          export GITHUB_BASE_REF="$base_ref"
+          export GITHUB_BASE_SHA="$base_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
+
+  test:
+    needs: build
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 35m
+    interruptible: true
+    env:
+      CI: "true"
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/test
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: test
+      npm_config_cache: .build/npm-cache-river
+      PLAYWRIGHT_BROWSERS_PATH: .build/playwright-browsers
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          base_ref="${INPUT_GITHUB_BASE_REF:-${GITHUB_BASE_REF:-main}}"
+          base_sha="${INPUT_GITHUB_BASE_SHA:-${GITHUB_BASE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          export GITHUB_BASE_REF="$base_ref"
+          export GITHUB_BASE_SHA="$base_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
