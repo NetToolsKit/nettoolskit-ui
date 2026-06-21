@@ -2,8 +2,8 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-21 12:40
-Status: active
+LastUpdated: 2026-06-21 13:03
+Status: completed
 Progress: 100% (15/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
@@ -36,23 +36,23 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 
 ## Linked Specs
 
-1. `planning/specs/active/nettoolskit-frontend-standard-sequence-2026-06-19.md`
-2. `planning/specs/active/nettoolskit-package-surface-and-sources-2026-06-19.md`
-3. `planning/specs/active/nettoolskit-design-tokens-dtcg-2026-06-19.md`
-4. `planning/specs/active/nettoolskit-theme-density-quasar-adapter-2026-06-19.md`
-5. `planning/specs/active/nettoolskit-component-contracts-and-recipes-2026-06-19.md`
-6. `planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md`
-7. `planning/specs/active/nettoolskit-template-migration-and-cleanup-2026-06-19.md`
-8. `planning/specs/active/nettoolskit-quality-gates-and-documentation-2026-06-19.md`
+1. `planning/specs/completed/nettoolskit-frontend-standard-sequence-2026-06-19.md`
+2. `planning/specs/completed/nettoolskit-package-surface-and-sources-2026-06-19.md`
+3. `planning/specs/completed/nettoolskit-design-tokens-dtcg-2026-06-19.md`
+4. `planning/specs/completed/nettoolskit-theme-density-quasar-adapter-2026-06-19.md`
+5. `planning/specs/completed/nettoolskit-component-contracts-and-recipes-2026-06-19.md`
+6. `planning/specs/completed/nettoolskit-css-governance-and-enforcement-2026-06-19.md`
+7. `planning/specs/completed/nettoolskit-template-migration-and-cleanup-2026-06-19.md`
+8. `planning/specs/completed/nettoolskit-quality-gates-and-documentation-2026-06-19.md`
 
 ## Current Planning Status
 
-- All 8 linked specs remain under `planning/specs/active` with implementation evidence, validation evidence, and closeout evidence recorded.
+- All 8 linked specs moved to `planning/specs/completed` with implementation evidence, validation evidence, and closeout evidence recorded.
 - PR #1 through PR #36 were accepted and merged before final integration closeout.
-- Repository owner/name is now `NetToolsKit/nettoolskit-ui`; server branch cleanup left only `main` and `refactor/nettoolskit-cms-settings-content-fields-ntk-form-2026-06-20`.
-- Final integration PR #37 is the active closeout PR into `main`: `https://github.com/NetToolsKit/nettoolskit-ui/pull/37`.
-- PR #37 remote checks passed after CI remediation at commit `26ba999a05`: CodeQL, CodeQL Analysis, Dependency Review, Vulnerability Audit, Lint + Type-check + Unit, Build Verification, E2E, and Visual Regression.
-- Remaining gap slices are documented below as future follow-up work and are not blockers for this final integration PR.
+- Repository owner/name is now `NetToolsKit/nettoolskit-ui`; server branch cleanup previously left only `main` and `refactor/nettoolskit-cms-settings-content-fields-ntk-form-2026-06-20` before Dependabot opened maintenance branches.
+- Final integration PR #37 was merged into `main` at `cbb6258270`: `https://github.com/NetToolsKit/nettoolskit-ui/pull/37`.
+- PR #37 remote checks passed after CI remediation: CodeQL, CodeQL Analysis, Dependency Review, Vulnerability Audit, Lint + Type-check + Unit, Build Verification, E2E, and Visual Regression.
+- The final archive commit moves this plan and the 8 specs to completed paths; remaining gap slices are documented below as future follow-up work and are not blockers for the frontend standard workstream.
 
 ### 2026-06-21 10:58 - Stage 14 CI And PR Stack Reconciliation
 
@@ -76,7 +76,13 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - `tests/unit/modules/cms/MediaLibrary.spec.ts` now covers unsafe media binding target paths and verifies prototype pollution does not occur.
 - Later PR #37 remote CI exposed frontend security wrapper incompatibility and broad Playwright E2E runtime. Workflows now run the pinned frontend vulnerability audit directly against runtime dependencies and keep E2E focused on stable runtime smoke flows, while visual/a11y gates remain covered by dedicated browser jobs.
 - PR #37 checks passed at commit `26ba999a05`: CodeQL, CodeQL Analysis, Dependency Review, Vulnerability Audit, Lint + Type-check + Unit, Build Verification, E2E, and Visual Regression.
-- This planning closeout commit is documentation-only; after its remote recheck passes, PR #37 can be marked ready for review without additional code changes.
+- PR #37 was later merged before the final archive move, so the archive move is carried as the final documentation-only follow-up delta after `main`.
+
+### 2026-06-21 13:03 - Planning Archive Closeout
+
+- All 8 NetToolsKit frontend standard specs were moved from `planning/specs/active` to `planning/specs/completed`.
+- This execution plan was moved from `planning/plans/active` to `planning/completed`.
+- Archive status was normalized to `Status: completed` for this plan and `Status: completed - archived` for each linked spec.
 
 ## Remaining Gap Slice Queue
 
