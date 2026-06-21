@@ -1,10 +1,10 @@
 # Dependency PR Unification - Plan
 
 Date: 2026-06-21
-LastUpdated: 2026-06-21 17:17
-Status: active
+LastUpdated: 2026-06-21 17:36
+Status: active - PR open, River CI green
 Branch: `chore/unify-dependency-upgrades`
-Progress: 83% (5/6 checked)
+Progress: 86% (6/7 checked)
 
 ## Scope
 
@@ -34,7 +34,8 @@ Separate spec registration is not required for this workstream because this is d
 - [x] Fix TypeScript 6, vue-tsc 3, jsdom 29, Vite 8, Vue Router 5, and ESLint 10 compatibility issues.
 - [x] Run install, audit, lint, type-check, unit tests, and build as applicable.
 - [x] Commit with semantic Git message and push branch.
-- [ ] Open one GitHub PR and record validation/CI status.
+- [x] Open one GitHub PR and record validation/CI status.
+- [ ] Merge PR and close superseded Dependabot PRs after operator approval.
 
 ## Validation Targets
 
@@ -67,7 +68,7 @@ Separate spec registration is not required for this workstream because this is d
 
 - Opened draft PR: https://github.com/NetToolsKit/nettoolskit-ui/pull/54
 - Commit: `400d2824a8 chore(deps): unify frontend major upgrades`
-- CI status: pending at PR creation.
+- CI status: River contexts passed on commit `65b5c7c7de72b4dc440ba35e050a85ac1768e0c7`: `river/prepare`, `river/standard`, `river/security`, `river/build`, and `river/test`.
 
 ## Closeout
 
