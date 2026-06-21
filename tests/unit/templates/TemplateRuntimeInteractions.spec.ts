@@ -42,7 +42,14 @@ vi.mock('../../../src/templates/layouts', async () => {
   const { defineComponent, h } = await vi.importActual<typeof import('vue')>('vue')
 
   return {
-    clearTemplateLayoutPersistence: vi.fn(),
+    clearTemplateLayoutPersistence: vi.fn((storageKeyPrefix = 'ntk-template-layout') => {
+      const keysToRemove = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index))
+        .filter((key): key is string => Boolean(key?.startsWith(`${storageKeyPrefix}:`)))
+
+      for (const key of keysToRemove) {
+        localStorage.removeItem(key)
+      }
+    }),
     AuthLayoutTemplate: defineComponent({
       name: 'AuthLayoutTemplate',
       setup(_props, { slots }) {

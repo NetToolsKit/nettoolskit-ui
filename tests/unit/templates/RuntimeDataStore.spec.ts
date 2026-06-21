@@ -74,7 +74,7 @@ describe('template runtime data store', () => {
       name: 'Alfa Distribution Copy',
       status: 'onboarding',
     })
-    expect(duplicate?.tags).toContain('copia')
+    expect(duplicate?.tags).toContain('copy')
     expect(templateRuntimeData.state.clients[0]?.id).toBe(duplicate?.id)
     expect(templateRuntimeData.clientRecords.value[0]?.id).toBe(duplicate?.id)
 
