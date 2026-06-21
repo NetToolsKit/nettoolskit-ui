@@ -107,7 +107,7 @@
     "@vue/test-utils": "^2.4.11",
     "cross-env": "^7.0.3",
     "esbuild-plugin-vue3": "^0.5.1",
-    "eslint": "^9.39.2",
+    "eslint": "^10.5.0",
     "eslint-plugin-vue": "^9.33.0",
     "jsdom": "^24.0.0",
     "quasar": "^2.20.1",
