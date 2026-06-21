@@ -1,5 +1,7 @@
 name: Security Analysis
 
+# Routine pull request security gates run in GitRiver. This workflow remains
+# scheduled/manual for GitHub-native CodeQL evidence and fallback audits.
 env:
   SHARED_AUTOMATION_REPO: ThiagoGuislotti/copilot-instructions
   SHARED_AUTOMATION_REF: 69db62f81259237a38bf8f394f574b0060d49752
@@ -8,14 +10,7 @@ env:
   SHARED_FRONTEND_AUDIT_SHA256: 564a681cafaecf14ad7395f33192f00416d03aba7abde3dd6f2b45c27a8a8ead
 
 on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+  workflow_dispatch:
   schedule:
     - cron: "30 6 * * 1"
 
