@@ -124,6 +124,6 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.17.0",
-    "highcharts": "12.5.0"
+    "highcharts": "13.0.0"
   }
 }
