@@ -109,7 +109,7 @@
     "esbuild-plugin-vue3": "^0.5.1",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^9.33.0",
-    "jsdom": "^24.0.0",
+    "jsdom": "^29.1.1",
     "quasar": "^2.20.1",
     "sass": "^1.101.0",
     "stylelint": "^17.13.0",
