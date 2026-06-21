@@ -9,16 +9,56 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 
 ---
 
+## README Standard Compliance
+
+This README follows the repository documentation and frontend quality standard:
+- [docs/standards/readme-frontend-super-agent-standard.md](./docs/standards/readme-frontend-super-agent-standard.md)
+
+Minimum contract covered in this file:
+- scope and platform purpose
+- architecture and structure
+- quality gates and contribution rules
+- validation and references
+
+## Frontend Quality Gate
+
+For frontend changes, use this mandatory baseline:
+
+```bash
+npm run lint -- --quiet
+npm run lint:style
+npm run lint:css
+npm run type-check
+npm run test:design-system
+npm run test:architecture
+npm run test:a11y
+npm run tokens:check
+npm run docs:check
+npm run verify
+```
+
+For visual/template and CMS slices, also run:
+
+```bash
+npm run test:visual
+npm run test:browser-gates
+```
+
+---
+
 ## Features
 
 - ✅ 22 reusable Vue 3 components (form, layout, UI)
-- ✅ 11 composables for reactive logic and state management
-- ✅ Multi-theme support (Sentinela blue, PlaTEA teal, Dark mode)
-- ✅ SCSS design system with CSS variables and utility classes
+- ✅ 12 composables for reactive logic and state management
+- ✅ **Centralized branding system** with `useBranding()` composable
+- ✅ Multi-theme support with CSS variables and design tokens
+- ✅ SCSS design system with comprehensive utility classes
 - ✅ TypeScript-first with full type definitions
 - ✅ Quasar Framework integration
 - ✅ Clean Architecture patterns
 - ✅ Accessibility-focused (WCAG AA compliant)
+- ✅ **Complete customization guides** and project templates
+- ✅ NPM package ready (CJS + ESM + CSS)
 
 ---
 
@@ -30,13 +70,17 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 - [Usage Examples](#usage-examples)
   - [Components](#components)
   - [Composables](#composables)
-  - [Theme System](#theme-system)
+  - [Branding System](#branding-system)
+- [White-Label Theme Parameters](#white-label-theme-parameters)
 - [API Reference](#api-reference)
   - [Components](#components-api)
   - [Composables](#composables-api)
   - [Theme Configuration](#theme-configuration)
+- [Documentation](#documentation)
+  - [Official Vue + Quasar UI References](#official-vue--quasar-ui-references)
 - [Design System](#design-system)
 - [Project Structure](#project-structure)
+  - [Architecture Layers](#architecture-layers)
 - [Contributing](#contributing)
 - [Dependencies](#dependencies)
 - [References](#references)
@@ -46,17 +90,25 @@ A comprehensive Vue 3 + Quasar component library and design system for building 
 
 ## Installation
 
-Clone the repository and copy the `nettoolskit-ui-vue` folder to your project's `shared` directory:
+### NPM Package (Recommended)
 
 ```bash
-git clone https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git
-cp -r nettoolskit-ui-vue your-project/src/shared/
+npm install nettoolskit
+```
+
+### From Source
+
+Clone the repository and copy the `nettoolskit-ui` folder to your project's `shared` directory:
+
+```bash
+git clone https://github.com/ThiagoGuislotti/nettoolskit-ui.git
+cp -r nettoolskit-ui your-project/src/shared/
 ```
 
 Or add as a Git submodule:
 
 ```bash
-git submodule add https://github.com/ThiagoGuislotti/nettoolskit-ui-vue.git src/shared/nettoolskit-ui-vue
+git submodule add https://github.com/ThiagoGuislotti/nettoolskit-ui.git src/shared/nettoolskit-ui
 ```
 
 ### Peer Dependencies
@@ -81,29 +133,72 @@ Ensure your project has the following dependencies:
 
 ## Quick Start
 
-```ts
-// main.ts or boot file
-import { initTheme } from '@/shared/nettoolskit-ui-vue';
+### 1. Setup (main.ts)
 
-// Initialize theme on app startup
-initTheme('sentinela'); // or 'platea', 'dark'
+```ts
+import { createApp } from 'vue'
+import { Quasar, Dark } from 'quasar'
+
+// Import styles
+import '@quasar/extras/material-icons/material-icons.css'
+import 'quasar/dist/quasar.css'
+import 'nettoolskit/design-system/tokens.css'
+import 'nettoolskit/styles/tokens.scss'
+import 'nettoolskit/styles/global.scss'
+import 'nettoolskit/styles/themes.css'
+
+const app = createApp(App)
+app.use(Quasar, {
+  plugins: {
+    Dark,
+  },
+})
+app.mount('#app')
 ```
+
+### 2. Configure Theme Tokens
+
+```css
+:root {
+  --brand-primary: #1976d2;
+  --brand-accent: #0f766e;
+  --ntk-primary: var(--brand-primary);
+  --ntk-accent: var(--brand-accent);
+  --q-primary: var(--brand-primary);
+  --q-accent: var(--brand-accent);
+}
+```
+
+### 3. Use Components
 
 ```vue
 <template>
-  <BaseInput v-model="email" label="Email" type="email" :rules="emailRules" />
+  <BaseInput v-model="email" label="Email" type="email" :rules="[required]" />
   <BaseButton label="Submit" color="primary" @click="handleSubmit" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { BaseInput, BaseButton, useFormRules } from '@/shared/nettoolskit-ui-vue';
+import { ref } from 'vue'
+import { BaseInput, BaseButton, useFormRules } from 'nettoolskit'
 
-const email = ref('');
-const { emailRules } = useFormRules();
-const handleSubmit = () => console.log('Submitted:', email.value);
+const email = ref('')
+const { required } = useFormRules()
+const handleSubmit = () => console.log('Submitted:', email.value)
 </script>
 ```
+
+### 4. Access Branding
+
+```vue
+<script setup lang="ts">
+import { useBranding } from 'nettoolskit'
+
+const { logo, appName, primaryColor, contact, social } = useBranding()
+</script>
+```
+
+> 📚 **Detailed Setup**: [templates/new-project-setup.md](./templates/new-project-setup.md)
+> 🎨 **Customization Guide**: [docs/CUSTOMIZATION.md](./docs/CUSTOMIZATION.md)
 
 ---
 
@@ -170,7 +265,7 @@ import {
   BaseTextarea,
   BaseButton,
   useFormRules,
-} from '@/shared/nettoolskit-ui-vue';
+} from '@/shared/nettoolskit-ui';
 
 const { rules } = useFormRules();
 const form = reactive({
@@ -284,15 +379,36 @@ const onSubmit = () => console.log('Form:', form);
 
 ### Composables
 
-#### useTheme - Dynamic Theme Management
+#### useBranding - Centralized Branding Access
 
 ```ts
-import { useTheme, initTheme } from '@/shared/nettoolskit-ui-vue';
+import { useBranding } from 'nettoolskit'
 
-// Initialize on app startup (main.ts)
-initTheme('sentinela');
+const {
+  logo,           // { letter, text, url } - Logo configuration
+  appName,        // Application name
+  tagline,        // Application tagline/subtitle
+  appUrl,         // Application URL
+  primaryColor,   // Primary brand color
+  secondaryColor, // Secondary brand color
+  contact,        // { email, phone, address, whatsapp }
+  social          // { github, linkedin, twitter, instagram, facebook }
+} = useBranding()
 
-// Use in components
+// Use in templates
+<template>
+  <div :style="{ color: primaryColor }">{{ appName }}</div>
+  <a :href="social.github">GitHub</a>
+</template>
+```
+
+#### Legacy `useTheme` - Compatibility Theme Management
+
+`useTheme` remains available for existing consumers, but new template runtime work should prefer CSS custom properties, active preset tokens, and Quasar Dark Plugin state.
+
+```ts
+import { useTheme } from 'nettoolskit'
+
 const {
   theme,           // Current theme config (readonly)
   themeName,       // Current theme name (readonly)
@@ -303,35 +419,28 @@ const {
   setTheme,        // Change theme by name
   setCustomTheme,  // Apply custom theme config
   loadSavedTheme,  // Load from localStorage
-} = useTheme();
+} = useTheme()
 
-// Switch themes
-setTheme('platea');  // Teal theme
-setTheme('dark');    // Dark mode
+// Switch themes programmatically
+setTheme('dark')  // Dark mode
 ```
 
 #### useFormRules - Form Validation
 
 ```ts
-import { useFormRules } from '@/shared/nettoolskit-ui-vue';
+import { useFormRules } from 'nettoolskit'
 
-const { rules, emailRules, cpfRules, cnpjRules, phoneRules } = useFormRules();
+const { required, email, minLength, maxLength, numeric, cpf, cnpj, phone } = useFormRules()
 
-// Available rules
-rules.required        // Field is required
-rules.email           // Valid email format
-rules.minLength(n)    // Minimum n characters
-rules.maxLength(n)    // Maximum n characters
-rules.numeric         // Numbers only
-rules.cpf             // Valid Brazilian CPF
-rules.cnpj            // Valid Brazilian CNPJ
-rules.phone           // Valid phone number
+// Use in components
+<BaseInput :rules="[required, email]" />
+<BaseInput :rules="[required, minLength(8)]" />
 ```
 
 #### useNotification - Toast Notifications
 
 ```ts
-import { useNotification } from '@/shared/nettoolskit-ui-vue';
+import { useNotification } from '@/shared/nettoolskit-ui';
 
 const { notify, success, error, warning, info } = useNotification();
 
@@ -354,7 +463,7 @@ notify({
 #### useDialog - Modal Dialogs
 
 ```ts
-import { useDialog } from '@/shared/nettoolskit-ui-vue';
+import { useDialog } from '@/shared/nettoolskit-ui';
 
 const { confirm, alert, prompt } = useDialog();
 
@@ -388,7 +497,7 @@ const name = await prompt({
 #### useResponsive - Breakpoint Detection
 
 ```ts
-import { useResponsive } from '@/shared/nettoolskit-ui-vue';
+import { useResponsive } from '@/shared/nettoolskit-ui';
 
 const { isMobile, isTablet, isDesktop, breakpoint } = useResponsive();
 
@@ -400,7 +509,7 @@ const { isMobile, isTablet, isDesktop, breakpoint } = useResponsive();
 #### useDebounce - Debounced Values
 
 ```ts
-import { useDebounce } from '@/shared/nettoolskit-ui-vue';
+import { useDebounce } from '@/shared/nettoolskit-ui';
 
 const searchQuery = ref('');
 const debouncedQuery = useDebounce(searchQuery, 300);
@@ -414,7 +523,7 @@ watch(debouncedQuery, (query) => {
 #### useAsync - Async Operation Handler
 
 ```ts
-import { useAsync } from '@/shared/nettoolskit-ui-vue';
+import { useAsync } from '@/shared/nettoolskit-ui';
 
 const { execute, loading, error, data } = useAsync(async (id: string) => {
   const response = await api.get(`/users/${id}`);
@@ -434,6 +543,8 @@ await execute('user-123');
 
 ### Theme System
 
+The template runtime model is preset-driven: Quasar brand variables (`--q-*`) and NetToolsKit CSS variables (`--ntk-*`, `--semantic-*`, `--ntk-template-*`) are the fast-swap white-label layer.
+
 #### Available Themes
 
 | Theme | Primary Color | Use Case |
@@ -442,11 +553,13 @@ await execute('user-123');
 | `platea` | Teal (#4A9B7F) | Accessibility, organization, calm UX |
 | `dark` | Indigo (#6366f1) | Dark mode, developer tools |
 
-#### Creating Custom Themes
+#### Creating Custom Themes (Legacy Compatibility)
+
+The `ThemeConfig` / `useTheme()` path is preserved for existing apps. Prefer CSS variables and presets for new template-runtime white-label work so brand values can change without plugin-side writes.
 
 ```ts
-import type { ThemeConfig } from '@/shared/nettoolskit-ui-vue';
-import { useTheme } from '@/shared/nettoolskit-ui-vue';
+import type { ThemeConfig } from '@/shared/nettoolskit-ui';
+import { useTheme } from '@/shared/nettoolskit-ui';
 
 const customTheme: ThemeConfig = {
   name: 'MyBrand',
@@ -523,6 +636,147 @@ The theme system automatically sets these CSS variables:
 
 ---
 
+## White-Label Theme Parameters
+
+This table documents all white-label theme parameters used by the CMS settings panel.
+
+- Source of truth: landing-page/CmsApp.vue (colorFields)
+- Total parameters: **113**
+- Basic mode visible by default: **69**
+- Advanced mode (optional): **44**
+
+| Parameter | Category | Simple description | Mode | Unified with |
+|---|---|---|---|---|
+| <code>fontFamily</code> | Typography | Font family | Basic | - |
+| <code>fontFamilyDisplay</code> | Typography | Display font family | Basic | - |
+| <code>fontStyleBase</code> | Typography | Base font style (normal/italic) | Basic | - |
+| <code>fontWeightRegular</code> | Typography | Weight regular | Basic | - |
+| <code>fontWeightMedium</code> | Typography | Weight medium | Basic | - |
+| <code>fontWeightSemibold</code> | Typography | Weight semibold | Basic | - |
+| <code>fontWeightBold</code> | Typography | Weight bold | Basic | - |
+| <code>fontSizeBase</code> | Typography | Base font size | Basic | - |
+| <code>fontSizeTitle</code> | Typography | Title font size | Basic | - |
+| <code>fontSizeTitleApp</code> | Typography | App title size | Basic | - |
+| <code>fontSizeBrandTitle</code> | Typography | Brand title size | Basic | - |
+| <code>fontSizeBrandSubtitle</code> | Typography | Brand subtitle size | Basic | - |
+| <code>fontSizeItemLabel</code> | Typography | Menu label size | Basic | - |
+| <code>fontSizeItemCaption</code> | Typography | Menu caption size | Basic | - |
+| <code>fontSizeGroupCaption</code> | Typography | Group caption size | Basic | - |
+| <code>fontSizeGroupCaptionMini</code> | Typography | Group mini caption size | Basic | - |
+| <code>letterSpacingGroupCaption</code> | Typography | Group caption letter spacing | Basic | - |
+| <code>letterSpacingGroupCaptionMini</code> | Typography | Group mini letter spacing | Basic | - |
+| <code>lineHeightBrandText</code> | Typography | Brand block line height | Basic | - |
+| <code>lineHeightItemLabel</code> | Typography | Item label line height | Basic | - |
+| <code>lineHeightItemCaption</code> | Typography | Item caption line height | Basic | - |
+| <code>borderWidth</code> | Layout | Border width | Basic | - |
+| <code>radiusSm</code> | Layout | Radius small | Basic | - |
+| <code>radiusMd</code> | Layout | Radius medium | Basic | - |
+| <code>radiusLg</code> | Layout | Radius large | Basic | - |
+| <code>radiusItem</code> | Layout | Menu item radius | Basic | - |
+| <code>spacingXs</code> | Layout | Spacing XS | Basic | - |
+| <code>spacingSm</code> | Layout | Spacing SM | Basic | - |
+| <code>spacingMd</code> | Layout | Spacing MD | Basic | - |
+| <code>spacingLg</code> | Layout | Spacing LG | Basic | - |
+| <code>transitionFast</code> | Layout | Transition | Basic | - |
+| <code>itemCaptionOffset</code> | Layout | Item caption offset | Advanced | - |
+| <code>menuSlotWidth</code> | Layout | Menu slot width | Advanced | - |
+| <code>searchWidth</code> | Layout | Search width | Advanced | - |
+| <code>searchControlHeight</code> | Layout | Search control height | Advanced | - |
+| <code>searchPrependPaddingRight</code> | Layout | Search icon right padding | Advanced | - |
+| <code>drawerHeaderMinHeight</code> | Layout | Drawer header min height | Advanced | - |
+| <code>brandLogoSize</code> | Layout | Brand logo size | Advanced | - |
+| <code>groupCaptionMinHeight</code> | Layout | Group caption min height | Advanced | - |
+| <code>groupCaptionPadding</code> | Layout | Group caption padding | Advanced | - |
+| <code>groupCaptionMiniPadding</code> | Layout | Group mini padding | Advanced | - |
+| <code>groupCaptionMiniMinWidth</code> | Layout | Group mini min width | Advanced | - |
+| <code>groupCaptionMiniHeight</code> | Layout | Group mini height | Advanced | - |
+| <code>groupCaptionMiniHorizontalPadding</code> | Layout | Group mini horizontal padding | Advanced | - |
+| <code>groupCaptionMiniRadius</code> | Layout | Group mini radius | Advanced | - |
+| <code>itemMinHeight</code> | Layout | Item min height | Advanced | - |
+| <code>itemIconSize</code> | Layout | Item icon size | Advanced | - |
+| <code>itemHoverTranslateX</code> | Layout | Item hover translate X | Advanced | - |
+| <code>itemActiveBorderWidth</code> | Layout | Item active border width | Advanced | - |
+| <code>drawerScrollPaddingBottom</code> | Layout | Drawer scroll padding bottom | Advanced | - |
+| <code>workspaceMaxWidth</code> | Layout | Workspace max width | Basic | - |
+| <code>viewportHeight</code> | Layout | Viewport height | Basic | - |
+| <code>compactBreakpoint</code> | Layout | Compact breakpoint | Basic | - |
+| <code>compactPagePadding</code> | Layout | Compact page padding | Advanced | - |
+| <code>compactWorkspaceCardPadding</code> | Layout | Compact workspace card padding | Advanced | - |
+| <code>cmsLayoutBreakpointLg</code> | Layout | CMS layout breakpoint LG | Advanced | - |
+| <code>cmsLayoutBreakpointMd</code> | Layout | CMS layout breakpoint MD | Advanced | - |
+| <code>miniItemMarginRight</code> | Layout | Mini item margin right | Advanced | - |
+| <code>miniItemAvatarMinWidth</code> | Layout | Mini item avatar min width | Advanced | - |
+| <code>shellBackground</code> | Foundation | Shell background | Basic | - |
+| <code>pageBackground</code> | Foundation | Page background (outside card) | Basic | - |
+| <code>pageTextColor</code> | Foundation | Page text color | Basic | <code>searchTextColor</code> |
+| <code>drawerBackground</code> | Foundation | Sidebar background (and cards) | Basic | <code>drawerFooterBackground</code> |
+| <code>drawerFooterBackground</code> | Foundation | Surface footer background (override) | Advanced | - |
+| <code>drawerTextColor</code> | Foundation | Sidebar text color | Basic | <code>itemTextColor</code>, <code>itemIconColor</code>, <code>brandSubtitleColor</code>, <code>groupCaptionColor</code> |
+| <code>dividerColor</code> | Foundation | Divider color | Basic | <code>titleSeparatorColor</code> |
+| <code>itemActiveColor</code> | Navigation | Primary accent | Basic | <code>itemHoverColor</code>, <code>itemIconHoverColor</code>, <code>focusColor</code>, <code>titleAppColor</code>, <code>brandTitleColor</code> |
+| <code>itemTextColor</code> | Navigation | Item text color (override) | Advanced | - |
+| <code>itemIconColor</code> | Navigation | Item icon color (override) | Advanced | - |
+| <code>itemHoverBackground</code> | Navigation | Sidebar item hover background | Basic | - |
+| <code>itemHoverColor</code> | Navigation | Item hover text color (override) | Advanced | - |
+| <code>itemIconHoverColor</code> | Navigation | Item hover icon color (override) | Advanced | - |
+| <code>itemActiveBackground</code> | Navigation | Active background | Basic | - |
+| <code>focusColor</code> | Navigation | Focus ring color (override) | Advanced | - |
+| <code>brandTitleColor</code> | Navigation | Brand title color (override) | Advanced | - |
+| <code>brandSubtitleColor</code> | Navigation | Brand subtitle color (override) | Advanced | - |
+| <code>groupCaptionColor</code> | Navigation | Group caption color (override) | Advanced | - |
+| <code>groupSeparatorOpacity</code> | Navigation | Group separator opacity | Advanced | - |
+| <code>groupCaptionMiniBackground</code> | Navigation | Group mini background | Basic | - |
+| <code>headerBackground</code> | Header | Header background | Basic | - |
+| <code>headerTextColor</code> | Header | Header text color | Basic | <code>toolbarButtonColor</code>, <code>titleTextColor</code>, <code>searchIconColor</code> |
+| <code>toolbarButtonColor</code> | Header | Toolbar icon color (override) | Advanced | - |
+| <code>titleAppColor</code> | Header | App title color (override) | Advanced | - |
+| <code>titleTextColor</code> | Header | Module title color (override) | Advanced | - |
+| <code>titleSeparatorColor</code> | Header | Title separator color (override) | Advanced | - |
+| <code>titleSeparatorSize</code> | Header | Title separator size | Basic | - |
+| <code>searchBackground</code> | Header | Search background | Basic | - |
+| <code>searchTextColor</code> | Header | Search text color (override) | Advanced | - |
+| <code>searchIconColor</code> | Header | Search icon color (override) | Advanced | - |
+| <code>searchBorder</code> | Header | Search border | Basic | - |
+| <code>searchBorderHover</code> | Header | Search border hover | Basic | - |
+| <code>headerShadow</code> | Header | Header shadow | Basic | - |
+| <code>headerZIndex</code> | Header | Header z-index | Advanced | - |
+| <code>headerBlur</code> | Header | Header blur | Basic | - |
+| <code>drawerShadow</code> | Header | Drawer shadow | Basic | - |
+| <code>drawerZIndex</code> | Header | Drawer z-index | Advanced | - |
+| <code>drawerFooterShadow</code> | Header | Drawer footer shadow | Basic | - |
+| <code>actionBackground</code> | Header | Header actions background | Basic | - |
+| <code>actionHoverBackground</code> | Header | Header actions hover background (hover only) | Basic | - |
+| <code>actionHoverTranslateY</code> | Header | Header actions hover translate Y | Basic | - |
+| <code>userAvatarSize</code> | Header | User avatar size | Basic | - |
+| <code>notificationSuccessColor</code> | Notifications | Success color | Basic | - |
+| <code>notificationSuccessTextColor</code> | Notifications | Success text color | Basic | - |
+| <code>notificationWarningColor</code> | Notifications | Warning color | Basic | - |
+| <code>notificationWarningTextColor</code> | Notifications | Warning text color | Basic | - |
+| <code>notificationErrorColor</code> | Notifications | Error color | Basic | - |
+| <code>notificationErrorTextColor</code> | Notifications | Error text color | Basic | - |
+| <code>notificationInfoColor</code> | Notifications | Info color | Basic | - |
+| <code>notificationInfoTextColor</code> | Notifications | Info text color | Basic | - |
+| <code>notificationBadgeColor</code> | Notifications | Notification badge color | Basic | - |
+| <code>notificationBadgeTextColor</code> | Notifications | Notification badge text color | Basic | - |
+| <code>notificationIconColor</code> | Notifications | Notification bell icon color | Basic | - |
+| <code>badgePulseScale</code> | Notifications | Badge pulse scale | Advanced | - |
+
+
+
+### Unification Notes (Alias-based)
+
+These base parameters can propagate values to related tokens:
+
+| Base parameter | Propagates to |
+|---|---|
+| `pageTextColor` | `searchTextColor` |
+| `drawerBackground` | `drawerFooterBackground` |
+| `drawerTextColor` | `itemTextColor`, `itemIconColor`, `brandSubtitleColor`, `groupCaptionColor` |
+| `dividerColor` | `titleSeparatorColor` |
+| `itemActiveColor` | `itemHoverColor`, `itemIconHoverColor`, `focusColor`, `titleAppColor`, `brandTitleColor` |
+| `headerTextColor` | `toolbarButtonColor`, `titleTextColor`, `searchIconColor` |
+
+---
 ## API Reference
 
 ### Components API
@@ -568,7 +822,7 @@ The theme system automatically sets these CSS variables:
 
 | Composable | Returns | Description |
 |------------|---------|-------------|
-| `useTheme` | `theme`, `setTheme`, `primaryColor`, `isDark`, etc. | Theme management |
+| `useTheme` | `theme`, `setTheme`, `primaryColor`, `isDark`, etc. | Legacy compatibility theme management; prefer preset CSS variables plus Quasar Dark sync for new template work |
 | `useFormRules` | `rules`, `emailRules`, `cpfRules`, etc. | Form validation rules |
 | `useNotification` | `notify`, `success`, `error`, `warning`, `info` | Toast notifications |
 | `useDialog` | `confirm`, `alert`, `prompt` | Modal dialogs |
@@ -628,50 +882,201 @@ interface ThemeGradients {
 
 ---
 
+## Documentation
+
+### Guides
+
+- 📘 **[New Project Setup](./templates/new-project-setup.md)** - Complete setup guide for new projects
+- 🎨 **[Customization Guide](./docs/CUSTOMIZATION.md)** - Theme and branding customization
+- 📝 **[Visual Identity Manual](./docs/nettoolskit-visual-identity-manual.md)** - Brand guidelines
+- 🧱 **[Template Catalog](./src/templates/README.md)** - Canonical template-first architecture, contracts, and reusable visual packs
+- 🧩 **[CMS Backend Integration Handbook](./docs/cms-backend-integration-handbook.md)** - How backend-oriented teams should persist, validate and publish CMS engine payloads
+- 🔌 **[CMS Provider Hydration](./docs/cms-provider-hydration.md)** - Async provider examples for content, assets and releases
+- 📦 **[CMS Review Package](./docs/cms-review-package.md)** - Export draft-vs-published review artifacts for release analysis and approvals
+
+### Template Runtime Preview
+
+- `samples/` is the canonical runtime host that consumes the reusable libraries in `src/**`.
+- `/` renders the single public sample derived from the approved reference in `.temp/reference`.
+- `/?template-runtime=1` renders the router-enabled template runtime (layout/navigation/page/feature templates composed via scaffolded routes).
+- `/internal-cms.html` is a local-only internal compatibility page for development and tests; it is intentionally excluded from the public samples build entry list.
+- The legacy marketing landing is no longer exposed through the public samples router.
+- Local preview command:
+
+```bash
+npm run dev:samples
+```
+
+### Official Vue + Quasar UI References
+
+Use the official documentation below as the source of truth for theme, dark mode, popup, portal, and layout decisions before adding local overrides:
+
+- [Quasar Dark Mode](https://quasar.dev/style/dark-mode)
+- [Quasar Dark Plugin](https://quasar.dev/quasar-plugins/dark/)
+- [Quasar Body Classes](https://quasar.dev/style/body-classes/)
+- [Quasar Color Palette And Brand Colors](https://quasar.dev/style/color-palette/)
+- [Quasar Sass And SCSS Variables](https://quasar.dev/style/sass-scss-variables/)
+- [Quasar QMenu](https://quasar.dev/vue-components/menu/)
+- [Quasar QDialog](https://quasar.dev/vue-components/dialog/)
+- [Quasar QSelect](https://quasar.dev/vue-components/select/)
+- [Quasar QDrawer](https://quasar.dev/layout/drawer/)
+- [Quasar QPage And QPageContainer](https://quasar.dev/layout/page/)
+- [Vue SFC CSS Features](https://vuejs.org/api/sfc-css-features)
+- [Vue Teleport](https://vuejs.org/guide/built-ins/teleport.html)
+
+### Visual Theme Operating Model
+
+Template runtime theme work must follow the official Quasar model first, then layer NetToolsKit aliases on top:
+
+1. **Quasar runtime mode and brand layer**
+   - Quasar Dark Plugin state is the intended runtime source for dark/light behavior.
+   - Quasar brand colors are the first color contract: `primary`, `secondary`, `accent`, `dark`, `positive`, `negative`, `info`, and `warning`.
+   - Runtime brand values must be exposed through Quasar-compatible `--q-*` variables.
+
+2. **NetToolsKit base aliases**
+   - `--ntk-*` and `--semantic-*` tokens map the active preset into application language.
+   - These aliases must not contradict the active `--q-*` brand values.
+   - Raw color values belong at the preset/brand layer only.
+
+3. **Template contracts**
+   - `--ntk-template-page-*`, `--ntk-template-shell-*`, `--ntk-template-overlay-*`, `--ntk-template-semantic-*`, and reference/CMS aliases are component-facing contracts.
+   - Components should consume these contracts instead of recalculating contrast with local `color-mix()` formulas.
+
+4. **Quasar teleports and portals**
+   - Menus, dialogs, popup proxies, selects, and tooltips can render outside the component DOM tree.
+   - Style these surfaces through the shared overlay bridge or explicit popup classes, not through parent scoped CSS alone.
+
+5. **Layout primitives**
+   - Runtime shells must start from `QLayout`, `QDrawer`, `QPageContainer`, and `QPage`.
+   - Local CSS should express the NetToolsKit product shell, not reimplement Quasar layout behavior.
+
+Completed closeout plans:
+- `planning/completed/post-closeout-template-theme-hardening-2026-04-21.md`
+- `planning/completed/residual-template-theme-guardrail-sweep-2026-04-21.md`
+- `planning/completed/vue-quasar-visual-architecture-replatform-2026-04-16.md`
+- `planning/completed/templates-100-functional-whitelabel-plan-2026-04-15.md`
+
+### Template-First Delivery
+
+All visual slices must start from reusable contracts in `src/templates/**`.
+
+Minimum release expectation for template-based frontend work:
+1. typed layout/page/feature contracts
+2. reusable state or scaffolding contracts
+3. token-driven styles
+4. unit coverage for critical behavior
+5. visual regression baseline when template surfaces change
+
+Template release checks:
+
+```bash
+npm run test -- tests/unit/templates/TemplateAcceptance.spec.ts
+npm run test:e2e -- tests/e2e/template-runtime-screenshots.spec.ts --project=chromium
+```
+
+### API References
+
+- Components API (see sections above)
+- Composables API (see sections above)
+- Theme Configuration (see CUSTOMIZATION.md)
+
+---
+
 ## Design System
 
-### Typography
+The design system foundation lives under `src/design-system` and is exported from `nettoolskit`.
 
-| Element | Font | Weight | Size |
-|---------|------|--------|------|
-| Display/Titles | Poppins | Bold (700) | 24-48px |
-| Body Text | Inter | Regular (400) | 14-16px |
-| Captions | Inter | Regular (400) | 12px |
+### Public Surface
 
-### Spacing Scale
+```ts
+import {
+  DsButton,
+  DsCard,
+  DsInput,
+  DsSelect,
+  DsTable,
+  DsPage,
+  DsSection,
+  designTokenCssVariables,
+  designTokenValues,
+  getNtkButtonClassName,
+  validateThemeRuntimeModel,
+} from 'nettoolskit'
+
+import 'nettoolskit/design-system/tokens.css'
+```
+
+### Token Pipeline
+
+Tokens are authored in DTCG-style JSON at `src/design-system/tokens/source.json`. Generated outputs are committed so package consumers can use typed token maps, a resolver JSON contract, declaration output, and CSS custom properties.
+
+```bash
+npm run tokens:build
+npm run tokens:check
+npm run docs:build
+npm run docs:check
+```
+
+Token outputs are written to:
+
+- `src/design-system/tokens/generated.css`
+- `src/design-system/tokens/resolver.json`
+- `src/design-system/tokens/generated/tokens.css`
+- `src/design-system/tokens/generated/tokens.ts`
+- `src/design-system/tokens/generated/tokens.d.ts`
+
+Generated design-system references are committed at [DESIGN.md](./DESIGN.md), [TOKENS.md](./TOKENS.md), and [COMPONENTS.md](./COMPONENTS.md).
+
+### CSS Governance Policy
+
+CSS and template governance is enforced by `npm run lint:css` using [policies/design-system-css-governance.yaml](./policies/design-system-css-governance.yaml) plus the architecture baseline at [tests/architecture/design-system-governance.baseline.json](./tests/architecture/design-system-governance.baseline.json). Existing exception counts require owner, removal spec, and reason metadata and cannot increase over the committed baseline.
+
+### Core Token Examples
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--spacing-xs` | 4px | Dense elements |
-| `--spacing-sm` | 8px | Tight spacing |
-| `--spacing-md` | 16px | Default spacing |
-| `--spacing-lg` | 24px | Section padding |
-| `--spacing-xl` | 32px | Large gaps |
-| `--spacing-2xl` | 48px | Section margins |
-| `--spacing-3xl` | 64px | Page sections |
+| `--ntk-primary` | `#0f766e` | Main product action color |
+| `--ntk-bg-primary` | `#ffffff` | Base app surface |
+| `--ntk-text-primary` | `#1e293b` | Primary text |
+| `--ntk-border-color` | `#e2e8f0` | Default borders |
+| `--ntk-spacing-md` | `1rem` | Default layout rhythm |
+| `--ntk-radius-md` | `8px` | Standard control radius |
 
-### Shadows
+### Runtime Contracts
 
-| Level | Opacity | Usage |
-|-------|---------|-------|
-| Soft | 0.05 | Cards, subtle elevation |
-| Medium | 0.08 | Dropdowns, popovers |
-| Strong | 0.1 | Modals, dialogs |
-
-### Transitions
-
-| Duration | Easing | Usage |
-|----------|--------|-------|
-| 200ms | ease-in-out | Hover states |
-| 300ms | ease-in-out | Expand/collapse |
-| 500ms | ease-in-out | Page transitions |
+Theme inputs go through `validateThemeRuntimeModel()` before adapters emit CSS variables. Tenant token maps are restricted to generated design-token CSS variables, and `createDensityCssVariableAssignments()` exposes compact, comfortable, and spacious density contexts without touching DOM state. Component recipes expose class contracts for shared UI primitives such as button, field, card, table, page, and section. `DsButton`, `DsCard`, `DsInput`, `DsSelect`, `DsTable`, `DsPage`, and `DsSection` provide the first rendered `Ds*` wrappers, while existing `Ntk*` compatibility paths stay available. The Quasar-backed `NtkButton` keeps legacy props and also maps recognized `variant`, `intent`, and `disabled` aliases to recipe classes.
 
 ---
 
 ## Project Structure
 
+### Architecture Layers
+
+NetToolsKit UI Vue is intentionally layered so the project stays simple to consume, especially for teams coming from backend-heavy stacks:
+
+1. **Quasar Base**
+   - Provides the foundation: layout primitives, responsive utilities, dialogs, inputs, drawers, tables, and ecosystem integration.
+   - NetToolsKit does **not** replace Quasar and should not reimplement generic framework features without a product-specific reason.
+
+2. **NTK UI**
+   - Adds opinionated product-facing components, design tokens, branding, reference catalog surfaces, and the shared app shell.
+   - This is the layer that standardizes how NetToolsKit applications look and behave on top of Quasar.
+
+3. **NTK CMS Engine**
+   - Adds schema-driven authoring, page/section/block composition, reusable presets, drag-and-drop builder flows, preview, validation, and release orchestration.
+   - This layer stays frontend-first and backend-agnostic.
+
+4. **Application / Backend Contracts**
+     - Persistence providers, auth, permissions, media storage, audit workflows, and business rules should plug into the CMS engine through contracts.
+     - These concerns should live outside the core engine so the builder remains reusable and simple.
+     - For async provider examples, see [docs/cms-provider-hydration.md](docs/cms-provider-hydration.md).
+     - For the backend-oriented integration flow, see [docs/cms-backend-integration-handbook.md](docs/cms-backend-integration-handbook.md).
+     - For offline release review exports, see [docs/cms-review-package.md](docs/cms-review-package.md).
+
+**Practical rule:** use Quasar directly for generic UI needs, and only encapsulate behavior in NetToolsKit when it creates product-level consistency, faster implementation, or CMS/editor reuse.
+
 ```
-nettoolskit-ui-vue/
+nettoolskit-ui/
 ├── adapters/                    # Infrastructure adapters
 │   └── QuasarNotificationAdapter.ts
 ├── components/                  # Vue components

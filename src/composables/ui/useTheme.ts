@@ -1,24 +1,46 @@
 /**
- * useTheme Composable
- * Gerencia temas dinamicamente na aplicação
- * Permite trocar cores, fontes e configurações em tempo real
+ * useTheme composable
+ *
+ * Legacy theme adapter for component-level CSS variables.
+ * Shared DOM theme state such as data-theme, dark-mode classes,
+ * and color-scheme is owned by the centralized runtime theme contract.
  */
 
 import { ref, computed, readonly } from 'vue';
-import type { ThemeConfig, ThemeName } from '../../config/theme.config';
-import { themes, defaultTheme } from '../../config/theme.config';
+import type { ThemeConfig, ThemeName } from '../../config/theme/theme.config';
+import { themes, defaultTheme } from '../../config/theme/theme.config';
+import { applySemanticColors } from '../../config/colors/semantic.config';
 
-// Estado global do tema
+// Global theme state.
 const currentTheme = ref<ThemeConfig>(defaultTheme);
-const themeName = ref<ThemeName>('sentinela');
+const themeName = ref<ThemeName>(defaultTheme.name as ThemeName);
 
 /**
- * Aplica as variáveis CSS do tema no documento
+ * Apply legacy theme CSS variables to the document root.
  */
 function applyThemeToCSS(theme: ThemeConfig): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
   const root = document.documentElement;
+  const normalizedBackground = theme.colors.background.replace('#', '');
+  const hasHexBackground = /^[0-9A-Fa-f]{6}$/.test(normalizedBackground);
+  const r = hasHexBackground ? parseInt(normalizedBackground.slice(0, 2), 16) : 255;
+  const g = hasHexBackground ? parseInt(normalizedBackground.slice(2, 4), 16) : 255;
+  const b = hasHexBackground ? parseInt(normalizedBackground.slice(4, 6), 16) : 255;
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const isDarkTheme = brightness < 128;
+  const textInverse = isDarkTheme ? theme.colors.text : theme.colors.background;
+  const overlayBackground = `color-mix(in srgb, ${theme.colors.text} 50%, transparent)`;
+  const footerBackground = isDarkTheme ? theme.colors.background : theme.colors.primaryDark;
+  const footerText = isDarkTheme ? theme.colors.text : theme.colors.background;
+  const footerTextMuted = isDarkTheme ? theme.colors.textLight : theme.colors.backgroundLight;
+  const footerBorder = isDarkTheme
+    ? theme.colors.border
+    : `color-mix(in srgb, ${theme.colors.background} 16%, transparent)`;
   
-  // Cores principais
+  // Main colors.
   root.style.setProperty('--theme-primary', theme.colors.primary);
   root.style.setProperty('--theme-primary-dark', theme.colors.primaryDark);
   root.style.setProperty('--theme-primary-light', theme.colors.primaryLight);
@@ -29,12 +51,12 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--theme-background', theme.colors.background);
   root.style.setProperty('--theme-background-light', theme.colors.backgroundLight);
   
-  // Texto
+  // Text.
   root.style.setProperty('--theme-text', theme.colors.text);
   root.style.setProperty('--theme-text-light', theme.colors.textLight);
   root.style.setProperty('--theme-text-muted', theme.colors.textMuted);
   
-  // Bordas
+  // Borders.
   root.style.setProperty('--theme-border', theme.colors.border);
   
   // Feedback
@@ -43,25 +65,67 @@ function applyThemeToCSS(theme: ThemeConfig): void {
   root.style.setProperty('--theme-error', theme.colors.error);
   root.style.setProperty('--theme-info', theme.colors.info);
   
-  // Gradientes
+  // Gradients.
   root.style.setProperty('--theme-gradient-hero', theme.gradients.hero);
   root.style.setProperty('--theme-gradient-primary', theme.gradients.primary);
   root.style.setProperty('--theme-gradient-loading', theme.gradients.loading);
   
-  // Fontes
+  // Fonts.
   root.style.setProperty('--theme-font-display', theme.fonts.display);
   root.style.setProperty('--theme-font-body', theme.fonts.body);
+
+  // Apply NTK tokens consumed by component styles
+  root.style.setProperty('--ntk-primary', theme.colors.primary);
+  root.style.setProperty('--ntk-primary-dark', theme.colors.primaryDark);
+  root.style.setProperty('--ntk-primary-light', theme.colors.primaryLight);
+  root.style.setProperty('--ntk-secondary', theme.colors.secondary);
+  root.style.setProperty('--ntk-bg-primary', theme.colors.background);
+  root.style.setProperty('--ntk-bg-secondary', theme.colors.backgroundLight);
+  root.style.setProperty('--ntk-bg-tertiary', theme.colors.backgroundLight);
+  root.style.setProperty('--ntk-bg-card', theme.colors.background);
+  root.style.setProperty('--ntk-bg-hover', theme.colors.backgroundLight);
+  root.style.setProperty('--ntk-bg-overlay', overlayBackground);
+  root.style.setProperty('--ntk-text-primary', theme.colors.text);
+  root.style.setProperty('--ntk-text-secondary', theme.colors.textLight);
+  root.style.setProperty('--ntk-text-muted', theme.colors.textMuted);
+  root.style.setProperty('--ntk-text-dark', theme.colors.text);
+  root.style.setProperty('--ntk-text-light', theme.colors.textLight);
+  root.style.setProperty('--ntk-text-inverse', textInverse);
+  root.style.setProperty('--ntk-text-on-primary', textInverse);
+  root.style.setProperty('--ntk-border-color', theme.colors.border);
+  root.style.setProperty('--ntk-border-light', theme.colors.border);
+  root.style.setProperty('--ntk-border-dark', theme.colors.border);
+  root.style.setProperty('--ntk-success', theme.colors.success);
+  root.style.setProperty('--ntk-warning', theme.colors.warning);
+  root.style.setProperty('--ntk-error', theme.colors.error);
+  root.style.setProperty('--ntk-info', theme.colors.info);
+  root.style.setProperty('--ntk-gradient-hero', theme.gradients.hero);
+  root.style.setProperty('--ntk-gradient-loading', theme.gradients.loading);
+  root.style.setProperty('--ntk-gradient-accent', theme.gradients.primary);
+  root.style.setProperty('--ntk-primary-gradient', theme.gradients.primary);
+  root.style.setProperty('--ntk-gradient-subtle', `linear-gradient(135deg, ${theme.colors.background} 0%, ${theme.colors.backgroundLight} 100%)`);
+  root.style.setProperty('--ntk-font-family', theme.fonts.body);
+  root.style.setProperty('--ntk-font-family-display', theme.fonts.display);
+  root.style.setProperty('--ntk-footer-bg', footerBackground);
+  root.style.setProperty('--ntk-footer-text', footerText);
+  root.style.setProperty('--ntk-footer-text-muted', footerTextMuted);
+  root.style.setProperty('--ntk-footer-link', theme.colors.primaryLight);
+  root.style.setProperty('--ntk-footer-link-hover', theme.colors.primary);
+  root.style.setProperty('--ntk-footer-border', footerBorder);
+  root.style.setProperty('--ntk-surface-soft', theme.colors.backgroundLight);
+  root.style.setProperty('--ntk-border-subtle', theme.colors.border);
   
-  // Data attribute para CSS selectors
-  root.setAttribute('data-theme', theme.name.toLowerCase());
+  // The shared DOM theme contract is managed elsewhere.
+  // This legacy composable must only update its own CSS variables.
+  applySemanticColors();
 }
 
 /**
- * Composable para gerenciar temas
+ * Composable for managing legacy themes.
  */
 export function useTheme() {
   /**
-   * Define o tema atual
+   * Sets the current theme.
    */
   const setTheme = (name: ThemeName): void => {
     const theme = themes[name];
@@ -70,17 +134,17 @@ export function useTheme() {
       themeName.value = name;
       applyThemeToCSS(theme);
       
-      // Salvar preferência no localStorage
+      // Save preference in localStorage.
       try {
         localStorage.setItem('app-theme', name);
-      } catch (e) {
-        console.warn('Não foi possível salvar preferência de tema');
+      } catch (_e) {
+        console.warn('Could not save theme preference');
       }
     }
   };
 
   /**
-   * Define um tema customizado
+   * Sets a custom theme.
    */
   const setCustomTheme = (theme: ThemeConfig): void => {
     currentTheme.value = theme;
@@ -88,7 +152,7 @@ export function useTheme() {
   };
 
   /**
-   * Carrega tema salvo ou usa o padrão
+   * Loads the saved theme or uses the default.
    */
   const loadSavedTheme = (): void => {
     try {
@@ -98,32 +162,32 @@ export function useTheme() {
       } else {
         applyThemeToCSS(currentTheme.value);
       }
-    } catch (e) {
+    } catch (_e) {
       applyThemeToCSS(currentTheme.value);
     }
   };
 
   /**
-   * Retorna a cor primária atual
+   * Returns the current primary color.
    */
   const primaryColor = computed(() => currentTheme.value.colors.primary);
 
   /**
-   * Retorna as configurações do logo
+   * Returns the logo settings.
    */
-  const logo = computed(() => currentTheme.value.logo);
+  const logo = computed(() => currentTheme.value.identity.logo);
 
   /**
-   * Retorna o nome do tema atual
+   * Returns the current theme name.
    */
   const name = computed(() => currentTheme.value.name);
 
   /**
-   * Verifica se é um tema escuro
+   * Checks whether the current theme is dark.
    */
   const isDark = computed(() => {
     const bg = currentTheme.value.colors.background;
-    // Verifica se o background é escuro (hex < 50%)
+    // Treat backgrounds below 50% brightness as dark.
     const hex = bg.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
@@ -133,12 +197,12 @@ export function useTheme() {
   });
 
   /**
-   * Lista de temas disponíveis
+   * Lists available themes.
    */
   const availableThemes = computed(() => Object.keys(themes) as ThemeName[]);
 
   return {
-    // Estado (readonly para evitar mutações diretas)
+    // State is readonly to avoid direct mutations.
     theme: readonly(currentTheme),
     themeName: readonly(themeName),
     
@@ -149,7 +213,7 @@ export function useTheme() {
     isDark,
     availableThemes,
     
-    // Métodos
+    // Methods.
     setTheme,
     setCustomTheme,
     loadSavedTheme,
@@ -157,13 +221,13 @@ export function useTheme() {
 }
 
 /**
- * Inicializa o tema no carregamento da aplicação
- * Chamar no main.ts ou App.vue
+ * Initializes the theme during application startup.
+ * Call from main.ts or App.vue.
  */
-export function initTheme(defaultThemeName: ThemeName = 'sentinela'): void {
-  const { setTheme, loadSavedTheme } = useTheme();
+export function initTheme(defaultThemeName: ThemeName = defaultTheme.name as ThemeName): void {
+  const { setTheme } = useTheme();
   
-  // Tenta carregar tema salvo, senão usa o padrão
+  // Tries to load the saved theme; otherwise uses the default.
   try {
     const saved = localStorage.getItem('app-theme') as ThemeName | null;
     if (saved && themes[saved]) {
@@ -171,7 +235,7 @@ export function initTheme(defaultThemeName: ThemeName = 'sentinela'): void {
     } else {
       setTheme(defaultThemeName);
     }
-  } catch (e) {
+  } catch (_e) {
     setTheme(defaultThemeName);
   }
 }

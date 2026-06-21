@@ -1,3 +1,7 @@
+/**
+ * Src/composables/ui/use Responsive module.
+ */
+
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
 

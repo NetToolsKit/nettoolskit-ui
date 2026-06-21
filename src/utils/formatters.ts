@@ -1,20 +1,20 @@
 /**
- * Formatters - Funções de formatação reutilizáveis
+ * Formatters - reusable formatting helpers.
  * 
- * Formatadores puros sem dependências de framework.
- * Podem ser usados em qualquer contexto (Vue, Node.js, etc).
+ * Pure formatters with no framework dependencies.
+ * They can be used in any context (Vue, Node.js, etc).
  * 
  * @layer Utils
  */
 
 /**
- * Formata número para moeda brasileira (BRL)
- * @example formatCurrency(1234.56) // "R$ 1.234,56"
+ * Formats a number as currency.
+ * @example formatCurrency(1234.56) // "$1,234.56"
  */
 export function formatCurrency(
   value: number,
-  locale: string = 'pt-BR',
-  currency: string = 'BRL'
+  locale: string = 'en-US',
+  currency: string = 'USD'
 ): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -23,24 +23,24 @@ export function formatCurrency(
 }
 
 /**
- * Formata número com separadores de milhar
- * @example formatNumber(1234567) // "1.234.567"
+ * Formats a number with thousands separators.
+ * @example formatNumber(1234567) // "1,234,567"
  */
 export function formatNumber(
   value: number,
-  locale: string = 'pt-BR'
+  locale: string = 'en-US'
 ): string {
   return new Intl.NumberFormat(locale).format(value);
 }
 
 /**
- * Formata número como porcentagem
- * @example formatPercent(0.1234) // "12,34%"
+ * Formats a number as a percentage.
+ * @example formatPercent(0.1234) // "12.34%"
  */
 export function formatPercent(
   value: number,
   decimals: number = 2,
-  locale: string = 'pt-BR'
+  locale: string = 'en-US'
 ): string {
   return new Intl.NumberFormat(locale, {
     style: 'percent',
@@ -50,12 +50,12 @@ export function formatPercent(
 }
 
 /**
- * Formata data para formato brasileiro
- * @example formatDate(new Date()) // "24/12/2024"
+ * Formats a date.
+ * @example formatDate(new Date()) // "12/24/2024"
  */
 export function formatDate(
   date: Date | string,
-  locale: string = 'pt-BR'
+  locale: string = 'en-US'
 ): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   return new Intl.DateTimeFormat(locale, {
@@ -66,12 +66,12 @@ export function formatDate(
 }
 
 /**
- * Formata data e hora
- * @example formatDateTime(new Date()) // "24/12/2024 14:30"
+ * Formats a date and time.
+ * @example formatDateTime(new Date()) // "12/24/2024, 2:30 PM"
  */
 export function formatDateTime(
   date: Date | string,
-  locale: string = 'pt-BR'
+  locale: string = 'en-US'
 ): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   return new Intl.DateTimeFormat(locale, {
@@ -84,12 +84,12 @@ export function formatDateTime(
 }
 
 /**
- * Formata data relativa (há X minutos, ontem, etc)
- * @example formatRelativeTime(new Date(Date.now() - 60000)) // "há 1 minuto"
+ * Formats relative time.
+ * @example formatRelativeTime(new Date(Date.now() - 60000)) // "1 minute ago"
  */
 export function formatRelativeTime(
   date: Date | string,
-  locale: string = 'pt-BR'
+  locale: string = 'en-US'
 ): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
@@ -115,7 +115,7 @@ export function formatRelativeTime(
 }
 
 /**
- * Formata CPF brasileiro
+ * Formats Brazilian CPF.
  * @example formatCPF("12345678901") // "123.456.789-01"
  */
 export function formatCPF(cpf: string): string {
@@ -125,7 +125,7 @@ export function formatCPF(cpf: string): string {
 }
 
 /**
- * Formata CNPJ brasileiro
+ * Formats Brazilian CNPJ.
  * @example formatCNPJ("12345678000190") // "12.345.678/0001-90"
  */
 export function formatCNPJ(cnpj: string): string {
@@ -135,7 +135,7 @@ export function formatCNPJ(cnpj: string): string {
 }
 
 /**
- * Formata telefone brasileiro
+ * Formats Brazilian phone number.
  * @example formatPhone("11987654321") // "(11) 98765-4321"
  */
 export function formatPhone(phone: string): string {
@@ -149,7 +149,7 @@ export function formatPhone(phone: string): string {
 }
 
 /**
- * Formata CEP brasileiro
+ * Formats Brazilian postal code.
  * @example formatCEP("12345678") // "12345-678"
  */
 export function formatCEP(cep: string): string {
@@ -159,8 +159,8 @@ export function formatCEP(cep: string): string {
 }
 
 /**
- * Trunca texto com ellipsis
- * @example truncate("Texto muito longo", 10) // "Texto mu..."
+ * Truncates text with an ellipsis.
+ * @example truncate("Very long text", 10) // "Very lo..."
  */
 export function truncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
@@ -168,7 +168,7 @@ export function truncate(text: string, maxLength: number): string {
 }
 
 /**
- * Capitaliza primeira letra de cada palavra
+ * Capitalizes the first letter of each word.
  * @example capitalize("hello world") // "Hello World"
  */
 export function capitalize(text: string): string {
@@ -180,7 +180,7 @@ export function capitalize(text: string): string {
 }
 
 /**
- * Formata bytes para tamanho legível
+ * Formats bytes as a readable size.
  * @example formatBytes(1024) // "1 KB"
  */
 export function formatBytes(bytes: number, decimals: number = 2): string {
@@ -194,7 +194,7 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
 }
 
 /**
- * Formata duração em segundos para formato legível
+ * Formats a duration in seconds.
  * @example formatDuration(3661) // "1h 1m 1s"
  */
 export function formatDuration(seconds: number): string {
@@ -211,14 +211,14 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
- * Slug - converte texto para URL amigável
- * @example slugify("Olá Mundo!") // "ola-mundo"
+ * Slug - converts text to a URL-friendly slug.
+ * @example slugify("Hello World!") // "hello-world"
  */
 export function slugify(text: string): string {
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
-    .replace(/[^a-z0-9]+/g, '-') // Substitui não-alfanuméricos por hífen
-    .replace(/^-+|-+$/g, ''); // Remove hífens do início/fim
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumerics with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }

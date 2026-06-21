@@ -1,0 +1,1116 @@
+{
+  "$description": "Minimal DTCG-compatible NetToolsKit token source derived from src/styles/tokens.scss root defaults.",
+  "color": {
+    "$description": "Brand and compatibility colors.",
+    "primary": {
+      "$type": "color",
+      "$value": "#0f766e",
+      "$description": "Primary application color.",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary"
+        }
+      }
+    },
+    "primaryDark": {
+      "$type": "color",
+      "$value": "#115e59",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-dark"
+        }
+      }
+    },
+    "primaryLight": {
+      "$type": "color",
+      "$value": "#2dd4bf",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-light"
+        }
+      }
+    },
+    "primaryRgb": {
+      "$type": "number",
+      "$value": "15, 118, 110",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-rgb"
+        }
+      }
+    },
+    "accent": {
+      "$type": "color",
+      "$value": "{color.primary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-accent"
+        }
+      }
+    },
+    "accentHover": {
+      "$type": "color",
+      "$value": "{color.primaryDark}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-accent-hover"
+        }
+      }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "{color.accent}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-secondary"
+        }
+      }
+    },
+    "secondaryDark": {
+      "$type": "color",
+      "$value": "{color.accentHover}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-secondary-dark"
+        }
+      }
+    },
+    "secondaryLight": {
+      "$type": "color",
+      "$value": "{color.primaryLight}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-secondary-light"
+        }
+      }
+    },
+    "dark": {
+      "$type": "color",
+      "$value": "#0f172a",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-dark"
+        }
+      }
+    }
+  },
+  "surface": {
+    "$description": "Default light-mode application surfaces.",
+    "bgPrimary": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-primary"
+        }
+      }
+    },
+    "bgSecondary": {
+      "$type": "color",
+      "$value": "#f8fafc",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-secondary"
+        }
+      }
+    },
+    "bgTertiary": {
+      "$type": "color",
+      "$value": "#f1f5f9",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-tertiary"
+        }
+      }
+    },
+    "bgCard": {
+      "$type": "color",
+      "$value": "{surface.bgPrimary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-card"
+        }
+      }
+    },
+    "bgElevated": {
+      "$type": "color",
+      "$value": "{surface.bgPrimary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-elevated"
+        }
+      }
+    },
+    "bgOverlay": {
+      "$type": "color",
+      "$value": "rgba(0, 0, 0, 0.5)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-overlay"
+        }
+      }
+    },
+    "bgHover": {
+      "$type": "color",
+      "$value": "#f5f5f5",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-hover"
+        }
+      }
+    },
+    "bgActive": {
+      "$type": "color",
+      "$value": "rgba({color.primaryRgb}, 0.08)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-active"
+        }
+      }
+    },
+    "bgLight": {
+      "$type": "color",
+      "$value": "{surface.bgSecondary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-bg-light"
+        }
+      }
+    },
+    "darkPage": {
+      "$type": "color",
+      "$value": "{surface.bgSecondary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-dark-page"
+        }
+      }
+    }
+  },
+  "text": {
+    "$description": "Text hierarchy and aliases.",
+    "primary": {
+      "$type": "color",
+      "$value": "#1e293b",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-primary"
+        }
+      }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "#64748b",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-secondary"
+        }
+      }
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "#94a3b8",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-muted"
+        }
+      }
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-inverse"
+        }
+      }
+    },
+    "onPrimary": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-on-primary"
+        }
+      }
+    },
+    "link": {
+      "$type": "color",
+      "$value": "{color.primary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-link"
+        }
+      }
+    },
+    "linkHover": {
+      "$type": "color",
+      "$value": "{color.primaryDark}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-link-hover"
+        }
+      }
+    },
+    "dark": {
+      "$type": "color",
+      "$value": "#424242",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-dark"
+        }
+      }
+    },
+    "light": {
+      "$type": "color",
+      "$value": "#757575",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-light"
+        }
+      }
+    },
+    "lighter": {
+      "$type": "color",
+      "$value": "#9e9e9e",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-text-lighter"
+        }
+      }
+    }
+  },
+  "border": {
+    "$description": "Border and input outline colors.",
+    "color": {
+      "$type": "color",
+      "$value": "#e2e8f0",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-border-color"
+        }
+      }
+    },
+    "light": {
+      "$type": "color",
+      "$value": "#f1f5f9",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-border-light"
+        }
+      }
+    },
+    "dark": {
+      "$type": "color",
+      "$value": "#cbd5e1",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-border-dark"
+        }
+      }
+    },
+    "focus": {
+      "$type": "color",
+      "$value": "{color.primary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-border-focus"
+        }
+      }
+    },
+    "input": {
+      "$type": "color",
+      "$value": "rgba(0, 0, 0, 0.24)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-border-input"
+        }
+      }
+    },
+    "inputHover": {
+      "$type": "color",
+      "$value": "rgba(0, 0, 0, 0.87)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-border-input-hover"
+        }
+      }
+    }
+  },
+  "feedback": {
+    "$description": "Semantic feedback colors using --ntk-* public aliases.",
+    "success": {
+      "$type": "color",
+      "$value": "#10b981",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-success"
+        }
+      }
+    },
+    "successLight": {
+      "$type": "color",
+      "$value": "#d1fae5",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-success-light"
+        }
+      }
+    },
+    "successDark": {
+      "$type": "color",
+      "$value": "#047857",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-success-dark"
+        }
+      }
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "#f59e0b",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-warning"
+        }
+      }
+    },
+    "warningLight": {
+      "$type": "color",
+      "$value": "#fef3c7",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-warning-light"
+        }
+      }
+    },
+    "warningDark": {
+      "$type": "color",
+      "$value": "#d97706",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-warning-dark"
+        }
+      }
+    },
+    "error": {
+      "$type": "color",
+      "$value": "#ef4444",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-error"
+        }
+      }
+    },
+    "errorLight": {
+      "$type": "color",
+      "$value": "#fee2e2",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-error-light"
+        }
+      }
+    },
+    "errorDark": {
+      "$type": "color",
+      "$value": "#dc2626",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-error-dark"
+        }
+      }
+    },
+    "info": {
+      "$type": "color",
+      "$value": "#14b8a6",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-info"
+        }
+      }
+    },
+    "infoLight": {
+      "$type": "color",
+      "$value": "#ccfbf1",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-info-light"
+        }
+      }
+    },
+    "infoDark": {
+      "$type": "color",
+      "$value": "#0f766e",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-info-dark"
+        }
+      }
+    },
+    "positive": {
+      "$type": "color",
+      "$value": "{feedback.success}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-positive"
+        }
+      }
+    },
+    "negative": {
+      "$type": "color",
+      "$value": "{feedback.error}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-negative"
+        }
+      }
+    },
+    "danger": {
+      "$type": "color",
+      "$value": "{feedback.error}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-danger"
+        }
+      }
+    }
+  },
+  "gradient": {
+    "$description": "Reusable gradients expressed with token references.",
+    "primaryStart": {
+      "$type": "color",
+      "$value": "{color.primary}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-gradient-start"
+        }
+      }
+    },
+    "primaryEnd": {
+      "$type": "color",
+      "$value": "{color.primaryLight}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-gradient-end"
+        }
+      }
+    },
+    "primary": {
+      "$type": "gradient",
+      "$value": "linear-gradient(135deg, {gradient.primaryStart} 0%, {gradient.primaryEnd} 100%)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-gradient"
+        }
+      }
+    },
+    "primaryHover": {
+      "$type": "gradient",
+      "$value": "linear-gradient(135deg, {color.primaryDark} 0%, {color.primary} 100%)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-primary-gradient-hover"
+        }
+      }
+    },
+    "hero": {
+      "$type": "gradient",
+      "$value": "linear-gradient(135deg, {surface.bgPrimary} 0%, {surface.bgSecondary} 100%)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-gradient-hero"
+        }
+      }
+    },
+    "loading": {
+      "$type": "gradient",
+      "$value": "linear-gradient(90deg, {surface.bgSecondary} 0%, {surface.bgTertiary} 50%, {surface.bgSecondary} 100%)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-gradient-loading"
+        }
+      }
+    },
+    "accent": {
+      "$type": "gradient",
+      "$value": "linear-gradient(135deg, {gradient.primaryStart} 0%, {gradient.primaryEnd} 100%)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-gradient-accent"
+        }
+      }
+    }
+  },
+  "shadow": {
+    "$description": "Elevation shadows.",
+    "color": {
+      "$type": "color",
+      "$value": "#0f172a",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-color"
+        }
+      }
+    },
+    "sm": {
+      "$type": "shadow",
+      "$value": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-sm"
+        }
+      }
+    },
+    "md": {
+      "$type": "shadow",
+      "$value": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-md"
+        }
+      }
+    },
+    "lg": {
+      "$type": "shadow",
+      "$value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-lg"
+        }
+      }
+    },
+    "xl": {
+      "$type": "shadow",
+      "$value": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-xl"
+        }
+      }
+    },
+    "card": {
+      "$type": "shadow",
+      "$value": "0 4px 8px rgba(0, 0, 0, 0.15)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-card"
+        }
+      }
+    },
+    "cardHover": {
+      "$type": "shadow",
+      "$value": "0 8px 16px rgba(0, 0, 0, 0.2)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-card-hover"
+        }
+      }
+    },
+    "popup": {
+      "$type": "shadow",
+      "$value": "0 8px 24px rgba(0, 0, 0, 0.25)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-popup"
+        }
+      }
+    },
+    "focus": {
+      "$type": "shadow",
+      "$value": "0 4px 8px rgba({color.primaryRgb}, 0.2)",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-focus"
+        }
+      }
+    },
+    "medium": {
+      "$type": "shadow",
+      "$value": "{shadow.md}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-medium"
+        }
+      }
+    },
+    "large": {
+      "$type": "shadow",
+      "$value": "{shadow.lg}",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-shadow-large"
+        }
+      }
+    }
+  },
+  "radius": {
+    "$description": "Standard radius scale.",
+    "sm": {
+      "$type": "dimension",
+      "$value": "4px",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-radius-sm"
+        }
+      }
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "8px",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-radius-md"
+        }
+      }
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "12px",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-radius-lg"
+        }
+      }
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "16px",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-radius-xl"
+        }
+      }
+    },
+    "2xl": {
+      "$type": "dimension",
+      "$value": "24px",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-radius-2xl"
+        }
+      }
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": "9999px",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-radius-full"
+        }
+      }
+    }
+  },
+  "spacing": {
+    "$description": "Base component spacing scale.",
+    "xs": {
+      "$type": "dimension",
+      "$value": "0.25rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-xs"
+        }
+      }
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "0.5rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-sm"
+        }
+      }
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "1rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-md"
+        }
+      }
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "1.5rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-lg"
+        }
+      }
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "2rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-xl"
+        }
+      }
+    },
+    "2xl": {
+      "$type": "dimension",
+      "$value": "3rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-2xl"
+        }
+      }
+    },
+    "3xl": {
+      "$type": "dimension",
+      "$value": "4rem",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-spacing-3xl"
+        }
+      }
+    }
+  },
+  "typography": {
+    "$description": "Font families, sizes, weights, and line heights.",
+    "fontFamily": {
+      "base": {
+        "$type": "fontFamily",
+        "$value": "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-family"
+          }
+        }
+      },
+      "display": {
+        "$type": "fontFamily",
+        "$value": "'Sora', 'Plus Jakarta Sans', sans-serif",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-family-display"
+          }
+        }
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": "'Fira Code', 'Consolas', 'Monaco', monospace",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-family-mono"
+          }
+        }
+      },
+      "body": {
+        "$type": "fontFamily",
+        "$value": "{typography.fontFamily.base}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-body"
+          }
+        }
+      },
+      "displayAlias": {
+        "$type": "fontFamily",
+        "$value": "{typography.fontFamily.display}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-display"
+          }
+        }
+      }
+    },
+    "fontSize": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "0.75rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-xs"
+          }
+        }
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "0.875rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-sm"
+          }
+        }
+      },
+      "base": {
+        "$type": "dimension",
+        "$value": "1rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-base"
+          }
+        }
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "1.125rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-lg"
+          }
+        }
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "1.25rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-xl"
+          }
+        }
+      },
+      "2xl": {
+        "$type": "dimension",
+        "$value": "1.5rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-2xl"
+          }
+        }
+      },
+      "3xl": {
+        "$type": "dimension",
+        "$value": "1.875rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-3xl"
+          }
+        }
+      },
+      "4xl": {
+        "$type": "dimension",
+        "$value": "2.25rem",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-size-4xl"
+          }
+        }
+      },
+      "textXs": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.xs}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-xs"
+          }
+        }
+      },
+      "textSm": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.sm}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-sm"
+          }
+        }
+      },
+      "textBase": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.base}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-base"
+          }
+        }
+      },
+      "textLg": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.lg}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-lg"
+          }
+        }
+      },
+      "textXl": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.xl}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-xl"
+          }
+        }
+      },
+      "text2xl": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.2xl}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-2xl"
+          }
+        }
+      },
+      "text3xl": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.3xl}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-3xl"
+          }
+        }
+      },
+      "text4xl": {
+        "$type": "dimension",
+        "$value": "{typography.fontSize.4xl}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-text-4xl"
+          }
+        }
+      }
+    },
+    "fontWeight": {
+      "normal": {
+        "$type": "fontWeight",
+        "$value": "400",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-weight-normal"
+          }
+        }
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": "500",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-weight-medium"
+          }
+        }
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": "600",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-weight-semibold"
+          }
+        }
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": "700",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-weight-bold"
+          }
+        }
+      },
+      "extrabold": {
+        "$type": "fontWeight",
+        "$value": "800",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-weight-extrabold"
+          }
+        }
+      },
+      "normalAlias": {
+        "$type": "fontWeight",
+        "$value": "{typography.fontWeight.normal}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-normal"
+          }
+        }
+      },
+      "mediumAlias": {
+        "$type": "fontWeight",
+        "$value": "{typography.fontWeight.medium}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-medium"
+          }
+        }
+      },
+      "semiboldAlias": {
+        "$type": "fontWeight",
+        "$value": "{typography.fontWeight.semibold}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-semibold"
+          }
+        }
+      },
+      "boldAlias": {
+        "$type": "fontWeight",
+        "$value": "{typography.fontWeight.bold}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-bold"
+          }
+        }
+      },
+      "extraboldAlias": {
+        "$type": "fontWeight",
+        "$value": "{typography.fontWeight.extrabold}",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-font-extrabold"
+          }
+        }
+      }
+    },
+    "lineHeight": {
+      "tight": {
+        "$type": "number",
+        "$value": "1.2",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-line-height-tight"
+          }
+        }
+      },
+      "normal": {
+        "$type": "number",
+        "$value": "1.6",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-line-height-normal"
+          }
+        }
+      },
+      "relaxed": {
+        "$type": "number",
+        "$value": "1.8",
+        "$extensions": {
+          "nettoolskit": {
+            "cssVariable": "--ntk-line-height-relaxed"
+          }
+        }
+      }
+    }
+  },
+  "motion": {
+    "$description": "Shared transition values.",
+    "fast": {
+      "$type": "transition",
+      "$value": "150ms ease-in-out",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-transition-fast"
+        }
+      }
+    },
+    "base": {
+      "$type": "transition",
+      "$value": "250ms ease-in-out",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-transition-base"
+        }
+      }
+    },
+    "slow": {
+      "$type": "transition",
+      "$value": "350ms ease-in-out",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-transition-slow"
+        }
+      }
+    }
+  }
+}

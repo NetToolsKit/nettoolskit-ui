@@ -1,69 +1,56 @@
-# Samples
+# Samples Runtime
 
-This directory contains sample files to help you get started with nettoolskit-ui-vue.
+Runtime host for a single approved sample derived from `.temp/reference`.
 
-## DemoPage.vue
+## Purpose
 
-A comprehensive showcase of all components and composables in the library.
+- keep `samples/` as the canonical public runtime for the approved reference-derived sample
+- consume reusable layouts, pages, navigation, and styles from `src/**`
+- keep the public host focused on one clean implementation instead of a multi-gallery flow
 
-### Usage
+## Entry Modes
 
-1. Copy `DemoPage.vue` to your project's pages directory
-2. Add a route to the page in your router configuration
-3. Adjust import paths based on your project structure
+- `/`
+  - original reference-derived sample
+- `/?template-runtime=1`
+  - router-enabled template runtime for internal composition checks
 
-### Example Router Configuration
+## Internal Compatibility Entry
 
-```typescript
-// router/routes.ts
-import DemoPage from '@/pages/DemoPage.vue'
+- `/internal-cms.html`
+  - local-only internal CMS compatibility runtime kept outside the public sample flow
+  - served by the Vite dev server for development/tests, but excluded from the public samples build entry list
 
-const routes = [
-  {
-    path: '/demo',
-    name: 'demo',
-    component: DemoPage,
-    meta: {
-      title: 'Design System Demo'
-    }
-  }
-]
+## Local Preview
+
+```bash
+npm run dev:samples
 ```
 
-### What's Included
+## Theme Runtime Contract
 
-The DemoPage showcases:
+The samples host is the canonical browser surface for validating template theme behavior.
 
-- **Theme System**: Runtime theme switching with useTheme
-- **Composables**: useNotification, useDialog, useResponsive, useDebounce, useFormRules, useAsync
-- **Buttons & Chips**: BaseButton, BaseChip with variants
-- **Cards**: BaseCard, MetricCard, InfoCard
-- **Form Inputs**: BaseInput, BaseSelect, BaseMultiSelect, BaseTextarea, BaseDatePicker, BaseTimePicker
-- **Metrics**: Dashboard metric cards with trends
-- **Design Tokens**: Colors, shadows, spacing scale
+- `/?template-runtime=1` must exercise the same token stack used by reusable templates.
+- Theme presets should update Quasar-compatible `--q-*` brand variables, NetToolsKit `--ntk-*` aliases, and template contracts together.
+- Dark presets must synchronize with Quasar dark-mode behavior and expose `body--dark` for CSS selectors and E2E assertions.
+- Quasar teleported surfaces (`QMenu`, `QDialog`, `QSelect`, `QPopupProxy`, `QTooltip`) must be styled through the shared overlay bridge or explicit popup classes.
+- Runtime visual artifacts, Playwright reports, and test output belong under `.build`.
 
-### Adjusting Import Paths
+## Fixed Reference Brand Artwork
 
-The sample uses relative imports. Adjust based on your project structure:
+The SVG files in `samples/assets/` are fixed reference brand artwork, not reusable white-label UI components.
 
-```typescript
-// If using @shared alias
-import { BaseButton, useNotification } from '@shared'
+- `original-reference-mark.svg` preserves the approved original-reference mark colors.
+- `core-reference-logo.svg` preserves the sample brand lockup colors.
+- These assets are intentionally excluded from the component color-token policy because SVGs loaded as external image assets cannot reliably consume host-page CSS variables across runtime and build targets.
+- If an artwork needs to participate in white-label theming, inline it as a Vue/SVG component and bind the fills to the template token layer instead of reusing these fixed files.
 
-// If using direct imports
-import BaseButton from '@/shared/components/ui/BaseButton.vue'
-import { useNotification } from '@/shared/composables/services/useNotification'
-```
+## Structure
 
-### Screenshot
-
-![Demo Page Screenshot](../docs/demo-page-screenshot.png)
-
-## Contributing
-
-Feel free to add more samples! Each sample should:
-
-1. Be self-contained and runnable
-2. Include clear documentation
-3. Demonstrate best practices
-4. Use relative imports that can be easily adjusted
+- `main.ts`
+  - chooses between the single public sample and the internal template runtime
+- `original-reference/**`
+  - self-contained original sample, sample data, and chart composition derived from the approved reference
+- `shared/mountSamplesHost.ts`
+  - sample host bootstrap helper

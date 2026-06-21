@@ -1,6 +1,6 @@
 /**
  * Utils Export
- * Exporta todas as funções utilitárias
+ * Exports all utility functions.
  */
 
 // Formatters

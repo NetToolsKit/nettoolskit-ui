@@ -1,6 +1,7 @@
 <template>
-  <base-select
-    v-model="internalValue"
+  <q-select
+    v-bind="$attrs"
+    :model-value="modelValue"
     :options="options"
     :label="label"
     :placeholder="placeholder"
@@ -11,57 +12,162 @@
     :disable="disable"
     :rules="rules"
     :lazy-rules="lazyRules"
-    :prepend-icon="prependIcon"
-    :append-icon="appendIcon"
-    multiple
-    :use-chips="useChips"
+    :clearable="clearable"
+    :use-input="useInput"
     :emit-value="emitValue"
     :map-options="mapOptions"
-    @update:model-value="handleUpdate"
+    :option-value="optionValue"
+    :option-label="optionLabel"
+    :loading="loading"
+    :behavior="behavior"
+    :filter-fn="filterFn"
+    :no-options-text="noOptionsText"
+    :multiple="true"
+    :use-chips="useChips"
+    :max-values="maxValues"
+    :stack-label="stackLabel"
+    class="base-multi-select"
+    :class="customClass"
+    @update:model-value="emitModelValue"
+    @blur="$emit('blur', $event)"
+    @focus="$emit('focus', $event)"
+    @filter="emitFilter"
+    @add="emitAdd"
+    @remove="emitRemove"
   >
-    <template v-if="$slots.prepend" v-slot:prepend>
+    <template
+      v-if="$slots.prepend"
+      #prepend
+    >
       <slot name="prepend" />
     </template>
 
-    <template v-if="$slots.append" v-slot:append>
+    <template
+      v-if="$slots.append"
+      #append
+    >
       <slot name="append" />
     </template>
-  </base-select>
+
+    <template
+      v-if="$slots.option"
+      #option="scope"
+    >
+      <slot
+        name="option"
+        v-bind="scope"
+      />
+    </template>
+
+    <template
+      v-if="$slots['selected-item']"
+      #selected-item="scope"
+    >
+      <slot
+        name="selected-item"
+        v-bind="scope"
+      />
+    </template>
+
+    <template
+      v-if="$slots['no-option']"
+      #no-option="scope"
+    >
+      <slot
+        name="no-option"
+        v-bind="scope"
+      />
+    </template>
+  </q-select>
 </template>
 
 <script setup lang="ts">
-import { baseFieldPropsDefaults, useBaseField } from '../../composables/forms/useBaseField'
-import baseSelect from './BaseSelect.vue'
+/**
+ * Src/components/form/Base Multi Select module.
+ */
 
-const props = defineProps({
-  ...baseFieldPropsDefaults,
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  options: {
-    type: Array,
-    required: true
-  },
-  useChips: {
-    type: Boolean,
-    default: true
-  },
-  emitValue: {
-    type: Boolean,
-    default: true
-  },
-  mapOptions: {
-    type: Boolean,
-    default: true
-  }
+import type { ValidationRule } from 'quasar'
+
+type SelectOption = string | number | Record<string, unknown>
+
+interface Props {
+  modelValue?: unknown[]
+  options?: SelectOption[]
+  label?: string
+  placeholder?: string
+  outlined?: boolean
+  filled?: boolean
+  dense?: boolean
+  readonly?: boolean
+  disable?: boolean
+  rules?: ValidationRule[]
+  lazyRules?: boolean
+  clearable?: boolean
+  useInput?: boolean
+  emitValue?: boolean
+  mapOptions?: boolean
+  optionValue?: string
+  optionLabel?: string
+  loading?: boolean
+  behavior?: 'menu' | 'dialog' | 'default'
+  filterFn?: (...args: unknown[]) => void
+  noOptionsText?: string
+  useChips?: boolean
+  maxValues?: number
+  stackLabel?: boolean
+  customClass?: string
+}
+
+withDefaults(defineProps<Props>(), {
+  modelValue: () => [],
+  options: () => [],
+  label: '',
+  placeholder: '',
+  outlined: true,
+  filled: false,
+  dense: false,
+  readonly: false,
+  disable: false,
+  rules: () => [],
+  lazyRules: true,
+  clearable: false,
+  useInput: false,
+  emitValue: true,
+  mapOptions: true,
+  optionValue: 'value',
+  optionLabel: 'label',
+  loading: false,
+  behavior: 'default',
+  filterFn: undefined,
+  noOptionsText: '',
+  useChips: true,
+  maxValues: undefined,
+  stackLabel: false,
+  customClass: '',
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: unknown[]]
+  blur: [event: Event]
+  focus: [event: Event]
+  filter: [...args: unknown[]]
+  add: [details: unknown]
+  remove: [details: unknown]
+}>()
 
-const { internalValue, handleUpdate } = useBaseField(props, emit)
+const emitModelValue = (value: unknown) => {
+  emit('update:modelValue', value as unknown[])
+}
+
+const emitFilter = (...args: unknown[]) => {
+  emit('filter', ...args)
+}
+
+const emitAdd = (details: unknown) => {
+  emit('add', details)
+}
+
+const emitRemove = (details: unknown) => {
+  emit('remove', details)
+}
 </script>
-
-<style scoped lang="scss">
-// Styles are inherited from BaseSelect
-</style>

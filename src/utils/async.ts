@@ -1,18 +1,18 @@
 /**
- * Async Utilities - Funções utilitárias para operações assíncronas
+ * Async Utilities - helpers for asynchronous operations.
  * 
- * Utilitários puros para trabalhar com Promises.
- * Sem dependências de framework.
+ * Pure utilities for working with Promises.
+ * No framework dependencies.
  * 
  * @layer Utils
  */
 
 /**
- * Retry - Tenta executar uma função assíncrona com retentativas
+ * Retry - attempts to execute an async function with retries.
  * 
- * @param fn - Função assíncrona a ser executada
- * @param maxRetries - Número máximo de retentativas
- * @param delay - Delay entre retentativas em ms (com exponential backoff)
+ * @param fn - Async function to execute
+ * @param maxRetries - Maximum number of retries
+ * @param delay - Delay between retries in ms with exponential backoff
  * 
  * @example
  * const data = await retry(() => fetchAPI(), 3, 1000)
@@ -42,10 +42,10 @@ export async function retry<T>(
 }
 
 /**
- * Timeout - Adiciona timeout a uma Promise
+ * Timeout - adds a timeout to a Promise.
  * 
- * @param promise - Promise a ser executada
- * @param ms - Tempo limite em milissegundos
+ * @param promise - Promise to execute
+ * @param ms - Timeout in milliseconds
  * 
  * @example
  * const data = await timeout(fetchAPI(), 5000)
@@ -63,9 +63,9 @@ export async function timeout<T>(
 }
 
 /**
- * Parallel - Executa múltiplas tarefas em paralelo
+ * Parallel - executes multiple tasks concurrently.
  * 
- * @param tasks - Array de funções que retornam Promises
+ * @param tasks - Array of functions that return Promises
  * 
  * @example
  * const results = await parallel([
@@ -81,9 +81,9 @@ export async function parallel<T>(
 }
 
 /**
- * Sequential - Executa múltiplas tarefas sequencialmente (waterfall)
+ * Sequential - executes multiple tasks sequentially (waterfall).
  * 
- * @param tasks - Array de funções que retornam Promises
+ * @param tasks - Array of functions that return Promises
  * 
  * @example
  * const results = await sequential([
@@ -105,9 +105,9 @@ export async function sequential<T>(
 }
 
 /**
- * Race - Retorna a primeira Promise resolvida ou rejeitada
+ * Race - returns the first Promise that resolves or rejects.
  * 
- * @param promises - Array de Promises
+ * @param promises - Array of Promises
  * 
  * @example
  * const fastest = await race([

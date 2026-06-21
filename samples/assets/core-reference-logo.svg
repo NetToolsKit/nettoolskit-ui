@@ -1,0 +1,6 @@
+<svg width="220" height="42" viewBox="0 0 220 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="5" width="30" height="30" rx="9" fill="#0F766E"/>
+  <path d="M12 13H21.5C24.5376 13 27 15.4624 27 18.5C27 21.5376 24.5376 24 21.5 24H17V29H12V13Z" fill="white"/>
+  <path d="M17 19H21.25C22.2165 19 23 18.2165 23 17.25C23 16.2835 22.2165 15.5 21.25 15.5H17V19Z" fill="#0F766E"/>
+  <text x="44" y="27" fill="#1E293B" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="0.5">ATLAS FLOW</text>
+</svg>

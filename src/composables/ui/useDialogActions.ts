@@ -1,25 +1,34 @@
+/**
+ * Src/composables/ui/use Dialog Actions module.
+ */
+
 import { useQuasar } from 'quasar'
 import { useNotification } from '../services/useNotification'
 
+const destructiveActionStyle = {
+  background: 'var(--ntk-dialog-action-danger-bg, var(--semantic-error-primary, var(--ntk-error)))',
+  color: 'var(--ntk-dialog-action-danger-text, var(--ntk-text-on-primary, var(--ntk-text-inverse)))'
+} as const
+
 /**
- * useDialog - Composable para diálogos de confirmação
+ * useDialog - Composable for confirmation dialogs.
  * 
- * Wrapper padronizado para Quasar Dialog com confirmações comuns.
- * Reutilizável em toda a aplicação.
+ * Standardized wrapper for Quasar Dialog with common confirmations.
+ * Reusable across the application.
  * 
  * @example
  * const { confirmDialog, deleteDialog } = useDialogActions()
- * await confirmDialog('Deseja continuar?')
- * await deleteDialog('Excluir usuário?')
+ * await confirmDialog('Do you want to continue?')
+ * await deleteDialog('Delete user?')
  */
 export function useDialogActions() {
   const $q = useQuasar()
   const { success, info } = useNotification()
 
   /**
-   * Dialog de confirmação genérico
+   * Generic confirmation dialog.
    */
-  const confirmDialog = (message: string, title = 'Confirmação'): Promise<boolean> => {
+  const confirmDialog = (message: string, title = 'Confirmation'): Promise<boolean> => {
     return new Promise((resolve) => {
       $q.dialog({
         title,
@@ -27,35 +36,36 @@ export function useDialogActions() {
         cancel: true,
         persistent: true
       }).onOk(() => {
-        success('Ação confirmada!')
+        success('Action confirmed.')
         resolve(true)
       }).onCancel(() => {
-        info('Ação cancelada.')
+        info('Action canceled.')
         resolve(false)
       })
     })
   }
 
   /**
-   * Dialog de exclusão com confirmação
+   * Delete confirmation dialog.
    */
-  const deleteDialog = (message: string, title = 'Confirmar Exclusão'): Promise<boolean> => {
+  const deleteDialog = (message: string, title = 'Confirm deletion'): Promise<boolean> => {
     return new Promise((resolve) => {
       $q.dialog({
         title,
         message,
         persistent: true,
         ok: {
-          label: 'Excluir',
-          color: 'negative',
+          label: 'Delete',
+          class: 'ntk-dialog-action ntk-dialog-action--danger',
+          style: destructiveActionStyle,
           unelevated: true
         },
         cancel: {
-          label: 'Cancelar',
+          label: 'Cancel',
           flat: true
         }
       }).onOk(() => {
-        success('Item excluído com sucesso!')
+        success('Item deleted successfully.')
         resolve(true)
       }).onCancel(() => {
         resolve(false)
@@ -64,7 +74,7 @@ export function useDialogActions() {
   }
 
   /**
-   * Dialog customizado
+   * Custom dialog.
    */
   const customDialog = (options: {
     title: string

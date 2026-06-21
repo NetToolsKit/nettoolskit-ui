@@ -1,0 +1,259 @@
+<template>
+  <section
+    class="ntk-reference-manager"
+    :aria-label="pageAriaLabel"
+  >
+    <header class="ntk-reference-manager__hero">
+      <div>
+        <p class="ntk-reference-manager__eyebrow">
+          {{ eyebrow }}
+        </p>
+        <h1>{{ title }}</h1>
+        <p class="ntk-reference-manager__subtitle">
+          {{ subtitle }}
+        </p>
+      </div>
+
+      <div class="ntk-reference-manager__brand-card">
+        <span class="ntk-reference-manager__brand-mark">{{ selectedPreset.brand.logoText }}</span>
+        <div>
+          <strong>{{ selectedPreset.brand.name }}</strong>
+          <p>{{ selectedPreset.brand.subtitle }}</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="ntk-reference-manager__stats">
+      <article
+        v-for="stat in stats"
+        :key="stat.id"
+        class="ntk-reference-manager__stat"
+      >
+        <span>{{ stat.label }}</span>
+        <strong>{{ stat.value }}</strong>
+      </article>
+    </div>
+
+    <div class="ntk-reference-manager__grid">
+      <ReferenceReportCatalogPanel
+        :search-value="searchValue"
+        :active-report-id="selectedReport?.id ?? null"
+        :report-groups="reportGroups"
+        title="Reference Files"
+        eyebrow="Approved Catalog"
+        @update:search-value="emit('update:searchValue', $event)"
+        @update:active-report-id="emit('update:activeReportId', $event)"
+        @report-select="emit('report-select', $event)"
+      />
+
+      <ReferenceReportDetailCard
+        :report="selectedReport"
+        :quick-actions="quickActions"
+        :fallback-empty-title="fallbackEmptyTitle"
+        :fallback-empty-description="fallbackEmptyDescription"
+        @action-click="emit('action-click', $event)"
+      />
+
+      <ReferenceWhitelabelPresetCard :preset="selectedPreset" />
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+
+import type { ReferenceWhitelabelPreset } from '../../../whitelabel'
+import type { TemplateDashboardMetric } from '../../pages'
+import ReferenceReportCatalogPanel from './components/ReferenceReportCatalogPanel.vue'
+import ReferenceReportDetailCard from './components/ReferenceReportDetailCard.vue'
+import ReferenceWhitelabelPresetCard from './components/ReferenceWhitelabelPresetCard.vue'
+import { findReferenceReportById } from './reference-report.sample-data'
+import type {
+  ReferenceReportGroup,
+  ReferenceSurfaceAction,
+} from './reference-system.types'
+
+const props = withDefaults(defineProps<{
+  eyebrow?: string
+  title?: string
+  subtitle?: string
+  searchValue?: string
+  activeReportId?: string | null
+  reportGroups: ReferenceReportGroup[]
+  stats?: TemplateDashboardMetric[]
+  quickActions?: ReferenceSurfaceAction[]
+  selectedPreset: ReferenceWhitelabelPreset
+  pageAriaLabel?: string
+  fallbackEmptyTitle?: string
+  fallbackEmptyDescription?: string
+}>(), {
+  eyebrow: 'Reference System',
+  title: 'Approved report catalog',
+  subtitle: 'Reusable catalog and whitelabel workspace built from the approved reference layout.',
+  searchValue: '',
+  activeReportId: null,
+  stats: () => [],
+  quickActions: () => [],
+  pageAriaLabel: 'Reference report catalog page',
+  fallbackEmptyTitle: 'Select one approved report',
+  fallbackEmptyDescription: 'Choose a report from the catalog to inspect metadata and continue to the designer.',
+})
+
+const emit = defineEmits<{
+  'update:searchValue': [value: string]
+  'update:activeReportId': [value: string]
+  'report-select': [value: string]
+  'action-click': [value: string]
+}>()
+
+const selectedReport = computed(() => {
+  return findReferenceReportById(props.reportGroups, props.activeReportId)
+})
+</script>
+
+<style scoped lang="scss">
+.ntk-reference-manager {
+  --ntk-reference-manager-text: var(--ntk-reference-text, var(--ntk-template-page-title, var(--ntk-text-primary)));
+  --ntk-reference-manager-muted: var(--ntk-reference-muted, var(--ntk-template-page-subtitle, var(--ntk-text-secondary, var(--ntk-text-body))));
+  --ntk-reference-manager-on-accent: var(--ntk-reference-on-accent, var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse))));
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  min-height: 100%;
+  background: var(--ntk-reference-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary)));
+}
+
+.ntk-reference-manager__hero {
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  border-radius: 24px;
+  background: var(
+    --ntk-reference-hero-bg,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 96%, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)))) 0%,
+      color-mix(in srgb, var(--ntk-reference-page-bg, var(--ntk-template-page-bg, var(--ntk-bg-secondary))) 88%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-tertiary))) 100%
+    )
+  );
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.ntk-reference-manager__eyebrow {
+  margin: 0;
+  font-family: var(--ntk-font-family-mono, 'IBM Plex Mono', ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ntk-reference-manager-muted);
+}
+
+.ntk-reference-manager__hero h1 {
+  margin: 8px 0 0;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.05;
+  color: var(--ntk-reference-manager-text);
+}
+
+.ntk-reference-manager__subtitle {
+  margin: 12px 0 0;
+  max-width: 720px;
+  color: var(--ntk-reference-manager-muted);
+}
+
+.ntk-reference-manager__brand-card {
+  min-width: 260px;
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary))) 82%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+}
+
+.ntk-reference-manager__brand-mark {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent)));
+  color: var(--ntk-reference-manager-on-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.ntk-reference-manager__brand-card strong {
+  display: block;
+  color: var(--ntk-reference-manager-text);
+}
+
+.ntk-reference-manager__brand-card p {
+  margin: 4px 0 0;
+  color: var(--ntk-reference-manager-muted);
+  font-size: 13px;
+}
+
+.ntk-reference-manager__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ntk-reference-manager__stat {
+  border: 1px solid var(--ntk-reference-border, var(--ntk-template-page-border, var(--ntk-border-color)));
+  border-radius: 18px;
+  background: var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)));
+  padding: 18px;
+}
+
+.ntk-reference-manager__stat span {
+  color: var(--ntk-reference-manager-muted);
+  font-size: 12px;
+}
+
+.ntk-reference-manager__stat strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 28px;
+  color: var(--ntk-reference-manager-text);
+}
+
+.ntk-reference-manager__grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr) 280px;
+  gap: 18px;
+  min-height: 0;
+}
+
+@media (max-width: 1280px) {
+  .ntk-reference-manager__grid {
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  }
+
+  .ntk-reference-manager :deep(.ntk-reference-preset-card) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 980px) {
+  .ntk-reference-manager {
+    padding: 16px;
+  }
+
+  .ntk-reference-manager__hero {
+    flex-direction: column;
+  }
+
+  .ntk-reference-manager__stats,
+  .ntk-reference-manager__grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

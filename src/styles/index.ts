@@ -1,51 +1,49 @@
 /**
  * Shared Styles Export
  * 
- * Este arquivo centraliza os estilos compartilhados do projeto.
+ * This file centralizes the shared project styles.
  * 
- * SISTEMA DE TOKENS:
- * - tokens.scss: Variáveis CSS globais (--ntk-*)
- * - design-system.scss: Estilos base e utilitários
- * - global.scss: Reset e estilos globais
+ * TOKEN SYSTEM:
+ * - tokens.scss: global CSS custom properties (--ntk-*)
+ * - global.scss: reset and global styles
  * 
- * USO EM PROJETOS:
- * 1. Importe os estilos no main.ts ou App.vue:
- *    @import 'nettoolskit-ui-vue/src/styles/tokens.scss';
- *    @import 'nettoolskit-ui-vue/src/styles/design-system.scss';
+ * PROJECT USAGE:
+ * 1. Import the styles in main.ts or App.vue:
+ *    @import 'nettoolskit/styles/tokens.scss';
+ *    @import 'nettoolskit/styles/global.scss';
  * 
- * 2. Use o plugin para customizar cores:
- *    import { NtkThemePlugin } from 'nettoolskit-ui-vue';
- *    app.use(NtkThemePlugin, { primary: '#0D47A1', primaryGradient: ['#0D47A1', '#7B74D4'] });
+ * 2. Prefer preset/theme CSS variables for runtime branding:
+ *    :root { --ntk-primary: var(--brand-primary); }
  * 
- * 3. Ou sobrescreva variáveis CSS diretamente:
- *    :root { --ntk-primary: #0D47A1; }
+ * 3. Legacy plugin-based theme writes remain available for existing apps,
+ *    but new template runtime work should use the preset-driven model.
  */
 
 /**
- * Design Tokens - Valores padrão
- * Use CSS Custom Properties (--ntk-*) para customização em runtime
+ * Design Tokens - default values
+ * Use CSS custom properties (--ntk-*) for runtime customization.
  */
 export const DESIGN_TOKENS = {
   colors: {
     // Primary
-    primary: '#512BD4',
-    primaryDark: '#3B1F9E',
-    primaryLight: '#7B74D4',
+    primary: '#0f766e',
+    primaryDark: '#115e59',
+    primaryLight: '#2dd4bf',
     
     // Secondary
-    secondary: '#64748b',
-    secondaryDark: '#475569',
-    secondaryLight: '#94a3b8',
+    secondary: '#0f766e',
+    secondaryDark: '#115e59',
+    secondaryLight: '#2dd4bf',
     
     // Backgrounds
     bgPrimary: '#ffffff',
-    bgSecondary: '#f8fafc',
-    bgTertiary: '#f1f5f9',
+    bgSecondary: '#f1f5f9',
+    bgTertiary: '#f8fafc',
     
     // Text
-    textPrimary: '#1e293b',
-    textSecondary: '#64748b',
-    textMuted: '#94a3b8',
+    textPrimary: '#0f172a',
+    textSecondary: '#334155',
+    textMuted: '#64748b',
     textInverse: '#ffffff',
     textOnPrimary: '#ffffff',
     
@@ -55,26 +53,20 @@ export const DESIGN_TOKENS = {
     borderDark: '#cbd5e1',
     
     // Feedback
-    success: '#22c55e',
+    success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    info: '#3b82f6',
+    info: '#14b8a6',
     
     // Footer
-    footerBg: '#1a1a2e',
-    footerText: '#e0e0e0',
-    
-    // Legacy (retrocompatibilidade)
-    white: '#ffffff',
-    background: '#f5f7fa',
-    gradientStart: '#f5f7fa',
-    gradientEnd: '#c3cfe2',
+    footerBg: '#0f172a',
+    footerText: '#f8fafc',
   },
   
   gradients: {
-    primary: 'linear-gradient(135deg, #512BD4 0%, #7B74D4 100%)',
-    hero: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-    loading: 'linear-gradient(90deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%)',
+    primary: 'linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)',
+    hero: 'linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%)',
+    loading: 'linear-gradient(90deg, #f1f5f9 0%, #f8fafc 50%, #f1f5f9 100%)',
   },
   
   borderRadius: {
@@ -99,13 +91,10 @@ export const DESIGN_TOKENS = {
   },
   
   fonts: {
-    family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
-    familyDisplay: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    family: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    familyDisplay: "'Sora', 'Plus Jakarta Sans', sans-serif",
     familyMono: "'Fira Code', 'Consolas', 'Monaco', monospace",
   },
-  
-  // Legacy (retrocompatibilidade)
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
 } as const;
 
 export type DesignTokens = typeof DESIGN_TOKENS;

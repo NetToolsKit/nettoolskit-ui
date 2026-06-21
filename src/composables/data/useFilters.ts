@@ -5,7 +5,7 @@
  * Adds Vue Router integration and Vue reactivity.
  * 
  * This composable follows Clean Architecture:
- * - Presentation (composable) → Application (service)
+ * - Presentation (composable) -> Application (service)
  * 
  * @example
  * const { filters, resetFilters, hasActiveFilters } = useFilters({
@@ -104,14 +104,14 @@ export function useFilters<T extends FiltersState>(
   }
 
   /**
-   * Toggle visibilidade do painel de filtros
+   * Toggles filter panel visibility.
    */
   const toggleFilters = () => {
     showFilters.value = !showFilters.value
   }
 
   /**
-   * Sincroniza filtros com URL query params
+   * Synchronizes filters with URL query params.
    */
   const syncFiltersToUrl = () => {
     const query = filterService.serializeToQueryParams()
@@ -119,7 +119,7 @@ export function useFilters<T extends FiltersState>(
   }
 
   /**
-   * Carrega filtros da URL (ao montar componente)
+   * Loads filters from the URL when the component mounts.
    */
   const loadFiltersFromUrl = () => {
     if (!syncWithUrl) return
@@ -138,7 +138,7 @@ export function useFilters<T extends FiltersState>(
     }, { deep: true })
   }
 
-  // Carrega filtros da URL ao inicializar
+  // Loads filters from the URL during initialization.
   if (syncWithUrl) {
     loadFiltersFromUrl()
   }
@@ -158,6 +158,6 @@ export function useFilters<T extends FiltersState>(
 }
 
 /**
- * Re-exporta tipos para conveniência
+ * Re-exports types for convenience.
  */
 export type { FiltersState } from '../../services/FilterService'

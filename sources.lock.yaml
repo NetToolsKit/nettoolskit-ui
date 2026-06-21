@@ -1,0 +1,30 @@
+schemaVersion: 1
+workstream: nettoolskit-frontend-standard
+packageName: nettoolskit
+commandPrefix: ntk
+sources:
+  - id: nettoolskit-frontend-design-system-standard
+    type: local-standard
+    path: .temp/NETTOOLSKIT_FRONTEND_DESIGN_SYSTEM_STANDARD.md
+    status: accepted
+    appliesTo:
+      - package-surface
+      - design-tokens
+      - theme-adapter
+      - component-contracts
+      - css-governance
+      - quality-gates
+    decision: Use as the governing frontend standard for this workstream.
+compatibility:
+  publicComponents:
+    currentPrefix: Ntk
+    futurePrefix: Ds
+    rule: Keep Ntk exports stable while Ds contracts are introduced in planned slices.
+  styles:
+    packageEntrypoint: nettoolskit/styles
+    scssEntrypoints:
+      - nettoolskit/styles/tokens.scss
+      - nettoolskit/styles/global.scss
+      - nettoolskit/styles/quasar-variables.scss
+    cssEntrypoints:
+      - nettoolskit/styles/themes.css

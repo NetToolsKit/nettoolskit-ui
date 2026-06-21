@@ -1,31 +1,35 @@
 /**
  * Design Tokens - CSS Custom Properties
- * Sistema de variáveis CSS globais para temas
+ * Global CSS variable layer for themes.
  * 
- * USO:
- * - Projetos que usam nettoolskit-ui-vue podem sobrescrever estas variáveis
- * - Suporta modo claro/escuro via classe .dark ou [data-theme="dark"]
- * - Suporta gradientes customizáveis
+ * USAGE:
+ * - Projects using nettoolskit-ui-vue can override these variables.
+ * - Supports light/dark mode through the .dark class or [data-theme="dark"].
+ * - Supports customizable gradients.
  * 
- * EXEMPLO DE CUSTOMIZAÇÃO:
+ * CUSTOMIZATION EXAMPLE:
  * :root {
- *   --ntk-primary: #0D47A1;
- *   --ntk-primary-gradient-start: #0D47A1;
- *   --ntk-primary-gradient-end: #7B74D4;
+ *   --ntk-primary: #0f766e;
+ *   --ntk-primary-gradient-start: #134e4a;
+ *   --ntk-primary-gradient-end: #14b8a6;
  * }
  */
 
 :root {
   /* ============================================
    * Primary Colors
-   * Cor principal da aplicação
+   * Primary application color
    * ============================================ */
-  --ntk-primary: #512BD4;
-  --ntk-primary-dark: #3B1F9E;
-  --ntk-primary-light: #7B74D4;
-  --ntk-primary-rgb: 81, 43, 212;
+  --ntk-primary: #0f766e;
+  --ntk-primary-dark: #115e59;
+  --ntk-primary-light: #2dd4bf;
+  --ntk-primary-rgb: 15, 118, 110;
+  --ntk-accent: var(--ntk-primary);
+  --ntk-accent-hover: var(--ntk-primary-dark);
+  --ntk-accent-soft: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-accent-rgb: var(--ntk-primary-rgb);
   
-  /* Gradiente Primário */
+  /* Primary gradient */
   --ntk-primary-gradient-start: var(--ntk-primary);
   --ntk-primary-gradient-end: var(--ntk-primary-light);
   --ntk-primary-gradient: linear-gradient(135deg, var(--ntk-primary-gradient-start) 0%, var(--ntk-primary-gradient-end) 100%);
@@ -33,15 +37,15 @@
   
   /* ============================================
    * Secondary Colors
-   * Cor secundária/accent
+   * Secondary/accent color
    * ============================================ */
-  --ntk-secondary: #64748b;
-  --ntk-secondary-dark: #475569;
-  --ntk-secondary-light: #94a3b8;
+  --ntk-secondary: var(--ntk-accent, #0f766e);
+  --ntk-secondary-dark: var(--ntk-accent-hover, #115e59);
+  --ntk-secondary-light: var(--ntk-primary-light, #2dd4bf);
   
   /* ============================================
    * Background Colors
-   * Cores de fundo para diferentes superfícies
+   * Background colors for different surfaces
    * ============================================ */
   --ntk-bg-primary: #ffffff;
   --ntk-bg-secondary: #f8fafc;
@@ -51,10 +55,14 @@
   --ntk-bg-overlay: rgba(0, 0, 0, 0.5);
   --ntk-bg-hover: #f5f5f5;
   --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-bg-light: var(--ntk-bg-secondary);
+  --ntk-bg-dark: color-mix(in srgb, var(--ntk-text-primary) 92%, var(--ntk-bg-primary));
+  --ntk-dark: #0f172a;
+  --ntk-dark-page: var(--ntk-bg-secondary);
   
   /* ============================================
    * Text Colors
-   * Cores de texto para diferentes hierarquias
+   * Text colors for different hierarchy levels
    * ============================================ */
   --ntk-text-primary: #1e293b;
   --ntk-text-secondary: #64748b;
@@ -69,7 +77,7 @@
   
   /* ============================================
    * Border Colors
-   * Cores de borda e divisores
+   * Border and divider colors
    * ============================================ */
   --ntk-border-color: #e2e8f0;
   --ntk-border-light: #f1f5f9;
@@ -80,31 +88,56 @@
   
   /* ============================================
    * Feedback Colors
-   * Cores semânticas para estados
+   * Semantic colors for states
    * ============================================ */
-  --ntk-success: #22c55e;
-  --ntk-success-light: #dcfce7;
-  --ntk-success-dark: #16a34a;
+  --semantic-success: #10b981;
+  --semantic-success-primary: var(--semantic-success);
+  --semantic-success-border: var(--semantic-success);
+  --semantic-success-bg: #d1fae5;
+  --semantic-success-text: #047857;
+
+  --semantic-warning: #f59e0b;
+  --semantic-warning-primary: var(--semantic-warning);
+  --semantic-warning-border: var(--semantic-warning);
+  --semantic-warning-bg: #fef3c7;
+  --semantic-warning-text: #d97706;
+
+  --semantic-error: #ef4444;
+  --semantic-error-primary: var(--semantic-error);
+  --semantic-error-border: var(--semantic-error);
+  --semantic-error-bg: #fee2e2;
+  --semantic-error-text: #dc2626;
+
+  --semantic-info: #14b8a6;
+  --semantic-info-primary: var(--semantic-info);
+  --semantic-info-border: var(--semantic-info);
+  --semantic-info-bg: #ccfbf1;
+  --semantic-info-text: #0f766e;
+
+  --ntk-success: var(--semantic-success);
+  --ntk-success-light: var(--semantic-success-bg);
+  --ntk-success-dark: var(--semantic-success-text);
   
-  --ntk-warning: #f59e0b;
-  --ntk-warning-light: #fef3c7;
-  --ntk-warning-dark: #d97706;
+  --ntk-warning: var(--semantic-warning);
+  --ntk-warning-light: var(--semantic-warning-bg);
+  --ntk-warning-dark: var(--semantic-warning-text);
   
-  --ntk-error: #ef4444;
-  --ntk-error-light: #fee2e2;
-  --ntk-error-dark: #dc2626;
+  --ntk-error: var(--semantic-error);
+  --ntk-error-light: var(--semantic-error-bg);
+  --ntk-error-dark: var(--semantic-error-text);
   
-  --ntk-info: #3b82f6;
-  --ntk-info-light: #dbeafe;
-  --ntk-info-dark: #2563eb;
+  --ntk-info: var(--semantic-info);
+  --ntk-info-light: var(--semantic-info-bg);
+  --ntk-info-dark: var(--semantic-info-text);
   
-  /* Aliases para compatibilidade */
+  /* Compatibility aliases */
   --ntk-positive: var(--ntk-success);
   --ntk-negative: var(--ntk-error);
+  --ntk-danger: var(--ntk-error);
   
   /* ============================================
    * Gradients
-   * Gradientes pré-definidos
+   * Predefined gradients
    * ============================================ */
   --ntk-gradient-hero: linear-gradient(135deg, var(--ntk-bg-primary) 0%, var(--ntk-bg-secondary) 100%);
   --ntk-gradient-loading: linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%);
@@ -112,8 +145,9 @@
   
   /* ============================================
    * Shadows
-   * Sombras para elevação
+   * Elevation shadows
    * ============================================ */
+  --ntk-shadow-color: #0f172a;
   --ntk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --ntk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --ntk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -122,10 +156,12 @@
   --ntk-shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.2);
   --ntk-shadow-popup: 0 8px 24px rgba(0, 0, 0, 0.25);
   --ntk-shadow-focus: 0 4px 8px rgba(var(--ntk-primary-rgb), 0.2);
+  --ntk-shadow-medium: var(--ntk-shadow-md);
+  --ntk-shadow-large: var(--ntk-shadow-lg);
   
   /* ============================================
    * Border Radius
-   * Raios de borda padrão
+   * Standard border radii
    * ============================================ */
   --ntk-radius-sm: 4px;
   --ntk-radius-md: 8px;
@@ -133,10 +169,30 @@
   --ntk-radius-xl: 16px;
   --ntk-radius-2xl: 24px;
   --ntk-radius-full: 9999px;
+
+  /* ============================================
+   * Spacing
+   * Base spacing for components
+   * ============================================ */
+  --ntk-spacing-xs: 0.25rem;
+  --ntk-spacing-sm: 0.5rem;
+  --ntk-spacing-md: 1rem;
+  --ntk-spacing-lg: 1.5rem;
+  --ntk-spacing-xl: 2rem;
+  --ntk-spacing-2xl: 3rem;
+  --ntk-spacing-3xl: 4rem;
+
+  /* ============================================
+   * Line Height
+   * Standard typography line heights
+   * ============================================ */
+  --ntk-line-height-tight: 1.2;
+  --ntk-line-height-normal: 1.6;
+  --ntk-line-height-relaxed: 1.8;
   
   /* ============================================
    * Transitions
-   * Durações de transição
+   * Transition durations
    * ============================================ */
   --ntk-transition-fast: 150ms ease-in-out;
   --ntk-transition-base: 250ms ease-in-out;
@@ -144,10 +200,10 @@
   
   /* ============================================
    * Typography
-   * Fontes e tamanhos
+   * Fonts and sizes
    * ============================================ */
-  --ntk-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  --ntk-font-family-display: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ntk-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ntk-font-family-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
   --ntk-font-family-mono: 'Fira Code', 'Consolas', 'Monaco', monospace;
   
   /* Font Sizes */
@@ -167,9 +223,26 @@
   --ntk-font-weight-bold: 700;
   --ntk-font-weight-extrabold: 800;
   
+  /* Typography aliases for semantic usage in shared components */
+  --ntk-font-body: var(--ntk-font-family);
+  --ntk-font-display: var(--ntk-font-family-display);
+  --ntk-font-normal: var(--ntk-font-weight-normal);
+  --ntk-font-medium: var(--ntk-font-weight-medium);
+  --ntk-font-semibold: var(--ntk-font-weight-semibold);
+  --ntk-font-bold: var(--ntk-font-weight-bold);
+  --ntk-font-extrabold: var(--ntk-font-weight-extrabold);
+  --ntk-text-xs: var(--ntk-font-size-xs);
+  --ntk-text-sm: var(--ntk-font-size-sm);
+  --ntk-text-base: var(--ntk-font-size-base);
+  --ntk-text-lg: var(--ntk-font-size-lg);
+  --ntk-text-xl: var(--ntk-font-size-xl);
+  --ntk-text-2xl: var(--ntk-font-size-2xl);
+  --ntk-text-3xl: var(--ntk-font-size-3xl);
+  --ntk-text-4xl: var(--ntk-font-size-4xl);
+  
   /* ============================================
    * Footer Colors
-   * Cores específicas para rodapé escuro
+   * Dark footer-specific colors
    * ============================================ */
   --ntk-footer-bg: #1a1a2e;
   --ntk-footer-text: #e0e0e0;
@@ -180,7 +253,7 @@
   
   /* ============================================
    * Form Colors
-   * Cores específicas para formulários
+   * Form-specific colors
    * ============================================ */
   --ntk-input-bg: var(--ntk-bg-primary);
   --ntk-input-border: var(--ntk-border-input);
@@ -193,7 +266,7 @@
   
   /* ============================================
    * Component Colors
-   * Cores específicas para componentes
+   * Component-specific colors
    * ============================================ */
   --ntk-chip-bg: var(--ntk-bg-tertiary);
   --ntk-chip-text: var(--ntk-text-dark);
@@ -213,55 +286,106 @@
   --ntk-sidebar-item-active-text: var(--ntk-primary);
   --ntk-sidebar-brand: var(--ntk-primary);
   
-  --ntk-menu-bg: #fafafa;
+  --ntk-menu-bg: var(--ntk-bg-card);
   --ntk-menu-item-hover: var(--ntk-bg-hover);
   --ntk-menu-item-active-bg: var(--ntk-primary);
   --ntk-menu-item-active-text: var(--ntk-text-inverse);
   
-  --ntk-popup-bg: #fafafa;
+  --ntk-popup-bg: var(--ntk-bg-card);
   --ntk-popup-shadow: var(--ntk-shadow-popup);
   --ntk-popup-header-bg: var(--ntk-primary);
   --ntk-popup-header-text: var(--ntk-text-inverse);
+
+  /* ============================================
+   * Template Bridge Tokens
+   * Generic visual baseline for reusable templates
+   * ============================================ */
+  --ntk-template-surface-radius: var(--ntk-radius-lg);
+  --ntk-template-surface-border: var(--ntk-border-color);
+  --ntk-template-surface-shadow: var(--ntk-shadow-sm);
+  --ntk-template-surface-shadow-hover: var(--ntk-shadow-md);
+
+  --ntk-template-toolbar-height: 48px;
+  --ntk-template-toolbar-padding-x: 12px;
+  --ntk-template-toolbar-gap: 8px;
+
+  --ntk-template-button-radius: var(--ntk-radius-md);
+  --ntk-template-button-height: 34px;
+  --ntk-template-button-padding-x: 14px;
+
+  --ntk-template-form-control-height: 44px;
+  --ntk-template-form-control-radius: var(--ntk-radius-md);
+  --ntk-template-form-control-bg: var(--ntk-input-bg);
+  --ntk-template-form-label-color: var(--ntk-input-label);
+  --ntk-template-form-label-size: 13px;
+  --ntk-template-form-label-weight: var(--ntk-font-weight-medium);
+  --ntk-template-form-icon-color: var(--ntk-input-icon);
+
+  --ntk-template-notification-bg: var(--ntk-bg-card);
+  --ntk-template-notification-border: var(--ntk-border-color);
+  --ntk-template-notification-radius: var(--ntk-radius-md);
+  --ntk-template-notification-shadow: var(--ntk-shadow-md);
+  --ntk-template-notification-message: var(--ntk-text-primary);
+  --ntk-template-notification-positive: var(--semantic-success-primary);
+  --ntk-template-notification-negative: var(--semantic-error-primary);
+  --ntk-template-notification-warning: var(--semantic-warning-primary);
+  --ntk-template-notification-info: var(--semantic-info-primary);
+
+  --ntk-template-page-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-card-bg: var(--ntk-bg-card);
+  --ntk-template-page-border: var(--ntk-border-color);
+  --ntk-template-page-title: var(--ntk-text-primary);
+  --ntk-template-page-subtitle: var(--ntk-text-secondary);
+  --ntk-template-page-text: var(--ntk-text-primary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-page-chip-bg: var(--ntk-bg-tertiary);
+  --ntk-template-page-chip-border: var(--ntk-border-color);
+  --ntk-template-page-chip-text: var(--ntk-text-secondary);
 }
 
 /* ============================================
- * Dark Mode
- * Variáveis para modo escuro
- * Ativado via classe .dark ou [data-theme="dark"]
+ * Generic Dark Fallback
+ * This block exists only for consumers that use a plain
+ * dark mode flag without the preset-driven themes.css layer.
+ * When a preset is active through [data-theme="<preset>"],
+ * themes.css remains the single source of truth.
  * ============================================ */
-.dark,
-[data-theme="dark"],
-.body--dark {
-  /* Primary RGB for dark mode */
-  --ntk-primary-rgb: 123, 116, 212;
+html.dark:not([data-theme]),
+html[data-theme='dark'],
+body.body--dark:not([data-theme]) {
+  /* Neutral primary RGB fallback */
+  --ntk-primary-rgb: 20, 184, 166;
   
-  /* Background Colors - Dark */
-  --ntk-bg-primary: #0f172a;
-  --ntk-bg-secondary: #1e293b;
-  --ntk-bg-tertiary: #334155;
-  --ntk-bg-card: #1e293b;
-  --ntk-bg-elevated: #334155;
-  --ntk-bg-overlay: rgba(0, 0, 0, 0.7);
-  --ntk-bg-hover: #334155;
+  /* Neutral surface fallback */
+  --ntk-bg-primary: #0f1115;
+  --ntk-bg-secondary: #171b22;
+  --ntk-bg-tertiary: #212734;
+  --ntk-bg-card: var(--ntk-bg-secondary);
+  --ntk-bg-elevated: var(--ntk-bg-tertiary);
+  --ntk-bg-overlay: rgba(0, 0, 0, 0.68);
+  --ntk-bg-hover: color-mix(in srgb, var(--ntk-bg-tertiary) 84%, white);
   --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.15);
+  --ntk-dark: var(--ntk-bg-secondary);
+  --ntk-dark-page: var(--ntk-bg-primary);
   
-  /* Text Colors - Dark */
-  --ntk-text-primary: #f1f5f9;
-  --ntk-text-secondary: #cbd5e1;
-  --ntk-text-muted: #94a3b8;
-  --ntk-text-inverse: #0f172a;
-  --ntk-text-dark: #f1f5f9;
-  --ntk-text-light: #cbd5e1;
-  --ntk-text-lighter: #94a3b8;
+  /* Neutral text fallback */
+  --ntk-text-primary: #f3f5f7;
+  --ntk-text-secondary: #c7ced8;
+  --ntk-text-muted: #97a3b4;
+  --ntk-text-inverse: #0f1115;
+  --ntk-text-dark: var(--ntk-text-primary);
+  --ntk-text-light: var(--ntk-text-secondary);
+  --ntk-text-lighter: var(--ntk-text-muted);
   
-  /* Border Colors - Dark */
-  --ntk-border-color: #334155;
-  --ntk-border-light: #475569;
-  --ntk-border-dark: #1e293b;
+  /* Neutral border fallback */
+  --ntk-border-color: rgba(255, 255, 255, 0.12);
+  --ntk-border-light: rgba(255, 255, 255, 0.08);
+  --ntk-border-dark: rgba(255, 255, 255, 0.18);
   --ntk-border-input: rgba(255, 255, 255, 0.24);
-  --ntk-border-input-hover: rgba(255, 255, 255, 0.5);
+  --ntk-border-input-hover: rgba(255, 255, 255, 0.42);
   
-  /* Shadows - Dark (mais sutis) */
+  /* Neutral shadow fallback */
+  --ntk-shadow-color: #000000;
   --ntk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --ntk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   --ntk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
@@ -269,24 +393,24 @@
   --ntk-shadow-card-hover: 0 8px 16px rgba(0, 0, 0, 0.4);
   --ntk-shadow-popup: 0 8px 24px rgba(0, 0, 0, 0.5);
   
-  /* Gradients - Dark */
+  /* Generic dark gradients */
   --ntk-gradient-hero: linear-gradient(135deg, var(--ntk-bg-primary) 0%, var(--ntk-bg-secondary) 100%);
   --ntk-gradient-loading: linear-gradient(90deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-tertiary) 50%, var(--ntk-bg-secondary) 100%);
   
-  /* Feedback Colors - Dark (mais vibrantes) */
-  --ntk-success-light: rgba(34, 197, 94, 0.2);
-  --ntk-warning-light: rgba(245, 158, 11, 0.2);
-  --ntk-error-light: rgba(239, 68, 68, 0.2);
-  --ntk-info-light: rgba(59, 130, 246, 0.2);
+  /* Generic semantic fills */
+  --ntk-success-light: color-mix(in srgb, var(--semantic-success) 20%, transparent);
+  --ntk-warning-light: color-mix(in srgb, var(--semantic-warning) 20%, transparent);
+  --ntk-error-light: color-mix(in srgb, var(--semantic-error) 20%, transparent);
+  --ntk-info-light: color-mix(in srgb, var(--semantic-info) 20%, transparent);
   
-  /* Form Colors - Dark */
-  --ntk-input-bg: var(--ntk-bg-secondary);
+  /* Generic form fallback */
+  --ntk-input-bg: color-mix(in srgb, var(--ntk-bg-secondary) 88%, var(--ntk-bg-primary));
   --ntk-input-text: var(--ntk-text-primary);
   --ntk-input-label: var(--ntk-text-secondary);
   --ntk-input-placeholder: var(--ntk-text-muted);
   --ntk-input-icon: var(--ntk-text-secondary);
   
-  /* Component Colors - Dark */
+  /* Generic component fallback */
   --ntk-chip-bg: var(--ntk-bg-tertiary);
   --ntk-chip-text: var(--ntk-text-primary);
   
@@ -296,11 +420,17 @@
   --ntk-popup-bg: var(--ntk-bg-secondary);
   
   --ntk-sidebar-item-hover: var(--ntk-bg-tertiary);
+
+  /* Template fallback surfaces */
+  --ntk-template-page-bg: var(--ntk-bg-primary);
+  --ntk-template-page-card-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-notification-bg: var(--ntk-bg-secondary);
 }
 
 /* ============================================
- * SCSS Variables (para uso em componentes)
- * Mapeiam para as CSS Custom Properties
+ * SCSS Variables
+ * Map to CSS custom properties for component usage.
  * ============================================ */
 
 // Primary
@@ -374,7 +504,7 @@ $ntk-popup-bg: var(--ntk-popup-bg);
 
 /* ============================================
  * Animations
- * Animações reutilizáveis
+ * Reusable animations
  * ============================================ */
 
 // Float animation - subtle up/down movement for images

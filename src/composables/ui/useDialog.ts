@@ -1,12 +1,11 @@
 /**
- * useDialog - Composable para gerenciar diálogos/modais
+ * useDialog - Composable for managing dialogs/modals.
  * 
- * Simplifica controle de abrir/fechar diálogos com estado reativo
- * e callbacks opcionais.
+ * Simplifies open/close control with reactive state and optional callbacks.
  * 
  * @example
  * const dialog = useDialog()
- * const confirmDialog = useDialog({ onClose: () => console.log('Fechou') })
+ * const confirmDialog = useDialog({ onClose: () => console.log('Closed') })
  * 
  * dialog.open()
  * dialog.close()
@@ -25,8 +24,8 @@ export interface UseDialogOptions {
 /**
  * Composable useDialog
  * 
- * @param options - Opções de configuração do diálogo
- * @returns Objeto com estado e métodos do diálogo
+ * @param options - Dialog configuration options
+ * @returns Object with dialog state and methods
  */
 export function useDialog(options: UseDialogOptions = {}) {
   const {
@@ -78,7 +77,7 @@ export function useDialog(options: UseDialogOptions = {}) {
   }
 
   /**
-   * Reseta para estado inicial
+   * Resets to the initial state.
    */
   const reset = () => {
     isOpen.value = initialState
@@ -112,7 +111,7 @@ export function useDialogConfirm(options: UseDialogOptions = {}) {
   let resolvePromise: ((value: boolean) => void) | null = null
 
   /**
-   * Abre diálogo e retorna Promise que resolve com true/false
+   * Opens the dialog and returns a Promise that resolves to true/false.
    */
   const openWithPromise = (): Promise<boolean> => {
     dialog.open()
@@ -122,7 +121,7 @@ export function useDialogConfirm(options: UseDialogOptions = {}) {
   }
 
   /**
-   * Confirma e fecha diálogo (resolve com true)
+   * Confirms and closes the dialog, resolving with true.
    */
   const confirm = () => {
     dialog.close()
@@ -131,7 +130,7 @@ export function useDialogConfirm(options: UseDialogOptions = {}) {
   }
 
   /**
-   * Cancela e fecha diálogo (resolve com false)
+   * Cancels and closes the dialog, resolving with false.
    */
   const cancel = () => {
     dialog.close()

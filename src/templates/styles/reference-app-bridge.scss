@@ -1,0 +1,860 @@
+/**
+ * Template style bridge.
+ * Keeps template surfaces visually coherent using token aliases only.
+ */
+
+:root {
+  --ntk-template-surface-radius: var(--ntk-radius-lg);
+  --ntk-template-surface-border: var(--ntk-border-color);
+  --ntk-template-surface-shadow: var(--ntk-shadow-sm);
+  --ntk-template-surface-shadow-hover: var(--ntk-shadow-md);
+
+  --ntk-template-toolbar-height: 48px;
+  --ntk-template-toolbar-padding-x: 12px;
+  --ntk-template-toolbar-gap: 8px;
+
+  --ntk-template-button-radius: var(--ntk-radius-md);
+  --ntk-template-button-height: 34px;
+  --ntk-template-button-padding-x: 14px;
+
+  --ntk-template-badge-radius: var(--ntk-radius-full);
+  --ntk-template-badge-weight: var(--ntk-font-weight-semibold);
+
+  --ntk-template-form-control-height: 44px;
+  --ntk-template-form-control-radius: var(--ntk-radius-md);
+  --ntk-template-form-control-bg: var(--ntk-input-bg);
+  --ntk-template-form-control-border: var(--ntk-border-input);
+  --ntk-template-form-control-border-hover: var(--ntk-border-input-hover);
+  --ntk-template-form-label-color: var(--ntk-input-label);
+  --ntk-template-form-label-size: 13px;
+  --ntk-template-form-label-weight: var(--ntk-font-weight-medium);
+  --ntk-template-form-icon-color: var(--ntk-input-icon);
+  --ntk-template-popup-bg: var(--ntk-popup-bg, var(--ntk-surface-overlay, var(--ntk-bg-card)));
+  --ntk-template-popup-border: var(--ntk-border-popup, var(--ntk-border-color));
+  --ntk-template-popup-shadow: var(--ntk-shadow-lg);
+  --ntk-template-popup-text: var(--ntk-text-popup, var(--ntk-text-primary));
+  --ntk-template-popup-muted: var(--ntk-text-secondary);
+  --ntk-template-overlay-bg: var(--ntk-template-popup-bg);
+  --ntk-template-overlay-border: var(--ntk-template-popup-border);
+  --ntk-template-overlay-shadow: var(--ntk-template-popup-shadow);
+  --ntk-template-overlay-text: var(--ntk-template-popup-text);
+  --ntk-template-overlay-muted: var(--ntk-template-popup-muted);
+  --ntk-template-overlay-radius: var(--ntk-template-surface-radius);
+  --ntk-template-overlay-section-bg: color-mix(in srgb, var(--ntk-template-overlay-text) 3%, var(--ntk-template-overlay-bg));
+  --ntk-template-overlay-hover-bg: var(--ntk-bg-hover, color-mix(in srgb, var(--ntk-accent) 8%, var(--ntk-template-overlay-bg)));
+  --ntk-template-overlay-active-bg: color-mix(in srgb, var(--ntk-accent) 14%, var(--ntk-template-overlay-bg));
+  --ntk-template-overlay-separator: var(--ntk-template-overlay-border);
+  --ntk-template-overlay-backdrop: var(--ntk-backdrop, color-mix(in srgb, var(--ntk-text-primary) 24%, transparent));
+  --ntk-template-table-bg: var(--ntk-surface-table, var(--ntk-template-page-card-bg));
+  --ntk-template-table-header-bg: var(--ntk-surface-table-header, var(--ntk-template-page-row-bg));
+  --ntk-template-table-row-bg: var(--ntk-surface-table-row, var(--ntk-template-page-row-bg));
+  --ntk-template-table-row-hover-bg: var(--ntk-surface-table-row-hover, var(--ntk-template-page-row-hover-bg));
+  --ntk-template-table-border: var(--ntk-border-table, var(--ntk-template-page-border));
+  --ntk-template-table-heading: var(--ntk-text-table-heading, var(--ntk-template-page-title));
+  --ntk-template-table-text: var(--ntk-text-table-body, var(--ntk-template-page-text));
+  --ntk-template-overlay-table-bg: var(--ntk-template-table-bg, var(--ntk-template-overlay-bg));
+  --ntk-template-overlay-table-header-bg: var(--ntk-template-table-header-bg, var(--ntk-template-overlay-section-bg));
+  --ntk-template-overlay-table-row-bg: var(--ntk-template-table-row-bg, var(--ntk-template-overlay-bg));
+  --ntk-template-overlay-table-row-hover-bg: var(--ntk-template-table-row-hover-bg, var(--ntk-template-overlay-hover-bg));
+  --ntk-template-overlay-table-border: var(--ntk-template-table-border, var(--ntk-template-overlay-border));
+  --ntk-template-overlay-table-heading: var(--ntk-template-table-heading, var(--ntk-template-overlay-text));
+  --ntk-template-overlay-table-text: var(--ntk-template-table-text, var(--ntk-template-overlay-text));
+
+  --ntk-template-notification-bg: var(--ntk-bg-card);
+  --ntk-template-notification-border: var(--ntk-border-color);
+  --ntk-template-notification-radius: var(--ntk-radius-md);
+  --ntk-template-notification-shadow: var(--ntk-shadow-md);
+  --ntk-template-notification-message: var(--ntk-text-primary);
+  --ntk-template-notification-positive: var(--semantic-success-primary);
+  --ntk-template-notification-negative: var(--semantic-error-primary);
+  --ntk-template-notification-warning: var(--semantic-warning-primary);
+  --ntk-template-notification-info: var(--semantic-info-primary);
+
+  --ntk-template-page-bg: var(--ntk-shell-bg, var(--ntk-bg-secondary));
+  --ntk-template-page-card-bg: var(--ntk-card-bg, var(--ntk-bg-card));
+  --ntk-template-page-border: var(--ntk-border, var(--ntk-border-color));
+  --ntk-template-page-title: var(--ntk-text-heading, var(--ntk-text-primary));
+  --ntk-template-page-subtitle: var(--ntk-text-muted, var(--ntk-text-secondary));
+  --ntk-template-page-text: var(--ntk-text-body, var(--ntk-text-primary));
+  --ntk-template-page-row-bg: var(--ntk-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-page-chip-bg: var(--ntk-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-page-chip-border: var(--ntk-border, var(--ntk-border-color));
+  --ntk-template-page-chip-text: var(--ntk-text-muted, var(--ntk-text-secondary));
+  --ntk-template-page-bar-fill: var(--ntk-bar-fill, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-page-accent-value: var(--ntk-accent-value, var(--semantic-success-primary, var(--ntk-success)));
+  --ntk-template-page-avatar-bg: var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-page-row-hover-bg: var(--ntk-row-hover-bg, var(--ntk-accent-soft, var(--ntk-bg-tertiary)));
+  --ntk-template-semantic-accent-soft-bg: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-accent-soft-border: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-accent-soft-text: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-accent-emphasis-bg: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-accent-emphasis-border: color-mix(in srgb, var(--ntk-accent, var(--ntk-primary)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-accent-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-info-soft-bg: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-info-soft-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-info-soft-text: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-info-emphasis-bg: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-info-emphasis-border: color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-info-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-success-soft-bg: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-success-soft-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-success-soft-text: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-success-emphasis-bg: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-success-emphasis-border: color-mix(in srgb, var(--semantic-success-primary, var(--ntk-success)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-success-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-warning-soft-bg: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 20%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-warning-soft-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 36%, var(--ntk-template-page-border));
+  --ntk-template-semantic-warning-soft-text: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 58%, var(--ntk-template-page-title));
+  --ntk-template-semantic-warning-emphasis-bg: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 26%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-warning-emphasis-border: color-mix(in srgb, var(--semantic-warning-primary, var(--ntk-warning)) 44%, var(--ntk-template-page-border));
+  --ntk-template-semantic-warning-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-danger-soft-bg: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-danger-soft-border: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 34%, var(--ntk-template-page-border));
+  --ntk-template-semantic-danger-soft-text: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 54%, var(--ntk-template-page-title));
+  --ntk-template-semantic-danger-emphasis-bg: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 24%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-danger-emphasis-border: color-mix(in srgb, var(--semantic-error-primary, var(--ntk-error)) 42%, var(--ntk-template-page-border));
+  --ntk-template-semantic-danger-emphasis-text: var(--ntk-template-page-title);
+  --ntk-template-semantic-neutral-soft-bg: color-mix(in srgb, var(--ntk-template-page-text) 12%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-neutral-soft-border: color-mix(in srgb, var(--ntk-template-page-text) 20%, var(--ntk-template-page-border));
+  --ntk-template-semantic-neutral-soft-text: var(--ntk-template-page-text);
+  --ntk-template-semantic-neutral-emphasis-bg: color-mix(in srgb, var(--ntk-template-page-text) 18%, var(--ntk-template-page-card-bg));
+  --ntk-template-semantic-neutral-emphasis-border: color-mix(in srgb, var(--ntk-template-page-text) 28%, var(--ntk-template-page-border));
+  --ntk-template-semantic-neutral-emphasis-text: var(--ntk-template-page-title);
+
+  --ntk-template-shell-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
+  --ntk-template-shell-text: var(--ntk-template-page-text, var(--ntk-text-body, var(--ntk-text-primary)));
+  --ntk-template-shell-title-color: var(--ntk-layout-title-color, var(--ntk-text-heading, var(--ntk-text-primary)));
+  --ntk-template-shell-header-bg: var(--ntk-header-bg, var(--ntk-template-layout-surface-bg, var(--ntk-card-bg, var(--ntk-bg-primary))));
+  --ntk-template-shell-header-text: var(--ntk-layout-header-text, var(--ntk-template-shell-title-color));
+  --ntk-template-shell-header-border: var(--ntk-layout-header-border, color-mix(in srgb, var(--ntk-template-shell-header-text) 12%, transparent));
+  --ntk-template-shell-header-shadow: var(--ntk-layout-header-shadow, 0 1px 3px color-mix(in srgb, var(--ntk-template-shell-text) 4%, transparent));
+  --ntk-template-shell-header-action-text: var(--ntk-layout-header-action-text, color-mix(in srgb, var(--ntk-template-shell-header-text) 92%, transparent));
+  --ntk-template-shell-header-action-hover-bg: var(--ntk-layout-header-action-hover-bg, color-mix(in srgb, var(--ntk-template-shell-header-text) 10%, transparent));
+  --ntk-template-shell-header-action-focus-ring: var(--ntk-layout-header-action-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));
+  --ntk-template-shell-header-action-radius: var(--ntk-layout-header-action-radius, 999px);
+  --ntk-template-shell-nav-surface-start: var(--ntk-layout-nav-surface-start, var(--ntk-drawer-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))));
+  --ntk-template-shell-nav-surface-end: var(--ntk-layout-nav-surface-end, color-mix(in srgb, var(--ntk-drawer-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-card))) 88%, var(--ntk-shell-bg, var(--ntk-bg-primary))));
+  --ntk-template-shell-horizontal-bg: var(--ntk-layout-horizontal-bg, linear-gradient(90deg, var(--ntk-template-shell-nav-surface-start) 0%, var(--ntk-template-shell-nav-surface-end) 100%));
+  --ntk-template-shell-horizontal-text: var(--ntk-layout-horizontal-text, var(--ntk-drawer-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
+  --ntk-template-shell-horizontal-border: var(--ntk-layout-horizontal-border, color-mix(in srgb, var(--ntk-template-shell-horizontal-text) 8%, transparent));
+  --ntk-template-shell-drawer-bg: var(--ntk-layout-drawer-bg, linear-gradient(180deg, var(--ntk-template-shell-nav-surface-start) 0%, var(--ntk-template-shell-nav-surface-end) 100%));
+  --ntk-template-shell-drawer-text: var(--ntk-layout-drawer-text, var(--ntk-drawer-text, var(--ntk-template-shell-text)));
+  --ntk-template-shell-drawer-border: var(--ntk-layout-drawer-border, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 22%, transparent));
+  --ntk-template-shell-drawer-inset: var(--ntk-layout-drawer-inset, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 18%, transparent));
+  --ntk-template-shell-nav-group-text: var(--ntk-layout-nav-group-text, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 88%, transparent));
+  --ntk-template-shell-nav-group-pill-bg: var(--ntk-layout-nav-group-pill-bg, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 18%, transparent));
+  --ntk-template-shell-nav-text: var(--ntk-layout-nav-text, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 82%, transparent));
+  --ntk-template-shell-nav-caption: var(--ntk-layout-nav-caption, color-mix(in srgb, var(--ntk-template-shell-nav-text) 78%, transparent));
+  --ntk-template-shell-nav-active-border: var(--ntk-layout-nav-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-shell-nav-active-text: var(--ntk-layout-nav-active-text, var(--ntk-template-shell-drawer-text));
+  --ntk-template-shell-nav-active-bg: var(--ntk-layout-nav-active-bg, linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ntk-template-shell-nav-active-border) 20%, transparent) 0%,
+    color-mix(in srgb, var(--ntk-template-shell-nav-active-border) 6%, transparent) 100%
+  ));
+  --ntk-template-shell-nav-active-shadow: var(--ntk-layout-nav-active-shadow, 0 0 0 1px color-mix(in srgb, var(--ntk-template-shell-nav-active-border) 24%, transparent), 0 10px 18px color-mix(in srgb, var(--ntk-template-shell-text) 18%, transparent));
+  --ntk-template-shell-nav-active-inset: var(--ntk-layout-nav-active-inset, inset 0 0 0 1px color-mix(in srgb, var(--ntk-template-shell-drawer-text) 14%, transparent));
+  --ntk-template-shell-nav-hover-bg: var(--ntk-layout-nav-hover-bg, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 8%, transparent));
+  --ntk-template-shell-reference-nav-hover-bg: var(--ntk-layout-reference-nav-hover-bg, color-mix(in srgb, var(--ntk-template-shell-drawer-text) 7%, transparent));
+  --ntk-template-shell-toolbar-border: var(--ntk-layout-toolbar-border, color-mix(in srgb, var(--ntk-template-shell-text) 12%, transparent));
+  --ntk-template-shell-submenu-bg: var(--ntk-layout-submenu-bg, var(--ntk-template-overlay-bg, var(--ntk-template-page-card-bg, var(--ntk-card-bg, var(--ntk-bg-primary)))));
+  --ntk-template-shell-submenu-border: var(--ntk-layout-submenu-border, var(--ntk-template-overlay-border, var(--ntk-template-shell-toolbar-border)));
+  --ntk-template-shell-submenu-text: var(--ntk-layout-submenu-text, var(--ntk-template-overlay-text, var(--ntk-template-page-title, var(--ntk-text-heading, var(--ntk-text-primary)))));
+  --ntk-template-shell-submenu-shadow: var(--ntk-layout-submenu-shadow, var(--ntk-template-overlay-shadow, var(--ntk-shadow-soft)));
+  --ntk-template-shell-submenu-hover-bg: var(--ntk-layout-submenu-hover-bg, var(--ntk-template-overlay-hover-bg, color-mix(in srgb, var(--ntk-template-shell-text) 5%, transparent)));
+  --ntk-template-shell-submenu-active-border: var(--ntk-layout-submenu-active-border, var(--ntk-primary, var(--ntk-accent)));
+  --ntk-template-shell-submenu-active-bg: var(--ntk-layout-submenu-active-bg, var(--ntk-template-overlay-active-bg, color-mix(in srgb, var(--ntk-template-shell-submenu-active-border) 12%, transparent)));
+  --ntk-template-shell-submenu-active-text: var(--ntk-layout-submenu-active-text, var(--ntk-template-shell-submenu-text));
+  --ntk-template-shell-horizontal-link-color: var(--ntk-layout-horizontal-link-color, color-mix(in srgb, var(--ntk-template-shell-horizontal-text) 84%, transparent));
+  --ntk-template-shell-horizontal-link-hover-color: var(--ntk-layout-horizontal-link-hover-color, var(--ntk-template-shell-horizontal-text));
+  --ntk-template-shell-horizontal-link-hover-bg: var(--ntk-layout-horizontal-link-hover-bg, color-mix(in srgb, var(--ntk-template-shell-horizontal-text) 8%, transparent));
+  --ntk-template-shell-horizontal-link-active-color: var(--ntk-layout-horizontal-link-active-color, var(--ntk-template-shell-horizontal-text));
+  --ntk-template-shell-horizontal-link-active-border: var(--ntk-layout-horizontal-link-active-border, var(--ntk-template-shell-horizontal-text));
+  --ntk-template-shell-horizontal-link-active-bg: var(--ntk-layout-horizontal-link-active-bg, color-mix(in srgb, var(--ntk-template-shell-horizontal-text) 12%, transparent));
+  --ntk-template-shell-horizontal-link-submenu-bg: var(--ntk-layout-horizontal-submenu-bg, var(--ntk-template-shell-submenu-bg));
+  --ntk-template-shell-horizontal-link-submenu-border: var(--ntk-layout-horizontal-submenu-border, var(--ntk-template-shell-submenu-border));
+  --ntk-template-shell-horizontal-link-submenu-text: var(--ntk-layout-horizontal-submenu-text, var(--ntk-template-shell-submenu-text));
+  --ntk-template-shell-horizontal-link-submenu-hover-bg: var(--ntk-layout-horizontal-submenu-hover-bg, var(--ntk-template-shell-submenu-hover-bg));
+  --ntk-template-shell-horizontal-link-submenu-active-border: var(--ntk-layout-horizontal-submenu-active-border, var(--ntk-template-shell-submenu-active-border));
+  --ntk-template-shell-horizontal-link-submenu-active-bg: var(--ntk-layout-horizontal-submenu-active-bg, var(--ntk-template-shell-submenu-active-bg));
+  --ntk-template-shell-horizontal-link-submenu-active-color: var(--ntk-layout-horizontal-submenu-active-color, var(--ntk-template-shell-submenu-active-text));
+  --ntk-template-shell-horizontal-link-submenu-shadow: var(--ntk-layout-horizontal-submenu-shadow, var(--ntk-template-shell-submenu-shadow));
+  --ntk-template-shell-user-menu-surface: var(--ntk-user-menu-surface, var(--ntk-template-overlay-bg));
+  --ntk-template-shell-user-menu-border: var(--ntk-user-menu-border, var(--ntk-template-overlay-border));
+  --ntk-template-shell-user-menu-shadow: var(--ntk-user-menu-shadow, var(--ntk-template-overlay-shadow));
+  --ntk-template-shell-user-menu-text: var(--ntk-user-menu-text, var(--ntk-template-overlay-text));
+  --ntk-template-shell-user-menu-muted: var(--ntk-user-menu-muted, var(--ntk-template-overlay-muted));
+  --ntk-template-shell-user-menu-accent: var(--ntk-user-menu-accent, var(--ntk-accent, var(--ntk-primary)));
+  --ntk-template-shell-user-menu-radius: var(--ntk-user-menu-radius, var(--ntk-template-overlay-radius));
+  --ntk-template-shell-user-menu-header-bg: var(--ntk-user-menu-header-bg, color-mix(in srgb, var(--ntk-template-shell-user-menu-text) 4%, var(--ntk-template-shell-user-menu-surface)));
+  --ntk-template-shell-user-menu-profile-bg: var(--ntk-user-menu-profile-bg, var(--ntk-template-shell-user-menu-surface));
+  --ntk-template-shell-user-menu-avatar-border: var(--ntk-avatar-border, color-mix(in srgb, var(--ntk-text-on-accent, var(--ntk-text-primary)) 88%, transparent));
+  --ntk-template-shell-user-menu-avatar-bg: var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-shell-user-menu-avatar-color: var(--ntk-avatar-color, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-shell-breadcrumb-bg: var(--ntk-header-breadcrumb-bg, color-mix(in srgb, var(--ntk-template-shell-header-text) 8%, transparent));
+  --ntk-template-shell-breadcrumb-border: var(--ntk-header-breadcrumb-border, color-mix(in srgb, var(--ntk-template-shell-header-text) 14%, transparent));
+  --ntk-template-shell-breadcrumb-link: var(--ntk-header-breadcrumb-link, color-mix(in srgb, var(--ntk-template-shell-header-text) 82%, transparent));
+  --ntk-template-shell-breadcrumb-link-hover: var(--ntk-header-breadcrumb-link-hover, var(--ntk-template-shell-header-text));
+  --ntk-template-shell-breadcrumb-current: var(--ntk-header-breadcrumb-current, var(--ntk-template-shell-header-text));
+  --ntk-template-shell-breadcrumb-sep: var(--ntk-header-breadcrumb-sep, color-mix(in srgb, var(--ntk-template-shell-header-text) 44%, transparent));
+  --ntk-template-shell-breadcrumb-hover-bg: var(--ntk-header-breadcrumb-hover-bg, color-mix(in srgb, var(--ntk-template-shell-header-text) 8%, transparent));
+  --ntk-template-shell-breadcrumb-focus-ring: var(--ntk-header-breadcrumb-focus-ring, var(--ntk-border-focus, var(--ntk-accent)));
+  --ntk-template-shell-breadcrumb-radius: var(--ntk-header-breadcrumb-radius, 20px);
+
+  --ntk-template-layout-header-bg: var(--ntk-template-shell-header-bg);
+  --ntk-template-layout-header-text: var(--ntk-template-shell-header-text);
+  --ntk-template-layout-header-action-text: var(--ntk-template-shell-header-action-text);
+  --ntk-template-layout-header-action-hover-bg: var(--ntk-template-shell-header-action-hover-bg);
+  --ntk-template-layout-header-action-focus-ring: var(--ntk-template-shell-header-action-focus-ring);
+  --ntk-template-layout-header-action-radius: var(--ntk-template-shell-header-action-radius);
+  --ntk-template-layout-header-breadcrumb-bg: var(--ntk-template-shell-breadcrumb-bg);
+  --ntk-template-layout-header-breadcrumb-border: var(--ntk-template-shell-breadcrumb-border);
+  --ntk-template-layout-header-breadcrumb-link: var(--ntk-template-shell-breadcrumb-link);
+  --ntk-template-layout-header-breadcrumb-link-hover: var(--ntk-template-shell-breadcrumb-link-hover);
+  --ntk-template-layout-header-breadcrumb-current: var(--ntk-template-shell-breadcrumb-current);
+  --ntk-template-layout-header-breadcrumb-sep: var(--ntk-template-shell-breadcrumb-sep);
+  --ntk-template-layout-header-breadcrumb-hover-bg: var(--ntk-template-shell-breadcrumb-hover-bg);
+  --ntk-template-layout-header-breadcrumb-focus-ring: var(--ntk-template-shell-breadcrumb-focus-ring);
+  --ntk-template-layout-header-breadcrumb-radius: var(--ntk-template-shell-breadcrumb-radius);
+  --ntk-template-layout-title-color: var(--ntk-template-shell-title-color);
+  --ntk-template-layout-horizontal-bg: var(--ntk-template-shell-horizontal-bg);
+  --ntk-template-layout-horizontal-text: var(--ntk-template-shell-horizontal-text);
+  --ntk-template-layout-drawer-bg: var(--ntk-template-shell-drawer-bg);
+  --ntk-template-layout-drawer-text: var(--ntk-template-shell-drawer-text);
+  --ntk-template-layout-page-bg: var(--ntk-shell-bg, var(--ntk-template-page-bg));
+  --ntk-template-layout-shell-bg: var(--ntk-template-shell-bg);
+  --ntk-template-auth-layout-bg: var(--ntk-template-page-bg);
+
+  --ntk-template-menu-link-color: var(--ntk-template-shell-nav-text);
+  --ntk-template-menu-link-hover-bg: var(--ntk-template-shell-nav-hover-bg);
+  --ntk-template-menu-link-active-border: var(--ntk-template-shell-nav-active-border);
+  --ntk-template-menu-link-active-bg: var(--ntk-template-shell-nav-active-bg);
+  --ntk-template-menu-link-active-text: var(--ntk-template-shell-nav-active-text);
+  --ntk-template-menu-link-caption: var(--ntk-template-shell-nav-caption);
+  --ntk-template-menu-link-reference-hover-bg: var(--ntk-template-shell-reference-nav-hover-bg);
+  --ntk-template-menu-link-child-active-bg: var(--ntk-nav-child-active-bg, var(--ntk-template-shell-submenu-active-bg, var(--ntk-template-shell-nav-active-bg)));
+  --ntk-template-menu-link-submenu-bg: var(--ntk-template-shell-submenu-bg);
+  --ntk-template-menu-link-submenu-border: var(--ntk-template-shell-submenu-border);
+  --ntk-template-menu-link-submenu-text: var(--ntk-template-shell-submenu-text);
+  --ntk-template-menu-link-submenu-hover-bg: var(--ntk-template-shell-submenu-hover-bg);
+  --ntk-template-menu-link-submenu-active-border: var(--ntk-template-shell-submenu-active-border);
+  --ntk-template-menu-link-submenu-active-bg: var(--ntk-template-shell-submenu-active-bg);
+  --ntk-template-menu-link-submenu-active-text: var(--ntk-template-shell-submenu-active-text);
+  --ntk-template-menu-link-submenu-radius: var(--ntk-template-overlay-radius, 8px);
+  --ntk-template-menu-link-shadow: var(--ntk-template-shell-submenu-shadow);
+  --ntk-template-menu-link-active-shadow: var(--ntk-template-shell-nav-active-shadow);
+  --ntk-template-menu-link-active-inset: var(--ntk-template-shell-nav-active-inset);
+
+  --ntk-template-horizontal-link-color: var(--ntk-template-shell-horizontal-link-color);
+  --ntk-template-horizontal-link-hover-color: var(--ntk-template-shell-horizontal-link-hover-color);
+  --ntk-template-horizontal-link-hover-bg: var(--ntk-template-shell-horizontal-link-hover-bg);
+  --ntk-template-horizontal-link-active-color: var(--ntk-template-shell-horizontal-link-active-color);
+  --ntk-template-horizontal-link-active-border: var(--ntk-template-shell-horizontal-link-active-border);
+  --ntk-template-horizontal-link-active-bg: var(--ntk-template-shell-horizontal-link-active-bg);
+  --ntk-template-horizontal-link-submenu-bg: var(--ntk-template-shell-horizontal-link-submenu-bg);
+  --ntk-template-horizontal-link-submenu-border: var(--ntk-template-shell-horizontal-link-submenu-border);
+  --ntk-template-horizontal-link-submenu-text: var(--ntk-template-shell-horizontal-link-submenu-text);
+  --ntk-template-horizontal-link-submenu-hover-bg: var(--ntk-template-shell-horizontal-link-submenu-hover-bg);
+  --ntk-template-horizontal-link-submenu-active-border: var(--ntk-template-shell-horizontal-link-submenu-active-border);
+  --ntk-template-horizontal-link-submenu-active-bg: var(--ntk-template-shell-horizontal-link-submenu-active-bg);
+  --ntk-template-horizontal-link-submenu-active-color: var(--ntk-template-shell-horizontal-link-submenu-active-color);
+  --ntk-template-horizontal-link-submenu-shadow: var(--ntk-template-shell-horizontal-link-submenu-shadow);
+
+  --ntk-template-user-menu-surface: var(--ntk-template-shell-user-menu-surface);
+  --ntk-template-user-menu-border: var(--ntk-template-shell-user-menu-border);
+  --ntk-template-user-menu-shadow: var(--ntk-template-shell-user-menu-shadow);
+  --ntk-template-user-menu-text: var(--ntk-template-shell-user-menu-text);
+  --ntk-template-user-menu-muted: var(--ntk-template-shell-user-menu-muted);
+  --ntk-template-user-menu-accent-color: var(--ntk-template-shell-user-menu-accent);
+  --ntk-template-user-menu-radius: var(--ntk-template-shell-user-menu-radius);
+  --ntk-template-user-menu-avatar-border: var(--ntk-template-shell-user-menu-avatar-border);
+  --ntk-template-user-menu-avatar-bg: var(--ntk-template-shell-user-menu-avatar-bg);
+  --ntk-template-user-menu-avatar-color: var(--ntk-template-shell-user-menu-avatar-color);
+  --ntk-template-user-menu-header-bg: var(--ntk-template-shell-user-menu-header-bg);
+  --ntk-template-user-menu-profile-bg: var(--ntk-template-shell-user-menu-profile-bg);
+
+  --ntk-template-breadcrumb-bg: var(--ntk-template-shell-breadcrumb-bg);
+  --ntk-template-breadcrumb-border: var(--ntk-template-shell-breadcrumb-border);
+  --ntk-template-breadcrumb-link-color: var(--ntk-template-shell-breadcrumb-link);
+  --ntk-template-breadcrumb-link-hover-color: var(--ntk-template-shell-breadcrumb-link-hover);
+  --ntk-template-breadcrumb-current-color: var(--ntk-template-shell-breadcrumb-current);
+  --ntk-template-breadcrumb-sep-color: var(--ntk-template-shell-breadcrumb-sep);
+  --ntk-template-breadcrumb-hover-bg: var(--ntk-template-shell-breadcrumb-hover-bg);
+  --ntk-template-breadcrumb-focus-ring: var(--ntk-template-shell-breadcrumb-focus-ring);
+  --ntk-template-breadcrumb-radius: var(--ntk-template-shell-breadcrumb-radius);
+
+  --ntk-template-login-page-bg: var(--ntk-bg-secondary);
+  --ntk-template-login-brand-bg: var(--ntk-login-brand-bg, var(--ntk-primary-gradient, var(--ntk-accent)));
+  --ntk-template-login-brand-text: var(--ntk-login-brand-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-login-brand-subtitle: var(--ntk-login-brand-subtitle, color-mix(in srgb, var(--ntk-template-login-brand-text) 78%, transparent));
+  --ntk-template-login-brand-feature-text: var(--ntk-login-brand-feature-text, color-mix(in srgb, var(--ntk-template-login-brand-text) 92%, transparent));
+  --ntk-template-login-brand-feature-bg: var(--ntk-login-brand-feature-bg, color-mix(in srgb, var(--ntk-accent) 20%, transparent));
+  --ntk-template-login-brand-footer: var(--ntk-login-brand-footer, color-mix(in srgb, var(--ntk-template-login-brand-text) 60%, transparent));
+  --ntk-template-login-form-bg: var(--ntk-login-form-bg, linear-gradient(180deg, var(--ntk-shell-bg, var(--ntk-bg-secondary)) 0%, var(--ntk-card-bg, var(--ntk-bg-card)) 100%));
+  --ntk-template-login-form-border: var(--ntk-border-color);
+  --ntk-template-login-form-card-bg: var(--ntk-bg-card);
+  --ntk-template-login-form-shadow: var(--ntk-login-form-shadow, color-mix(in srgb, var(--ntk-text-primary) 6%, transparent));
+  --ntk-template-login-form-title: var(--ntk-text-primary);
+  --ntk-template-login-form-subtitle: var(--ntk-text-secondary);
+  --ntk-template-login-version: var(--ntk-text-muted);
+
+  --ntk-template-wiki-bg: var(--ntk-bg-secondary);
+  --ntk-template-wiki-icon-bg: var(--ntk-wiki-icon-bg, var(--ntk-accent));
+  --ntk-template-wiki-icon-text: var(--ntk-wiki-icon-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-wiki-chat-bg: var(--ntk-bg-secondary);
+
+  --ntk-template-placeholder-bg: var(--ntk-placeholder-bg, linear-gradient(180deg, var(--ntk-bg-secondary) 0%, color-mix(in srgb, var(--ntk-accent) 8%, var(--ntk-bg-secondary)) 100%));
+  --ntk-template-placeholder-shadow: var(--ntk-placeholder-shadow, color-mix(in srgb, var(--ntk-text-primary) 8%, transparent));
+  --ntk-template-placeholder-icon-color: var(--semantic-info-primary);
+  --ntk-template-placeholder-icon-bg: var(--ntk-placeholder-icon-bg, color-mix(in srgb, var(--semantic-info-primary, var(--ntk-info)) 12%, transparent));
+
+  --ntk-template-profile-hero-bg: var(--ntk-profile-hero-bg, linear-gradient(135deg, var(--ntk-shell-bg, var(--ntk-bg-secondary)) 0%, var(--ntk-card-bg, var(--ntk-bg-card)) 100%));
+  --ntk-template-profile-avatar-bg: var(--ntk-profile-avatar-bg, var(--ntk-avatar-bg, var(--ntk-primary-gradient, var(--ntk-accent))));
+  --ntk-template-profile-avatar-border: var(--ntk-profile-avatar-border, var(--ntk-avatar-border, var(--ntk-card-bg, var(--ntk-bg-card))));
+  --ntk-template-profile-avatar-shadow: var(--ntk-profile-avatar-shadow, color-mix(in srgb, var(--ntk-text-primary) 20%, transparent));
+
+  --ntk-template-not-found-bg: var(--ntk-not-found-bg, radial-gradient(circle at top, var(--ntk-primary-gradient-start, var(--ntk-accent)) 0%, var(--ntk-primary-gradient-end, var(--ntk-accent-hover, var(--ntk-accent))) 100%));
+  --ntk-template-not-found-text: var(--ntk-not-found-text, var(--ntk-text-on-accent, var(--ntk-text-primary)));
+  --ntk-template-not-found-card-bg: var(--ntk-not-found-card-bg, color-mix(in srgb, var(--ntk-bg-card, var(--ntk-card-bg, var(--ntk-bg-primary))) 76%, transparent));
+  --ntk-template-not-found-border: var(--ntk-not-found-border, color-mix(in srgb, var(--ntk-template-not-found-text) 16%, transparent));
+  --ntk-template-not-found-code-color: var(--ntk-not-found-code-color, var(--semantic-info-primary, var(--ntk-info)));
+  --ntk-template-not-found-code-shadow: var(--ntk-not-found-code-shadow, color-mix(in srgb, var(--ntk-text-primary) 35%, transparent));
+  --ntk-template-not-found-subtitle: var(--ntk-not-found-subtitle, color-mix(in srgb, var(--ntk-template-not-found-text) 82%, transparent));
+
+  --ntk-reference-badge-bg: var(--ntk-reference-badge-background, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 20%, var(--ntk-reference-panel-bg, var(--ntk-template-page-card-bg, var(--ntk-bg-primary)))));
+  --ntk-reference-badge-border: var(--ntk-reference-badge-outline, color-mix(in srgb, var(--ntk-reference-accent, var(--ntk-primary, var(--ntk-accent))) 28%, var(--ntk-reference-panel-muted-bg, var(--ntk-bg-secondary))));
+  --ntk-reference-badge-text: var(--ntk-reference-badge-foreground, var(--ntk-template-page-title, var(--ntk-text-primary)));
+}
+
+.dark,
+[data-theme='dark'],
+.body--dark {
+  --ntk-template-surface-border: var(--ntk-border-color);
+  --ntk-template-page-bg: var(--ntk-bg-primary);
+  --ntk-template-page-card-bg: var(--ntk-bg-secondary);
+  --ntk-template-page-row-bg: var(--ntk-bg-tertiary);
+  --ntk-template-notification-bg: var(--ntk-bg-secondary);
+  --ntk-template-login-form-bg: var(--ntk-login-form-bg-dark, linear-gradient(180deg, var(--ntk-bg-secondary) 0%, var(--ntk-bg-primary) 100%));
+}
+
+[class*='ntk-template-'] .q-card {
+  border-radius: var(--ntk-template-surface-radius);
+  border: 1px solid var(--ntk-template-surface-border);
+  box-shadow: var(--ntk-template-surface-shadow);
+  background: var(--ntk-template-page-card-bg);
+  color: var(--ntk-template-page-text);
+}
+
+[class*='ntk-template-'] .q-btn:not(.q-btn--round) {
+  min-height: var(--ntk-template-button-height);
+  border-radius: var(--ntk-template-button-radius);
+  padding-inline: var(--ntk-template-button-padding-x);
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action {
+  --ntk-template-tone-action-accent: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-tone-action-bg: var(--ntk-template-tone-action-accent);
+  --ntk-template-tone-action-fg: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse, var(--ntk-text-primary))));
+  --ntk-template-tone-action-border: color-mix(in srgb, var(--ntk-template-tone-action-accent) 40%, var(--ntk-border-color));
+
+  border: 1px solid transparent !important;
+  background: var(--ntk-template-tone-action-bg) !important;
+  color: var(--ntk-template-tone-action-fg) !important;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action .q-icon,
+[class*='ntk-template-'] .ntk-template-tone-action .q-spinner {
+  color: inherit !important;
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip,
+.ntk-template-semantic-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 2px 10px;
+  border: 1px solid var(--ntk-template-semantic-border, transparent);
+  border-radius: var(--ntk-template-badge-radius);
+  background: var(--ntk-template-semantic-bg, transparent);
+  color: var(--ntk-template-semantic-text, var(--ntk-template-page-title));
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--soft,
+.ntk-template-semantic-chip--soft {
+  --ntk-template-semantic-bg: var(--ntk-template-semantic-soft-bg);
+  --ntk-template-semantic-border: var(--ntk-template-semantic-soft-border);
+  --ntk-template-semantic-text: var(--ntk-template-semantic-soft-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--emphasis,
+.ntk-template-semantic-chip--emphasis {
+  --ntk-template-semantic-bg: var(--ntk-template-semantic-emphasis-bg);
+  --ntk-template-semantic-border: var(--ntk-template-semantic-emphasis-border);
+  --ntk-template-semantic-text: var(--ntk-template-semantic-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--accent,
+.ntk-template-semantic-chip--accent {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-accent-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-accent-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-accent-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-accent-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-accent-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-accent-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--info,
+.ntk-template-semantic-chip--info {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-info-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-info-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-info-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-info-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-info-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-info-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--success,
+.ntk-template-semantic-chip--success {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-success-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-success-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-success-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-success-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-success-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-success-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--warning,
+.ntk-template-semantic-chip--warning {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-warning-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-warning-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-warning-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-warning-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-warning-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-warning-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--danger,
+.ntk-template-semantic-chip--danger {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-danger-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-danger-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-danger-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-danger-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-danger-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-danger-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-semantic-chip--neutral,
+.ntk-template-semantic-chip--neutral {
+  --ntk-template-semantic-soft-bg: var(--ntk-template-semantic-neutral-soft-bg);
+  --ntk-template-semantic-soft-border: var(--ntk-template-semantic-neutral-soft-border);
+  --ntk-template-semantic-soft-text: var(--ntk-template-semantic-neutral-soft-text);
+  --ntk-template-semantic-emphasis-bg: var(--ntk-template-semantic-neutral-emphasis-bg);
+  --ntk-template-semantic-emphasis-border: var(--ntk-template-semantic-neutral-emphasis-border);
+  --ntk-template-semantic-emphasis-text: var(--ntk-template-semantic-neutral-emphasis-text);
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-neutral {
+  --ntk-template-tone-action-accent: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-tone-action-bg: var(--ntk-template-page-row-bg, var(--ntk-bg-tertiary));
+  --ntk-template-tone-action-fg: var(--ntk-template-page-title, var(--ntk-text-primary));
+  --ntk-template-tone-action-border: var(--ntk-template-page-border, var(--ntk-border-color));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-primary,
+[class*='ntk-template-'] .ntk-template-tone-action--tone-info {
+  --ntk-template-tone-action-accent: var(--semantic-info-primary, var(--ntk-info));
+  --ntk-template-tone-action-bg: var(--ntk-primary, var(--ntk-accent, var(--semantic-info-primary, var(--ntk-info))));
+  --ntk-template-tone-action-fg: var(--ntk-text-on-primary, var(--ntk-text-on-accent, var(--ntk-text-inverse, var(--ntk-text-primary))));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-success {
+  --ntk-template-tone-action-accent: var(--semantic-success-primary, var(--ntk-success));
+  --ntk-template-tone-action-bg: var(--semantic-success-primary, var(--ntk-success));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-warning {
+  --ntk-template-tone-action-accent: var(--semantic-warning-primary, var(--ntk-warning));
+  --ntk-template-tone-action-bg: var(--semantic-warning-primary, var(--ntk-warning));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--tone-danger {
+  --ntk-template-tone-action-accent: var(--semantic-error-primary, var(--ntk-error));
+  --ntk-template-tone-action-bg: var(--semantic-error-primary, var(--ntk-error));
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--variant-outline,
+[class*='ntk-template-'] .ntk-template-tone-action--variant-flat {
+  background: transparent !important;
+  color: var(--ntk-template-tone-action-accent) !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--variant-outline {
+  border-color: var(--ntk-template-tone-action-border) !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action--variant-flat {
+  border-color: transparent !important;
+}
+
+[class*='ntk-template-'] .ntk-template-tone-action.q-btn--disabled {
+  opacity: 0.62;
+}
+
+[class*='ntk-template-'] .q-badge {
+  border-radius: var(--ntk-template-badge-radius);
+  font-weight: var(--ntk-template-badge-weight);
+}
+
+[class*='ntk-template-'] .q-toolbar {
+  min-height: var(--ntk-template-toolbar-height);
+  padding-inline: var(--ntk-template-toolbar-padding-x);
+  gap: var(--ntk-template-toolbar-gap);
+}
+
+[class*='ntk-template-'] .q-field__control {
+  min-height: var(--ntk-template-form-control-height);
+  border-radius: var(--ntk-template-form-control-radius);
+  background: var(--ntk-template-form-control-bg);
+  color: var(--ntk-input-text);
+}
+
+[class*='ntk-template-'] .q-field__native,
+[class*='ntk-template-'] .q-field__input,
+[class*='ntk-template-'] .q-field textarea,
+[class*='ntk-template-'] .q-field input {
+  color: var(--ntk-input-text) !important;
+}
+
+[class*='ntk-template-'] .q-field__native::placeholder,
+[class*='ntk-template-'] .q-field__input::placeholder,
+[class*='ntk-template-'] .q-field textarea::placeholder,
+[class*='ntk-template-'] .q-field input::placeholder {
+  color: var(--ntk-input-placeholder) !important;
+}
+
+[class*='ntk-template-'] .q-field__label {
+  color: var(--ntk-template-form-label-color) !important;
+  font-size: var(--ntk-template-form-label-size) !important;
+  font-weight: var(--ntk-template-form-label-weight);
+}
+
+[class*='ntk-template-'] .q-field__prepend,
+[class*='ntk-template-'] .q-field__append {
+  color: var(--ntk-template-form-icon-color);
+}
+
+body[data-ntk-template-theme='true'] :is(.q-field--filled, .q-field--outlined, .q-field--standout, .q-field--standard) .q-field__control {
+  background: var(--ntk-template-form-control-bg) !important;
+  color: var(--ntk-input-text) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-field--filled .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--standout .q-field__control::before {
+  background: var(--ntk-template-form-control-bg) !important;
+  border-color: var(--ntk-template-form-control-border) !important;
+  opacity: 1 !important;
+}
+
+body[data-ntk-template-theme='true'] .q-field--outlined .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--outlined .q-field__control::after,
+body[data-ntk-template-theme='true'] .q-field--standard .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--standard .q-field__control::after {
+  border-color: var(--ntk-template-form-control-border) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-field:hover .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field:hover .q-field__control::after {
+  border-color: var(--ntk-template-form-control-border-hover) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-field--focused .q-field__control::before,
+body[data-ntk-template-theme='true'] .q-field--focused .q-field__control::after {
+  border-color: var(--ntk-border-focus) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-field__native,
+body[data-ntk-template-theme='true'] .q-field__input,
+body[data-ntk-template-theme='true'] .q-field textarea,
+body[data-ntk-template-theme='true'] .q-field input,
+body[data-ntk-template-theme='true'] .q-field__marginal,
+body[data-ntk-template-theme='true'] .q-select__dropdown-icon {
+  color: var(--ntk-input-text) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-field__label,
+body[data-ntk-template-theme='true'] .q-field__bottom,
+body[data-ntk-template-theme='true'] .q-field__messages,
+body[data-ntk-template-theme='true'] .q-field__counter {
+  color: var(--ntk-input-label) !important;
+}
+
+body[data-ntk-template-theme='true'] :is(input, textarea):-webkit-autofill,
+body[data-ntk-template-theme='true'] :is(input, textarea):-webkit-autofill:hover,
+body[data-ntk-template-theme='true'] :is(input, textarea):-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ntk-input-text);
+  box-shadow: 0 0 0 1000px var(--ntk-input-bg) inset;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
+body[data-ntk-template-theme='true'] {
+  .q-dialog__backdrop {
+    background: var(--ntk-template-overlay-backdrop) !important;
+  }
+
+  /* Global contract for teleported Quasar surfaces: menus, popup proxies, select popups, and dialogs. */
+  :is(.q-menu, .q-popup-proxy, .q-dialog__inner > div, .q-dialog__inner > section, .q-dialog__inner > article, .q-dialog__inner > .q-card, .q-dialog-plugin) {
+    background: var(--ntk-template-overlay-bg) !important;
+    color: var(--ntk-template-overlay-text) !important;
+    border: 1px solid var(--ntk-template-overlay-border) !important;
+    border-radius: var(--ntk-template-overlay-radius) !important;
+    box-shadow: var(--ntk-template-overlay-shadow) !important;
+    overflow: clip;
+
+    :is(.q-card, .q-list, .q-card__section, .q-table__container, .q-table__middle, .q-table__grid-content, .q-virtual-scroll__content) {
+      background: transparent !important;
+    }
+
+    :is(.q-item, .q-item__section, .q-item__label, .q-toolbar__title, .q-dialog__title, .q-dialog__message, .q-banner__title, .q-banner__message, .q-field__native, .q-field__input, .q-select__dropdown-icon, .q-checkbox__label, .q-radio__label) {
+      color: var(--ntk-template-overlay-text) !important;
+    }
+
+    :is(.q-toolbar, .q-table__top, .q-table__bottom, .q-banner) {
+      background: var(--ntk-template-overlay-section-bg) !important;
+      color: var(--ntk-template-overlay-text) !important;
+    }
+
+    .q-separator {
+      background: var(--ntk-template-overlay-separator) !important;
+    }
+
+    .q-item:hover,
+    .q-item.q-manual-focusable--focused {
+      background: var(--ntk-template-overlay-hover-bg) !important;
+    }
+
+    .q-item--active,
+    .q-item.q-router-link--active {
+      background: var(--ntk-template-overlay-active-bg) !important;
+    }
+
+    :is(.q-item__label--caption, .q-item__label--header, .q-field__bottom, .q-field__messages, .q-field__counter, .q-table__bottom-item) {
+      color: var(--ntk-template-overlay-muted) !important;
+    }
+
+    :is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {
+      background: var(--ntk-template-overlay-table-bg) !important;
+      color: var(--ntk-template-overlay-table-text) !important;
+    }
+
+    .q-table__top,
+    .q-table__bottom {
+      border-color: var(--ntk-template-overlay-table-border) !important;
+    }
+
+    .q-table thead tr,
+    .q-table thead th {
+      background: var(--ntk-template-overlay-table-header-bg) !important;
+      color: var(--ntk-template-overlay-table-heading) !important;
+      border-color: var(--ntk-template-overlay-table-border) !important;
+    }
+
+    .q-table tbody tr,
+    .q-table tbody td {
+      background: var(--ntk-template-overlay-table-row-bg) !important;
+      color: var(--ntk-template-overlay-table-text) !important;
+      border-color: var(--ntk-template-overlay-table-border) !important;
+    }
+
+    .q-table tbody tr:hover td,
+    .q-table tbody tr:hover th,
+    .q-table tbody tr.q-tr--selected td {
+      background: var(--ntk-template-overlay-table-row-hover-bg) !important;
+    }
+
+    :is(.q-table__grid-item-card, .q-table__grid-content .q-card) {
+      background: var(--ntk-template-overlay-table-bg) !important;
+      color: var(--ntk-template-overlay-table-text) !important;
+      border-color: var(--ntk-template-overlay-table-border) !important;
+    }
+  }
+
+  .q-tooltip {
+    background: var(--ntk-template-overlay-bg) !important;
+    color: var(--ntk-template-overlay-text) !important;
+    border: 1px solid var(--ntk-template-overlay-border) !important;
+    border-radius: var(--ntk-template-overlay-radius) !important;
+    box-shadow: var(--ntk-template-overlay-shadow) !important;
+    max-width: min(320px, calc(100vw - 24px));
+  }
+}
+
+body[data-ntk-template-theme='true'] :is(.q-table__container, .q-table, .q-table__middle, .q-table__top, .q-table__bottom) {
+  background: var(--ntk-template-table-bg) !important;
+  color: var(--ntk-template-table-text) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-table__top,
+body[data-ntk-template-theme='true'] .q-table__bottom {
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-table thead tr,
+body[data-ntk-template-theme='true'] .q-table thead th {
+  background: var(--ntk-template-table-header-bg) !important;
+  color: var(--ntk-template-table-heading) !important;
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-table tbody tr,
+body[data-ntk-template-theme='true'] .q-table tbody td {
+  background: var(--ntk-template-table-row-bg) !important;
+  color: var(--ntk-template-table-text) !important;
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-table tbody tr:hover td,
+body[data-ntk-template-theme='true'] .q-table tbody tr:hover th,
+body[data-ntk-template-theme='true'] .q-table tbody tr.q-tr--selected td {
+  background: var(--ntk-template-table-row-hover-bg) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-table__grid-item-card,
+body[data-ntk-template-theme='true'] .q-table__grid-content .q-card {
+  background: var(--ntk-template-table-bg) !important;
+  color: var(--ntk-template-table-text) !important;
+  border-color: var(--ntk-template-table-border) !important;
+}
+
+[class*='ntk-template-'] :is(button, [role='button'], a, input, textarea):focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+
+body[data-ntk-template-theme='true'] .q-notification {
+  background: var(--ntk-template-notification-bg) !important;
+  border-radius: var(--ntk-template-notification-radius) !important;
+  border: 1px solid var(--ntk-template-notification-border) !important;
+  border-left: 4px solid var(--ntk-template-notification-info) !important;
+  box-shadow: var(--ntk-template-notification-shadow) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-notification .q-notification__message {
+  color: var(--ntk-template-notification-message) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-notification.bg-positive {
+  border-left-color: var(--ntk-template-notification-positive) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-positive) !important;
+  }
+}
+
+body[data-ntk-template-theme='true'] .q-notification.bg-negative {
+  border-left-color: var(--ntk-template-notification-negative) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-negative) !important;
+  }
+}
+
+body[data-ntk-template-theme='true'] .q-notification.bg-warning {
+  border-left-color: var(--ntk-template-notification-warning) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-warning) !important;
+  }
+}
+
+body[data-ntk-template-theme='true'] .q-notification.bg-info {
+  border-left-color: var(--ntk-template-notification-info) !important;
+
+  .q-notification__icon {
+    color: var(--ntk-template-notification-info) !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reference-parity global Quasar overrides                           */
+/* ------------------------------------------------------------------ */
+
+[class*='ntk-template-'] .q-spinner {
+  animation-duration: 0.3s;
+}
+
+[class*='ntk-template-'] input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Runtime chat FAB                                                   */
+/* ------------------------------------------------------------------ */
+
+.ntk-runtime-chat-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ntk-accent, var(--ntk-primary-gradient, var(--ntk-primary)));
+  box-shadow: 0 4px 14px var(--ntk-fab-shadow, color-mix(in srgb, var(--ntk-accent) 35%, transparent));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px var(--ntk-fab-shadow-hover, color-mix(in srgb, var(--ntk-accent) 45%, transparent));
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Theme-aware Quasar color overrides                                 */
+/* ------------------------------------------------------------------ */
+
+/* Quasar text-primary / bg-primary follow the accent color when a theme is active */
+body[data-ntk-template-theme='true'] .text-primary,
+body[data-ntk-template-theme='true'] .q-btn.text-primary {
+  color: var(--ntk-accent) !important;
+}
+
+body[data-ntk-template-theme='true'] .bg-primary {
+  background: var(--ntk-accent) !important;
+  color: var(--ntk-text-on-accent, var(--ntk-text-primary)) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-toggle__inner--truthy {
+  color: var(--ntk-accent) !important;
+}
+
+body[data-ntk-template-theme='true'] .q-checkbox__inner--truthy {
+  color: var(--ntk-accent) !important;
+}
+
+/* Focus ring */
+body[data-ntk-template-theme='true'] [class*='ntk-template-'] :is(button, [role='button'], a, input, textarea):focus-visible {
+  outline-color: var(--ntk-accent);
+}

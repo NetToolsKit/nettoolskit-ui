@@ -1,9 +1,9 @@
 /**
- * useAsync - Composable Vue para gerenciar estado de operações assíncronas
- * 
- * Wrapper reativo para funções assíncronas com estados de loading/error/data.
- * Simplifica o gerenciamento de chamadas API em componentes Vue.
- * 
+ * useAsync - Vue composable for managing asynchronous operation state.
+ *
+ * Reactive wrapper for asynchronous functions with loading/error/data states.
+ * Simplifies API call management in Vue components.
+ *
  * @layer Composables/Utils
  */
 
@@ -24,12 +24,12 @@ export interface UseAsyncReturn<T> {
 
 /**
  * Composable useAsync
- * 
- * Gerencia estado de operações assíncronas com reatividade Vue.
- * 
- * @param fn - Função assíncrona a ser executada
- * @param options - Opções de configuração
- * 
+ *
+ * Manages asynchronous operation state with Vue reactivity.
+ *
+ * @param fn - Async function to execute
+ * @param options - Configuration options
+ *
  * @example
  * const { loading, error, data, execute } = useAsync(
  *   async () => {
@@ -51,7 +51,7 @@ export function useAsync<T>(
 
   const loading = ref(false)
   const error = ref<Error | null>(null)
-  const data = ref<T | null>(null)
+  const data = ref(null) as Ref<T | null>
 
   const execute = async (): Promise<void> => {
     loading.value = true
@@ -75,7 +75,7 @@ export function useAsync<T>(
     }
   }
 
-  // Executa imediatamente se configurado
+  // Executes immediately when configured.
   if (immediate) {
     execute()
   }

@@ -1,0 +1,208 @@
+name: CI Tests
+
+env:
+  SHARED_AUTOMATION_REPO: ThiagoGuislotti/copilot-instructions
+  SHARED_AUTOMATION_REF: 69db62f81259237a38bf8f394f574b0060d49752
+  SHARED_SCRIPTS_DIR: .temp/shared-scripts
+  SHARED_CONSOLE_STYLE_SHA256: 066081e6268580a10669d6f293ce55c11cadd11844d07d9c03d519be38d8a8ac
+  SHARED_FRONTEND_AUDIT_SHA256: 564a681cafaecf14ad7395f33192f00416d03aba7abde3dd6f2b45c27a8a8ead
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - 'feature/**'
+  pull_request:
+    branches:
+      - '*'
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint + Type-check + Unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download shared security scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_url="https://raw.githubusercontent.com/${SHARED_AUTOMATION_REPO}/${SHARED_AUTOMATION_REF}"
+          mkdir -p "${SHARED_SCRIPTS_DIR}/common" "${SHARED_SCRIPTS_DIR}/security"
+          curl -fsSL "${base_url}/scripts/common/console-style.ps1" -o "${SHARED_SCRIPTS_DIR}/common/console-style.ps1"
+          curl -fsSL "${base_url}/scripts/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1"
+          echo "${SHARED_CONSOLE_STYLE_SHA256}  ${SHARED_SCRIPTS_DIR}/common/console-style.ps1" | sha256sum --check --
+          echo "${SHARED_FRONTEND_AUDIT_SHA256}  ${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" | sha256sum --check --
+
+      - name: Security audit (vulnerability gate)
+        shell: pwsh
+        run: |
+          & "${env:SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" `
+            -RepoRoot "${{ github.workspace }}" `
+            -ProjectPath "${{ github.workspace }}" `
+            -PackageManager npm `
+            -OutputDir ".temp/vulnerability-audit/frontend" `
+            -FailOnSeverities Critical,High `
+            -IncludeDevDependencies:$false `
+            -DetailedLogs
+        continue-on-error: true
+
+      - name: Upload vulnerability reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnerability-audit-ci
+          path: .temp/vulnerability-audit/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Token drift check
+        run: npm run tokens:check
+
+      - name: Generated docs drift check
+        run: npm run docs:check
+
+      - name: Stylelint
+        run: npm run lint:style
+
+      - name: CSS governance
+        run: npm run lint:css
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Architecture governance tests
+        run: npm run test:architecture
+
+      - name: Unit tests
+        run: npm test
+
+  build:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    needs: quality
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build library (CJS + ESM + declarations)
+        run: npm run build
+
+      - name: Build landing preview
+        run: npm run build:landing
+
+      - name: Verify dist output exists
+        run: |
+          test -f .build/dist/index.js || (echo "Missing CJS output" && exit 1)
+          test -f .build/dist/index.mjs || (echo "Missing ESM output" && exit 1)
+          test -f .build/dist/index.d.ts || (echo "Missing type declarations" && exit 1)
+          test -f .build/dist/styles.js || (echo "Missing styles CJS output" && exit 1)
+          test -f .build/dist/styles.mjs || (echo "Missing styles ESM output" && exit 1)
+          echo "All expected outputs present"
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    needs: quality
+    timeout-minutes: 15
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Accessibility gate
+        run: npm run test:a11y
+
+      - name: E2E tests
+        run: npx playwright test tests/e2e/template-runtime-reset-workspace.spec.ts tests/e2e/template-runtime-whitelabel.spec.ts tests/e2e/template-runtime-wiki-chat.spec.ts --project=chromium --workers=1
+
+      - name: Upload e2e artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-artifacts
+          path: |
+            .build/test-results/
+            .build/playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  visual-regression:
+    name: Visual Regression (Playwright)
+    runs-on: windows-latest
+    needs: quality
+    timeout-minutes: 20
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install chromium
+
+      - name: Visual regression tests
+        run: npm run test:visual
+
+      - name: Upload visual regression artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-regression-artifacts
+          path: |
+            .build/test-results/
+            .build/playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14

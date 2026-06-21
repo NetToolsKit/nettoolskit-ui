@@ -1,0 +1,467 @@
+/**
+ * NetToolsKit Theme System
+ * ========================
+ * Switchable color palettes through [data-theme] on the root element.
+ *
+ * USAGE:
+ *   document.documentElement.dataset.theme = 'revolut' | 'claude' | 'warp' | 'resend' | 'superhuman' | 'kraken'
+ *
+ * Every variable here is consumed by tokens.scss, reference-app-bridge.scss,
+ * or directly by components through --ntk-accent, --ntk-avatar-bg, and related tokens.
+ */
+
+/* ============================================================
+ * DEFAULT / REVOLUT  (teal fintech)
+ * ============================================================ */
+:root,
+[data-theme='revolut'] {
+  --ntk-primary: #0f766e;
+  --ntk-primary-dark: #115e59;
+  --ntk-primary-light: #2dd4bf;
+  --ntk-primary-rgb: 15, 118, 110;
+  --ntk-primary-gradient-start: #134e4a;
+  --ntk-primary-gradient-end: #14b8a6;
+  --ntk-primary-gradient: linear-gradient(135deg, #134e4a 0%, #14b8a6 100%);
+
+  --ntk-accent: #0f766e;
+  --ntk-accent-hover: #115e59;
+  --ntk-accent-soft: rgba(15, 118, 110, 0.08);
+  --ntk-accent-rgb: 15, 118, 110;
+
+  --ntk-shell-bg: #f1f5f9;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #0f172a;
+  --ntk-dark-page: #f1f5f9;
+
+  --ntk-text-heading: #0f172a;
+  --ntk-text-body: #334155;
+  --ntk-text-muted: #64748b;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #e2e8f0;
+  --ntk-border-strong: #cbd5e1;
+
+  --ntk-success: #10b981;
+  --ntk-warning: #f59e0b;
+  --ntk-error: #ef4444;
+  --ntk-info: #14b8a6;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #134e4a 0%, #0f766e 58%, #115e59 100%);
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(15, 118, 110, 0.3);
+  --ntk-fab-shadow-hover: rgba(15, 118, 110, 0.4);
+
+  --ntk-row-bg: #f8fafc;
+  --ntk-row-hover-bg: #f1f5f9;
+
+  --ntk-bar-fill: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+  --ntk-accent-value: #10b981;
+
+  /* Drawer / nav (reference mode - light sidebar) */
+  --ntk-drawer-text: #334155;
+  --ntk-nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --ntk-nav-active-bg: rgba(15, 118, 110, 0.08);
+  --ntk-nav-active-border: #0f766e;
+
+  /* Dark scheme flag - light themes = 0, dark themes = 1 */
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * CLAUDE  (warm terracotta)
+ * ============================================================ */
+[data-theme='claude'] {
+  --ntk-primary: #c96442;
+  --ntk-primary-dark: #b5593a;
+  --ntk-primary-light: #e39e7c;
+  --ntk-primary-rgb: 201, 100, 66;
+  --ntk-primary-gradient-start: #8a513c;
+  --ntk-primary-gradient-end: #c96442;
+  --ntk-primary-gradient: linear-gradient(135deg, #8a513c 0%, #c96442 100%);
+
+  --ntk-accent: #c96442;
+  --ntk-accent-hover: #b5593a;
+  --ntk-accent-soft: rgba(201, 100, 66, 0.08);
+  --ntk-accent-rgb: 201, 100, 66;
+
+  --ntk-shell-bg: #faf9f5;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #141413;
+  --ntk-dark-page: #faf9f5;
+
+  --ntk-text-heading: #141413;
+  --ntk-text-body: #4d4c48;
+  --ntk-text-muted: #5e5d59;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #e8e6dc;
+  --ntk-border-strong: #d1cfc5;
+
+  --ntk-success: #8f8b57;
+  --ntk-warning: #d69b4b;
+  --ntk-error: #ad5546;
+  --ntk-info: #c96442;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #7a4b39 0%, #c96442 100%);
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(201, 100, 66, 0.3);
+  --ntk-fab-shadow-hover: rgba(201, 100, 66, 0.4);
+
+  --ntk-row-bg: #faf9f5;
+  --ntk-row-hover-bg: #f5f4ed;
+
+  --ntk-bar-fill: linear-gradient(90deg, #8a513c 0%, #c96442 100%);
+  --ntk-accent-value: #c96442;
+
+  --ntk-drawer-text: #4d4c48;
+  --ntk-nav-hover-bg: rgba(0, 0, 0, 0.04);
+  --ntk-nav-active-bg: rgba(201, 100, 66, 0.08);
+  --ntk-nav-active-border: #c96442;
+
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * WARP  (dark minimal)
+ * ============================================================ */
+[data-theme='warp'] {
+  --ntk-primary: #e2e2e2;
+  --ntk-primary-dark: #c8c8c4;
+  --ntk-primary-light: #ffffff;
+  --ntk-primary-rgb: 226, 226, 226;
+  --ntk-primary-gradient-start: #353534;
+  --ntk-primary-gradient-end: #e2e2e2;
+  --ntk-primary-gradient: linear-gradient(135deg, #353534 0%, #e2e2e2 100%);
+
+  --ntk-accent: #e2e2e2;
+  --ntk-accent-hover: #ffffff;
+  --ntk-accent-soft: rgba(255, 255, 255, 0.06);
+  --ntk-accent-rgb: 226, 226, 226;
+
+  --ntk-shell-bg: #0e0e0d;
+  --ntk-card-bg: #1a1a19;
+  --ntk-header-bg: #141413;
+  --ntk-drawer-bg: #141413;
+  --ntk-dark: #1a1a19;
+  --ntk-dark-page: #0e0e0d;
+
+  --ntk-text-heading: #faf9f6;
+  --ntk-text-body: #c8c8c4;
+  --ntk-text-muted: #8a8a86;
+  --ntk-text-on-accent: #0e0e0d;
+
+  --ntk-border: rgba(226, 226, 226, 0.12);
+  --ntk-border-strong: rgba(226, 226, 226, 0.22);
+
+  --ntk-success: #7fd0b6;
+  --ntk-warning: #d6b46c;
+  --ntk-error: #d58b8b;
+  --ntk-info: #e2e2e2;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #2c2c2b 0%, #434341 100%);
+  --ntk-avatar-color: #faf9f6;
+  --ntk-avatar-border: rgba(255, 255, 255, 0.16);
+
+  --ntk-fab-shadow: rgba(255, 255, 255, 0.08);
+  --ntk-fab-shadow-hover: rgba(255, 255, 255, 0.14);
+
+  --ntk-row-bg: rgba(255, 255, 255, 0.03);
+  --ntk-row-hover-bg: rgba(255, 255, 255, 0.06);
+
+  --ntk-bar-fill: linear-gradient(90deg, #747472 0%, #e2e2e2 100%);
+  --ntk-accent-value: #e2e2e2;
+
+  --ntk-drawer-text: #c8c8c4;
+  --ntk-nav-hover-bg: rgba(255, 255, 255, 0.06);
+  --ntk-nav-active-bg: rgba(255, 255, 255, 0.1);
+  --ntk-nav-active-border: #e2e2e2;
+
+  --ntk-dark-scheme: 1;
+}
+
+/* ============================================================
+ * RESEND  (dark vibrant)
+ * ============================================================ */
+[data-theme='resend'] {
+  --ntk-primary: #ffffff;
+  --ntk-primary-dark: #cfcfcf;
+  --ntk-primary-light: #ffffff;
+  --ntk-primary-rgb: 255, 255, 255;
+  --ntk-primary-gradient-start: #1b1b1b;
+  --ntk-primary-gradient-end: #ffffff;
+  --ntk-primary-gradient: linear-gradient(135deg, #1b1b1b 0%, #ffffff 100%);
+
+  --ntk-accent: #ffffff;
+  --ntk-accent-hover: rgba(255, 255, 255, 0.85);
+  --ntk-accent-soft: rgba(255, 255, 255, 0.06);
+  --ntk-accent-rgb: 255, 255, 255;
+
+  --ntk-shell-bg: #000000;
+  --ntk-card-bg: #0a0a0a;
+  --ntk-header-bg: #000000;
+  --ntk-drawer-bg: #000000;
+  --ntk-dark: #0a0a0a;
+  --ntk-dark-page: #000000;
+
+  --ntk-text-heading: #f0f0f0;
+  --ntk-text-body: #b0b0b0;
+  --ntk-text-muted: #a1a1a1;
+  --ntk-text-on-accent: #000000;
+
+  --ntk-border: rgba(214, 235, 253, 0.12);
+  --ntk-border-strong: rgba(214, 235, 253, 0.22);
+
+  --ntk-success: #78d0b6;
+  --ntk-warning: #d0b06c;
+  --ntk-error: #d68989;
+  --ntk-info: #ffffff;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #171717 0%, #2a2a2a 100%);
+  --ntk-avatar-color: #f0f0f0;
+  --ntk-avatar-border: rgba(255, 255, 255, 0.16);
+
+  --ntk-fab-shadow: rgba(255, 255, 255, 0.06);
+  --ntk-fab-shadow-hover: rgba(255, 255, 255, 0.12);
+
+  --ntk-row-bg: rgba(255, 255, 255, 0.03);
+  --ntk-row-hover-bg: rgba(255, 255, 255, 0.06);
+
+  --ntk-bar-fill: linear-gradient(90deg, #6d6d6d 0%, #ffffff 100%);
+  --ntk-accent-value: #ffffff;
+
+  --ntk-drawer-text: #b0b0b0;
+  --ntk-nav-hover-bg: rgba(255, 255, 255, 0.06);
+  --ntk-nav-active-bg: rgba(255, 255, 255, 0.1);
+  --ntk-nav-active-border: #ffffff;
+
+  --ntk-dark-scheme: 1;
+}
+
+/* ============================================================
+ * SUPERHUMAN  (purple glow)
+ * ============================================================ */
+[data-theme='superhuman'] {
+  --ntk-primary: #714cb6;
+  --ntk-primary-dark: #5f3fa0;
+  --ntk-primary-light: #9a7be0;
+  --ntk-primary-rgb: 113, 76, 182;
+  --ntk-primary-gradient-start: #4d2f87;
+  --ntk-primary-gradient-end: #8c68d3;
+  --ntk-primary-gradient: linear-gradient(135deg, #4d2f87 0%, #8c68d3 100%);
+
+  --ntk-accent: #714cb6;
+  --ntk-accent-hover: #5f3fa0;
+  --ntk-accent-soft: rgba(113, 76, 182, 0.08);
+  --ntk-accent-rgb: 113, 76, 182;
+
+  --ntk-shell-bg: #f5f3f0;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #1b1938;
+  --ntk-dark-page: #f5f3f0;
+
+  --ntk-text-heading: #1b1938;
+  --ntk-text-body: #3d3b54;
+  --ntk-text-muted: #6b6b80;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #dcd7d3;
+  --ntk-border-strong: #c5c0bc;
+
+  --ntk-success: #8a67d8;
+  --ntk-warning: #c68b55;
+  --ntk-error: #c05285;
+  --ntk-info: #714cb6;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #4d2f87 0%, #714cb6 100%);
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(113, 76, 182, 0.3);
+  --ntk-fab-shadow-hover: rgba(113, 76, 182, 0.4);
+
+  --ntk-row-bg: #f5f3f0;
+  --ntk-row-hover-bg: #edeae6;
+
+  --ntk-bar-fill: linear-gradient(90deg, #5f3fa0 0%, #8c68d3 100%);
+  --ntk-accent-value: #714cb6;
+
+  --ntk-drawer-text: #3d3b54;
+  --ntk-nav-hover-bg: rgba(113, 76, 182, 0.05);
+  --ntk-nav-active-bg: rgba(113, 76, 182, 0.08);
+  --ntk-nav-active-border: #714cb6;
+
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * KRAKEN  (deep purple)
+ * ============================================================ */
+[data-theme='kraken'] {
+  --ntk-primary: #7132f5;
+  --ntk-primary-dark: #5b1ecf;
+  --ntk-primary-light: #996cff;
+  --ntk-primary-rgb: 113, 50, 245;
+  --ntk-primary-gradient-start: #4e1bbb;
+  --ntk-primary-gradient-end: #8c66ff;
+  --ntk-primary-gradient: linear-gradient(135deg, #4e1bbb 0%, #8c66ff 100%);
+
+  --ntk-accent: #7132f5;
+  --ntk-accent-hover: #5b1ecf;
+  --ntk-accent-soft: rgba(113, 50, 245, 0.08);
+  --ntk-accent-rgb: 113, 50, 245;
+
+  --ntk-shell-bg: #f8f8fc;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #101114;
+  --ntk-dark-page: #f8f8fc;
+
+  --ntk-text-heading: #101114;
+  --ntk-text-body: #3a3c4e;
+  --ntk-text-muted: #686b82;
+  --ntk-text-on-accent: #ffffff;
+
+  --ntk-border: #e0e0ea;
+  --ntk-border-strong: #c8c8d6;
+
+  --ntk-success: #8e6cff;
+  --ntk-warning: #c8904c;
+  --ntk-error: #c85692;
+  --ntk-info: #7132f5;
+
+  --ntk-avatar-bg: linear-gradient(135deg, #4e1bbb 0%, #7132f5 100%);
+  --ntk-avatar-color: #ffffff;
+  --ntk-avatar-border: #ffffff;
+
+  --ntk-fab-shadow: rgba(113, 50, 245, 0.3);
+  --ntk-fab-shadow-hover: rgba(113, 50, 245, 0.4);
+
+  --ntk-row-bg: #f8f8fc;
+  --ntk-row-hover-bg: #f0f0f8;
+
+  --ntk-bar-fill: linear-gradient(90deg, #5b1ecf 0%, #996cff 100%);
+  --ntk-accent-value: #7132f5;
+
+  --ntk-drawer-text: #3a3c4e;
+  --ntk-nav-hover-bg: rgba(113, 50, 245, 0.05);
+  --ntk-nav-active-bg: rgba(113, 50, 245, 0.08);
+  --ntk-nav-active-border: #7132f5;
+
+  --ntk-dark-scheme: 0;
+}
+
+/* ============================================================
+ * THEME TOKEN BRIDGE
+ * ============================================================
+ * Promotes preset aliases to the base tokens consumed by templates
+ * and by Quasar bridge surfaces.
+ */
+html[data-theme],
+html[data-theme] body {
+  --ntk-secondary: var(--ntk-accent);
+  --ntk-secondary-dark: var(--ntk-accent-hover);
+  --ntk-secondary-light: var(--ntk-primary-light);
+
+  --ntk-bg-primary: var(--ntk-shell-bg);
+  --ntk-bg-secondary: var(--ntk-card-bg);
+  --ntk-bg-tertiary: var(--ntk-row-bg);
+  --ntk-bg-card: var(--ntk-card-bg);
+  --ntk-bg-elevated: var(--ntk-card-bg);
+  --ntk-bg-hover: var(--ntk-row-hover-bg);
+  --ntk-bg-active: var(--ntk-nav-active-bg, var(--ntk-accent-soft));
+  --ntk-surface-card: var(--ntk-card-bg);
+  --ntk-surface-overlay: color-mix(in srgb, var(--ntk-card-bg) 94%, var(--ntk-shell-bg));
+  --ntk-surface-dialog: var(--ntk-surface-overlay);
+  --ntk-surface-menu: var(--ntk-surface-overlay);
+  --ntk-surface-table: var(--ntk-card-bg);
+  --ntk-surface-table-header: color-mix(in srgb, var(--ntk-row-bg) 72%, var(--ntk-card-bg));
+  --ntk-surface-table-row: var(--ntk-row-bg);
+  --ntk-surface-table-row-hover: var(--ntk-row-hover-bg);
+
+  --ntk-text-primary: var(--ntk-text-heading);
+  --ntk-text-secondary: var(--ntk-text-body);
+  --ntk-text-link: var(--ntk-accent);
+  --ntk-text-link-hover: var(--ntk-accent-hover);
+  --ntk-text-dark: var(--ntk-text-heading);
+  --ntk-text-light: var(--ntk-text-body);
+  --ntk-text-lighter: var(--ntk-text-muted);
+  --ntk-text-on-primary: var(--ntk-text-on-accent);
+  --ntk-text-popup: var(--ntk-text-heading);
+  --ntk-text-table-heading: var(--ntk-text-heading);
+  --ntk-text-table-body: var(--ntk-text-body);
+
+  --ntk-border-color: var(--ntk-border);
+  --ntk-border-light: color-mix(in srgb, var(--ntk-border) 58%, transparent);
+  --ntk-border-dark: var(--ntk-border-strong);
+  --ntk-border-input: var(--ntk-border);
+  --ntk-border-input-hover: var(--ntk-border-strong);
+  --ntk-border-popup: color-mix(in srgb, var(--ntk-border) 82%, transparent);
+  --ntk-border-table: var(--ntk-border);
+
+  --semantic-success: var(--ntk-success);
+  --semantic-success-primary: var(--ntk-success);
+  --semantic-success-border: color-mix(in srgb, var(--ntk-success) 52%, var(--ntk-border));
+  --semantic-success-bg: color-mix(in srgb, var(--ntk-success) 18%, var(--ntk-card-bg));
+  --semantic-success-text: color-mix(in srgb, var(--ntk-success) 72%, var(--ntk-text-heading));
+  --semantic-warning: var(--ntk-warning);
+  --semantic-warning-primary: var(--ntk-warning);
+  --semantic-warning-border: color-mix(in srgb, var(--ntk-warning) 56%, var(--ntk-border));
+  --semantic-warning-bg: color-mix(in srgb, var(--ntk-warning) 20%, var(--ntk-card-bg));
+  --semantic-warning-text: color-mix(in srgb, var(--ntk-warning) 74%, var(--ntk-text-heading));
+  --semantic-error: var(--ntk-error);
+  --semantic-error-primary: var(--ntk-error);
+  --semantic-error-border: color-mix(in srgb, var(--ntk-error) 54%, var(--ntk-border));
+  --semantic-error-bg: color-mix(in srgb, var(--ntk-error) 18%, var(--ntk-card-bg));
+  --semantic-error-text: color-mix(in srgb, var(--ntk-error) 72%, var(--ntk-text-heading));
+  --semantic-info: var(--ntk-info);
+  --semantic-info-primary: var(--ntk-info);
+  --semantic-info-border: color-mix(in srgb, var(--ntk-info) 52%, var(--ntk-border));
+  --semantic-info-bg: color-mix(in srgb, var(--ntk-info) 18%, var(--ntk-card-bg));
+  --semantic-info-text: color-mix(in srgb, var(--ntk-info) 72%, var(--ntk-text-heading));
+
+  --ntk-success-light: var(--semantic-success-bg);
+  --ntk-success-dark: var(--semantic-success-text);
+  --ntk-warning-light: var(--semantic-warning-bg);
+  --ntk-warning-dark: var(--semantic-warning-text);
+  --ntk-error-light: var(--semantic-error-bg);
+  --ntk-error-dark: var(--semantic-error-text);
+  --ntk-info-light: var(--semantic-info-bg);
+  --ntk-info-dark: var(--semantic-info-text);
+
+  --ntk-input-bg: color-mix(in srgb, var(--ntk-card-bg) 84%, var(--ntk-shell-bg));
+  --ntk-input-text: var(--ntk-text-heading);
+  --ntk-input-label: var(--ntk-text-body);
+  --ntk-input-placeholder: var(--ntk-text-muted);
+  --ntk-input-icon: var(--ntk-text-muted);
+
+  --ntk-chip-bg: var(--ntk-row-bg);
+  --ntk-chip-text: var(--ntk-text-body);
+  --ntk-menu-bg: var(--ntk-card-bg);
+  --ntk-popup-bg: var(--ntk-card-bg);
+  --ntk-sidebar-bg: var(--ntk-drawer-bg);
+  --ntk-sidebar-border: var(--ntk-border);
+  --ntk-sidebar-item-hover: var(--ntk-row-hover-bg);
+  --ntk-sidebar-item-active-bg: var(--ntk-nav-active-bg, var(--ntk-accent-soft));
+  --ntk-sidebar-item-active-text: var(--ntk-accent);
+}
+
+html[data-theme] {
+  background: var(--ntk-bg-primary);
+  color: var(--ntk-text-primary);
+}
+
+html[data-theme] body {
+  background: var(--ntk-bg-primary);
+  color: var(--ntk-text-primary);
+}

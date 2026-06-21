@@ -1,23 +1,46 @@
 /**
- * Validators - Funções de validação reutilizáveis
+ * Validators - reusable validation helpers.
  * 
- * Validadores puros sem dependências de framework.
- * Podem ser usados em qualquer contexto (Vue, Node.js, etc).
+ * Pure validators with no framework dependencies.
+ * They can be used in any context (Vue, Node.js, etc).
  * 
  * @layer Utils
  */
 
 /**
- * Valida formato de email (RFC 5322 simplificado)
+ * Validates simplified RFC 5322 email format.
  */
 export function validateEmail(email: string): boolean {
   if (!email) return false
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
+  if (typeof email !== 'string') return false
+
+  const trimmed = email.trim()
+  if (!trimmed || trimmed.length > 254 || trimmed !== email) return false
+
+  const atIndex = trimmed.indexOf('@')
+  if (atIndex <= 0 || atIndex !== trimmed.lastIndexOf('@')) return false
+
+  const localPart = trimmed.slice(0, atIndex)
+  const domain = trimmed.slice(atIndex + 1)
+  if (!localPart || !domain || domain.length > 253) return false
+  if (hasWhitespace(localPart) || hasWhitespace(domain)) return false
+
+  const dotIndex = domain.lastIndexOf('.')
+  return dotIndex > 0 && dotIndex < domain.length - 1
+}
+
+function hasWhitespace(value: string): boolean {
+  for (const character of value) {
+    if (character.charCodeAt(0) <= 32) {
+      return true
+    }
+  }
+
+  return false
 }
 
 /**
- * Valida formato de URL (http/https)
+ * Validates http/https URL format.
  */
 export function validateURL(url: string): boolean {
   if (!url) return false
@@ -30,8 +53,8 @@ export function validateURL(url: string): boolean {
 }
 
 /**
- * Valida telefone brasileiro
- * Formatos aceitos: (XX) XXXXX-XXXX, (XX) XXXX-XXXX, XXXXXXXXXXX, XXXXXXXXXX
+ * Validates Brazilian phone numbers.
+ * Accepted formats: (XX) XXXXX-XXXX, (XX) XXXX-XXXX, XXXXXXXXXXX, XXXXXXXXXX.
  */
 export function validatePhone(phone: string): boolean {
   if (!phone) return false
@@ -40,7 +63,7 @@ export function validatePhone(phone: string): boolean {
 }
 
 /**
- * Valida CPF brasileiro com dígitos verificadores
+ * Validates Brazilian CPF with check digits.
  */
 export function validateCPF(cpf: string): boolean {
   if (!cpf) return false
@@ -48,7 +71,7 @@ export function validateCPF(cpf: string): boolean {
   const cleaned = cpf.replace(/\D/g, '')
   if (cleaned.length !== 11) return false
   
-    // Reject CPFs with all equal digits
+  // Reject CPFs with all equal digits
   if (/^(\d)\1{10}$/.test(cleaned)) return false
   
   // Calculate first check digit
@@ -73,7 +96,7 @@ export function validateCPF(cpf: string): boolean {
 }
 
 /**
- * Valida CNPJ brasileiro com dígitos verificadores
+ * Validates Brazilian CNPJ with check digits.
  */
 export function validateCNPJ(cnpj: string): boolean {
   if (!cnpj) return false
@@ -118,28 +141,28 @@ export function validatePassword(
   const errors: string[] = []
   
   if (!password) {
-    errors.push('Senha é obrigatória')
+    errors.push('Password is required')
     return { valid: false, errors }
   }
   
   if (password.length < minLength) {
-    errors.push(`Senha deve ter no mínimo ${minLength} caracteres`)
+    errors.push(`Password must have at least ${minLength} characters`)
   }
   
   if (!/[a-z]/.test(password)) {
-    errors.push('Senha deve conter letras minúsculas')
+    errors.push('Password must contain lowercase letters')
   }
   
   if (!/[A-Z]/.test(password)) {
-    errors.push('Senha deve conter letras maiúsculas')
+    errors.push('Password must contain uppercase letters')
   }
   
   if (!/\d/.test(password)) {
-    errors.push('Senha deve conter números')
+    errors.push('Password must contain numbers')
   }
   
   if (!/[@$!%*?&#]/.test(password)) {
-    errors.push('Senha deve conter caracteres especiais (@$!%*?&#)')
+    errors.push('Password must contain special characters (@$!%*?&#)')
   }
   
   return {

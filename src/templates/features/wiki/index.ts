@@ -1,0 +1,6 @@
+export { default as WikiTemplate } from './WikiTemplate.vue'
+export { default as WikiChatTemplate } from './WikiChatTemplate.vue'
+export { default as WikiChatDrawerTemplate } from './WikiChatDrawerTemplate.vue'
+export * from './wiki-template.types'
+export * from './wiki-chat-service.template'
+export * from './wiki-chat-store.template'

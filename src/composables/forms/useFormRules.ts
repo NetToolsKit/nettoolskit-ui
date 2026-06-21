@@ -1,9 +1,9 @@
 /**
- * useFormRules - Composable Vue para validações de formulário
+ * useFormRules - Vue composable for form validation.
  * 
- * Wrapper Vue para o FormValidationService (Application Layer).
+ * Vue wrapper for FormValidationService (Application Layer).
  * 
- * Este composable agora está conforme Clean Architecture:
+ * This composable follows Clean Architecture:
  * - Presentation (composable) → Application (service)
  * 
  * @example
@@ -18,10 +18,10 @@ import { FormValidationService } from '../../services/FormValidationService'
 /**
  * Composable useFormRules
  * 
- * Retorna métodos de validação do FormValidationService encapsulados para uso
- * em componentes Vue/Quasar.
+ * Returns FormValidationService validation methods wrapped for use
+ * in Vue/Quasar components.
  * 
- * @returns Objeto com métodos de validação tipados
+ * @returns Object with typed validation methods
  */
 export function useFormRules() {
   return {
@@ -68,7 +68,6 @@ export function useFormRules() {
 }
 
 /**
- * Re-exporta tipos para conveniência
+ * Re-export types for convenience
  */
 export type { ValidationRule, ValidationResult } from '../../services/FormValidationService'
-

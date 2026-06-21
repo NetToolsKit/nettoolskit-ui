@@ -4,9 +4,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// Mock the FilterService since we don't have the actual implementation
-// These tests document the expected behavior
-
 describe('FilterService', () => {
   describe('applyFilters()', () => {
     it('should filter data based on criteria', () => {
@@ -16,7 +13,6 @@ describe('FilterService', () => {
         { id: 3, name: 'Bob', age: 25 }
       ]
 
-      // Expected behavior: filter by age
       const filtered = data.filter(item => item.age === 25)
 
       expect(filtered).toHaveLength(2)
@@ -50,7 +46,7 @@ describe('FilterService', () => {
       ]
 
       const searchTerm = 'john'
-      const filtered = data.filter(item => 
+      const filtered = data.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
 
@@ -67,7 +63,7 @@ describe('FilterService', () => {
       ]
 
       const searchTerm = 'JOHN'
-      const filtered = data.filter(item => 
+      const filtered = data.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
 
@@ -81,7 +77,7 @@ describe('FilterService', () => {
       ]
 
       const searchTerm = 'xyz'
-      const filtered = data.filter(item => 
+      const filtered = data.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
 
@@ -100,7 +96,7 @@ describe('FilterService', () => {
       const startDate = new Date('2024-01-01')
       const endDate = new Date('2024-02-28')
 
-      const filtered = data.filter(item => 
+      const filtered = data.filter(item =>
         item.date >= startDate && item.date <= endDate
       )
 
@@ -116,7 +112,7 @@ describe('FilterService', () => {
       const startDate = new Date('2024-01-01')
       const endDate = new Date('2024-01-31')
 
-      const filtered = data.filter(item => 
+      const filtered = data.filter(item =>
         item.date >= startDate && item.date <= endDate
       )
 
