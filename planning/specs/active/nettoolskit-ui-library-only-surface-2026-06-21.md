@@ -1,11 +1,12 @@
 # NetToolsKit UI Library-Only Surface - Spec
 
 Generated: 2026-06-21 19:14
-LastUpdated: 2026-06-21 19:14
-Status: active
+LastUpdated: 2026-06-21 20:55
+Status: ready-for-review
 Priority: high
 Branch: `refactor/library-only-surface`
 BackupBranch: `backup/pre-library-only-cleanup-2026-06-21`
+PullRequest: https://github.com/NetToolsKit/nettoolskit-ui/pull/56
 
 ## Intake Summary
 

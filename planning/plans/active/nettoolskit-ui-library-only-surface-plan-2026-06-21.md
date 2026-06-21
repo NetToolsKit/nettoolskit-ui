@@ -1,12 +1,13 @@
 # NetToolsKit UI Library-Only Surface - Plan
 
 Generated: 2026-06-21 19:14
-LastUpdated: 2026-06-21 20:53
-Status: active
-Progress: 89% (8/9 checked)
+LastUpdated: 2026-06-21 20:55
+Status: ready-for-review
+Progress: 100% (9/9 checked)
 Branch: `refactor/library-only-surface`
 BackupBranch: `backup/pre-library-only-cleanup-2026-06-21`
 Spec: `planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md`
+PullRequest: https://github.com/NetToolsKit/nettoolskit-ui/pull/56
 
 ## Progress Checklist
 
@@ -18,7 +19,7 @@ Spec: `planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md`
 - [x] README, docs and changelog describe the library-only scope.
 - [x] Package dry run proves removed product declarations are not published.
 - [x] Library validation gates pass or blocked gates are documented.
-- [ ] Branch is committed, pushed, and PR-ready.
+- [x] Branch is committed, pushed, and PR-ready.
 
 ## Scope Summary
 
