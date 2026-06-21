@@ -1,10 +1,10 @@
 # Dependency PR Unification - Plan
 
 Date: 2026-06-21
-LastUpdated: 2026-06-21 17:07
+LastUpdated: 2026-06-21 17:17
 Status: active
 Branch: `chore/unify-dependency-upgrades`
-Progress: 67% (4/6 checked)
+Progress: 83% (5/6 checked)
 
 ## Scope
 
@@ -33,7 +33,7 @@ Separate spec registration is not required for this workstream because this is d
 - [x] Apply dependency version updates as one compatible package set.
 - [x] Fix TypeScript 6, vue-tsc 3, jsdom 29, Vite 8, Vue Router 5, and ESLint 10 compatibility issues.
 - [x] Run install, audit, lint, type-check, unit tests, and build as applicable.
-- [ ] Commit with semantic Git message and push branch.
+- [x] Commit with semantic Git message and push branch.
 - [ ] Open one GitHub PR and record validation/CI status.
 
 ## Validation Targets
@@ -62,6 +62,12 @@ Separate spec registration is not required for this workstream because this is d
 - Passed: `npm run build`
 - Passed with Vite 8 warnings only: `npm run build:landing`
 - Local Windows limitation: full `npm test` exceeded the local 15-minute timeout after spawning Vitest workers; River/Linux CI remains the final full-suite gate.
+
+## PR Evidence
+
+- Opened draft PR: https://github.com/NetToolsKit/nettoolskit-ui/pull/54
+- Commit: `400d2824a8 chore(deps): unify frontend major upgrades`
+- CI status: pending at PR creation.
 
 ## Closeout
 
