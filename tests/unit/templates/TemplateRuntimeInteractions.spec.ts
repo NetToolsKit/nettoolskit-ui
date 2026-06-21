@@ -42,6 +42,7 @@ vi.mock('../../../src/templates/layouts', async () => {
   const { defineComponent, h } = await vi.importActual<typeof import('vue')>('vue')
 
   return {
+    clearTemplateLayoutPersistence: vi.fn(),
     AuthLayoutTemplate: defineComponent({
       name: 'AuthLayoutTemplate',
       setup(_props, { slots }) {

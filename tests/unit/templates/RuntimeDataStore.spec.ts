@@ -71,7 +71,7 @@ describe('template runtime data store', () => {
 
     expect(duplicate).not.toBeNull()
     expect(duplicate).toMatchObject({
-      name: 'Distribuidora Alfa Copy',
+      name: 'Alfa Distribution Copy',
       status: 'onboarding',
     })
     expect(duplicate?.tags).toContain('copia')
@@ -108,7 +108,7 @@ describe('template runtime data store', () => {
     const created = templateRuntimeData.createOrder()
     const recycledCancelledOrder = templateRuntimeData.state.orders.find(order => order.status === 'cancelled')
 
-    expect(created.number).toBe('PED-1051')
+    expect(created.number).toBe('ORD-1051')
     expect(created.clientId).toBe(templateRuntimeData.state.clients.find(client => client.status !== 'inactive')?.id)
     expect(templateRuntimeData.orderRecords.value[0]?.id).toBe(created.id)
 
@@ -232,9 +232,9 @@ describe('template runtime data store', () => {
     cloned.clients[0]!.name = 'Changed Client'
     cloned.clients[0]!.tags.push('changed')
 
-    expect(seeded.clients[0]?.name).toBe('Distribuidora Alfa')
+    expect(seeded.clients[0]?.name).toBe('Alfa Distribution')
     expect(seeded.clients[0]?.tags).not.toContain('changed')
-    expect(nextTemplateRuntimeOrderNumber(seeded)).toBe('PED-1051')
+    expect(nextTemplateRuntimeOrderNumber(seeded)).toBe('ORD-1051')
 
     persistTemplateRuntimeData(cloned)
     expect(loadTemplateRuntimeData().clients[0]?.name).toBe('Changed Client')

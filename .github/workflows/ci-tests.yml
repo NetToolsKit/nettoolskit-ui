@@ -7,6 +7,7 @@ env:
   SHARED_CONSOLE_STYLE_SHA256: 066081e6268580a10669d6f293ce55c11cadd11844d07d9c03d519be38d8a8ac
   SHARED_FRONTEND_AUDIT_SHA256: 564a681cafaecf14ad7395f33192f00416d03aba7abde3dd6f2b45c27a8a8ead
   SHARED_PREBUILD_GATE_SHA256: b99a08d21ea9a7da616fe4e200ba37abaaf7d8f36c8ee77fb4cd7abc211ba881
+  SHARED_VULNERABILITY_AUDIT_SHA256: 0dbf6bcf732be2b12a18d1fea8ccd405518d9e247b9cf86b64ceb37cf130aa09
 
 on:
   push:
@@ -50,9 +51,11 @@ jobs:
           curl -fsSL "${base_url}/scripts/common/console-style.ps1" -o "${SHARED_SCRIPTS_DIR}/common/console-style.ps1"
           curl -fsSL "${base_url}/scripts/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1"
           curl -fsSL "${base_url}/scripts/security/Invoke-PreBuildSecurityGate.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-PreBuildSecurityGate.ps1"
+          curl -fsSL "${base_url}/scripts/security/Invoke-VulnerabilityAudit.ps1" -o "${SHARED_SCRIPTS_DIR}/security/Invoke-VulnerabilityAudit.ps1"
           echo "${SHARED_CONSOLE_STYLE_SHA256}  ${SHARED_SCRIPTS_DIR}/common/console-style.ps1" | sha256sum --check --
           echo "${SHARED_FRONTEND_AUDIT_SHA256}  ${SHARED_SCRIPTS_DIR}/security/Invoke-FrontendPackageVulnerabilityAudit.ps1" | sha256sum --check --
           echo "${SHARED_PREBUILD_GATE_SHA256}  ${SHARED_SCRIPTS_DIR}/security/Invoke-PreBuildSecurityGate.ps1" | sha256sum --check --
+          echo "${SHARED_VULNERABILITY_AUDIT_SHA256}  ${SHARED_SCRIPTS_DIR}/security/Invoke-VulnerabilityAudit.ps1" | sha256sum --check --
 
       - name: Security audit (vulnerability gate)
         shell: pwsh
