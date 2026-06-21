@@ -2,7 +2,7 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-21 11:41
+LastUpdated: 2026-06-21 12:40
 Status: active
 Progress: 100% (15/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
@@ -47,45 +47,12 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 
 ## Current Planning Status
 
-- All 8 linked specs remain under `planning/specs/active` after completion audit.
-- The earlier 90% status reflected completed implementation slices, not final spec acceptance.
-- PR #1 through PR #4 are open as draft PRs in a stacked chain; Vercel checks are green, but no GitHub Actions run was found for those heads during the audit.
-- PR #5 is open as a draft stacked PR from `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19` into `feat/nettoolskit-quality-gates-docs-2026-06-19`.
-- PR #6 is open as a draft stacked PR from `feat/nettoolskit-token-css-policy-2026-06-19` into `feat/nettoolskit-quality-gates-browser-stylelint-2026-06-19`.
-- PR #7 is open as a draft stacked PR from `feat/nettoolskit-theme-density-contracts-2026-06-19` into `feat/nettoolskit-token-css-policy-2026-06-19`.
-- PR #8 is open as a draft stacked PR from `feat/nettoolskit-ds-button-wrapper-2026-06-19` into `feat/nettoolskit-theme-density-contracts-2026-06-19`.
-- PR #9 is open as a draft stacked PR from `feat/nettoolskit-ds-card-input-wrappers-2026-06-19` into `feat/nettoolskit-ds-button-wrapper-2026-06-19`.
-- PR #10 is open as a draft stacked PR from `feat/nettoolskit-cms-preview-ds-button-2026-06-19` into `feat/nettoolskit-ds-card-input-wrappers-2026-06-19`.
-- PR #11 is open as a draft stacked PR from `feat/nettoolskit-ds-select-wrapper-2026-06-20` into `feat/nettoolskit-cms-preview-ds-button-2026-06-19`.
-- PR #12 is open as a draft stacked PR from `feat/nettoolskit-ds-table-wrapper-2026-06-20` into `feat/nettoolskit-ds-select-wrapper-2026-06-20`.
-- PR #13 is open as a draft stacked PR from `feat/nettoolskit-ds-page-section-wrappers-2026-06-20` into `feat/nettoolskit-ds-table-wrapper-2026-06-20`.
-- PR #14 is open as a draft stacked PR from `feat/nettoolskit-ntk-button-compat-2026-06-20` into `feat/nettoolskit-ds-page-section-wrappers-2026-06-20`.
-- PR #15 is open as a draft stacked PR from `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20` into `feat/nettoolskit-ntk-button-compat-2026-06-20`.
-- PR #16 is open as a draft stacked PR from `feat/nettoolskit-ntk-datatable-compat-2026-06-20` into `refactor/nettoolskit-cms-ruler-ds-button-2026-06-20`.
-- PR #17 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-ds-button-2026-06-20` into `feat/nettoolskit-ntk-datatable-compat-2026-06-20`.
-- PR #18 is open as a draft stacked PR from `feat/nettoolskit-ntk-select-compat-2026-06-20` into `refactor/nettoolskit-cms-media-ds-button-2026-06-20`.
-- PR #19 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-ds-button-2026-06-20` into `feat/nettoolskit-ntk-select-compat-2026-06-20`.
-- PR #20 is open as a draft stacked PR from `feat/nettoolskit-ntk-input-compat-2026-06-20` into `refactor/nettoolskit-cms-releases-ds-button-2026-06-20`.
-- PR #21 is open as a draft stacked PR from `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20` into `feat/nettoolskit-ntk-input-compat-2026-06-20`.
-- PR #22 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-preview-toolbar-ntk-select-2026-06-20`.
-- PR #23 is open as a draft stacked PR from `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20` into `refactor/nettoolskit-cms-media-fields-ntk-form-2026-06-20`.
-- PR #24 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-cards-2026-06-20` into `refactor/nettoolskit-cms-bridge-field-token-aliases-2026-06-20`.
-- PR #25 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-shell-native-cards-2026-06-20`.
-- PR #26 is open as a draft stacked PR from `refactor/nettoolskit-cms-shell-native-separator-2026-06-20` into `refactor/nettoolskit-cms-releases-fields-ntk-form-2026-06-20`.
-- PR #27 is open as a draft stacked PR from `refactor/nettoolskit-cms-native-separators-2026-06-20` into `refactor/nettoolskit-cms-shell-native-separator-2026-06-20`.
-- PR #28 is open as a draft stacked PR from `refactor/nettoolskit-cms-usage-drawer-native-shell-2026-06-20` into `refactor/nettoolskit-cms-native-separators-2026-06-20`.
-- PR #29 is open as a draft stacked PR from `refactor/nettoolskit-cms-shared-native-chips-2026-06-20` into `refactor/nettoolskit-cms-usage-drawer-native-shell-2026-06-20`.
-- PR #30 is open as a draft stacked PR from `refactor/nettoolskit-cms-media-native-chips-2026-06-20` into `refactor/nettoolskit-cms-shared-native-chips-2026-06-20`.
-- PR #31 is open as a draft stacked PR from `refactor/nettoolskit-cms-pages-preview-native-chips-2026-06-20` into `refactor/nettoolskit-cms-media-native-chips-2026-06-20`.
-- PR #32 is open as a draft stacked PR from `refactor/nettoolskit-cms-blocks-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-preview-native-chips-2026-06-20`.
-- PR #33 is open as a draft stacked PR from `refactor/nettoolskit-cms-pages-native-chips-2026-06-20` into `refactor/nettoolskit-cms-blocks-native-chips-2026-06-20`.
-- PR #34 is open as a draft stacked PR from `refactor/nettoolskit-cms-releases-native-chips-2026-06-20` into `refactor/nettoolskit-cms-pages-native-chips-2026-06-20`.
-- PR #35 is open as a draft stacked PR from `refactor/nettoolskit-cms-settings-native-chips-2026-06-20` into `refactor/nettoolskit-cms-releases-native-chips-2026-06-20`.
-- PR #35 remote checks passed at 2026-06-20 13:55: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
-- PR #36 is open as a draft stacked PR from `refactor/nettoolskit-cms-settings-content-fields-ntk-form-2026-06-20` into `refactor/nettoolskit-cms-settings-native-chips-2026-06-20`.
-- PR #36 remote checks passed at 2026-06-20 14:25: Vercel passed, Vercel Preview Comments passed, and GitHub Actions are still not present in `gh pr checks`.
-- Remaining spec gaps have been converted into the next implementation-slice queue; CI/PR stack inspection is now the next checklist item.
-- Specs and this plan must stay active until remaining gaps, CI/review evidence, and closeout are recorded.
+- All 8 linked specs remain under `planning/specs/active` with implementation evidence, validation evidence, and closeout evidence recorded.
+- PR #1 through PR #36 were accepted and merged before final integration closeout.
+- Repository owner/name is now `NetToolsKit/nettoolskit-ui`; server branch cleanup left only `main` and `refactor/nettoolskit-cms-settings-content-fields-ntk-form-2026-06-20`.
+- Final integration PR #37 is the active closeout PR into `main`: `https://github.com/NetToolsKit/nettoolskit-ui/pull/37`.
+- PR #37 remote checks passed after CI remediation at commit `26ba999a05`: CodeQL, CodeQL Analysis, Dependency Review, Vulnerability Audit, Lint + Type-check + Unit, Build Verification, E2E, and Visual Regression.
+- Remaining gap slices are documented below as future follow-up work and are not blockers for this final integration PR.
 
 ### 2026-06-21 10:58 - Stage 14 CI And PR Stack Reconciliation
 
@@ -107,7 +74,9 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 - Initial PR #37 dependency review failed because GitHub reported dependency review is not supported until dependency graph is enabled for the repository; the workflow now keeps Dependency Review as best-effort so unsupported repository settings do not block the rest of the security gate.
 - Initial PR #37 CodeQL code-scanning check reported 12 alerts. Remediation removed regex-dependent slug/email normalization paths, added markdown backslash escaping, and blocked unsafe media binding path segments (`__proto__`, `prototype`, and `constructor`) before nested object assignment.
 - `tests/unit/modules/cms/MediaLibrary.spec.ts` now covers unsafe media binding target paths and verifies prototype pollution does not occur.
-- PR #37 must remain draft until the remote GitHub Actions recheck on this closeout commit passes.
+- Later PR #37 remote CI exposed frontend security wrapper incompatibility and broad Playwright E2E runtime. Workflows now run the pinned frontend vulnerability audit directly against runtime dependencies and keep E2E focused on stable runtime smoke flows, while visual/a11y gates remain covered by dedicated browser jobs.
+- PR #37 checks passed at commit `26ba999a05`: CodeQL, CodeQL Analysis, Dependency Review, Vulnerability Audit, Lint + Type-check + Unit, Build Verification, E2E, and Visual Regression.
+- This planning closeout commit is documentation-only; after its remote recheck passes, PR #37 can be marked ready for review without additional code changes.
 
 ## Remaining Gap Slice Queue
 
