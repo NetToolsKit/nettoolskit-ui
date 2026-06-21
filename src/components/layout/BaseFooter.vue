@@ -3,7 +3,8 @@
  * Src/components/layout/Base Footer module.
  */
 
+import type { DefineComponent } from 'vue'
 import NtkFooter from './NtkFooter.vue'
 
-export default NtkFooter
+export default NtkFooter as unknown as DefineComponent
 </script>
