@@ -2,8 +2,8 @@
 
 Date: 2026-06-19
 Generated: 2026-06-19 16:00
-LastUpdated: 2026-06-21 12:40
-Status: active
+LastUpdated: 2026-06-21 12:52
+Status: completed
 Progress: 100% (15/15 checked)
 Primary specialist: `dev-frontend-vue-quasar-engineer`
 Tester: mandatory
@@ -36,18 +36,18 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 
 ## Linked Specs
 
-1. `planning/specs/active/nettoolskit-frontend-standard-sequence-2026-06-19.md`
-2. `planning/specs/active/nettoolskit-package-surface-and-sources-2026-06-19.md`
-3. `planning/specs/active/nettoolskit-design-tokens-dtcg-2026-06-19.md`
-4. `planning/specs/active/nettoolskit-theme-density-quasar-adapter-2026-06-19.md`
-5. `planning/specs/active/nettoolskit-component-contracts-and-recipes-2026-06-19.md`
-6. `planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md`
-7. `planning/specs/active/nettoolskit-template-migration-and-cleanup-2026-06-19.md`
-8. `planning/specs/active/nettoolskit-quality-gates-and-documentation-2026-06-19.md`
+1. `planning/specs/completed/nettoolskit-frontend-standard-sequence-2026-06-19.md`
+2. `planning/specs/completed/nettoolskit-package-surface-and-sources-2026-06-19.md`
+3. `planning/specs/completed/nettoolskit-design-tokens-dtcg-2026-06-19.md`
+4. `planning/specs/completed/nettoolskit-theme-density-quasar-adapter-2026-06-19.md`
+5. `planning/specs/completed/nettoolskit-component-contracts-and-recipes-2026-06-19.md`
+6. `planning/specs/completed/nettoolskit-css-governance-and-enforcement-2026-06-19.md`
+7. `planning/specs/completed/nettoolskit-template-migration-and-cleanup-2026-06-19.md`
+8. `planning/specs/completed/nettoolskit-quality-gates-and-documentation-2026-06-19.md`
 
 ## Current Planning Status
 
-- All 8 linked specs remain under `planning/specs/active` with implementation evidence, validation evidence, and closeout evidence recorded.
+- All 8 linked specs moved to `planning/specs/completed` with implementation evidence, validation evidence, and closeout evidence recorded.
 - PR #1 through PR #36 were accepted and merged before final integration closeout.
 - Repository owner/name is now `NetToolsKit/nettoolskit-ui`; server branch cleanup left only `main` and `refactor/nettoolskit-cms-settings-content-fields-ntk-form-2026-06-20`.
 - Final integration PR #37 is the active closeout PR into `main`: `https://github.com/NetToolsKit/nettoolskit-ui/pull/37`.
