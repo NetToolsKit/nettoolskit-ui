@@ -118,7 +118,7 @@
     "vite": "^6.0.5",
     "vitest": "^4.0.18",
     "vue": "^3.5.38",
-    "vue-eslint-parser": "^9.4.3",
+    "vue-eslint-parser": "^10.4.1",
     "vue-router": "^4.6.4",
     "vue-tsc": "^2.0.0"
   },
