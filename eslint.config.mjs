@@ -3,9 +3,17 @@ import vue from 'eslint-plugin-vue'
 import tsParser from '@typescript-eslint/parser'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import vueParser from 'vue-eslint-parser'
+import globals from 'globals'
+
+const runtimeGlobals = {
+  ...globals.browser,
+  ...globals.node,
+  ...globals.es2026,
+}
 
 const tsLanguageOptions = {
   parser: tsParser,
+  globals: runtimeGlobals,
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -50,6 +58,7 @@ export default [
     files: ['**/*.vue'],
     languageOptions: {
       parser: vueParser,
+      globals: runtimeGlobals,
       parserOptions: {
         ...tsLanguageOptions.parserOptions,
         parser: tsParser,

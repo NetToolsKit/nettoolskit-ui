@@ -4,6 +4,7 @@
 
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { nextTick } from 'vue'
 import CmsLandingFeaturesBlock from '../../../../src/modules/cms/blocks/landing/CmsLandingFeaturesBlock.vue'
 
 const defaultItems = [
@@ -29,6 +30,15 @@ function mockCardRect(element: Element): void {
       toJSON: () => ({}),
     }),
   })
+}
+
+async function dispatchPointerEvent(element: Element, type: string, clientX: number, clientY: number): Promise<void> {
+  element.dispatchEvent(new MouseEvent(type, {
+    bubbles: true,
+    clientX,
+    clientY,
+  }))
+  await nextTick()
 }
 
 describe('CmsLandingFeaturesBlock', () => {
@@ -58,8 +68,8 @@ describe('CmsLandingFeaturesBlock', () => {
     const card = wrapper.find('.cms-features-card')
     mockCardRect(card.element)
 
-    await card.trigger('pointerenter', { clientX: 100, clientY: 60 })
-    await card.trigger('pointermove', { clientX: 160, clientY: 30 })
+    await dispatchPointerEvent(card.element, 'pointerenter', 100, 60)
+    await dispatchPointerEvent(card.element, 'pointermove', 160, 30)
 
     const style = card.attributes('style') ?? ''
     expect(style).toContain('--cms-card-tilt-x')

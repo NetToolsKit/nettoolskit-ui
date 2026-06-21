@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-03-01
 
+### Changed
+
+- **Unified npm major dependency upgrade**
+  - Updated the frontend dependency set for TypeScript 6, vue-tsc 3, Vite 8, Vue Router 5, ESLint 10, eslint-plugin-vue 10, vue-eslint-parser 10, jsdom 29, cross-env 10, and Highcharts 13 in one compatible lockfile.
+  - Added ESLint runtime globals for browser, Node, and modern ECMAScript APIs required by the existing Vue/Quasar source tree.
+  - Stabilized TypeScript 6 and vue-tsc 3 declaration checks for style imports and legacy `Base*` component aliases.
+  - Updated the jsdom 29 pointer-event unit test path to dispatch DOM events with coordinates through the event constructor.
+
 ### Added
 
 - **NtkInput design-system compatibility aliases**
