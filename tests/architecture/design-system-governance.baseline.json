@@ -1,15 +1,14 @@
 {
   "schemaVersion": 1,
   "scannedRoots": [
-    "src/components",
-    "src/templates"
+    "src/components"
   ],
-  "scannedFiles": 177,
+  "scannedFiles": 58,
   "metrics": {
-    "directQuasarTags": 1446,
-    "quasarClassSelectors": 412,
-    "unmanagedDeepSelectors": 221,
-    "importantDeclarations": 256,
+    "directQuasarTags": 334,
+    "quasarClassSelectors": 144,
+    "unmanagedDeepSelectors": 106,
+    "importantDeclarations": 110,
     "rawHexColors": 0
   }
 }

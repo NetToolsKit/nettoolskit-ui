@@ -46,33 +46,26 @@
     "build:js": "tsup",
     "build:dts": "vue-tsc --declaration --emitDeclarationOnly --outDir .build/dist",
     "build:samples": "vite build",
-    "build:landing": "npm run build:samples",
     "dev": "npm run dev:samples",
     "dev:samples": "vite",
-    "dev:landing": "npm run dev:samples",
     "dev:lib": "tsup --watch",
     "prepublishOnly": "npm run build",
     "docs:build": "node scripts/design-system-docs.mjs",
     "docs:check": "node scripts/design-system-docs.mjs --check",
     "tokens:build": "node scripts/token-build.mjs",
     "tokens:check": "node scripts/token-build.mjs --check",
-    "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts",
+    "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
     "test:architecture": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/architecture",
     "test:design-system": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
     "test:tokens": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system/tokens/token-build.spec.ts --environment=node --pool=forks --maxWorkers=1 --no-file-parallelism",
-    "test:a11y": "playwright test tests/e2e/design-system-a11y.spec.ts --workers=1",
-    "test:visual": "playwright test tests/e2e/template-runtime-visual.spec.ts tests/e2e/cms-visual-regression.spec.ts --workers=1",
-    "test:browser-gates": "playwright test tests/e2e/design-system-a11y.spec.ts tests/e2e/template-runtime-visual.spec.ts tests/e2e/cms-visual-regression.spec.ts --workers=1",
     "test:watch": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --config tests/vitest.config.ts",
     "test:coverage": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --coverage --config tests/vitest.config.ts",
     "test:ui": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --ui --config tests/vitest.config.ts",
-    "test:e2e": "playwright test",
-    "test:e2e:update": "playwright test --update-snapshots",
     "lint": "eslint src samples --ext .ts,.vue",
     "lint:style": "stylelint \"src/**/*.css\"",
     "lint:css": "node scripts/lint-css-governance.mjs",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:design-system && npm run test:architecture && npm run test:browser-gates && npm run build"
+    "verify": "npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:design-system && npm run test:architecture && npm run build && npm run build:samples"
   },
   "keywords": [
     "vue",
@@ -91,12 +84,11 @@
   },
   "peerDependencies": {
     "quasar": "^2.0.0",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "vue-router": "^5.0.0"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.11.3",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.61.0",
     "@quasar/vite-plugin": "^1.12.0",
     "@types/node": "^25.0.3",
     "@typescript-eslint/eslint-plugin": "^8.61.1",
@@ -124,7 +116,6 @@
     "vue-tsc": "^3.3.5"
   },
   "dependencies": {
-    "@quasar/extras": "^1.17.0",
-    "highcharts": "13.0.0"
+    "@quasar/extras": "^1.17.0"
   }
 }

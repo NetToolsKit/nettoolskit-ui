@@ -1,6 +1,0 @@
-export * from './navigation-template.catalog'
-export * from './menu-template.types'
-export { default as AppBreadcrumbTemplate } from './AppBreadcrumbTemplate.vue'
-export { default as HorizontalMenuLinkTemplate } from './HorizontalMenuLinkTemplate.vue'
-export { default as MenuLinkTemplate } from './MenuLinkTemplate.vue'
-export { default as UserMenuTemplate } from './UserMenuTemplate.vue'

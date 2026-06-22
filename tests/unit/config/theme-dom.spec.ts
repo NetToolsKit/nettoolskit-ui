@@ -1,20 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-
-const { darkSetMock } = vi.hoisted(() => ({
-  darkSetMock: vi.fn(),
-}))
-
-vi.mock('quasar', () => ({
-  Dark: {
-    set: darkSetMock,
-  },
-}))
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import { syncThemeDomState } from '../../../src/config/theme/theme-dom'
 
 describe('theme DOM sync', () => {
   beforeEach(() => {
-    darkSetMock.mockClear()
     document.documentElement.removeAttribute('style')
     document.documentElement.removeAttribute('data-theme')
     document.documentElement.className = ''
@@ -48,7 +37,8 @@ describe('theme DOM sync', () => {
     expect(root.style.getPropertyValue('--q-info')).toBe('#14b8a6')
     expect(root.style.getPropertyValue('--q-dark')).toBe('#1a1a19')
     expect(root.style.getPropertyValue('--q-dark-page')).toBe('#0e0e0d')
-    expect(darkSetMock).toHaveBeenCalledWith(true)
+    expect(root.classList.contains('dark')).toBe(true)
+    expect(document.body.classList.contains('body--dark')).toBe(true)
   })
 
   it('prefers explicit secondary when provided by a host white-label theme', () => {

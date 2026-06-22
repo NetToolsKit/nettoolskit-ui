@@ -3,7 +3,6 @@ name: design-system-css-governance
 description: Baseline-aware CSS and template governance for the NetToolsKit frontend standard.
 governedRoots:
   - src/components
-  - src/templates
 sourceExtensions:
   - .css
   - .scss
@@ -31,17 +30,17 @@ baseline:
 exceptions:
   - metric: directQuasarTags
     owner: frontend-standard-migration
-    removalSpec: planning/specs/active/nettoolskit-template-migration-and-cleanup-2026-06-19.md
-    reason: Legacy CMS/template surfaces still expose direct Quasar components while Ds/Ntk wrappers are migrated in thin PRs.
+    removalSpec: planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md
+    reason: Legacy Ntk compatibility components still expose direct Quasar components while Ds/Ntk wrappers are migrated in thin PRs.
   - metric: quasarClassSelectors
     owner: frontend-standard-migration
-    removalSpec: planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md
-    reason: Existing bridge styles retain Quasar class selectors until wrapper recipes cover the affected controls.
+    removalSpec: planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md
+    reason: Existing component bridge styles retain Quasar class selectors until wrapper recipes cover the affected controls.
   - metric: unmanagedDeepSelectors
     owner: frontend-standard-migration
-    removalSpec: planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md
-    reason: Existing deep selectors remain as compatibility bridges and cannot increase over the baseline.
+    removalSpec: planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md
+    reason: Existing component deep selectors remain as compatibility bridges and cannot increase over the baseline.
   - metric: importantDeclarations
     owner: frontend-standard-migration
-    removalSpec: planning/specs/active/nettoolskit-css-governance-and-enforcement-2026-06-19.md
-    reason: Existing important declarations remain as compatibility bridges and cannot increase over the baseline.
+    removalSpec: planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md
+    reason: Existing component important declarations remain as compatibility bridges and cannot increase over the baseline.

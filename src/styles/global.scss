@@ -1,9 +1,8 @@
 /**
- * Global Application Styles - Landing Page Design System
- * Modern, clean design with refined luxury typography
+ * Global library styles.
+ * Keep this file product-neutral: consumers own application shells, routes,
+ * landing pages and CMS-specific style bridges.
  */
-
-@use '../templates/styles/reference-app-bridge';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
 
 /* ============================================

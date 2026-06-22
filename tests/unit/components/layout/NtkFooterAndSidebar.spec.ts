@@ -6,8 +6,17 @@ import NtkSidebar from '../../../../src/components/layout/NtkSidebar.vue'
 
 vi.mock('../../../../src/composables/ui/useBranding', () => ({
   useBranding: () => ({
-    appName: { value: 'TestBrand' },
-    tagline: { value: '' },
+    logo: { value: { type: 'letter', value: 'N', alt: 'NetToolsKit' } },
+    appName: { value: 'BrandApp' },
+    tagline: { value: 'Brand tagline' },
+    primaryColor: { value: 'var(--ntk-primary)' },
+    secondaryColor: { value: 'var(--ntk-secondary)' },
+    social: {
+      value: {
+        github: 'https://github.com/test',
+        linkedin: 'https://linkedin.com/company/test',
+      },
+    },
   }),
 }))
 

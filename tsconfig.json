@@ -20,6 +20,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["index.ts", "src/**/*", "landing-page/**/*", "samples/**/*", "vite.config.ts"],
+  "include": ["index.ts", "src/**/*"],
   "exclude": ["node_modules", "dist", "tests", "**/*.spec.ts"]
 }

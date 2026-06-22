@@ -4,7 +4,6 @@
 
 import { describe, expect, it } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
-import { createLandingPageConfig } from '../../../src/config/landing/landing-page.config'
 
 type VueComponentModule = {
   default: unknown
@@ -44,7 +43,6 @@ const requiredPropsByFileName: Record<string, Record<string, unknown>> = {
   'NtkInput.vue': fieldLabel,
   'NtkTextarea.vue': fieldLabel,
   'NtkTimePicker.vue': fieldLabel,
-  'NtkLandingComposer.vue': { config: createLandingPageConfig() },
   'NtkAppSidebar.vue': { menuItems: [{ label: 'Home', to: '/' }] },
   'NtkContactSection.vue': { title: 'Contact us' },
   'BaseFeatureCard.vue': { title: 'Feature title' },

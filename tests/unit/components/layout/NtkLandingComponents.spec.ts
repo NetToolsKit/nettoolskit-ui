@@ -3,8 +3,6 @@ import { shallowMount } from '@vue/test-utils'
 
 import NtkHero from '../../../../src/components/layout/NtkHero.vue'
 import NtkCTASection from '../../../../src/components/layout/NtkCTASection.vue'
-import NtkLandingComposer from '../../../../src/components/layout/NtkLandingComposer.vue'
-import type { LandingPageConfig } from '../../../../src/config/landing/landing-page.config'
 
 vi.mock('../../../../src/composables/ui/useTheme', () => ({
   useTheme: () => ({
@@ -19,8 +17,17 @@ vi.mock('../../../../src/composables/ui/useTheme', () => ({
 
 vi.mock('../../../../src/composables/ui/useBranding', () => ({
   useBranding: () => ({
+    logo: { value: { type: 'letter', value: 'N', alt: 'NetToolsKit' } },
     appName: { value: 'BrandApp' },
     tagline: { value: 'Brand tagline' },
+    primaryColor: { value: 'var(--ntk-primary)' },
+    secondaryColor: { value: 'var(--ntk-secondary)' },
+    social: {
+      value: {
+        github: 'https://github.com/test',
+        linkedin: 'https://linkedin.com/company/test',
+      },
+    },
   }),
 }))
 
@@ -162,71 +169,5 @@ describe('NtkCTASection', () => {
     })
 
     expect(wrapper.find('.cta-btn--secondary').exists()).toBe(false)
-  })
-})
-
-// ─── NtkLandingComposer ────────────────────────────────────────────────────
-
-function makeConfig(sections: Record<string, boolean> = {}): LandingPageConfig {
-  return {
-    sections: {
-      header: false,
-      hero: false,
-      stats: false,
-      services: false,
-      stack: false,
-      contact: false,
-      cta: false,
-      footer: false,
-      ...sections,
-    },
-    header: { logoText: 'Test', logoLetter: 'T', logoLink: '#', navItems: [], ctaText: '', ctaLink: '' },
-    hero: { variant: 'default', layout: 'split', size: 'md', title: 'Hello', subtitle: '', image: '', imageAlt: '' },
-    stats: { title: 'Stats', items: [] },
-    services: { title: 'Services', services: [] },
-    stack: { title: 'Stack', categories: [] },
-    contact: { title: 'Contact', showForm: false, channels: [] },
-    cta: { title: 'CTA', primaryCTA: { text: 'Go', link: '#' } },
-    footer: { brandName: 'Test', linkSections: [], copyrightText: '' },
-  }
-}
-
-describe('NtkLandingComposer', () => {
-  it('renders hero stub when sections.hero is true', () => {
-    const wrapper = shallowMount(NtkLandingComposer, {
-      props: { config: makeConfig({ hero: true }) },
-    })
-
-    expect(wrapper.find('ntk-hero-stub').exists()).toBe(true)
-  })
-
-  it('does not render hero when sections.hero is false', () => {
-    const wrapper = shallowMount(NtkLandingComposer, {
-      props: { config: makeConfig({ hero: false }) },
-    })
-
-    expect(wrapper.find('ntk-hero-stub').exists()).toBe(false)
-  })
-
-  it('emits contact-submit when NtkContactSection emits submit', async () => {
-    const wrapper = shallowMount(NtkLandingComposer, {
-      props: { config: makeConfig({ contact: true }) },
-    })
-
-    const payload = { name: 'Ana', email: 'ana@example.com' }
-    await wrapper.find('ntk-contact-section-stub').trigger('submit', payload)
-    expect(wrapper.emitted('contact-submit')).toBeTruthy()
-  })
-
-  it('renders all enabled sections and hides disabled ones', () => {
-    const wrapper = shallowMount(NtkLandingComposer, {
-      props: { config: makeConfig({ header: true, hero: true, footer: true }) },
-    })
-
-    expect(wrapper.find('ntk-landing-header-stub').exists()).toBe(true)
-    expect(wrapper.find('ntk-hero-stub').exists()).toBe(true)
-    expect(wrapper.find('ntk-footer-stub').exists()).toBe(true)
-    expect(wrapper.find('ntk-stats-section-stub').exists()).toBe(false)
-    expect(wrapper.find('ntk-service-grid-stub').exists()).toBe(false)
   })
 })

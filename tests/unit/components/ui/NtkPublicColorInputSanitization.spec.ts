@@ -14,11 +14,17 @@ import NtkSteps from '../../../../src/components/ui/NtkSteps.vue'
 
 vi.mock('../../../../src/composables/ui/useBranding', () => ({
   useBranding: () => ({
-    logo: { value: { value: 'N' } },
-    appName: { value: 'NetToolsKit' },
-    tagline: { value: 'Toolkit' },
+    logo: { value: { type: 'letter', value: 'N', alt: 'NetToolsKit' } },
+    appName: { value: 'BrandApp' },
+    tagline: { value: 'Brand tagline' },
     primaryColor: { value: 'var(--ntk-primary)' },
     secondaryColor: { value: 'var(--ntk-secondary)' },
+    social: {
+      value: {
+        github: 'https://github.com/test',
+        linkedin: 'https://linkedin.com/company/test',
+      },
+    },
   }),
 }))
 

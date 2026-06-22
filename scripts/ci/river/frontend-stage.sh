@@ -51,31 +51,20 @@ case "$stage" in
     run_changed_surface
     npm_ci
     npm run build
-    npm run build:landing
+    npm run build:samples
     test -f .build/dist/index.js
     test -f .build/dist/index.mjs
     test -f .build/dist/index.d.ts
     test -f .build/dist/styles.js
     test -f .build/dist/styles.mjs
+    test -d .build/samples
     ;;
   test)
     run_changed_surface
     npm_ci
     npm run test:architecture
+    npm run test:design-system
     npm test
-    npx playwright install --with-deps chromium
-    npm run test:a11y
-    npx playwright test \
-      tests/e2e/template-runtime-reset-workspace.spec.ts \
-      tests/e2e/template-runtime-whitelabel.spec.ts \
-      tests/e2e/template-runtime-wiki-chat.spec.ts \
-      --project=chromium \
-      --workers=1
-    if [ "${NTK_RIVER_ENABLE_WINDOWS_VISUAL:-0}" = "1" ]; then
-      npm run test:visual
-    else
-      echo "River test: Windows-specific visual snapshot suites remain in the manual GitHub fallback workflow."
-    fi
     ;;
   *)
     echo "Unknown River frontend stage: $stage" >&2

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
   applyThemeColors,
@@ -6,12 +6,6 @@ import {
   lightThemeColors,
 } from '../../../src/config/colors/theme-mode.config'
 import { defaultTheme, getTheme, themes } from '../../../src/config/theme/theme.config'
-
-vi.mock('quasar', () => ({
-  Dark: {
-    set: vi.fn(),
-  },
-}))
 
 describe('theme fallback configuration', () => {
   beforeEach(() => {

@@ -6,7 +6,7 @@ This repository uses a unified standard for documentation and frontend delivery 
 
 Applies to:
 - `README.md` at repository root
-- all domain README files (for example `planning/README.md`, `src/templates/README.md`)
+- all domain README files (for example `planning/README.md`, `samples/README.md`)
 - frontend-oriented implementation slices (Vue/TS/SCSS)
 
 ## README Minimum Contract

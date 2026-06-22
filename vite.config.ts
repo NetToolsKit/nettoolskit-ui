@@ -6,7 +6,7 @@ import { resolve } from 'path'
 const modernSassApiOption = { api: 'modern-compiler' } as Record<string, string>
 
 /**
- * Split strategy used by the public samples host and template builds.
+ * Split strategy used by the public samples host.
  * Keeps framework/vendor code separated from feature-specific code
  * to reduce single-bundle size warnings and improve cacheability.
  */
@@ -14,36 +14,11 @@ function manualChunkByModule(id: string): string | undefined {
   const normalized = id.replace(/\\/g, '/')
 
   if (!normalized.includes('/node_modules/')) {
-    if (normalized.includes('/landing-page/CmsApp.vue')) {
-      return 'cms-app'
-    }
-    if (
-      normalized.includes('/src/modules/cms/releases/')
-      || normalized.includes('/src/modules/cms/index.ts')
-      || normalized.includes('/src/modules/cms/index')
-      || normalized.includes('/src/modules/cms/white-label/')
-      || normalized.includes('/src/modules/cms/core/')
-      || normalized.includes('/src/modules/cms/renderer/')
-    ) {
-      return 'cms-engine'
-    }
-    if (
-      normalized.includes('/src/modules/cms/blocks/')
-      || normalized.includes('/src/modules/cms/presets/')
-    ) {
-      return 'cms-blocks'
-    }
-    if (normalized.includes('/src/templates/')) {
-      return 'template-system'
-    }
     return undefined
   }
 
   if (normalized.includes('/node_modules/quasar/')) {
     return 'vendor-quasar'
-  }
-  if (normalized.includes('/node_modules/vue-router/')) {
-    return 'vendor-vue-router'
   }
 
   return 'vendor'
@@ -61,7 +36,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, './samples/index.html'),
-        internalCms: resolve(__dirname, './samples/internal-cms.html'),
       },
       output: {
         manualChunks: manualChunkByModule,
