@@ -3,6 +3,17 @@
 Date: 2026-06-21
 Status: active
 Branch: `ci/gitriver-access-cicd`
+Progress: 86% (6/7 checked)
+
+## Progress Checklist
+
+- [x] Add GitRiver workflow metadata for the canonical stages.
+- [x] Add source-owned River shell scripts for clone-safe frontend gates and changed-surface handling.
+- [x] Restrict GitHub Actions to manual/scheduled fallback instead of routine PR gates.
+- [x] Add an Access wrapper for publishing GitRiver metadata for `nettoolskit-ui`.
+- [x] Validate locally, dry-run Access publication, and publish through Access.
+- [x] Commit, push, and open/update the GitHub PR for this migration.
+- [ ] Move the active spec and plan to completed after the migration PR is merged and closeout is confirmed.
 
 ## PR Audit
 
