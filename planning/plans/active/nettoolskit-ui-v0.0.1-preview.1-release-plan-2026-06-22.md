@@ -1,10 +1,11 @@
 # NetToolsKit UI v0.0.1-preview.1 Release - Plan
 
 Generated: 2026-06-22 08:25 America/Sao_Paulo
-LastUpdated: 2026-06-22 08:41 America/Sao_Paulo
-Status: active
-Progress: 86% (6/7 checked)
+LastUpdated: 2026-06-22 08:46 America/Sao_Paulo
+Status: ready-for-review
+Progress: 100% (7/7 checked)
 Branch: `release/v0.0.1-preview.1`
+PullRequest: https://github.com/NetToolsKit/nettoolskit-ui/pull/59
 Source Traceability: not required
 
 ## Progress Checklist
@@ -15,7 +16,7 @@ Source Traceability: not required
 - [x] Changelog has a dated `0.0.1-preview.1` section.
 - [x] Local release gates pass.
 - [x] Package dry-run proves the preview tarball shape.
-- [ ] Release commit is pushed and PR-ready.
+- [x] Release commit is pushed and PR-ready.
 
 ## Scope Summary
 
@@ -72,6 +73,8 @@ for the preview release.
   `scripts/ci/river/run-source-gate.sh`,
   `scripts/ci/river/changed-surface.sh`, and
   `scripts/ci/river/frontend-stage.sh`.
+- Pushed: branch `release/v0.0.1-preview.1` to `origin`.
+- Opened: PR #59 `chore(release): prepare v0.0.1-preview.1`.
 
 ## Closeout Expectations
 
