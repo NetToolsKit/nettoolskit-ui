@@ -1,14 +1,14 @@
 # NetToolsKit UI River Stage Policy Standardization - Spec
 
-Status: planning-ready
+Status: completed
 Created: 2026-06-21 17:32 America/Sao_Paulo
-LastUpdated: 2026-06-21 17:32 America/Sao_Paulo
+LastUpdated: 2026-06-22 08:32 America/Sao_Paulo
 Generated: 2026-06-21 17:32
-Related Plan: `planning/plans/active/nettoolskit-ui-river-stage-policy-standardization-plan-2026-06-21.md`
+Related Plan: `planning/plans/completed/2026-06/nettoolskit-ui-river-stage-policy-standardization-plan-2026-06-21.md`
 Workstream ID: `nettoolskit-ui-river-stage-policy-standardization`
 Source Spec: `nettoolskit-agent/planning/specs/completed/2026-06/202606191130-spec-cicd-promotion-workflow-validation.md`
 Source Follow-Up: `nettoolskit-agent/planning/plans/completed/2026-06/202606211300-plan-cicd-stage-only-closeout-followup.md`
-Related Local Planning: `planning/specs/active/nettoolskit-ui-gitriver-cicd-migration-2026-06-21.md`
+Related Local Planning: `planning/specs/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-2026-06-21.md`
 
 ## Objective
 
@@ -150,3 +150,11 @@ planning, future validation, review, and closeout.
   are changed in this planning-only slice.
 - Performance: future ordinary PR gates can stay bounded and avoid promotion,
   browser-heavy, or package/deploy work unless the changed surface requires it.
+
+## Closeout
+
+Completed for `v0.0.1-preview.1` release preparation after the policy overlay
+was reconciled with the implemented GitRiver migration. Public contexts are
+stage-only `river/{stage}` names, River metadata validates `GITHUB_SOURCE_SHA`,
+GitHub Actions remain fallback/manual/scheduled where applicable, and PR #55 was
+merged into `main` on 2026-06-21T21:39:23Z with River contexts successful.

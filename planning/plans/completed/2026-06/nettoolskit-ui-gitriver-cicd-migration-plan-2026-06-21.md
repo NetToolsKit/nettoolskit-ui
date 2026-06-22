@@ -1,9 +1,10 @@
 # NetToolsKit UI GitRiver CI/CD Migration - Plan
 
 Date: 2026-06-21
-Status: active
+LastUpdated: 2026-06-22 08:32
+Status: completed
 Branch: `ci/gitriver-access-cicd`
-Progress: 86% (6/7 checked)
+Progress: 100% (7/7 checked)
 
 ## Progress Checklist
 
@@ -13,7 +14,7 @@ Progress: 86% (6/7 checked)
 - [x] Add an Access wrapper for publishing GitRiver metadata for `nettoolskit-ui`.
 - [x] Validate locally, dry-run Access publication, and publish through Access.
 - [x] Commit, push, and open/update the GitHub PR for this migration.
-- [ ] Move the active spec and plan to completed after the migration PR is merged and closeout is confirmed.
+- [x] Move the active spec and plan to completed after the migration PR is merged and closeout is confirmed.
 
 ## PR Audit
 
@@ -55,9 +56,9 @@ All currently open PRs are mergeable. The blocking state is CI/CD instability fr
 - Passed: `npm run docs:check`
 - Passed: `npm audit --omit=dev --audit-level=high`
 - Passed: `git diff --check`
+- Merged: PR #53 merged into `main` on 2026-06-21T18:51:34Z with River `prepare`, `standard`, `security`, `build`, and `test` contexts successful.
 - Not used as a gate: local `changed-surface` functional loop timed out in Windows Git Bash while `git fetch` waited on SSH; GitRiver uses HTTPS with `GITHUB_SOURCE_TOKEN` through Access.
 
 ## Closeout
 
-- Update this plan with the validation and publication result.
-- Move active spec and plan to completed after the migration PR is merged.
+- Closed for `v0.0.1-preview.1` release preparation after merged PR and GitRiver publication evidence were verified.

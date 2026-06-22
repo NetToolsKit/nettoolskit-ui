@@ -7,7 +7,7 @@ Priority: high
 Branch: `TBD`
 Workstream ID: `nettoolskit-ui-legacy-ntk-governance-hardening`
 Related Standard: `.temp/NETTOOLSKIT_FRONTEND_DESIGN_SYSTEM_STANDARD.md`
-Related Baseline: `planning/specs/active/nettoolskit-ui-library-only-surface-2026-06-21.md`
+Related Baseline: `planning/specs/completed/2026-06/nettoolskit-ui-library-only-surface-2026-06-21.md`
 
 ## Objective
 

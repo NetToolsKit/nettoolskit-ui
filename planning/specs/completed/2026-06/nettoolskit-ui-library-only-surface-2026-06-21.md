@@ -1,8 +1,8 @@
 # NetToolsKit UI Library-Only Surface - Spec
 
 Generated: 2026-06-21 19:14
-LastUpdated: 2026-06-21 20:55
-Status: ready-for-review
+LastUpdated: 2026-06-22 08:32
+Status: completed
 Priority: high
 Branch: `refactor/library-only-surface`
 BackupBranch: `backup/pre-library-only-cleanup-2026-06-21`
@@ -90,3 +90,9 @@ Ready for execution planning.
 - Frontend Vue/Quasar engineer
 - Test engineer for package gates
 - Release closeout engineer for README/changelog/PR summary
+
+## Closeout
+
+Completed for `v0.0.1-preview.1` release preparation after PR #56 was merged
+into `main` on 2026-06-22T00:06:00Z with River `prepare`, `standard`,
+`security`, `build`, and `test` contexts successful.

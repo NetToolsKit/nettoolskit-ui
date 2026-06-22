@@ -1,10 +1,10 @@
 # Dependency PR Unification - Plan
 
 Date: 2026-06-21
-LastUpdated: 2026-06-21 17:36
-Status: active - PR open, River CI green
+LastUpdated: 2026-06-22 08:32
+Status: completed
 Branch: `chore/unify-dependency-upgrades`
-Progress: 86% (6/7 checked)
+Progress: 100% (7/7 checked)
 
 ## Scope
 
@@ -35,7 +35,7 @@ Separate spec registration is not required for this workstream because this is d
 - [x] Run install, audit, lint, type-check, unit tests, and build as applicable.
 - [x] Commit with semantic Git message and push branch.
 - [x] Open one GitHub PR and record validation/CI status.
-- [ ] Merge PR and close superseded Dependabot PRs after operator approval.
+- [x] Merge PR and close superseded Dependabot PRs after operator approval.
 
 ## Validation Targets
 
@@ -69,8 +69,8 @@ Separate spec registration is not required for this workstream because this is d
 - Opened draft PR: https://github.com/NetToolsKit/nettoolskit-ui/pull/54
 - Commit: `400d2824a8 chore(deps): unify frontend major upgrades`
 - CI status: River contexts passed on commit `65b5c7c7de72b4dc440ba35e050a85ac1768e0c7`: `river/prepare`, `river/standard`, `river/security`, `river/build`, and `river/test`.
+- Merged: PR #54 merged into `main` on 2026-06-21T21:18:51Z with River `prepare`, `standard`, `security`, `build`, and `test` contexts successful.
 
 ## Closeout
 
-- Keep the final PR title semantic, without `[codex]`.
-- After the unified PR is green, the individual Dependabot PRs can be closed as superseded.
+- Closed for `v0.0.1-preview.1` release preparation after merged PR evidence was verified.

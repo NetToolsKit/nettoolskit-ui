@@ -1,26 +1,26 @@
 # NetToolsKit UI River Stage Policy Standardization - Plan
 
 Generated: 2026-06-21 17:32
-LastUpdated: 2026-06-21 17:36
-Status: active
+LastUpdated: 2026-06-22 08:32
+Status: completed
 Owner: nettoolskit-ui
 Branch: `docs/nettoolskit-ui-river-stage-policy-spec-20260621`
-Spec Path: `planning/specs/active/nettoolskit-ui-river-stage-policy-standardization-2026-06-21.md`
+Spec Path: `planning/specs/completed/2026-06/nettoolskit-ui-river-stage-policy-standardization-2026-06-21.md`
 Workstream ID: `nettoolskit-ui-river-stage-policy-standardization`
-Related Local Plan: `planning/plans/active/nettoolskit-ui-gitriver-cicd-migration-plan-2026-06-21.md`
-Progress: 22% (2/9 checked)
+Related Local Plan: `planning/plans/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-plan-2026-06-21.md`
+Progress: 100% (9/9 checked)
 
 ## Progress Checklist
 
 - [x] Register the Agent-derived CI/CD River stage policy spec.
 - [x] Register the active execution plan for future rollout or reconciliation.
-- [ ] Reconcile this policy overlay with the existing UI GitRiver CI/CD migration plan.
-- [ ] Inventory existing GitHub Actions, package, release, browser, and frontend validation surfaces.
-- [ ] Map existing and required checks to canonical stages: prepare, standard, security, build, test, package, release, deploy, and verify.
-- [ ] Confirm every public River context is stage-only `river/{stage}` where River is configured.
-- [ ] Validate exact source SHA checkout behavior where River execution exists.
-- [ ] Run repository-specific validation and status visibility audit.
-- [ ] Complete review, README/changelog decision, PR evidence, and archive closeout.
+- [x] Reconcile this policy overlay with the existing UI GitRiver CI/CD migration plan.
+- [x] Inventory existing GitHub Actions, package, release, browser, and frontend validation surfaces.
+- [x] Map existing and required checks to canonical stages: prepare, standard, security, build, test, package, release, deploy, and verify.
+- [x] Confirm every public River context is stage-only `river/{stage}` where River is configured.
+- [x] Validate exact source SHA checkout behavior where River execution exists.
+- [x] Run repository-specific validation and status visibility audit.
+- [x] Complete review, README/changelog decision, PR evidence, and archive closeout.
 
 ## Scope Summary
 
@@ -49,8 +49,8 @@ closeout.
 
 2. Reconcile this policy overlay with existing UI GitRiver migration planning.
    - Target paths:
-     `planning/specs/active/nettoolskit-ui-gitriver-cicd-migration-2026-06-21.md`,
-     `planning/plans/active/nettoolskit-ui-gitriver-cicd-migration-plan-2026-06-21.md`.
+    `planning/specs/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-2026-06-21.md`,
+    `planning/plans/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-plan-2026-06-21.md`.
    - Checkpoint: no contradictory context naming or validation claims remain.
 
 3. In a future implementation or reconciliation branch, inventory current CI/CD
@@ -77,15 +77,20 @@ closeout.
 ## Validation Checklist
 
 - [x] Planning-only branch validates with `git diff --check`.
-- [ ] Existing UI GitRiver migration planning is reconciled with this stage policy overlay.
-- [ ] Public River contexts are stage-only `river/{stage}` names where River is configured.
-- [ ] River source checkout validates exact source SHA before gates run where River is configured.
-- [ ] Ordinary PR gates stay bounded and skip-aware.
-- [ ] Promotion workflows keep approval, rollback, pinned actions, least privilege, and secret hygiene.
+- [x] Existing UI GitRiver migration planning is reconciled with this stage policy overlay.
+- [x] Public River contexts are stage-only `river/{stage}` names where River is configured.
+- [x] River source checkout validates exact source SHA before gates run where River is configured.
+- [x] Ordinary PR gates stay bounded and skip-aware.
+- [x] Promotion workflows keep approval, rollback, pinned actions, least privilege, and secret hygiene.
 
 ## Validation Evidence
 
 - 2026-06-21 17:36: `git diff --check` passed for the planning-only changes.
+- 2026-06-22 08:32: `.gitriver/workflows/nettoolskit-ui-quality.yml` exposes stage-only public contexts: `river/prepare`, `river/standard`, `river/security`, `river/build`, and `river/test`.
+- 2026-06-22 08:32: River metadata validates `GITHUB_SOURCE_SHA` before each stage gate.
+- 2026-06-22 08:32: GitHub Actions are restricted to `workflow_dispatch` and scheduled fallback/security evidence paths for this repository.
+- 2026-06-22 08:32: Git Bash syntax check passed for `scripts/ci/river/run-source-gate.sh`, `scripts/ci/river/changed-surface.sh`, and `scripts/ci/river/frontend-stage.sh`.
+- 2026-06-22 08:32: PR #55 merged into `main` on 2026-06-21T21:39:23Z with River `prepare`, `standard`, `security`, `build`, and `test` contexts successful.
 
 ## Risks And Mitigations
 
@@ -101,9 +106,5 @@ closeout.
 
 ## Closeout Expectations
 
-- README update: deferred until implementation or reconciliation changes
-  developer workflow or CI/CD commands.
-- CHANGELOG update: deferred until implementation or reconciliation is
-  release-relevant; this planning-only registration does not change runtime
-  behavior.
-- Commit message suggestion: `docs(planning): register river stage policy baseline`.
+- Closed for `v0.0.1-preview.1` release preparation after reconciliation with
+  the implemented GitRiver migration and merged PR evidence were verified.

@@ -1,7 +1,8 @@
 # NetToolsKit UI GitRiver CI/CD Migration - Spec
 
 Date: 2026-06-21
-Status: active
+LastUpdated: 2026-06-22 08:32
+Status: completed
 Priority: P0
 Source Guidance: `nettoolskit-agent` operations, governance, and security CI/CD instructions
 
@@ -41,6 +42,8 @@ Open Dependabot PRs are mergeable, but most are blocked by legacy GitHub Actions
 - Synced masked `GITHUB_SOURCE_TOKEN`, `GHCR_PUBLISH_TOKEN`, and `NPM_TOKEN` through Access.
 - Reloaded the Access `access-ci` stack so the live webhook bridge uses the current repository route map.
 - Verified PR pipeline `019eeb25-8fc8-7221-bd84-6aae4f216868` completed successfully in `admin/nettoolskit-ui-ci`.
+- PR #53 merged into `main` on 2026-06-21T18:51:34Z with River `prepare`,
+  `standard`, `security`, `build`, and `test` contexts successful.
 
 ## Risks
 
@@ -52,3 +55,8 @@ Open Dependabot PRs are mergeable, but most are blocked by legacy GitHub Actions
 
 - Primary: `ops-devops-platform-engineer`
 - Support: `test-engineer`, `release-closeout-engineer`
+
+## Closeout
+
+Completed for `v0.0.1-preview.1` release preparation after the GitRiver
+migration PR was merged and publication evidence was recorded.
