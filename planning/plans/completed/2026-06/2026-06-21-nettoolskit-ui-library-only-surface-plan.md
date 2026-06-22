@@ -6,7 +6,7 @@ Status: completed
 Progress: 100% (9/9 checked)
 Branch: `refactor/library-only-surface`
 BackupBranch: `backup/pre-library-only-cleanup-2026-06-21`
-Spec: `planning/specs/completed/2026-06/nettoolskit-ui-library-only-surface-2026-06-21.md`
+Spec: `planning/specs/completed/2026-06/2026-06-21-nettoolskit-ui-library-only-surface.md`
 PullRequest: https://github.com/NetToolsKit/nettoolskit-ui/pull/56
 
 ## Progress Checklist

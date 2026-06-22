@@ -28,7 +28,7 @@ Overall status: **100%**
 
 ## Relationship To The Templates Functional Plan
 
-This plan is the visual-architecture dependency for `planning/plans/completed/2026-04/templates-100-functional-whitelabel-plan-2026-04-15.md`.
+This plan is the visual-architecture dependency for `planning/plans/completed/2026-04/2026-04-15-templates-100-functional-whitelabel-plan.md`.
 
 It owns the frontend visual recovery scope that was previously spread across the older plan's white-label, visual regression, and visual closeout slices. Runtime-local functionality, placeholder replacement, and non-visual release completion remain owned by the older plan.
 
@@ -245,7 +245,7 @@ The visual architecture must follow the documented Quasar and Vue behavior:
 
 **Target paths:**
 - `README.md`
-- `planning/plans/completed/2026-04/vue-quasar-visual-architecture-replatform-2026-04-16.md`
+- `planning/plans/completed/2026-04/2026-04-16-vue-quasar-visual-architecture-replatform.md`
 - `docs/knowledge-base/planning-reference/white-label-parameters-table.md`
 
 **Changes:**

@@ -36,14 +36,14 @@ Package naming must use `nettoolskit`. Repository-owned terminal commands may us
 
 ## Linked Specs
 
-1. `planning/specs/completed/2026-06/nettoolskit-frontend-standard-sequence-2026-06-19.md`
-2. `planning/specs/completed/2026-06/nettoolskit-package-surface-and-sources-2026-06-19.md`
-3. `planning/specs/completed/2026-06/nettoolskit-design-tokens-dtcg-2026-06-19.md`
-4. `planning/specs/completed/2026-06/nettoolskit-theme-density-quasar-adapter-2026-06-19.md`
-5. `planning/specs/completed/2026-06/nettoolskit-component-contracts-and-recipes-2026-06-19.md`
-6. `planning/specs/completed/2026-06/nettoolskit-css-governance-and-enforcement-2026-06-19.md`
-7. `planning/specs/completed/2026-06/nettoolskit-template-migration-and-cleanup-2026-06-19.md`
-8. `planning/specs/completed/2026-06/nettoolskit-quality-gates-and-documentation-2026-06-19.md`
+1. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-frontend-standard-sequence.md`
+2. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-package-surface-and-sources.md`
+3. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-design-tokens-dtcg.md`
+4. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-theme-density-quasar-adapter.md`
+5. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-component-contracts-and-recipes.md`
+6. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-css-governance-and-enforcement.md`
+7. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-template-migration-and-cleanup.md`
+8. `planning/specs/completed/2026-06/2026-06-19-nettoolskit-quality-gates-and-documentation.md`
 
 ## Current Planning Status
 

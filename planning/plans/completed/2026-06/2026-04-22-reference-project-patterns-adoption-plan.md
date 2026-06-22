@@ -222,7 +222,7 @@ Validation commands:
 Status: completed
 
 Target paths:
-- `planning/active/reference-project-patterns-adoption-plan-2026-04-22.md`
+- `planning/active/2026-04-22-reference-project-patterns-adoption-plan.md`
 
 Work:
 - Build a matrix of project, useful pattern, UI surface impacted, fit score, priority, and implementation risk.
@@ -230,7 +230,7 @@ Work:
 - Mark backend/platform concepts as out of scope.
 
 Validation commands:
-- `rg -n 'Directus|Strapi|Budibase|OpenBlocks|Frappe|Corteza|Appwrite|Skyve' planning/active/reference-project-patterns-adoption-plan-2026-04-22.md`
+- `rg -n 'Directus|Strapi|Budibase|OpenBlocks|Frappe|Corteza|Appwrite|Skyve' planning/active/2026-04-22-reference-project-patterns-adoption-plan.md`
 
 Checkpoint:
 - Every provided reference link has a clear useful/not-useful decision.
@@ -347,7 +347,7 @@ Status: ready
 
 Target paths:
 - `.build/reference-project-patterns/`
-- `planning/active/reference-project-patterns-adoption-plan-2026-04-22.md`
+- `planning/active/2026-04-22-reference-project-patterns-adoption-plan.md`
 - future completed plan path under `planning/plans/completed/YYYY-MM/`
 
 Work:

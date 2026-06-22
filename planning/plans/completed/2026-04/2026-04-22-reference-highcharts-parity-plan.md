@@ -106,8 +106,8 @@ Suggested commit:
 ### Task 4 - Plan Closeout
 
 Target paths:
-- `planning/active/enterprise-reference-visual-evidence-plan-2026-04-22.md`
-- `planning/active/reference-highcharts-parity-plan-2026-04-22.md`
+- `planning/active/2026-04-22-enterprise-reference-visual-evidence-plan.md`
+- `planning/active/2026-04-22-reference-highcharts-parity-plan.md`
 
 Work:
 - Update enterprise progress after Highcharts parity evidence passes.

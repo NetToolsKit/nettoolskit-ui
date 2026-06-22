@@ -9,8 +9,8 @@ The active planning folder contained older Vue/Quasar and reference-pattern plan
 
 ## Archived Files
 
-- `reference-project-patterns-adoption-plan-2026-04-22.md`
-- `vue-quasar-enterprise-compliance-plan-2026-04-22.md`
+- `2026-04-22-reference-project-patterns-adoption-plan.md`
+- `2026-04-22-vue-quasar-enterprise-compliance-plan.md`
 
 ## Archive Rule
 

@@ -7,7 +7,7 @@ Branch: `feat/remove-cms-whitelabel-reference-2026-04-01`
 ## Summary
 
 Second-pass gap closure against `docs/knowledge-base/planning-reference/layout-cms.md`.
-4 structural/behavioral gaps remain after the initial 6 were closed (see `planning/plans/completed/2026-04/reference-layout-gap-closure-plan-2026-04-02.md`).
+4 structural/behavioral gaps remain after the initial 6 were closed (see `planning/plans/completed/2026-04/2026-04-02-reference-layout-gap-closure-plan.md`).
 
 ## Out of scope
 

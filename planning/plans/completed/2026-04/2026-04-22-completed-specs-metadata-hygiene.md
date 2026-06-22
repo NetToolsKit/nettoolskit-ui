@@ -27,7 +27,7 @@ Overall status: **100%**
 | Slice | Status | Completed evidence |
 |---|---:|---|
 | Slice 1 - Completed Spec Status Metadata | 100% | Completed specs now use completed/archived status wording. |
-| Slice 2 - Completed Spec Language Hygiene | 100% | `reference-full-component-parity-spec-2026-04-13.md` was translated to English while preserving historical intent. |
+| Slice 2 - Completed Spec Language Hygiene | 100% | `2026-04-13-reference-full-component-parity-spec.md` was translated to English while preserving historical intent. |
 | Slice 3 - Historical Backlog Wording | 100% | Archived checklists and CMS remaining-work lists are explicitly marked as historical/superseded. |
 | Slice 4 - Residual Artifact Guard | 100% | `.gitignore` now blocks root `test-results/`, `playwright-report/`, `reports/`, `screenshots/`, and `traces/`. |
 | Slice 5 - Validation And Closeout | 100% | Status/reference/language scans and `git diff --check` passed. |

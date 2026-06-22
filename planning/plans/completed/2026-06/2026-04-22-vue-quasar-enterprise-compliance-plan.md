@@ -174,7 +174,7 @@ Suggested commit:
 Target paths:
 - `tests/e2e/template-runtime-reference-evidence.spec.ts`
 - `.build/evidence/reference-visual-comparison/`
-- `planning/active/vue-quasar-enterprise-compliance-plan-2026-04-22.md`
+- `planning/active/2026-04-22-vue-quasar-enterprise-compliance-plan.md`
 
 Work:
 - Extend evidence with a matrix covering theme tokens, Quasar shell, table/list, avatar initials, overlays, dark contrast, and reference resource parity.

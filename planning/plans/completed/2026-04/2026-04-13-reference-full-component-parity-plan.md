@@ -2,7 +2,7 @@
 
 Date: 2026-04-13
 Branch: `feat/reference-full-component-parity-2026-04-13`
-Spec: `planning/specs/completed/2026-04/reference-full-component-parity-spec-2026-04-13.md`
+Spec: `planning/specs/completed/2026-04/2026-04-13-reference-full-component-parity-spec.md`
 Status: completed
 
 ## Scope Summary
@@ -229,8 +229,8 @@ Replicate every component, layout, page, module, store, style, and composable fr
 **Goal:** Final validation of visual and functional parity.
 
 **Target paths:**
-- `planning/plans/completed/2026-04/reference-full-component-parity-plan-2026-04-13.md`
-- `planning/specs/completed/2026-04/reference-full-component-parity-spec-2026-04-13.md`
+- `planning/plans/completed/2026-04/2026-04-13-reference-full-component-parity-plan.md`
+- `planning/specs/completed/2026-04/2026-04-13-reference-full-component-parity-spec.md`
 
 **Changes:**
 - Run complete smoke tests on every page.

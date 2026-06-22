@@ -4,11 +4,11 @@ Status: completed
 Created: 2026-06-21 17:32 America/Sao_Paulo
 LastUpdated: 2026-06-22 08:32 America/Sao_Paulo
 Generated: 2026-06-21 17:32
-Related Plan: `planning/plans/completed/2026-06/nettoolskit-ui-river-stage-policy-standardization-plan-2026-06-21.md`
+Related Plan: `planning/plans/completed/2026-06/2026-06-21-nettoolskit-ui-river-stage-policy-standardization-plan.md`
 Workstream ID: `nettoolskit-ui-river-stage-policy-standardization`
 Source Spec: `nettoolskit-agent/planning/specs/completed/2026-06/202606191130-spec-cicd-promotion-workflow-validation.md`
 Source Follow-Up: `nettoolskit-agent/planning/plans/completed/2026-06/202606211300-plan-cicd-stage-only-closeout-followup.md`
-Related Local Planning: `planning/specs/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-2026-06-21.md`
+Related Local Planning: `planning/specs/completed/2026-06/2026-06-21-nettoolskit-ui-gitriver-cicd-migration.md`
 
 ## Objective
 

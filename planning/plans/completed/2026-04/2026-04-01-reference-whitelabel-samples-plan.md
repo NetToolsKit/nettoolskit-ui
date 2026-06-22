@@ -64,7 +64,7 @@ Out of scope for this workstream:
 
 1. Create the execution track for CMS removal and reference-system adoption
    - Target paths:
-     - `planning/plans/completed/2026-04/reference-whitelabel-samples-plan-2026-04-01.md`
+     - `planning/plans/completed/2026-04/2026-04-01-reference-whitelabel-samples-plan.md`
    - Checkpoints:
      - scope, risks, validations, and commit checkpoints are explicit
    - Commit checkpoint suggestion:

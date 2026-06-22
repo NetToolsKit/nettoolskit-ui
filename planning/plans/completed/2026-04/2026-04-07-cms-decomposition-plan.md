@@ -178,7 +178,7 @@ Archive note: this list was superseded by the later closeout direction and is no
 
 ### Slice 3
 - Target paths:
-  - `planning/plans/completed/2026-04/cms-decomposition-plan-2026-04-07.md`
+  - `planning/plans/completed/2026-04/2026-04-07-cms-decomposition-plan.md`
 - Commands:
   - `npm run type-check`
   - `npm run lint`

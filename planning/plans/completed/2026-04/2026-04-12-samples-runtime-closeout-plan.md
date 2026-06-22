@@ -75,7 +75,7 @@
 
 ### Task 5-6: Validation and closeout
 - target paths:
-  - `planning/plans/completed/2026-04/samples-runtime-closeout-plan-2026-04-12.md`
+  - `planning/plans/completed/2026-04/2026-04-12-samples-runtime-closeout-plan.md`
 - commands:
   - `npm run type-check`
   - `npm run test -- tests/unit/landing/LandingTokenization.spec.ts tests/unit/samples/TemplateVisualFamilies.spec.ts tests/unit/samples/TemplateShowcaseApprovedReference.spec.ts`

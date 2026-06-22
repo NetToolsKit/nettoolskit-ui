@@ -4,7 +4,7 @@ Date: 2026-03-26
 Repository: `nettoolskit-ui-vue`
 Status: Completed / archived
 Related history:
-- `planning/plans/completed/2026-03/cms-engine-enterprise-plan-2026-03-13.md`
+- `planning/plans/completed/2026-03/2026-03-13-cms-engine-enterprise-plan.md`
 
 ## Scope Summary
 
@@ -21,7 +21,7 @@ Out of scope:
 
 ## Current Reality Baseline
 
-- Historical plan status in `planning/plans/completed/2026-03/cms-engine-enterprise-plan-2026-03-13.md` says the template/reference alignment track was completed.
+- Historical plan status in `planning/plans/completed/2026-03/2026-03-13-cms-engine-enterprise-plan.md` says the template/reference alignment track was completed.
 - This corrective workstream started because the runtime did not fully match that claim:
   - `landing-page/CmsApp.vue` was still using `NtkAppShell`
   - `Settings`, `Pages`, and `Blocks` were still rendering large inline designer shells instead of consuming `MainLayoutTemplate` and `EditorWorkbenchTemplate` as the primary host surfaces
@@ -114,8 +114,8 @@ Out of scope:
 
 1. Reconcile plan status with runtime truth
    - Target paths:
-     - `planning/plans/completed/2026-03/cms-engine-reference-alignment-plan-2026-03-26.md`
-     - `planning/plans/completed/2026-03/cms-engine-enterprise-plan-2026-03-13.md`
+     - `planning/plans/completed/2026-03/2026-03-26-cms-engine-reference-alignment-plan.md`
+     - `planning/plans/completed/2026-03/2026-03-13-cms-engine-enterprise-plan.md`
    - Commands:
      - `git status --short`
      - `rg -n "NtkAppShell|MainLayoutTemplate|EditorWorkbenchTemplate" landing-page/CmsApp.vue src/templates -S`
@@ -204,7 +204,7 @@ Out of scope:
    - Target paths:
      - `.temp/reference/**`
      - `.temp/comparison/**`
-     - `planning/plans/completed/2026-03/cms-engine-reference-alignment-plan-2026-03-26.md`
+     - `planning/plans/completed/2026-03/2026-03-26-cms-engine-reference-alignment-plan.md`
      - `README.md`
      - `src/templates/**/README.md`
    - Commands:

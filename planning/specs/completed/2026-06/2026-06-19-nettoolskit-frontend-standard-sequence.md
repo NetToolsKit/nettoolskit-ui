@@ -22,13 +22,13 @@ The active workstream now starts from these specs:
 
 | Priority | Sequence | Spec | Purpose |
 |---|---:|---|---|
-| P0 | 01 | `nettoolskit-package-surface-and-sources-2026-06-19.md` | Naming, source lock, package surface, repo-owned commands, and documentation ownership |
-| P0 | 02 | `nettoolskit-design-tokens-dtcg-2026-06-19.md` | DTCG token files, resolver, generated CSS/TS, compatibility bridge |
-| P0 | 03 | `nettoolskit-theme-density-quasar-adapter-2026-06-19.md` | Theme, density, dark mode, multi-tenant validation, Quasar adapter |
-| P1 | 04 | `nettoolskit-component-contracts-and-recipes-2026-06-19.md` | Typed visual contracts, recipes, `Ds*` components, `Ntk*` compatibility |
-| P1 | 05 | `nettoolskit-css-governance-and-enforcement-2026-06-19.md` | CSS layers, `:deep()` policy, `!important` policy, ESLint and Stylelint |
-| P1 | 06 | `nettoolskit-template-migration-and-cleanup-2026-06-19.md` | CMS/templates migration away from direct Quasar and residual bridge overrides |
-| P2 | 07 | `nettoolskit-quality-gates-and-documentation-2026-06-19.md` | Tests, a11y, visual evidence, generated docs, CI gates |
+| P0 | 01 | `2026-06-19-nettoolskit-package-surface-and-sources.md` | Naming, source lock, package surface, repo-owned commands, and documentation ownership |
+| P0 | 02 | `2026-06-19-nettoolskit-design-tokens-dtcg.md` | DTCG token files, resolver, generated CSS/TS, compatibility bridge |
+| P0 | 03 | `2026-06-19-nettoolskit-theme-density-quasar-adapter.md` | Theme, density, dark mode, multi-tenant validation, Quasar adapter |
+| P1 | 04 | `2026-06-19-nettoolskit-component-contracts-and-recipes.md` | Typed visual contracts, recipes, `Ds*` components, `Ntk*` compatibility |
+| P1 | 05 | `2026-06-19-nettoolskit-css-governance-and-enforcement.md` | CSS layers, `:deep()` policy, `!important` policy, ESLint and Stylelint |
+| P1 | 06 | `2026-06-19-nettoolskit-template-migration-and-cleanup.md` | CMS/templates migration away from direct Quasar and residual bridge overrides |
+| P2 | 07 | `2026-06-19-nettoolskit-quality-gates-and-documentation.md` | Tests, a11y, visual evidence, generated docs, CI gates |
 
 ## Required Ordering
 

@@ -4,7 +4,7 @@ Date: 2026-04-01
 Repository: `nettoolskit-ui-vue`
 Status: Complete
 Related history:
-- `planning/plans/completed/2026-03/cms-engine-reference-alignment-plan-2026-03-26.md`
+- `planning/plans/completed/2026-03/2026-03-26-cms-engine-reference-alignment-plan.md`
 
 ## Normalized Intake Summary
 
@@ -157,7 +157,7 @@ Out of scope for this workstream:
      - `landing-page/TemplateShowcaseApp.vue`
      - `tests/unit/templates/**`
      - `README.md`
-     - `planning/plans/completed/2026-04/reference-whitelabel-report-system-plan-2026-04-01.md`
+     - `planning/plans/completed/2026-04/2026-04-01-reference-whitelabel-report-system-plan.md`
    - Commands:
      - `npm run lint`
      - `npm run type-check`

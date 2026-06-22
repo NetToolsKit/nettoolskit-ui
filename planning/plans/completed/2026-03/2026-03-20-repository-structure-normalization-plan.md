@@ -38,8 +38,8 @@ Out of scope:
 
 ## Decisions
 
-- `planning/plans/completed/2026-03/cms-engine-enterprise-plan-2026-03-13.md` is archived as completed after later CMS closeout work resolved the remaining items.
-- `planning/plans/completed/2026-03/landing-standardization-plan-2026-03-18.md` is archived as completed.
+- `planning/plans/completed/2026-03/2026-03-13-cms-engine-enterprise-plan.md` is archived as completed after later CMS closeout work resolved the remaining items.
+- `planning/plans/completed/2026-03/2026-03-18-landing-standardization-plan.md` is archived as completed.
 - `layout-cms.md` and the white-label hardcoded audit are support material, not execution plans; they belong in `docs/knowledge-base/planning-reference/`.
 - `node_modules/` remains at repository root because npm/Vite/TypeScript resolution expects the standard location; it is not safe to relocate as a repository hygiene change.
 - Root deployment manifests such as `vercel.json` remain at root because their hosting providers expect that location.

@@ -5,9 +5,9 @@ LastUpdated: 2026-06-22 08:32
 Status: completed
 Owner: nettoolskit-ui
 Branch: `docs/nettoolskit-ui-river-stage-policy-spec-20260621`
-Spec Path: `planning/specs/completed/2026-06/nettoolskit-ui-river-stage-policy-standardization-2026-06-21.md`
+Spec Path: `planning/specs/completed/2026-06/2026-06-21-nettoolskit-ui-river-stage-policy-standardization.md`
 Workstream ID: `nettoolskit-ui-river-stage-policy-standardization`
-Related Local Plan: `planning/plans/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-plan-2026-06-21.md`
+Related Local Plan: `planning/plans/completed/2026-06/2026-06-21-nettoolskit-ui-gitriver-cicd-migration-plan.md`
 Progress: 100% (9/9 checked)
 
 ## Progress Checklist
@@ -49,8 +49,8 @@ closeout.
 
 2. Reconcile this policy overlay with existing UI GitRiver migration planning.
    - Target paths:
-    `planning/specs/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-2026-06-21.md`,
-    `planning/plans/completed/2026-06/nettoolskit-ui-gitriver-cicd-migration-plan-2026-06-21.md`.
+    `planning/specs/completed/2026-06/2026-06-21-nettoolskit-ui-gitriver-cicd-migration.md`,
+    `planning/plans/completed/2026-06/2026-06-21-nettoolskit-ui-gitriver-cicd-migration-plan.md`.
    - Checkpoint: no contradictory context naming or validation claims remain.
 
 3. In a future implementation or reconciliation branch, inventory current CI/CD
