@@ -2,7 +2,8 @@
 
 Generated: 2026-06-21 21:43 America/Sao_Paulo
 LastUpdated: 2026-06-21 21:43 America/Sao_Paulo
-Status: active
+Status: superseded
+Superseded-by: `planning/specs/active/2026-06-23-nettoolskit-ui-legacy-surface-elimination.md`
 Priority: high
 Branch: `TBD`
 Workstream ID: `nettoolskit-ui-legacy-ntk-governance-hardening`
