@@ -64,8 +64,9 @@
     "lint": "eslint src samples --ext .ts,.vue",
     "lint:style": "stylelint \"src/**/*.css\"",
     "lint:css": "node scripts/lint-css-governance.mjs",
+    "sec:audit": "npm audit --omit=dev --audit-level=high",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run build:samples"
+    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run build:samples"
   },
   "keywords": [
     "vue",
@@ -78,6 +79,12 @@
   ],
   "author": "Thiago Guislotti",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/NetToolsKit/nettoolskit-ui.git"
