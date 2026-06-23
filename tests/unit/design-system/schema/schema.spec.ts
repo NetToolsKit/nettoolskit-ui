@@ -203,3 +203,30 @@ describe('defineResource', () => {
     expect(() => defineResource({ title: 'X', columns: [] })).toThrow(/columns must not be empty/)
   })
 })
+describe('schema coverage completeness', () => {
+  it('humanizeFieldName returns the original for empty or separator-only names', () => {
+    expect(humanizeFieldName('')).toBe('')
+    expect(humanizeFieldName('___')).toBe('___')
+  })
+
+  it('resolveFieldRules includes a pattern rule when pattern is set', () => {
+    const rules = resolveFieldRules({ field: 'code', type: 'text', pattern: /^\d+$/ })
+    expect(rules).toHaveLength(1)
+    expect(rules[0]('12a')).toBe('Formato inválido')
+    expect(rules[0]('123')).toBe(true)
+  })
+
+  it('bounded rules are optional-friendly on empty input', () => {
+    expect(minLengthRule(3)('')).toBe(true)
+    expect(maxLengthRule(3)('')).toBe(true)
+    expect(minValueRule(1)('')).toBe(true)
+    expect(minValueRule(1)(null)).toBe(true)
+    expect(maxValueRule(1)('')).toBe(true)
+    expect(maxValueRule(1)(undefined)).toBe(true)
+    expect(patternRule(/x/)('')).toBe(true)
+  })
+
+  it('defineResource rejects a column without a field', () => {
+    expect(() => defineResource({ title: 'X', columns: [{ field: '' } as never] })).toThrow(/field is required/)
+  })
+})

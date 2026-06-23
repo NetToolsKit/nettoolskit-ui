@@ -46,6 +46,12 @@ export default defineConfig({
           functions: 100,
           lines: 100,
           branches: 90
+        },
+        'src/design-system/core/schema/**/*.ts': {
+          statements: 100,
+          functions: 100,
+          lines: 100,
+          branches: 90
         }
       }
     }
