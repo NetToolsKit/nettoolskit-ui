@@ -31,6 +31,7 @@ import {
   DsFormPage,
   DsCrudPage,
   DsChip,
+  DsSteps,
 } from '@/design-system/vue'
 
 interface PropDescriptor {
@@ -97,6 +98,7 @@ const components: Record<string, unknown> = {
   DsFormPage,
   DsCrudPage,
   DsChip,
+  DsSteps,
 }
 
 describe('Ds* public API contract', () => {

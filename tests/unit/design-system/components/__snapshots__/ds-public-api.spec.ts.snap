@@ -1020,6 +1020,61 @@ exports[`Ds* public API contract > pins the public props/events of DsStateBlock 
 }
 `;
 
+exports[`Ds* public API contract > pins the public props/events of DsSteps 1`] = `
+{
+  "emits": [
+    "step-click",
+  ],
+  "name": "DsSteps",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "clickable": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "current": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "orientation": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "steps": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsTable 1`] = `
 {
   "emits": [
