@@ -27,15 +27,27 @@ export default defineConfig({
     include: ['tests/unit/**/*.spec.ts', 'tests/architecture/**/*.spec.ts'],
     coverage: {
       provider: 'v8',
-      reportsDirectory: '../.build/coverage',
+      reportsDirectory: resolve(__dirname, '../.build/coverage'),
       reporter: ['text', 'json', 'html'],
       clean: true,
-      include: ['../src/**/*.ts', '../src/**/*.vue'],
+      // Paths are resolved relative to the Vitest root (the project root), so
+      // they must be root-relative, not relative to this config file.
+      include: ['src/**/*.ts', 'src/**/*.vue'],
       exclude: [
-        '../src/**/*.d.ts',
-        '../src/**/index.ts',
-        '../src/styles/**'
-      ]
+        'src/**/*.d.ts',
+        'src/**/index.ts',
+        'src/styles/**'
+      ],
+      // The deterministic core (contracts + recipes) is the highest-value layer
+      // to keep fully covered. Other layers are gated by their own suites.
+      thresholds: {
+        'src/design-system/core/components/**/*.ts': {
+          statements: 100,
+          functions: 100,
+          lines: 100,
+          branches: 90
+        }
+      }
     }
   },
   resolve: {

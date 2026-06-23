@@ -465,3 +465,127 @@ html[data-theme] body {
   background: var(--ntk-bg-primary);
   color: var(--ntk-text-primary);
 }
+
+/* ============================================================
+ * GENERIC COLOR SCHEME - DARK MODE
+ * ============================================================
+ * Dark mode is an axis that is independent from the named brand
+ * [data-theme] palettes above. It overrides ONLY the canonical
+ * semantic tokens that Ds* components consume, so switching schemes
+ * never requires editing component CSS ("change tokens, not CSS").
+ *
+ *   auto      follows the OS when no explicit choice is made
+ *   explicit  [data-color-scheme='dark' | 'light'] always wins
+ *
+ * Drive it from useColorScheme(): it sets
+ *   document.documentElement.dataset.colorScheme
+ * and mirrors Quasar via the body--dark class.
+ *
+ * This generic scheme targets the default (brandless) token set.
+ * The named brand themes ship their own light/dark palettes.
+ */
+:root {
+  --ntk-color-scheme-dark: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]):not([data-color-scheme]) {
+    color-scheme: dark;
+
+    --ntk-color-scheme-dark: 1;
+
+    --ntk-bg-primary: #0f172a;
+    --ntk-bg-secondary: #111c30;
+    --ntk-bg-tertiary: #1e293b;
+    --ntk-bg-card: #1a2436;
+    --ntk-bg-elevated: #22304a;
+    --ntk-bg-overlay: rgba(2, 6, 23, 0.72);
+    --ntk-bg-hover: rgba(148, 163, 184, 0.12);
+    --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.24);
+    --ntk-bg-light: #1e293b;
+    --ntk-dark-page: #0b1220;
+
+    --ntk-text-primary: #f1f5f9;
+    --ntk-text-secondary: #cbd5e1;
+    --ntk-text-muted: #94a3b8;
+    --ntk-text-inverse: #0f172a;
+    --ntk-text-dark: #f1f5f9;
+    --ntk-text-light: #cbd5e1;
+    --ntk-text-lighter: #94a3b8;
+
+    --ntk-border-color: #2b3a52;
+    --ntk-border-light: #1e293b;
+    --ntk-border-dark: #3b4a63;
+    --ntk-border-input: rgba(226, 232, 240, 0.24);
+    --ntk-border-input-hover: rgba(226, 232, 240, 0.45);
+
+    --ntk-success: #34d399;
+    --ntk-success-light: rgba(52, 211, 153, 0.16);
+    --ntk-success-dark: #6ee7b7;
+    --ntk-warning: #fbbf24;
+    --ntk-warning-light: rgba(251, 191, 36, 0.16);
+    --ntk-warning-dark: #fcd34d;
+    --ntk-error: #f87171;
+    --ntk-error-light: rgba(248, 113, 113, 0.16);
+    --ntk-error-dark: #fca5a5;
+    --ntk-info: #2dd4bf;
+    --ntk-info-light: rgba(45, 212, 191, 0.16);
+    --ntk-info-dark: #5eead4;
+
+    --ntk-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --ntk-shadow-card-hover: 0 8px 20px rgba(0, 0, 0, 0.55);
+  }
+}
+
+html[data-color-scheme='dark'] {
+  color-scheme: dark;
+
+  --ntk-color-scheme-dark: 1;
+
+  --ntk-bg-primary: #0f172a;
+  --ntk-bg-secondary: #111c30;
+  --ntk-bg-tertiary: #1e293b;
+  --ntk-bg-card: #1a2436;
+  --ntk-bg-elevated: #22304a;
+  --ntk-bg-overlay: rgba(2, 6, 23, 0.72);
+  --ntk-bg-hover: rgba(148, 163, 184, 0.12);
+  --ntk-bg-active: rgba(var(--ntk-primary-rgb), 0.24);
+  --ntk-bg-light: #1e293b;
+  --ntk-dark-page: #0b1220;
+
+  --ntk-text-primary: #f1f5f9;
+  --ntk-text-secondary: #cbd5e1;
+  --ntk-text-muted: #94a3b8;
+  --ntk-text-inverse: #0f172a;
+  --ntk-text-dark: #f1f5f9;
+  --ntk-text-light: #cbd5e1;
+  --ntk-text-lighter: #94a3b8;
+
+  --ntk-border-color: #2b3a52;
+  --ntk-border-light: #1e293b;
+  --ntk-border-dark: #3b4a63;
+  --ntk-border-input: rgba(226, 232, 240, 0.24);
+  --ntk-border-input-hover: rgba(226, 232, 240, 0.45);
+
+  --ntk-success: #34d399;
+  --ntk-success-light: rgba(52, 211, 153, 0.16);
+  --ntk-success-dark: #6ee7b7;
+  --ntk-warning: #fbbf24;
+  --ntk-warning-light: rgba(251, 191, 36, 0.16);
+  --ntk-warning-dark: #fcd34d;
+  --ntk-error: #f87171;
+  --ntk-error-light: rgba(248, 113, 113, 0.16);
+  --ntk-error-dark: #fca5a5;
+  --ntk-info: #2dd4bf;
+  --ntk-info-light: rgba(45, 212, 191, 0.16);
+  --ntk-info-dark: #5eead4;
+
+  --ntk-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --ntk-shadow-card-hover: 0 8px 20px rgba(0, 0, 0, 0.55);
+}
+
+html[data-color-scheme='light'] {
+  color-scheme: light;
+
+  --ntk-color-scheme-dark: 0;
+}

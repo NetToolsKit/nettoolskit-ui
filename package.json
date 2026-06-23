@@ -59,13 +59,13 @@
     "test:design-system": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
     "test:tokens": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system/tokens/token-build.spec.ts --environment=node --pool=forks --maxWorkers=1 --no-file-parallelism",
     "test:watch": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --config tests/vitest.config.ts",
-    "test:coverage": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --coverage --config tests/vitest.config.ts",
+    "test:coverage": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --coverage --config tests/vitest.config.ts --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
     "test:ui": "cross-env VITE_CJS_IGNORE_WARNING=true vitest --ui --config tests/vitest.config.ts",
     "lint": "eslint src samples --ext .ts,.vue",
     "lint:style": "stylelint \"src/**/*.css\"",
     "lint:css": "node scripts/lint-css-governance.mjs",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:design-system && npm run test:architecture && npm run build && npm run build:samples"
+    "verify": "npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run build:samples"
   },
   "keywords": [
     "vue",
@@ -97,6 +97,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/ui": "^4.0.18",
     "@vue/test-utils": "^2.4.11",
+    "axe-core": "^4.12.1",
     "cross-env": "^10.1.0",
     "esbuild-plugin-vue3": "^0.5.1",
     "eslint": "^10.5.0",
