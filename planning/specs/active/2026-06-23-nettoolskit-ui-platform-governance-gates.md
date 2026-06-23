@@ -35,7 +35,7 @@ of platform decisions. This spec turns each into a deterministic gate.
 core      -> may not import vue / quasar / DOM / storage / http   (lint-enforced)
 vue       -> may import core + adapters, not product/features
 features  -> import ONLY the public API (no deep paths)           (lint-enforced)
-every PR  -> verify gates + CodeQL + dependency-review + audit run automatically
+every PR  -> GitRiver runs verify gates + CodeQL + dependency-review + audit
 public API change -> snapshot diff forces a semver + changelog decision
 ```
 
@@ -43,8 +43,10 @@ public API change -> snapshot diff forces a semver + changelog decision
 
 - Enforce import boundaries with an executable tool (ESLint `no-restricted-imports`
   / `import/no-restricted-paths`, or dependency-cruiser) wired into `verify`.
-- Trigger `ci-tests` and `security` (CodeQL, dependency-review, audit) on
-  `pull_request` to `main`, keeping the existing schedule as a fallback.
+- PR gates are run by **GitRiver** (canonical), by deliberate design; the GitHub
+  `ci-tests`/`security` workflows stay manual/scheduled fallbacks. Governance
+  work is to confirm + document that the GitRiver gate runs the full `verify`
+  set plus CodeQL/audit, NOT to duplicate it with `pull_request` triggers.
 - Formalize the public-API contract: the existing `ds-public-api.spec.ts`
   snapshot is the gate; a documented deprecation lifecycle (`@deprecated` ->
   minor with warning -> removal in next major) governs changes.
@@ -61,7 +63,7 @@ public API change -> snapshot diff forces a semver + changelog decision
 | Slice | Target paths | Standardization impact | Security impact | Performance impact | Acceptance signal |
 |---|---|---|---|---|---|
 | Import boundaries | eslint config, `package.json`, tests | Makes Clean Architecture enforceable | Stops core touching DOM/storage/http | Cheap static analysis | Boundary violations fail `verify` |
-| CI on PR | `.github/workflows/**` | Native gates run per PR | CodeQL/dep-review/audit on PR | Bounded CI minutes | PR shows the gates running |
+| PR gate (GitRiver) | `.gitriver/**`, docs | PR gating stays in GitRiver, documented | CodeQL/dep-review/audit run there | No duplicate CI minutes | GitRiver runs verify+security on PR; README documents the gate location |
 | API stability | `tests/**`, `docs/**` | Documented semver + deprecation | No silent breaking changes | Snapshot diff is instant | API change requires snapshot + changelog |
 | Coverage governance | `tests/vitest.config.ts`, `package.json` | Locks core/schema + Vue floors | Asserts critical paths tested | Coverage run already gated | Thresholds enforced per layer in `verify` |
 | ADRs | `planning/decisions/**` | Decisions are traceable | Records security/boundary rationale | Docs only | ADR template + index + backfilled records |
@@ -86,7 +88,8 @@ public API change -> snapshot diff forces a semver + changelog decision
 
 - An executable import-boundary check runs in `npm run verify` and fails on a
   core->Vue/DOM import or a feature deep-import.
-- `pull_request` triggers exist for the test and security workflows.
+- The PR gate (GitRiver) is documented and confirmed to run the `verify` set +
+  security checks; GitHub workflows remain documented manual fallbacks.
 - `core/schema/**` is at 100% coverage and a Vue-layer floor is enforced; all
   wired into `verify`.
 - A documented API semver + deprecation policy references the snapshot gate, and
