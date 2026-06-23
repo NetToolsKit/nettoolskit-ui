@@ -11,6 +11,8 @@ import {
   getNtkButtonClassName,
   getNtkCardClasses,
   getNtkCardClassName,
+  getNtkChipClasses,
+  getNtkChipClassName,
   getNtkDialogClasses,
   getNtkDialogClassName,
   getNtkEmptyStateClasses,
@@ -42,6 +44,7 @@ import {
 const helpers = [
   ['button', getNtkButtonClasses, getNtkButtonClassName, 'ntk-button'],
   ['card', getNtkCardClasses, getNtkCardClassName, 'ntk-card'],
+  ['chip', getNtkChipClasses, getNtkChipClassName, 'ntk-chip'],
   ['dialog', getNtkDialogClasses, getNtkDialogClassName, 'ntk-dialog'],
   ['empty-state', getNtkEmptyStateClasses, getNtkEmptyStateClassName, 'ntk-empty-state'],
   ['field', getNtkFieldClasses, getNtkFieldClassName, 'ntk-field'],

@@ -32,7 +32,7 @@
       <NtkCard title="Component Library" subtitle="Ntk* compatibility surface">
         <div class="sample-stack">
           <NtkInput label="NtkInput" placeholder="Reusable field" />
-          <NtkChip label="Stable API" color="primary" />
+          <DsChip label="Stable API" intent="primary" />
         </div>
       </NtkCard>
 
@@ -65,10 +65,10 @@
 import {
   DsButton,
   DsCard,
+  DsChip,
   DsInput,
   NtkButton,
   NtkCard,
-  NtkChip,
   NtkInput,
   NtkMetricCard,
 } from '../index'
