@@ -57,6 +57,7 @@
       <DashboardRecipe />
       <CrudRecipe />
       <FormRecipe />
+      <DialogRecipe />
     </section>
   </main>
 </template>
@@ -74,6 +75,7 @@ import {
 } from '../index'
 import CrudRecipe from './recipes/CrudRecipe.vue'
 import DashboardRecipe from './recipes/DashboardRecipe.vue'
+import DialogRecipe from './recipes/DialogRecipe.vue'
 import FormRecipe from './recipes/FormRecipe.vue'
 </script>
 

@@ -141,5 +141,9 @@ is always available.
 - [x] L2-core schema model + validation (pure) — implemented + tested.
 - [x] L2-vue `DsForm` renderer (DsInput extended with `type`/`multiline`) — implemented + tested (incl. axe).
 - [x] L1 `DsCrudPage` + `DsFormPage` composites — implemented + tested (incl. stale-fetch guard).
-- [ ] L3 recipe catalog in samples — pending.
+- [x] L3 recipe catalog in samples — CRUD/form/dashboard/dialog recipes ship in
+  `samples/recipes/**` and render in `LibrarySampleApp`; `build:samples` covers them.
 - New components added to the public API snapshot gate; `npm run verify` is green.
+
+Status: **complete** — all five layers (L0–L3) implemented, tested and gated.
+Ready to archive once PR #60 merges.
