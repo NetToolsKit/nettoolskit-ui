@@ -32,7 +32,7 @@
       <NtkCard title="Component Library" subtitle="Ntk* compatibility surface">
         <div class="sample-stack">
           <NtkInput label="NtkInput" placeholder="Reusable field" />
-          <NtkChip label="Stable API" color="primary" />
+          <DsChip label="Stable API" intent="primary" />
         </div>
       </NtkCard>
 
@@ -43,6 +43,22 @@
         trend="+ synced"
       />
     </section>
+
+    <section class="sample-recipes" aria-label="Front creation recipes">
+      <header class="sample-recipes__intro">
+        <p class="sample-kicker">Front creation system</p>
+        <h2>Telas a partir de schema</h2>
+        <p>
+          As receitas abaixo usam apenas componentes da biblioteca. Descreva os
+          dados; o sistema renderiza layout, validação e estados.
+        </p>
+      </header>
+
+      <DashboardRecipe />
+      <CrudRecipe />
+      <FormRecipe />
+      <DialogRecipe />
+    </section>
   </main>
 </template>
 
@@ -50,13 +66,17 @@
 import {
   DsButton,
   DsCard,
+  DsChip,
   DsInput,
   NtkButton,
   NtkCard,
-  NtkChip,
   NtkInput,
   NtkMetricCard,
 } from '../index'
+import CrudRecipe from './recipes/CrudRecipe.vue'
+import DashboardRecipe from './recipes/DashboardRecipe.vue'
+import DialogRecipe from './recipes/DialogRecipe.vue'
+import FormRecipe from './recipes/FormRecipe.vue'
 </script>
 
 <style scoped>
@@ -108,6 +128,25 @@ import {
 .sample-stack {
   display: grid;
   gap: 12px;
+}
+
+.sample-recipes {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1120px;
+  margin: 48px auto 0;
+}
+
+.sample-recipes__intro h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.sample-recipes__intro p {
+  max-width: 640px;
+  margin: 0;
+  color: var(--ntk-text-secondary);
 }
 
 @media (max-width: 900px) {

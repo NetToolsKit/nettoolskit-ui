@@ -1,0 +1,1205 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Ds* public API contract > pins the public props/events of DsButton 1`] = `
+{
+  "emits": [
+    "click",
+  ],
+  "name": "DsButton",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "iconRight": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "loading": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "type": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsCard 1`] = `
+{
+  "emits": [
+    "click",
+  ],
+  "name": "DsCard",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "clickable": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "selected": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "subtitle": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsChip 1`] = `
+{
+  "emits": [
+    "click",
+    "remove",
+  ],
+  "name": "DsChip",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "clickable": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "removable": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "removeLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "selected": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsCrudPage 1`] = `
+{
+  "emits": [
+    "created",
+    "deleted",
+    "error",
+    "updated",
+  ],
+  "name": "DsCrudPage",
+  "props": {
+    "cancelLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "deleteLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "editLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "editTitle": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "emptyDescription": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "emptyTitle": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "errorTitle": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "idPrefix": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "loadingLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "newLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "resource": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "saveLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "searchLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "searchPlaceholder": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "searchable": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsDialog 1`] = `
+{
+  "emits": [
+    "close",
+    "open",
+    "update:modelValue",
+  ],
+  "name": "DsDialog",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "closeLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "description": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "hideClose": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "persistent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsEmptyState 1`] = `
+{
+  "emits": [],
+  "name": "DsEmptyState",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "description": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsFilterBar 1`] = `
+{
+  "emits": [
+    "apply",
+    "reset",
+  ],
+  "name": "DsFilterBar",
+  "props": {
+    "applyLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "loading": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "resetLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "showActions": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsForm 1`] = `
+{
+  "emits": [
+    "reset",
+    "submit",
+    "update:modelValue",
+  ],
+  "name": "DsForm",
+  "props": {
+    "columns": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "idPrefix": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "legend": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "loading": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "resetLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "schema": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "showActions": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "showReset": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "submitLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsFormLayout 1`] = `
+{
+  "emits": [],
+  "name": "DsFormLayout",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "columns": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "legend": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsFormPage 1`] = `
+{
+  "emits": [
+    "reset",
+    "submit",
+    "update:modelValue",
+  ],
+  "name": "DsFormPage",
+  "props": {
+    "columns": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "description": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "idPrefix": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "legend": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "loading": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "resetLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "schema": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "showActions": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "showReset": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "submitLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": true,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsInput 1`] = `
+{
+  "emits": [
+    "blur",
+    "focus",
+    "update:modelValue",
+  ],
+  "name": "DsInput",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "errorMessage": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "hint": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "invalid": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "multiline": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "name": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "placeholder": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "readonly": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "required": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "rows": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "type": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsMetricGrid 1`] = `
+{
+  "emits": [],
+  "name": "DsMetricGrid",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "columns": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "metrics": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsPage 1`] = `
+{
+  "emits": [],
+  "name": "DsPage",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "subtitle": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsPageHeader 1`] = `
+{
+  "emits": [],
+  "name": "DsPageHeader",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "description": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "eyebrow": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "headingLevel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsSection 1`] = `
+{
+  "emits": [],
+  "name": "DsSection",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "eyebrow": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "headingLevel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "subtitle": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] = `
+{
+  "emits": [
+    "blur",
+    "focus",
+    "update:modelValue",
+  ],
+  "name": "DsSelect",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "errorMessage": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "hint": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "invalid": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "multiple": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "name": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "options": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "placeholder": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "readonly": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "required": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsStateBlock 1`] = `
+{
+  "emits": [],
+  "name": "DsStateBlock",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "description": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "skeletonLines": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "state": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsSteps 1`] = `
+{
+  "emits": [
+    "step-click",
+  ],
+  "name": "DsSteps",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "clickable": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "current": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "orientation": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "steps": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsTable 1`] = `
+{
+  "emits": [
+    "row-click",
+    "update:selectedKeys",
+  ],
+  "name": "DsTable",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "caption": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "columns": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "emptyLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "emptyValueLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "rows": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "selectAllLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "selectRowLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "selectable": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "selectedKeys": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsToolbar 1`] = `
+{
+  "emits": [],
+  "name": "DsToolbar",
+  "props": {
+    "align": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "wrap": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;

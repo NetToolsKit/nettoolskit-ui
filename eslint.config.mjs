@@ -73,4 +73,50 @@ export default [
       'vue/require-default-prop': 'off',
     },
   },
+
+  // --- Platform governance: executable import boundaries (engineering-first) ---
+  // The Ds* design system must never depend on the legacy Ntk*/Base* surface.
+  // This locks the governed surface and prevents new legacy coupling while the
+  // legacy-surface-elimination workstream removes the old components.
+  {
+    files: ['src/design-system/**/*.ts', 'src/design-system/**/*.vue'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/Ntk*', '**/Base*'],
+              message:
+                'The Ds* design system must not import legacy Ntk*/Base* components. Use Ds* primitives/recipes instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  // The pure core layer must stay framework-agnostic (Clean Architecture):
+  // no Vue, Quasar, router, or legacy component coupling.
+  {
+    files: ['src/design-system/core/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'vue', message: 'core must stay framework-agnostic: no Vue in the pure core layer.' },
+            { name: 'vue-router', message: 'core must stay framework-agnostic: no vue-router in the pure core layer.' },
+            { name: 'quasar', message: 'core must not import Quasar; keep it behind adapters.' },
+          ],
+          patterns: [
+            {
+              group: ['@vue/*', '@quasar/*', '**/Ntk*', '**/Base*'],
+              message: 'core must stay framework-agnostic and free of legacy components.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]

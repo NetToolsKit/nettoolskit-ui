@@ -18,5 +18,6 @@ platform structure, visual contracts, migration policy, testing or governance.
 - Every spec must state the priority, sequence context, target paths,
   validation evidence and likely specialist.
 - Completed specs must move to `planning/specs/completed/YYYY-MM/**`.
+- Spec filenames must use a date prefix: `YYYY-MM-DD-descriptive-slug.md`.
 - Package naming must use `nettoolskit`.
 - Repository-owned terminal commands may use `ntk`.

@@ -17,6 +17,9 @@ export const ntkComponentIntents = [
 ] as const
 export type NtkComponentIntent = (typeof ntkComponentIntents)[number]
 
+export const ntkComponentDensities = ['compact', 'comfortable', 'spacious'] as const
+export type NtkComponentDensity = (typeof ntkComponentDensities)[number]
+
 export interface NtkComponentContractBase {
   readonly id?: string
   readonly testId?: string

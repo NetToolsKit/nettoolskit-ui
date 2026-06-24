@@ -102,6 +102,23 @@ describe('DsSelect', () => {
     ]))
   })
 
+  it('supports multiple selection emitting a string array', async () => {
+    const wrapper = mount(DsSelect, {
+      props: {
+        multiple: true,
+        modelValue: ['draft'],
+        options,
+      },
+    })
+
+    const select = wrapper.get('select')
+    expect(select.attributes('multiple')).toBeDefined()
+    expect((select.element as HTMLSelectElement).selectedOptions.length).toBe(1)
+
+    await select.setValue(['draft', 'published'])
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['draft', 'published']])
+  })
+
   it('does not emit model updates while readonly', async () => {
     const wrapper = mount(DsSelect, {
       props: {

@@ -19,6 +19,14 @@ Do not edit by hand.
 | Table recipe | `src/design-system/core/components/table.ts` |
 | Page recipe | `src/design-system/core/components/page.ts` |
 | Section recipe | `src/design-system/core/components/section.ts` |
+| Page header recipe | `src/design-system/core/components/page-header.ts` |
+| Toolbar recipe | `src/design-system/core/components/toolbar.ts` |
+| Filter bar recipe | `src/design-system/core/components/filter-bar.ts` |
+| Form layout recipe | `src/design-system/core/components/form-layout.ts` |
+| Dialog recipe | `src/design-system/core/components/dialog.ts` |
+| Empty state recipe | `src/design-system/core/components/empty-state.ts` |
+| Metric grid recipe | `src/design-system/core/components/metric-grid.ts` |
+| State block recipe | `src/design-system/core/components/state-block.ts` |
 
 ## Token Model
 
@@ -40,6 +48,14 @@ Do not edit by hand.
 | Table | `default` | `md` | `neutral` | `default`, `bordered`, `striped` | `selected`, `clickable` |
 | Page | `default` | `md` | `neutral` | `default`, `surface`, `dashboard` | None |
 | Section | `default` | `md` | `neutral` | `default`, `surface`, `muted`, `accent` | None |
+| Page header | `default` | `md` | `neutral` | `default`, `compact`, `hero` | None |
+| Toolbar | `default` | `md` | `neutral` | `default`, `bordered`, `floating` | None |
+| Filter bar | `default` | `md` | `neutral` | `default`, `inline`, `stacked` | `loading` |
+| Form layout | `stacked` | `md` | `neutral` | `stacked`, `grid`, `inline` | None |
+| Dialog | `default` | `md` | `neutral` | `default`, `sheet`, `fullscreen` | None |
+| Empty state | `default` | `md` | `neutral` | `default`, `bordered`, `ghost` | None |
+| Metric grid | `default` | `md` | `neutral` | `default`, `bordered`, `plain` | None |
+| State block | `default` | `md` | `neutral` | `default`, `inline`, `overlay` | None |
 
 ## Usage Rules
 

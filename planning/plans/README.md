@@ -17,3 +17,4 @@ This folder stores execution plans for `nettoolskit-ui` workstreams.
 - Plans must describe ordered tasks, target paths, validations, risks and
   closeout expectations.
 - Completed plans must move to `planning/plans/completed/YYYY-MM/**`.
+- Plan filenames must use a date prefix: `YYYY-MM-DD-descriptive-slug.md`.
