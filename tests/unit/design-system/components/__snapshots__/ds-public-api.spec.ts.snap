@@ -1,5 +1,44 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Ds* public API contract > pins the public props/events of DsAppShell 1`] = `
+{
+  "emits": [
+    "update:drawerOpen",
+  ],
+  "name": "DsAppShell",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "drawerOpen": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsButton 1`] = `
 {
   "emits": [
@@ -313,6 +352,75 @@ exports[`Ds* public API contract > pins the public props/events of DsDialog 1`] 
 }
 `;
 
+exports[`Ds* public API contract > pins the public props/events of DsDrawer 1`] = `
+{
+  "emits": [
+    "close",
+    "open",
+    "update:modelValue",
+  ],
+  "name": "DsDrawer",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "closeLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "hideClose": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "navLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "persistent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "side": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsEmptyState 1`] = `
 {
   "emits": [],
@@ -403,6 +511,39 @@ exports[`Ds* public API contract > pins the public props/events of DsFilterBar 1
       "required": false,
     },
     "showActions": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsFooter 1`] = `
+{
+  "emits": [],
+  "name": "DsFooter",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
       "hasDefault": true,
       "required": false,
     },
@@ -588,6 +729,53 @@ exports[`Ds* public API contract > pins the public props/events of DsFormPage 1`
     "title": {
       "hasDefault": false,
       "required": true,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsHeader 1`] = `
+{
+  "emits": [
+    "toggle-menu",
+  ],
+  "name": "DsHeader",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "menuLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "showMenu": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
     },
   },
 }
@@ -1009,6 +1197,47 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "required": false,
     },
     "required": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsSidebar 1`] = `
+{
+  "emits": [],
+  "name": "DsSidebar",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "collapsed": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
       "hasDefault": true,
       "required": false,
     },
