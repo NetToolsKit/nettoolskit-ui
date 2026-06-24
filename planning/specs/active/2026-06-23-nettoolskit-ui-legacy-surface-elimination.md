@@ -127,10 +127,16 @@ into one reviewable PR, with docs/codemod following.
   unmanagedDeepSelectors / importantDeclarations / rawHexColors) are 0 and the
   policy now enforces zero tolerance. (Fixed a false-positive hex from the
   `&#9776;` entity in DsHeader by using the literal glyph.)
-- [ ] **Migration guide + codemod + CHANGELOG (next PR):** `MIGRATION.md` mapping
-  every removed component to its `Ds*` replacement (or product-scope/removed),
-  an `Ntk*`→`Ds*` import codemod, a CHANGELOG breaking-change entry, and an
-  ESLint guard against reintroducing `src/components` imports.
+- [x] **Migration guide + codemod + CHANGELOG (this PR):** `MIGRATION.md` maps
+  every removed component to its `Ds*` replacement (1:1, manual, or product-scope
+  removed) and the removed composables; `scripts/codemod/ntk-to-ds.mjs` rewrites
+  the 1:1 `Ntk*`/`Base*`→`Ds*` cases (flagging the rest); CHANGELOG has a
+  breaking-change entry; and an ESLint `no-restricted-imports` guard blocks
+  reintroducing `src/components` or `Ntk*`/`Base*` imports across app/samples/tests.
+
+**Status: complete** — `index.ts` is `Ds*`-only, the governance baseline is 0
+(zero-tolerance), reintroduction is lint-blocked, and the breaking change is
+documented with a codemod. Ready to archive.
 
 Notification capability is preserved by the kept `useNotification` composable +
 `NotificationService` + `QuasarNotificationAdapter`; only the legacy

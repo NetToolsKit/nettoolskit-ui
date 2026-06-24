@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- **BREAKING: legacy `Ntk*`/`Base*` component surface removed.**
+  - Deleted the entire `src/components` tree (54 `Ntk*`/`Base*`/marketing/landing components plus `app-shell.{types,config,theme}`) and the `useNtkField`/`useBaseField` field composables.
+  - `index.ts` now exports only the governed design system (`Ds*` components, tokens, recipes, schema, `createNetToolsKitUI`), the kept composables/services/utils/config, and the Quasar notification adapter.
+  - Notification capability is preserved via `useNotification` + `NotificationService` + `QuasarNotificationAdapter`; only the `NtkNotificationCenter` UI wrapper was removed.
+  - See `MIGRATION.md` for the full `Ntk*`/`Base*` → `Ds*` mapping and `scripts/codemod/ntk-to-ds.mjs` for an automated import/usage rewrite of the 1:1 cases.
+
+### Added
+
+- **Schema-driven front creation system & app shell** (capability-parity with the removed surface):
+  - `createNetToolsKitUI` one-line install plugin; `defineForm`/`defineResource` pure schema; `DsForm`, `DsFormPage`, `DsCrudPage` screen composites.
+  - `DsTable` server mode (sortable headers, server pagination, loading) wired through `DsCrudPage`.
+  - `DsChip`, `DsSteps`, `DsLogo`, and the app shell family (`DsAppShell`/`DsHeader`/`DsSidebar`/`DsFooter`/`DsDrawer`); `DsSelect` multiple selection.
+- **MIGRATION.md** and an `Ntk*`→`Ds*` codemod (`scripts/codemod/ntk-to-ds.mjs`).
+
+### Changed
+
+- **CSS governance is now zero-tolerance.** The baseline scans `src/design-system/vue/components` with all metrics at 0 (directQuasarTags / quasarClassSelectors / unmanagedDeepSelectors / importantDeclarations / rawHexColors), and an ESLint rule blocks reintroducing legacy `Ntk*`/`Base*` or `src/components` imports.
+
 ## [0.0.1-preview.1] - 2026-06-22
 
 ### Removed
