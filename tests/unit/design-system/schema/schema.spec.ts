@@ -14,6 +14,7 @@ import {
   maxValueRule,
   minLengthRule,
   minValueRule,
+  normalizeFetchResult,
   ntkFieldTypes,
   patternRule,
   requiredRule,
@@ -201,6 +202,40 @@ describe('defineResource', () => {
     expect(defineResource({ title: 'X', rowKey: 'uuid', columns: [{ field: 'a' }] }).rowKey).toBe('uuid')
     expect(() => defineResource({ title: '', columns: [{ field: 'a' }] })).toThrow(/title is required/)
     expect(() => defineResource({ title: 'X', columns: [] })).toThrow(/columns must not be empty/)
+  })
+
+  it('carries server-mode pagination config (pageSize, defaultSort)', () => {
+    const resource = defineResource({
+      title: 'Clients',
+      columns: [{ field: 'name', sortable: true }],
+      pageSize: 20,
+      defaultSort: { field: 'name', descending: true },
+    })
+    expect(resource.pageSize).toBe(20)
+    expect(resource.defaultSort).toEqual({ field: 'name', descending: true })
+  })
+})
+
+describe('normalizeFetchResult', () => {
+  it('treats a bare array as a single client-side page', () => {
+    expect(normalizeFetchResult([{ id: 1 }, { id: 2 }])).toEqual({
+      rows: [{ id: 1 }, { id: 2 }],
+      total: 2,
+    })
+  })
+
+  it('uses the server-reported total for a paged result', () => {
+    expect(normalizeFetchResult({ rows: [{ id: 1 }], total: 57 })).toEqual({
+      rows: [{ id: 1 }],
+      total: 57,
+    })
+  })
+
+  it('falls back to the row count when a paged result omits total', () => {
+    expect(normalizeFetchResult({ rows: [{ id: 1 }, { id: 2 }] })).toEqual({
+      rows: [{ id: 1 }, { id: 2 }],
+      total: 2,
+    })
   })
 })
 describe('schema coverage completeness', () => {

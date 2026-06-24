@@ -10,7 +10,7 @@
       v-if="searchable"
       :aria-label="`${resource.title} filters`"
       :loading="loading"
-      @apply="reload"
+      @apply="onApplyFilters"
       @reset="onResetFilters"
     >
       <template #search>
@@ -50,6 +50,11 @@
       :columns="tableColumns"
       :rows="tableRows"
       :aria-label="resource.title"
+      :sort="sort"
+      :pagination="pagination"
+      :loading="loading"
+      @update:sort="onSortChange"
+      @update:page="onPageChange"
     >
       <template v-if="hasRowActions" #cell-__actions="{ row }">
         <div class="ntk-crud-page__row-actions">
@@ -94,9 +99,13 @@
 import { computed, onMounted, ref } from 'vue'
 import {
   createInitialValues,
+  normalizeFetchResult,
   type NtkNormalizedResource,
+  type NtkQueryParams,
   type NtkTableCellValue,
+  type NtkTablePagination,
   type NtkTableRow,
+  type NtkTableSort,
 } from '../../core'
 import DsButton from './DsButton.vue'
 import DsDialog from './DsDialog.vue'
@@ -163,21 +172,37 @@ const dialogOpen = ref(false)
 const editing = ref<CrudRow | null>(null)
 const formValues = ref<Record<string, unknown>>({})
 const saving = ref(false)
+const page = ref(1)
+const pageSize = ref(props.resource.pageSize ?? 10)
+const total = ref(0)
+const sort = ref<NtkTableSort | null>(
+  props.resource.defaultSort
+    ? {
+        field: props.resource.defaultSort.field,
+        direction: props.resource.defaultSort.descending ? 'desc' : 'asc',
+      }
+    : null,
+)
 
 // Monotonic token so a slow in-flight fetch can never overwrite a newer result.
 let requestToken = 0
 
 const searchable = computed(() => props.searchable && Boolean(props.resource.fetch))
 const hasRowActions = computed(() => Boolean(props.resource.update || props.resource.remove))
+const paginated = computed(() => Boolean(props.resource.pageSize))
+const pagination = computed<NtkTablePagination | null>(() => (
+  paginated.value ? { page: page.value, pageSize: pageSize.value, total: total.value } : null
+))
 
 const tableColumns = computed(() => {
   const columns = props.resource.columns.map((column) => ({
     id: column.field,
     label: column.label,
     align: column.align,
+    sortable: column.sortable ?? false,
   }))
   if (hasRowActions.value) {
-    columns.push({ id: '__actions', label: '', align: 'right' })
+    columns.push({ id: '__actions', label: '', align: 'right', sortable: false })
   }
   return columns
 })
@@ -211,6 +236,14 @@ const tableRows = computed<NtkTableRow[]>(() =>
   }),
 )
 
+function buildParams(): NtkQueryParams {
+  return {
+    search: search.value || undefined,
+    ...(paginated.value ? { page: page.value, pageSize: pageSize.value } : {}),
+    ...(sort.value ? { sortBy: sort.value.field, descending: sort.value.direction === 'desc' } : {}),
+  }
+}
+
 async function reload(): Promise<void> {
   const { fetch } = props.resource
   if (!fetch) {
@@ -220,11 +253,13 @@ async function reload(): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    const result = await fetch({ search: search.value || undefined })
+    const result = await fetch(buildParams())
     if (token !== requestToken) {
       return
     }
-    rows.value = [...result]
+    const normalized = normalizeFetchResult(result)
+    rows.value = normalized.rows
+    total.value = normalized.total
   } catch (cause) {
     if (token !== requestToken) {
       return
@@ -238,8 +273,25 @@ async function reload(): Promise<void> {
   }
 }
 
+function onApplyFilters(): void {
+  page.value = 1
+  void reload()
+}
+
 function onResetFilters(): void {
   search.value = ''
+  page.value = 1
+  void reload()
+}
+
+function onSortChange(next: NtkTableSort | null): void {
+  sort.value = next
+  page.value = 1
+  void reload()
+}
+
+function onPageChange(next: number): void {
+  page.value = next
   void reload()
 }
 

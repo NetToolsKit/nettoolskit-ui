@@ -131,4 +131,66 @@ describe('DsTable', () => {
 
     expect(wrapper.text()).toContain('Status:release-1:Draft')
   })
+
+  it('renders sortable headers with aria-sort and emits the next sort on activation', async () => {
+    const wrapper = mount(DsTable, {
+      props: {
+        columns: [
+          { id: 'name', label: 'Name', sortable: true },
+          { id: 'status', label: 'Status' },
+        ],
+        rows,
+        sort: { field: 'name', direction: 'asc' },
+      },
+    })
+
+    const [nameHeader, statusHeader] = wrapper.findAll('th')
+    expect(nameHeader?.attributes('aria-sort')).toBe('ascending')
+    expect(statusHeader?.attributes('aria-sort')).toBeUndefined()
+    expect(statusHeader?.find('button').exists()).toBe(false)
+
+    await nameHeader?.get('button.ntk-table__sort').trigger('click')
+    expect(wrapper.emitted('update:sort')?.[0]).toEqual([{ field: 'name', direction: 'desc' }])
+  })
+
+  it('renders a server-mode pagination footer and emits page changes', async () => {
+    const wrapper = mount(DsTable, {
+      props: {
+        columns,
+        rows,
+        pagination: { page: 2, pageSize: 10, total: 25 },
+      },
+    })
+
+    const nav = wrapper.get('.ntk-table__pagination')
+    expect(nav.text()).toContain('11')
+    expect(nav.text()).toContain('20')
+    expect(nav.text()).toContain('25')
+
+    const buttons = nav.findAll('.ntk-table__pagination-button')
+    await buttons[0]?.trigger('click')
+    await buttons[1]?.trigger('click')
+
+    expect(wrapper.emitted('update:page')?.[0]).toEqual([1])
+    expect(wrapper.emitted('update:page')?.[1]).toEqual([3])
+  })
+
+  it('disables navigation and marks the table busy while loading an empty set', () => {
+    const wrapper = mount(DsTable, {
+      props: {
+        columns,
+        rows: [],
+        loading: true,
+        loadingLabel: 'Loading releases',
+        pagination: { page: 1, pageSize: 10, total: 0 },
+      },
+    })
+
+    expect(wrapper.get('.ntk-table').attributes('aria-busy')).toBe('true')
+    expect(wrapper.get('.ntk-table__loading-cell').text()).toBe('Loading releases')
+    expect(wrapper.find('.ntk-table__empty-cell').exists()).toBe(false)
+    for (const button of wrapper.findAll('.ntk-table__pagination-button')) {
+      expect(button.attributes('disabled')).toBeDefined()
+    }
+  })
 })

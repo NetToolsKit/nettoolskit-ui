@@ -21,6 +21,37 @@ export interface NtkTableColumn {
   readonly label: string
   readonly align?: 'left' | 'center' | 'right'
   readonly width?: string
+  /** When true, the header becomes an interactive sort control. */
+  readonly sortable?: boolean
+}
+
+export type NtkTableSortDirection = 'asc' | 'desc'
+
+export interface NtkTableSort {
+  readonly field: string
+  readonly direction: NtkTableSortDirection
+}
+
+export interface NtkTablePagination {
+  /** 1-based current page. */
+  readonly page: number
+  readonly pageSize: number
+  /** Total row count across all pages (server-reported in server mode). */
+  readonly total: number
+}
+
+export interface NtkTablePageInfo {
+  readonly page: number
+  readonly pageSize: number
+  readonly total: number
+  readonly totalPages: number
+  /** 1-based index of the first row on the current page (0 when empty). */
+  readonly startRow: number
+  /** 1-based index of the last row on the current page (0 when empty). */
+  readonly endRow: number
+  readonly hasPrevious: boolean
+  readonly hasNext: boolean
+  readonly isEmpty: boolean
 }
 
 export interface NtkTableRow {
@@ -41,6 +72,12 @@ export interface NtkTableContract extends NtkComponentContractBase {
   readonly selectable?: boolean
   readonly emptyLabel?: string
   readonly emptyValueLabel?: string
+  /** Active sort (controlled). `null` means unsorted. */
+  readonly sort?: NtkTableSort | null
+  /** When provided, the table renders server-mode pagination controls. */
+  readonly pagination?: NtkTablePagination | null
+  /** Reflects an in-flight fetch (server mode). */
+  readonly loading?: boolean
 }
 
 export const ntkTableDefaults = {
@@ -88,3 +125,61 @@ export const getNtkTableClasses = (options: NtkTableRecipeOptions = {}) =>
 
 export const getNtkTableClassName = (options: NtkTableRecipeOptions = {}) =>
   resolveNtkTableRecipe(options).className
+
+/**
+ * The `aria-sort` value for a column header given the active sort. Pure.
+ */
+export const getNtkTableAriaSort = (
+  sort: NtkTableSort | null | undefined,
+  field: string,
+): 'ascending' | 'descending' | 'none' => {
+  if (!sort || sort.field !== field) {
+    return 'none'
+  }
+  return sort.direction === 'asc' ? 'ascending' : 'descending'
+}
+
+/**
+ * Compute the next sort state when a column header is activated. Cycles
+ * none -> ascending -> descending -> none for the same column; a different
+ * column always restarts at ascending. Pure.
+ */
+export const nextNtkTableSort = (
+  current: NtkTableSort | null | undefined,
+  field: string,
+): NtkTableSort | null => {
+  if (!current || current.field !== field) {
+    return { field, direction: 'asc' }
+  }
+  if (current.direction === 'asc') {
+    return { field, direction: 'desc' }
+  }
+  return null
+}
+
+/**
+ * Derive presentational pagination info (clamped page, row range, navigation
+ * flags) from a raw pagination state. Pure and defensive: a non-positive page
+ * size collapses to a single page and the page is clamped into range.
+ */
+export const getNtkTablePageInfo = (pagination: NtkTablePagination): NtkTablePageInfo => {
+  const total = Math.max(0, Math.trunc(pagination.total))
+  const pageSize = Math.max(1, Math.trunc(pagination.pageSize))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const page = Math.min(Math.max(1, Math.trunc(pagination.page)), totalPages)
+  const isEmpty = total === 0
+  const startRow = isEmpty ? 0 : (page - 1) * pageSize + 1
+  const endRow = isEmpty ? 0 : Math.min(page * pageSize, total)
+
+  return {
+    page,
+    pageSize,
+    total,
+    totalPages,
+    startRow,
+    endRow,
+    hasPrevious: page > 1,
+    hasNext: page < totalPages,
+    isEmpty,
+  }
+}

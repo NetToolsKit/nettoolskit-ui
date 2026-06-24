@@ -126,6 +126,42 @@ describe('DsCrudPage', () => {
     expect(resource.fetch).toHaveBeenCalledTimes(2)
   })
 
+  it('drives server-mode pagination and sorting through the fetch params', async () => {
+    const pageRows: Client[] = [{ id: 1, name: 'Ana', email: 'ana@acme.co' }]
+    const fetch = vi.fn(async () => ({ rows: pageRows, total: 25 }))
+    const resource = defineResource<Client>({
+      title: 'Clients',
+      columns: [{ field: 'name', sortable: true }, { field: 'email' }],
+      rowKey: 'id',
+      pageSize: 10,
+      fetch,
+    })
+    const wrapper = mount(DsCrudPage, { props: { resource } })
+    await flushPromises()
+
+    // First load is paginated and the footer reflects the server total.
+    expect(fetch).toHaveBeenLastCalledWith({ search: undefined, page: 1, pageSize: 10 })
+    expect(wrapper.find('.ntk-table__pagination').exists()).toBe(true)
+    expect(wrapper.find('.ntk-table__pagination').text()).toContain('25')
+
+    // Next page advances the page param.
+    const nav = wrapper.findAll('.ntk-table__pagination-button')
+    await nav[nav.length - 1]?.trigger('click')
+    await flushPromises()
+    expect(fetch).toHaveBeenLastCalledWith({ search: undefined, page: 2, pageSize: 10 })
+
+    // Activating a sortable header sorts ascending and resets to page 1.
+    await wrapper.get('th .ntk-table__sort').trigger('click')
+    await flushPromises()
+    expect(fetch).toHaveBeenLastCalledWith({
+      search: undefined,
+      page: 1,
+      pageSize: 10,
+      sortBy: 'name',
+      descending: false,
+    })
+  })
+
   it('ignores a stale in-flight fetch result', async () => {
     const resolvers: Array<(rows: Client[]) => void> = []
     const fetch = vi.fn(() => new Promise<Client[]>((resolve) => { resolvers.push(resolve) }))

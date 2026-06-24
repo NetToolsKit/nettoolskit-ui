@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" :class="classes" :data-testid="testId">
+  <div :id="id" :class="classes" :data-testid="testId" :aria-busy="loading ? 'true' : undefined">
     <table class="ntk-table__table" :aria-label="caption ? undefined : ariaLabel">
       <caption v-if="caption" class="ntk-table__caption">
         {{ caption }}
@@ -23,13 +23,28 @@
             class="ntk-table__header-cell"
             :class="`ntk-table__cell--align-${column.align ?? 'left'}`"
             :style="column.width ? { width: column.width } : undefined"
+            :aria-sort="column.sortable ? ariaSortFor(column.id) : undefined"
           >
-            {{ column.label }}
+            <button
+              v-if="column.sortable"
+              type="button"
+              class="ntk-table__sort"
+              @click="onSort(column.id)"
+            >
+              <span class="ntk-table__sort-label">{{ column.label }}</span>
+              <span class="ntk-table__sort-indicator" aria-hidden="true">{{ sortIndicator(column.id) }}</span>
+            </button>
+            <template v-else>{{ column.label }}</template>
           </th>
         </tr>
       </thead>
       <tbody class="ntk-table__body">
-        <tr v-if="rows.length === 0" class="ntk-table__row ntk-table__row--empty">
+        <tr v-if="loading && rows.length === 0" class="ntk-table__row ntk-table__row--loading">
+          <td class="ntk-table__loading-cell" :colspan="columnSpan">
+            {{ loadingLabel }}
+          </td>
+        </tr>
+        <tr v-else-if="rows.length === 0" class="ntk-table__row ntk-table__row--empty">
           <td class="ntk-table__empty-cell" :colspan="columnSpan">
             {{ emptyLabel }}
           </td>
@@ -72,17 +87,46 @@
         </tr>
       </tbody>
     </table>
+
+    <nav v-if="pageInfo" class="ntk-table__pagination" :aria-label="paginationLabel">
+      <span class="ntk-table__pagination-range">
+        {{ pageInfo.startRow }}&ndash;{{ pageInfo.endRow }} / {{ pageInfo.total }}
+      </span>
+      <div class="ntk-table__pagination-controls">
+        <button
+          type="button"
+          class="ntk-table__pagination-button"
+          :disabled="!pageInfo.hasPrevious || loading"
+          @click="onPage(pageInfo.page - 1)"
+        >
+          {{ previousPageLabel }}
+        </button>
+        <span class="ntk-table__pagination-page">{{ pageInfo.page }} / {{ pageInfo.totalPages }}</span>
+        <button
+          type="button"
+          class="ntk-table__pagination-button"
+          :disabled="!pageInfo.hasNext || loading"
+          @click="onPage(pageInfo.page + 1)"
+        >
+          {{ nextPageLabel }}
+        </button>
+      </div>
+    </nav>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
+  getNtkTableAriaSort,
+  getNtkTablePageInfo,
+  nextNtkTableSort,
   ntkTableDefaults,
   normalizeNtkClasses,
   resolveNtkTableRecipe,
   type NtkTableContract,
   type NtkTableRow,
+  type NtkTableSort,
 } from '../../core'
 
 defineOptions({
@@ -92,6 +136,10 @@ defineOptions({
 const props = withDefaults(defineProps<NtkTableContract & {
   readonly selectAllLabel?: string
   readonly selectRowLabel?: (row: NtkTableRow) => string
+  readonly loadingLabel?: string
+  readonly paginationLabel?: string
+  readonly previousPageLabel?: string
+  readonly nextPageLabel?: string
 }>(), {
   columns: () => [],
   rows: () => [],
@@ -104,12 +152,46 @@ const props = withDefaults(defineProps<NtkTableContract & {
   emptyValueLabel: '-',
   ariaLabel: 'Data table',
   selectAllLabel: 'Select all rows',
+  sort: null,
+  pagination: null,
+  loading: false,
+  loadingLabel: 'Loading...',
+  paginationLabel: 'Pagination',
+  previousPageLabel: 'Previous',
+  nextPageLabel: 'Next',
 })
 
 const emit = defineEmits<{
   'update:selectedKeys': [ids: string[]]
+  'update:sort': [sort: NtkTableSort | null]
+  'update:page': [page: number]
   'row-click': [rowId: string]
 }>()
+
+const pageInfo = computed(() => (props.pagination ? getNtkTablePageInfo(props.pagination) : null))
+
+function ariaSortFor(columnId: string): 'ascending' | 'descending' | 'none' {
+  return getNtkTableAriaSort(props.sort, columnId)
+}
+
+function sortIndicator(columnId: string): string {
+  const state = ariaSortFor(columnId)
+  if (state === 'ascending') {
+    return '↑'
+  }
+  if (state === 'descending') {
+    return '↓'
+  }
+  return '↕'
+}
+
+function onSort(columnId: string): void {
+  emit('update:sort', nextNtkTableSort(props.sort, columnId))
+}
+
+function onPage(page: number): void {
+  emit('update:page', page)
+}
 
 const selectedKeySet = computed(() => new Set(props.selectedKeys))
 const selectedRows = computed(() => props.rows.filter(row => selectedKeySet.value.has(row.id)))
@@ -188,3 +270,79 @@ function onToggleRow(rowId: string): void {
   emit('update:selectedKeys', Array.from(nextSelectedKeys))
 }
 </script>
+
+<style scoped>
+.ntk-table__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-spacing-xs);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--ntk-font-weight-bold);
+  cursor: pointer;
+}
+
+.ntk-table__sort:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+
+.ntk-table__sort-indicator {
+  color: var(--ntk-text-muted);
+  font-size: var(--ntk-font-size-sm);
+}
+
+.ntk-table__loading-cell {
+  padding: var(--ntk-spacing-lg);
+  text-align: center;
+  color: var(--ntk-text-secondary);
+}
+
+.ntk-table__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ntk-spacing-sm);
+  padding-block-start: var(--ntk-spacing-sm);
+}
+
+.ntk-table__pagination-range,
+.ntk-table__pagination-page {
+  color: var(--ntk-text-secondary);
+  font-size: var(--ntk-font-size-sm);
+}
+
+.ntk-table__pagination-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-spacing-sm);
+}
+
+.ntk-table__pagination-button {
+  padding: var(--ntk-spacing-xs) var(--ntk-spacing-sm);
+  border: 1px solid var(--ntk-border-color);
+  border-radius: var(--ntk-radius-sm);
+  background: var(--ntk-bg-card);
+  color: var(--ntk-text-primary);
+  cursor: pointer;
+  transition: background-color var(--ntk-transition-fast), color var(--ntk-transition-fast);
+}
+
+.ntk-table__pagination-button:hover:not(:disabled) {
+  background: var(--ntk-bg-hover);
+}
+
+.ntk-table__pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ntk-table__pagination-button:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+</style>

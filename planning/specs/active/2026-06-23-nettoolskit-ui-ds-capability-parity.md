@@ -120,9 +120,12 @@ table -> shell -> feedback. Unblocks `legacy-surface-elimination`.
   multiselect now renders DsSelect instead of an inline native select.
 - Note: DsDatePicker/DsTimePicker are optional polish, not a blocking gap —
   DsForm already renders accessible native date/time inputs via DsInput.
-- [ ] DsTable server-mode (replaces NtkDataTable) — next; coordinated change
-  across DsTable + DsCrudPage (server pagination/sort/filter + cancellation).
-- [ ] DsLogo (replaces NtkLogo).
+- [x] DsTable server-mode (replaces NtkDataTable) — shipped; sortable headers
+  (`aria-sort`), server pagination footer + loading, driven by DsCrudPage via
+  `defineResource` (`pageSize`/`defaultSort`, `{ rows, total }` results). Pure
+  helpers (`getNtkTablePageInfo`/`nextNtkTableSort`/`getNtkTableAriaSort`/
+  `normalizeFetchResult`) at 100% core coverage; stale-fetch cancellation kept.
+- [ ] DsLogo (replaces NtkLogo) — next.
 - [ ] App shell: DsAppShell / DsHeader / DsSidebar / DsFooter / DsDrawer — largest.
 
 All shipped on PR #60. Per-commit CI uses the GitHub `ci-tests` workflow

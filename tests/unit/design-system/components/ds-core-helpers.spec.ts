@@ -37,6 +37,9 @@ import {
   getNtkStateBlockClassName,
   getNtkTableClasses,
   getNtkTableClassName,
+  getNtkTableAriaSort,
+  getNtkTablePageInfo,
+  nextNtkTableSort,
   getNtkToolbarClasses,
   getNtkToolbarClassName,
   normalizeNtkClasses,
@@ -85,5 +88,73 @@ describe('recipe primitives edge cases', () => {
 
   it('uniqueNtkClasses drops duplicates and falsy entries while preserving order', () => {
     expect(uniqueNtkClasses(['a', 'b', 'a', '', 'c'])).toEqual(['a', 'b', 'c'])
+  })
+})
+
+describe('table sort + pagination helpers', () => {
+  it('getNtkTableAriaSort maps the active column/direction to aria-sort', () => {
+    expect(getNtkTableAriaSort(null, 'name')).toBe('none')
+    expect(getNtkTableAriaSort({ field: 'name', direction: 'asc' }, 'email')).toBe('none')
+    expect(getNtkTableAriaSort({ field: 'name', direction: 'asc' }, 'name')).toBe('ascending')
+    expect(getNtkTableAriaSort({ field: 'name', direction: 'desc' }, 'name')).toBe('descending')
+  })
+
+  it('nextNtkTableSort cycles none -> asc -> desc -> none and restarts on a new column', () => {
+    expect(nextNtkTableSort(null, 'name')).toEqual({ field: 'name', direction: 'asc' })
+    expect(nextNtkTableSort({ field: 'email', direction: 'desc' }, 'name')).toEqual({ field: 'name', direction: 'asc' })
+    expect(nextNtkTableSort({ field: 'name', direction: 'asc' }, 'name')).toEqual({ field: 'name', direction: 'desc' })
+    expect(nextNtkTableSort({ field: 'name', direction: 'desc' }, 'name')).toBeNull()
+  })
+
+  it('getNtkTablePageInfo computes a clamped range in the middle of a result set', () => {
+    expect(getNtkTablePageInfo({ page: 2, pageSize: 10, total: 25 })).toEqual({
+      page: 2,
+      pageSize: 10,
+      total: 25,
+      totalPages: 3,
+      startRow: 11,
+      endRow: 20,
+      hasPrevious: true,
+      hasNext: true,
+      isEmpty: false,
+    })
+  })
+
+  it('getNtkTablePageInfo clamps an over-range page to the last (partial) page', () => {
+    expect(getNtkTablePageInfo({ page: 99, pageSize: 10, total: 25 })).toMatchObject({
+      page: 3,
+      startRow: 21,
+      endRow: 25,
+      hasPrevious: true,
+      hasNext: false,
+    })
+  })
+
+  it('getNtkTablePageInfo reports an empty, single-page state for zero rows', () => {
+    expect(getNtkTablePageInfo({ page: 1, pageSize: 10, total: 0 })).toEqual({
+      page: 1,
+      pageSize: 10,
+      total: 0,
+      totalPages: 1,
+      startRow: 0,
+      endRow: 0,
+      hasPrevious: false,
+      hasNext: false,
+      isEmpty: true,
+    })
+  })
+
+  it('getNtkTablePageInfo defends against non-positive page/size and negative totals', () => {
+    expect(getNtkTablePageInfo({ page: -2, pageSize: 0, total: -3 })).toEqual({
+      page: 1,
+      pageSize: 1,
+      total: 0,
+      totalPages: 1,
+      startRow: 0,
+      endRow: 0,
+      hasPrevious: false,
+      hasNext: false,
+      isEmpty: true,
+    })
   })
 })
