@@ -927,6 +927,10 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "hasDefault": false,
       "required": false,
     },
+    "multiple": {
+      "hasDefault": true,
+      "required": false,
+    },
     "name": {
       "hasDefault": false,
       "required": false,

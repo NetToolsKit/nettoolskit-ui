@@ -18,6 +18,7 @@ const schema = defineForm({
     { field: 'role', type: 'select', options: [{ label: 'Admin', value: 1 }, { label: 'User', value: 2 }] },
     { field: 'active', type: 'switch' },
     { field: 'bio', type: 'textarea' },
+    { field: 'tags', type: 'multiselect', options: [{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }] },
   ],
 })
 
@@ -53,6 +54,17 @@ describe('DsForm', () => {
     await wrapper.find('#ds-form-role__control').setValue('1')
     const last = wrapper.emitted('update:modelValue')!.at(-1)![0] as Record<string, unknown>
     expect(last.role).toBe(1)
+  })
+
+  it('renders multiselect as a DsSelect and emits a typed array', async () => {
+    const wrapper = mount(DsForm, { props: { schema } })
+    const select = wrapper.find('#ds-form-tags__control')
+    expect(select.exists()).toBe(true)
+    expect(select.attributes('multiple')).toBeDefined()
+
+    await select.setValue(['a', 'b'])
+    const last = wrapper.emitted('update:modelValue')!.at(-1)![0] as Record<string, unknown>
+    expect(last.tags).toEqual(['a', 'b'])
   })
 
   it('blocks submit and shows messages when invalid, then submits when valid', async () => {

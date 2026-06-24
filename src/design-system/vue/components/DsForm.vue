@@ -62,33 +62,20 @@
           </span>
         </label>
 
-        <label
+        <DsSelect
           v-else-if="field.type === 'multiselect'"
-          class="ntk-field"
-          :class="errors[field.field] ? 'ntk-field--is-invalid' : null"
-          :for="fieldId(field.field) + '__control'"
-        >
-          <span class="ntk-field__label">{{ field.label }}</span>
-          <select
-            :id="fieldId(field.field) + '__control'"
-            class="ntk-field__control"
-            multiple
-            :disabled="disabled || field.disabled"
-            :aria-invalid="errors[field.field] ? 'true' : undefined"
-            @change="setMultiselect(field, $event)"
-          >
-            <option
-              v-for="option in field.options"
-              :key="String(option.value)"
-              :value="String(option.value)"
-              :selected="isSelected(field.field, option.value)"
-              :disabled="option.disabled"
-            >{{ option.label }}</option>
-          </select>
-          <span v-if="errors[field.field] || field.help" class="ntk-field__message">
-            {{ errors[field.field] || field.help }}
-          </span>
-        </label>
+          :id="fieldId(field.field)"
+          multiple
+          :label="field.label"
+          :options="selectOptions(field)"
+          :model-value="selectedStrings(field.field)"
+          :hint="field.help"
+          :required="field.required"
+          :disabled="disabled || field.disabled"
+          :invalid="Boolean(errors[field.field])"
+          :error-message="errors[field.field]"
+          @update:model-value="setMultiselect(field, $event)"
+        />
       </template>
 
       <template v-if="showActions" #actions>
@@ -185,12 +172,10 @@ const stringValue = (key: string): string => {
   return value === null || value === undefined ? '' : String(value)
 }
 const booleanValue = (key: string): boolean => values.value[key] === true
-const selectedValues = (key: string): unknown[] => {
+const selectedStrings = (key: string): string[] => {
   const value = values.value[key]
-  return Array.isArray(value) ? value : []
+  return Array.isArray(value) ? value.map(String) : []
 }
-const isSelected = (key: string, value: unknown): boolean =>
-  selectedValues(key).map(String).includes(String(value))
 
 const selectOptions = (field: NtkNormalizedField) =>
   (field.options ?? []).map((option) => ({
@@ -225,16 +210,16 @@ const setField = (field: NtkNormalizedField, raw: string): void => {
   const coerced = field.type === 'number' ? (raw === '' ? null : Number(raw)) : raw
   update(field, coerced)
 }
-const setSelect = (field: NtkNormalizedField, raw: string): void => {
-  const option = (field.options ?? []).find((candidate) => String(candidate.value) === raw)
-  update(field, option ? option.value : (raw === '' ? null : raw))
+const setSelect = (field: NtkNormalizedField, raw: string | string[]): void => {
+  const value = Array.isArray(raw) ? (raw[0] ?? '') : raw
+  const option = (field.options ?? []).find((candidate) => String(candidate.value) === value)
+  update(field, option ? option.value : (value === '' ? null : value))
 }
 const setBoolean = (field: NtkNormalizedField, checked: boolean): void => {
   update(field, checked)
 }
-const setMultiselect = (field: NtkNormalizedField, event: Event): void => {
-  const select = event.target as HTMLSelectElement
-  const chosen = Array.from(select.selectedOptions).map((option) => option.value)
+const setMultiselect = (field: NtkNormalizedField, raw: string | string[]): void => {
+  const chosen = Array.isArray(raw) ? raw : [raw]
   const mapped = (field.options ?? [])
     .filter((option) => chosen.includes(String(option.value)))
     .map((option) => option.value)
