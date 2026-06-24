@@ -682,6 +682,67 @@ exports[`Ds* public API contract > pins the public props/events of DsInput 1`] =
 }
 `;
 
+exports[`Ds* public API contract > pins the public props/events of DsLogo 1`] = `
+{
+  "emits": [],
+  "name": "DsLogo",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "href": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "mark": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "showTagline": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "showText": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "tagline": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "text": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsMetricGrid 1`] = `
 {
   "emits": [],
