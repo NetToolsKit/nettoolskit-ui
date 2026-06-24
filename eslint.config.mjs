@@ -74,6 +74,38 @@ export default [
     },
   },
 
+  // --- Legacy reintroduction guard ---
+  // The legacy Ntk*/Base* surface and the `src/components` tree were removed
+  // (see MIGRATION.md). Block any re-introduction across app, samples and tests.
+  // The stricter design-system/core blocks below override this for their files.
+  {
+    files: ['src/**/*.ts', 'src/**/*.vue', 'samples/**/*.{ts,vue}', 'tests/**/*.{ts,vue}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '**/components/form/*',
+                '**/components/layout/*',
+                '**/components/ui/*',
+                '**/components/builders/*',
+              ],
+              message:
+                'The legacy src/components surface was removed. Use the Ds* design system instead (see MIGRATION.md).',
+            },
+            {
+              group: ['**/Ntk*', '**/Base*'],
+              message:
+                'Legacy Ntk*/Base* components were removed. Use the Ds* equivalents (see MIGRATION.md).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // --- Platform governance: executable import boundaries (engineering-first) ---
   // The Ds* design system must never depend on the legacy Ntk*/Base* surface.
   // This locks the governed surface and prevents new legacy coupling while the
