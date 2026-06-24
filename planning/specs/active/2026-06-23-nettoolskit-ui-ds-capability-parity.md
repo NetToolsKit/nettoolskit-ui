@@ -112,3 +112,18 @@ table -> shell -> feedback. Unblocks `legacy-surface-elimination`.
 - Frontend Vue/Quasar engineer (components, adapters)
 - Test engineer (states, a11y, table race conditions)
 - Docs/release engineer (generated docs, API snapshot)
+## Progress (2026-06-24)
+
+- [x] DsChip (replaces NtkChip) — shipped, CI green; samples catalog de-legacy'd.
+- [x] DsSteps app stepper — shipped, CI green.
+- [x] DsSelect multiple (covers NtkMultiSelect) — shipped, CI green; DsForm
+  multiselect now renders DsSelect instead of an inline native select.
+- Note: DsDatePicker/DsTimePicker are optional polish, not a blocking gap —
+  DsForm already renders accessible native date/time inputs via DsInput.
+- [ ] DsTable server-mode (replaces NtkDataTable) — next; coordinated change
+  across DsTable + DsCrudPage (server pagination/sort/filter + cancellation).
+- [ ] DsLogo (replaces NtkLogo).
+- [ ] App shell: DsAppShell / DsHeader / DsSidebar / DsFooter / DsDrawer — largest.
+
+All shipped on PR #60. Per-commit CI uses the GitHub `ci-tests` workflow
+(manual dispatch); GitRiver gates only at PR-open.
