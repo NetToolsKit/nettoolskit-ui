@@ -125,8 +125,10 @@ table -> shell -> feedback. Unblocks `legacy-surface-elimination`.
   `defineResource` (`pageSize`/`defaultSort`, `{ rows, total }` results). Pure
   helpers (`getNtkTablePageInfo`/`nextNtkTableSort`/`getNtkTableAriaSort`/
   `normalizeFetchResult`) at 100% core coverage; stale-fetch cancellation kept.
-- [ ] DsLogo (replaces NtkLogo) — next.
-- [ ] App shell: DsAppShell / DsHeader / DsSidebar / DsFooter / DsDrawer — largest.
+- [x] DsLogo (replaces NtkLogo) — shipped; token-driven brand mark (glyph tile +
+  wordmark/tagline), variants gradient/solid/outline, sizes xs–xl, optional link.
+  Domain-neutral (prop-driven, no branding-state coupling); axe clean.
+- [ ] App shell: DsAppShell / DsHeader / DsSidebar / DsFooter / DsDrawer — largest; next.
 
 All shipped on PR #60. Per-commit CI uses the GitHub `ci-tests` workflow
 (manual dispatch); GitRiver gates only at PR-open.
