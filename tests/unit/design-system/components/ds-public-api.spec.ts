@@ -12,9 +12,14 @@ import { describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 
 import {
+  DsAppShell,
   DsButton,
   DsCard,
   DsDialog,
+  DsDrawer,
+  DsFooter,
+  DsHeader,
+  DsSidebar,
   DsEmptyState,
   DsFilterBar,
   DsFormLayout,
@@ -80,9 +85,14 @@ const describeApi = (component: unknown): ApiDescriptor => {
 }
 
 const components: Record<string, unknown> = {
+  DsAppShell,
   DsButton,
   DsCard,
   DsDialog,
+  DsDrawer,
+  DsFooter,
+  DsHeader,
+  DsSidebar,
   DsEmptyState,
   DsFilterBar,
   DsFormLayout,

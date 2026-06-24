@@ -128,7 +128,14 @@ table -> shell -> feedback. Unblocks `legacy-surface-elimination`.
 - [x] DsLogo (replaces NtkLogo) — shipped; token-driven brand mark (glyph tile +
   wordmark/tagline), variants gradient/solid/outline, sizes xs–xl, optional link.
   Domain-neutral (prop-driven, no branding-state coupling); axe clean.
-- [ ] App shell: DsAppShell / DsHeader / DsSidebar / DsFooter / DsDrawer — largest; next.
+- [x] App shell: DsAppShell / DsHeader / DsSidebar / DsFooter / DsDrawer — shipped;
+  landmark-correct layout scaffolding (banner/nav/main/contentinfo), off-canvas
+  drawer reusing the DsDialog focus-trap/Esc/backdrop pattern, collapsible
+  sidebar. Mount + axe tests (74) incl. a composed-shell a11y scan.
+
+**Parity status: complete** — every retained legacy capability now has a `Ds*`
+contract+recipe+wrapper+tests in the public-API snapshot. Unblocks
+`legacy-surface-elimination`.
 
 All shipped on PR #60. Per-commit CI uses the GitHub `ci-tests` workflow
 (manual dispatch); GitRiver gates only at PR-open.

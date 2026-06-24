@@ -7,12 +7,22 @@
 
 import { describe, expect, it } from 'vitest'
 import {
+  getNtkAppShellClasses,
+  getNtkAppShellClassName,
   getNtkButtonClasses,
   getNtkButtonClassName,
   getNtkCardClasses,
   getNtkCardClassName,
   getNtkChipClasses,
   getNtkChipClassName,
+  getNtkDrawerClasses,
+  getNtkDrawerClassName,
+  getNtkFooterClasses,
+  getNtkFooterClassName,
+  getNtkHeaderClasses,
+  getNtkHeaderClassName,
+  getNtkSidebarClasses,
+  getNtkSidebarClassName,
   getNtkStepsClasses,
   getNtkStepsClassName,
   getNtkDialogClasses,
@@ -49,6 +59,11 @@ import {
 } from '@/design-system/core'
 
 const helpers = [
+  ['app-shell', getNtkAppShellClasses, getNtkAppShellClassName, 'ntk-app-shell'],
+  ['header', getNtkHeaderClasses, getNtkHeaderClassName, 'ntk-header'],
+  ['sidebar', getNtkSidebarClasses, getNtkSidebarClassName, 'ntk-sidebar'],
+  ['footer', getNtkFooterClasses, getNtkFooterClassName, 'ntk-footer'],
+  ['drawer', getNtkDrawerClasses, getNtkDrawerClassName, 'ntk-drawer'],
   ['button', getNtkButtonClasses, getNtkButtonClassName, 'ntk-button'],
   ['card', getNtkCardClasses, getNtkCardClassName, 'ntk-card'],
   ['chip', getNtkChipClasses, getNtkChipClassName, 'ntk-chip'],
