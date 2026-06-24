@@ -1083,7 +1083,9 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
 {
   "emits": [
     "row-click",
+    "update:page",
     "update:selectedKeys",
+    "update:sort",
   ],
   "name": "DsTable",
   "props": {
@@ -1119,6 +1121,30 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "hasDefault": true,
       "required": false,
     },
+    "loading": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "loadingLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "nextPageLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "pagination": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "paginationLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "previousPageLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
     "rows": {
       "hasDefault": true,
       "required": false,
@@ -1140,6 +1166,10 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "required": false,
     },
     "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "sort": {
       "hasDefault": true,
       "required": false,
     },

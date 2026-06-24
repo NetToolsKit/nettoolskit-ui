@@ -220,6 +220,9 @@ Source: `src/design-system/core/components/table.ts`.
 | `selectable` | Yes | `boolean` | `NtkTableContract` |
 | `emptyLabel` | Yes | `string` | `NtkTableContract` |
 | `emptyValueLabel` | Yes | `string` | `NtkTableContract` |
+| `sort` | Yes | `NtkTableSort \\| null` | `NtkTableContract` |
+| `pagination` | Yes | `NtkTablePagination \\| null` | `NtkTableContract` |
+| `loading` | Yes | `boolean` | `NtkTableContract` |
 
 ### Class Map
 

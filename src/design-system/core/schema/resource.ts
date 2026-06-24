@@ -39,8 +39,41 @@ export interface NtkQueryParams {
   readonly descending?: boolean
 }
 
-export type NtkResourceFetch<Row> = (params: NtkQueryParams) => readonly Row[] | Promise<readonly Row[]>
+/** A page of rows plus the server-reported total, for server-mode pagination. */
+export interface NtkFetchResult<Row> {
+  readonly rows: readonly Row[]
+  readonly total?: number
+}
+
+/** A fetch may return a plain array (client mode) or a `{ rows, total }` page. */
+export type NtkResourceFetchResult<Row> = readonly Row[] | NtkFetchResult<Row>
+
+export type NtkResourceFetch<Row> = (
+  params: NtkQueryParams,
+) => NtkResourceFetchResult<Row> | Promise<NtkResourceFetchResult<Row>>
 export type NtkResourceMutate<Row> = (row: Row) => unknown | Promise<unknown>
+
+/** Default sort applied on first load when columns are sortable. */
+export interface NtkResourceSort {
+  readonly field: string
+  readonly descending?: boolean
+}
+
+/**
+ * Coerce either fetch result shape into a uniform `{ rows, total }`. When the
+ * handler returns a bare array (client mode) the total is the array length.
+ * Pure.
+ */
+export const normalizeFetchResult = <Row>(
+  result: NtkResourceFetchResult<Row>,
+): { rows: Row[]; total: number } => {
+  if (Array.isArray(result)) {
+    return { rows: [...result], total: result.length }
+  }
+  const page = result as NtkFetchResult<Row>
+  const rows = [...page.rows]
+  return { rows, total: page.total ?? rows.length }
+}
 
 export interface NtkResourceSchema<Row = Record<string, unknown>> {
   readonly title: string
@@ -50,6 +83,10 @@ export interface NtkResourceSchema<Row = Record<string, unknown>> {
   readonly columns: readonly NtkColumnSchema<Row>[]
   readonly form?: readonly NtkFieldSchema[]
   readonly formColumns?: NtkFormColumnCount
+  /** When set, enables server-mode pagination with this page size. */
+  readonly pageSize?: number
+  /** Initial sort applied on first load. */
+  readonly defaultSort?: NtkResourceSort
   readonly fetch?: NtkResourceFetch<Row>
   readonly create?: NtkResourceMutate<Row>
   readonly update?: NtkResourceMutate<Row>
@@ -62,6 +99,8 @@ export interface NtkNormalizedResource<Row = Record<string, unknown>> {
   readonly rowKey: string
   readonly columns: readonly NtkNormalizedColumn<Row>[]
   readonly form: NtkNormalizedFormSchema
+  readonly pageSize?: number
+  readonly defaultSort?: NtkResourceSort
   readonly fetch?: NtkResourceFetch<Row>
   readonly create?: NtkResourceMutate<Row>
   readonly update?: NtkResourceMutate<Row>
@@ -99,6 +138,8 @@ export const defineResource = <Row = Record<string, unknown>>(
     rowKey: schema.rowKey ?? 'id',
     columns: schema.columns.map(normalizeColumn),
     form: defineForm({ fields: schema.form ?? [], columns: schema.formColumns }),
+    pageSize: schema.pageSize,
+    defaultSort: schema.defaultSort,
     fetch: schema.fetch,
     create: schema.create,
     update: schema.update,
