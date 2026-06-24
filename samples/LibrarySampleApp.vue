@@ -10,7 +10,7 @@
         </p>
       </div>
 
-      <NtkButton
+      <DsButton
         label="Primary action"
         variant="solid"
         intent="primary"
@@ -29,18 +29,17 @@
         </div>
       </DsCard>
 
-      <NtkCard title="Component Library" subtitle="Ntk* compatibility surface">
+      <DsCard title="Primitives" subtitle="Composable Ds* building blocks">
         <div class="sample-stack">
-          <NtkInput label="NtkInput" placeholder="Reusable field" />
+          <DsInput name="reusable-input" label="DsInput" placeholder="Reusable field" />
           <DsChip label="Stable API" intent="primary" />
         </div>
-      </NtkCard>
+      </DsCard>
 
-      <NtkMetricCard
-        label="Tokens"
-        value="119"
-        icon="palette"
-        trend="+ synced"
+      <DsMetricGrid
+        :metrics="[{ id: 'tokens', label: 'Tokens', value: '119', delta: 'synced', deltaDirection: 'up' }]"
+        :columns="1"
+        aria-label="Token metric"
       />
     </section>
 
@@ -68,10 +67,7 @@ import {
   DsCard,
   DsChip,
   DsInput,
-  NtkButton,
-  NtkCard,
-  NtkInput,
-  NtkMetricCard,
+  DsMetricGrid,
 } from '../index'
 import CrudRecipe from './recipes/CrudRecipe.vue'
 import DashboardRecipe from './recipes/DashboardRecipe.vue'

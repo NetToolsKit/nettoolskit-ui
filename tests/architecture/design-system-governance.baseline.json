@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "scannedRoots": [
-    "src/components"
+    "src/design-system/vue/components"
   ],
-  "scannedFiles": 58,
+  "scannedFiles": 27,
   "metrics": {
-    "directQuasarTags": 334,
-    "quasarClassSelectors": 144,
-    "unmanagedDeepSelectors": 106,
-    "importantDeclarations": 110,
+    "directQuasarTags": 0,
+    "quasarClassSelectors": 0,
+    "unmanagedDeepSelectors": 0,
+    "importantDeclarations": 0,
     "rawHexColors": 0
   }
 }
