@@ -107,3 +107,32 @@ Phase 0 (deprecation + lint guard) can start immediately in parallel.
 - Review engineer (API/package surface, breaking change)
 - Test engineer (visual/state regression, baseline reductions)
 - Docs/release engineer (migration guide, codemod, changelog)
+
+## Progress (2026-06-24)
+
+Executed after `ds-capability-parity` landed (all replacements shipped). Because
+the legacy tests were grouped by category rather than scope, the marketing-only
+and twin-only slices would have required surgical edits of shared test files with
+no safety benefit now that parity is complete — so the deletion was consolidated
+into one reviewable PR, with docs/codemod following.
+
+- [x] **Deletion + index rewrite (this PR):** removed the entire `src/components`
+  tree (54 `Ntk*`/`Base*`/marketing components + `app-shell.*`), the legacy
+  `useNtkField`/`useBaseField` composables, and all legacy component tests
+  (~31 files). `index.ts` now exports only the design system (`Ds*`, tokens,
+  recipes, schema, install plugin), kept composables/services/utils/config, and
+  the Quasar notification adapter. Samples migrated to `Ds*`-only.
+- [x] **Governance baseline → 0:** scan root moved to `src/design-system/vue/
+  components`; all metrics (directQuasarTags / quasarClassSelectors /
+  unmanagedDeepSelectors / importantDeclarations / rawHexColors) are 0 and the
+  policy now enforces zero tolerance. (Fixed a false-positive hex from the
+  `&#9776;` entity in DsHeader by using the literal glyph.)
+- [ ] **Migration guide + codemod + CHANGELOG (next PR):** `MIGRATION.md` mapping
+  every removed component to its `Ds*` replacement (or product-scope/removed),
+  an `Ntk*`→`Ds*` import codemod, a CHANGELOG breaking-change entry, and an
+  ESLint guard against reintroducing `src/components` imports.
+
+Notification capability is preserved by the kept `useNotification` composable +
+`NotificationService` + `QuasarNotificationAdapter`; only the legacy
+`NtkNotificationCenter` UI wrapper was removed. Version stays on the `0.0.x`
+preview line (breaking changes acceptable pre-1.0).

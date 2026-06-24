@@ -8,7 +8,7 @@
         :aria-label="menuLabel"
         @click="onToggleMenu"
       >
-        <span aria-hidden="true">&#9776;</span>
+        <span aria-hidden="true">☰</span>
       </button>
       <div v-if="$slots.brand" class="ntk-header__brand">
         <slot name="brand" />
