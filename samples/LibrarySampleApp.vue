@@ -149,6 +149,14 @@
       >
         <WorkspaceRecipe />
       </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Workspace docado"
+        description="DsDockLayout com DsTreeExplorer (ARIA tree), DsWorkspaceCanvas, DsDockPanel e DsStatusBar; splitters redimensionáveis por teclado."
+        :code="dockWorkspaceSnippet"
+      >
+        <DockWorkspaceRecipe />
+      </RecipeShowcase>
     </section>
 
     <!-- Single shared toast host for the whole catalog; the gallery's toast
@@ -178,6 +186,7 @@ import ComponentsGalleryRecipe from './recipes/ComponentsGalleryRecipe.vue'
 import CrudRecipe from './recipes/CrudRecipe.vue'
 import DashboardRecipe from './recipes/DashboardRecipe.vue'
 import DialogRecipe from './recipes/DialogRecipe.vue'
+import DockWorkspaceRecipe from './recipes/DockWorkspaceRecipe.vue'
 import EmptyStateRecipe from './recipes/EmptyStateRecipe.vue'
 import FormRecipe from './recipes/FormRecipe.vue'
 import RecipeShowcase from './recipes/RecipeShowcase.vue'
@@ -275,6 +284,31 @@ const workspaceSnippet = `<DsHeader title="Engineering Studio">
 // quickActions: { id, label, icon, disabled?, selected?, intent? }[]
 // ribbonTabs:  { id, label, groups: { id, label, commands: [...] }[] }[]
 // icon names come from the built-in command-icon registry (no icon font).`
+
+const dockWorkspaceSnippet = `<DsDockLayout :left-size="220" :bottom-size="120">
+  <template #left>
+    <DsTreeExplorer
+      :nodes="projectNodes"
+      aria-label="Project explorer"
+      @update:selected="onSelect"
+      @toggle="onToggle"
+    />
+  </template>
+
+  <DsWorkspaceCanvas surface="grid" aria-label="Design surface">
+    <template #header>{{ selectedLabel }}</template>
+    <!-- canvas content -->
+  </DsWorkspaceCanvas>
+
+  <template #bottom>
+    <DsDockPanel title="Output" collapsible :collapsed="collapsed" @toggle-collapse="..." />
+  </template>
+</DsDockLayout>
+
+<DsStatusBar :segments="statusSegments" />
+
+// projectNodes: { id, label, icon?, children?, expanded?, selected?, disabled? }[]
+// statusSegments: { id, icon?, label?, value?, intent?, tooltip? }[]`
 
 // Color scheme (light/dark/system) — token-only swap via useColorScheme.
 const { mode } = useColorScheme()

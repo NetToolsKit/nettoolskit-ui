@@ -52,6 +52,11 @@ import {
   DsRibbon,
   DsRibbonGroup,
   DsRibbonCommand,
+  DsStatusBar,
+  DsWorkspaceCanvas,
+  DsDockLayout,
+  DsDockPanel,
+  DsTreeExplorer,
 } from '@/design-system/vue'
 
 interface PropDescriptor {
@@ -139,6 +144,11 @@ const components: Record<string, unknown> = {
   DsRibbon,
   DsRibbonGroup,
   DsRibbonCommand,
+  DsStatusBar,
+  DsWorkspaceCanvas,
+  DsDockLayout,
+  DsDockPanel,
+  DsTreeExplorer,
 }
 
 describe('Ds* public API contract', () => {
