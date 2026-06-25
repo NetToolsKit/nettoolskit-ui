@@ -44,7 +44,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
+  getNtkDensityClass,
   ntkFieldDefaults,
+  ntkFieldRecipeClassMap,
   resolveNtkFieldRecipe,
   type NtkFieldContract,
 } from '../../core'
@@ -68,6 +70,7 @@ const props = withDefaults(defineProps<NtkFieldContract<DsInputValue> & {
   variant: ntkFieldDefaults.variant,
   size: ntkFieldDefaults.size,
   intent: ntkFieldDefaults.intent,
+  density: ntkFieldDefaults.density,
   disabled: false,
   readonly: false,
   required: false,
@@ -88,16 +91,19 @@ const inputId = computed(() => props.id ? `${props.id}__control` : undefined)
 const descriptionId = computed(() => (
   (props.errorMessage || props.hint) && props.id ? `${props.id}__description` : undefined
 ))
-const classes = computed(() => resolveNtkFieldRecipe({
-  variant: props.variant,
-  size: props.size,
-  intent: props.intent,
-  disabled: props.disabled,
-  readonly: props.readonly,
-  required: props.required,
-  invalid: props.invalid,
-  class: props.class,
-}).classes)
+const classes = computed(() => [
+  ...resolveNtkFieldRecipe({
+    variant: props.variant,
+    size: props.size,
+    intent: props.intent,
+    disabled: props.disabled,
+    readonly: props.readonly,
+    required: props.required,
+    invalid: props.invalid,
+    class: props.class,
+  }).classes,
+  getNtkDensityClass(ntkFieldRecipeClassMap.root, props.density),
+])
 </script>
 
 <style scoped>
@@ -158,6 +164,24 @@ const classes = computed(() => resolveNtkFieldRecipe({
 .ntk-field__control--multiline {
   resize: vertical;
   min-block-size: calc(var(--ntk-spacing-3xl) + var(--ntk-spacing-md));
+}
+
+/* Density. Comfortable keeps the baseline control padding; compact tightens
+   the field for dense forms and spacious relaxes it for touch surfaces. */
+.ntk-field--density-compact {
+  gap: 2px;
+}
+
+.ntk-field--density-compact .ntk-field__control {
+  padding-block: var(--ntk-spacing-xs);
+}
+
+.ntk-field--density-spacious {
+  gap: var(--ntk-spacing-sm);
+}
+
+.ntk-field--density-spacious .ntk-field__control {
+  padding-block: var(--ntk-spacing-md);
 }
 
 /* Sizes. */

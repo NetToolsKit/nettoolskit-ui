@@ -157,12 +157,15 @@ const classes = computed(() => resolveNtkMetricGridRecipe({
   font-weight: var(--ntk-font-weight-semibold);
 }
 
+/* Deltas are small (xs) text, so they must clear 4.5:1 on the card surface.
+   The semantic *-dark tokens land just under AA on light themes, so blend them
+   toward the primary text color to guarantee contrast across every theme. */
 .ntk-metric-grid__delta--up {
-  color: var(--ntk-success-dark);
+  color: color-mix(in srgb, var(--ntk-success-dark) 70%, var(--ntk-text-primary));
 }
 
 .ntk-metric-grid__delta--down {
-  color: var(--ntk-error-dark);
+  color: color-mix(in srgb, var(--ntk-error-dark) 70%, var(--ntk-text-primary));
 }
 
 .ntk-metric-grid__delta--flat {

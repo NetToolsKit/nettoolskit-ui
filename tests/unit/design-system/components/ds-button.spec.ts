@@ -61,4 +61,33 @@ describe('DsButton', () => {
     ]))
     expect(wrapper.emitted('click')).toBeUndefined()
   })
+
+  it('renders a token-driven spinner, disabled and aria-busy, while loading', () => {
+    const wrapper = mount(DsButton, {
+      props: {
+        label: 'Saving',
+        loading: true,
+      },
+    })
+
+    const button = wrapper.get('button')
+
+    expect(wrapper.find('.ntk-button__spinner').exists()).toBe(true)
+    expect(button.attributes('disabled')).toBeDefined()
+    expect(button.attributes('aria-busy')).toBe('true')
+  })
+
+  it('does not render the spinner when not loading', () => {
+    const wrapper = mount(DsButton, { props: { label: 'Idle' } })
+
+    expect(wrapper.find('.ntk-button__spinner').exists()).toBe(false)
+  })
+
+  it('defaults to comfortable density and reflects an explicit density class', () => {
+    expect(mount(DsButton, { props: { label: 'Default' } }).get('button').classes())
+      .toContain('ntk-button--density-comfortable')
+
+    const compact = mount(DsButton, { props: { label: 'Compact', density: 'compact' } })
+    expect(compact.get('button').classes()).toContain('ntk-button--density-compact')
+  })
 })

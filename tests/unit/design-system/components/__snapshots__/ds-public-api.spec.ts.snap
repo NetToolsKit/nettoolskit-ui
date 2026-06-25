@@ -50,6 +50,10 @@ exports[`Ds* public API contract > pins the public props/events of DsButton 1`] 
       "hasDefault": false,
       "required": false,
     },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
     "disabled": {
       "hasDefault": true,
       "required": false,
@@ -794,6 +798,10 @@ exports[`Ds* public API contract > pins the public props/events of DsInput 1`] =
       "hasDefault": false,
       "required": false,
     },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
     "disabled": {
       "hasDefault": true,
       "required": false,
@@ -1144,6 +1152,10 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "hasDefault": false,
       "required": false,
     },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
     "disabled": {
       "hasDefault": true,
       "required": false,
@@ -1392,6 +1404,10 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "required": false,
     },
     "columns": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "density": {
       "hasDefault": true,
       "required": false,
     },

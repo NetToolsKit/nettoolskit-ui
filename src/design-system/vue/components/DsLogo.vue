@@ -144,7 +144,7 @@ const resolvedAriaLabel = computed(() => (
 
 .ntk-logo--size-sm {
   --ntk-logo-mark: 28px;
-  --ntk-logo-text: var(--ntk-font-size-md);
+  --ntk-logo-text: var(--ntk-font-size-base);
 }
 
 .ntk-logo--size-lg {

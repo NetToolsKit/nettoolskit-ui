@@ -8,18 +8,25 @@ import {
   type NtkRecipeClassMap,
   type NtkRecipeOptions,
 } from './recipe'
-import type { NtkComponentContractBase, NtkComponentIntent, NtkComponentSize } from './contracts'
+import type {
+  NtkComponentContractBase,
+  NtkComponentDensity,
+  NtkComponentIntent,
+  NtkComponentSize,
+} from './contracts'
 
 export const ntkButtonVariants = ['solid', 'outline', 'ghost', 'link'] as const
 export type NtkButtonVariant = (typeof ntkButtonVariants)[number]
 export type NtkButtonSize = NtkComponentSize
 export type NtkButtonIntent = NtkComponentIntent
+export type NtkButtonDensity = NtkComponentDensity
 
 export interface NtkButtonContract extends NtkComponentContractBase {
   readonly label?: string
   readonly variant?: NtkButtonVariant
   readonly size?: NtkButtonSize
   readonly intent?: NtkButtonIntent
+  readonly density?: NtkButtonDensity
   readonly disabled?: boolean
   readonly loading?: boolean
   readonly icon?: string
@@ -31,7 +38,8 @@ export const ntkButtonDefaults = {
   variant: 'solid',
   size: 'md',
   intent: 'primary',
-} as const satisfies Required<Pick<NtkButtonContract, 'variant' | 'size' | 'intent'>>
+  density: 'comfortable',
+} as const satisfies Required<Pick<NtkButtonContract, 'variant' | 'size' | 'intent' | 'density'>>
 
 export const ntkButtonRecipeClassMap = {
   root: 'ntk-button',

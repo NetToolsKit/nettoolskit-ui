@@ -54,6 +54,8 @@ import {
   nextNtkTableSort,
   getNtkToolbarClasses,
   getNtkToolbarClassName,
+  getNtkDensityClass,
+  ntkComponentDensities,
   normalizeNtkClasses,
   uniqueNtkClasses,
 } from '@/design-system/core'
@@ -106,6 +108,14 @@ describe('recipe primitives edge cases', () => {
 
   it('uniqueNtkClasses drops duplicates and falsy entries while preserving order', () => {
     expect(uniqueNtkClasses(['a', 'b', 'a', '', 'c'])).toEqual(['a', 'b', 'c'])
+  })
+
+  it('getNtkDensityClass builds a root-scoped density class and defaults to comfortable', () => {
+    // Default-parameter branch (called without an explicit density).
+    expect(getNtkDensityClass('ntk-button')).toBe('ntk-button--density-comfortable')
+    for (const density of ntkComponentDensities) {
+      expect(getNtkDensityClass('ntk-field', density)).toBe(`ntk-field--density-${density}`)
+    }
   })
 })
 

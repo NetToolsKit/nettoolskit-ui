@@ -104,7 +104,7 @@ function onRemove(): void {
 }
 
 .ntk-chip--size-lg {
-  font-size: var(--ntk-font-size-md);
+  font-size: var(--ntk-font-size-base);
   padding-inline: var(--ntk-spacing-md);
 }
 
@@ -156,7 +156,7 @@ function onRemove(): void {
   border-radius: var(--ntk-radius-full);
   background: transparent;
   color: inherit;
-  font-size: var(--ntk-font-size-md);
+  font-size: var(--ntk-font-size-base);
   line-height: 1;
   cursor: pointer;
 }

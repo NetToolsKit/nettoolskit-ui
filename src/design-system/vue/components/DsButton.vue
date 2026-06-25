@@ -8,6 +8,7 @@
     :data-testid="testId"
     @click="emit('click', $event)"
   >
+    <span v-if="loading" class="ntk-button__spinner" aria-hidden="true"></span>
     <span v-if="icon" class="ntk-button__icon ntk-button__icon--left" aria-hidden="true">{{ icon }}</span>
     <span v-if="$slots.default || label" class="ntk-button__label">
       <slot>{{ label }}</slot>
@@ -19,7 +20,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
+  getNtkDensityClass,
   ntkButtonDefaults,
+  ntkButtonRecipeClassMap,
   resolveNtkButtonRecipe,
   type NtkButtonContract,
 } from '../../core'
@@ -32,6 +35,7 @@ const props = withDefaults(defineProps<NtkButtonContract>(), {
   variant: ntkButtonDefaults.variant,
   size: ntkButtonDefaults.size,
   intent: ntkButtonDefaults.intent,
+  density: ntkButtonDefaults.density,
   type: 'button',
   disabled: false,
   loading: false,
@@ -41,14 +45,17 @@ const emit = defineEmits<{
   click: [event: MouseEvent]
 }>()
 
-const classes = computed(() => resolveNtkButtonRecipe({
-  variant: props.variant,
-  size: props.size,
-  intent: props.intent,
-  disabled: props.disabled,
-  loading: props.loading,
-  class: props.class,
-}).classes)
+const classes = computed(() => [
+  ...resolveNtkButtonRecipe({
+    variant: props.variant,
+    size: props.size,
+    intent: props.intent,
+    disabled: props.disabled,
+    loading: props.loading,
+    class: props.class,
+  }).classes,
+  getNtkDensityClass(ntkButtonRecipeClassMap.root, props.density),
+])
 </script>
 
 <style scoped>
@@ -56,6 +63,11 @@ const classes = computed(() => resolveNtkButtonRecipe({
   --ntk-c: var(--ntk-primary);
   --ntk-c-dark: var(--ntk-primary-dark);
   --ntk-c-light: var(--ntk-primary-light);
+  /* Accessible text shade for transparent variants: blend the intent color
+     toward the primary text color so ghost/outline labels clear WCAG AA on the
+     page surface in both light and dark schemes (the raw intent hue alone is
+     too light for small text). */
+  --ntk-c-text: color-mix(in srgb, var(--ntk-c) 55%, var(--ntk-text-primary));
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -120,6 +132,20 @@ const classes = computed(() => resolveNtkButtonRecipe({
   --ntk-c-light: var(--ntk-info-light);
 }
 
+/* Density. Comfortable mirrors the size defaults; compact/spacious nudge the
+   block/inline padding so a row of controls can be tightened or relaxed. */
+.ntk-button--density-compact {
+  padding-block: var(--ntk-spacing-xs);
+  padding-inline: var(--ntk-spacing-sm);
+  gap: var(--ntk-spacing-xs);
+}
+
+.ntk-button--density-spacious {
+  padding-block: var(--ntk-spacing-md);
+  padding-inline: var(--ntk-spacing-lg);
+  gap: var(--ntk-spacing-md);
+}
+
 /* Sizes. */
 .ntk-button--size-sm {
   padding-block: var(--ntk-spacing-xs);
@@ -154,7 +180,7 @@ const classes = computed(() => resolveNtkButtonRecipe({
 .ntk-button--variant-outline {
   border-color: var(--ntk-c);
   background: transparent;
-  color: var(--ntk-c);
+  color: var(--ntk-c-text);
 }
 
 .ntk-button--variant-outline:hover:not(:disabled) {
@@ -164,7 +190,7 @@ const classes = computed(() => resolveNtkButtonRecipe({
 .ntk-button--variant-ghost {
   border-color: transparent;
   background: transparent;
-  color: var(--ntk-c);
+  color: var(--ntk-c-text);
 }
 
 .ntk-button--variant-ghost:hover:not(:disabled) {
@@ -206,5 +232,30 @@ const classes = computed(() => resolveNtkButtonRecipe({
 .ntk-button__label {
   display: inline-flex;
   align-items: center;
+}
+
+/* Token-driven loading spinner. Inherits the button text color via
+   currentColor, so it stays legible across every variant and theme. */
+.ntk-button__spinner {
+  inline-size: 1em;
+  block-size: 1em;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-block-start-color: transparent;
+  border-radius: var(--ntk-radius-full);
+  opacity: 0.85;
+  animation: ntk-button-spin var(--ntk-transition-slow) linear infinite;
+}
+
+@keyframes ntk-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ntk-button__spinner {
+    animation-duration: 0ms;
+  }
 }
 </style>

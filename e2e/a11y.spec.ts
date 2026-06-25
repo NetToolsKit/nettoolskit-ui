@@ -28,9 +28,8 @@ test('catalog exposes a main landmark and a top-level heading', async ({ page })
 test('catalog has no detectable WCAG violations (axe)', async ({ page }) => {
   const results = await new AxeBuilder({ page })
     .withTags(WCAG_TAGS)
-    // Contrast depends on the active theme tokens; it is governed at the token
-    // layer. Keep this DOM/role/label-focused and deterministic.
-    .disableRules(['color-contrast'])
+    // Real WCAG AA contrast is enforced against the rendered, styled catalog:
+    // the styled Ds* components must meet 4.5:1 with token-only color pairs.
     .analyze()
 
   const summary = results.violations

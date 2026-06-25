@@ -175,6 +175,14 @@ describe('DsTable', () => {
     expect(wrapper.emitted('update:page')?.[1]).toEqual([3])
   })
 
+  it('defaults to comfortable density and reflects an explicit density class', () => {
+    expect(mount(DsTable, { props: { columns, rows } }).get('.ntk-table').classes())
+      .toContain('ntk-table--density-comfortable')
+
+    const compact = mount(DsTable, { props: { columns, rows, density: 'compact' } })
+    expect(compact.get('.ntk-table').classes()).toContain('ntk-table--density-compact')
+  })
+
   it('disables navigation and marks the table busy while loading an empty set', () => {
     const wrapper = mount(DsTable, {
       props: {

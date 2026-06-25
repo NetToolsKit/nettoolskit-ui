@@ -119,6 +119,14 @@ describe('DsSelect', () => {
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['draft', 'published']])
   })
 
+  it('defaults to comfortable density and reflects an explicit density class', () => {
+    expect(mount(DsSelect, { props: { options } }).get('label').classes())
+      .toContain('ntk-field--density-comfortable')
+
+    const compact = mount(DsSelect, { props: { options, density: 'compact' } })
+    expect(compact.get('label').classes()).toContain('ntk-field--density-compact')
+  })
+
   it('does not emit model updates while readonly', async () => {
     const wrapper = mount(DsSelect, {
       props: {
