@@ -80,6 +80,16 @@ import {
   getNtkRibbonGroupClassName,
   getNtkRibbonCommandClasses,
   getNtkRibbonCommandClassName,
+  getNtkStatusBarClasses,
+  getNtkStatusBarClassName,
+  getNtkWorkspaceCanvasClasses,
+  getNtkWorkspaceCanvasClassName,
+  getNtkDockLayoutClasses,
+  getNtkDockLayoutClassName,
+  getNtkDockPanelClasses,
+  getNtkDockPanelClassName,
+  getNtkTreeExplorerClasses,
+  getNtkTreeExplorerClassName,
   getNtkDensityClass,
   ntkComponentDensities,
   normalizeNtkClasses,
@@ -122,6 +132,11 @@ const helpers = [
   ['ribbon', getNtkRibbonClasses, getNtkRibbonClassName, 'ntk-ribbon'],
   ['ribbon-group', getNtkRibbonGroupClasses, getNtkRibbonGroupClassName, 'ntk-ribbon-group'],
   ['ribbon-command', getNtkRibbonCommandClasses, getNtkRibbonCommandClassName, 'ntk-ribbon-command'],
+  ['status-bar', getNtkStatusBarClasses, getNtkStatusBarClassName, 'ntk-status-bar'],
+  ['workspace-canvas', getNtkWorkspaceCanvasClasses, getNtkWorkspaceCanvasClassName, 'ntk-workspace-canvas'],
+  ['dock-layout', getNtkDockLayoutClasses, getNtkDockLayoutClassName, 'ntk-dock-layout'],
+  ['dock-panel', getNtkDockPanelClasses, getNtkDockPanelClassName, 'ntk-dock-panel'],
+  ['tree-explorer', getNtkTreeExplorerClasses, getNtkTreeExplorerClassName, 'ntk-tree-explorer'],
 ] as const
 
 describe('getNtk* class helpers', () => {
