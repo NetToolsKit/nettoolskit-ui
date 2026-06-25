@@ -18,6 +18,7 @@ Do not edit by hand.
 | `spacing` | 7 | Base component spacing scale. |
 | `typography` | 34 | Font families, sizes, weights, and line heights. |
 | `motion` | 3 | Shared transition values. |
+| `zIndex` | 3 | Stacking scale for layered overlays. |
 
 Resolver: `src/design-system/tokens/resolver.json`.
 
@@ -90,10 +91,10 @@ Values are resolved. CSS values keep token references as CSS custom properties w
 | `feedback.successDark` | `color` | `--ntk-success-dark` | `#047857` | `#047857` |
 | `feedback.warning` | `color` | `--ntk-warning` | `#f59e0b` | `#f59e0b` |
 | `feedback.warningLight` | `color` | `--ntk-warning-light` | `#fef3c7` | `#fef3c7` |
-| `feedback.warningDark` | `color` | `--ntk-warning-dark` | `#d97706` | `#d97706` |
+| `feedback.warningDark` | `color` | `--ntk-warning-dark` | `#b45309` | `#b45309` |
 | `feedback.error` | `color` | `--ntk-error` | `#ef4444` | `#ef4444` |
 | `feedback.errorLight` | `color` | `--ntk-error-light` | `#fee2e2` | `#fee2e2` |
-| `feedback.errorDark` | `color` | `--ntk-error-dark` | `#dc2626` | `#dc2626` |
+| `feedback.errorDark` | `color` | `--ntk-error-dark` | `#b91c1c` | `#b91c1c` |
 | `feedback.info` | `color` | `--ntk-info` | `#14b8a6` | `#14b8a6` |
 | `feedback.infoLight` | `color` | `--ntk-info-light` | `#ccfbf1` | `#ccfbf1` |
 | `feedback.infoDark` | `color` | `--ntk-info-dark` | `#0f766e` | `#0f766e` |
@@ -198,3 +199,11 @@ Values are resolved. CSS values keep token references as CSS custom properties w
 | `motion.fast` | `transition` | `--ntk-transition-fast` | `150ms ease-in-out` | `150ms ease-in-out` |
 | `motion.base` | `transition` | `--ntk-transition-base` | `250ms ease-in-out` | `250ms ease-in-out` |
 | `motion.slow` | `transition` | `--ntk-transition-slow` | `350ms ease-in-out` | `350ms ease-in-out` |
+
+### Z Index
+
+| Token | Type | CSS variable | Value | CSS value |
+| --- | --- | --- | --- | --- |
+| `zIndex.dropdown` | `number` | `--ntk-z-dropdown` | `1000` | `1000` |
+| `zIndex.overlay` | `number` | `--ntk-z-overlay` | `1500` | `1500` |
+| `zIndex.toast` | `number` | `--ntk-z-toast` | `2000` | `2000` |

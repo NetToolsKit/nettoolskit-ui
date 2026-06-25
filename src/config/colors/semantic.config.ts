@@ -96,7 +96,7 @@ export interface SemanticColors {
   /**
    * Dark warning color
    * Used for text on light backgrounds and pressed states
-   * @example '#d97706' (amber-600)
+   * @example '#b45309' (amber-700)
    */
   warningDark: string
   
@@ -118,7 +118,7 @@ export interface SemanticColors {
    * Warning text color
    * Used for text content in warning contexts
    * Must meet WCAG AA contrast ratio (4.5:1) on light backgrounds
-   * @example '#d97706' (amber-600)
+   * @example '#b45309' (amber-700)
    */
   warningText: string
   
@@ -143,7 +143,7 @@ export interface SemanticColors {
   /**
    * Dark error color
    * Used for text on light backgrounds and pressed states
-   * @example '#dc2626' (red-600)
+   * @example '#b91c1c' (red-700)
    */
   errorDark: string
   
@@ -165,7 +165,7 @@ export interface SemanticColors {
    * Error text color
    * Used for text content in error contexts
    * Must meet WCAG AA contrast ratio (4.5:1) on light backgrounds
-   * @example '#dc2626' (red-600)
+   * @example '#b91c1c' (red-700)
    */
   errorText: string
   
@@ -296,18 +296,18 @@ const defaultSemanticColors: SemanticColors = {
   // Warning (Amber/Orange) - Caution, requires attention
   warningPrimary: '#f59e0b',
   warningLight: '#fef3c7',
-  warningDark: '#d97706',
+  warningDark: '#b45309',
   warningBorder: '#f59e0b',
   warningBackground: '#fef3c7',
-  warningText: '#d97706',
-  
+  warningText: '#b45309',
+
   // Error (Red) - Errors, destructive actions
   errorPrimary: '#ef4444',
   errorLight: '#fee2e2',
-  errorDark: '#dc2626',
+  errorDark: '#b91c1c',
   errorBorder: '#ef4444',
   errorBackground: '#fee2e2',
-  errorText: '#dc2626',
+  errorText: '#b91c1c',
   
   // Info (Blue) - Informational, neutral messages
   infoPrimary: '#3b82f6',

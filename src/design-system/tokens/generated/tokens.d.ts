@@ -122,6 +122,9 @@ export type DesignTokenPath =
   | "motion.fast"
   | "motion.base"
   | "motion.slow"
+  | "zIndex.dropdown"
+  | "zIndex.overlay"
+  | "zIndex.toast"
 
 export type DesignTokenCssVariable =
   | "--ntk-primary"
@@ -243,6 +246,9 @@ export type DesignTokenCssVariable =
   | "--ntk-transition-fast"
   | "--ntk-transition-base"
   | "--ntk-transition-slow"
+  | "--ntk-z-dropdown"
+  | "--ntk-z-overlay"
+  | "--ntk-z-toast"
 
 export type DesignTokenGroup =
   | "color"
@@ -256,6 +262,7 @@ export type DesignTokenGroup =
   | "spacing"
   | "typography"
   | "motion"
+  | "zIndex"
 
 export type DesignTokenType =
   | "color"
@@ -289,7 +296,7 @@ export interface DesignTokenResolver {
   readonly schemaVersion: 1
   readonly namespace: "nettoolskit"
   readonly source: "src/design-system/tokens/source.json"
-  readonly tokenCount: 119
+  readonly tokenCount: 122
   readonly groups: Readonly<Record<DesignTokenGroup, { readonly name: DesignTokenGroup; readonly tokens: readonly DesignTokenPath[] }>>
   readonly types: Readonly<Record<DesignTokenType, { readonly name: DesignTokenType; readonly tokens: readonly DesignTokenPath[] }>>
   readonly contexts: Readonly<Record<DesignTokenResolverContext, { readonly name: DesignTokenResolverContext; readonly status: string; readonly tokens: readonly DesignTokenPath[] }>>

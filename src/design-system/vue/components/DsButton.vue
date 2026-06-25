@@ -167,14 +167,17 @@ const classes = computed(() => [
 
 /* Variants. */
 .ntk-button--variant-solid {
-  border-color: var(--ntk-c);
-  background: var(--ntk-c);
+  /* Solid fills use the intent's AA-700 dark shade so white label text clears
+     WCAG AA (the raw 500 base hue fails ~2.5-3.7:1). */
+  border-color: var(--ntk-c-dark);
+  background: var(--ntk-c-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-button--variant-solid:hover:not(:disabled) {
-  border-color: var(--ntk-c-dark);
-  background: var(--ntk-c-dark);
+  /* Deepen the fill on hover while staying darker than the AA-700 base. */
+  border-color: color-mix(in srgb, var(--ntk-c-dark) 85%, black);
+  background: color-mix(in srgb, var(--ntk-c-dark) 85%, black);
 }
 
 .ntk-button--variant-outline {

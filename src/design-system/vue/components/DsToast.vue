@@ -177,31 +177,31 @@ function onDismiss(): void {
 
 .ntk-toast--variant-solid.ntk-toast--intent-info {
   border-color: transparent;
-  background: var(--ntk-info);
+  background: var(--ntk-info-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-toast--variant-solid.ntk-toast--intent-primary {
   border-color: transparent;
-  background: var(--ntk-primary);
+  background: var(--ntk-primary-dark);
   color: var(--ntk-text-on-primary);
 }
 
 .ntk-toast--variant-solid.ntk-toast--intent-success {
   border-color: transparent;
-  background: var(--ntk-success);
+  background: var(--ntk-success-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-toast--variant-solid.ntk-toast--intent-warning {
   border-color: transparent;
-  background: var(--ntk-warning);
+  background: var(--ntk-warning-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-toast--variant-solid.ntk-toast--intent-danger {
   border-color: transparent;
-  background: var(--ntk-error);
+  background: var(--ntk-error-dark);
   color: var(--ntk-text-inverse);
 }
 

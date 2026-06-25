@@ -6,21 +6,61 @@
   <div class="recipe-gallery">
     <section class="recipe-gallery__group" aria-label="DsBadge">
       <h4 class="recipe-gallery__title">DsBadge</h4>
+      <!-- Every intent x variant so the e2e axe color-contrast scan exercises
+           the full matrix of solid/soft/outline semantic pairings. -->
+      <div
+        v-for="variant in intentVariants"
+        :key="`badge-${variant}`"
+        class="recipe-gallery__row"
+      >
+        <DsBadge
+          v-for="intent in intents"
+          :key="`badge-${variant}-${intent}`"
+          :variant="variant"
+          :intent="intent"
+          :label="intent"
+        />
+      </div>
       <div class="recipe-gallery__row">
-        <DsBadge label="Padrão" />
-        <DsBadge label="Novo" variant="solid" intent="primary" />
-        <DsBadge label="Ativo" variant="soft" intent="primary" />
-        <DsBadge label="Beta" variant="outline" intent="primary" />
         <DsBadge dot intent="primary" label="Status online" />
       </div>
     </section>
 
     <section class="recipe-gallery__group" aria-label="DsChip">
       <h4 class="recipe-gallery__title">DsChip</h4>
+      <div
+        v-for="variant in intentVariants"
+        :key="`chip-${variant}`"
+        class="recipe-gallery__row"
+      >
+        <DsChip
+          v-for="intent in intents"
+          :key="`chip-${variant}-${intent}`"
+          :variant="variant"
+          :intent="intent"
+          :label="intent"
+        />
+      </div>
       <div class="recipe-gallery__row">
-        <DsChip label="Padrão" />
         <DsChip label="Selecionado" clickable selected />
         <DsChip label="Removível" variant="soft" removable remove-label="Remover filtro" />
+      </div>
+    </section>
+
+    <section class="recipe-gallery__group recipe-gallery__group--wide" aria-label="DsButton">
+      <h4 class="recipe-gallery__title">DsButton</h4>
+      <div
+        v-for="variant in buttonVariants"
+        :key="`button-${variant}`"
+        class="recipe-gallery__row"
+      >
+        <DsButton
+          v-for="intent in intents"
+          :key="`button-${variant}-${intent}`"
+          :variant="variant"
+          :intent="intent"
+          :label="intent"
+        />
       </div>
     </section>
 
@@ -83,25 +123,21 @@
       <DsSteps :steps="steps" :current="1" aria-label="Progresso do cadastro" />
     </section>
 
-    <section class="recipe-gallery__group" aria-label="DsBanner">
+    <section class="recipe-gallery__group recipe-gallery__group--wide" aria-label="DsBanner">
       <h4 class="recipe-gallery__title">DsBanner</h4>
+      <!-- Full intent x variant matrix; the e2e axe scan validates contrast for
+           every solid/soft/outline semantic banner. -->
       <div class="recipe-gallery__stack">
-        <DsBanner
-          variant="soft"
-          intent="neutral"
-          icon="ℹ️"
-          title="Atualização disponível"
-          message="Uma nova versão da biblioteca foi publicada."
-        />
-        <DsBanner
-          variant="soft"
-          intent="primary"
-          icon="📌"
-          title="Plano atualizado"
-          message="Suas alterações de plano entram em vigor no próximo ciclo."
-          dismissible
-          dismiss-label="Dispensar aviso"
-        />
+        <template v-for="variant in intentVariants" :key="`banner-${variant}`">
+          <DsBanner
+            v-for="intent in intents"
+            :key="`banner-${variant}-${intent}`"
+            :variant="variant"
+            :intent="intent"
+            :title="`${variant} / ${intent}`"
+            :message="`Banner ${variant} com intenção ${intent}.`"
+          />
+        </template>
       </div>
     </section>
 
@@ -132,10 +168,28 @@ import {
   DsTabs,
   DsTooltip,
   useToast,
+  type NtkBadgeVariant,
   type NtkBreadcrumbItem,
+  type NtkButtonVariant,
+  type NtkComponentIntent,
   type NtkStepItem,
   type NtkTabItem,
 } from '../../index'
+
+// Drive the intent x variant matrices below so the e2e axe color-contrast scan
+// exercises every solid/soft/outline semantic pairing in one rendered DOM.
+const intents: NtkComponentIntent[] = [
+  'neutral',
+  'primary',
+  'success',
+  'warning',
+  'danger',
+  'info',
+]
+// Badge/Banner/Chip share the solid/soft/outline variant set.
+const intentVariants: NtkBadgeVariant[] = ['solid', 'soft', 'outline']
+// Buttons expose solid/outline/ghost (plus link, omitted here).
+const buttonVariants: NtkButtonVariant[] = ['solid', 'outline', 'ghost']
 
 const tabs: NtkTabItem[] = [
   { id: 'overview', label: 'Visão geral' },
@@ -178,6 +232,10 @@ const onToast = (): void => {
   display: flex;
   flex-direction: column;
   gap: var(--ntk-spacing-sm);
+}
+
+.recipe-gallery__group--wide {
+  grid-column: 1 / -1;
 }
 
 .recipe-gallery__title {

@@ -292,9 +292,9 @@ export const designTokens = {
   },
   "feedback.warningDark": {
     "type": "color",
-    "value": "#d97706",
-    "rawValue": "#d97706",
-    "cssValue": "#d97706",
+    "value": "#b45309",
+    "rawValue": "#b45309",
+    "cssValue": "#b45309",
     "cssVariable": "--ntk-warning-dark"
   },
   "feedback.error": {
@@ -313,9 +313,9 @@ export const designTokens = {
   },
   "feedback.errorDark": {
     "type": "color",
-    "value": "#dc2626",
-    "rawValue": "#dc2626",
-    "cssValue": "#dc2626",
+    "value": "#b91c1c",
+    "rawValue": "#b91c1c",
+    "cssValue": "#b91c1c",
     "cssVariable": "--ntk-error-dark"
   },
   "feedback.info": {
@@ -835,6 +835,27 @@ export const designTokens = {
     "rawValue": "350ms ease-in-out",
     "cssValue": "350ms ease-in-out",
     "cssVariable": "--ntk-transition-slow"
+  },
+  "zIndex.dropdown": {
+    "type": "number",
+    "value": "1000",
+    "rawValue": "1000",
+    "cssValue": "1000",
+    "cssVariable": "--ntk-z-dropdown"
+  },
+  "zIndex.overlay": {
+    "type": "number",
+    "value": "1500",
+    "rawValue": "1500",
+    "cssValue": "1500",
+    "cssVariable": "--ntk-z-overlay"
+  },
+  "zIndex.toast": {
+    "type": "number",
+    "value": "2000",
+    "rawValue": "2000",
+    "cssValue": "2000",
+    "cssVariable": "--ntk-z-toast"
   }
 } as const
 
@@ -880,10 +901,10 @@ export const designTokenValues = {
   "feedback.successDark": "#047857",
   "feedback.warning": "#f59e0b",
   "feedback.warningLight": "#fef3c7",
-  "feedback.warningDark": "#d97706",
+  "feedback.warningDark": "#b45309",
   "feedback.error": "#ef4444",
   "feedback.errorLight": "#fee2e2",
-  "feedback.errorDark": "#dc2626",
+  "feedback.errorDark": "#b91c1c",
   "feedback.info": "#14b8a6",
   "feedback.infoLight": "#ccfbf1",
   "feedback.infoDark": "#0f766e",
@@ -957,7 +978,10 @@ export const designTokenValues = {
   "typography.lineHeight.relaxed": "1.8",
   "motion.fast": "150ms ease-in-out",
   "motion.base": "250ms ease-in-out",
-  "motion.slow": "350ms ease-in-out"
+  "motion.slow": "350ms ease-in-out",
+  "zIndex.dropdown": "1000",
+  "zIndex.overlay": "1500",
+  "zIndex.toast": "2000"
 } as const
 
 export const designTokenCssVariables = {
@@ -1079,7 +1103,10 @@ export const designTokenCssVariables = {
   "typography.lineHeight.relaxed": "--ntk-line-height-relaxed",
   "motion.fast": "--ntk-transition-fast",
   "motion.base": "--ntk-transition-base",
-  "motion.slow": "--ntk-transition-slow"
+  "motion.slow": "--ntk-transition-slow",
+  "zIndex.dropdown": "--ntk-z-dropdown",
+  "zIndex.overlay": "--ntk-z-overlay",
+  "zIndex.toast": "--ntk-z-toast"
 } as const
 
 export const designTokensByCssVariable = {
@@ -1201,14 +1228,17 @@ export const designTokensByCssVariable = {
   "--ntk-line-height-relaxed": "typography.lineHeight.relaxed",
   "--ntk-transition-fast": "motion.fast",
   "--ntk-transition-base": "motion.base",
-  "--ntk-transition-slow": "motion.slow"
+  "--ntk-transition-slow": "motion.slow",
+  "--ntk-z-dropdown": "zIndex.dropdown",
+  "--ntk-z-overlay": "zIndex.overlay",
+  "--ntk-z-toast": "zIndex.toast"
 } as const
 
 export const designTokenResolver = {
   "schemaVersion": 1,
   "namespace": "nettoolskit",
   "source": "src/design-system/tokens/source.json",
-  "tokenCount": 119,
+  "tokenCount": 122,
   "groups": {
     "color": {
       "name": "color",
@@ -1383,6 +1413,14 @@ export const designTokenResolver = {
         "motion.base",
         "motion.slow"
       ]
+    },
+    "zIndex": {
+      "name": "zIndex",
+      "tokens": [
+        "zIndex.dropdown",
+        "zIndex.overlay",
+        "zIndex.toast"
+      ]
     }
   },
   "types": {
@@ -1450,7 +1488,10 @@ export const designTokenResolver = {
         "color.primaryRgb",
         "typography.lineHeight.tight",
         "typography.lineHeight.normal",
-        "typography.lineHeight.relaxed"
+        "typography.lineHeight.relaxed",
+        "zIndex.dropdown",
+        "zIndex.overlay",
+        "zIndex.toast"
       ]
     },
     "gradient": {
@@ -2184,9 +2225,9 @@ export const designTokenResolver = {
       "path": "feedback.warningDark",
       "group": "feedback",
       "type": "color",
-      "value": "#d97706",
-      "rawValue": "#d97706",
-      "cssValue": "#d97706",
+      "value": "#b45309",
+      "rawValue": "#b45309",
+      "cssValue": "#b45309",
       "cssVariable": "--ntk-warning-dark",
       "references": []
     },
@@ -2214,9 +2255,9 @@ export const designTokenResolver = {
       "path": "feedback.errorDark",
       "group": "feedback",
       "type": "color",
-      "value": "#dc2626",
-      "rawValue": "#dc2626",
-      "cssValue": "#dc2626",
+      "value": "#b91c1c",
+      "rawValue": "#b91c1c",
+      "cssValue": "#b91c1c",
       "cssVariable": "--ntk-error-dark",
       "references": []
     },
@@ -3021,6 +3062,36 @@ export const designTokenResolver = {
       "cssValue": "350ms ease-in-out",
       "cssVariable": "--ntk-transition-slow",
       "references": []
+    },
+    "zIndex.dropdown": {
+      "path": "zIndex.dropdown",
+      "group": "zIndex",
+      "type": "number",
+      "value": "1000",
+      "rawValue": "1000",
+      "cssValue": "1000",
+      "cssVariable": "--ntk-z-dropdown",
+      "references": []
+    },
+    "zIndex.overlay": {
+      "path": "zIndex.overlay",
+      "group": "zIndex",
+      "type": "number",
+      "value": "1500",
+      "rawValue": "1500",
+      "cssValue": "1500",
+      "cssVariable": "--ntk-z-overlay",
+      "references": []
+    },
+    "zIndex.toast": {
+      "path": "zIndex.toast",
+      "group": "zIndex",
+      "type": "number",
+      "value": "2000",
+      "rawValue": "2000",
+      "cssValue": "2000",
+      "cssVariable": "--ntk-z-toast",
+      "references": []
     }
   },
   "cssVariables": {
@@ -3142,7 +3213,10 @@ export const designTokenResolver = {
     "--ntk-line-height-relaxed": "typography.lineHeight.relaxed",
     "--ntk-transition-fast": "motion.fast",
     "--ntk-transition-base": "motion.base",
-    "--ntk-transition-slow": "motion.slow"
+    "--ntk-transition-slow": "motion.slow",
+    "--ntk-z-dropdown": "zIndex.dropdown",
+    "--ntk-z-overlay": "zIndex.overlay",
+    "--ntk-z-toast": "zIndex.toast"
   }
 } as const
 

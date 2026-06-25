@@ -189,31 +189,31 @@ function onDismiss(): void {
 
 .ntk-banner--variant-solid.ntk-banner--intent-info {
   border-color: transparent;
-  background: var(--ntk-info);
+  background: var(--ntk-info-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-banner--variant-solid.ntk-banner--intent-primary {
   border-color: transparent;
-  background: var(--ntk-primary);
+  background: var(--ntk-primary-dark);
   color: var(--ntk-text-on-primary);
 }
 
 .ntk-banner--variant-solid.ntk-banner--intent-success {
   border-color: transparent;
-  background: var(--ntk-success);
+  background: var(--ntk-success-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-banner--variant-solid.ntk-banner--intent-warning {
   border-color: transparent;
-  background: var(--ntk-warning);
+  background: var(--ntk-warning-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-banner--variant-solid.ntk-banner--intent-danger {
   border-color: transparent;
-  background: var(--ntk-error);
+  background: var(--ntk-error-dark);
   color: var(--ntk-text-inverse);
 }
 
