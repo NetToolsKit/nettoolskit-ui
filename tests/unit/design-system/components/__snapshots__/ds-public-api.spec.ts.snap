@@ -133,6 +133,61 @@ exports[`Ds* public API contract > pins the public props/events of DsBadge 1`] =
 }
 `;
 
+exports[`Ds* public API contract > pins the public props/events of DsBanner 1`] = `
+{
+  "emits": [
+    "dismiss",
+  ],
+  "name": "DsBanner",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "dismissLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "dismissible": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "message": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsBreadcrumbs 1`] = `
 {
   "emits": [],
@@ -1707,6 +1762,82 @@ exports[`Ds* public API contract > pins the public props/events of DsTabs 1`] = 
       "required": false,
     },
     "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsToast 1`] = `
+{
+  "emits": [
+    "dismiss",
+  ],
+  "name": "DsToast",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "dismissLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "dismissible": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "message": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsToastHost 1`] = `
+{
+  "emits": [],
+  "name": "DsToastHost",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "dismissLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "position": {
       "hasDefault": true,
       "required": false,
     },
