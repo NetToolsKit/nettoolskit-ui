@@ -526,6 +526,99 @@ exports[`Ds* public API contract > pins the public props/events of DsCrudPage 1`
 }
 `;
 
+exports[`Ds* public API contract > pins the public props/events of DsDatePicker 1`] = `
+{
+  "emits": [
+    "blur",
+    "focus",
+    "update:modelValue",
+  ],
+  "name": "DsDatePicker",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "errorMessage": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "hint": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "invalid": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "max": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "min": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "name": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "placeholder": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "readonly": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "required": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "triggerLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsDialog 1`] = `
 {
   "emits": [
@@ -2173,6 +2266,103 @@ exports[`Ds* public API contract > pins the public props/events of DsTabs 1`] = 
     },
     "testId": {
       "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsTimePicker 1`] = `
+{
+  "emits": [
+    "blur",
+    "focus",
+    "update:modelValue",
+  ],
+  "name": "DsTimePicker",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "errorMessage": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "hint": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "invalid": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "max": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "min": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "modelValue": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "name": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "placeholder": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "readonly": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "required": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "step": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "triggerLabel": {
+      "hasDefault": true,
       "required": false,
     },
     "variant": {

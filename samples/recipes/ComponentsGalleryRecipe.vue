@@ -151,6 +151,31 @@
         />
       </div>
     </section>
+
+    <section class="recipe-gallery__group" aria-label="DsDatePicker e DsTimePicker">
+      <h4 class="recipe-gallery__title">DsDatePicker / DsTimePicker</h4>
+      <div class="recipe-gallery__row recipe-gallery__row--pickers">
+        <DsDatePicker
+          id="gallery-date"
+          v-model="selectedDate"
+          label="Data do agendamento"
+          placeholder="Selecione uma data"
+          :min="'2024-01-01'"
+          :max="'2025-12-31'"
+          hint="Use o calendario ou as setas do teclado"
+        />
+        <DsTimePicker
+          id="gallery-time"
+          v-model="selectedTime"
+          label="Horario"
+          placeholder="Selecione um horario"
+          :step="30"
+          min="08:00"
+          max="18:00"
+          hint="Lista de horarios em intervalos de 30 minutos"
+        />
+      </div>
+    </section>
   </div>
 </template>
 
@@ -163,9 +188,11 @@ import {
   DsBreadcrumbs,
   DsButton,
   DsChip,
+  DsDatePicker,
   DsSkeleton,
   DsSteps,
   DsTabs,
+  DsTimePicker,
   DsTooltip,
   useToast,
   type NtkBadgeVariant,
@@ -209,6 +236,9 @@ const steps: NtkStepItem[] = [
   { id: 'profile', label: 'Perfil', description: 'Informações pessoais' },
   { id: 'review', label: 'Revisão', description: 'Confirmar e enviar' },
 ]
+
+const selectedDate = ref<string | null>('2024-06-15')
+const selectedTime = ref<string | null>('09:30')
 
 // Toast queue is shared; <DsToastHost /> at the catalog root renders it.
 const { pushToast } = useToast()
@@ -256,6 +286,14 @@ const onToast = (): void => {
 
 .recipe-gallery__row--skeleton {
   align-items: flex-start;
+}
+
+.recipe-gallery__row--pickers {
+  align-items: flex-start;
+}
+
+.recipe-gallery__row--pickers > * {
+  flex: 1 1 200px;
 }
 
 .recipe-gallery__stack {
