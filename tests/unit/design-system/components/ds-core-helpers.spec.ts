@@ -9,12 +9,24 @@ import { describe, expect, it } from 'vitest'
 import {
   getNtkAppShellClasses,
   getNtkAppShellClassName,
+  getNtkAvatarClasses,
+  getNtkAvatarClassName,
+  getNtkBadgeClasses,
+  getNtkBadgeClassName,
+  getNtkBannerClasses,
+  getNtkBannerClassName,
+  getNtkBreadcrumbsClasses,
+  getNtkBreadcrumbsClassName,
   getNtkButtonClasses,
   getNtkButtonClassName,
   getNtkCardClasses,
   getNtkCardClassName,
   getNtkChipClasses,
   getNtkChipClassName,
+  getNtkDatePickerClasses,
+  getNtkDatePickerClassName,
+  getNtkTimePickerClasses,
+  getNtkTimePickerClassName,
   getNtkDrawerClasses,
   getNtkDrawerClassName,
   getNtkFooterClasses,
@@ -23,8 +35,16 @@ import {
   getNtkHeaderClassName,
   getNtkSidebarClasses,
   getNtkSidebarClassName,
+  getNtkSkeletonClasses,
+  getNtkSkeletonClassName,
   getNtkStepsClasses,
   getNtkStepsClassName,
+  getNtkTabsClasses,
+  getNtkTabsClassName,
+  getNtkToastClasses,
+  getNtkToastClassName,
+  getNtkTooltipClasses,
+  getNtkTooltipClassName,
   getNtkDialogClasses,
   getNtkDialogClassName,
   getNtkEmptyStateClasses,
@@ -54,6 +74,28 @@ import {
   nextNtkTableSort,
   getNtkToolbarClasses,
   getNtkToolbarClassName,
+  getNtkCommandIconClasses,
+  getNtkCommandIconClassName,
+  getNtkQuickAccessToolbarClasses,
+  getNtkQuickAccessToolbarClassName,
+  getNtkRibbonClasses,
+  getNtkRibbonClassName,
+  getNtkRibbonGroupClasses,
+  getNtkRibbonGroupClassName,
+  getNtkRibbonCommandClasses,
+  getNtkRibbonCommandClassName,
+  getNtkStatusBarClasses,
+  getNtkStatusBarClassName,
+  getNtkWorkspaceCanvasClasses,
+  getNtkWorkspaceCanvasClassName,
+  getNtkDockLayoutClasses,
+  getNtkDockLayoutClassName,
+  getNtkDockPanelClasses,
+  getNtkDockPanelClassName,
+  getNtkTreeExplorerClasses,
+  getNtkTreeExplorerClassName,
+  getNtkDensityClass,
+  ntkComponentDensities,
   normalizeNtkClasses,
   uniqueNtkClasses,
 } from '@/design-system/core'
@@ -68,9 +110,19 @@ const helpers = [
   ['card', getNtkCardClasses, getNtkCardClassName, 'ntk-card'],
   ['chip', getNtkChipClasses, getNtkChipClassName, 'ntk-chip'],
   ['steps', getNtkStepsClasses, getNtkStepsClassName, 'ntk-steps'],
+  ['badge', getNtkBadgeClasses, getNtkBadgeClassName, 'ntk-badge'],
+  ['banner', getNtkBannerClasses, getNtkBannerClassName, 'ntk-banner'],
+  ['toast', getNtkToastClasses, getNtkToastClassName, 'ntk-toast'],
+  ['tabs', getNtkTabsClasses, getNtkTabsClassName, 'ntk-tabs'],
+  ['tooltip', getNtkTooltipClasses, getNtkTooltipClassName, 'ntk-tooltip'],
+  ['skeleton', getNtkSkeletonClasses, getNtkSkeletonClassName, 'ntk-skeleton'],
+  ['avatar', getNtkAvatarClasses, getNtkAvatarClassName, 'ntk-avatar'],
+  ['breadcrumbs', getNtkBreadcrumbsClasses, getNtkBreadcrumbsClassName, 'ntk-breadcrumbs'],
   ['dialog', getNtkDialogClasses, getNtkDialogClassName, 'ntk-dialog'],
   ['empty-state', getNtkEmptyStateClasses, getNtkEmptyStateClassName, 'ntk-empty-state'],
   ['field', getNtkFieldClasses, getNtkFieldClassName, 'ntk-field'],
+  ['date-picker', getNtkDatePickerClasses, getNtkDatePickerClassName, 'ntk-field'],
+  ['time-picker', getNtkTimePickerClasses, getNtkTimePickerClassName, 'ntk-field'],
   ['filter-bar', getNtkFilterBarClasses, getNtkFilterBarClassName, 'ntk-filter-bar'],
   ['form-layout', getNtkFormLayoutClasses, getNtkFormLayoutClassName, 'ntk-form-layout'],
   ['logo', getNtkLogoClasses, getNtkLogoClassName, 'ntk-logo'],
@@ -81,6 +133,16 @@ const helpers = [
   ['state-block', getNtkStateBlockClasses, getNtkStateBlockClassName, 'ntk-state-block'],
   ['table', getNtkTableClasses, getNtkTableClassName, 'ntk-table'],
   ['toolbar', getNtkToolbarClasses, getNtkToolbarClassName, 'ntk-toolbar'],
+  ['command-icon', getNtkCommandIconClasses, getNtkCommandIconClassName, 'ntk-command-icon'],
+  ['quick-access-toolbar', getNtkQuickAccessToolbarClasses, getNtkQuickAccessToolbarClassName, 'ntk-quick-access-toolbar'],
+  ['ribbon', getNtkRibbonClasses, getNtkRibbonClassName, 'ntk-ribbon'],
+  ['ribbon-group', getNtkRibbonGroupClasses, getNtkRibbonGroupClassName, 'ntk-ribbon-group'],
+  ['ribbon-command', getNtkRibbonCommandClasses, getNtkRibbonCommandClassName, 'ntk-ribbon-command'],
+  ['status-bar', getNtkStatusBarClasses, getNtkStatusBarClassName, 'ntk-status-bar'],
+  ['workspace-canvas', getNtkWorkspaceCanvasClasses, getNtkWorkspaceCanvasClassName, 'ntk-workspace-canvas'],
+  ['dock-layout', getNtkDockLayoutClasses, getNtkDockLayoutClassName, 'ntk-dock-layout'],
+  ['dock-panel', getNtkDockPanelClasses, getNtkDockPanelClassName, 'ntk-dock-panel'],
+  ['tree-explorer', getNtkTreeExplorerClasses, getNtkTreeExplorerClassName, 'ntk-tree-explorer'],
 ] as const
 
 describe('getNtk* class helpers', () => {
@@ -106,6 +168,14 @@ describe('recipe primitives edge cases', () => {
 
   it('uniqueNtkClasses drops duplicates and falsy entries while preserving order', () => {
     expect(uniqueNtkClasses(['a', 'b', 'a', '', 'c'])).toEqual(['a', 'b', 'c'])
+  })
+
+  it('getNtkDensityClass builds a root-scoped density class and defaults to comfortable', () => {
+    // Default-parameter branch (called without an explicit density).
+    expect(getNtkDensityClass('ntk-button')).toBe('ntk-button--density-comfortable')
+    for (const density of ntkComponentDensities) {
+      expect(getNtkDensityClass('ntk-field', density)).toBe(`ntk-field--density-${density}`)
+    }
   })
 })
 

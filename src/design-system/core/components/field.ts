@@ -8,12 +8,18 @@ import {
   type NtkRecipeClassMap,
   type NtkRecipeOptions,
 } from './recipe'
-import type { NtkComponentContractBase, NtkComponentIntent, NtkComponentSize } from './contracts'
+import type {
+  NtkComponentContractBase,
+  NtkComponentDensity,
+  NtkComponentIntent,
+  NtkComponentSize,
+} from './contracts'
 
 export const ntkFieldVariants = ['outlined', 'filled', 'plain'] as const
 export type NtkFieldVariant = (typeof ntkFieldVariants)[number]
 export type NtkFieldSize = NtkComponentSize
 export type NtkFieldIntent = NtkComponentIntent
+export type NtkFieldDensity = NtkComponentDensity
 export type NtkFieldValue = string | number | boolean | readonly unknown[] | Record<string, unknown> | null
 
 export interface NtkFieldContract<TValue = NtkFieldValue> extends NtkComponentContractBase {
@@ -24,6 +30,7 @@ export interface NtkFieldContract<TValue = NtkFieldValue> extends NtkComponentCo
   readonly variant?: NtkFieldVariant
   readonly size?: NtkFieldSize
   readonly intent?: NtkFieldIntent
+  readonly density?: NtkFieldDensity
   readonly disabled?: boolean
   readonly readonly?: boolean
   readonly required?: boolean
@@ -36,7 +43,8 @@ export const ntkFieldDefaults = {
   variant: 'outlined',
   size: 'md',
   intent: 'neutral',
-} as const satisfies Required<Pick<NtkFieldContract, 'variant' | 'size' | 'intent'>>
+  density: 'comfortable',
+} as const satisfies Required<Pick<NtkFieldContract, 'variant' | 'size' | 'intent' | 'density'>>
 
 export const ntkFieldRecipeClassMap = {
   root: 'ntk-field',

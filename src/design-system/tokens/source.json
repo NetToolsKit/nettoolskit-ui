@@ -386,7 +386,7 @@
     },
     "warningDark": {
       "$type": "color",
-      "$value": "#d97706",
+      "$value": "#b45309",
       "$extensions": {
         "nettoolskit": {
           "cssVariable": "--ntk-warning-dark"
@@ -413,7 +413,7 @@
     },
     "errorDark": {
       "$type": "color",
-      "$value": "#dc2626",
+      "$value": "#b91c1c",
       "$extensions": {
         "nettoolskit": {
           "cssVariable": "--ntk-error-dark"
@@ -1109,6 +1109,36 @@
       "$extensions": {
         "nettoolskit": {
           "cssVariable": "--ntk-transition-slow"
+        }
+      }
+    }
+  },
+  "zIndex": {
+    "$description": "Stacking scale for layered overlays.",
+    "dropdown": {
+      "$type": "number",
+      "$value": "1000",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-z-dropdown"
+        }
+      }
+    },
+    "overlay": {
+      "$type": "number",
+      "$value": "1500",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-z-overlay"
+        }
+      }
+    },
+    "toast": {
+      "$type": "number",
+      "$value": "2000",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-z-toast"
         }
       }
     }

@@ -8,12 +8,18 @@ import {
   type NtkRecipeClassMap,
   type NtkRecipeOptions,
 } from './recipe'
-import type { NtkComponentContractBase, NtkComponentIntent, NtkComponentSize } from './contracts'
+import type {
+  NtkComponentContractBase,
+  NtkComponentDensity,
+  NtkComponentIntent,
+  NtkComponentSize,
+} from './contracts'
 
 export const ntkTableVariants = ['default', 'bordered', 'striped'] as const
 export type NtkTableVariant = (typeof ntkTableVariants)[number]
 export type NtkTableSize = NtkComponentSize
 export type NtkTableIntent = NtkComponentIntent
+export type NtkTableDensity = NtkComponentDensity
 export type NtkTableCellValue = string | number | boolean | null | undefined
 
 export interface NtkTableColumn {
@@ -69,6 +75,7 @@ export interface NtkTableContract extends NtkComponentContractBase {
   readonly variant?: NtkTableVariant
   readonly size?: NtkTableSize
   readonly intent?: NtkTableIntent
+  readonly density?: NtkTableDensity
   readonly selectable?: boolean
   readonly emptyLabel?: string
   readonly emptyValueLabel?: string
@@ -84,7 +91,8 @@ export const ntkTableDefaults = {
   variant: 'default',
   size: 'md',
   intent: 'neutral',
-} as const satisfies Required<Pick<NtkTableContract, 'variant' | 'size' | 'intent'>>
+  density: 'comfortable',
+} as const satisfies Required<Pick<NtkTableContract, 'variant' | 'size' | 'intent' | 'density'>>
 
 export const ntkTableRecipeClassMap = {
   root: 'ntk-table',

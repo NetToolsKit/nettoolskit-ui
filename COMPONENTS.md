@@ -53,6 +53,7 @@ Source: `src/design-system/core/components/button.ts`.
 | `variant` | Yes | `NtkButtonVariant` | `NtkButtonContract` |
 | `size` | Yes | `NtkButtonSize` | `NtkButtonContract` |
 | `intent` | Yes | `NtkButtonIntent` | `NtkButtonContract` |
+| `density` | Yes | `NtkButtonDensity` | `NtkButtonContract` |
 | `disabled` | Yes | `boolean` | `NtkButtonContract` |
 | `loading` | Yes | `boolean` | `NtkButtonContract` |
 | `icon` | Yes | `string` | `NtkButtonContract` |
@@ -108,6 +109,7 @@ Source: `src/design-system/core/components/field.ts`.
 | `variant` | Yes | `NtkFieldVariant` | `NtkFieldContract` |
 | `size` | Yes | `NtkFieldSize` | `NtkFieldContract` |
 | `intent` | Yes | `NtkFieldIntent` | `NtkFieldContract` |
+| `density` | Yes | `NtkFieldDensity` | `NtkFieldContract` |
 | `disabled` | Yes | `boolean` | `NtkFieldContract` |
 | `readonly` | Yes | `boolean` | `NtkFieldContract` |
 | `required` | Yes | `boolean` | `NtkFieldContract` |
@@ -217,6 +219,7 @@ Source: `src/design-system/core/components/table.ts`.
 | `variant` | Yes | `NtkTableVariant` | `NtkTableContract` |
 | `size` | Yes | `NtkTableSize` | `NtkTableContract` |
 | `intent` | Yes | `NtkTableIntent` | `NtkTableContract` |
+| `density` | Yes | `NtkTableDensity` | `NtkTableContract` |
 | `selectable` | Yes | `boolean` | `NtkTableContract` |
 | `emptyLabel` | Yes | `string` | `NtkTableContract` |
 | `emptyValueLabel` | Yes | `string` | `NtkTableContract` |

@@ -118,10 +118,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
+  getNtkDensityClass,
   getNtkTableAriaSort,
   getNtkTablePageInfo,
   nextNtkTableSort,
   ntkTableDefaults,
+  ntkTableRecipeClassMap,
   normalizeNtkClasses,
   resolveNtkTableRecipe,
   type NtkTableContract,
@@ -147,6 +149,7 @@ const props = withDefaults(defineProps<NtkTableContract & {
   variant: ntkTableDefaults.variant,
   size: ntkTableDefaults.size,
   intent: ntkTableDefaults.intent,
+  density: ntkTableDefaults.density,
   selectable: false,
   emptyLabel: 'No records found',
   emptyValueLabel: '-',
@@ -205,14 +208,17 @@ const selectionState = computed(() => {
   return allRowsSelected.value ? 'true' : 'false'
 })
 const columnSpan = computed(() => props.columns.length + (props.selectable ? 1 : 0))
-const classes = computed(() => resolveNtkTableRecipe({
-  variant: props.variant,
-  size: props.size,
-  intent: props.intent,
-  clickable: props.rows.length > 0,
-  selected: selectedRows.value.length > 0,
-  class: props.class,
-}).classes)
+const classes = computed(() => [
+  ...resolveNtkTableRecipe({
+    variant: props.variant,
+    size: props.size,
+    intent: props.intent,
+    clickable: props.rows.length > 0,
+    selected: selectedRows.value.length > 0,
+    class: props.class,
+  }).classes,
+  getNtkDensityClass(ntkTableRecipeClassMap.root, props.density),
+])
 
 function isSelected(rowId: string): boolean {
   return selectedKeySet.value.has(rowId)
@@ -321,6 +327,20 @@ function onToggleRow(rowId: string): void {
 
 .ntk-table__cell--align-right {
   text-align: end;
+}
+
+/* Density. Adjusts row height via cell block padding. Comfortable matches the
+   baseline; compact tightens rows for data-dense grids, spacious relaxes them. */
+.ntk-table--density-compact .ntk-table__header-cell,
+.ntk-table--density-compact .ntk-table__cell,
+.ntk-table--density-compact .ntk-table__selection-cell {
+  padding-block: var(--ntk-spacing-xs);
+}
+
+.ntk-table--density-spacious .ntk-table__header-cell,
+.ntk-table--density-spacious .ntk-table__cell,
+.ntk-table--density-spacious .ntk-table__selection-cell {
+  padding-block: var(--ntk-spacing-md);
 }
 
 /* Sizes. */

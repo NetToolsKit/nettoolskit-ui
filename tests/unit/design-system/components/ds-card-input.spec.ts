@@ -153,4 +153,11 @@ describe('DsInput', () => {
       'ntk-field--is-readonly',
     ]))
   })
+
+  it('defaults to comfortable density and reflects an explicit density class', () => {
+    expect(mount(DsInput).get('label').classes()).toContain('ntk-field--density-comfortable')
+
+    const spacious = mount(DsInput, { props: { density: 'spacious' } })
+    expect(spacious.get('label').classes()).toContain('ntk-field--density-spacious')
+  })
 })

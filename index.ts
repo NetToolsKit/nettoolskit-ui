@@ -55,6 +55,7 @@ export * from './src/composables/ui/useResponsive'
 export * from './src/composables/ui/useTheme'
 export * from './src/composables/ui/useColorScheme'
 export * from './src/composables/ui/useBranding'
+export * from './src/composables/ui/useToast'
 
 // ============================================================================
 // COMPOSABLES - Data
