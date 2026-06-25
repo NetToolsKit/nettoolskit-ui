@@ -272,6 +272,121 @@ function onToggleRow(rowId: string): void {
 </script>
 
 <style scoped>
+.ntk-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-spacing-sm);
+  font-family: var(--ntk-font-family);
+  color: var(--ntk-text-primary);
+}
+
+.ntk-table__table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--ntk-font-size-sm);
+}
+
+.ntk-table__caption {
+  margin-block-end: var(--ntk-spacing-sm);
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-medium);
+  text-align: start;
+  color: var(--ntk-text-secondary);
+}
+
+.ntk-table__header-cell {
+  padding-block: var(--ntk-spacing-sm);
+  padding-inline: var(--ntk-spacing-md);
+  border-block-end: 1px solid var(--ntk-border-color);
+  font-weight: var(--ntk-font-weight-semibold);
+  color: var(--ntk-text-secondary);
+  white-space: nowrap;
+}
+
+.ntk-table__cell {
+  padding-block: var(--ntk-spacing-sm);
+  padding-inline: var(--ntk-spacing-md);
+  border-block-end: 1px solid var(--ntk-border-light);
+  color: var(--ntk-text-primary);
+}
+
+/* Alignment helpers. */
+.ntk-table__cell--align-left {
+  text-align: start;
+}
+
+.ntk-table__cell--align-center {
+  text-align: center;
+}
+
+.ntk-table__cell--align-right {
+  text-align: end;
+}
+
+/* Sizes. */
+.ntk-table--size-sm .ntk-table__header-cell,
+.ntk-table--size-sm .ntk-table__cell {
+  padding-block: var(--ntk-spacing-xs);
+  padding-inline: var(--ntk-spacing-sm);
+}
+
+.ntk-table--size-lg .ntk-table__header-cell,
+.ntk-table--size-lg .ntk-table__cell {
+  padding-block: var(--ntk-spacing-md);
+  padding-inline: var(--ntk-spacing-lg);
+}
+
+/* Variants. */
+.ntk-table--variant-bordered .ntk-table__header-cell,
+.ntk-table--variant-bordered .ntk-table__cell {
+  border: 1px solid var(--ntk-border-color);
+}
+
+.ntk-table--variant-striped .ntk-table__body .ntk-table__row:nth-child(even) {
+  background: var(--ntk-bg-secondary);
+}
+
+/* Row interaction. */
+.ntk-table__body .ntk-table__row {
+  transition: background-color var(--ntk-transition-fast);
+}
+
+.ntk-table__body .ntk-table__row:hover {
+  background: var(--ntk-bg-hover);
+}
+
+.ntk-table__row:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: -2px;
+}
+
+.ntk-table__row--selected,
+.ntk-table--has-selection .ntk-table__row--selected {
+  background: var(--ntk-primary-light);
+}
+
+.ntk-table__selection-cell {
+  padding-block: var(--ntk-spacing-sm);
+  padding-inline: var(--ntk-spacing-md);
+  border-block-end: 1px solid var(--ntk-border-light);
+  text-align: center;
+}
+
+.ntk-table__selection-control {
+  cursor: pointer;
+}
+
+.ntk-table__selection-control:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+
+.ntk-table__empty-cell {
+  padding: var(--ntk-spacing-lg);
+  text-align: center;
+  color: var(--ntk-text-muted);
+}
+
 .ntk-table__sort {
   display: inline-flex;
   align-items: center;
