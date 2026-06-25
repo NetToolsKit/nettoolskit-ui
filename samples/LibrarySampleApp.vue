@@ -1,8 +1,27 @@
 <template>
-  <!-- Catalog wrapper is a div: the page-level recipes (DsCrudPage/DsFormPage)
-       provide their own <main> landmarks, so nesting another main would be
-       invalid. -->
-  <div class="sample-shell">
+  <!-- Host root: a top-level DsTabs switcher between the component catalog and
+       the three fully-mocked demo apps. The catalog stays the default tab so
+       the existing e2e (Clientes heading + Editar perfil dialog) still finds
+       its anchors on load. A single DsToastHost is mounted here for the whole
+       host (the toast queue is a module singleton). -->
+  <div class="sample-host">
+    <div class="sample-host__switcher">
+      <DsTabs
+        v-model="view"
+        :tabs="viewTabs"
+        variant="pill"
+        aria-label="Demonstrações"
+      />
+    </div>
+
+    <IndustrialStudioApp v-if="view === 'industrial'" class="sample-host__app" />
+    <UserManagementApp v-else-if="view === 'users'" class="sample-host__app" />
+    <EcommerceApp v-else-if="view === 'ecommerce'" class="sample-host__app" />
+
+    <!-- Catalog wrapper is a div: the page-level recipes (DsCrudPage/DsFormPage)
+         provide their own <main> landmarks, so nesting another main would be
+         invalid. -->
+    <div v-show="view === 'catalog'" class="sample-shell">
     <section class="sample-hero">
       <div>
         <p class="sample-kicker">NetToolsKit UI</p>
@@ -159,8 +178,10 @@
       </RecipeShowcase>
     </section>
 
-    <!-- Single shared toast host for the whole catalog; the gallery's toast
-         button pushes onto this queue. -->
+    </div>
+
+    <!-- Single shared toast host for the whole host (catalog + demo apps); the
+         gallery's toast button and the demo apps all push onto this queue. -->
     <DsToastHost />
   </div>
 </template>
@@ -174,14 +195,19 @@ import {
   DsInput,
   DsMetricGrid,
   DsSelect,
+  DsTabs,
   DsToastHost,
   ntkComponentDensities,
   setColorScheme,
   useColorScheme,
   type ColorSchemeMode,
   type NtkComponentDensity,
+  type NtkTabItem,
 } from '../index'
 import { useThemeSwitcher, type ThemeId } from '../src/composables/useThemeSwitcher'
+import EcommerceApp from './apps/EcommerceApp.vue'
+import IndustrialStudioApp from './apps/IndustrialStudioApp.vue'
+import UserManagementApp from './apps/UserManagementApp.vue'
 import ComponentsGalleryRecipe from './recipes/ComponentsGalleryRecipe.vue'
 import CrudRecipe from './recipes/CrudRecipe.vue'
 import DashboardRecipe from './recipes/DashboardRecipe.vue'
@@ -192,6 +218,16 @@ import FormRecipe from './recipes/FormRecipe.vue'
 import RecipeShowcase from './recipes/RecipeShowcase.vue'
 import TableRecipe from './recipes/TableRecipe.vue'
 import WorkspaceRecipe from './recipes/WorkspaceRecipe.vue'
+
+// Top-level view switcher: catalog (default) + the three fully-mocked demo
+// apps. Default MUST be 'catalog' so the existing e2e anchors render on load.
+const view = ref<string>('catalog')
+const viewTabs: NtkTabItem[] = [
+  { id: 'catalog', label: 'Catálogo' },
+  { id: 'industrial', label: 'Industrial' },
+  { id: 'users', label: 'Usuários' },
+  { id: 'ecommerce', label: 'E-commerce' },
+]
 
 // Concise composition snippets shown next to each live recipe. These mirror the
 // recipe source so a developer can copy the shape and adjust domain fields.
@@ -346,8 +382,26 @@ const onDensityChange = (next: string): void => {
 </script>
 
 <style scoped>
-.sample-shell {
+.sample-host {
   min-height: 100vh;
+  background: var(--ntk-bg-primary);
+  color: var(--ntk-text-primary);
+}
+
+.sample-host__switcher {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--ntk-spacing-md) clamp(24px, 4vw, 56px);
+  border-block-end: 1px solid var(--ntk-border-color);
+  background: var(--ntk-bg-card);
+}
+
+.sample-host__app {
+  padding: clamp(24px, 4vw, 56px);
+}
+
+.sample-shell {
   padding: clamp(24px, 4vw, 56px);
   background: var(--ntk-bg-primary);
   color: var(--ntk-text-primary);
