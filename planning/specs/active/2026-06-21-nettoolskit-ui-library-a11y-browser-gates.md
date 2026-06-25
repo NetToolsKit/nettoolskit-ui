@@ -99,3 +99,27 @@ one stable route/page to test.
 - Frontend Vue/Quasar engineer
 - Test engineer for browser/a11y harness
 - Ops/DevOps engineer for GitRiver/GitHub integration
+
+## Progress (2026-06-24)
+
+- [x] **Test harness:** `@playwright/test` + `@axe-core/playwright` devDeps,
+  `playwright.config.ts` (single Chromium project) and a `test:e2e` script. The
+  webServer builds the sample catalog and serves it statically via `vite preview`
+  on port 3000 (deterministic — no dev-server HMR/pre-bundling).
+- [x] **Catalog targets + a11y assertions:** `e2e/a11y.spec.ts` runs over the
+  sample host only and asserts (real browser, not jsdom): a `main` landmark + a
+  top-level heading, an axe WCAG 2 A/AA scan with **zero** violations, keyboard
+  focus reaching an interactive control, and the `DsDialog` open → focus-trap →
+  Escape-close lifecycle. All 4 pass locally.
+- [x] **CI integration:** `.github/workflows/a11y.yml` installs Chromium and runs
+  the gate on `workflow_dispatch` + pull requests that touch the design system,
+  samples, or the gate. Kept out of `npm run verify` so ordinary gates stay fast.
+- [x] **Documentation:** README "Browser & a11y gate" section states scope and
+  placement (library-only; routine PR gating stays in GitRiver; product e2e is
+  downstream).
+- Fixed a real catalog a11y issue surfaced by the gate: the sample wrapper was a
+  `<main>` nested around the page recipes' own `<main>` landmarks; it is now a
+  `<div>` so landmarks are valid.
+
+**Status: complete.** `npm run verify` stays green; the browser gate is a
+documented, bounded, CI-wired addition.

@@ -108,6 +108,21 @@ Full package gate:
 npm run verify
 ```
 
+Browser & a11y gate (separate from `verify` to keep ordinary gates fast):
+
+```bash
+# builds the sample catalog, serves it, and runs a real-browser axe/a11y +
+# focus/dialog smoke over the Ds* recipes (Chromium)
+npx playwright install chromium   # one-time
+npm run test:e2e
+```
+
+This library-only gate targets the sample catalog (`samples/`) — no product,
+CMS, or template runtime. It runs in CI via `.github/workflows/a11y.yml`
+(`workflow_dispatch` + pull requests touching the design system, samples, or the
+gate itself). Routine PR gating remains in GitRiver; broader product e2e lives
+downstream.
+
 Package dry-run:
 
 ```bash

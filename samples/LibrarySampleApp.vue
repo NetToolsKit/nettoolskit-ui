@@ -1,5 +1,8 @@
 <template>
-  <main class="sample-shell">
+  <!-- Catalog wrapper is a div: the page-level recipes (DsCrudPage/DsFormPage)
+       provide their own <main> landmarks, so nesting another main would be
+       invalid. -->
+  <div class="sample-shell">
     <section class="sample-hero">
       <div>
         <p class="sample-kicker">NetToolsKit UI</p>
@@ -58,7 +61,7 @@
       <FormRecipe />
       <DialogRecipe />
     </section>
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">
