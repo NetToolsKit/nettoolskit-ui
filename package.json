@@ -127,6 +127,6 @@
     "vue-tsc": "^3.3.5"
   },
   "dependencies": {
-    "@quasar/extras": "^1.17.0"
+    "@quasar/extras": "^2.0.1"
   }
 }
