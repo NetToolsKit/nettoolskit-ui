@@ -35,6 +35,13 @@ import {
 import 'nettoolskit/styles/global.scss'
 ```
 
+### Recipes
+
+Copyable, library-only patterns for common screens (CRUD, form, dialog, table,
+empty/loading/error states, and a primitives gallery) live in
+[RECIPES.md](./RECIPES.md). Each recipe is rendered live in the sample catalog
+(`samples/`) next to its composition snippet — run `npm run dev:samples`.
+
 ## Public Surface
 
 - `src/design-system/**`: tokens, theme/density helpers, recipes, contracts and

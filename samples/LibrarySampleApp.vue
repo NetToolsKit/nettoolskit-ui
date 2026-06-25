@@ -81,15 +81,71 @@
         <h2>Telas a partir de schema</h2>
         <p>
           As receitas abaixo usam apenas componentes da biblioteca. Descreva os
-          dados; o sistema renderiza layout, validação e estados.
+          dados; o sistema renderiza layout, validação e estados. Cada receita
+          traz um trecho de composição copiável.
         </p>
       </header>
 
-      <DashboardRecipe />
-      <CrudRecipe />
-      <FormRecipe />
-      <DialogRecipe />
+      <RecipeShowcase
+        title="Dashboard"
+        description="Visão geral com indicadores em DsMetricGrid."
+        :code="dashboardSnippet"
+      >
+        <DashboardRecipe />
+      </RecipeShowcase>
+
+      <RecipeShowcase
+        title="CRUD a partir de schema"
+        description="Lista, filtros, formulário e estados a partir de defineResource."
+        :code="crudSnippet"
+      >
+        <CrudRecipe />
+      </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Formulário de página"
+        description="Formulário de duas colunas gerado por defineForm."
+        :code="formSnippet"
+      >
+        <FormRecipe />
+      </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Diálogo de ação"
+        description="Formulário em modal acessível com DsDialog."
+        :code="dialogSnippet"
+      >
+        <DialogRecipe />
+      </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Tabela com ordenação e paginação"
+        description="DsTable autônomo com sort/paginação server-style sobre uma fixture e variação de densidade."
+        :code="tableSnippet"
+      >
+        <TableRecipe />
+      </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Estados: vazio, carregando e erro"
+        description="DsEmptyState com ações e DsStateBlock em loading e erro."
+        :code="emptyStateSnippet"
+      >
+        <EmptyStateRecipe />
+      </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Galeria de primitivos"
+        description="DsBadge, DsChip, DsAvatar, DsTabs, DsTooltip, DsSkeleton, DsBreadcrumbs, DsSteps, DsBanner e DsToast."
+        :code="gallerySnippet"
+      >
+        <ComponentsGalleryRecipe />
+      </RecipeShowcase>
     </section>
+
+    <!-- Single shared toast host for the whole catalog; the gallery's toast
+         button pushes onto this queue. -->
+    <DsToastHost />
   </div>
 </template>
 
@@ -102,6 +158,7 @@ import {
   DsInput,
   DsMetricGrid,
   DsSelect,
+  DsToastHost,
   ntkComponentDensities,
   setColorScheme,
   useColorScheme,
@@ -109,10 +166,94 @@ import {
   type NtkComponentDensity,
 } from '../index'
 import { useThemeSwitcher, type ThemeId } from '../src/composables/useThemeSwitcher'
+import ComponentsGalleryRecipe from './recipes/ComponentsGalleryRecipe.vue'
 import CrudRecipe from './recipes/CrudRecipe.vue'
 import DashboardRecipe from './recipes/DashboardRecipe.vue'
 import DialogRecipe from './recipes/DialogRecipe.vue'
+import EmptyStateRecipe from './recipes/EmptyStateRecipe.vue'
 import FormRecipe from './recipes/FormRecipe.vue'
+import RecipeShowcase from './recipes/RecipeShowcase.vue'
+import TableRecipe from './recipes/TableRecipe.vue'
+
+// Concise composition snippets shown next to each live recipe. These mirror the
+// recipe source so a developer can copy the shape and adjust domain fields.
+const dashboardSnippet = `<DsMetricGrid
+  :metrics="[
+    { id: 'revenue', label: 'Receita', value: 'R$ 128k', delta: '+12%', deltaDirection: 'up' },
+    { id: 'active', label: 'Clientes ativos', value: '1.204', delta: '+3%', deltaDirection: 'up' },
+  ]"
+  :columns="3"
+  aria-label="Indicadores"
+/>`
+
+const crudSnippet = `import { DsCrudPage, defineResource } from 'nettoolskit'
+
+const resource = defineResource({
+  title: 'Clientes',
+  rowKey: 'id',
+  columns: [
+    { field: 'name', label: 'Nome' },
+    { field: 'email', label: 'E-mail' },
+  ],
+  form: [
+    { field: 'name', type: 'text', label: 'Nome', required: true },
+    { field: 'email', type: 'email', label: 'E-mail', required: true },
+  ],
+  async fetch() { /* ... */ return rows },
+  async create(row) { /* ... */ },
+  async update(row) { /* ... */ },
+  async remove(row) { /* ... */ },
+})
+// <DsCrudPage :resource="resource" />`
+
+const formSnippet = `import { DsFormPage, defineForm } from 'nettoolskit'
+
+const schema = defineForm({
+  columns: 2,
+  fields: [
+    { field: 'firstName', type: 'text', label: 'Nome', required: true },
+    { field: 'email', type: 'email', label: 'E-mail', required: true },
+    { field: 'newsletter', type: 'switch', label: 'Receber novidades' },
+  ],
+})
+// <DsFormPage :schema="schema" v-model="values" @submit="onSubmit" />`
+
+const dialogSnippet = `<DsButton label="Editar perfil" intent="primary" @click="open = true" />
+<DsDialog v-model="open" title="Editar perfil">
+  <DsForm :schema="schema" v-model="values" submit-label="Salvar" @submit="onSubmit" />
+</DsDialog>`
+
+const tableSnippet = `<DsTable
+  :columns="columns"
+  :rows="pageRows"
+  :sort="sort"
+  :pagination="{ page, pageSize: 4, total: rows.length }"
+  :density="density"
+  variant="striped"
+  @update:sort="onSort"
+  @update:page="onPage"
+/>`
+
+const emptyStateSnippet = `<DsEmptyState title="Nenhum cliente encontrado" variant="bordered">
+  <template #actions>
+    <DsButton label="Novo cliente" intent="primary" />
+  </template>
+</DsEmptyState>
+
+<DsStateBlock state="loading" title="Carregando clientes" />
+<DsStateBlock state="error" title="Falha ao carregar" />`
+
+const gallerySnippet = `import { useToast } from 'nettoolskit'
+
+const { pushToast } = useToast()
+// <DsBadge label="Novo" intent="primary" />
+// <DsChip label="Removível" removable />
+// <DsAvatar name="Ana Souza" status="online" />
+// <DsTabs v-model="tab" :tabs="tabs" />
+// <DsTooltip text="Dica"><DsButton label="?" /></DsTooltip>
+// <DsBanner intent="info" title="Aviso" message="..." />
+// <DsButton label="Toast" @click="pushToast({ message: 'Salvo!', intent: 'success' })" />
+// Monte <DsToastHost /> uma vez na raiz.`
 
 // Color scheme (light/dark/system) — token-only swap via useColorScheme.
 const { mode } = useColorScheme()
