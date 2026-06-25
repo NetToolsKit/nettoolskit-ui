@@ -52,3 +52,83 @@ const classes = computed(() => resolveNtkPageRecipe({
   class: props.class,
 }).classes)
 </script>
+
+<style scoped>
+.ntk-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-spacing-lg);
+  padding: var(--ntk-spacing-lg);
+  background: var(--ntk-bg-primary);
+  color: var(--ntk-text-primary);
+  font-family: var(--ntk-font-family);
+}
+
+/* Variants. */
+.ntk-page--variant-surface {
+  background: var(--ntk-bg-secondary);
+}
+
+.ntk-page--variant-dashboard {
+  gap: var(--ntk-spacing-xl);
+  background: var(--ntk-bg-secondary);
+}
+
+/* Sizes adjust the page padding. */
+.ntk-page--size-sm {
+  gap: var(--ntk-spacing-md);
+  padding: var(--ntk-spacing-md);
+}
+
+.ntk-page--size-lg {
+  gap: var(--ntk-spacing-xl);
+  padding: var(--ntk-spacing-2xl);
+}
+
+/* Slots. */
+.ntk-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ntk-spacing-md);
+}
+
+.ntk-page__title {
+  margin: 0;
+  font-family: var(--ntk-font-family-display);
+  font-size: var(--ntk-font-size-2xl);
+  font-weight: var(--ntk-font-weight-bold);
+  line-height: var(--ntk-line-height-tight);
+  color: var(--ntk-text-primary);
+}
+
+.ntk-page__subtitle {
+  margin: var(--ntk-spacing-xs) 0 0;
+  font-size: var(--ntk-font-size-base);
+  color: var(--ntk-text-secondary);
+}
+
+.ntk-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ntk-spacing-sm);
+}
+
+.ntk-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-spacing-lg);
+}
+
+.ntk-page__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ntk-spacing-sm);
+  padding-block-start: var(--ntk-spacing-md);
+  border-block-start: 1px solid var(--ntk-border-color);
+  color: var(--ntk-text-secondary);
+}
+</style>
