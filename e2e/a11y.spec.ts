@@ -68,9 +68,13 @@ test('DsDialog opens, holds focus, and closes on Escape', async ({ page }) => {
 
 const switchToApp = async (
   page: import('@playwright/test').Page,
-  tabName: string,
+  navName: string,
 ): Promise<void> => {
-  await page.getByRole('tab', { name: tabName, exact: true }).click()
+  // Navigation is the left sidebar menu (DsSidebar) of the app shell.
+  await page
+    .getByRole('navigation', { name: 'Aplicações' })
+    .getByRole('button', { name: navName, exact: true })
+    .click()
 }
 
 const expectNoAxeViolations = async (
@@ -97,10 +101,8 @@ test('Industrial app renders and has no WCAG violations (axe)', async ({ page })
 test('Users app renders and has no WCAG violations (axe)', async ({ page }) => {
   await switchToApp(page, 'Usuários')
 
-  // Smoke: the CRUD page (DsCrudPage) heading + the users data table render.
-  // The page lives in a <main> landmark; scope to it to disambiguate from the
-  // app's own <h1> in the header banner. The table hydrates asynchronously.
-  await expect(page.getByRole('main').getByRole('heading', { name: 'Usuários' })).toBeVisible()
+  // Smoke: the users data table (DsCrudPage → DsTable) renders. It hydrates
+  // asynchronously; the aria-label disambiguates it.
   await expect(page.getByRole('table', { name: 'Usuários' })).toBeVisible()
 
   await expectNoAxeViolations(page)

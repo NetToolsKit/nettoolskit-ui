@@ -1,208 +1,228 @@
 <template>
-  <!-- Host root: a top-level DsTabs switcher between the component catalog and
-       the three fully-mocked demo apps. The catalog stays the default tab so
-       the existing e2e (Clientes heading + Editar perfil dialog) still finds
-       its anchors on load. A single DsToastHost is mounted here for the whole
-       host (the toast queue is a module singleton). -->
-  <div class="sample-host">
-    <div class="sample-host__switcher">
-      <DsTabs
-        v-model="view"
-        :tabs="viewTabs"
-        variant="pill"
-        aria-label="Demonstrações"
-      />
-    </div>
+  <!-- App shell host: top header (DsHeader) + left sidebar menu (DsSidebar)
+       navigating between the component catalog (default) and the three mocked
+       demo apps. This is the standard pattern: menu superior + menu lateral.
+       The catalog stays default so the e2e anchors (Clientes / Editar perfil)
+       render on load. A single DsToastHost serves the whole host. -->
+  <DsAppShell class="demo">
+    <template #header>
+      <DsHeader class="demo__header">
+        <template #brand>
+          <DsLogo mark="N" text="NetToolsKit UI" size="sm" />
+        </template>
+        <span class="demo__view-name">{{ activeNav.label }}</span>
+      </DsHeader>
+    </template>
 
-    <IndustrialStudioApp v-if="view === 'industrial'" class="sample-host__app" />
-    <UserManagementApp v-else-if="view === 'users'" class="sample-host__app" />
-    <EcommerceApp v-else-if="view === 'ecommerce'" class="sample-host__app" />
+    <template #sidebar>
+      <DsSidebar aria-label="Navegação principal">
+        <nav class="demo-nav" aria-label="Aplicações">
+          <button
+            v-for="item in navItems"
+            :key="item.id"
+            type="button"
+            class="demo-nav__item"
+            :class="{ 'demo-nav__item--active': view === item.id }"
+            :aria-current="view === item.id ? 'page' : undefined"
+            @click="view = item.id"
+          >
+            <DsCommandIcon :name="item.icon" />
+            <span>{{ item.label }}</span>
+          </button>
+        </nav>
+      </DsSidebar>
+    </template>
 
-    <!-- Catalog wrapper is a div: the page-level recipes (DsCrudPage/DsFormPage)
-         provide their own <main> landmarks, so nesting another main would be
-         invalid. -->
-    <div v-show="view === 'catalog'" class="sample-shell">
-    <section class="sample-hero">
-      <div>
-        <p class="sample-kicker">NetToolsKit UI</p>
-        <h1>Vue 3 + Quasar library surface</h1>
-        <p>
-          Reusable components, composables, tokens and design-system contracts
-          without product runtime code.
-        </p>
-      </div>
+    <div class="demo-main">
+      <IndustrialStudioApp v-if="view === 'industrial'" />
+      <UserManagementApp v-else-if="view === 'users'" />
+      <EcommerceApp v-else-if="view === 'ecommerce'" />
 
-      <DsButton
-        label="Primary action"
-        variant="solid"
-        intent="primary"
-        :density="density"
-      />
-    </section>
+      <!-- Catalog wrapper is a div: page-level recipes (DsCrudPage/DsFormPage)
+           provide their own <main> landmarks. -->
+      <div v-show="view === 'catalog'" class="sample-shell">
+        <section class="sample-hero">
+          <div>
+            <p class="sample-kicker">NetToolsKit UI</p>
+            <h1>Vue 3 + Quasar library surface</h1>
+            <p>
+              Reusable components, composables, tokens and design-system contracts
+              without product runtime code.
+            </p>
+          </div>
 
-    <section class="sample-controls" aria-label="Catalog appearance controls">
-      <DsSelect
-        id="catalog-scheme"
-        class="sample-controls__field"
-        label="Color scheme"
-        :model-value="scheme"
-        :options="schemeOptions"
-        @update:model-value="onSchemeChange"
-      />
-      <DsSelect
-        id="catalog-theme"
-        class="sample-controls__field"
-        label="Theme"
-        :model-value="theme"
-        :options="themeSelectOptions"
-        @update:model-value="onThemeChange"
-      />
-      <DsSelect
-        id="catalog-density"
-        class="sample-controls__field"
-        label="Density"
-        :model-value="density"
-        :options="densityOptions"
-        @update:model-value="onDensityChange"
-      />
-    </section>
-
-    <section class="sample-grid" aria-label="Library component examples">
-      <DsCard title="Design System" subtitle="DTCG tokens and Ds* wrappers">
-        <div class="sample-stack">
-          <DsButton label="DsButton" intent="primary" :density="density" />
-          <DsInput
-            name="sample-input"
-            label="DsInput"
-            placeholder="Tokenized field"
+          <DsButton
+            label="Primary action"
+            variant="solid"
+            intent="primary"
             :density="density"
           />
-        </div>
-      </DsCard>
+        </section>
 
-      <DsCard title="Primitives" subtitle="Composable Ds* building blocks">
-        <div class="sample-stack">
-          <DsInput name="reusable-input" label="DsInput" placeholder="Reusable field" :density="density" />
-          <DsChip label="Stable API" intent="primary" />
-        </div>
-      </DsCard>
+        <section class="sample-controls" aria-label="Catalog appearance controls">
+          <DsSelect
+            id="catalog-scheme"
+            class="sample-controls__field"
+            label="Color scheme"
+            :model-value="scheme"
+            :options="schemeOptions"
+            @update:model-value="onSchemeChange"
+          />
+          <DsSelect
+            id="catalog-theme"
+            class="sample-controls__field"
+            label="Theme"
+            :model-value="theme"
+            :options="themeSelectOptions"
+            @update:model-value="onThemeChange"
+          />
+          <DsSelect
+            id="catalog-density"
+            class="sample-controls__field"
+            label="Density"
+            :model-value="density"
+            :options="densityOptions"
+            @update:model-value="onDensityChange"
+          />
+        </section>
 
-      <DsMetricGrid
-        :metrics="[{ id: 'tokens', label: 'Tokens', value: '119', delta: 'synced', deltaDirection: 'up' }]"
-        :columns="1"
-        aria-label="Token metric"
-      />
-    </section>
+        <section class="sample-grid" aria-label="Library component examples">
+          <DsCard title="Design System" subtitle="DTCG tokens and Ds* wrappers">
+            <div class="sample-stack">
+              <DsButton label="DsButton" intent="primary" :density="density" />
+              <DsInput
+                name="sample-input"
+                label="DsInput"
+                placeholder="Tokenized field"
+                :density="density"
+              />
+            </div>
+          </DsCard>
 
-    <section class="sample-recipes" aria-label="Front creation recipes">
-      <header class="sample-recipes__intro">
-        <p class="sample-kicker">Front creation system</p>
-        <h2>Telas a partir de schema</h2>
-        <p>
-          As receitas abaixo usam apenas componentes da biblioteca. Descreva os
-          dados; o sistema renderiza layout, validação e estados. Cada receita
-          traz um trecho de composição copiável.
-        </p>
-      </header>
+          <DsCard title="Primitives" subtitle="Composable Ds* building blocks">
+            <div class="sample-stack">
+              <DsInput name="reusable-input" label="DsInput" placeholder="Reusable field" :density="density" />
+              <DsChip label="Stable API" intent="primary" />
+            </div>
+          </DsCard>
 
-      <RecipeShowcase
-        title="Dashboard"
-        description="Visão geral com indicadores em DsMetricGrid."
-        :code="dashboardSnippet"
-      >
-        <DashboardRecipe />
-      </RecipeShowcase>
+          <DsMetricGrid
+            :metrics="[{ id: 'tokens', label: 'Tokens', value: '122', delta: 'synced', deltaDirection: 'up' }]"
+            :columns="1"
+            aria-label="Token metric"
+          />
+        </section>
 
-      <RecipeShowcase
-        title="CRUD a partir de schema"
-        description="Lista, filtros, formulário e estados a partir de defineResource."
-        :code="crudSnippet"
-      >
-        <CrudRecipe />
-      </RecipeShowcase>
+        <section class="sample-recipes" aria-label="Front creation recipes">
+          <header class="sample-recipes__intro">
+            <p class="sample-kicker">Front creation system</p>
+            <h2>Telas a partir de schema</h2>
+            <p>
+              As receitas abaixo usam apenas componentes da biblioteca. Descreva os
+              dados; o sistema renderiza layout, validação e estados. Cada receita
+              traz um trecho de composição copiável.
+            </p>
+          </header>
 
-      <RecipeShowcase
-        title="Formulário de página"
-        description="Formulário de duas colunas gerado por defineForm."
-        :code="formSnippet"
-      >
-        <FormRecipe />
-      </RecipeShowcase>
+          <RecipeShowcase
+            title="Dashboard"
+            description="Visão geral com indicadores em DsMetricGrid."
+            :code="dashboardSnippet"
+          >
+            <DashboardRecipe />
+          </RecipeShowcase>
 
-      <RecipeShowcase
-        title="Diálogo de ação"
-        description="Formulário em modal acessível com DsDialog."
-        :code="dialogSnippet"
-      >
-        <DialogRecipe />
-      </RecipeShowcase>
+          <RecipeShowcase
+            title="CRUD a partir de schema"
+            description="Lista, filtros, formulário e estados a partir de defineResource."
+            :code="crudSnippet"
+          >
+            <CrudRecipe />
+          </RecipeShowcase>
 
-      <RecipeShowcase
-        title="Tabela com ordenação e paginação"
-        description="DsTable autônomo com sort/paginação server-style sobre uma fixture e variação de densidade."
-        :code="tableSnippet"
-      >
-        <TableRecipe />
-      </RecipeShowcase>
+          <RecipeShowcase
+            title="Formulário de página"
+            description="Formulário de duas colunas gerado por defineForm."
+            :code="formSnippet"
+          >
+            <FormRecipe />
+          </RecipeShowcase>
 
-      <RecipeShowcase
-        title="Estados: vazio, carregando e erro"
-        description="DsEmptyState com ações e DsStateBlock em loading e erro."
-        :code="emptyStateSnippet"
-      >
-        <EmptyStateRecipe />
-      </RecipeShowcase>
+          <RecipeShowcase
+            title="Diálogo de ação"
+            description="Formulário em modal acessível com DsDialog."
+            :code="dialogSnippet"
+          >
+            <DialogRecipe />
+          </RecipeShowcase>
 
-      <RecipeShowcase
-        title="Galeria de primitivos"
-        description="DsBadge, DsChip, DsAvatar, DsTabs, DsTooltip, DsSkeleton, DsBreadcrumbs, DsSteps, DsBanner e DsToast."
-        :code="gallerySnippet"
-      >
-        <ComponentsGalleryRecipe />
-      </RecipeShowcase>
+          <RecipeShowcase
+            title="Tabela com ordenação e paginação"
+            description="DsTable autônomo com sort/paginação server-style sobre uma fixture e variação de densidade."
+            :code="tableSnippet"
+          >
+            <TableRecipe />
+          </RecipeShowcase>
 
-      <RecipeShowcase
-        title="Workspace industrial"
-        description="Estudio de engenharia neutro: DsQuickAccessToolbar + DsRibbon com ícones inline e navegação por teclado."
-        :code="workspaceSnippet"
-      >
-        <WorkspaceRecipe />
-      </RecipeShowcase>
+          <RecipeShowcase
+            title="Estados: vazio, carregando e erro"
+            description="DsEmptyState com ações e DsStateBlock em loading e erro."
+            :code="emptyStateSnippet"
+          >
+            <EmptyStateRecipe />
+          </RecipeShowcase>
 
-      <RecipeShowcase
-        title="Workspace docado"
-        description="DsDockLayout com DsTreeExplorer (ARIA tree), DsWorkspaceCanvas, DsDockPanel e DsStatusBar; splitters redimensionáveis por teclado."
-        :code="dockWorkspaceSnippet"
-      >
-        <DockWorkspaceRecipe />
-      </RecipeShowcase>
-    </section>
+          <RecipeShowcase
+            title="Galeria de primitivos"
+            description="DsBadge, DsChip, DsAvatar, DsTabs, DsTooltip, DsSkeleton, DsBreadcrumbs, DsSteps, DsBanner e DsToast."
+            :code="gallerySnippet"
+          >
+            <ComponentsGalleryRecipe />
+          </RecipeShowcase>
 
+          <RecipeShowcase
+            title="Workspace industrial"
+            description="Estudio de engenharia neutro: DsQuickAccessToolbar + DsRibbon com ícones inline e navegação por teclado."
+            :code="workspaceSnippet"
+          >
+            <WorkspaceRecipe />
+          </RecipeShowcase>
+
+          <RecipeShowcase
+            title="Workspace docado"
+            description="DsDockLayout com DsTreeExplorer (ARIA tree), DsWorkspaceCanvas, DsDockPanel e DsStatusBar; splitters redimensionáveis por teclado."
+            :code="dockWorkspaceSnippet"
+          >
+            <DockWorkspaceRecipe />
+          </RecipeShowcase>
+        </section>
+      </div>
     </div>
 
-    <!-- Single shared toast host for the whole host (catalog + demo apps); the
-         gallery's toast button and the demo apps all push onto this queue. -->
     <DsToastHost />
-  </div>
+  </DsAppShell>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import {
+  DsAppShell,
   DsButton,
   DsCard,
   DsChip,
+  DsCommandIcon,
+  DsHeader,
   DsInput,
+  DsLogo,
   DsMetricGrid,
   DsSelect,
-  DsTabs,
+  DsSidebar,
   DsToastHost,
   ntkComponentDensities,
   setColorScheme,
   useColorScheme,
   type ColorSchemeMode,
   type NtkComponentDensity,
-  type NtkTabItem,
 } from '../index'
 import { useThemeSwitcher, type ThemeId } from '../src/composables/useThemeSwitcher'
 import EcommerceApp from './apps/EcommerceApp.vue'
@@ -219,18 +239,19 @@ import RecipeShowcase from './recipes/RecipeShowcase.vue'
 import TableRecipe from './recipes/TableRecipe.vue'
 import WorkspaceRecipe from './recipes/WorkspaceRecipe.vue'
 
-// Top-level view switcher: catalog (default) + the three fully-mocked demo
-// apps. Default MUST be 'catalog' so the existing e2e anchors render on load.
-const view = ref<string>('catalog')
-const viewTabs: NtkTabItem[] = [
-  { id: 'catalog', label: 'Catálogo' },
-  { id: 'industrial', label: 'Industrial' },
-  { id: 'users', label: 'Usuários' },
-  { id: 'ecommerce', label: 'E-commerce' },
+// Sidebar navigation: catalog (default) + the three fully-mocked demo apps.
+// Default MUST be 'catalog' so the existing e2e anchors render on load.
+type NavId = 'catalog' | 'industrial' | 'users' | 'ecommerce'
+const view = ref<NavId>('catalog')
+const navItems: ReadonlyArray<{ id: NavId; label: string; icon: 'grid' | 'settings' | 'menu' | 'open' }> = [
+  { id: 'catalog', label: 'Catálogo', icon: 'grid' },
+  { id: 'industrial', label: 'Industrial', icon: 'settings' },
+  { id: 'users', label: 'Usuários', icon: 'menu' },
+  { id: 'ecommerce', label: 'E-commerce', icon: 'open' },
 ]
+const activeNav = computed(() => navItems.find((item) => item.id === view.value) ?? navItems[0])
 
-// Concise composition snippets shown next to each live recipe. These mirror the
-// recipe source so a developer can copy the shape and adjust domain fields.
+// Concise composition snippets shown next to each live recipe.
 const dashboardSnippet = `<DsMetricGrid
   :metrics="[
     { id: 'revenue', label: 'Receita', value: 'R$ 128k', delta: '+12%', deltaDirection: 'up' },
@@ -382,28 +403,62 @@ const onDensityChange = (next: string): void => {
 </script>
 
 <style scoped>
-.sample-host {
+.demo {
   min-height: 100vh;
-  background: var(--ntk-bg-primary);
+}
+
+.demo__view-name {
+  color: var(--ntk-text-secondary);
+  font-weight: var(--ntk-font-weight-medium);
+}
+
+.demo-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntk-spacing-xs);
+  padding: var(--ntk-spacing-sm);
+}
+
+.demo-nav__item {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-spacing-sm);
+  padding: var(--ntk-spacing-sm) var(--ntk-spacing-md);
+  border: 0;
+  border-radius: var(--ntk-radius-md);
+  background: transparent;
+  color: var(--ntk-text-secondary);
+  font: inherit;
+  font-weight: var(--ntk-font-weight-medium);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--ntk-transition-fast), color var(--ntk-transition-fast);
+}
+
+.demo-nav__item:hover {
+  background: var(--ntk-bg-hover);
   color: var(--ntk-text-primary);
 }
 
-.sample-host__switcher {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  padding: var(--ntk-spacing-md) clamp(24px, 4vw, 56px);
-  border-block-end: 1px solid var(--ntk-border-color);
-  background: var(--ntk-bg-card);
+.demo-nav__item--active {
+  /* primary-light renders as a vivid tint (not a pale pastel) in some themes,
+     so use the subtle active surface with dark primary text for AA contrast. */
+  background: var(--ntk-bg-active);
+  color: var(--ntk-primary-dark);
+  font-weight: var(--ntk-font-weight-semibold);
+  box-shadow: inset 3px 0 0 var(--ntk-primary);
 }
 
-.sample-host__app {
-  padding: clamp(24px, 4vw, 56px);
+.demo-nav__item:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
+}
+
+.demo-main {
+  min-inline-size: 0;
 }
 
 .sample-shell {
-  padding: clamp(24px, 4vw, 56px);
-  background: var(--ntk-bg-primary);
   color: var(--ntk-text-primary);
 }
 
