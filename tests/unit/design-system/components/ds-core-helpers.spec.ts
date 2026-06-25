@@ -70,6 +70,16 @@ import {
   nextNtkTableSort,
   getNtkToolbarClasses,
   getNtkToolbarClassName,
+  getNtkCommandIconClasses,
+  getNtkCommandIconClassName,
+  getNtkQuickAccessToolbarClasses,
+  getNtkQuickAccessToolbarClassName,
+  getNtkRibbonClasses,
+  getNtkRibbonClassName,
+  getNtkRibbonGroupClasses,
+  getNtkRibbonGroupClassName,
+  getNtkRibbonCommandClasses,
+  getNtkRibbonCommandClassName,
   getNtkDensityClass,
   ntkComponentDensities,
   normalizeNtkClasses,
@@ -107,6 +117,11 @@ const helpers = [
   ['state-block', getNtkStateBlockClasses, getNtkStateBlockClassName, 'ntk-state-block'],
   ['table', getNtkTableClasses, getNtkTableClassName, 'ntk-table'],
   ['toolbar', getNtkToolbarClasses, getNtkToolbarClassName, 'ntk-toolbar'],
+  ['command-icon', getNtkCommandIconClasses, getNtkCommandIconClassName, 'ntk-command-icon'],
+  ['quick-access-toolbar', getNtkQuickAccessToolbarClasses, getNtkQuickAccessToolbarClassName, 'ntk-quick-access-toolbar'],
+  ['ribbon', getNtkRibbonClasses, getNtkRibbonClassName, 'ntk-ribbon'],
+  ['ribbon-group', getNtkRibbonGroupClasses, getNtkRibbonGroupClassName, 'ntk-ribbon-group'],
+  ['ribbon-command', getNtkRibbonCommandClasses, getNtkRibbonCommandClassName, 'ntk-ribbon-command'],
 ] as const
 
 describe('getNtk* class helpers', () => {
