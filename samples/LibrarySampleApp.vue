@@ -141,6 +141,14 @@
       >
         <ComponentsGalleryRecipe />
       </RecipeShowcase>
+
+      <RecipeShowcase
+        title="Workspace industrial"
+        description="Estudio de engenharia neutro: DsQuickAccessToolbar + DsRibbon com ícones inline e navegação por teclado."
+        :code="workspaceSnippet"
+      >
+        <WorkspaceRecipe />
+      </RecipeShowcase>
     </section>
 
     <!-- Single shared toast host for the whole catalog; the gallery's toast
@@ -174,6 +182,7 @@ import EmptyStateRecipe from './recipes/EmptyStateRecipe.vue'
 import FormRecipe from './recipes/FormRecipe.vue'
 import RecipeShowcase from './recipes/RecipeShowcase.vue'
 import TableRecipe from './recipes/TableRecipe.vue'
+import WorkspaceRecipe from './recipes/WorkspaceRecipe.vue'
 
 // Concise composition snippets shown next to each live recipe. These mirror the
 // recipe source so a developer can copy the shape and adjust domain fields.
@@ -254,6 +263,18 @@ const { pushToast } = useToast()
 // <DsBanner intent="info" title="Aviso" message="..." />
 // <DsButton label="Toast" @click="pushToast({ message: 'Salvo!', intent: 'success' })" />
 // Monte <DsToastHost /> uma vez na raiz.`
+
+const workspaceSnippet = `<DsHeader title="Engineering Studio">
+  <template #actions>
+    <DsQuickAccessToolbar :items="quickActions" @command="onCommand" />
+  </template>
+</DsHeader>
+
+<DsRibbon v-model:active-tab="activeTab" :tabs="ribbonTabs" @command="onCommand" />
+
+// quickActions: { id, label, icon, disabled?, selected?, intent? }[]
+// ribbonTabs:  { id, label, groups: { id, label, commands: [...] }[] }[]
+// icon names come from the built-in command-icon registry (no icon font).`
 
 // Color scheme (light/dark/system) — token-only swap via useColorScheme.
 const { mode } = useColorScheme()

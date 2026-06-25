@@ -411,6 +411,47 @@ exports[`Ds* public API contract > pins the public props/events of DsChip 1`] = 
 }
 `;
 
+exports[`Ds* public API contract > pins the public props/events of DsCommandIcon 1`] = `
+{
+  "emits": [],
+  "name": "DsCommandIcon",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "name": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
 exports[`Ds* public API contract > pins the public props/events of DsCrudPage 1`] = `
 {
   "emits": [
@@ -1269,6 +1310,211 @@ exports[`Ds* public API contract > pins the public props/events of DsPageHeader 
       "required": false,
     },
     "title": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsQuickAccessToolbar 1`] = `
+{
+  "emits": [
+    "command",
+  ],
+  "name": "DsQuickAccessToolbar",
+  "props": {
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "items": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsRibbon 1`] = `
+{
+  "emits": [
+    "command",
+    "update:activeTab",
+  ],
+  "name": "DsRibbon",
+  "props": {
+    "activeTab": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "ariaLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "tabs": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsRibbonCommand 1`] = `
+{
+  "emits": [
+    "click",
+  ],
+  "name": "DsRibbonCommand",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "disabled": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "icon": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "selected": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "variant": {
+      "hasDefault": true,
+      "required": false,
+    },
+  },
+}
+`;
+
+exports[`Ds* public API contract > pins the public props/events of DsRibbonGroup 1`] = `
+{
+  "emits": [
+    "command",
+  ],
+  "name": "DsRibbonGroup",
+  "props": {
+    "class": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "commands": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "density": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "id": {
+      "hasDefault": false,
+      "required": false,
+    },
+    "intent": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "label": {
+      "hasDefault": false,
+      "required": true,
+    },
+    "labelPosition": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "separator": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "size": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "testId": {
       "hasDefault": false,
       "required": false,
     },
