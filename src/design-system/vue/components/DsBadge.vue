@@ -80,22 +80,22 @@ const classes = computed(() => resolveNtkBadgeRecipe({
 }
 
 .ntk-badge--variant-solid.ntk-badge--intent-success {
-  background: var(--ntk-success);
+  background: var(--ntk-success-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-badge--variant-solid.ntk-badge--intent-warning {
-  background: var(--ntk-warning);
+  background: var(--ntk-warning-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-badge--variant-solid.ntk-badge--intent-danger {
-  background: var(--ntk-error);
+  background: var(--ntk-error-dark);
   color: var(--ntk-text-inverse);
 }
 
 .ntk-badge--variant-solid.ntk-badge--intent-info {
-  background: var(--ntk-info);
+  background: var(--ntk-info-dark);
   color: var(--ntk-text-inverse);
 }
 

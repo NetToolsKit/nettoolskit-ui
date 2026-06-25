@@ -30,10 +30,10 @@ Do not edit by hand.
 
 ## Token Model
 
-- Total tokens: 119.
-- Resolver entries: 119.
-- Token groups: `color`, `surface`, `text`, `border`, `feedback`, `gradient`, `shadow`, `radius`, `spacing`, `typography`, `motion`.
-- Token types: `color` (53), `dimension` (29), `fontFamily` (5), `fontWeight` (10), `gradient` (5), `number` (4), `shadow` (10), `transition` (3).
+- Total tokens: 122.
+- Resolver entries: 122.
+- Token groups: `color`, `surface`, `text`, `border`, `feedback`, `gradient`, `shadow`, `radius`, `spacing`, `typography`, `motion`, `zIndex`.
+- Token types: `color` (53), `dimension` (29), `fontFamily` (5), `fontWeight` (10), `gradient` (5), `number` (7), `shadow` (10), `transition` (3).
 - Public CSS variables use the `--ntk-*` namespace.
 - Token references are resolved for documentation while CSS output keeps `var(--ntk-*)` links where possible.
 - `resolver.json` maps token paths, groups, types, references, and CSS variables for runtime adapters.

@@ -44,10 +44,10 @@
   --ntk-success-dark: #047857;
   --ntk-warning: #f59e0b;
   --ntk-warning-light: #fef3c7;
-  --ntk-warning-dark: #d97706;
+  --ntk-warning-dark: #b45309;
   --ntk-error: #ef4444;
   --ntk-error-light: #fee2e2;
-  --ntk-error-dark: #dc2626;
+  --ntk-error-dark: #b91c1c;
   --ntk-info: #14b8a6;
   --ntk-info-light: #ccfbf1;
   --ntk-info-dark: #0f766e;
@@ -122,4 +122,7 @@
   --ntk-transition-fast: 150ms ease-in-out;
   --ntk-transition-base: 250ms ease-in-out;
   --ntk-transition-slow: 350ms ease-in-out;
+  --ntk-z-dropdown: 1000;
+  --ntk-z-overlay: 1500;
+  --ntk-z-toast: 2000;
 }

@@ -83,6 +83,12 @@ function onRemove(): void {
 
 <style scoped>
 .ntk-chip {
+  /* Per-intent color channel consumed by the variants below. Defaults to the
+     neutral treatment; intent modifiers re-point the channel. The -dark shades
+     are AA-700 values, safe for white-on (solid) and dark-on-light (soft text). */
+  --ntk-c: var(--ntk-text-secondary);
+  --ntk-c-dark: var(--ntk-text-primary);
+  --ntk-c-light: var(--ntk-bg-secondary);
   display: inline-flex;
   align-items: center;
   gap: var(--ntk-spacing-xs);
@@ -108,18 +114,81 @@ function onRemove(): void {
   padding-inline: var(--ntk-spacing-md);
 }
 
+/* Intents map to the single local color channel. */
+.ntk-chip--intent-primary {
+  --ntk-c: var(--ntk-primary);
+  --ntk-c-dark: var(--ntk-primary-dark);
+  --ntk-c-light: var(--ntk-primary-light);
+}
+
+.ntk-chip--intent-success {
+  --ntk-c: var(--ntk-success);
+  --ntk-c-dark: var(--ntk-success-dark);
+  --ntk-c-light: var(--ntk-success-light);
+}
+
+.ntk-chip--intent-warning {
+  --ntk-c: var(--ntk-warning);
+  --ntk-c-dark: var(--ntk-warning-dark);
+  --ntk-c-light: var(--ntk-warning-light);
+}
+
+.ntk-chip--intent-danger {
+  --ntk-c: var(--ntk-error);
+  --ntk-c-dark: var(--ntk-error-dark);
+  --ntk-c-light: var(--ntk-error-light);
+}
+
+.ntk-chip--intent-info {
+  --ntk-c: var(--ntk-info);
+  --ntk-c-dark: var(--ntk-info-dark);
+  --ntk-c-light: var(--ntk-info-light);
+}
+
+/* Variants. Solid fills with the AA-700 dark shade + inverse text; soft puts
+   dark text on the pastel; outline uses the dark shade for text + border. */
+.ntk-chip--variant-solid {
+  border-color: var(--ntk-c-dark);
+  background: var(--ntk-c-dark);
+  color: var(--ntk-text-inverse);
+}
+
 .ntk-chip--variant-soft {
   border-color: transparent;
+  background: var(--ntk-c-light);
+  color: var(--ntk-c-dark);
+}
+
+.ntk-chip--variant-soft.ntk-chip--intent-neutral {
   background: var(--ntk-bg-hover);
+  color: var(--ntk-text-primary);
+}
+
+/* primary-light is a vivid tint (not a pale pastel), so the soft primary chip
+   uses the soft accent surface instead to keep the label AA over the fill. */
+.ntk-chip--variant-soft.ntk-chip--intent-primary {
+  background: var(--ntk-bg-active);
+  color: var(--ntk-primary-dark);
 }
 
 .ntk-chip--variant-outline {
+  border-color: var(--ntk-c);
   background: transparent;
+  color: var(--ntk-c-dark);
 }
 
+.ntk-chip--variant-outline.ntk-chip--intent-neutral {
+  border-color: var(--ntk-border-color);
+  color: var(--ntk-text-primary);
+}
+
+/* Selected reads as an active accent surface regardless of the base variant:
+   a soft primary background with the AA-safe primary-dark text + border, so the
+   label keeps >=4.5:1 even over a solid chip's dark fill. */
 .ntk-chip--is-selected {
   border-color: var(--ntk-primary);
-  color: var(--ntk-primary);
+  background: var(--ntk-bg-active);
+  color: var(--ntk-primary-dark);
 }
 
 .ntk-chip--is-disabled {

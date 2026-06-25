@@ -413,22 +413,26 @@ html[data-theme] body {
   --semantic-success-primary: var(--ntk-success);
   --semantic-success-border: color-mix(in srgb, var(--ntk-success) 52%, var(--ntk-border));
   --semantic-success-bg: color-mix(in srgb, var(--ntk-success) 18%, var(--ntk-card-bg));
-  --semantic-success-text: color-mix(in srgb, var(--ntk-success) 72%, var(--ntk-text-heading));
+  /* Text shades blend the intent hue toward the heading color. The base 500 hue
+     alone clears only ~3-4:1 on white, so we mix in more heading to land an
+     AA-700-equivalent that holds >=4.5:1 on both white (outline) and the soft
+     pastel background across every light theme. */
+  --semantic-success-text: color-mix(in srgb, var(--ntk-success) 60%, var(--ntk-text-heading));
   --semantic-warning: var(--ntk-warning);
   --semantic-warning-primary: var(--ntk-warning);
   --semantic-warning-border: color-mix(in srgb, var(--ntk-warning) 56%, var(--ntk-border));
   --semantic-warning-bg: color-mix(in srgb, var(--ntk-warning) 20%, var(--ntk-card-bg));
-  --semantic-warning-text: color-mix(in srgb, var(--ntk-warning) 74%, var(--ntk-text-heading));
+  --semantic-warning-text: color-mix(in srgb, var(--ntk-warning) 55%, var(--ntk-text-heading));
   --semantic-error: var(--ntk-error);
   --semantic-error-primary: var(--ntk-error);
   --semantic-error-border: color-mix(in srgb, var(--ntk-error) 54%, var(--ntk-border));
   --semantic-error-bg: color-mix(in srgb, var(--ntk-error) 18%, var(--ntk-card-bg));
-  --semantic-error-text: color-mix(in srgb, var(--ntk-error) 72%, var(--ntk-text-heading));
+  --semantic-error-text: color-mix(in srgb, var(--ntk-error) 58%, var(--ntk-text-heading));
   --semantic-info: var(--ntk-info);
   --semantic-info-primary: var(--ntk-info);
   --semantic-info-border: color-mix(in srgb, var(--ntk-info) 52%, var(--ntk-border));
   --semantic-info-bg: color-mix(in srgb, var(--ntk-info) 18%, var(--ntk-card-bg));
-  --semantic-info-text: color-mix(in srgb, var(--ntk-info) 72%, var(--ntk-text-heading));
+  --semantic-info-text: color-mix(in srgb, var(--ntk-info) 52%, var(--ntk-text-heading));
 
   --ntk-success-light: var(--semantic-success-bg);
   --ntk-success-dark: var(--semantic-success-text);

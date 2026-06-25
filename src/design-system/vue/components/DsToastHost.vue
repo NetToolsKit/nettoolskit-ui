@@ -52,7 +52,7 @@ const hostClasses = computed(() => [
 <style scoped>
 .ntk-toast-host {
   position: fixed;
-  z-index: 2000;
+  z-index: var(--ntk-z-toast);
   display: flex;
   flex-direction: column;
   gap: var(--ntk-spacing-sm);
