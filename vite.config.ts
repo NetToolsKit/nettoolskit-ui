@@ -21,6 +21,12 @@ function manualChunkByModule(id: string): string | undefined {
     return 'vendor-quasar'
   }
 
+  // Keep Three.js (lazy-imported by the 3D viewer screen) in its own async
+  // chunk so it never lands in the eagerly-loaded initial/vendor bundle.
+  if (normalized.includes('/node_modules/three/')) {
+    return 'vendor-three'
+  }
+
   return 'vendor'
 }
 

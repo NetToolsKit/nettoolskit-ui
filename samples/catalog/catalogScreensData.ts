@@ -320,3 +320,69 @@ export const dashMatrix: readonly { cells: DashMatrixCell[] }[] = (() => {
   }
   return out
 })()
+
+/* ============================================================
+ * Fluxo / BPM · N8N-style node editor
+ * ------------------------------------------------------------
+ * Node positions / labels / connections mirror the reference's BPM canvas.
+ * Each node "kind" carries a semantic `--ds-color-*` tone so the colored chip,
+ * the left accent and the connectors re-resolve live with theme / brand.
+ * ============================================================ */
+export type FlowKind = 'start' | 'task' | 'gateway' | 'end' | 'event'
+
+/** Maps a node kind to its semantic tone token suffix (`--ds-color-<tone>`). */
+export const flowKindTone: Record<FlowKind, 'success' | 'primary' | 'warning' | 'danger' | 'info'> = {
+  start: 'success',
+  task: 'primary',
+  gateway: 'warning',
+  end: 'danger',
+  event: 'info',
+}
+
+export interface FlowNodeSeed {
+  readonly id: string
+  readonly kind: FlowKind
+  /** i18n key for the bold node title. */
+  readonly titleKey: string
+  readonly x: number
+  readonly y: number
+}
+
+/** Reference BPM nodes (verbatim layout from the reference canvas). */
+export const flowNodes: readonly FlowNodeSeed[] = [
+  { id: 'n-start', kind: 'start', titleKey: 'bpmStart', x: 30, y: 118 },
+  { id: 'n-receive', kind: 'task', titleKey: 'bpmReceive', x: 240, y: 118 },
+  { id: 'n-approve', kind: 'gateway', titleKey: 'bpmApprove', x: 460, y: 118 },
+  { id: 'n-invoice', kind: 'task', titleKey: 'bpmInvoice', x: 700, y: 30 },
+  { id: 'n-review', kind: 'task', titleKey: 'bpmReview', x: 700, y: 206 },
+  { id: 'n-end', kind: 'end', titleKey: 'bpmEnd', x: 930, y: 118 },
+]
+
+export interface FlowEdgeSeed {
+  readonly from: string
+  readonly to: string
+}
+
+/** Reference BPM connections (curved bezier links with arrowheads). */
+export const flowEdges: readonly FlowEdgeSeed[] = [
+  { from: 'n-start', to: 'n-receive' },
+  { from: 'n-receive', to: 'n-approve' },
+  { from: 'n-approve', to: 'n-invoice' },
+  { from: 'n-approve', to: 'n-review' },
+  { from: 'n-invoice', to: 'n-end' },
+  { from: 'n-review', to: 'n-end' },
+]
+
+/** Left "Componentes" palette (one entry per node kind). */
+export interface FlowPaletteItem {
+  readonly kind: FlowKind
+  readonly labelKey: string
+}
+
+export const flowPalette: readonly FlowPaletteItem[] = [
+  { kind: 'start', labelKey: 'bpmStart' },
+  { kind: 'task', labelKey: 'bpmTask' },
+  { kind: 'gateway', labelKey: 'bpmGateway' },
+  { kind: 'end', labelKey: 'bpmEnd' },
+  { kind: 'event', labelKey: 'bpmEvent' },
+]

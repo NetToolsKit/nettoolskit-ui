@@ -10,8 +10,8 @@
       <main class="cat-body__main">
         <CatalogHero :t="t" />
 
-        <!-- Example screens: Login / Web / E-commerce / Dashboards are real;
-             Fluxo / 3D / Industrial remain stubs (later batch). -->
+        <!-- Example screens: all seven are real (Login / Web / E-commerce /
+             Dashboards / Fluxo-BPM / Visualizador 3D / Industrial). -->
         <CatalogScreenLogin
           :t="t"
           :locale="state.locale"
@@ -25,6 +25,18 @@
           :locale="state.locale"
         />
         <CatalogScreenDashboards
+          :t="t"
+          :locale="state.locale"
+        />
+        <CatalogScreenFlow
+          :t="t"
+          :locale="state.locale"
+        />
+        <CatalogScreenViewer3d
+          :t="t"
+          :locale="state.locale"
+        />
+        <CatalogScreenIndustrial
           :t="t"
           :locale="state.locale"
         />
@@ -92,7 +104,10 @@ import CatalogInteractive from './CatalogInteractive.vue'
 import CatalogModals from './CatalogModals.vue'
 import CatalogScreenDashboards from './CatalogScreenDashboards.vue'
 import CatalogScreenEcommerce from './CatalogScreenEcommerce.vue'
+import CatalogScreenFlow from './CatalogScreenFlow.vue'
+import CatalogScreenIndustrial from './CatalogScreenIndustrial.vue'
 import CatalogScreenLogin from './CatalogScreenLogin.vue'
+import CatalogScreenViewer3d from './CatalogScreenViewer3d.vue'
 import CatalogScreenWeb from './CatalogScreenWeb.vue'
 import CatalogSection from './CatalogSection.vue'
 import CatalogTable from './CatalogTable.vue'
@@ -102,7 +117,7 @@ import { getCatalogStrings } from './catalogI18n'
 import { catalogSections, initCatalogShell, useCatalogShell } from './useCatalogShell'
 
 const { state } = useCatalogShell()
-const realScreens = new Set(['login', 'web', 'ecommerce', 'dashboards'])
+const realScreens = new Set(['login', 'web', 'ecommerce', 'dashboards', 'fluxo', 'viewer3d', 'industrial'])
 const stubScreenSections = catalogSections.filter(
   (s) => s.group === 'screens' && !realScreens.has(s.anchor),
 )
