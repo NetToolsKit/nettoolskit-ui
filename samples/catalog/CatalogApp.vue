@@ -10,9 +10,26 @@
       <main class="cat-body__main">
         <CatalogHero :t="t" />
 
-        <!-- Screen example sections (still titled stubs in this phase). -->
+        <!-- Example screens: Login / Web / E-commerce / Dashboards are real;
+             Fluxo / 3D / Industrial remain stubs (later batch). -->
+        <CatalogScreenLogin
+          :t="t"
+          :locale="state.locale"
+        />
+        <CatalogScreenWeb
+          :t="t"
+          :locale="state.locale"
+        />
+        <CatalogScreenEcommerce
+          :t="t"
+          :locale="state.locale"
+        />
+        <CatalogScreenDashboards
+          :t="t"
+          :locale="state.locale"
+        />
         <CatalogSection
-          v-for="meta in screenSections"
+          v-for="meta in stubScreenSections"
           :key="meta.anchor"
           :meta="meta"
           :t="t"
@@ -73,6 +90,10 @@ import CatalogHero from './CatalogHero.vue'
 import CatalogInputs from './CatalogInputs.vue'
 import CatalogInteractive from './CatalogInteractive.vue'
 import CatalogModals from './CatalogModals.vue'
+import CatalogScreenDashboards from './CatalogScreenDashboards.vue'
+import CatalogScreenEcommerce from './CatalogScreenEcommerce.vue'
+import CatalogScreenLogin from './CatalogScreenLogin.vue'
+import CatalogScreenWeb from './CatalogScreenWeb.vue'
 import CatalogSection from './CatalogSection.vue'
 import CatalogTable from './CatalogTable.vue'
 import CatalogToc from './CatalogToc.vue'
@@ -81,7 +102,10 @@ import { getCatalogStrings } from './catalogI18n'
 import { catalogSections, initCatalogShell, useCatalogShell } from './useCatalogShell'
 
 const { state } = useCatalogShell()
-const screenSections = catalogSections.filter((s) => s.group === 'screens')
+const realScreens = new Set(['login', 'web', 'ecommerce', 'dashboards'])
+const stubScreenSections = catalogSections.filter(
+  (s) => s.group === 'screens' && !realScreens.has(s.anchor),
+)
 const t = computed(() => getCatalogStrings(state.locale))
 
 onMounted(() => {
