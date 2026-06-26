@@ -70,10 +70,10 @@ Tabela & estados, Interativos, Feedback).
 
 ## Progress Checklist
 
-Progress: 20% (1/5 checked)
+Progress: 40% (2/5 checked)
 
 - [x] P1 · Token & theme foundation (PR #84 — additive light/dark/hc/machine + brand + density + --ind-*; gates green)
-- [ ] P2 · Catalog shell
+- [x] P2 · Catalog shell (PR #84 — top bar TEMA/MARCA/DENSIDADE/FONTE/IDIOMA + sticky collapsible TOC + hero + banner + 4 lockups; live token switching verified vs slice-00)
 - [ ] P3 · Fundamentals + component galleries
 - [ ] P4 · Example screens
 - [ ] P5 · i18n PT/EN + verification
