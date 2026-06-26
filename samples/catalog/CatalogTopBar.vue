@@ -82,6 +82,39 @@
                     @input="onCustomColor"
                   >
                 </label>
+
+                <!-- Brand TEXT color (contrast drawn on top of the brand). -->
+                <div class="cat-palette__divider" />
+                <p class="cat-palette__title">
+                  {{ t.brandTextLbl }}
+                </p>
+                <div
+                  class="cat-textmode"
+                  role="group"
+                  :aria-label="t.brandTextLbl"
+                >
+                  <button
+                    v-for="opt in textColorOptions"
+                    :key="opt.value"
+                    type="button"
+                    class="cat-textmode__btn"
+                    :class="{ 'is-active': isTextModeActive(opt.value) }"
+                    :aria-pressed="isTextModeActive(opt.value)"
+                    @click="applyBrandTextColor(opt.value)"
+                  >
+                    {{ opt.label }}
+                  </button>
+                </div>
+                <label class="cat-palette__custom">
+                  <span>{{ t.custom }}</span>
+                  <input
+                    type="color"
+                    :value="currentBrandTextHex"
+                    :aria-label="t.brandTextLbl"
+                    @input="onCustomTextColor"
+                  >
+                </label>
+
                 <button
                   v-close-popup
                   type="button"
@@ -198,11 +231,13 @@ const props = defineProps<{ t: CatalogStrings }>()
 const {
   state,
   currentBrandHex,
+  currentBrandTextHex,
   applyTheme,
   applyDensity,
   applyLocale,
   applyFont,
   applyBrandColor,
+  applyBrandTextColor,
   resetBrandColor,
 } = useCatalogShell()
 
@@ -230,9 +265,29 @@ const activeFontLabel = computed(
   () => fonts.find((f) => f.id === state.fontId)?.label ?? fonts[0].label
 )
 
+/** Brand-text adjuster presets: Auto (luminance) · White · Black. */
+const textColorOptions = computed<{ value: 'auto' | string; label: string }[]>(() => [
+  { value: 'auto', label: props.t.textAuto },
+  { value: '#ffffff', label: props.t.textWhite },
+  { value: '#000000', label: props.t.textBlack },
+])
+
+function isTextModeActive(value: 'auto' | string): boolean {
+  if (value === 'auto') return state.brandTextColor === 'auto'
+  return (
+    state.brandTextColor !== 'auto' &&
+    state.brandTextColor.toLowerCase() === value.toLowerCase()
+  )
+}
+
 function onCustomColor(event: Event): void {
   const value = (event.target as HTMLInputElement).value
   applyBrandColor(value)
+}
+
+function onCustomTextColor(event: Event): void {
+  const value = (event.target as HTMLInputElement).value
+  applyBrandTextColor(value)
 }
 </script>
 
@@ -450,6 +505,47 @@ function onCustomColor(event: Event): void {
   background: none;
   cursor: pointer;
   padding: 0;
+}
+
+.cat-palette__divider {
+  block-size: 1px;
+  margin: 2px 0;
+  background: var(--ntk-border);
+}
+
+/* Brand text-color mode (Auto / White / Black) */
+.cat-textmode {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--ntk-row-bg);
+}
+
+.cat-textmode__btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ntk-text-muted);
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.cat-textmode__btn:hover {
+  color: var(--ntk-text-heading);
+}
+
+.cat-textmode__btn.is-active {
+  background: var(--ntk-primary);
+  color: var(--ntk-text-on-accent);
+  font-weight: 600;
 }
 
 .cat-palette__reset {

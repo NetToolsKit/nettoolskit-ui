@@ -135,8 +135,8 @@ export const catalogSections: readonly CatalogSectionMeta[] = [
   { anchor: 'interativos', group: 'components', number: '11', titleKey: 'interTitle', descKey: 'interDesc' },
 ]
 
-/** Converts a #rrggbb hex to an "r, g, b" channel string for *-rgb tokens. */
-function hexToRgbChannels(hex: string): string {
+/** Parses a #rgb / #rrggbb hex into 0–255 channel triplet. */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const normalized = hex.replace('#', '')
   const value =
     normalized.length === 3
@@ -145,10 +145,50 @@ function hexToRgbChannels(hex: string): string {
           .map((c) => c + c)
           .join('')
       : normalized
-  const r = parseInt(value.slice(0, 2), 16)
-  const g = parseInt(value.slice(2, 4), 16)
-  const b = parseInt(value.slice(4, 6), 16)
+  return {
+    r: parseInt(value.slice(0, 2), 16),
+    g: parseInt(value.slice(2, 4), 16),
+    b: parseInt(value.slice(4, 6), 16),
+  }
+}
+
+/** Converts a #rrggbb hex to an "r, g, b" channel string for *-rgb tokens. */
+function hexToRgbChannels(hex: string): string {
+  const { r, g, b } = hexToRgb(hex)
   return `${r}, ${g}, ${b}`
+}
+
+/** Brand-text candidates: near-white and near-black (matches theme contrasts). */
+const TEXT_WHITE = '#ffffff'
+const TEXT_BLACK = '#0b0a1a'
+
+/** WCAG relative luminance for an sRGB hex color (0 = black, 1 = white). */
+function relativeLuminance(hex: string): number {
+  const { r, g, b } = hexToRgb(hex)
+  const lin = [r, g, b].map((channel) => {
+    const c = channel / 255
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
+
+/** WCAG contrast ratio between two hex colors (1 = identical, 21 = max). */
+function contrastRatio(a: string, b: string): number {
+  const la = relativeLuminance(a)
+  const lb = relativeLuminance(b)
+  const lighter = Math.max(la, lb)
+  const darker = Math.min(la, lb)
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
+/**
+ * Auto brand-text color: pick white or near-black — whichever yields the higher
+ * WCAG contrast ratio against the chosen brand color.
+ */
+function autoBrandTextColor(brandHex: string): string {
+  return contrastRatio(brandHex, TEXT_WHITE) >= contrastRatio(brandHex, TEXT_BLACK)
+    ? TEXT_WHITE
+    : TEXT_BLACK
 }
 
 /** Inline-override keys this composable owns, so reset clears exactly these. */
@@ -161,7 +201,24 @@ const BRAND_OVERRIDE_KEYS = [
   '--ntk-accent-hover',
   '--ntk-accent-soft',
   '--ntk-nav-active-bg',
+  // Brand "source" mirrors — let theme-scoped subtrees (e.g. the embedded
+  // Industrial under data-theme='machine') re-read the live brand without the
+  // machine theme block re-pinning the primary/accent family.
+  '--cat-brand',
+  '--cat-brand-dark',
+  '--cat-brand-rgb',
+  '--cat-brand-soft',
 ] as const
+
+/** Brand text-color override keys (contrast on top of the brand color). */
+const BRAND_TEXT_OVERRIDE_KEYS = [
+  '--ntk-primary-contrast',
+  '--ntk-text-on-accent',
+  '--cat-brand-contrast',
+] as const
+
+/** Brand text-color choice: 'auto' (luminance-derived) or a forced hex. */
+export type CatalogBrandTextColor = 'auto' | string
 
 interface CatalogShellState {
   theme: CatalogTheme
@@ -169,6 +226,7 @@ interface CatalogShellState {
   locale: CatalogLocale
   fontId: string
   brandColor: string | null
+  brandTextColor: CatalogBrandTextColor
 }
 
 const state = reactive<CatalogShellState>({
@@ -177,6 +235,7 @@ const state = reactive<CatalogShellState>({
   locale: 'pt',
   fontId: 'plex',
   brandColor: null,
+  brandTextColor: 'auto',
 })
 
 function root(): HTMLElement | null {
@@ -207,8 +266,34 @@ export function applyFont(fontId: string): void {
 }
 
 /**
+ * Resolves the effective brand-text color for the active choice: 'auto' derives
+ * it from the current brand color's luminance; otherwise the forced hex is used.
+ */
+function resolveBrandTextColor(): string {
+  const brand = state.brandColor ?? catalogSwatches[0].hex
+  return state.brandTextColor === 'auto' ? autoBrandTextColor(brand) : state.brandTextColor
+}
+
+/**
+ * Applies the brand-text color INLINE so it is identical across themes: writes
+ * both `--ntk-primary-contrast` and `--ntk-text-on-accent` (plus a `--cat-brand-
+ * contrast` mirror the embedded Industrial reads).
+ */
+function paintBrandTextColor(): void {
+  const el = root()
+  if (!el) return
+  const color = resolveBrandTextColor()
+  el.style.setProperty('--ntk-primary-contrast', color)
+  el.style.setProperty('--ntk-text-on-accent', color)
+  el.style.setProperty('--cat-brand-contrast', color)
+}
+
+/**
  * Sets the live brand color: writes primary/accent + rgb channels and derives
- * the dark/hover and soft surfaces with color-mix, all as inline overrides.
+ * the dark/hover and soft surfaces with color-mix, all as inline overrides. Also
+ * writes `--cat-brand*` source mirrors so theme-scoped subtrees can re-read the
+ * live brand, and re-paints the brand-text color (Auto re-derives from the new
+ * brand).
  */
 export function applyBrandColor(hex: string): void {
   state.brandColor = hex
@@ -225,16 +310,58 @@ export function applyBrandColor(hex: string): void {
   el.style.setProperty('--ntk-accent-hover', dark)
   el.style.setProperty('--ntk-accent-soft', soft)
   el.style.setProperty('--ntk-nav-active-bg', soft)
+  // Brand source mirrors (read by theme-scoped subtrees, e.g. the Industrial).
+  el.style.setProperty('--cat-brand', hex)
+  el.style.setProperty('--cat-brand-dark', dark)
+  el.style.setProperty('--cat-brand-rgb', rgb)
+  el.style.setProperty('--cat-brand-soft', soft)
+  paintBrandTextColor()
+}
+
+/**
+ * Sets the brand-text color choice ('auto' | hex) and re-paints it inline so the
+ * text drawn on top of the brand color stays identical across light/dark/hc.
+ */
+export function applyBrandTextColor(choice: CatalogBrandTextColor): void {
+  state.brandTextColor = choice
+  paintBrandTextColor()
+}
+
+/**
+ * Seeds the brand SOURCE mirrors (--cat-brand*) with the catalog default brand
+ * so theme-scoped subtrees (the embedded Industrial under data-theme='machine')
+ * follow the brand even with no user pick — without writing the primary/accent
+ * family inline. Used on init and on reset.
+ */
+function seedBrandSource(): void {
+  const el = root()
+  if (!el) return
+  const fallback = catalogSwatches[0].hex
+  const rgb = hexToRgbChannels(fallback)
+  el.style.setProperty('--cat-brand', fallback)
+  el.style.setProperty('--cat-brand-dark', `color-mix(in srgb, ${fallback} 82%, black)`)
+  el.style.setProperty('--cat-brand-rgb', rgb)
+  el.style.setProperty('--cat-brand-soft', `color-mix(in srgb, ${fallback} 12%, white)`)
+  el.style.setProperty('--cat-brand-contrast', resolveBrandTextColor())
 }
 
 /** Clears the inline brand overrides, falling back to the theme default. */
 export function resetBrandColor(): void {
   state.brandColor = null
+  state.brandTextColor = 'auto'
   const el = root()
   if (!el) return
   for (const key of BRAND_OVERRIDE_KEYS) {
     el.style.removeProperty(key)
   }
+  for (const key of BRAND_TEXT_OVERRIDE_KEYS) {
+    el.style.removeProperty(key)
+  }
+  // Restore the brand SOURCE to the catalog default (so the embedded Industrial
+  // keeps following the catalog default, not steel-navy) and re-paint the
+  // Auto-derived brand-text color inline (keeps it theme-stable after reset).
+  seedBrandSource()
+  paintBrandTextColor()
 }
 
 /**
@@ -246,19 +373,37 @@ export function initCatalogShell(): void {
   applyDensity(state.density)
   applyFont(state.fontId)
   const el = root()
-  if (el) el.dataset.brand = 'purple'
+  if (!el) return
+  el.dataset.brand = 'purple'
+  // Seed the brand SOURCE mirrors so the embedded Industrial follows the catalog
+  // default brand even before the user picks one. Brand state stays null until a
+  // pick (the rest of the catalog keeps resolving from the data-brand block).
+  seedBrandSource()
+  // Paint the brand-text color inline from the start so text drawn on top of the
+  // brand color (segmented controls, primary buttons, badges) is identical
+  // across light/dark/hc — Auto-derived from the default brand.
+  paintBrandTextColor()
 }
 
 export function useCatalogShell() {
   const currentBrandHex = computed(() => state.brandColor ?? catalogSwatches[0].hex)
+  // Effective brand-text color (resolves 'auto' to the luminance-derived value),
+  // used to drive the custom color input's value in the MARCA control.
+  const currentBrandTextHex = computed(() =>
+    state.brandTextColor === 'auto'
+      ? autoBrandTextColor(currentBrandHex.value)
+      : state.brandTextColor,
+  )
   return {
     state: readonly(state),
     currentBrandHex,
+    currentBrandTextHex,
     applyTheme,
     applyDensity,
     applyLocale,
     applyFont,
     applyBrandColor,
+    applyBrandTextColor,
     resetBrandColor,
   }
 }

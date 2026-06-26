@@ -315,21 +315,26 @@
   --ntk-text-heading: #1f2123;
   --ntk-text-body: #1f2123;
   --ntk-text-muted: #62676d;
-  --ntk-text-on-accent: #ffffff;
+  --ntk-text-on-accent: var(--cat-brand-contrast, #ffffff);
   --ntk-drawer-text: #62676d;
 
   --ntk-border: #d2d4d7;
   --ntk-border-strong: #b6b9bd;
 
-  --ntk-primary: #4a6378;
-  --ntk-primary-dark: #3a4f60;
+  /* Brand family FOLLOWS the live catalog brand (--cat-brand*, written inline
+     on <html> by the brand picker); the steel-navy literals are only the
+     standalone-machine fallback when no brand source is present. The neutral
+     surfaces/text/border grays above stay machine-specific. */
+  --ntk-primary: var(--cat-brand, #4a6378);
+  --ntk-primary-dark: var(--cat-brand-dark, #3a4f60);
   --ntk-primary-light: color-mix(in srgb, var(--ntk-primary) 55%, #ffffff);
-  --ntk-primary-rgb: 74, 99, 120;
+  --ntk-primary-rgb: var(--cat-brand-rgb, 74, 99, 120);
+  --ntk-primary-contrast: var(--cat-brand-contrast, #ffffff);
 
-  --ntk-accent: #4a6378;
-  --ntk-accent-hover: #3a4f60;
-  --ntk-accent-soft: #dde3ea;
-  --ntk-accent-rgb: 74, 99, 120;
+  --ntk-accent: var(--cat-brand, #4a6378);
+  --ntk-accent-hover: var(--cat-brand-dark, #3a4f60);
+  --ntk-accent-soft: var(--cat-brand-soft, #dde3ea);
+  --ntk-accent-rgb: var(--cat-brand-rgb, 74, 99, 120);
 
   --ntk-success: #1f8a48;
   --ntk-warning: #b5740a;
