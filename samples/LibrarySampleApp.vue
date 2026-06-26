@@ -23,9 +23,19 @@
         </template>
         <span class="demo__view-name">{{ activeNav.label }}</span>
         <template #actions>
-          <div class="demo__user">
-            <DsAvatar name="Ana Souza" size="sm" status="online" />
-            <span class="demo__user-name">Ana Souza</span>
+          <div class="demo__actions">
+            <button
+              type="button"
+              class="demo__back"
+              @click="emit('back-to-showcase')"
+            >
+              <DsCommandIcon name="chevron-left" />
+              <span>Vitrine do Design System</span>
+            </button>
+            <div class="demo__user">
+              <DsAvatar name="Ana Souza" size="sm" status="online" />
+              <span class="demo__user-name">Ana Souza</span>
+            </div>
           </div>
         </template>
       </DsHeader>
@@ -262,6 +272,9 @@ import FormRecipe from './recipes/FormRecipe.vue'
 import RecipeShowcase from './recipes/RecipeShowcase.vue'
 import TableRecipe from './recipes/TableRecipe.vue'
 import WorkspaceRecipe from './recipes/WorkspaceRecipe.vue'
+
+// Back to the Design System showcase (the samples' default landing surface).
+const emit = defineEmits<{ 'back-to-showcase': [] }>()
 
 // Sidebar navigation: catalog (default) + the three fully-mocked demo apps.
 // Default MUST be 'catalog' so the existing e2e anchors render on load.
@@ -511,6 +524,37 @@ const onDensityChange = (next: string): void => {
 .demo__view-name {
   color: #cbd5e1;
   font-weight: var(--ntk-font-weight-medium);
+}
+
+.demo__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ntk-spacing-md);
+}
+
+.demo__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ntk-spacing-xs);
+  padding: var(--ntk-spacing-xs) var(--ntk-spacing-sm);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--ntk-radius-full);
+  background: transparent;
+  color: var(--ntk-text-inverse);
+  font: inherit;
+  font-size: var(--ntk-font-size-sm);
+  font-weight: var(--ntk-font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--ntk-transition-fast);
+}
+
+.demo__back:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.demo__back:focus-visible {
+  outline: 2px solid var(--ntk-text-inverse);
+  outline-offset: 2px;
 }
 
 .demo__user {
