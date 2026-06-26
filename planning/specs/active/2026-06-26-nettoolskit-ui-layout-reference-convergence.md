@@ -70,10 +70,13 @@ Tabela & estados, Interativos, Feedback).
 
 ## Progress Checklist
 
-Progress: 40% (2/5 checked)
+Acceptance: **pixel-identical** to the reference (not "close"); verify side-by-side per section.
+
+Progress: 50% (3/6 checked)
 
 - [x] P1 · Token & theme foundation (PR #84 — additive light/dark/hc/machine + brand + density + --ind-*; gates green)
 - [x] P2 · Catalog shell (PR #84 — top bar TEMA/MARCA/DENSIDADE/FONTE/IDIOMA + sticky collapsible TOC + hero + banner + 4 lockups; live token switching verified vs slice-00)
-- [ ] P3 · Fundamentals + component galleries
-- [ ] P4 · Example screens
-- [ ] P5 · i18n PT/EN + verification
+- [x] P3 · Fundamentals + component galleries (PR #84 — Cores/Tipografia/Espaço + Botões/Inputs/Cards/Badges/Modais/Tabela/Interativos/Feedback; verified pixel-faithful vs slice-05..11)
+- [ ] P4 · Example screens (Login · Web · E-commerce · Dashboards · Fluxo/BPM · Visualizador 3D · Industrial; each with "Tela cheia")
+- [ ] P3.5 · Governed Ds* parity (DsButton soft/plain, DsCard soft, DsToast/Banner accent-left, DsDialog header/footer, DsTable scroll) — token-only, gates + tests + docs
+- [ ] P5 · i18n PT/EN + final verification (a11y/e2e, governance, docs, side-by-side diff sign-off)
