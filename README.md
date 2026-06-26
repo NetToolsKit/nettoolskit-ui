@@ -39,7 +39,7 @@ import 'nettoolskit/styles/global.scss'
 
 Copyable, library-only patterns for common screens (CRUD, form, dialog, table,
 empty/loading/error states, and a primitives gallery) live in
-[RECIPES.md](./RECIPES.md). Each recipe is rendered live in the sample catalog
+[docs/RECIPES.md](./docs/RECIPES.md). Each recipe is rendered live in the sample catalog
 (`samples/`) next to its composition snippet — run `npm run dev:samples`.
 
 ## Public Surface
@@ -138,9 +138,9 @@ npm pack --dry-run
 
 ## Generated References
 
-- [DESIGN.md](./DESIGN.md)
-- [TOKENS.md](./TOKENS.md)
-- [COMPONENTS.md](./COMPONENTS.md)
+- [docs/DESIGN.md](./docs/DESIGN.md)
+- [docs/TOKENS.md](./docs/TOKENS.md)
+- [docs/COMPONENTS.md](./docs/COMPONENTS.md)
 
 Regenerate/check with:
 

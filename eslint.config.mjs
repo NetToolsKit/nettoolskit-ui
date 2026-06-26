@@ -76,7 +76,7 @@ export default [
 
   // --- Legacy reintroduction guard ---
   // The legacy Ntk*/Base* surface and the `src/components` tree were removed
-  // (see MIGRATION.md). Block any re-introduction across app, samples and tests.
+  // (see docs/MIGRATION.md). Block any re-introduction across app, samples and tests.
   // The stricter design-system/core blocks below override this for their files.
   {
     files: ['src/**/*.ts', 'src/**/*.vue', 'samples/**/*.{ts,vue}', 'tests/**/*.{ts,vue}'],
@@ -93,12 +93,12 @@ export default [
                 '**/components/builders/*',
               ],
               message:
-                'The legacy src/components surface was removed. Use the Ds* design system instead (see MIGRATION.md).',
+                'The legacy src/components surface was removed. Use the Ds* design system instead (see docs/MIGRATION.md).',
             },
             {
               group: ['**/Ntk*', '**/Base*'],
               message:
-                'Legacy Ntk*/Base* components were removed. Use the Ds* equivalents (see MIGRATION.md).',
+                'Legacy Ntk*/Base* components were removed. Use the Ds* equivalents (see docs/MIGRATION.md).',
             },
           ],
         },

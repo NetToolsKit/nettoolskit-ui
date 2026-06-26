@@ -325,7 +325,7 @@ function joinMarkdownLines(lines) {
 
 function getDefaultDocOutputPaths(repoRoot) {
   return Object.fromEntries(
-    Object.entries(DEFAULT_DOC_FILENAMES).map(([key, filename]) => [key, path.join(repoRoot, filename)]),
+    Object.entries(DEFAULT_DOC_FILENAMES).map(([key, filename]) => [key, path.join(repoRoot, 'docs', filename)]),
   )
 }
 
@@ -654,9 +654,9 @@ function generateDesignOverviewDoc(model) {
     '',
     '| File | Contents |',
     '| --- | --- |',
-    '| `DESIGN.md` | System overview, sources, and usage rules. |',
-    '| `TOKENS.md` | Token groups and resolved CSS variable reference. |',
-    '| `COMPONENTS.md` | Component contracts, defaults, variants, and class maps. |',
+    '| `docs/DESIGN.md` | System overview, sources, and usage rules. |',
+    '| `docs/TOKENS.md` | Token groups and resolved CSS variable reference. |',
+    '| `docs/COMPONENTS.md` | Component contracts, defaults, variants, and class maps. |',
     '',
   ]
 
