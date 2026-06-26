@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Codemod: rewrite legacy `Ntk*`/`Base*` component references to their `Ds*`
- * equivalents for the 1:1 mappings (see MIGRATION.md). Handles both import
+ * equivalents for the 1:1 mappings (see docs/MIGRATION.md). Handles both import
  * specifiers and template tags via word-boundary replacement.
  *
  * Non-1:1 cases (Textarea, MultiSelect, Date/Time pickers, DataTable,
@@ -134,7 +134,7 @@ async function main() {
 
   console.log(`\n${dry ? 'Would change' : 'Changed'} ${changed} file(s), ${replacements} replacement(s).`)
   if (manualReport.size > 0) {
-    console.log('\nManual migration required (left untouched — see MIGRATION.md):')
+    console.log('\nManual migration required (left untouched — see docs/MIGRATION.md):')
     for (const [file, names] of manualReport) console.log(`  ${file}: ${[...new Set(names)].join(', ')}`)
   }
 }
