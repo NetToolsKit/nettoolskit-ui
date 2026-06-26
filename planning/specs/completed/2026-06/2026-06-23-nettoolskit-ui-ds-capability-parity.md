@@ -2,7 +2,7 @@
 
 Generated: 2026-06-23 America/Sao_Paulo
 LastUpdated: 2026-06-23 America/Sao_Paulo
-Status: active
+Status: completed
 Priority: high
 Branch: `TBD`
 Workstream ID: `nettoolskit-ui-ds-capability-parity`
