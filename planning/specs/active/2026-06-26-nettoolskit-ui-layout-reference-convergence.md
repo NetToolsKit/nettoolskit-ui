@@ -77,6 +77,6 @@ Progress: 50% (3/6 checked)
 - [x] P1 · Token & theme foundation (PR #84 — additive light/dark/hc/machine + brand + density + --ind-*; gates green)
 - [x] P2 · Catalog shell (PR #84 — top bar TEMA/MARCA/DENSIDADE/FONTE/IDIOMA + sticky collapsible TOC + hero + banner + 4 lockups; live token switching verified vs slice-00)
 - [x] P3 · Fundamentals + component galleries (PR #84 — Cores/Tipografia/Espaço + Botões/Inputs/Cards/Badges/Modais/Tabela/Interativos/Feedback; verified pixel-faithful vs slice-05..11)
-- [ ] P4 · Example screens (Login · Web · E-commerce · Dashboards · Fluxo/BPM · Visualizador 3D · Industrial; each with "Tela cheia")
+- [~] P4 · Example screens — batch 1 DONE (Login · Web · E-commerce · Dashboards pixel-identical vs slice-00..04, fullscreen works; PR #84). Remaining: Fluxo/BPM · Visualizador 3D · Industrial
 - [ ] P3.5 · Governed Ds* parity (DsButton soft/plain, DsCard soft, DsToast/Banner accent-left, DsDialog header/footer, DsTable scroll) — token-only, gates + tests + docs
 - [ ] P5 · i18n PT/EN + final verification (a11y/e2e, governance, docs, side-by-side diff sign-off)
