@@ -12,17 +12,7 @@
 export const galleryTones = ['primary', 'neutral', 'success', 'warning', 'danger', 'info'] as const
 export type GalleryTone = (typeof galleryTones)[number]
 
-/** Tone → i18n label key (resolved at render time). */
-export const toneLabelKey: Record<GalleryTone, string> = {
-  primary: 'tonePrimary',
-  neutral: 'toneNeutral',
-  success: 'toneSuccess',
-  warning: 'toneWarning',
-  danger: 'toneDanger',
-  info: 'toneInfo',
-}
-
-/** Fixed PT/EN tone labels (same in both locales for the matrix headers). */
+/** Fixed PT tone labels for the matrix headers. */
 export const toneLabel: Record<GalleryTone, string> = {
   primary: 'Primária',
   neutral: 'Neutra',
