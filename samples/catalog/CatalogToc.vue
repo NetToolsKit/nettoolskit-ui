@@ -202,13 +202,22 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* FIXED side menu: pinned to the viewport so the index never scrolls away with
+   the content. Sits exactly over the 208px grid column the content reserves
+   (the left edge tracks the centered 1280px shell + page padding). Full height
+   below the sticky top bar, with its own scroll for long indexes. */
 .cat-toc {
-  position: sticky;
+  position: fixed;
   top: 92px;
+  bottom: 0;
+  left: max(var(--ds-page-padding, 32px), calc((100vw - 1280px) / 2 + var(--ds-page-padding, 32px)));
+  width: 208px;
   display: flex;
   flex-direction: column;
   gap: 2px;
   font-size: 13.5px;
+  overflow-y: auto;
+  padding-bottom: 24px;
 }
 
 .cat-toc__head {
