@@ -29,18 +29,15 @@
   --ind-splitter: 4px;
   --ntk-font-sans: "IBM Plex Sans", system-ui, sans-serif;
 
-  /* Reference catalog ergonomics (theme-independent). */
+  /* Reference catalog ergonomics (theme-independent). The density-dependent
+     ergonomics tokens (control-height, paddings, section-gap, table-row-height)
+     live in the DENSITY blocks below so Compacto/Confortável/Espaçoso apply. */
   --ds-font-sans: var(--ntk-font-sans);
   --ds-font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --ds-radius-sm: 6px;
   --ds-radius-md: 10px;
   --ds-radius-lg: 16px;
   --ds-radius-pill: 999px;
-  --ds-control-height: 40px;
-  --ds-card-padding: 20px;
-  --ds-page-padding: 32px;
-  --ds-section-gap: 30px;
-  --ds-table-row-height: 48px;
 }
 
 /* ============================================================
@@ -423,11 +420,29 @@
 
 /* ============================================================
  * DENSITY (orthogonal to theme).
- * Industrial chrome heights copied verbatim from the reference
- * tokens.css density blocks.
+ * Drives the reference ergonomics tokens (`--ds-control-height`,
+ * `--ds-table-row-height`, `--ds-page-padding`, `--ds-card-padding`,
+ * `--ds-section-gap`) AND the `--ntk-*` aliases the shell consumes, so
+ * Compacto / Confortável / Espaçoso visibly resize controls, paddings,
+ * gaps and table rows. The base TYPE scale is intentionally left
+ * unchanged. Industrial chrome heights (`--ind-*`) are copied verbatim
+ * from the reference tokens.css density blocks. Values match the
+ * reference DENSITY map exactly.
  * ============================================================ */
 :root,
 [data-density='comfortable'] {
+  --ds-control-height: 40px;
+  --ds-table-row-height: 48px;
+  --ds-page-padding: 32px;
+  --ds-card-padding: 20px;
+  --ds-section-gap: 30px;
+
+  --ntk-control-height: var(--ds-control-height);
+  --ntk-table-row-height: var(--ds-table-row-height);
+  --ntk-page-padding: var(--ds-page-padding);
+  --ntk-card-padding: var(--ds-card-padding);
+  --ntk-section-gap: var(--ds-section-gap);
+
   --ind-titlebar-h: 38px;
   --ind-ribbon-h: 98px;
   --ind-status-h: 27px;
@@ -436,6 +451,18 @@
 }
 
 [data-density='compact'] {
+  --ds-control-height: 32px;
+  --ds-table-row-height: 38px;
+  --ds-page-padding: 20px;
+  --ds-card-padding: 14px;
+  --ds-section-gap: 20px;
+
+  --ntk-control-height: var(--ds-control-height);
+  --ntk-table-row-height: var(--ds-table-row-height);
+  --ntk-page-padding: var(--ds-page-padding);
+  --ntk-card-padding: var(--ds-card-padding);
+  --ntk-section-gap: var(--ds-section-gap);
+
   --ind-titlebar-h: 34px;
   --ind-ribbon-h: 88px;
   --ind-status-h: 24px;
@@ -444,6 +471,18 @@
 }
 
 [data-density='spacious'] {
+  --ds-control-height: 48px;
+  --ds-table-row-height: 60px;
+  --ds-page-padding: 44px;
+  --ds-card-padding: 28px;
+  --ds-section-gap: 42px;
+
+  --ntk-control-height: var(--ds-control-height);
+  --ntk-table-row-height: var(--ds-table-row-height);
+  --ntk-page-padding: var(--ds-page-padding);
+  --ntk-card-padding: var(--ds-card-padding);
+  --ntk-section-gap: var(--ds-section-gap);
+
   --ind-titlebar-h: 44px;
   --ind-ribbon-h: 110px;
   --ind-status-h: 30px;

@@ -377,6 +377,8 @@ const scrollRowsFew = computed(() => scrollRows.slice(0, 4))
 .cg-grid14__row {
   display: grid;
   grid-template-columns: repeat(14, minmax(84px, 1fr));
+  align-items: center;
+  min-height: var(--ds-table-row-height);
   border-top: var(--ds-border-width) solid var(--ds-color-border);
 }
 
@@ -436,6 +438,8 @@ const scrollRowsFew = computed(() => scrollRows.slice(0, 4))
 .cg-grid5__row {
   display: grid;
   grid-template-columns: 104px 1.5fr 78px 1.3fr 96px;
+  align-items: center;
+  min-height: var(--ds-table-row-height);
   border-top: var(--ds-border-width) solid var(--ds-color-border);
 }
 
