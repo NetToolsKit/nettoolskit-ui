@@ -188,7 +188,10 @@ const classes = computed(() => [
 .ntk-button--variant-soft {
   border-color: transparent;
   background: var(--ntk-c-light);
-  color: var(--ntk-c-text);
+  /* Blend the intent strongly toward the near-black primary text so the label
+     clears WCAG AA (>=4.5:1) on the light soft tint even for the most saturated
+     brand hues (the 55/45 text channel alone lands ~4.2:1 on vivid brands). */
+  color: color-mix(in srgb, var(--ntk-c) 38%, var(--ntk-text-primary));
 }
 
 .ntk-button--variant-soft:hover:not(:disabled) {
