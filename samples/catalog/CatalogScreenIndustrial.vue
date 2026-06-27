@@ -9,12 +9,14 @@
     <template #default="{ isFull }">
       <!-- Native SCADA-like engineering workspace built from the industrial Ds*
            set (DsAppShell · DsQuickAccessToolbar · DsRibbon · DsDockLayout ·
-           DsTreeExplorer · DsDockPanel · DsWorkspaceCanvas · DsStatusBar). The
-           whole shell scopes to the `machine` industrial theme. -->
+           DsTreeExplorer · DsDockPanel · DsWorkspaceCanvas · DsStatusBar).
+           The embedded shell INHERITS the catalog `data-theme` (Light→light,
+           Dark→proper dark, HC→hc) so it stays coherent with the rest of the
+           catalog; brand accents (logo "N", ribbon active, status) follow the
+           live brand hue via the `--ntk-*` tokens. No forced `machine` scope. -->
       <div
         class="ind-stage"
         :class="{ 'ind-stage--full': isFull }"
-        data-theme="machine"
       >
         <DsAppShell class="ind-shell">
           <template #header="{ }">
