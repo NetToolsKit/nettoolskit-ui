@@ -23,7 +23,9 @@ const props = withDefaults(
   {
     size: 28,
     background: 'var(--ntk-primary)',
-    color: '#ffffff',
+    // Follow the brand-text adjuster on the brand background by default (so the
+    // logo "N" turns black when brand-text=Preto). Lockups pass explicit colors.
+    color: 'var(--ntk-text-on-accent)',
   }
 )
 
