@@ -111,6 +111,16 @@ describe('design-system component recipes', () => {
     ])
   })
 
+  it('maps the soft card variant to a surface-muted treatment class', () => {
+    expect(ntkCardRecipeClassMap.variants.soft).toBe('ntk-card--variant-soft')
+    expect(resolveNtkCardRecipe({ variant: 'soft' }).classes).toEqual([
+      'ntk-card',
+      'ntk-card--variant-soft',
+      'ntk-card--size-md',
+      'ntk-card--intent-neutral',
+    ])
+  })
+
   it('maps card recipes to compatibility variant names and interaction classes', () => {
     const recipe = resolveNtkCardRecipe({
       variant: 'accent-left',

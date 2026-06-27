@@ -44,7 +44,7 @@ Do not edit by hand.
 | --- | --- | --- | --- | --- | --- |
 | Button | `solid` | `md` | `primary` | `solid`, `soft`, `outline`, `ghost`, `link`, `plain` | `disabled`, `loading` |
 | Field | `outlined` | `md` | `neutral` | `outlined`, `filled`, `plain` | `disabled`, `invalid`, `readonly`, `required` |
-| Card | `default` | `md` | `neutral` | `default`, `outlined`, `elevated`, `accent-left`, `accent-top` | `clickable`, `selected` |
+| Card | `default` | `md` | `neutral` | `default`, `soft`, `outlined`, `elevated`, `accent-left`, `accent-top` | `clickable`, `selected` |
 | Table | `default` | `md` | `neutral` | `default`, `bordered`, `striped` | `selected`, `clickable` |
 | Page | `default` | `md` | `neutral` | `default`, `surface`, `dashboard` | None |
 | Section | `default` | `md` | `neutral` | `default`, `surface`, `muted`, `accent` | None |

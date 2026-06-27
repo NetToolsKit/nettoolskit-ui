@@ -150,7 +150,7 @@ Source: `src/design-system/core/components/card.ts`.
 | Setting | Values |
 | --- | --- |
 | Defaults | variant `default`, size `md`, intent `neutral` |
-| Variants | `default`, `outlined`, `elevated`, `accent-left`, `accent-top` |
+| Variants | `default`, `soft`, `outlined`, `elevated`, `accent-left`, `accent-top` |
 | Sizes | `sm`, `md`, `lg` |
 | Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
 | States | `clickable`, `selected` |
@@ -176,6 +176,7 @@ Source: `src/design-system/core/components/card.ts`.
 | --- | --- |
 | `root` | `ntk-card` |
 | `variant default` | `ntk-card--variant-default` |
+| `variant soft` | `ntk-card--variant-soft` |
 | `variant outlined` | `ntk-card--variant-outlined` |
 | `variant elevated` | `ntk-card--variant-elevated` |
 | `variant accent-left` | `ntk-card--variant-accent-left` |

@@ -10,7 +10,7 @@ import {
 } from './recipe'
 import type { NtkComponentContractBase, NtkComponentIntent, NtkComponentSize } from './contracts'
 
-export const ntkCardVariants = ['default', 'outlined', 'elevated', 'accent-left', 'accent-top'] as const
+export const ntkCardVariants = ['default', 'soft', 'outlined', 'elevated', 'accent-left', 'accent-top'] as const
 export type NtkCardVariant = (typeof ntkCardVariants)[number]
 export type NtkCardSize = NtkComponentSize
 export type NtkCardIntent = NtkComponentIntent
@@ -35,6 +35,7 @@ export const ntkCardRecipeClassMap = {
   root: 'ntk-card',
   variants: {
     default: 'ntk-card--variant-default',
+    soft: 'ntk-card--variant-soft',
     outlined: 'ntk-card--variant-outlined',
     elevated: 'ntk-card--variant-elevated',
     'accent-left': 'ntk-card--variant-accent-left',

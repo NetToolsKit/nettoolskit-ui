@@ -45,7 +45,10 @@
         </p>
       </DsCard>
 
-      <DsCard class="cg-card cg-card--soft">
+      <DsCard
+        variant="soft"
+        class="cg-card"
+      >
         <span class="cg-card__kicker">soft</span>
         <h4 class="cg-card__title">
           {{ t.cardSoftT }}
@@ -80,10 +83,11 @@ defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
   gap: 14px;
 }
 
-/* Re-skin DsCard bodies to the exact reference card metrics. */
+/* Re-skin DsCard bodies to the exact reference card metrics. The base keeps
+   layout only; the surface fill is per-variant so the native soft variant's
+   muted background shows through. */
 .cg-card {
   border-radius: var(--ds-radius-lg);
-  background: var(--ds-color-surface);
   padding: var(--ds-card-padding);
   gap: 8px;
 }
@@ -97,22 +101,19 @@ defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
 .cg-card--flat {
   border: none;
   box-shadow: none;
+  background: var(--ds-color-surface);
 }
 
 .cg-card--outlined {
   border: var(--ds-border-width) solid var(--ds-color-border);
   box-shadow: none;
+  background: var(--ds-color-surface);
 }
 
 .cg-card--elevated {
   border: none;
   box-shadow: var(--ds-shadow);
-}
-
-.cg-card--soft {
-  border: none;
-  box-shadow: none;
-  background: var(--ds-color-surface-muted);
+  background: var(--ds-color-surface);
 }
 
 .cg-card__kicker {

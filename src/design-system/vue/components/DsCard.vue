@@ -121,6 +121,14 @@ function onKeyboardActivate(event: KeyboardEvent): void {
 }
 
 /* Variants. */
+/* Soft: a muted subtle surface with no border or shadow, for low-emphasis
+   panels that sit quietly inside a denser layout. */
+.ntk-card--variant-soft {
+  border-color: transparent;
+  background: var(--ntk-bg-secondary);
+  box-shadow: none;
+}
+
 .ntk-card--variant-outlined {
   box-shadow: none;
 }
