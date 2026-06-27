@@ -436,16 +436,32 @@ function onCustomTextColor(event: Event): void {
   line-height: 1;
 }
 
-/* Palette menu */
-.cat-menu {
+@media (max-width: 1180px) {
+  .cat-topbar__inner {
+    flex-wrap: wrap;
+  }
+  .cat-topbar__controls {
+    margin-left: 0;
+  }
+}
+</style>
+
+<!--
+  QMenu panels (MARCA "Cor" + FONTE) teleport to <body>, OUTSIDE this component's
+  scoped DOM, so scoped selectors never match the .q-menu root (it carries no
+  data-v attribute). These rules are intentionally GLOBAL so the popover panels
+  follow the catalog theme tokens instead of Quasar's default white surface.
+-->
+<style>
+.cat-menu.q-menu {
   background: var(--ntk-card-bg);
   color: var(--ntk-text-body);
   border: 1px solid var(--ntk-border);
   border-radius: 12px;
-  box-shadow: var(--ntk-shadow-popup);
+  box-shadow: var(--ntk-shadow-popup, 0 8px 24px rgba(0, 0, 0, 0.25));
 }
 
-.cat-palette {
+.cat-menu .cat-palette {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -453,7 +469,7 @@ function onCustomTextColor(event: Event): void {
   width: 200px;
 }
 
-.cat-palette__title {
+.cat-menu .cat-palette__title {
   margin: 0;
   font-size: 9px;
   font-weight: 600;
@@ -463,32 +479,32 @@ function onCustomTextColor(event: Event): void {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-.cat-palette__grid {
+.cat-menu .cat-palette__grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 7px;
 }
 
-.cat-swatch {
+.cat-menu .cat-swatch {
   inline-size: 22px;
   block-size: 22px;
   border-radius: 7px;
   border: none;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18) inset;
   transition: transform 0.12s;
 }
 
-.cat-swatch:hover {
+.cat-menu .cat-swatch:hover {
   transform: scale(1.1);
 }
 
-.cat-swatch.is-active {
+.cat-menu .cat-swatch.is-active {
   box-shadow: 0 0 0 2px var(--ntk-card-bg), 0 0 0 4px var(--ntk-text-heading);
 }
 
-.cat-palette__custom {
+.cat-menu .cat-palette__custom {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -497,7 +513,7 @@ function onCustomTextColor(event: Event): void {
   color: var(--ntk-text-body);
 }
 
-.cat-palette__custom input[type='color'] {
+.cat-menu .cat-palette__custom input[type='color'] {
   inline-size: 34px;
   block-size: 24px;
   border: 1px solid var(--ntk-border);
@@ -507,14 +523,14 @@ function onCustomTextColor(event: Event): void {
   padding: 0;
 }
 
-.cat-palette__divider {
+.cat-menu .cat-palette__divider {
   block-size: 1px;
   margin: 2px 0;
   background: var(--ntk-border);
 }
 
 /* Brand text-color mode (Auto / White / Black) */
-.cat-textmode {
+.cat-menu .cat-textmode {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
@@ -523,7 +539,7 @@ function onCustomTextColor(event: Event): void {
   background: var(--ntk-row-bg);
 }
 
-.cat-textmode__btn {
+.cat-menu .cat-textmode__btn {
   appearance: none;
   border: none;
   cursor: pointer;
@@ -538,17 +554,17 @@ function onCustomTextColor(event: Event): void {
   white-space: nowrap;
 }
 
-.cat-textmode__btn:hover {
+.cat-menu .cat-textmode__btn:hover {
   color: var(--ntk-text-heading);
 }
 
-.cat-textmode__btn.is-active {
+.cat-menu .cat-textmode__btn.is-active {
   background: var(--ntk-primary);
   color: var(--ntk-text-on-accent);
   font-weight: 600;
 }
 
-.cat-palette__reset {
+.cat-menu .cat-palette__reset {
   appearance: none;
   cursor: pointer;
   border: 1px solid var(--ntk-border);
@@ -561,19 +577,19 @@ function onCustomTextColor(event: Event): void {
   padding: 7px 10px;
 }
 
-.cat-palette__reset:hover {
+.cat-menu .cat-palette__reset:hover {
   background: var(--ntk-row-hover-bg);
 }
 
 /* Font list menu */
-.cat-fontlist {
+.cat-menu .cat-fontlist {
   display: flex;
   flex-direction: column;
   padding: 6px;
   min-width: 180px;
 }
 
-.cat-fontlist__item {
+.cat-menu .cat-fontlist__item {
   appearance: none;
   border: none;
   cursor: pointer;
@@ -581,26 +597,18 @@ function onCustomTextColor(event: Event): void {
   padding: 9px 12px;
   border-radius: 8px;
   background: transparent;
+  /* Theme text color so the per-option font preview stays readable in dark. */
   color: var(--ntk-text-body);
   font-size: 14px;
 }
 
-.cat-fontlist__item:hover {
+.cat-menu .cat-fontlist__item:hover {
   background: var(--ntk-row-hover-bg);
 }
 
-.cat-fontlist__item.is-active {
+.cat-menu .cat-fontlist__item.is-active {
   background: var(--ntk-nav-active-bg);
   color: var(--ntk-primary);
   font-weight: 600;
-}
-
-@media (max-width: 1180px) {
-  .cat-topbar__inner {
-    flex-wrap: wrap;
-  }
-  .cat-topbar__controls {
-    margin-left: 0;
-  }
 }
 </style>
