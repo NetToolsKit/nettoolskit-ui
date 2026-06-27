@@ -65,6 +65,13 @@ case "$stage" in
     npm run test:architecture
     npm run test:design-system
     npm test
+    # Browser + accessibility gate (Playwright + axe over the sample catalog).
+    # River's node:20-bookworm image has apt + root, so install Chromium with its
+    # system dependencies here and run the e2e/a11y suite (CI mode builds the
+    # samples and serves them on :3000). This keeps the browser/WCAG gate inside
+    # River — there is no separate GitHub Action on pull requests.
+    npx playwright install --with-deps chromium
+    npm run test:e2e
     ;;
   *)
     echo "Unknown River frontend stage: $stage" >&2

@@ -1,0 +1,597 @@
+/**
+ * NetToolsKit — Reference Theme Bridge (ADDITIVE / non-destructive)
+ * ================================================================
+ * Maps the reference design system's tokens (light|dark|hc|machine
+ * x brand purple|blue x density compact|comfortable|spacious) onto our
+ * existing `--ntk-*` base aliases, so the samples catalog can render with
+ * the reference's exact colors WITHOUT touching themes.css or the named
+ * brand palettes (revolut/claude/warp/...).
+ *
+ * The `html[data-theme]` bridge in themes.css derives everything else
+ * (bg-primary, surface-*, text-*, border-*, semantic-*, input-*, sidebar-*)
+ * from these base aliases, so setting the base aliases is enough.
+ *
+ * SOURCE OF TRUTH for color values:
+ *   src/design-system/tokens/generated/tokens.css (--ds-* themes).
+ *
+ * Apply context with data-attributes on <html>:
+ *   <html data-theme="light|dark|hc|machine"
+ *         data-brand="purple|blue"
+ *         data-density="compact|comfortable|spacious">
+ *
+ * Plain CSS (no @layer) to match themes.css cascade behavior.
+ */
+
+/* ============================================================
+ * BASE TOKENS (theme/density independent)
+ * ============================================================ */
+:root {
+  --ind-splitter: 4px;
+  --ntk-font-sans: "IBM Plex Sans", system-ui, sans-serif;
+
+  /* Reference catalog ergonomics (theme-independent). The density-dependent
+     ergonomics tokens (control-height, paddings, section-gap, table-row-height)
+     live in the DENSITY blocks below so Compacto/Confortável/Espaçoso apply. */
+  --ds-font-sans: var(--ntk-font-sans);
+  --ds-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --ds-radius-sm: 6px;
+  --ds-radius-md: 10px;
+  --ds-radius-lg: 16px;
+  --ds-radius-pill: 999px;
+}
+
+/* ============================================================
+ * REFERENCE `--ds-*` TOKEN BRIDGE (additive)
+ * ------------------------------------------------------------
+ * The Fundamentos/Componentes galleries replicate the reference
+ * catalog 1:1, which authors color via `--ds-color-*`. We expose
+ * those names here, theme-aware:
+ *   - brand tokens (primary / hover / soft / contrast) alias the
+ *     LIVE `--ntk-*` so the brand-color picker keeps re-resolving
+ *     them in real time;
+ *   - surface/text/border + semantic tones use the reference's
+ *     exact literal values per theme.
+ * Values are verbatim from the reference THEME palette.
+ * ============================================================ */
+:root,
+[data-theme] {
+  --ds-color-primary: var(--ntk-primary);
+  --ds-color-primary-hover: var(--ntk-primary-dark);
+  --ds-color-primary-soft: var(--ntk-accent-soft);
+  --ds-color-primary-contrast: var(--ntk-text-on-accent);
+  --ds-border-width: 1px;
+
+  /* SOFT FOREGROUND tokens — the readable text/icon/dot color to place ON a
+     `*-soft` background. By default (light + hc) this is simply the deeper
+     tone color, which already contrasts against the pale soft surface. The
+     DARK theme overrides these with a LIGHTER tint so they pop on the dark
+     soft bg (see the dark block). */
+  --ds-color-primary-soft-fg: var(--ds-color-primary);
+  --ds-color-neutral-soft-fg: var(--ds-color-neutral);
+  --ds-color-success-soft-fg: var(--ds-color-success);
+  --ds-color-warning-soft-fg: var(--ds-color-warning);
+  --ds-color-danger-soft-fg: var(--ds-color-danger);
+  --ds-color-info-soft-fg: var(--ds-color-info);
+
+  /* GLOBAL "on-soft" rule (single source of truth).
+     `--ntk-on-soft` is the text/icon/dot color for ANY element whose background
+     is the BRAND soft surface (`*-soft` / `--ntk-accent-soft` / nav-active).
+     It aliases the brand soft-fg so every soft surface — chips, the TOC active
+     item, the FONTE selected option, custom-select rows, avatars, etc. — points
+     at one token instead of hardcoding the deep brand. Semantic tones keep using
+     their matching `--ds-color-<tone>-soft-fg`. Resolves to the deep brand on
+     light/hc (readable on the pale wash) and to a LIGHT tint on dark. */
+  --ntk-on-soft: var(--ds-color-primary-soft-fg);
+}
+
+/* Bridge tokens that color TEXT-ON-SOFT (the nav/sidebar active item sits on the
+   soft `--ntk-nav-active-bg`). themes.css points these at the deep brand
+   `--ntk-accent` from inside an `html[data-theme]` rule, so we re-point them at
+   the global on-soft rule at matching specificity (and load later) — making the
+   active-item label/icon follow `--ntk-on-soft` everywhere. */
+html[data-theme] {
+  --ntk-sidebar-item-active-text: var(--ntk-on-soft);
+  --ntk-nav-active-fg: var(--ntk-on-soft);
+}
+
+[data-theme='light'] {
+  --ds-color-bg: #f6f7f9;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-muted: #f1f3f7;
+  --ds-color-text: #0f172a;
+  --ds-color-text-muted: #5b6675;
+  --ds-color-border: #dbe0e8;
+  --ds-color-border-strong: #b8c0cc;
+  /* Semantic tones (light): WCAG 2.2 AA wins over the reference's exact hue.
+     Each tone is the SMALLEST darkening of the reference value that clears
+     4.5:1 in ALL its catalog uses — as solid-button/badge background under
+     white text, AND as foreground text/dot on its own pale `*-soft` wash
+     (the binding constraint, ~4.6:1). Reference originals (kept as soft bg):
+     neutral #64748b · success #16a34a · warning #c2740a · danger #dc2626 ·
+     info #0e7da6. */
+  --ds-color-neutral: #5e6d83;
+  --ds-color-neutral-soft: #eef1f5;
+  --ds-color-neutral-contrast: #ffffff;
+  --ds-color-success: #117e39;
+  --ds-color-success-soft: #e7f7ee;
+  --ds-color-success-contrast: #ffffff;
+  --ds-color-warning: #9d5e08;
+  --ds-color-warning-soft: #fbf0dd;
+  --ds-color-warning-contrast: #ffffff;
+  --ds-color-danger: #ce2424;
+  --ds-color-danger-soft: #fce9e9;
+  --ds-color-danger-contrast: #ffffff;
+  --ds-color-info: #0d759b;
+  --ds-color-info-soft: #e3f4fa;
+  --ds-color-info-contrast: #ffffff;
+  --ds-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 6px 20px rgba(15, 23, 42, 0.06);
+  --ds-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --ds-overlay: rgba(15, 23, 42, 0.55);
+  --ds-border-width: 1px;
+  --ds-focus-ring: 0 0 0 2px var(--ds-color-surface), 0 0 0 4px var(--ds-color-primary);
+}
+
+[data-theme='dark'] {
+  --ds-color-bg: #0a0f1c;
+  --ds-color-surface: #121a2b;
+  --ds-color-surface-muted: #1b2438;
+  --ds-color-text: #eef2f8;
+  --ds-color-text-muted: #9aa6b8;
+  --ds-color-border: #293549;
+  --ds-color-border-strong: #3b4a64;
+  --ds-color-neutral: #94a3b8;
+  /* Neutral soft (dark): a barely-there lift off the surface. */
+  --ds-color-neutral-soft: color-mix(in srgb, #94a3b8 9%, var(--ds-color-surface));
+  --ds-color-neutral-contrast: #0a0f1c;
+  --ds-color-success: #3ecf7f;
+  /* Semantic SOFT tones (dark): the reference's literal dark softs read too
+     heavy, so these are now GENTLE, subtle tints just above the surface
+     (~12% of the tone). Still clearly dark tints, never light. */
+  --ds-color-success-soft: color-mix(in srgb, var(--ds-color-success) 12%, var(--ds-color-surface));
+  --ds-color-success-contrast: #04140b;
+  --ds-color-warning: #f0a93b;
+  --ds-color-warning-soft: color-mix(in srgb, var(--ds-color-warning) 12%, var(--ds-color-surface));
+  --ds-color-warning-contrast: #1a1304;
+  --ds-color-danger: #f4736f;
+  --ds-color-danger-soft: color-mix(in srgb, var(--ds-color-danger) 12%, var(--ds-color-surface));
+  --ds-color-danger-contrast: #1a0606;
+  --ds-color-info: #3ec5e6;
+  --ds-color-info-soft: color-mix(in srgb, var(--ds-color-info) 12%, var(--ds-color-surface));
+  --ds-color-info-contrast: #04141a;
+
+  /* SOFT BACKGROUND (dark): the brand soft becomes a SUBTLE tint of the LIVE
+     brand against the dark surface (gentler than the old #241a4d block), so it
+     follows the brand picker yet stays barely above the surface. */
+  --ds-color-primary-soft: color-mix(in srgb, var(--ntk-primary) 9%, var(--ds-color-surface));
+
+  /* SOFT FOREGROUND (dark): the text/icon ON the dark soft bg is the LIGHT
+     theme's soft BACKGROUND color (a very light tint of the tone) — high
+     contrast on the dark soft surface, per the requested look. */
+  --ds-color-primary-soft-fg: var(--cat-brand-soft-light, #ece8fb);
+  --ds-color-neutral-soft-fg: #eef1f5;
+  --ds-color-success-soft-fg: #e7f7ee;
+  --ds-color-warning-soft-fg: #fbf0dd;
+  --ds-color-danger-soft-fg: #fce9e9;
+  --ds-color-info-soft-fg: #e3f4fa;
+  --ds-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.5);
+  --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --ds-overlay: rgba(2, 6, 16, 0.7);
+  --ds-border-width: 1px;
+  --ds-focus-ring: 0 0 0 2px var(--ds-color-surface), 0 0 0 4px var(--ds-color-primary);
+}
+
+[data-theme='hc'] {
+  --ds-color-bg: #ffffff;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-muted: #f2f2f2;
+  --ds-color-text: #000000;
+  --ds-color-text-muted: #1a1a1a;
+  --ds-color-border: #000000;
+  --ds-color-border-strong: #000000;
+  --ds-color-neutral: #1a1a1a;
+  --ds-color-neutral-soft: #ededed;
+  --ds-color-neutral-contrast: #ffffff;
+  --ds-color-success: #0a6b2d;
+  --ds-color-success-soft: #ddf5e7;
+  --ds-color-success-contrast: #ffffff;
+  --ds-color-warning: #7a4a00;
+  --ds-color-warning-soft: #fbeccd;
+  --ds-color-warning-contrast: #ffffff;
+  --ds-color-danger: #a10010;
+  --ds-color-danger-soft: #fbe0e2;
+  --ds-color-danger-contrast: #ffffff;
+  --ds-color-info: #004e63;
+  --ds-color-info-soft: #daf0f6;
+  --ds-color-info-contrast: #ffffff;
+  --ds-shadow: none;
+  --ds-shadow-sm: none;
+  --ds-overlay: rgba(0, 0, 0, 0.75);
+  --ds-border-width: 2px;
+  --ds-focus-ring: 0 0 0 2px var(--ds-color-surface), 0 0 0 5px var(--ds-color-primary);
+}
+
+/* ============================================================
+ * THEME: LIGHT  (ds light — default purple primary)
+ * ============================================================ */
+[data-theme='light'] {
+  --ntk-shell-bg: #f6f7f9;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #0f172a;
+
+  --ntk-row-bg: #f1f3f7;
+  --ntk-row-hover-bg: #e9ecf1;
+
+  --ntk-text-heading: #0f172a;
+  --ntk-text-body: #0f172a;
+  --ntk-text-muted: #5b6675;
+  --ntk-text-on-accent: #ffffff;
+  --ntk-drawer-text: #5b6675;
+
+  --ntk-border: #dbe0e8;
+  --ntk-border-strong: #b8c0cc;
+
+  --ntk-primary: #4f26db;
+  --ntk-primary-dark: #3f1eb0;
+  --ntk-primary-light: color-mix(in srgb, var(--ntk-primary) 55%, #ffffff);
+  --ntk-primary-rgb: 79, 38, 219;
+
+  --ntk-accent: #4f26db;
+  --ntk-accent-hover: #3f1eb0;
+  --ntk-accent-soft: #ece8fb;
+  --ntk-accent-rgb: 79, 38, 219;
+
+  --ntk-success: #16a34a;
+  --ntk-warning: #c2740a;
+  --ntk-error: #dc2626;
+  --ntk-info: #0e7da6;
+
+  --ntk-nav-active-bg: #ece8fb;
+  --ntk-nav-hover-bg: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-nav-active-border: #4f26db;
+
+  --ntk-dark-scheme: 0;
+
+  --ind-grid: #d3d8e0;
+  --ind-status-bg: var(--ntk-primary);
+  --ind-status-fg: var(--ntk-text-on-accent);
+}
+
+/* ============================================================
+ * THEME: DARK  (ds dark)
+ * ============================================================ */
+[data-theme='dark'] {
+  --ntk-shell-bg: #0a0f1c;
+  --ntk-card-bg: #121a2b;
+  --ntk-header-bg: #121a2b;
+  --ntk-drawer-bg: #121a2b;
+  --ntk-dark: #eef2f8;
+
+  --ntk-row-bg: #1b2438;
+  --ntk-row-hover-bg: #070b14;
+
+  --ntk-text-heading: #eef2f8;
+  --ntk-text-body: #eef2f8;
+  --ntk-text-muted: #9aa6b8;
+  --ntk-text-on-accent: #0b0a1a;
+  --ntk-drawer-text: #9aa6b8;
+
+  --ntk-border: #293549;
+  --ntk-border-strong: #3b4a64;
+
+  --ntk-primary: #8b73f2;
+  --ntk-primary-dark: #a594f5;
+  --ntk-primary-light: color-mix(in srgb, var(--ntk-primary) 55%, #ffffff);
+  --ntk-primary-rgb: 139, 115, 242;
+
+  --ntk-accent: #8b73f2;
+  --ntk-accent-hover: #a594f5;
+  --ntk-accent-soft: #241a4d;
+  --ntk-accent-rgb: 139, 115, 242;
+
+  --ntk-success: #3ecf7f;
+  --ntk-warning: #f0a93b;
+  --ntk-error: #f4736f;
+  --ntk-info: #3ec5e6;
+
+  --ntk-nav-active-bg: #241a4d;
+  --ntk-nav-hover-bg: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-nav-active-border: #8b73f2;
+
+  --ntk-dark-scheme: 1;
+
+  --ind-grid: #1b2740;
+  --ind-status-bg: var(--ntk-primary);
+  --ind-status-fg: var(--ntk-text-on-accent);
+}
+
+/* ============================================================
+ * THEME: HC  (ds high contrast)
+ * ============================================================ */
+[data-theme='hc'] {
+  --ntk-shell-bg: #ffffff;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #000000;
+
+  --ntk-row-bg: #f0f0f0;
+  --ntk-row-hover-bg: #e6e6e6;
+
+  --ntk-text-heading: #000000;
+  --ntk-text-body: #000000;
+  --ntk-text-muted: #1a1a1a;
+  --ntk-text-on-accent: #ffffff;
+  --ntk-drawer-text: #1a1a1a;
+
+  --ntk-border: #000000;
+  --ntk-border-strong: #000000;
+
+  --ntk-primary: #3a1aa6;
+  --ntk-primary-dark: #2a1078;
+  --ntk-primary-light: color-mix(in srgb, var(--ntk-primary) 55%, #ffffff);
+  --ntk-primary-rgb: 58, 26, 166;
+
+  --ntk-accent: #3a1aa6;
+  --ntk-accent-hover: #2a1078;
+  --ntk-accent-soft: #e9e3fb;
+  --ntk-accent-rgb: 58, 26, 166;
+
+  --ntk-success: #0a6b2d;
+  --ntk-warning: #7a4a00;
+  --ntk-error: #a10010;
+  --ntk-info: #004e63;
+
+  --ntk-nav-active-bg: #e9e3fb;
+  --ntk-nav-hover-bg: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-nav-active-border: #3a1aa6;
+
+  --ntk-dark-scheme: 0;
+
+  --ind-grid: #bdbdbd;
+  --ind-status-bg: var(--ntk-primary);
+  --ind-status-fg: var(--ntk-text-on-accent);
+}
+
+/* ============================================================
+ * THEME: MACHINE  (ds machine — light-gray industrial)
+ * ============================================================ */
+[data-theme='machine'] {
+  --ntk-shell-bg: #f0f1f2;
+  --ntk-card-bg: #ffffff;
+  --ntk-header-bg: #ffffff;
+  --ntk-drawer-bg: #ffffff;
+  --ntk-dark: #1f2123;
+
+  --ntk-row-bg: #f5f6f7;
+  --ntk-row-hover-bg: #dcdee0;
+
+  --ntk-text-heading: #1f2123;
+  --ntk-text-body: #1f2123;
+  --ntk-text-muted: #62676d;
+  --ntk-text-on-accent: var(--cat-brand-contrast, #ffffff);
+  --ntk-drawer-text: #62676d;
+
+  --ntk-border: #d2d4d7;
+  --ntk-border-strong: #b6b9bd;
+
+  /* Brand family FOLLOWS the live catalog brand (--cat-brand*, written inline
+     on <html> by the brand picker); the steel-navy literals are only the
+     standalone-machine fallback when no brand source is present. The neutral
+     surfaces/text/border grays above stay machine-specific. */
+  --ntk-primary: var(--cat-brand, #4a6378);
+  --ntk-primary-dark: var(--cat-brand-dark, #3a4f60);
+  --ntk-primary-light: color-mix(in srgb, var(--ntk-primary) 55%, #ffffff);
+  --ntk-primary-rgb: var(--cat-brand-rgb, 74, 99, 120);
+  --ntk-primary-contrast: var(--cat-brand-contrast, #ffffff);
+
+  --ntk-accent: var(--cat-brand, #4a6378);
+  --ntk-accent-hover: var(--cat-brand-dark, #3a4f60);
+  --ntk-accent-soft: var(--cat-brand-soft, #dde3ea);
+  --ntk-accent-rgb: var(--cat-brand-rgb, 74, 99, 120);
+
+  --ntk-success: #1f8a48;
+  --ntk-warning: #b5740a;
+  --ntk-error: #c4322b;
+  --ntk-info: #2a7da8;
+
+  --ntk-nav-active-bg: #dde3ea;
+  --ntk-nav-hover-bg: rgba(var(--ntk-primary-rgb), 0.08);
+  --ntk-nav-active-border: #4a6378;
+
+  --ntk-dark-scheme: 0;
+
+  --ind-grid: #dcdee1;
+  --ind-status-bg: var(--ntk-row-bg);
+  --ind-status-fg: var(--ntk-text-muted);
+}
+
+/* ============================================================
+ * BRAND OVERRIDES (orthogonal to theme).
+ * Declared AFTER the theme blocks so they win at equal specificity
+ * for single-attribute brands, and at higher specificity for the
+ * theme+brand combinations.
+ * ============================================================ */
+
+/* Purple is the reference default primary; declared explicitly so
+   selecting purple after another brand restores the theme primary. */
+[data-brand='purple'] {
+  --ntk-primary: #4f26db;
+  --ntk-primary-dark: #3f1eb0;
+  --ntk-primary-rgb: 79, 38, 219;
+  --ntk-accent: #4f26db;
+  --ntk-accent-hover: #3f1eb0;
+  --ntk-accent-soft: #ece8fb;
+  --ntk-accent-rgb: 79, 38, 219;
+}
+
+[data-brand='blue'] {
+  --ntk-primary: #2563eb;
+  --ntk-primary-dark: #1d4ed8;
+  --ntk-primary-rgb: 37, 99, 235;
+  --ntk-accent: #2563eb;
+  --ntk-accent-hover: #1d4ed8;
+  --ntk-accent-soft: #e8f0fe;
+  --ntk-accent-rgb: 37, 99, 235;
+}
+
+[data-theme='dark'][data-brand='purple'] {
+  --ntk-primary: #8b73f2;
+  --ntk-primary-dark: #a594f5;
+  --ntk-primary-rgb: 139, 115, 242;
+  --ntk-accent: #8b73f2;
+  --ntk-accent-hover: #a594f5;
+  --ntk-accent-soft: #241a4d;
+  --ntk-accent-rgb: 139, 115, 242;
+}
+
+[data-theme='hc'][data-brand='purple'] {
+  --ntk-primary: #3a1aa6;
+  --ntk-primary-dark: #2a1078;
+  --ntk-primary-rgb: 58, 26, 166;
+  --ntk-accent: #3a1aa6;
+  --ntk-accent-hover: #2a1078;
+  --ntk-accent-soft: #e9e3fb;
+  --ntk-accent-rgb: 58, 26, 166;
+}
+
+[data-theme='dark'][data-brand='blue'] {
+  --ntk-primary: #60a5fa;
+  --ntk-primary-dark: #85bdfb;
+  --ntk-primary-rgb: 96, 165, 250;
+  --ntk-accent: #60a5fa;
+  --ntk-accent-hover: #85bdfb;
+  --ntk-accent-soft: #152449;
+  --ntk-accent-rgb: 96, 165, 250;
+}
+
+[data-theme='hc'][data-brand='blue'] {
+  --ntk-primary: #1e40af;
+  --ntk-primary-dark: #15307f;
+  --ntk-primary-rgb: 30, 64, 175;
+  --ntk-accent: #1e40af;
+  --ntk-accent-hover: #15307f;
+  --ntk-accent-soft: #e3ebfb;
+  --ntk-accent-rgb: 30, 64, 175;
+}
+
+/* ============================================================
+ * DENSITY (orthogonal to theme).
+ * Drives the reference ergonomics tokens (`--ds-control-height`,
+ * `--ds-table-row-height`, `--ds-page-padding`, `--ds-card-padding`,
+ * `--ds-section-gap`) AND the `--ntk-*` aliases the shell consumes, so
+ * Compacto / Confortável / Espaçoso visibly resize controls, paddings,
+ * gaps and table rows. The base TYPE scale is intentionally left
+ * unchanged. Industrial chrome heights (`--ind-*`) are copied verbatim
+ * from the reference tokens.css density blocks. Values match the
+ * reference DENSITY map exactly.
+ * ============================================================ */
+:root,
+[data-density='comfortable'] {
+  --ds-control-height: 40px;
+  --ds-table-row-height: 48px;
+  --ds-page-padding: 32px;
+  --ds-card-padding: 20px;
+  --ds-section-gap: 30px;
+
+  --ntk-control-height: var(--ds-control-height);
+  --ntk-table-row-height: var(--ds-table-row-height);
+  --ntk-page-padding: var(--ds-page-padding);
+  --ntk-card-padding: var(--ds-card-padding);
+  --ntk-section-gap: var(--ds-section-gap);
+
+  --ind-titlebar-h: 38px;
+  --ind-ribbon-h: 98px;
+  --ind-status-h: 27px;
+  --ind-panelhdr-h: 32px;
+  --ind-tree-row: 28px;
+}
+
+[data-density='compact'] {
+  --ds-control-height: 32px;
+  --ds-table-row-height: 38px;
+  --ds-page-padding: 20px;
+  --ds-card-padding: 14px;
+  --ds-section-gap: 20px;
+
+  --ntk-control-height: var(--ds-control-height);
+  --ntk-table-row-height: var(--ds-table-row-height);
+  --ntk-page-padding: var(--ds-page-padding);
+  --ntk-card-padding: var(--ds-card-padding);
+  --ntk-section-gap: var(--ds-section-gap);
+
+  --ind-titlebar-h: 34px;
+  --ind-ribbon-h: 88px;
+  --ind-status-h: 24px;
+  --ind-panelhdr-h: 28px;
+  --ind-tree-row: 24px;
+}
+
+[data-density='spacious'] {
+  --ds-control-height: 48px;
+  --ds-table-row-height: 60px;
+  --ds-page-padding: 44px;
+  --ds-card-padding: 28px;
+  --ds-section-gap: 42px;
+
+  --ntk-control-height: var(--ds-control-height);
+  --ntk-table-row-height: var(--ds-table-row-height);
+  --ntk-page-padding: var(--ds-page-padding);
+  --ntk-card-padding: var(--ds-card-padding);
+  --ntk-section-gap: var(--ds-section-gap);
+
+  --ind-titlebar-h: 44px;
+  --ind-ribbon-h: 110px;
+  --ind-status-h: 30px;
+  --ind-panelhdr-h: 38px;
+  --ind-tree-row: 34px;
+}
+
+/* ============================================================
+ * THEMED SCROLLBARS
+ * ------------------------------------------------------------
+ * The catalog page and every inner scroll area (TOC, dock panels,
+ * tables, canvas, code editor, etc.) get theme-aware scrollbars so
+ * dark theme no longer shows light/native bars. Driven entirely by
+ * `--ntk-*` tokens; `color-scheme` flips the native UA scrollbar +
+ * form-control rendering per theme. WebKit + Firefox covered.
+ * ============================================================ */
+[data-theme='light'],
+[data-theme='hc'] {
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* Firefox: thin themed bars (thumb · track). */
+html {
+  scrollbar-color: var(--ntk-border-strong) var(--ntk-row-bg);
+  scrollbar-width: thin;
+}
+
+/* WebKit/Chromium: themed bars for the page and any scroll area. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ntk-row-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ntk-border-strong);
+  border: 3px solid var(--ntk-row-bg);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ntk-text-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--ntk-row-bg);
+}

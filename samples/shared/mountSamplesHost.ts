@@ -52,7 +52,22 @@ import 'quasar/dist/quasar.css'
 
 import '../../src/styles/tokens.scss'
 import '../../src/styles/themes.css'
+import '../../src/styles/reference-themes.css'
 import '../../src/styles/global.scss'
+
+/**
+ * Applies the reference theme axes defaults (theme/brand/density) on the
+ * document root, idempotently. Existing values (e.g. a user-selected theme or
+ * the color-scheme bootstrap) are preserved — these only fill in when unset.
+ */
+function applyReferenceThemeDefaults(): void {
+  if (typeof document === 'undefined') return
+
+  const { dataset } = document.documentElement
+  dataset.theme ??= 'light'
+  dataset.brand ??= 'purple'
+  dataset.density ??= 'comfortable'
+}
 
 /**
  * Mounts one samples runtime entry with the shared Quasar registry and style tokens.
@@ -61,6 +76,8 @@ export function mountSamplesHost(
   rootComponent: Component,
   configureApp?: (app: App) => void
 ): App {
+  applyReferenceThemeDefaults()
+
   const app = createApp(rootComponent)
 
   app.use(Quasar, {
