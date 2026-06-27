@@ -25,15 +25,11 @@
       id="cg-modal"
       v-model="isOpen"
       class="cg-dialog"
-      :class="{ 'cg-dialog--full': activeSize === 'full' }"
       :style="dialogStyle"
       :title="t.modalTitle"
       close-label="Fechar"
     >
       {{ t.modalBody }}
-      <template #actions>
-        <div class="cg-dialog__footer" />
-      </template>
     </DsDialog>
   </section>
 </template>
@@ -129,80 +125,11 @@ const dialogStyle = computed<CSSProperties>(() => {
   background: var(--ds-color-primary-hover);
 }
 
-/* Re-skin DsDialog to the exact reference modal (primary-soft header bar,
-   scrollable body, slim reserved footer). */
+/* The governed DsDialog now provides the reference modal natively (header bar,
+   scrollable body, slim reserved footer). Only the per-size sizing is set here
+   via inline :style; the catalog aligns the dialog font to the sans stack. */
 .cg-dialog {
   max-width: 96vw;
   max-height: 86vh;
-  padding: 0;
-  border: var(--ds-border-width) solid var(--ds-color-border);
-  border-radius: var(--ds-radius-lg);
-  background: var(--ds-color-surface);
-  box-shadow: var(--ds-shadow);
-  overflow: hidden;
-}
-
-.cg-dialog :deep(.ntk-dialog__surface) {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 0;
-  min-height: 0;
-}
-
-.cg-dialog :deep(.ntk-dialog__header) {
-  align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
-  border-bottom: var(--ds-border-width) solid var(--ds-color-border);
-  background: var(--ds-color-primary-soft);
-  flex: 0 0 auto;
-}
-
-.cg-dialog :deep(.ntk-dialog__title) {
-  margin: 0;
-  flex: 1;
-  font-family: var(--ds-font-sans);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--ds-color-primary-soft-fg);
-}
-
-.cg-dialog :deep(.ntk-dialog__close) {
-  width: 30px;
-  height: 30px;
-  color: var(--ds-color-primary-soft-fg);
-  border-radius: var(--ds-radius-sm);
-}
-
-.cg-dialog :deep(.ntk-dialog__close:hover) {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.cg-dialog :deep(.ntk-dialog__body) {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-  padding: 16px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--ds-color-text);
-}
-
-/* Full-size modal: the body fills the tall surface and scrolls. */
-.cg-dialog--full :deep(.ntk-dialog__body) {
-  flex: 1 1 auto;
-}
-
-.cg-dialog :deep(.ntk-dialog__actions) {
-  padding: 0;
-}
-
-.cg-dialog__footer {
-  width: 100%;
-  height: 14px;
-  border-top: var(--ds-border-width) solid var(--ds-color-border);
-  background: var(--ds-color-surface-muted);
 }
 </style>

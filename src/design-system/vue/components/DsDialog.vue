@@ -25,11 +25,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </header>
-      <p v-if="description" :id="descriptionId" class="ntk-dialog__description">{{ description }}</p>
       <div class="ntk-dialog__body">
+        <p v-if="description" :id="descriptionId" class="ntk-dialog__description">{{ description }}</p>
         <slot />
       </div>
-      <footer v-if="$slots.actions" class="ntk-dialog__actions">
+      <footer class="ntk-dialog__footer" :class="{ 'ntk-dialog__footer--actions': $slots.actions }">
         <slot name="actions" :close="() => requestClose('action')" />
       </footer>
     </div>
@@ -184,6 +184,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .ntk-dialog {
+  display: flex;
+  flex-direction: column;
   margin: auto;
   inline-size: min(92vw, 32rem);
   max-block-size: min(86vh, 48rem);
@@ -194,6 +196,7 @@ onBeforeUnmount(() => {
   color: var(--ntk-text-primary);
   box-shadow: var(--ntk-shadow-xl);
   font-family: var(--ntk-font-family);
+  overflow: hidden;
 }
 
 .ntk-dialog--size-sm {
@@ -222,45 +225,69 @@ onBeforeUnmount(() => {
   background: var(--ntk-bg-overlay);
 }
 
+/* The surface is a vertical band stack: a header bar, a scrollable body, and a
+   slim reserved footer (always present), matching the reference modal. */
 .ntk-dialog__surface {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--ntk-spacing-sm);
-  padding: var(--ntk-spacing-lg);
+  min-block-size: 0;
 }
 
+/* Header bar: a distinct band with its own padding and a bottom divider. */
 .ntk-dialog__header {
   display: flex;
-  align-items: flex-start;
+  flex: 0 0 auto;
+  align-items: center;
   justify-content: space-between;
   gap: var(--ntk-spacing-sm);
+  padding-block: var(--ntk-spacing-sm);
+  padding-inline: var(--ntk-spacing-lg);
+  border-block-end: 1px solid var(--ntk-border-color);
+  background: var(--ntk-bg-active);
 }
 
 .ntk-dialog__title {
   margin: 0;
   font-family: var(--ntk-font-family-display);
-  font-size: var(--ntk-font-size-xl);
+  font-size: var(--ntk-font-size-lg);
   font-weight: var(--ntk-font-weight-bold);
-  color: var(--ntk-text-primary);
+  color: var(--ntk-on-soft);
 }
 
 .ntk-dialog__description {
-  margin: 0;
+  margin: 0 0 var(--ntk-spacing-sm);
   font-size: var(--ntk-font-size-sm);
   color: var(--ntk-text-secondary);
 }
 
 .ntk-dialog__body {
+  flex: 1 1 auto;
+  min-block-size: 0;
   overflow: auto;
+  padding: var(--ntk-spacing-lg);
   color: var(--ntk-text-primary);
 }
 
-.ntk-dialog__actions {
+/* Footer: a slim reserved band that always anchors the modal. When the actions
+   slot is filled it grows to host the buttons; empty it stays a thin divider. */
+.ntk-dialog__footer {
+  flex: 0 0 auto;
+  block-size: var(--ntk-spacing-md);
+  border-block-start: 1px solid var(--ntk-border-color);
+  background: var(--ntk-bg-secondary);
+}
+
+.ntk-dialog__footer--actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
   gap: var(--ntk-spacing-sm);
-  padding-block-start: var(--ntk-spacing-sm);
+  block-size: auto;
+  padding-block: var(--ntk-spacing-sm);
+  padding-inline: var(--ntk-spacing-lg);
+  background: var(--ntk-bg-card);
 }
 
 .ntk-dialog__close {
