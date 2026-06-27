@@ -138,9 +138,8 @@
                 <div class="ec-card__hd">
                   {{ t.recentOrders }}
                 </div>
-                <div role="table">
+                <div>
                   <div
-                    role="row"
                     class="ec-orow ec-orow--head"
                   >
                     <div class="ec-ocell">
@@ -159,7 +158,6 @@
                   <div
                     v-for="o in ecomOrders.slice(0, 3)"
                     :key="o.id"
-                    role="row"
                     class="ec-orow"
                   >
                     <div class="ec-ocell ec-ocell--mono">
@@ -195,9 +193,8 @@
             >
               <span class="ec-h">{{ t.sbOrders }}</span>
               <div class="ec-card">
-                <div role="table">
+                <div>
                   <div
-                    role="row"
                     class="ec-orow ec-orow--head"
                   >
                     <div class="ec-ocell">
@@ -216,7 +213,6 @@
                   <div
                     v-for="o in ecomOrders"
                     :key="o.id"
-                    role="row"
                     class="ec-orow"
                   >
                     <div class="ec-ocell ec-ocell--mono">
@@ -290,9 +286,8 @@
             >
               <span class="ec-h">{{ t.sbStock }}</span>
               <div class="ec-card">
-                <div role="table">
+                <div>
                   <div
-                    role="row"
                     class="ec-srow ec-orow--head"
                   >
                     <div class="ec-ocell">
@@ -311,7 +306,6 @@
                   <div
                     v-for="s in ecomStock"
                     :key="s.sku"
-                    role="row"
                     class="ec-srow"
                   >
                     <div class="ec-ocell ec-ocell--mono">

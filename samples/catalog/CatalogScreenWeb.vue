@@ -123,21 +123,36 @@
                   role="row"
                   class="wb-tr"
                 >
-                  <div class="wb-cell wb-cell--client">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--client"
+                  >
                     <span class="wb-client__name">{{ c.nome }}</span>
                     <span class="wb-client__email">{{ c.email }}</span>
                   </div>
-                  <div class="wb-cell wb-cell--doc">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--doc"
+                  >
                     <span class="wb-doc__num">{{ c.doc }}</span>
                     <span class="wb-doc__type">{{ c.tipo }}</span>
                   </div>
-                  <div class="wb-cell wb-cell--plan">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--plan"
+                  >
                     {{ c.plano }}
                   </div>
-                  <div class="wb-cell wb-cell--fee">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--fee"
+                  >
                     {{ formatBrl2(c.valor) }}
                   </div>
-                  <div class="wb-cell wb-cell--status">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--status"
+                  >
                     <span
                       class="wb-badge"
                       :style="badgeStyle(c.status)"
@@ -149,10 +164,16 @@
                       {{ t[statusLabelKey(c.status)] }}
                     </span>
                   </div>
-                  <div class="wb-cell wb-cell--created">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--created"
+                  >
                     {{ formatDate2(c.criado) }}
                   </div>
-                  <div class="wb-cell wb-cell--actions">
+                  <div
+                    role="cell"
+                    class="wb-cell wb-cell--actions"
+                  >
                     <div class="wb-actions">
                       <button
                         type="button"
