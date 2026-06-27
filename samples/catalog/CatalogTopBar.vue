@@ -304,7 +304,13 @@ function onCustomTextColor(event: Event): void {
   display: flex;
   align-items: center;
   gap: 28px;
-  padding: 11px clamp(20px, 4vw, 48px);
+  /* Center the bar content in the SAME 1280px container as the body grid
+     (.cat-body), so the logo aligns with the content's left edge and the
+     controls sit at the container's right — matching the reference, instead of
+     stretching to the viewport edges. The bar background/border stay full-width. */
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 11px var(--ds-page-padding, 32px);
 }
 
 /* Brand */
