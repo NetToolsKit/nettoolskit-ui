@@ -102,19 +102,26 @@ html[data-theme] {
   --ds-color-text-muted: #5b6675;
   --ds-color-border: #dbe0e8;
   --ds-color-border-strong: #b8c0cc;
-  --ds-color-neutral: #64748b;
+  /* Semantic tones (light): WCAG 2.2 AA wins over the reference's exact hue.
+     Each tone is the SMALLEST darkening of the reference value that clears
+     4.5:1 in ALL its catalog uses — as solid-button/badge background under
+     white text, AND as foreground text/dot on its own pale `*-soft` wash
+     (the binding constraint, ~4.6:1). Reference originals (kept as soft bg):
+     neutral #64748b · success #16a34a · warning #c2740a · danger #dc2626 ·
+     info #0e7da6. */
+  --ds-color-neutral: #5e6d83;
   --ds-color-neutral-soft: #eef1f5;
   --ds-color-neutral-contrast: #ffffff;
-  --ds-color-success: #16a34a;
+  --ds-color-success: #117e39;
   --ds-color-success-soft: #e7f7ee;
   --ds-color-success-contrast: #ffffff;
-  --ds-color-warning: #c2740a;
+  --ds-color-warning: #9d5e08;
   --ds-color-warning-soft: #fbf0dd;
   --ds-color-warning-contrast: #ffffff;
-  --ds-color-danger: #dc2626;
+  --ds-color-danger: #ce2424;
   --ds-color-danger-soft: #fce9e9;
   --ds-color-danger-contrast: #ffffff;
-  --ds-color-info: #0e7da6;
+  --ds-color-info: #0d759b;
   --ds-color-info-soft: #e3f4fa;
   --ds-color-info-contrast: #ffffff;
   --ds-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 6px 20px rgba(15, 23, 42, 0.06);

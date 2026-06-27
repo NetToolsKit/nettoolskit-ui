@@ -374,7 +374,10 @@ onBeforeUnmount(() => {
 }
 
 .cg-agev__time {
-  opacity: 0.7;
+  /* No opacity dimming: a translucent time label would blend into the pale
+     `*-soft` event background and drop below WCAG AA. The mono font + tabular
+     spacing already separate it from the title, so it stays full-strength. */
+  font-variant-numeric: tabular-nums;
 }
 
 /* Drawing board */

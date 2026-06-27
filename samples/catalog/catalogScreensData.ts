@@ -211,6 +211,37 @@ function mix(pct: number): string {
 }
 
 /**
+ * Heat-cell text color picker (WCAG AA). The cell background is `mix(pct)` — a
+ * light wash of the brand for low pct, deepening as pct rises. White
+ * (`--ds-color-primary-contrast`) only clears 4.5:1 once the wash is dark enough
+ * (~74% of the purple brand); below that the dark on-surface text is readable.
+ * The threshold sits at 74 so neither branch is ever under-contrasted.
+ * (Matrix cells never land in 53–73, so the simple split is safe there.)
+ */
+const HEAT_WHITE_TEXT_MIN = 74
+function heatTextColor(pct: number, lightVar: string): string {
+  return pct >= HEAT_WHITE_TEXT_MIN ? 'var(--ds-color-primary-contrast)' : lightVar
+}
+
+/**
+ * Region map cells carry a numeric label that can land anywhere in 18–87,
+ * including the 53–73 "dead zone" where neither white nor the dark on-surface
+ * text clears 4.5:1 against `mix(pct)`. To keep both the label value AND AA
+ * contrast, cells from 66% up render white text on a background floored to
+ * `HEAT_WHITE_TEXT_MIN` (a sub-perceptible deepening of the wash), so white
+ * always clears; lighter cells keep the dark text on their exact wash.
+ */
+function regionFill(pct: number): { background: string; color: string } {
+  if (pct >= 66) {
+    return {
+      background: mix(Math.max(pct, HEAT_WHITE_TEXT_MIN)),
+      color: 'var(--ds-color-primary-contrast)',
+    }
+  }
+  return { background: mix(pct), color: 'var(--ds-color-text)' }
+}
+
+/**
  * Reference LCG used to seed the heatmap and region map. Reproduced verbatim
  * so the rendered cells are pixel-identical to the standalone. Heat consumes
  * the first 60 draws; the region map consumes the next 12.
@@ -272,18 +303,19 @@ const regionNames = ['Norte', 'Nordeste', 'Centro', 'Sudeste', 'Sul', 'Oeste', '
 
 export const dashRegions: readonly DashRegion[] = regionNames.map((name, i) => {
   const pct = seeded.region[i]
+  const fill = regionFill(pct)
   return {
     name,
     pct: `${pct}%`,
     style: {
-      background: mix(pct),
+      background: fill.background,
       borderRadius: 'var(--ds-radius-md)',
       padding: '12px',
       minHeight: '62px',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
-      color: pct > 52 ? 'var(--ds-color-primary-contrast)' : 'var(--ds-color-text)',
+      color: fill.color,
       border: 'var(--ds-border-width) solid var(--ds-color-border)',
     },
   }
@@ -304,7 +336,7 @@ export const dashMatrix: readonly { cells: DashMatrixCell[] }[] = (() => {
         val: `${v}%`,
         style: {
           background: mix(v),
-          color: v > 52 ? 'var(--ds-color-primary-contrast)' : 'var(--ds-color-text-muted)',
+          color: heatTextColor(v, 'var(--ds-color-text-muted)'),
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
