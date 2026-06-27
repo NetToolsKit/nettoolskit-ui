@@ -20,13 +20,17 @@
 
       <!-- E-mail (focus) — bespoke label so "(foco)" can carry the primary color -->
       <div class="cg-field cg-loadingfield">
-        <span class="cg-loadingfield__label">
+        <span
+          id="cg-email-label"
+          class="cg-loadingfield__label"
+        >
           {{ t.inEmail }} <span class="cg-focustag">{{ t.inFocus }}</span>
         </span>
         <input
           class="cg-emailinput"
           value="contato@empresa.com.br"
           readonly
+          aria-labelledby="cg-email-label"
         >
         <span class="cg-loadingfield__hint">{{ t.inHintEmail }}</span>
       </div>
@@ -62,11 +66,15 @@
 
       <!-- Buscando (loading) -->
       <div class="cg-field cg-loadingfield">
-        <span class="cg-loadingfield__label">{{ t.inBuscando }}</span>
+        <span
+          id="cg-loading-label"
+          class="cg-loadingfield__label"
+        >{{ t.inBuscando }}</span>
         <div class="cg-loadingfield__control">
           <input
             :value="locale === 'en' ? 'searching…' : 'consultando…'"
             readonly
+            aria-labelledby="cg-loading-label"
           >
           <span class="cg-loadingfield__spinner" />
         </div>
@@ -105,24 +113,34 @@
 
       <!-- (b) Searchable select / autocomplete — DsInput + filtered list -->
       <div class="cg-field cg-xfield cg-auto">
-        <span class="cg-xfield__label">{{ t.inAuto }}</span>
+        <span
+          id="cg-auto-label"
+          class="cg-xfield__label"
+        >{{ t.inAuto }}</span>
         <input
           v-model="autoQuery"
           class="cg-xcontrol"
           type="text"
           :placeholder="t.inAutoPh"
           role="combobox"
-          aria-expanded="true"
+          aria-labelledby="cg-auto-label"
+          aria-controls="cg-auto-listbox"
+          :aria-expanded="autoExpanded"
           aria-autocomplete="list"
           @focus="autoOpen = true"
         >
         <ul
-          v-if="autoOpen && autoQuery"
+          v-show="autoExpanded"
+          id="cg-auto-listbox"
           class="cg-auto__list"
+          role="listbox"
+          aria-labelledby="cg-auto-label"
         >
           <li
             v-for="opt in autoResults"
             :key="opt.value"
+            role="option"
+            :aria-selected="false"
           >
             <button
               type="button"
@@ -258,6 +276,9 @@ const autoOpen = ref(false)
 const autoResults = computed(() =>
   cityOptions.value.filter((o) => o.label.toLowerCase().includes(autoQuery.value.trim().toLowerCase())),
 )
+/** Combobox expanded state — drives both `aria-expanded` and the listbox popup,
+ *  so the ARIA combobox contract stays truthful (open only with an active query). */
+const autoExpanded = computed(() => autoOpen.value && autoQuery.value.trim().length > 0)
 function pickAuto(label: string): void {
   autoQuery.value = label
   autoOpen.value = false

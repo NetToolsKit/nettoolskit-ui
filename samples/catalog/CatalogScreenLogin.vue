@@ -68,15 +68,23 @@
             </p>
           </div>
           <div class="lg-field">
-            <label class="lg-label">{{ t.inEmail }}</label>
+            <label
+              class="lg-label"
+              for="lg-email"
+            >{{ t.inEmail }}</label>
             <input
+              id="lg-email"
               class="lg-input"
               value="contato@empresa.com.br"
             >
           </div>
           <div class="lg-field">
-            <label class="lg-label">{{ t.loginPass }}</label>
+            <label
+              class="lg-label"
+              for="lg-pass"
+            >{{ t.loginPass }}</label>
             <input
+              id="lg-pass"
               class="lg-input"
               type="password"
               value="123456789"
