@@ -1820,6 +1820,10 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "hasDefault": true,
       "required": false,
     },
+    "emptyLabel": {
+      "hasDefault": true,
+      "required": false,
+    },
     "errorMessage": {
       "hasDefault": false,
       "required": false,
@@ -1869,6 +1873,14 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "required": false,
     },
     "required": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "searchPlaceholder": {
+      "hasDefault": true,
+      "required": false,
+    },
+    "searchable": {
       "hasDefault": true,
       "required": false,
     },
