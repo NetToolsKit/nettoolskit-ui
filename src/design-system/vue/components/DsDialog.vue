@@ -184,8 +184,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .ntk-dialog {
-  display: flex;
-  flex-direction: column;
   margin: auto;
   inline-size: min(92vw, 32rem);
   max-block-size: min(86vh, 48rem);
@@ -197,6 +195,13 @@ onBeforeUnmount(() => {
   box-shadow: var(--ntk-shadow-xl);
   font-family: var(--ntk-font-family);
   overflow: hidden;
+}
+
+/* Only the open dialog becomes a flex band stack. A closed <dialog> keeps the
+   UA `display: none`, so the surface never intercepts pointer events or shows. */
+.ntk-dialog[open] {
+  display: flex;
+  flex-direction: column;
 }
 
 .ntk-dialog--size-sm {

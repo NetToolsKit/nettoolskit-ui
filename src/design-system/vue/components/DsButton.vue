@@ -180,13 +180,15 @@ const classes = computed(() => [
   background: color-mix(in srgb, var(--ntk-c-dark) 85%, black);
 }
 
-/* Soft: a tinted fill with the intent's dark shade as readable foreground.
-   The light tint + dark text mirrors the badge/banner soft treatment and keeps
-   small label text above WCAG AA on the subtle surface. */
+/* Soft: a tinted fill with an AA-safe foreground. The label uses the same
+   text-darkened intent channel as ghost/outline (intent blended toward the
+   near-black primary text), so small label text clears WCAG AA on the light
+   tint across themes/brands (the raw intent-dark shade alone can fail ~3.4:1
+   on its own light tint). */
 .ntk-button--variant-soft {
   border-color: transparent;
   background: var(--ntk-c-light);
-  color: var(--ntk-c-dark);
+  color: var(--ntk-c-text);
 }
 
 .ntk-button--variant-soft:hover:not(:disabled) {

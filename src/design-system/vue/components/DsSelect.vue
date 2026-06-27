@@ -31,6 +31,7 @@
       :aria-expanded="open"
       :aria-controls="listboxId"
       :aria-labelledby="label ? `${labelId} ${triggerId}` : undefined"
+      :aria-label="label ? undefined : (placeholder || 'Select')"
       :aria-invalid="invalid ? 'true' : undefined"
       :aria-describedby="(errorMessage || hint) ? descriptionId : undefined"
       :disabled="disabled"
