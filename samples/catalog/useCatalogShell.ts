@@ -192,27 +192,37 @@ function autoBrandTextColor(brandHex: string): string {
 }
 
 /**
- * Reference catalog's EXACT per-theme `soft` tint for the canonical brand
- * swatches (purple / blue), copied verbatim from its tokens. We pin the brand
- * HUE constant across themes (so the primary/dot never shift), but the SOFT
- * surface must still adapt per theme — in dark it is a DARK tint of the hue,
- * not a light wash. For these two swatches we use the reference's literal soft
- * values; arbitrary custom colors derive a per-theme soft via color-mix.
+ * Reference catalog's per-theme `soft` tint for the canonical brand swatches
+ * (purple / blue). We pin the brand HUE constant across themes (so the
+ * primary/dot never shift), but the SOFT surface must still adapt per theme —
+ * in dark it is a DARK tint of the hue, never a light wash. Light/HC use the
+ * reference's literal light softs; in dark we SOFTEN the reference's literal
+ * dark soft toward the surface so it reads as a gentle, subtle tint just above
+ * the surface (the raw reference values read too heavy in our shell).
  */
-const CANONICAL_BRAND_SOFT: Record<string, Record<CatalogTheme, string>> = {
-  '#4f26db': { light: '#ece8fb', dark: '#241a4d', hc: '#e9e3fb' }, // purple
-  '#2563eb': { light: '#e8f0fe', dark: '#152449', hc: '#e3ebfb' }, // blue
+const CANONICAL_BRAND_SOFT: Record<string, { light: string; dark: string; hc: string }> = {
+  '#4f26db': {
+    light: '#ece8fb',
+    dark: 'color-mix(in srgb, #241a4d 70%, var(--ds-color-surface, #121a2b))',
+    hc: '#e9e3fb',
+  }, // purple
+  '#2563eb': {
+    light: '#e8f0fe',
+    dark: 'color-mix(in srgb, #152449 70%, var(--ds-color-surface, #121a2b))',
+    hc: '#e3ebfb',
+  }, // blue
 }
 
 /**
  * Per-theme SOFT tint for an arbitrary brand hue. Light/HC are LIGHT washes
- * (mix toward white); DARK is a DARK tint (mix toward the dark surface) so the
- * soft never renders as a light panel in dark theme.
+ * (mix toward white); DARK is a GENTLE dark tint (a small amount of the hue mixed
+ * into the dark surface) so the soft is a subtle low-contrast background just
+ * above the surface — clearly a dark tint, never a light panel.
  */
 function brandSoftFor(hex: string, theme: CatalogTheme): string {
   const canonical = CANONICAL_BRAND_SOFT[hex.toLowerCase()]
   if (canonical) return canonical[theme]
-  if (theme === 'dark') return `color-mix(in srgb, ${hex} 22%, var(--ds-color-surface, #121a2b))`
+  if (theme === 'dark') return `color-mix(in srgb, ${hex} 12%, var(--ds-color-surface, #121a2b))`
   if (theme === 'hc') return `color-mix(in srgb, ${hex} 16%, white)`
   return `color-mix(in srgb, ${hex} 14%, white)`
 }

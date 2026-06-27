@@ -104,16 +104,19 @@
   --ds-color-neutral-soft: #1b2438;
   --ds-color-neutral-contrast: #0a0f1c;
   --ds-color-success: #3ecf7f;
-  --ds-color-success-soft: #0f2a1c;
+  /* Semantic SOFT tones (dark): gentle, subtle tints just above the surface —
+     the reference's literal dark softs read too heavy, so soften toward the
+     dark surface (#121a2b). Still clearly dark tints, never light. */
+  --ds-color-success-soft: color-mix(in srgb, #0f2a1c 70%, var(--ds-color-surface));
   --ds-color-success-contrast: #04140b;
   --ds-color-warning: #f0a93b;
-  --ds-color-warning-soft: #2e2310;
+  --ds-color-warning-soft: color-mix(in srgb, #2e2310 70%, var(--ds-color-surface));
   --ds-color-warning-contrast: #1a1304;
   --ds-color-danger: #f4736f;
-  --ds-color-danger-soft: #2e1414;
+  --ds-color-danger-soft: color-mix(in srgb, #2e1414 70%, var(--ds-color-surface));
   --ds-color-danger-contrast: #1a0606;
   --ds-color-info: #3ec5e6;
-  --ds-color-info-soft: #0c2630;
+  --ds-color-info-soft: color-mix(in srgb, #0c2630 70%, var(--ds-color-surface));
   --ds-color-info-contrast: #04141a;
   --ds-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.5);
   --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
