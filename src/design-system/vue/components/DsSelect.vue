@@ -323,7 +323,11 @@ function moveActive(delta: number): void {
 }
 
 function scrollActiveIntoView(): void {
-  const el = panelRef.value?.querySelector<HTMLElement>(`#${CSS.escape(optionId(activeIndex.value))}`)
+  // jsdom (unit test env) has no global `CSS`, so guard `CSS.escape`. Option ids
+  // are generated and selector-safe, so the raw id is a fine fallback.
+  const id = optionId(activeIndex.value)
+  const safeId = typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(id) : id
+  const el = panelRef.value?.querySelector<HTMLElement>(`#${safeId}`)
   el?.scrollIntoView({ block: 'nearest' })
 }
 
