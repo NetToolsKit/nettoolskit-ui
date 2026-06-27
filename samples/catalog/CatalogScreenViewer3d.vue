@@ -135,7 +135,7 @@ type Mesh = { rotation: { x: number; z: number }; position: { x: number; y: numb
 type MaterialWithColor = { color: { set: (c: string | number) => void } }
 
 let THREE: ThreeModule | null = null
-let renderer: { setSize: (w: number, h: number) => void; setPixelRatio: (r: number) => void; render: (s: unknown, c: unknown) => void; dispose: () => void; domElement: HTMLCanvasElement } | null = null
+let renderer: { setSize: (w: number, h: number) => void; setPixelRatio: (r: number) => void; setClearColor?: (c: unknown, a?: number) => void; render: (s: unknown, c: unknown) => void; dispose: () => void; domElement: HTMLCanvasElement } | null = null
 let scene: { add: (o: unknown) => void } | null = null
 let camera: { aspect: number; updateProjectionMatrix: () => void } | null = null
 let rig: Obj3D | null = null
@@ -158,9 +158,31 @@ function brandColor(): string {
   return v || '#4f26db'
 }
 
+/** Read a themed CSS color var off <html>, with a safe fallback. */
+function cssColor(varName: string, fallback: string): string {
+  if (typeof getComputedStyle === 'undefined' || typeof document === 'undefined') return fallback
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+  return v || fallback
+}
+
+/** Recessed viewport background — follows the active theme (dark in dark). */
+function surfaceColor(): string {
+  return cssColor('--ds-color-bg', '#eef0f5')
+}
+
+/** Apply the themed scene/renderer background so the viewport is never white in dark. */
+function applyTheme(): void {
+  if (!THREE) return
+  const bg = surfaceColor()
+  if (scene) (scene as unknown as { background: unknown }).background = new THREE.Color(bg)
+  renderer?.setClearColor?.(new THREE.Color(bg), 1)
+}
+
 function applyBrand(): void {
   const c = brandColor()
   for (const m of brandMaterials) m.color.set(c)
+  // Theme axis can change at the same time as brand, so refresh the bg too.
+  applyTheme()
 }
 
 onMounted(async () => {
@@ -187,8 +209,8 @@ function buildScene(): void {
   const h = el.clientHeight || 320
 
   scene = new THREE.Scene()
-  const sky = new THREE.Color('#eef0f5')
-  ;(scene as unknown as { background: unknown }).background = sky
+  // Background follows the active theme (recessed viewport surface).
+  ;(scene as unknown as { background: unknown }).background = new THREE.Color(surfaceColor())
 
   camera = new THREE.PerspectiveCamera(38, w / h, 0.1, 100)
   ;(camera as unknown as { position: { set: (x: number, y: number, z: number) => void } }).position.set(0, 1.9, 7.6)
@@ -197,6 +219,7 @@ function buildScene(): void {
   renderer = new THREE.WebGLRenderer({ antialias: true }) as unknown as typeof renderer
   renderer!.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer!.setSize(w, h)
+  renderer!.setClearColor?.(new THREE.Color(surfaceColor()), 1)
   el.appendChild(renderer!.domElement)
 
   // lights
@@ -206,8 +229,13 @@ function buildScene(): void {
   scene!.add(amb)
   scene!.add(dir)
 
-  // ground grid
-  const grid = new THREE.GridHelper(16, 16, 0xc7ccd6, 0xdde1e8)
+  // ground grid — themed so it stays subtle on the dark viewport too
+  const grid = new THREE.GridHelper(
+    16,
+    16,
+    new THREE.Color(cssColor('--ds-color-border-strong', '#c7ccd6')),
+    new THREE.Color(cssColor('--ds-color-border', '#dde1e8')),
+  )
   scene!.add(grid)
 
   // brand material (follows --ntk-primary) + a darker accent for limbs
@@ -382,7 +410,8 @@ onBeforeUnmount(() => {
   height: 360px;
   cursor: grab;
   touch-action: none;
-  background: #eef0f5;
+  /* Recessed surface follows the theme (matches the WebGL scene background). */
+  background: var(--ds-color-bg);
 }
 
 .vw-shell--full .vw-viewport {
