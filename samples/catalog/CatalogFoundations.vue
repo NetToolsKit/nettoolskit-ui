@@ -466,7 +466,7 @@ function toneSoftDot(tone: GalleryTone): CSSProperties {
 .cg-ramp__cell--soft {
   width: 64px;
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ds-color-primary-soft-fg);
 }
 
 .cg-brand__samplebtn {

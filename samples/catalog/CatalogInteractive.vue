@@ -181,7 +181,7 @@ function dropEvent(target: number): void {
 function eventStyle(tone: GalleryTone): CSSProperties {
   return {
     background: `var(--ds-color-${tone}-soft)`,
-    color: `var(--ds-color-${tone})`,
+    color: `var(--ds-color-${tone}-soft-fg)`,
     borderLeftColor: `var(--ds-color-${tone})`,
   }
 }

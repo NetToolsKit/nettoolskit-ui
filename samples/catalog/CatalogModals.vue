@@ -166,13 +166,13 @@ const dialogStyle = computed<CSSProperties>(() => {
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--ds-color-primary);
+  color: var(--ds-color-primary-soft-fg);
 }
 
 .cg-dialog :deep(.ntk-dialog__close) {
   width: 30px;
   height: 30px;
-  color: var(--ds-color-primary);
+  color: var(--ds-color-primary-soft-fg);
   border-radius: var(--ds-radius-sm);
 }
 

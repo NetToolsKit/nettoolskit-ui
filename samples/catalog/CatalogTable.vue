@@ -568,7 +568,7 @@ const scrollRowsFew = computed(() => scrollRows.slice(0, 4))
 .cg-errbox__title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--ds-color-danger);
+  color: var(--ds-color-danger-soft-fg);
 }
 
 .cg-errbox__code {

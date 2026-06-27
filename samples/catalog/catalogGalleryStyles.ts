@@ -30,9 +30,11 @@ export const buttonBase: CSSProperties = {
 export function variantStyle(variant: ButtonVariant, tone: GalleryTone): CSSProperties {
   const c = `var(--ds-color-${tone})`
   const soft = `var(--ds-color-${tone}-soft)`
+  // Foreground tuned to contrast on the soft bg (lighter tint in dark theme).
+  const softFg = `var(--ds-color-${tone}-soft-fg)`
   const contrast = `var(--ds-color-${tone}-contrast)`
   if (variant === 'solid') return { background: c, color: contrast, borderColor: c }
-  if (variant === 'soft') return { background: soft, color: c, borderColor: 'transparent' }
+  if (variant === 'soft') return { background: soft, color: softFg, borderColor: 'transparent' }
   if (variant === 'outline') return { background: 'transparent', color: c, borderColor: c }
   if (variant === 'ghost') return { background: 'transparent', color: c, borderColor: 'transparent' }
   // plain
@@ -61,7 +63,8 @@ export function badgeSolid(tone: GalleryTone): CSSProperties {
 }
 
 export function badgeSoft(tone: GalleryTone): CSSProperties {
-  return { ...badgePill, background: `var(--ds-color-${tone}-soft)`, color: `var(--ds-color-${tone})` }
+  // Soft-fg text + dot so the badge stays readable on the subtle dark soft bg.
+  return { ...badgePill, background: `var(--ds-color-${tone}-soft)`, color: `var(--ds-color-${tone}-soft-fg)` }
 }
 
 /** Leading status dot inside a badge. */

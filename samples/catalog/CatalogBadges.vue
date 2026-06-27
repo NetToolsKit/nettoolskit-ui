@@ -24,7 +24,7 @@
         <DsBadge :style="softStyle(tone)">
           <span
             class="cg-badgedot"
-            :style="dotStyle(`var(--ds-color-${tone})`)"
+            :style="dotStyle(`var(--ds-color-${tone}-soft-fg)`)"
           />{{ toneName(tone) }}
         </DsBadge>
       </div>

@@ -215,7 +215,7 @@ function toastStyle(tone: 'success' | 'danger'): Record<string, string> {
 .cg-banner__title {
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--ds-color-warning);
+  color: var(--ds-color-warning-soft-fg);
 }
 
 .cg-banner__message {
