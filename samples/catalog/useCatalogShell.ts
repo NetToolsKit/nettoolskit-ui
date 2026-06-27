@@ -191,31 +191,31 @@ function autoBrandTextColor(brandHex: string): string {
     : TEXT_BLACK
 }
 
-/** Inline-override keys this composable owns, so reset clears exactly these. */
-const BRAND_OVERRIDE_KEYS = [
-  '--ntk-primary',
-  '--ntk-accent',
-  '--ntk-primary-rgb',
-  '--ntk-accent-rgb',
-  '--ntk-primary-dark',
-  '--ntk-accent-hover',
-  '--ntk-accent-soft',
-  '--ntk-nav-active-bg',
-  // Brand "source" mirrors — let theme-scoped subtrees (e.g. the embedded
-  // Industrial under data-theme='machine') re-read the live brand without the
-  // machine theme block re-pinning the primary/accent family.
-  '--cat-brand',
-  '--cat-brand-dark',
-  '--cat-brand-rgb',
-  '--cat-brand-soft',
-] as const
+/**
+ * Reference catalog's EXACT per-theme `soft` tint for the canonical brand
+ * swatches (purple / blue), copied verbatim from its tokens. We pin the brand
+ * HUE constant across themes (so the primary/dot never shift), but the SOFT
+ * surface must still adapt per theme — in dark it is a DARK tint of the hue,
+ * not a light wash. For these two swatches we use the reference's literal soft
+ * values; arbitrary custom colors derive a per-theme soft via color-mix.
+ */
+const CANONICAL_BRAND_SOFT: Record<string, Record<CatalogTheme, string>> = {
+  '#4f26db': { light: '#ece8fb', dark: '#241a4d', hc: '#e9e3fb' }, // purple
+  '#2563eb': { light: '#e8f0fe', dark: '#152449', hc: '#e3ebfb' }, // blue
+}
 
-/** Brand text-color override keys (contrast on top of the brand color). */
-const BRAND_TEXT_OVERRIDE_KEYS = [
-  '--ntk-primary-contrast',
-  '--ntk-text-on-accent',
-  '--cat-brand-contrast',
-] as const
+/**
+ * Per-theme SOFT tint for an arbitrary brand hue. Light/HC are LIGHT washes
+ * (mix toward white); DARK is a DARK tint (mix toward the dark surface) so the
+ * soft never renders as a light panel in dark theme.
+ */
+function brandSoftFor(hex: string, theme: CatalogTheme): string {
+  const canonical = CANONICAL_BRAND_SOFT[hex.toLowerCase()]
+  if (canonical) return canonical[theme]
+  if (theme === 'dark') return `color-mix(in srgb, ${hex} 22%, var(--ds-color-surface, #121a2b))`
+  if (theme === 'hc') return `color-mix(in srgb, ${hex} 16%, white)`
+  return `color-mix(in srgb, ${hex} 14%, white)`
+}
 
 /** Brand text-color choice: 'auto' (luminance-derived) or a forced hex. */
 export type CatalogBrandTextColor = 'auto' | string
@@ -245,7 +245,11 @@ function root(): HTMLElement | null {
 export function applyTheme(theme: CatalogTheme): void {
   state.theme = theme
   const el = root()
-  if (el) el.dataset.theme = theme
+  if (!el) return
+  el.dataset.theme = theme
+  // Re-pin the brand inline for the new theme: the hue stays constant, but the
+  // per-theme SOFT tint (light wash vs dark tint) must re-resolve.
+  paintBrand()
 }
 
 export function applyDensity(density: CatalogDensity): void {
@@ -265,12 +269,17 @@ export function applyFont(fontId: string): void {
   if (el) el.style.setProperty('--ntk-font-sans', font.stack)
 }
 
+/** The brand hue currently in effect: the user pick, or the catalog default. */
+function effectiveBrand(): string {
+  return state.brandColor ?? catalogSwatches[0].hex
+}
+
 /**
  * Resolves the effective brand-text color for the active choice: 'auto' derives
  * it from the current brand color's luminance; otherwise the forced hex is used.
  */
 function resolveBrandTextColor(): string {
-  const brand = state.brandColor ?? catalogSwatches[0].hex
+  const brand = effectiveBrand()
   return state.brandTextColor === 'auto' ? autoBrandTextColor(brand) : state.brandTextColor
 }
 
@@ -289,33 +298,48 @@ function paintBrandTextColor(): void {
 }
 
 /**
- * Sets the live brand color: writes primary/accent + rgb channels and derives
- * the dark/hover and soft surfaces with color-mix, all as inline overrides. Also
- * writes `--cat-brand*` source mirrors so theme-scoped subtrees can re-read the
- * live brand, and re-paints the brand-text color (Auto re-derives from the new
- * brand).
+ * Paints the WHOLE brand family inline on <html> from the effective brand hue.
+ *
+ * The brand HUE is pinned CONSTANT across themes: `--ntk-primary`/`--ntk-accent`
+ * (+ rgb) are written verbatim so Light↔Dark↔HC never shift the brand tone (the
+ * MARCA dot and primary accents stay identical). Only the theme-relative parts
+ * adapt:
+ *   - hover = color-mix(brand 82%, black);
+ *   - soft / nav-active-bg = brandSoftFor() — a LIGHT wash in light/hc but a
+ *     DARK tint in dark (so the soft is never a light panel in dark theme);
+ *   - contrast = the brand-text adjuster value (painted separately).
+ * Also mirrors `--cat-brand*` for theme-scoped subtrees (embedded Industrial).
+ * Must be re-run on theme change so the per-theme soft re-resolves.
  */
-export function applyBrandColor(hex: string): void {
-  state.brandColor = hex
+function paintBrand(): void {
   const el = root()
   if (!el) return
+  const hex = effectiveBrand()
   const rgb = hexToRgbChannels(hex)
-  const dark = `color-mix(in srgb, ${hex} 82%, black)`
-  const soft = `color-mix(in srgb, ${hex} 12%, white)`
+  const hover = `color-mix(in srgb, ${hex} 82%, black)`
+  const soft = brandSoftFor(hex, state.theme)
   el.style.setProperty('--ntk-primary', hex)
   el.style.setProperty('--ntk-accent', hex)
   el.style.setProperty('--ntk-primary-rgb', rgb)
   el.style.setProperty('--ntk-accent-rgb', rgb)
-  el.style.setProperty('--ntk-primary-dark', dark)
-  el.style.setProperty('--ntk-accent-hover', dark)
+  el.style.setProperty('--ntk-primary-dark', hover)
+  el.style.setProperty('--ntk-accent-hover', hover)
   el.style.setProperty('--ntk-accent-soft', soft)
   el.style.setProperty('--ntk-nav-active-bg', soft)
   // Brand source mirrors (read by theme-scoped subtrees, e.g. the Industrial).
   el.style.setProperty('--cat-brand', hex)
-  el.style.setProperty('--cat-brand-dark', dark)
+  el.style.setProperty('--cat-brand-dark', hover)
   el.style.setProperty('--cat-brand-rgb', rgb)
   el.style.setProperty('--cat-brand-soft', soft)
   paintBrandTextColor()
+}
+
+/**
+ * Sets the live brand color (user pick) and repaints the whole brand family.
+ */
+export function applyBrandColor(hex: string): void {
+  state.brandColor = hex
+  paintBrand()
 }
 
 /**
@@ -327,46 +351,20 @@ export function applyBrandTextColor(choice: CatalogBrandTextColor): void {
   paintBrandTextColor()
 }
 
-/**
- * Seeds the brand SOURCE mirrors (--cat-brand*) with the catalog default brand
- * so theme-scoped subtrees (the embedded Industrial under data-theme='machine')
- * follow the brand even with no user pick — without writing the primary/accent
- * family inline. Used on init and on reset.
- */
-function seedBrandSource(): void {
-  const el = root()
-  if (!el) return
-  const fallback = catalogSwatches[0].hex
-  const rgb = hexToRgbChannels(fallback)
-  el.style.setProperty('--cat-brand', fallback)
-  el.style.setProperty('--cat-brand-dark', `color-mix(in srgb, ${fallback} 82%, black)`)
-  el.style.setProperty('--cat-brand-rgb', rgb)
-  el.style.setProperty('--cat-brand-soft', `color-mix(in srgb, ${fallback} 12%, white)`)
-  el.style.setProperty('--cat-brand-contrast', resolveBrandTextColor())
-}
-
-/** Clears the inline brand overrides, falling back to the theme default. */
+/** Clears the user pick, restoring the catalog default brand (still pinned). */
 export function resetBrandColor(): void {
   state.brandColor = null
   state.brandTextColor = 'auto'
-  const el = root()
-  if (!el) return
-  for (const key of BRAND_OVERRIDE_KEYS) {
-    el.style.removeProperty(key)
-  }
-  for (const key of BRAND_TEXT_OVERRIDE_KEYS) {
-    el.style.removeProperty(key)
-  }
-  // Restore the brand SOURCE to the catalog default (so the embedded Industrial
-  // keeps following the catalog default, not steel-navy) and re-paint the
-  // Auto-derived brand-text color inline (keeps it theme-stable after reset).
-  seedBrandSource()
-  paintBrandTextColor()
+  // Repaint from the default brand: the family stays inline (pinned hue across
+  // themes), the Auto brand-text color re-derives, and the embedded Industrial
+  // keeps following the catalog default brand.
+  paintBrand()
 }
 
 /**
  * Owns the document theme axes for the catalog: forces the reference light
- * palette (overriding any legacy data-theme like 'revolut') on mount.
+ * palette (overriding any legacy data-theme like 'revolut') on mount, and pins
+ * the brand family inline so the hue is constant across themes from the start.
  */
 export function initCatalogShell(): void {
   applyTheme(state.theme)
@@ -375,14 +373,10 @@ export function initCatalogShell(): void {
   const el = root()
   if (!el) return
   el.dataset.brand = 'purple'
-  // Seed the brand SOURCE mirrors so the embedded Industrial follows the catalog
-  // default brand even before the user picks one. Brand state stays null until a
-  // pick (the rest of the catalog keeps resolving from the data-brand block).
-  seedBrandSource()
-  // Paint the brand-text color inline from the start so text drawn on top of the
-  // brand color (segmented controls, primary buttons, badges) is identical
-  // across light/dark/hc — Auto-derived from the default brand.
-  paintBrandTextColor()
+  // Pin the brand family inline from the start (constant hue across themes), so
+  // the MARCA dot, primary accents, segmented controls and the embedded
+  // Industrial all resolve the same brand in Light / Dark / HC.
+  paintBrand()
 }
 
 export function useCatalogShell() {
