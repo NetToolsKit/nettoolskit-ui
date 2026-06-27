@@ -1,6 +1,12 @@
 <template>
   <div :id="id" :class="classes" :data-testid="testId" :aria-busy="loading ? 'true' : undefined">
-    <table class="ntk-table__table" :aria-label="caption ? undefined : ariaLabel">
+    <div
+      class="ntk-table__scroll"
+      role="region"
+      tabindex="0"
+      :aria-label="scrollRegionLabel ?? ariaLabel"
+    >
+      <table class="ntk-table__table" :aria-label="caption ? undefined : ariaLabel">
       <caption v-if="caption" class="ntk-table__caption">
         {{ caption }}
       </caption>
@@ -31,10 +37,14 @@
               class="ntk-table__sort"
               @click="onSort(column.id)"
             >
-              <span class="ntk-table__sort-label">{{ column.label }}</span>
+              <span class="ntk-table__sort-label">
+                <slot :name="`header-${column.id}`" :column="column">{{ column.label }}</slot>
+              </span>
               <span class="ntk-table__sort-indicator" aria-hidden="true">{{ sortIndicator(column.id) }}</span>
             </button>
-            <template v-else>{{ column.label }}</template>
+            <template v-else>
+              <slot :name="`header-${column.id}`" :column="column">{{ column.label }}</slot>
+            </template>
           </th>
         </tr>
       </thead>
@@ -86,7 +96,8 @@
           </td>
         </tr>
       </tbody>
-    </table>
+      </table>
+    </div>
 
     <nav v-if="pageInfo" class="ntk-table__pagination" :aria-label="paginationLabel">
       <span class="ntk-table__pagination-range">
@@ -142,6 +153,8 @@ const props = withDefaults(defineProps<NtkTableContract & {
   readonly paginationLabel?: string
   readonly previousPageLabel?: string
   readonly nextPageLabel?: string
+  /** Accessible name for the keyboard-focusable scroll region. */
+  readonly scrollRegionLabel?: string
 }>(), {
   columns: () => [],
   rows: () => [],
@@ -284,6 +297,19 @@ function onToggleRow(rowId: string): void {
   gap: var(--ntk-spacing-sm);
   font-family: var(--ntk-font-family);
   color: var(--ntk-text-primary);
+}
+
+/* Keyboard-focusable scroll container. Owns horizontal/vertical overflow so
+   long/wide tables can be scrolled with the keyboard; the focus ring marks it
+   as an interactive region for assistive tech. */
+.ntk-table__scroll {
+  overflow: auto;
+  max-inline-size: 100%;
+}
+
+.ntk-table__scroll:focus-visible {
+  outline: 2px solid var(--ntk-border-focus);
+  outline-offset: 2px;
 }
 
 .ntk-table__table {

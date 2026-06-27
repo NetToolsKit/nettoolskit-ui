@@ -2197,6 +2197,10 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "hasDefault": true,
       "required": false,
     },
+    "scrollRegionLabel": {
+      "hasDefault": false,
+      "required": false,
+    },
     "selectAllLabel": {
       "hasDefault": true,
       "required": false,

@@ -118,6 +118,39 @@ describe('DsTable', () => {
     expect(emptyCell.attributes('colspan')).toBe('4')
   })
 
+  it('wraps the table in a keyboard-focusable scroll region', () => {
+    const wrapper = mount(DsTable, {
+      props: { columns, rows, ariaLabel: 'Releases', scrollRegionLabel: 'Releases scroll area' },
+    })
+
+    const region = wrapper.get('.ntk-table__scroll')
+    expect(region.attributes('role')).toBe('region')
+    expect(region.attributes('tabindex')).toBe('0')
+    expect(region.attributes('aria-label')).toBe('Releases scroll area')
+    // The scroll region defaults to the table aria-label when no explicit label.
+    const fallback = mount(DsTable, { props: { columns, rows, ariaLabel: 'Releases' } })
+    expect(fallback.get('.ntk-table__scroll').attributes('aria-label')).toBe('Releases')
+  })
+
+  it('renders custom typed header slots with column context', () => {
+    const wrapper = mount(DsTable, {
+      props: {
+        columns: [
+          { id: 'name', label: 'Name', sortable: true },
+          { id: 'status', label: 'Status' },
+        ],
+        rows,
+      },
+      slots: {
+        'header-name': '<template #default="{ column }"><em>{{ column.label }} ASC</em></template>',
+        'header-status': '<template #default="{ column }"><b>{{ column.id }}</b></template>',
+      },
+    })
+
+    expect(wrapper.text()).toContain('Name ASC')
+    expect(wrapper.text()).toContain('status')
+  })
+
   it('renders custom cell slots with row and column context', () => {
     const wrapper = mount(DsTable, {
       props: {
