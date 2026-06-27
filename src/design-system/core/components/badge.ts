@@ -26,6 +26,8 @@ export interface NtkBadgeContract extends NtkComponentContractBase {
   readonly intent?: NtkBadgeIntent
   /** Render a text-free status dot instead of a labelled badge. */
   readonly dot?: boolean
+  /** Render a small leading status dot before the label (labelled badges). */
+  readonly leadingDot?: boolean
 }
 
 export const ntkBadgeDefaults = {

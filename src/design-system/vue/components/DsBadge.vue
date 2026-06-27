@@ -7,6 +7,7 @@
     :aria-label="dot ? label : undefined"
   >
     <template v-if="!dot">
+      <span v-if="leadingDot" class="ntk-badge__dot" aria-hidden="true"></span>
       <slot>{{ label }}</slot>
     </template>
   </span>
@@ -29,13 +30,18 @@ const props = withDefaults(defineProps<NtkBadgeContract>(), {
   size: ntkBadgeDefaults.size,
   intent: ntkBadgeDefaults.intent,
   dot: false,
+  leadingDot: false,
 })
 
 const classes = computed(() => resolveNtkBadgeRecipe({
   variant: props.variant,
   size: props.size,
   intent: props.intent,
-  class: [props.class, props.dot ? 'ntk-badge--is-dot' : null],
+  class: [
+    props.class,
+    props.dot ? 'ntk-badge--is-dot' : null,
+    props.leadingDot ? 'ntk-badge--has-leading-dot' : null,
+  ],
 }).classes)
 </script>
 
@@ -101,7 +107,9 @@ const classes = computed(() => resolveNtkBadgeRecipe({
 
 .ntk-badge--variant-soft.ntk-badge--intent-primary {
   background: var(--ntk-bg-active);
-  color: var(--ntk-primary-dark);
+  /* Brand soft surface uses the shared on-soft foreground token so the badge
+     label stays readable across themes. */
+  color: var(--ntk-on-soft);
 }
 
 .ntk-badge--variant-soft.ntk-badge--intent-success {
@@ -153,6 +161,21 @@ const classes = computed(() => resolveNtkBadgeRecipe({
 .ntk-badge--variant-outline.ntk-badge--intent-info {
   border-color: var(--ntk-info);
   color: var(--ntk-info-dark);
+}
+
+/* Leading status dot inside a labelled badge. Inherits the badge foreground via
+   currentColor so it matches the (intent-derived) label color automatically. */
+.ntk-badge__dot {
+  flex: 0 0 auto;
+  inline-size: 0.375rem;
+  block-size: 0.375rem;
+  border-radius: var(--ntk-radius-full);
+  background: currentColor;
+}
+
+.ntk-badge--size-lg .ntk-badge__dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
 }
 
 .ntk-badge--is-dot {

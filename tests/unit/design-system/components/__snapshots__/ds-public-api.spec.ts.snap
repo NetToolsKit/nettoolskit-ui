@@ -117,6 +117,10 @@ exports[`Ds* public API contract > pins the public props/events of DsBadge 1`] =
       "hasDefault": false,
       "required": false,
     },
+    "leadingDot": {
+      "hasDefault": true,
+      "required": false,
+    },
     "size": {
       "hasDefault": true,
       "required": false,
