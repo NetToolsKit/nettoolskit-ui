@@ -492,3 +492,51 @@
   --ind-panelhdr-h: 38px;
   --ind-tree-row: 34px;
 }
+
+/* ============================================================
+ * THEMED SCROLLBARS
+ * ------------------------------------------------------------
+ * The catalog page and every inner scroll area (TOC, dock panels,
+ * tables, canvas, code editor, etc.) get theme-aware scrollbars so
+ * dark theme no longer shows light/native bars. Driven entirely by
+ * `--ntk-*` tokens; `color-scheme` flips the native UA scrollbar +
+ * form-control rendering per theme. WebKit + Firefox covered.
+ * ============================================================ */
+[data-theme='light'],
+[data-theme='hc'] {
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* Firefox: thin themed bars (thumb · track). */
+html {
+  scrollbar-color: var(--ntk-border-strong) var(--ntk-row-bg);
+  scrollbar-width: thin;
+}
+
+/* WebKit/Chromium: themed bars for the page and any scroll area. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ntk-row-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ntk-border-strong);
+  border: 3px solid var(--ntk-row-bg);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ntk-text-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--ntk-row-bg);
+}
