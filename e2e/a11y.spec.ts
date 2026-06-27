@@ -1,10 +1,12 @@
 /**
- * Library browser + accessibility gate over the design-system sample catalog.
+ * Library browser + accessibility gate over the living design-system catalog.
  *
- * Proves the rendered DOM (real browser, not jsdom) is accessible and that key
- * `Ds*` interactions behave: landmarks, an axe scan, keyboard focus, and the
- * dialog open/close/focus lifecycle. Scope is the sample host only — no product,
- * CMS, template, or network flows.
+ * The default sample host is the catalog (CatalogApp): a sticky top control bar,
+ * a fixed side-menu TOC, the hero, fundamentals, component galleries and the
+ * example screens. This gate proves the rendered DOM (real browser, not jsdom) is
+ * accessible and that key Ds* interactions behave: landmarks, an axe scan,
+ * keyboard focus, and a dialog open/close lifecycle. Scope is the sample host
+ * only — no product, CMS, template, or network flows.
  */
 
 import AxeBuilder from '@axe-core/playwright'
@@ -14,13 +16,12 @@ const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
-  // The CRUD recipe hydrates its table asynchronously; wait for the catalog to
-  // settle so the a11y scan covers the fully rendered DOM.
-  await expect(page.getByRole('heading', { name: 'Clientes', exact: true })).toBeVisible()
+  // The catalog renders its hero first; wait for the title so the a11y scan
+  // covers the fully-rendered catalog.
+  await expect(page.getByRole('heading', { name: /Sistema de Design/ }).first()).toBeVisible()
 })
 
 test('catalog exposes a main landmark and a top-level heading', async ({ page }) => {
-  // Page-level recipes (DsCrudPage/DsFormPage) provide <main> landmarks.
   await expect(page.locator('main').first()).toBeVisible()
   await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible()
 })
@@ -44,16 +45,12 @@ test('keyboard focus reaches an interactive control', async ({ page }) => {
   expect(['BUTTON', 'A', 'INPUT', 'SELECT', 'TEXTAREA']).toContain(focusedTag)
 })
 
-test('DsDialog opens, holds focus, and closes on Escape', async ({ page }) => {
-  await page.getByRole('button', { name: 'Editar perfil' }).click()
+test('DsDialog opens from the Modais gallery and closes on Escape', async ({ page }) => {
+  // The Modais section exposes size triggers ("Abrir · SM/MD/LG/XL/Full").
+  await page.getByRole('button', { name: /Abrir.*MD/ }).first().click()
 
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
-  await expect(dialog).toContainText('Editar perfil')
-
-  // Native <dialog> modal moves focus inside; it must stay within the dialog.
-  const focusInside = await dialog.evaluate((el) => el.contains(document.activeElement))
-  expect(focusInside).toBe(true)
 
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()

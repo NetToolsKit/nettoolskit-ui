@@ -13,7 +13,12 @@
     <div class="cg-block">
       <span class="cg-eyebrow">{{ t.scrollTitle }}</span>
       <span class="cg-blockdesc">{{ t.scrollDesc }}</span>
-      <div class="cg-scrollbox cg-scrollbox--hv">
+      <div
+        class="cg-scrollbox cg-scrollbox--hv"
+        tabindex="0"
+        role="region"
+        :aria-label="t.scrollDesc"
+      >
         <div class="cg-grid14">
           <div class="cg-grid14__head">
             <div
@@ -81,7 +86,12 @@
       <div class="cg-block cg-block--tight">
         <span class="cg-eyebrow">{{ t.scrollVTitle }}</span>
         <span class="cg-blockdesc cg-blockdesc--sm">{{ t.scrollVDesc }}</span>
-        <div class="cg-scrollbox cg-scrollbox--v">
+        <div
+          class="cg-scrollbox cg-scrollbox--v"
+          tabindex="0"
+          role="region"
+          :aria-label="t.scrollVDesc"
+        >
           <div class="cg-grid5">
             <div class="cg-grid5__head">
               <div class="cg-grid5__hcell">
@@ -128,7 +138,12 @@
       <div class="cg-block cg-block--tight cg-minw0">
         <span class="cg-eyebrow">{{ t.scrollHTitle }}</span>
         <span class="cg-blockdesc cg-blockdesc--sm">{{ t.scrollHDesc }}</span>
-        <div class="cg-scrollbox cg-scrollbox--h">
+        <div
+          class="cg-scrollbox cg-scrollbox--h"
+          tabindex="0"
+          role="region"
+          :aria-label="t.scrollHDesc"
+        >
           <div class="cg-grid14 cg-grid14--h">
             <div class="cg-grid14__head cg-grid14__head--plain">
               <div
