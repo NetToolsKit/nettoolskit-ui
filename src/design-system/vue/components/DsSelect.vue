@@ -328,7 +328,9 @@ function scrollActiveIntoView(): void {
   const id = optionId(activeIndex.value)
   const safeId = typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(id) : id
   const el = panelRef.value?.querySelector<HTMLElement>(`#${safeId}`)
-  el?.scrollIntoView({ block: 'nearest' })
+  // jsdom (unit env) doesn't implement scrollIntoView — optional-call it so the
+  // keyboard/active-option logic stays test-safe in the browser-less suite.
+  el?.scrollIntoView?.({ block: 'nearest' })
 }
 
 function onWindowChange(): void {
