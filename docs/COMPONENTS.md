@@ -37,7 +37,7 @@ Source: `src/design-system/core/components/button.ts`.
 | Setting | Values |
 | --- | --- |
 | Defaults | variant `solid`, size `md`, intent `primary` |
-| Variants | `solid`, `outline`, `ghost`, `link` |
+| Variants | `solid`, `soft`, `outline`, `ghost`, `link`, `plain` |
 | Sizes | `sm`, `md`, `lg` |
 | Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
 | States | `disabled`, `loading` |
@@ -66,9 +66,11 @@ Source: `src/design-system/core/components/button.ts`.
 | --- | --- |
 | `root` | `ntk-button` |
 | `variant solid` | `ntk-button--variant-solid` |
+| `variant soft` | `ntk-button--variant-soft` |
 | `variant outline` | `ntk-button--variant-outline` |
 | `variant ghost` | `ntk-button--variant-ghost` |
 | `variant link` | `ntk-button--variant-link` |
+| `variant plain` | `ntk-button--variant-plain` |
 | `size sm` | `ntk-button--size-sm` |
 | `size md` | `ntk-button--size-md` |
 | `size lg` | `ntk-button--size-lg` |

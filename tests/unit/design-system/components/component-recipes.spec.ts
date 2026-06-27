@@ -37,7 +37,7 @@ import {
 
 describe('design-system component recipes', () => {
   it('exposes typed button, field, size, and intent primitives', () => {
-    expect(ntkButtonVariants).toEqual(['solid', 'outline', 'ghost', 'link'])
+    expect(ntkButtonVariants).toEqual(['solid', 'soft', 'outline', 'ghost', 'link', 'plain'])
     expect(ntkFieldVariants).toEqual(['outlined', 'filled', 'plain'])
     expect(ntkTableVariants).toEqual(['default', 'bordered', 'striped'])
     expect(ntkPageVariants).toEqual(['default', 'surface', 'dashboard'])
@@ -183,6 +183,20 @@ describe('design-system component recipes', () => {
     expect(ntkButtonRecipeClassMap.variants.ghost).toBe('ntk-button--variant-ghost')
     expect(ntkButtonRecipeClassMap.sizes.lg).toBe('ntk-button--size-lg')
     expect(ntkButtonRecipeClassMap.intents.info).toBe('ntk-button--intent-info')
+  })
+
+  it('maps the soft and plain button variants', () => {
+    expect(ntkButtonRecipeClassMap.variants.soft).toBe('ntk-button--variant-soft')
+    expect(ntkButtonRecipeClassMap.variants.plain).toBe('ntk-button--variant-plain')
+    expect(resolveNtkButtonRecipe({ variant: 'soft', intent: 'success' }).classes).toEqual([
+      'ntk-button',
+      'ntk-button--variant-soft',
+      'ntk-button--size-md',
+      'ntk-button--intent-success',
+    ])
+    expect(resolveNtkButtonRecipe({ variant: 'plain', intent: 'neutral' }).className).toBe(
+      'ntk-button ntk-button--variant-plain ntk-button--size-md ntk-button--intent-neutral',
+    )
   })
 
   it('maps button contracts into pure Vue compatibility props', () => {

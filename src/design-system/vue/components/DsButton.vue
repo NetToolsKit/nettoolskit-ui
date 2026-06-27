@@ -180,6 +180,30 @@ const classes = computed(() => [
   background: color-mix(in srgb, var(--ntk-c-dark) 85%, black);
 }
 
+/* Soft: a tinted fill with the intent's dark shade as readable foreground.
+   The light tint + dark text mirrors the badge/banner soft treatment and keeps
+   small label text above WCAG AA on the subtle surface. */
+.ntk-button--variant-soft {
+  border-color: transparent;
+  background: var(--ntk-c-light);
+  color: var(--ntk-c-dark);
+}
+
+.ntk-button--variant-soft:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ntk-c-light) 88%, var(--ntk-c-dark));
+}
+
+/* Neutral soft has no semantic light tint, so it falls back to the page hover
+   surface with the secondary text shade. */
+.ntk-button--variant-soft.ntk-button--intent-neutral {
+  background: var(--ntk-bg-secondary);
+  color: var(--ntk-text-primary);
+}
+
+.ntk-button--variant-soft.ntk-button--intent-neutral:hover:not(:disabled) {
+  background: var(--ntk-bg-hover);
+}
+
 .ntk-button--variant-outline {
   border-color: var(--ntk-c);
   background: transparent;
@@ -210,6 +234,23 @@ const classes = computed(() => [
 .ntk-button--variant-link:hover:not(:disabled) {
   color: var(--ntk-text-link-hover);
   text-decoration: underline;
+}
+
+/* Plain: no chrome at all (transparent bg + border) with the intent text color.
+   Unlike ghost, plain keeps its label color flat on hover (no surface fill),
+   matching the reference low-emphasis action. Neutral plain uses primary text. */
+.ntk-button--variant-plain {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ntk-c-text);
+}
+
+.ntk-button--variant-plain.ntk-button--intent-neutral {
+  color: var(--ntk-text-primary);
+}
+
+.ntk-button--variant-plain:hover:not(:disabled) {
+  color: var(--ntk-c-dark);
 }
 
 /* States. */
