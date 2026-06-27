@@ -608,7 +608,8 @@ function onCustomTextColor(event: Event): void {
 
 .cat-menu .cat-fontlist__item.is-active {
   background: var(--ntk-nav-active-bg);
-  color: var(--ntk-primary);
+  /* Selected option sits on the soft nav-active surface → global on-soft rule. */
+  color: var(--ntk-on-soft);
   font-weight: 600;
 }
 </style>

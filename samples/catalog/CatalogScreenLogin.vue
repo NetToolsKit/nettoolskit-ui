@@ -247,7 +247,7 @@ const feats = computed(() => [props.t.feat1, props.t.feat2, props.t.feat3])
   height: 20px;
   border-radius: 999px;
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ntk-on-soft);
   display: flex;
   align-items: center;
   justify-content: center;

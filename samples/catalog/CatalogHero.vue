@@ -194,7 +194,8 @@ const chips = computed(() => [
   margin: 0;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--ntk-primary);
+  /* Text on the brand soft callout surface → global on-soft rule. */
+  color: var(--ntk-on-soft);
 }
 
 /* Brand lockups */

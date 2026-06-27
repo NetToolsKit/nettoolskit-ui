@@ -72,6 +72,26 @@
   --ds-color-warning-soft-fg: var(--ds-color-warning);
   --ds-color-danger-soft-fg: var(--ds-color-danger);
   --ds-color-info-soft-fg: var(--ds-color-info);
+
+  /* GLOBAL "on-soft" rule (single source of truth).
+     `--ntk-on-soft` is the text/icon/dot color for ANY element whose background
+     is the BRAND soft surface (`*-soft` / `--ntk-accent-soft` / nav-active).
+     It aliases the brand soft-fg so every soft surface — chips, the TOC active
+     item, the FONTE selected option, custom-select rows, avatars, etc. — points
+     at one token instead of hardcoding the deep brand. Semantic tones keep using
+     their matching `--ds-color-<tone>-soft-fg`. Resolves to the deep brand on
+     light/hc (readable on the pale wash) and to a LIGHT tint on dark. */
+  --ntk-on-soft: var(--ds-color-primary-soft-fg);
+}
+
+/* Bridge tokens that color TEXT-ON-SOFT (the nav/sidebar active item sits on the
+   soft `--ntk-nav-active-bg`). themes.css points these at the deep brand
+   `--ntk-accent` from inside an `html[data-theme]` rule, so we re-point them at
+   the global on-soft rule at matching specificity (and load later) — making the
+   active-item label/icon follow `--ntk-on-soft` everywhere. */
+html[data-theme] {
+  --ntk-sidebar-item-active-text: var(--ntk-on-soft);
+  --ntk-nav-active-fg: var(--ntk-on-soft);
 }
 
 [data-theme='light'] {
@@ -113,29 +133,39 @@
   --ds-color-border: #293549;
   --ds-color-border-strong: #3b4a64;
   --ds-color-neutral: #94a3b8;
+  /* Neutral soft (dark): a barely-there lift off the surface. */
+  --ds-color-neutral-soft: color-mix(in srgb, #94a3b8 9%, var(--ds-color-surface));
   --ds-color-neutral-contrast: #0a0f1c;
   --ds-color-success: #3ecf7f;
+  /* Semantic SOFT tones (dark): the reference's literal dark softs read too
+     heavy, so these are now GENTLE, subtle tints just above the surface
+     (~12% of the tone). Still clearly dark tints, never light. */
+  --ds-color-success-soft: color-mix(in srgb, var(--ds-color-success) 12%, var(--ds-color-surface));
   --ds-color-success-contrast: #04140b;
   --ds-color-warning: #f0a93b;
+  --ds-color-warning-soft: color-mix(in srgb, var(--ds-color-warning) 12%, var(--ds-color-surface));
   --ds-color-warning-contrast: #1a1304;
   --ds-color-danger: #f4736f;
+  --ds-color-danger-soft: color-mix(in srgb, var(--ds-color-danger) 12%, var(--ds-color-surface));
   --ds-color-danger-contrast: #1a0606;
   --ds-color-info: #3ec5e6;
+  --ds-color-info-soft: color-mix(in srgb, var(--ds-color-info) 12%, var(--ds-color-surface));
   --ds-color-info-contrast: #04141a;
 
-  /* SOFT tones (dark) === LIGHT theme softs. Per the final user decision the
-     dark soft must look IDENTICAL to light: light-wash BACKGROUND + the deep
-     tone FOREGROUND. The soft BACKGROUNDS below are the light-theme literals;
-     the soft FOREGROUNDS are intentionally NOT overridden here, so they fall
-     back to the shared-block default (`*-soft-fg: var(--ds-color-<tone>)`) — the
-     same deep tone used in light/hc. Primary soft also matches light: the
-     shared block resolves `--ds-color-primary-soft: var(--ntk-accent-soft)` and
-     the shell writes the LIGHT brand wash inline (dark === light). */
-  --ds-color-neutral-soft: #eef1f5;
-  --ds-color-success-soft: #e7f7ee;
-  --ds-color-warning-soft: #fbf0dd;
-  --ds-color-danger-soft: #fce9e9;
-  --ds-color-info-soft: #e3f4fa;
+  /* SOFT BACKGROUND (dark): the brand soft becomes a SUBTLE tint of the LIVE
+     brand against the dark surface (gentler than the old #241a4d block), so it
+     follows the brand picker yet stays barely above the surface. */
+  --ds-color-primary-soft: color-mix(in srgb, var(--ntk-primary) 9%, var(--ds-color-surface));
+
+  /* SOFT FOREGROUND (dark): the text/icon ON the dark soft bg is the LIGHT
+     theme's soft BACKGROUND color (a very light tint of the tone) — high
+     contrast on the dark soft surface, per the requested look. */
+  --ds-color-primary-soft-fg: var(--cat-brand-soft-light, #ece8fb);
+  --ds-color-neutral-soft-fg: #eef1f5;
+  --ds-color-success-soft-fg: #e7f7ee;
+  --ds-color-warning-soft-fg: #fbf0dd;
+  --ds-color-danger-soft-fg: #fce9e9;
+  --ds-color-info-soft-fg: #e3f4fa;
   --ds-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.5);
   --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --ds-overlay: rgba(2, 6, 16, 0.7);
@@ -250,8 +280,7 @@
 
   --ntk-accent: #8b73f2;
   --ntk-accent-hover: #a594f5;
-  /* Dark soft === light soft (user decision): light purple wash, not a dark tint. */
-  --ntk-accent-soft: #ece8fb;
+  --ntk-accent-soft: #241a4d;
   --ntk-accent-rgb: 139, 115, 242;
 
   --ntk-success: #3ecf7f;
@@ -259,7 +288,7 @@
   --ntk-error: #f4736f;
   --ntk-info: #3ec5e6;
 
-  --ntk-nav-active-bg: #ece8fb;
+  --ntk-nav-active-bg: #241a4d;
   --ntk-nav-hover-bg: rgba(var(--ntk-primary-rgb), 0.08);
   --ntk-nav-active-border: #8b73f2;
 
@@ -406,8 +435,7 @@
   --ntk-primary-rgb: 139, 115, 242;
   --ntk-accent: #8b73f2;
   --ntk-accent-hover: #a594f5;
-  /* Dark soft === light soft (user decision). */
-  --ntk-accent-soft: #ece8fb;
+  --ntk-accent-soft: #241a4d;
   --ntk-accent-rgb: 139, 115, 242;
 }
 
@@ -427,8 +455,7 @@
   --ntk-primary-rgb: 96, 165, 250;
   --ntk-accent: #60a5fa;
   --ntk-accent-hover: #85bdfb;
-  /* Dark soft === light soft (user decision): light blue wash. */
-  --ntk-accent-soft: #e8f0fe;
+  --ntk-accent-soft: #152449;
   --ntk-accent-rgb: 96, 165, 250;
 }
 

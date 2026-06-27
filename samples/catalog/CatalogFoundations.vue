@@ -489,7 +489,7 @@ function toneSoftDot(tone: GalleryTone): CSSProperties {
   padding: 3px 11px;
   border-radius: var(--ds-radius-pill);
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ds-color-primary-soft-fg);
   font-size: 12px;
   font-weight: 600;
 }
@@ -498,7 +498,7 @@ function toneSoftDot(tone: GalleryTone): CSSProperties {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: var(--ds-color-primary);
+  background: var(--ds-color-primary-soft-fg);
 }
 
 .cg-brand__note {

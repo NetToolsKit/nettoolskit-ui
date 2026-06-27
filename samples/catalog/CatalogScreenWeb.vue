@@ -354,7 +354,7 @@ function badgeStyle(s: CustomerStatus): CSSProperties {
     fontSize: '12px',
     fontWeight: 600,
     background: `var(--ds-color-${tone}-soft)`,
-    color: `var(--ds-color-${tone})`,
+    color: `var(--ds-color-${tone}-soft-fg)`,
   }
 }
 </script>
@@ -682,7 +682,7 @@ function badgeStyle(s: CustomerStatus): CSSProperties {
 .wb-act--primary {
   border-color: transparent;
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ntk-on-soft);
 }
 
 .wb-act--primary:hover {
@@ -730,7 +730,7 @@ function badgeStyle(s: CustomerStatus): CSSProperties {
   border-radius: var(--ds-radius-md);
   border: var(--ds-border-width) solid transparent;
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ntk-on-soft);
   font-size: 13px;
   font-weight: 600;
   font-family: var(--ds-font-sans);

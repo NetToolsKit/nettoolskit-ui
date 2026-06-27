@@ -266,7 +266,7 @@
                       height="34"
                       viewBox="0 0 24 24"
                       fill="none"
-                      :stroke="`var(--ds-color-${p.tone})`"
+                      :stroke="`var(--ds-color-${p.tone}-soft-fg)`"
                       stroke-width="1.5"
                       stroke-linejoin="round"
                       aria-hidden="true"
@@ -458,7 +458,7 @@ function pillStyle(tone: string): CSSProperties {
     padding: '2px 9px',
     borderRadius: '999px',
     background: `var(--ds-color-${tone}-soft)`,
-    color: `var(--ds-color-${tone})`,
+    color: `var(--ds-color-${tone}-soft-fg)`,
     fontSize: '11.5px',
     fontWeight: 600,
   }
@@ -609,7 +609,7 @@ function pillStyle(tone: string): CSSProperties {
   height: 30px;
   border-radius: 999px;
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ntk-on-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -668,7 +668,7 @@ function pillStyle(tone: string): CSSProperties {
 
 .ec-nav--active {
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ntk-on-soft);
 }
 
 .ec-nav__icon {
@@ -872,7 +872,7 @@ function pillStyle(tone: string): CSSProperties {
   height: 38px;
   border-radius: 999px;
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary);
+  color: var(--ntk-on-soft);
   display: flex;
   align-items: center;
   justify-content: center;

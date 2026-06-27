@@ -371,7 +371,8 @@ onBeforeUnmount(() => {
 
 .cs-option--selected {
   background: var(--ds-color-primary-soft);
-  color: var(--ds-color-primary-soft-fg, var(--ds-color-primary));
+  /* Selected row sits on the brand soft surface → global on-soft rule. */
+  color: var(--ntk-on-soft);
   font-weight: 600;
 }
 
@@ -382,6 +383,6 @@ onBeforeUnmount(() => {
 .cs-option__check {
   flex: 0 0 auto;
   font-size: 12px;
-  color: var(--ds-color-primary-soft-fg, var(--ds-color-primary));
+  color: var(--ntk-on-soft);
 }
 </style>

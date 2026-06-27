@@ -501,6 +501,20 @@ function toggleCheck(value: string): void {
   align-items: center;
 }
 
+/* The soft primary DsChip renders on the brand SOFT surface; re-skin it (samples
+   scope permits :deep) so the chip bg is the catalog brand soft and the label +
+   the "×" remove icon both follow the global on-soft rule (deep brand on
+   light/hc, light tint on dark) instead of the deep brand baked into the chip. */
+.cg-chips :deep(.ntk-chip--variant-soft.ntk-chip--intent-primary) {
+  background: var(--ds-color-primary-soft);
+  color: var(--ntk-on-soft);
+}
+
+.cg-chips :deep(.ntk-chip--variant-soft.ntk-chip--intent-primary .ntk-chip__label),
+.cg-chips :deep(.ntk-chip--variant-soft.ntk-chip--intent-primary .ntk-chip__remove) {
+  color: var(--ntk-on-soft);
+}
+
 .cg-chips__empty {
   font-size: 12px;
   font-style: italic;

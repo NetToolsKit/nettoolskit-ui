@@ -325,7 +325,9 @@ onBeforeUnmount(() => {
 
 .cat-toc__link.is-active {
   background: var(--ntk-nav-active-bg);
-  color: var(--ntk-primary);
+  /* Text on the soft nav-active surface uses the global on-soft rule (deep brand
+     on light/hc, light tint on dark) instead of the deep brand directly. */
+  color: var(--ntk-on-soft);
   font-weight: 600;
 }
 
@@ -335,5 +337,11 @@ onBeforeUnmount(() => {
   border-radius: 999px;
   background: var(--ntk-primary);
   flex: 0 0 auto;
+}
+
+/* Active item: the bullet sits ON the soft nav-active surface, so it follows the
+   on-soft rule too (light tint on dark, deep brand on light/hc). */
+.cat-toc__link.is-active .cat-toc__bullet {
+  background: var(--ntk-on-soft);
 }
 </style>
