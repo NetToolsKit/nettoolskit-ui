@@ -69,6 +69,6 @@ Do not edit by hand.
 
 | File | Contents |
 | --- | --- |
-| `DESIGN.md` | System overview, sources, and usage rules. |
-| `TOKENS.md` | Token groups and resolved CSS variable reference. |
-| `COMPONENTS.md` | Component contracts, defaults, variants, and class maps. |
+| `docs/DESIGN.md` | System overview, sources, and usage rules. |
+| `docs/TOKENS.md` | Token groups and resolved CSS variable reference. |
+| `docs/COMPONENTS.md` | Component contracts, defaults, variants, and class maps. |

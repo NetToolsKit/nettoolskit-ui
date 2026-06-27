@@ -32,9 +32,9 @@ describe('design-system documentation generator', () => {
   it('keeps checked-in markdown synchronized with generated output', async () => {
     const { docs } = await generateDesignSystemDocs()
 
-    expect(docs.design).toBe(await readRepoFile('../../../../DESIGN.md'))
-    expect(docs.tokens).toBe(await readRepoFile('../../../../TOKENS.md'))
-    expect(docs.components).toBe(await readRepoFile('../../../../COMPONENTS.md'))
+    expect(docs.design).toBe(await readRepoFile('../../../../docs/DESIGN.md'))
+    expect(docs.tokens).toBe(await readRepoFile('../../../../docs/TOKENS.md'))
+    expect(docs.components).toBe(await readRepoFile('../../../../docs/COMPONENTS.md'))
 
     const result = await checkDesignSystemDocs()
 

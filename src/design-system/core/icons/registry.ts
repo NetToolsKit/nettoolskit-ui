@@ -40,6 +40,14 @@ export const ntkCommandIconRegistry = {
   close: '<path d="M6 6l12 12"/><path d="M18 6L6 18"/>',
   menu: '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>',
   'chevron-down': '<path d="M6 9l6 6 6-6"/>',
+  'chevron-left': '<path d="M15 6l-6 6 6 6"/>',
+  'chevron-right': '<path d="M9 6l6 6-6 6"/>',
+  dashboard: '<rect x="3" y="3" width="8" height="9" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="12" width="8" height="9" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/>',
+  users: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6.1"/><path d="M17.5 14.4A5.5 5.5 0 0 1 20.5 20"/>',
+  user: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  store: '<path d="M4 9h16l-1-4H5z"/><path d="M4 9v2a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0V9"/><path d="M5 11v9h14v-9"/><path d="M10 20v-5h4v5"/>',
+  factory: '<path d="M3 20h18"/><path d="M4 20V9l5 3.5V9l5 3.5V7l5 3v10"/><path d="M7 16h2"/><path d="M12 16h2"/><path d="M17 16h2"/>',
+  bell: '<path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 19a2 2 0 0 0 4 0"/>',
 } as const
 
 /** Closed union of supported command icon names. */
