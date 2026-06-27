@@ -86,6 +86,14 @@ describe('DsBanner', () => {
     expect(wrapper.get('.ntk-banner__actions').text()).toBe('Retry')
   })
 
+  it('renders the accent variant (neutral surface + colored left rail)', () => {
+    const wrapper = mount(DsBanner, { props: { variant: 'accent', intent: 'warning', message: 'x' } })
+    expect(wrapper.get('.ntk-banner').classes()).toEqual(expect.arrayContaining([
+      'ntk-banner--variant-accent',
+      'ntk-banner--intent-warning',
+    ]))
+  })
+
   it('has no accessibility violations when dismissible with actions', async () => {
     const wrapper = mount(DsBanner, {
       props: { title: 'Saved', message: 'All good', dismissible: true, intent: 'success' },
@@ -121,6 +129,16 @@ describe('DsToast', () => {
   it('omits the close button when not dismissible', () => {
     const wrapper = mount(DsToast, { props: { message: 'x', dismissible: false } })
     expect(wrapper.find('.ntk-toast__dismiss').exists()).toBe(false)
+  })
+
+  it('renders the accent variant with a colored icon rail', () => {
+    const wrapper = mount(DsToast, { props: { variant: 'accent', intent: 'success', icon: '✓', message: 'Saved' } })
+    const root = wrapper.get('.ntk-toast')
+    expect(root.classes()).toEqual(expect.arrayContaining([
+      'ntk-toast--variant-accent',
+      'ntk-toast--intent-success',
+    ]))
+    expect(wrapper.get('.ntk-toast__icon').attributes('aria-hidden')).toBe('true')
   })
 })
 
