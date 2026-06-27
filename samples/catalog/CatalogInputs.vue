@@ -51,12 +51,11 @@
         :hint="t.inHintPlano"
       />
 
-      <!-- Status (select) -->
-      <DsSelect
+      <!-- Status (select) — themed custom dropdown (no native OS popup) -->
+      <CatalogSelect
         id="cg-in-status"
-        class="cg-field"
+        v-model="statusValue"
         :label="t.inStatus"
-        :model-value="'ativo'"
         :options="statusOptions"
         :hint="t.inHintStatus"
       />
@@ -74,7 +73,7 @@
         <span class="cg-loadingfield__hint">{{ t.inHintLoading }}</span>
       </div>
 
-      <!-- (a) Multi-select with chips — uses DsSelect(multiple) + DsChip -->
+      <!-- (a) Multi-select with chips — themed CatalogSelect to add + DsChip -->
       <div class="cg-field cg-xfield">
         <span class="cg-xfield__label">{{ t.inMulti }}</span>
         <div class="cg-chips">
@@ -94,22 +93,13 @@
             class="cg-chips__empty"
           >{{ t.inMultiEmpty }}</span>
         </div>
-        <select
-          class="cg-xcontrol"
-          :value="''"
-          @change="addMulti(($event.target as HTMLSelectElement).value)"
-        >
-          <option value="">
-            {{ t.inMultiAdd }}
-          </option>
-          <option
-            v-for="opt in availableMulti"
-            :key="opt.value"
-            :value="opt.value"
-          >
-            {{ opt.label }}
-          </option>
-        </select>
+        <CatalogSelect
+          id="cg-in-multi-add"
+          :model-value="''"
+          :options="availableMulti"
+          :placeholder="t.inMultiAdd"
+          @update:model-value="addMulti"
+        />
         <span class="cg-xfield__hint">{{ t.inHintMulti }}</span>
       </div>
 
@@ -152,12 +142,11 @@
         <span class="cg-xfield__hint">{{ t.inHintAuto }}</span>
       </div>
 
-      <!-- (c) Required single-choice — DsSelect with required + validation -->
-      <DsSelect
+      <!-- (c) Required single-choice — themed custom dropdown -->
+      <CatalogSelect
         id="cg-in-dept"
-        class="cg-field cg-field--required"
-        :label="t.inRequired"
         :model-value="requiredDept"
+        :label="t.inRequired"
         :options="deptOptions"
         :placeholder="t.inRequiredPh"
         required
@@ -216,8 +205,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { DsChip, DsInput, DsSelect } from '../../index'
+import { DsChip, DsInput } from '../../index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
+import CatalogSelect from './CatalogSelect.vue'
 import type { CatalogStrings } from './catalogI18n'
 
 interface Option { value: string; label: string }
@@ -230,6 +220,7 @@ const statusOptions = computed(() => [
   { value: 'inativo', label: props.locale === 'en' ? 'Inactive' : 'Inativo' },
   { value: 'bloqueado', label: props.locale === 'en' ? 'Blocked' : 'Bloqueado' },
 ])
+const statusValue = ref('ativo')
 
 function optionLabel(opts: readonly Option[], value: string): string {
   return opts.find((o) => o.value === value)?.label ?? value
@@ -280,8 +271,8 @@ const deptOptions = computed<Option[]>(() => [
   { value: 'support', label: props.t.deptSupport },
 ])
 const requiredDept = ref('')
-function onRequired(value: string | string[]): void {
-  requiredDept.value = Array.isArray(value) ? (value[0] ?? '') : value
+function onRequired(value: string): void {
+  requiredDept.value = value
 }
 
 /* (d) radio group */
@@ -349,10 +340,6 @@ function toggleCheck(value: string): void {
   font-size: 14px;
   font-family: var(--ds-font-sans);
   line-height: var(--ds-control-height);
-}
-
-.cg-field :deep(select.ntk-field__control) {
-  padding: 0 36px 0 13px;
 }
 
 .cg-field :deep(.ntk-field__control:focus) {
@@ -565,13 +552,6 @@ function toggleCheck(value: string): void {
   padding: 8px 10px;
   font-size: 13px;
   color: var(--ds-color-text-muted);
-}
-
-/* required indicator (asterisk) on DsSelect label */
-.cg-field--required :deep(.ntk-field__label)::after {
-  content: ' *';
-  color: var(--ds-color-danger);
-  font-weight: 700;
 }
 
 /* radio / checkbox groups */
