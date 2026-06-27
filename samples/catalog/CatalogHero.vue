@@ -275,6 +275,13 @@ const chips = computed(() => [
   color: #ffffff;
 }
 
+/* Negative lockup sits on the BRAND background, so its text must follow the
+   brand contrast color (the "Cor do texto" adjuster) — not a hardcoded white.
+   Mono/photo keep white (they sit on dark surfaces). */
+.cat-lockup__card--negative .cat-lockup__name {
+  color: var(--ntk-text-on-accent);
+}
+
 .cat-lockup__overlay {
   position: absolute;
   right: 12px;

@@ -304,7 +304,7 @@ function onCustomTextColor(event: Event): void {
   display: flex;
   align-items: center;
   gap: 28px;
-  padding: 14px clamp(20px, 4vw, 48px);
+  padding: 11px clamp(20px, 4vw, 48px);
 }
 
 /* Brand */
@@ -375,10 +375,10 @@ function onCustomTextColor(event: Event): void {
   appearance: none;
   border: none;
   cursor: pointer;
-  padding: 6px 12px;
+  padding: 5px 11px;
   border-radius: 7px;
   font: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--ntk-text-muted);
   background: transparent;
@@ -402,13 +402,13 @@ function onCustomTextColor(event: Event): void {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  padding: 7px 12px;
-  border-radius: 9px;
+  padding: 6px 11px;
+  border-radius: 8px;
   border: 1px solid var(--ntk-border);
   background: var(--ntk-card-bg);
   color: var(--ntk-text-heading);
   font: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   transition: border-color 0.15s, background 0.15s;
 }
