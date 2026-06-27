@@ -55,13 +55,13 @@ governance gates green (lint:css = 0, 100% core coverage, generated docs in sync
 
 ## Progress Checklist
 
-Progress: 0% (0/8 checked)
+Progress: 100% (8/8 checked)
 
-- [ ] DsButton soft + plain variants
-- [ ] DsCard soft variant
-- [ ] DsBadge dot + soft foreground
-- [ ] DsTable sort + pagination + scroll region + slots
-- [ ] DsSelect themed panel (searchable/multiple, ARIA)
-- [ ] DsDialog header/footer regions
-- [ ] DsToast/DsBanner left-accent variant
-- [ ] Catalog refactor to native variants + gates green (incl. 100% core, docs)
+- [x] DsButton soft + plain variants
+- [x] DsCard soft variant
+- [x] DsBadge dot + soft foreground
+- [x] DsTable sort + pagination + scroll region + slots
+- [x] DsSelect themed panel (searchable/multiple, ARIA)
+- [x] DsDialog header/footer regions
+- [x] DsToast/DsBanner left-accent variant
+- [x] Catalog refactor to native variants + gates green (incl. 100% core, docs)

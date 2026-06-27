@@ -189,16 +189,16 @@ describe('DsSelect', () => {
     disabled.unmount()
   })
 
-  it('does not emit model updates while readonly', async () => {
+  it('does not open or emit model updates while readonly', async () => {
     const wrapper = mount(DsSelect, {
       attachTo: document.body,
       props: { id: 'ro', modelValue: 'draft', readonly: true, options },
     })
 
     await openPanel(wrapper)
-    const optionEls = document.querySelectorAll('#ro__listbox [role="option"]')
-    ;(optionEls[1] as HTMLElement).click()
-    await nextTick()
+    // A readonly select shows its value but does not open an interactive panel.
+    expect(wrapper.get('.ntk-select__trigger').attributes('aria-expanded')).toBe('false')
+    expect(document.getElementById('ro__listbox')).toBeNull()
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     wrapper.unmount()
   })
