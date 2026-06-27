@@ -35,6 +35,9 @@
           >
             <span>{{ t.tdDrop }}</span>
           </div>
+
+          <!-- rotate hint pill (matches the reference) -->
+          <span class="vw-hint">{{ t.tdHint }}</span>
         </div>
 
         <!-- transport controls -->
@@ -76,17 +79,27 @@
             {{ playing ? t.tdPause : t.tdPlay }}
           </button>
 
-          <input
-            v-model.number="frame"
-            class="vw-scrub"
-            type="range"
-            min="0"
-            max="240"
-            step="1"
-            :aria-label="t.tdTimeline"
-            @input="onScrub"
-          >
-          <span class="vw-frame">{{ Math.round(frame) }} / 240</span>
+          <div class="vw-track">
+            <input
+              v-model.number="frame"
+              class="vw-scrub"
+              type="range"
+              min="0"
+              max="240"
+              step="1"
+              :aria-label="t.tdTimeline"
+              @input="onScrub"
+            >
+            <div class="vw-times">
+              <span>{{ formatTime(frame) }}</span>
+              <span>frame {{ Math.round(frame) }} / 240</span>
+              <span>{{ formatTime(240) }}</span>
+            </div>
+          </div>
+
+          <span class="vw-droppill">
+            <span aria-hidden="true">⬆</span> {{ t.tdDropPill }}
+          </span>
         </div>
       </div>
     </template>
@@ -106,6 +119,14 @@ const playing = ref(true)
 const frame = ref(0)
 const dragHover = ref(false)
 const clipName = ref('walk_cycle.fbx')
+
+/** Frame → mm:ss timecode at 60 fps (matches the reference transport row). */
+function formatTime(f: number): string {
+  const totalSeconds = Math.round(f) / 60
+  const mm = Math.floor(totalSeconds / 60)
+  const ss = Math.floor(totalSeconds % 60)
+  return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`
+}
 
 // Minimal structural typings for the bits of three we touch (lazy-imported).
 type ThreeModule = typeof import('three')
@@ -448,17 +469,53 @@ onBeforeUnmount(() => {
   filter: brightness(0.95);
 }
 
-.vw-scrub {
+.vw-track {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.vw-scrub {
+  width: 100%;
   accent-color: var(--ds-color-primary);
   cursor: pointer;
 }
 
-.vw-frame {
+.vw-times {
+  display: flex;
+  justify-content: space-between;
   font-family: var(--ds-font-mono);
+  font-size: 10px;
+  color: var(--ds-color-text-muted);
+}
+
+/* rotate hint pill inside the viewport (bottom-left) */
+.vw-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  font-size: 11px;
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface);
+  border: var(--ds-border-width) solid var(--ds-color-border);
+  border-radius: var(--ds-radius-pill);
+  padding: 3px 10px;
+  pointer-events: none;
+}
+
+/* persistent drop pill on the right of the transport controls */
+.vw-droppill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
   font-size: 12px;
   color: var(--ds-color-text-muted);
-  min-width: 62px;
-  text-align: right;
+  background: var(--ds-color-surface);
+  border: var(--ds-border-width) solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  padding: 7px 12px;
 }
 </style>

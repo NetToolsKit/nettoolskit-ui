@@ -380,6 +380,8 @@ const pt: CatalogStrings = {
   tdPause: 'Pausar',
   tdTimeline: 'Linha do tempo',
   tdDrop: 'Solte um arquivo .fbx / .glb para carregar',
+  tdDropPill: 'Arraste um .fbx / .glb aqui',
+  tdHint: 'Arraste para girar · a cor segue a marca',
   tdLoading: 'Carregando visualizador 3D…',
   // industrial
   indAppTitle: 'Engineering Studio',
@@ -798,6 +800,8 @@ const en: CatalogStrings = {
   tdPause: 'Pause',
   tdTimeline: 'Timeline',
   tdDrop: 'Drop a .fbx / .glb file to load',
+  tdDropPill: 'Drop a .fbx / .glb here',
+  tdHint: 'Drag to rotate · color follows the brand',
   tdLoading: 'Loading 3D viewer…',
   // industrial
   indAppTitle: 'Engineering Studio',
