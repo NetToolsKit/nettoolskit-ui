@@ -44,7 +44,7 @@
   "scripts": {
     "build": "npm run build:js && npm run build:dts",
     "build:js": "tsup",
-    "build:dts": "vue-tsc --declaration --emitDeclarationOnly --outDir .build/dist",
+    "build:dts": "vue-tsc --declaration --emitDeclarationOnly --outDir .build/dist && node scripts/emit-dist-entry-dts.mjs",
     "build:samples": "vite build",
     "dev": "npm run dev:samples",
     "dev:samples": "vite",
