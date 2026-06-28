@@ -74,12 +74,16 @@ case "$stage" in
     npm run test:e2e
     ;;
   release)
-    # Publishes nettoolskit to the public npm registry. npm-publish.sh gates on
-    # the source ref (publishes only on main / v*; dry-run elsewhere) and is
-    # idempotent on an already-published version. `npm publish` triggers the
-    # prepublishOnly build, so full devDependencies are required here.
+    # Publishes @nettoolskit/ui to BOTH registries (org standard):
+    #   - npm-publish.sh    -> public npmjs.org (primary, no-auth install)
+    #   - package-publish.sh -> GitHub Packages (org-internal mirror)
+    # Both gate on the source ref (publish only on main / v*; dry-run elsewhere)
+    # and are idempotent on an already-published version. Build once up front so
+    # the GitHub Packages publish can reuse dist with --ignore-scripts.
     npm_ci
+    npm run build
     bash "$script_dir/npm-publish.sh"
+    bash "$script_dir/package-publish.sh"
     ;;
   *)
     echo "Unknown River frontend stage: $stage" >&2

@@ -295,7 +295,7 @@ const dashboardSnippet = `<DsMetricGrid
   aria-label="Indicadores"
 />`
 
-const crudSnippet = `import { DsCrudPage, defineResource } from 'nettoolskit'
+const crudSnippet = `import { DsCrudPage, defineResource } from '@nettoolskit/ui'
 
 const resource = defineResource({
   title: 'Clientes',
@@ -315,7 +315,7 @@ const resource = defineResource({
 })
 // <DsCrudPage :resource="resource" />`
 
-const formSnippet = `import { DsFormPage, defineForm } from 'nettoolskit'
+const formSnippet = `import { DsFormPage, defineForm } from '@nettoolskit/ui'
 
 const schema = defineForm({
   columns: 2,
@@ -352,7 +352,7 @@ const emptyStateSnippet = `<DsEmptyState title="Nenhum cliente encontrado" varia
 <DsStateBlock state="loading" title="Carregando clientes" />
 <DsStateBlock state="error" title="Falha ao carregar" />`
 
-const gallerySnippet = `import { useToast } from 'nettoolskit'
+const gallerySnippet = `import { useToast } from '@nettoolskit/ui'
 
 const { pushToast } = useToast()
 // <DsBadge label="Novo" intent="primary" />

@@ -77,7 +77,7 @@ Register the whole `Ds*` system and bootstrap theme/color-scheme in one call:
 
 ```ts
 import { createApp } from 'vue'
-import { createNetToolsKitUI } from 'nettoolskit'
+import { createNetToolsKitUI } from '@nettoolskit/ui'
 
 createApp(App).use(createNetToolsKitUI({ theme: 'revolut', colorScheme: 'auto' })).mount('#app')
 ```

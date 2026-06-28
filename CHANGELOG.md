@@ -23,10 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `DsChip`, `DsSteps`, `DsLogo`, and the app shell family (`DsAppShell`/`DsHeader`/`DsSidebar`/`DsFooter`/`DsDrawer`); `DsSelect` multiple selection.
 - **MIGRATION.md** and an `Ntk*`→`Ds*` codemod (`scripts/codemod/ntk-to-ds.mjs`).
 - **L0–L3 architecture guide** (`docs/architecture/layers.md`) with a decision guide, worked example, and the pure-vs-framework (`core`/styles/`vue`) split.
-- **npm publishing via the GitRiver `release` stage** (`scripts/ci/river/npm-publish.sh`): `nettoolskit` publishes to the public npm registry on `main`/`v*` refs with dist-tag `preview` (idempotent; credential injected into the runner).
+- **Dual-registry publishing via the GitRiver `release` stage** on `main`/`v*` refs with dist-tag `preview` (idempotent; credentials injected into the runner): `scripts/ci/river/npm-publish.sh` → public **npmjs.org** (primary), `scripts/ci/river/package-publish.sh` → **GitHub Packages** (org mirror).
 
 ### Changed
 
+- **BREAKING: package renamed `nettoolskit` → `@nettoolskit/ui`** to follow the `@nettoolskit/*` org scope convention. Update installs (`npm install @nettoolskit/ui`), imports (`from '@nettoolskit/ui'`) and style subpaths (`@nettoolskit/ui/styles/*`). The unscoped `nettoolskit` preview is deprecated on npm with a pointer to the new name.
 - **CSS governance is now zero-tolerance.** The baseline scans `src/design-system/vue/components` with all metrics at 0 (directQuasarTags / quasarClassSelectors / unmanagedDeepSelectors / importantDeclarations / rawHexColors), and an ESLint rule blocks reintroducing legacy `Ntk*`/`Base*` or `src/components` imports.
 
 ## [0.0.1-preview.1] - 2026-06-22
