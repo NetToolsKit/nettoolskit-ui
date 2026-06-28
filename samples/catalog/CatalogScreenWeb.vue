@@ -35,7 +35,7 @@
                 <input
                   v-model="query"
                   :placeholder="t.searchPh"
-                  aria-label="Buscar cliente"
+                  :aria-label="t.webSearchAria"
                   class="wb-search__input"
                 >
                 <span

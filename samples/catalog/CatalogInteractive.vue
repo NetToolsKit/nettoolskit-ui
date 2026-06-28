@@ -33,7 +33,7 @@
             draggable="true"
             @dragstart="dragCard = id"
           >
-            {{ kanbanCards[id].title }}
+            {{ t[kanbanCards[id].titleKey] }}
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@
             class="cg-drawswatch"
             :class="{ 'is-active': drawColor === c }"
             :style="{ background: c }"
-            aria-label="cor"
+            :aria-label="t.drawColorAria"
             @click="drawColor = c"
           />
         </div>
