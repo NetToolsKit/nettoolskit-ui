@@ -128,7 +128,7 @@ import {
   type NtkTableColumn,
   type NtkTableRow,
   type NtkTreeNode,
-} from '../../index'
+} from '../../src/index'
 
 // Command icons come from the built-in closed registry (no icon font). The
 // authoring commands below map each logical action to the nearest registry

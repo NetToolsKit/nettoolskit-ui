@@ -43,7 +43,7 @@ import {
   type NtkTableColumn,
   type NtkTableRow,
   type NtkTableSort,
-} from '../../index'
+} from '../../src/index'
 
 const columns: NtkTableColumn[] = [
   { id: 'order', label: 'Pedido', sortable: true },

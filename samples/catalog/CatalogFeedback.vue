@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DsBanner, DsButton, DsToast } from '../../index'
+import { DsBanner, DsButton, DsToast } from '../../src/index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
 

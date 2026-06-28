@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { DsButton, DsCard } from '../../index'
+import { DsButton, DsCard } from '../../src/index'
 
 const props = withDefaults(defineProps<{
   title: string

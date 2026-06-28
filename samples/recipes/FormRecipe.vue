@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DsFormPage, defineForm } from '../../index'
+import { DsFormPage, defineForm } from '../../src/index'
 
 const schema = defineForm({
   columns: 2,

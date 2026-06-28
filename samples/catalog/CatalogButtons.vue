@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { DsButton } from '../../index'
+import { DsButton } from '../../src/index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
 import {

@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { DsCard } from '../../index'
+import { DsCard } from '../../src/index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
 

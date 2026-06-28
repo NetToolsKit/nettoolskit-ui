@@ -314,7 +314,7 @@ import {
   type NtkRibbonTab,
   type NtkStatusBarSegment,
   type NtkTreeNode,
-} from '../../index'
+} from '../../src/index'
 
 const props = defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
 

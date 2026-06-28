@@ -143,7 +143,7 @@ import {
   type NtkTabItem,
   type NtkTableColumn,
   type NtkTableRow,
-} from '../../index'
+} from '../../src/index'
 
 type Category = 'apparel' | 'electronics' | 'home'
 

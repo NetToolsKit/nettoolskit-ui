@@ -34,88 +34,88 @@
 // ============================================================================
 // ADAPTERS
 // ============================================================================
-export * from './src/adapters/QuasarNotificationAdapter'
+export * from './adapters/QuasarNotificationAdapter'
 
 // ============================================================================
 // DESIGN SYSTEM (Ds* components, tokens, recipes, schema, install plugin)
 // ============================================================================
-export * from './src/design-system'
+export * from './design-system'
 
 // ============================================================================
 // COMPOSABLES - Forms
 // ============================================================================
-export * from './src/composables/forms/useFormRules'
+export * from './composables/forms/useFormRules'
 
 // ============================================================================
 // COMPOSABLES - UI
 // ============================================================================
-export * from './src/composables/ui/useDialog'
-export * from './src/composables/ui/useDialogActions'
-export * from './src/composables/ui/useResponsive'
-export * from './src/composables/ui/useTheme'
-export * from './src/composables/ui/useColorScheme'
-export * from './src/composables/ui/useBranding'
-export * from './src/composables/ui/useToast'
+export * from './composables/ui/useDialog'
+export * from './composables/ui/useDialogActions'
+export * from './composables/ui/useResponsive'
+export * from './composables/ui/useTheme'
+export * from './composables/ui/useColorScheme'
+export * from './composables/ui/useBranding'
+export * from './composables/ui/useToast'
 
 // ============================================================================
 // COMPOSABLES - Data
 // ============================================================================
-export * from './src/composables/data/useFilters'
-export * from './src/composables/data/useTableColumns'
+export * from './composables/data/useFilters'
+export * from './composables/data/useTableColumns'
 
 // ============================================================================
 // COMPOSABLES - Utils
 // ============================================================================
-export * from './src/composables/utils/useDebounce'
-export * from './src/composables/utils/useAsync'
+export * from './composables/utils/useDebounce'
+export * from './composables/utils/useAsync'
 
 // ============================================================================
 // COMPOSABLES - Services
 // ============================================================================
-export * from './src/composables/services/useNotification'
+export * from './composables/services/useNotification'
 
 // ============================================================================
 // SERVICES
 // ============================================================================
-export * from './src/services/NotificationService'
-export * from './src/services/FilterService'
-export * from './src/services/FormValidationService'
+export * from './services/NotificationService'
+export * from './services/FilterService'
+export * from './services/FormValidationService'
 
 // ============================================================================
 // UTILS - Validators
 // ============================================================================
-export * from './src/utils/validators'
+export * from './utils/validators'
 
 // ============================================================================
 // UTILS - Async
 // ============================================================================
-export * from './src/utils/async'
+export * from './utils/async'
 
 // ============================================================================
 // CONFIG - Theme
 // ============================================================================
-export * from './src/config/theme/theme.config'
+export * from './config/theme/theme.config'
 // Legacy compatibility export. Prefer the preset-driven runtime theme model,
 // CSS custom properties, and Quasar Dark Plugin sync for new template work.
-export * from './src/config/theme/theme.plugin'
+export * from './config/theme/theme.plugin'
 
 // ============================================================================
 // CONFIG - Brand
 // ============================================================================
-export * from './src/config/brand/identity.config'
-export * from './src/config/brand/navigation.config'
-export * from './src/config/brand/content.config'
+export * from './config/brand/identity.config'
+export * from './config/brand/navigation.config'
+export * from './config/brand/content.config'
 
 // ============================================================================
 // CONFIG - Presets
 // ============================================================================
-export * from './src/config/presets'
+export * from './config/presets'
 
 // ============================================================================
 // CONFIG - Colors
 // ============================================================================
-export * from './src/config/colors/palette.config'
-export * from './src/config/colors/semantic.config'
+export * from './config/colors/palette.config'
+export * from './config/colors/semantic.config'
 // Legacy compatibility export. Prefer preset/theme CSS custom properties for
 // runtime white-label work so tokens can be swapped without plugin writes.
-export * from './src/config/colors/theme-mode.config'
+export * from './config/colors/theme-mode.config'

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { DsMetricGrid } from '../../index'
+import { DsMetricGrid } from '../../src/index'
 
 const metrics = [
   { id: 'revenue', label: 'Receita', value: 'R$ 128k', delta: '+12%', deltaDirection: 'up' as const },

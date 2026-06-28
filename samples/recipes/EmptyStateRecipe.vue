@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 // Pure presentation: each state is a static demo of the async surfaces.
-import { DsButton, DsEmptyState, DsStateBlock } from '../../index'
+import { DsButton, DsEmptyState, DsStateBlock } from '../../src/index'
 </script>
 
 <style scoped>

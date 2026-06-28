@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { computed, ref, type CSSProperties } from 'vue'
-import { DsDialog } from '../../index'
+import { DsDialog } from '../../src/index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
 

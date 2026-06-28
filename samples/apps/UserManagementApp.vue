@@ -55,7 +55,7 @@ import {
   pushToast,
   type NtkMetricItem,
   type NtkQueryParams,
-} from '../../index'
+} from '../../src/index'
 
 interface User {
   id: number

@@ -8,7 +8,7 @@ import vue from 'esbuild-plugin-vue3'
  */
 export default defineConfig({
   entry: {
-    index: 'index.ts',
+    index: 'src/index.ts',
     styles: 'src/styles/index.ts',
   },
   format: ['cjs', 'esm'],

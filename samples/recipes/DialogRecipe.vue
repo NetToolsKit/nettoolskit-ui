@@ -26,7 +26,7 @@
 // No custom CSS for the dialog/form; DsDialog owns focus trap + Esc/backdrop,
 // DsForm owns layout, validation and submit.
 import { ref } from 'vue'
-import { DsButton, DsDialog, DsForm, defineForm } from '../../index'
+import { DsButton, DsDialog, DsForm, defineForm } from '../../src/index'
 
 const schema = defineForm({
   fields: [
