@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `DsTable` server mode (sortable headers, server pagination, loading) wired through `DsCrudPage`.
   - `DsChip`, `DsSteps`, `DsLogo`, and the app shell family (`DsAppShell`/`DsHeader`/`DsSidebar`/`DsFooter`/`DsDrawer`); `DsSelect` multiple selection.
 - **MIGRATION.md** and an `Ntk*`→`Ds*` codemod (`scripts/codemod/ntk-to-ds.mjs`).
+- **L0–L3 architecture guide** (`docs/architecture/layers.md`) with a decision guide, worked example, and the pure-vs-framework (`core`/styles/`vue`) split.
+- **npm publishing via the GitRiver `release` stage** (`scripts/ci/river/npm-publish.sh`): `nettoolskit` publishes to the public npm registry on `main`/`v*` refs with dist-tag `preview` (idempotent; credential injected into the runner).
 
 ### Changed
 
