@@ -22,11 +22,11 @@
         <div class="cg-grid14">
           <div class="cg-grid14__head">
             <div
-              v-for="col in scrollCols"
-              :key="col"
+              v-for="colKey in scrollColKeys"
+              :key="colKey"
               class="cg-grid14__hcell"
             >
-              {{ col }}
+              {{ t[colKey] }}
             </div>
           </div>
           <div
@@ -95,19 +95,19 @@
           <div class="cg-grid5">
             <div class="cg-grid5__head">
               <div class="cg-grid5__hcell">
-                ID
+                {{ t.tcId }}
               </div>
               <div class="cg-grid5__hcell">
-                Tag
+                {{ t.tcTag }}
               </div>
               <div class="cg-grid5__hcell">
-                Tipo
+                {{ t.tcType }}
               </div>
               <div class="cg-grid5__hcell">
-                Zona
+                {{ t.tcZone }}
               </div>
               <div class="cg-grid5__hcell">
-                Upd
+                {{ t.tcUpd }}
               </div>
             </div>
             <div
@@ -147,11 +147,11 @@
           <div class="cg-grid14 cg-grid14--h">
             <div class="cg-grid14__head cg-grid14__head--plain">
               <div
-                v-for="col in scrollCols"
-                :key="col"
+                v-for="colKey in scrollColKeys"
+                :key="colKey"
                 class="cg-grid14__hcell cg-grid14__hcell--h"
               >
-                {{ col }}
+                {{ t[colKey] }}
               </div>
             </div>
             <div
@@ -274,7 +274,7 @@
 import { computed } from 'vue'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
-import { scrollCols, scrollRows } from './catalogGalleryData'
+import { scrollColKeys, scrollRows } from './catalogGalleryData'
 
 defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
 

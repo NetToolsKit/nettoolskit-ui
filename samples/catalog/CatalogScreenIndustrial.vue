@@ -29,7 +29,7 @@
                 :items="quickActions"
                 variant="default"
                 size="sm"
-                aria-label="Quick access"
+                :aria-label="t.indQuickAccess"
               />
             </header>
           </template>
@@ -38,14 +38,14 @@
             <DsRibbon
               v-model:active-tab="activeTab"
               :tabs="ribbonTabs"
-              aria-label="Ribbon"
+              :aria-label="t.indRibbon"
               size="sm"
               density="compact"
             />
 
             <DsDockLayout
               class="ind-dock"
-              aria-label="Engineering workspace"
+              :aria-label="t.indWorkspace"
               :left-size="232"
               :right-size="232"
               :bottom-size="148"
@@ -151,7 +151,7 @@
                         tabindex="0"
                         @pointerdown="onDevicePointerDown(w.id, $event)"
                       >
-                        <span class="ind-widget__lbl">{{ w.label }}</span>
+                        <span class="ind-widget__lbl">{{ t[w.labelKey] }}</span>
                         <span
                           class="ind-widget__val"
                           :style="{ color: `var(--ntk-${w.tone})` }"
@@ -287,7 +287,7 @@
               :segments="statusSegments"
               variant="bordered"
               size="sm"
-              aria-label="Status"
+              :aria-label="t.indStatusAria"
             />
           </template>
         </DsAppShell>
@@ -362,13 +362,13 @@ ELSE
   Motor_Run := TRUE;
 END_IF`)
 
-const quickActions: NtkQuickAccessItem[] = [
-  { id: 'new', label: 'Novo', icon: 'new' },
-  { id: 'open', label: 'Abrir', icon: 'open' },
-  { id: 'save', label: 'Salvar', icon: 'save' },
-  { id: 'run', label: 'Executar', icon: 'run', intent: 'success' },
-  { id: 'stop', label: 'Parar', icon: 'stop', intent: 'danger' },
-]
+const quickActions = computed<NtkQuickAccessItem[]>(() => [
+  { id: 'new', label: props.t.indQaNew, icon: 'new' },
+  { id: 'open', label: props.t.indCmdOpen, icon: 'open' },
+  { id: 'save', label: props.t.indCmdSave, icon: 'save' },
+  { id: 'run', label: props.t.indCmdRun, icon: 'run', intent: 'success' },
+  { id: 'stop', label: props.t.indCmdStop, icon: 'stop', intent: 'danger' },
+])
 
 const activeTab = ref('home')
 const ribbonTabs = computed<NtkRibbonTab[]>(() => [
@@ -496,15 +496,15 @@ const DEV_H = 300
 const DEVICE_W = 160
 const DEVICE_H = 64
 
-interface Device { id: string; label: string; value: string; tone: string; x: number; y: number }
+interface Device { id: string; labelKey: string; value: string; tone: string; x: number; y: number }
 
 const devices = reactive<Device[]>([
-  { id: 'd-motor', label: 'Motor M-01', value: 'RUN', tone: 'success', x: 24, y: 28 },
-  { id: 'd-temp', label: 'Temp °C', value: '76.4', tone: 'info', x: 248, y: 28 },
-  { id: 'd-setpoint', label: 'Setpoint', value: '80.0', tone: 'primary', x: 456, y: 28 },
-  { id: 'd-pressure', label: 'Pressão bar', value: '2.1', tone: 'warning', x: 24, y: 176 },
-  { id: 'd-alarm', label: 'Alarme', value: 'OK', tone: 'success', x: 248, y: 176 },
-  { id: 'd-flow', label: 'Vazão L/min', value: '142', tone: 'info', x: 456, y: 176 },
+  { id: 'd-motor', labelKey: 'indDevMotor', value: 'RUN', tone: 'success', x: 24, y: 28 },
+  { id: 'd-temp', labelKey: 'indDevTemp', value: '76.4', tone: 'info', x: 248, y: 28 },
+  { id: 'd-setpoint', labelKey: 'indDevSetpoint', value: '80.0', tone: 'primary', x: 456, y: 28 },
+  { id: 'd-pressure', labelKey: 'indDevPressure', value: '2.1', tone: 'warning', x: 24, y: 176 },
+  { id: 'd-alarm', labelKey: 'indDevAlarm', value: 'OK', tone: 'success', x: 248, y: 176 },
+  { id: 'd-flow', labelKey: 'indDevFlow', value: '142', tone: 'info', x: 456, y: 176 },
 ])
 
 const deviceLinks: ReadonlyArray<{ from: string; to: string }> = [
@@ -595,10 +595,9 @@ const bottomTabs = computed(() => [
   { key: 'problems' as const, labelKey: 'indPanelProblems', count: 2 },
 ])
 
-const outputLog = `> Build iniciado: PCDemo.APP
-> Compilando Main.st ... ok
-> Vinculando tags (3) ... ok
-> Build concluído em 0.84 s — 0 erros, 1 aviso`
+const outputLog = computed(() =>
+  [props.t.indOutBuildStart, props.t.indOutCompiling, props.t.indOutLinking, props.t.indOutDone].join('\n'),
+)
 
 const watchRows = [
   { tag: 'Motor_Run', type: 'BOOL', value: 'TRUE' },

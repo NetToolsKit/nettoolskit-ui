@@ -18,7 +18,7 @@
         icon="✓"
         :title="t.fbSavedT"
         :message="t.fbSavedB"
-        dismiss-label="Fechar"
+        :dismiss-label="t.close"
         @dismiss="showSuccess = false"
       />
 
@@ -31,7 +31,7 @@
         icon="!"
         :title="t.fbErrT"
         :message="t.fbErrB"
-        dismiss-label="Fechar"
+        :dismiss-label="t.close"
         @dismiss="showError = false"
       />
 
@@ -45,7 +45,7 @@
         :title="t.fbWarnT"
         :message="t.fbWarnB"
         dismissible
-        dismiss-label="Fechar"
+        :dismiss-label="t.close"
         @dismiss="showWarning = false"
       >
         <template #actions>

@@ -140,17 +140,17 @@
     <div class="cg-typecard">
       <div
         v-for="row in typeScale"
-        :key="row.label"
+        :key="row.labelKey"
         class="cg-typerow"
       >
         <div class="cg-typerow__label">
-          <span class="cg-typerow__name">{{ row.label }}</span>
+          <span class="cg-typerow__name">{{ t[row.labelKey] }}</span>
           <span class="cg-mono cg-typerow__meta">{{ row.meta }}</span>
         </div>
         <span
           class="cg-typerow__sample"
           :style="row.style as Record<string, string>"
-        >{{ row.sample }}</span>
+        >{{ typeSample(row) }}</span>
       </div>
     </div>
   </section>
@@ -214,6 +214,7 @@ import {
   toneLabelEn,
   typeScale,
   type GalleryTone,
+  type TypeScaleRow,
 } from './catalogGalleryData'
 import { catalogSwatches, useCatalogShell } from './useCatalogShell'
 
@@ -228,6 +229,11 @@ function onCustom(event: Event): void {
 
 function toneName(tone: GalleryTone): string {
   return props.locale === 'en' ? toneLabelEn[tone] : toneLabel[tone]
+}
+
+/** Locale-resolved type-scale sample: localized copy or the fixed literal. */
+function typeSample(row: TypeScaleRow): string {
+  return row.sampleKey ? props.t[row.sampleKey] : (row.sample ?? '')
 }
 
 function toneBoxStyle(tone: GalleryTone): CSSProperties {

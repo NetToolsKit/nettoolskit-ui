@@ -47,59 +47,64 @@ export const surfaceSwatches: readonly SurfaceSwatch[] = [
   { label: 'Borda', labelEn: 'Border', varName: '--ds-color-border' },
 ]
 
-/** Type-scale rows: label + spec meta + the rendered sample style. */
+/**
+ * Type-scale rows: i18n keys for label + sample + spec meta + the rendered style.
+ * `labelKey`/`sampleKey` resolve against the active locale; Display and Mono use a
+ * fixed brand/token literal (`sample`) that is identical in both locales.
+ */
 export interface TypeScaleRow {
-  readonly label: string
-  readonly sample: string
+  readonly labelKey: string
+  readonly sampleKey?: string
+  readonly sample?: string
   readonly meta: string
   readonly style: Record<string, string | number>
 }
 
 export const typeScale: readonly TypeScaleRow[] = [
   {
-    label: 'Display',
+    labelKey: 'tsDisplay',
     sample: 'NetToolsKit',
     meta: '40px · 1.15 · 600',
     style: { fontSize: '40px', lineHeight: 1.15, fontWeight: 600, letterSpacing: '-.02em' },
   },
   {
-    label: 'Título H1',
-    sample: 'Gerencie sua base de clientes',
+    labelKey: 'tsH1',
+    sampleKey: 'tsSampleH1',
     meta: '28px · 1.2 · 600',
     style: { fontSize: '28px', lineHeight: 1.2, fontWeight: 600, letterSpacing: '-.02em' },
   },
   {
-    label: 'Título H2',
-    sample: 'Seção de conteúdo',
+    labelKey: 'tsH2',
+    sampleKey: 'tsSampleH2',
     meta: '20px · 1.3 · 600',
     style: { fontSize: '20px', lineHeight: 1.3, fontWeight: 600 },
   },
   {
-    label: 'Título H3',
-    sample: 'Cartão de informação',
+    labelKey: 'tsH3',
+    sampleKey: 'tsSampleH3',
     meta: '16px · 1.4 · 600',
     style: { fontSize: '16px', lineHeight: 1.4, fontWeight: 600 },
   },
   {
-    label: 'Corpo',
-    sample: 'Texto base para leitura contínua, com altura de linha confortável e medida adequada.',
+    labelKey: 'tsBody',
+    sampleKey: 'tsSampleBody',
     meta: '15px · 1.55 · 400',
     style: { fontSize: '15px', lineHeight: 1.55, fontWeight: 400 },
   },
   {
-    label: 'Corpo forte',
-    sample: 'Ênfase dentro do corpo de texto.',
+    labelKey: 'tsBodyStrong',
+    sampleKey: 'tsSampleBodyStrong',
     meta: '15px · 1.55 · 600',
     style: { fontSize: '15px', lineHeight: 1.55, fontWeight: 600 },
   },
   {
-    label: 'Pequeno',
-    sample: 'Texto auxiliar, dicas e legendas de apoio.',
+    labelKey: 'tsSmall',
+    sampleKey: 'tsSampleSmall',
     meta: '13px · 1.5 · 400',
     style: { fontSize: '13px', lineHeight: 1.5, fontWeight: 400, color: 'var(--ds-color-text-muted)' },
   },
   {
-    label: 'Mono',
+    labelKey: 'tsMono',
     sample: '--ds-color-primary: #4f26db',
     meta: '12px · 1.5 · 500',
     style: {
@@ -155,22 +160,25 @@ export const buttonSizes: readonly {
   { key: 'lg', labelKey: 'szLg', dsSize: 'lg', density: 'spacious' },
 ]
 
-/** Scroll table columns + generated rows (verbatim from the reference). */
-export const scrollCols = [
-  'ID',
-  'Tag',
-  'Endereço',
-  'Tipo',
-  'Valor',
-  'Unid.',
-  'Mín',
-  'Máx',
-  'Escala',
-  'Alarme',
-  'Zona',
-  'PLC',
-  'Scan',
-  'Atualizado',
+/**
+ * Scroll table column header i18n keys (14 cols) + generated rows (verbatim from
+ * the reference). Keys resolve against the active locale in CatalogTable.
+ */
+export const scrollColKeys = [
+  'tcId',
+  'tcTag',
+  'tcAddr',
+  'tcType',
+  'tcValue',
+  'tcUnit',
+  'tcMin',
+  'tcMax',
+  'tcScale',
+  'tcAlarm',
+  'tcZone',
+  'tcPlc',
+  'tcScan',
+  'tcUpdated',
 ] as const
 
 export interface ScrollRow {
@@ -216,17 +224,18 @@ export const scrollRows: readonly ScrollRow[] = Array.from({ length: 36 }, (_unu
 /** Kanban + agenda + draw seeds. */
 export interface KanbanCard {
   readonly id: string
-  readonly title: string
+  /** i18n key for the card title (resolved against the active locale). */
+  readonly titleKey: string
   readonly tone: GalleryTone
 }
 
 export const kanbanCards: Record<string, KanbanCard> = {
-  k1: { id: 'k1', title: 'OAuth + refresh token', tone: 'info' },
-  k2: { id: 'k2', title: 'Rate limiter', tone: 'warning' },
-  k3: { id: 'k3', title: 'Webhook retries', tone: 'neutral' },
-  k4: { id: 'k4', title: 'Migração de schema', tone: 'primary' },
-  k5: { id: 'k5', title: 'Cache de tags', tone: 'success' },
-  k6: { id: 'k6', title: 'Auditoria de acesso', tone: 'danger' },
+  k1: { id: 'k1', titleKey: 'kbCardOauth', tone: 'info' },
+  k2: { id: 'k2', titleKey: 'kbCardRate', tone: 'warning' },
+  k3: { id: 'k3', titleKey: 'kbCardWebhook', tone: 'neutral' },
+  k4: { id: 'k4', titleKey: 'kbCardSchema', tone: 'primary' },
+  k5: { id: 'k5', titleKey: 'kbCardCache', tone: 'success' },
+  k6: { id: 'k6', titleKey: 'kbCardAudit', tone: 'danger' },
 }
 
 export type KanbanColumnKey = 'todo' | 'doing' | 'done'

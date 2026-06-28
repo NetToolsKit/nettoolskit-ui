@@ -12,7 +12,7 @@
         :class="{ 'vw-shell--full': isFull }"
       >
         <!-- file chip -->
-        <span class="vw-chip">{{ clipName }} · 60 fps · 240 frames</span>
+        <span class="vw-chip">{{ clipName }} · 60 fps · 240 {{ t.vwFrames }}</span>
 
         <!-- viewport (drag to rotate) + drop zone overlay -->
         <div
@@ -92,7 +92,7 @@
             >
             <div class="vw-times">
               <span>{{ formatTime(frame) }}</span>
-              <span>frame {{ Math.round(frame) }} / 240</span>
+              <span>{{ t.vwFrame }} {{ Math.round(frame) }} / 240</span>
               <span>{{ formatTime(240) }}</span>
             </div>
           </div>

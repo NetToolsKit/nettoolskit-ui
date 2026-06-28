@@ -27,7 +27,7 @@
       class="cg-dialog"
       :style="dialogStyle"
       :title="t.modalTitle"
-      close-label="Fechar"
+      :close-label="t.close"
     >
       {{ t.modalBody }}
     </DsDialog>
