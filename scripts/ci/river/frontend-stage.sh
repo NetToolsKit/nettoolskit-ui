@@ -73,6 +73,14 @@ case "$stage" in
     npx playwright install --with-deps chromium
     npm run test:e2e
     ;;
+  release)
+    # Publishes nettoolskit to the public npm registry. npm-publish.sh gates on
+    # the source ref (publishes only on main / v*; dry-run elsewhere) and is
+    # idempotent on an already-published version. `npm publish` triggers the
+    # prepublishOnly build, so full devDependencies are required here.
+    npm_ci
+    bash "$script_dir/npm-publish.sh"
+    ;;
   *)
     echo "Unknown River frontend stage: $stage" >&2
     exit 2
