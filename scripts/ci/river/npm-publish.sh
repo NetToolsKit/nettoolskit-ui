@@ -79,10 +79,12 @@ if [ "$should_publish" != "1" ]; then
   exit 0
 fi
 
-# Accept either NPM_TOKEN or NODE_AUTH_TOKEN from the runner environment, and
-# expose it to npm as NODE_AUTH_TOKEN (which the .npmrc reference below reads).
-NODE_AUTH_TOKEN="${NPM_TOKEN:-${NODE_AUTH_TOKEN:-}}"
-[ -n "$NODE_AUTH_TOKEN" ] || fail "npm publish credential is required (set NPM_TOKEN or NODE_AUTH_TOKEN)."
+# Resolve the npm token via the shared resolver: process env first (a no-op while
+# GitRiver still syncs NPM_TOKEN), else Bitwarden (key NPM_PACKAGES). Exposed to
+# npm as NODE_AUTH_TOKEN, which the .npmrc reference below reads.
+resolver_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NODE_AUTH_TOKEN="$(bash "$resolver_dir/resolve-secret.sh" NPM_TOKEN NODE_AUTH_TOKEN NPM_PACKAGES)" \
+  || fail "npm publish credential is required (NPM_TOKEN/NODE_AUTH_TOKEN env, or Bitwarden NPM_PACKAGES)."
 export NODE_AUTH_TOKEN
 
 tmp_dir=""
