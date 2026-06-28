@@ -51,8 +51,8 @@ Local vitest does NOT run here (Node 26 + network mount). Verify via:
 
 ## Progress Checklist
 
-Progress: 0% (0/3 checked)
+Progress: 100% (3/3 checked)
 
-- [ ] index.ts → src/index.ts (entry + all imports + configs)
-- [ ] e2e → tests/e2e (playwright testDir + river path refs)
-- [ ] archive the 2 shipped specs; gates green (build + ci-tests + river)
+- [x] index.ts → src/index.ts (entry + all imports + configs)
+- [x] e2e → tests/e2e (playwright testDir + river path refs)
+- [x] archive the 2 shipped specs; gates green (build + ci-tests + river)
