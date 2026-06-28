@@ -19,6 +19,47 @@ Peer dependencies:
 npm install vue quasar
 ```
 
+> **Preview release.** `0.0.1-preview.x` is an early preview: the public surface
+> is stabilizing and minor versions may introduce breaking changes until `0.1.0`.
+
+## Quick start
+
+One-line install registers every `Ds*` component and bootstraps theming:
+
+```ts
+import { createNetToolsKitUI } from 'nettoolskit'
+import 'nettoolskit/styles/global.scss'
+
+app.use(createNetToolsKitUI({ theme: 'auto' }))
+```
+
+A complete CRUD screen from a single schema — list + filter + pagination +
+validated form + delete, with no per-screen CSS and no raw Quasar:
+
+```vue
+<template>
+  <DsCrudPage :resource="resource" />
+</template>
+
+<script setup lang="ts">
+import { DsCrudPage, defineResource } from 'nettoolskit'
+
+const resource = defineResource({
+  title: 'Clientes',
+  rowKey: 'id',
+  columns: [{ field: 'name', label: 'Nome' }, { field: 'email', label: 'E-mail' }],
+  form: [
+    { field: 'name', type: 'text', label: 'Nome', required: true, minLength: 2 },
+    { field: 'email', type: 'email', label: 'E-mail', required: true },
+  ],
+  fetch: () => api.list(),
+  create: (row) => api.create(row),
+  update: (row) => api.update(row),
+  remove: (row) => api.remove(row),
+})
+</script>
+```
+
 ## Usage
 
 ```ts
@@ -34,6 +75,23 @@ import {
 
 import 'nettoolskit/styles/global.scss'
 ```
+
+## Layers (L0–L3)
+
+The library is a layered front-creation system — pick the layer that matches how
+much control you need, and drop down a level any time for full control:
+
+| Layer | What | Reach for it when |
+|---|---|---|
+| **L0** | `Ds*` primitives + `createNetToolsKitUI()` install | One widget / app + theme setup |
+| **L1** | `DsCrudPage` / `DsFormPage` composites | No template fits → full layout control |
+| **L2** | `defineForm` / `defineResource` schema + `DsForm` | A whole screen from a schema |
+| **L3** | Recipe catalog (`samples/`) | Learn / copy a sanctioned pattern |
+
+The pure logic (contracts, class recipes, schema, validation) lives in
+`src/design-system/core/**` (zero Vue, framework-free); the `Ds*` components are
+thin render shells over it. Full guide + decision tree + worked example:
+[docs/architecture/layers.md](./docs/architecture/layers.md).
 
 ### Recipes
 
@@ -125,16 +183,21 @@ npm run test:e2e
 ```
 
 This library-only gate targets the sample catalog (`samples/`) — no product,
-CMS, or template runtime. It runs in CI via `.github/workflows/a11y.yml`
-(`workflow_dispatch` + pull requests touching the design system, samples, or the
-gate itself). Routine PR gating remains in GitRiver; broader product e2e lives
-downstream.
+CMS, or template runtime. It runs in CI inside the GitRiver `test` stage (which
+installs Chromium and runs `npm run test:e2e`), so the real-browser a11y/focus
+checks gate every PR to `main` alongside the unit, lint and build stages.
 
 Package dry-run:
 
 ```bash
 npm pack --dry-run
 ```
+
+## Documentation
+
+- [docs/architecture/layers.md](./docs/architecture/layers.md) — L0–L3 layers, decision guide, pure-vs-framework split
+- [docs/RECIPES.md](./docs/RECIPES.md) — copyable screen patterns
+- [docs/MIGRATION.md](./docs/MIGRATION.md) — migration notes
 
 ## Generated References
 
