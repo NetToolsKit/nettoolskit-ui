@@ -58,7 +58,7 @@
           <button
             type="button"
             class="ec-icon"
-            aria-label="Notificações"
+            :aria-label="t.ecomNotifications"
           >
             <svg
               width="17"
@@ -127,11 +127,11 @@
                   class="ec-kpi"
                 >
                   <span class="ec-kpi__label">{{ t[kpi.key] }}</span>
-                  <span class="ec-kpi__value">{{ kpi.value }}</span>
+                  <span class="ec-kpi__value">{{ formatKpiValue(kpi, locale) }}</span>
                   <span
                     class="ec-kpi__delta"
                     :style="{ color: `var(--ds-color-${kpi.tone})` }"
-                  >{{ kpi.delta }}</span>
+                  >{{ formatDeltaPercent(kpi.delta, locale) }}</span>
                 </div>
               </div>
               <div class="ec-card">
@@ -167,7 +167,7 @@
                       {{ o.client }}
                     </div>
                     <div class="ec-ocell ec-ocell--right ec-ocell--mono">
-                      {{ o.total }}
+                      {{ formatCurrency(o.total, locale) }}
                     </div>
                     <div class="ec-ocell">
                       <span
@@ -222,7 +222,7 @@
                       {{ o.client }}
                     </div>
                     <div class="ec-ocell ec-ocell--right ec-ocell--mono">
-                      {{ o.total }}
+                      {{ formatCurrency(o.total, locale) }}
                     </div>
                     <div class="ec-ocell">
                       <span
@@ -273,7 +273,7 @@
                   </div>
                   <div class="ec-prod__body">
                     <span class="ec-prod__name">{{ p.name }}</span>
-                    <span class="ec-prod__price">{{ p.price }}</span>
+                    <span class="ec-prod__price">{{ formatCurrency(p.price, locale, p.priceDecimals) }}</span>
                   </div>
                 </div>
               </div>
@@ -291,13 +291,13 @@
                     class="ec-srow ec-orow--head"
                   >
                     <div class="ec-ocell">
-                      SKU
+                      {{ t.colSku }}
                     </div>
                     <div class="ec-ocell">
                       {{ t.sbProducts }}
                     </div>
                     <div class="ec-ocell ec-ocell--right">
-                      Qtd
+                      {{ t.colQty }}
                     </div>
                     <div class="ec-ocell">
                       {{ t.colSituacao }}
@@ -326,7 +326,7 @@
                           class="ec-pill__dot"
                           :style="{ background: `var(--ds-color-${s.tone})` }"
                         />
-                        {{ s.label }}
+                        {{ t[s.labelKey] }}
                       </span>
                     </div>
                   </div>
@@ -365,10 +365,10 @@
               <div class="ec-kpis">
                 <div
                   v-for="k in ecomReportKpis"
-                  :key="k.label"
+                  :key="k.labelKey"
                   class="ec-kpi"
                 >
-                  <span class="ec-kpi__label">{{ k.label }}</span>
+                  <span class="ec-kpi__label">{{ t[k.labelKey] }}</span>
                   <span class="ec-kpi__value">{{ k.value }}</span>
                   <span class="ec-kpi__delta ec-kpi__delta--ok">{{ k.delta }}</span>
                 </div>
@@ -396,20 +396,20 @@
               <span class="ec-h">{{ t.sbSettings }}</span>
               <div class="ec-card">
                 <div class="ec-settings">
-                  <label class="ec-settings__lbl">Loja</label>
+                  <label class="ec-settings__lbl">{{ t.setStore }}</label>
                   <input
                     class="ec-settings__inp"
-                    value="NetShop BR"
+                    :value="locale === 'en' ? 'NetShop US' : 'NetShop BR'"
                   >
-                  <label class="ec-settings__lbl">Moeda</label>
+                  <label class="ec-settings__lbl">{{ t.setCurrency }}</label>
                   <input
                     class="ec-settings__inp"
-                    value="BRL (R$)"
+                    :value="locale === 'en' ? 'USD ($)' : 'BRL (R$)'"
                   >
-                  <label class="ec-settings__lbl">Fuso</label>
+                  <label class="ec-settings__lbl">{{ t.setTimezone }}</label>
                   <input
                     class="ec-settings__inp ec-settings__inp--mono"
-                    value="America/Sao_Paulo"
+                    :value="locale === 'en' ? 'America/New_York' : 'America/Sao_Paulo'"
                   >
                 </div>
               </div>
@@ -435,6 +435,9 @@ import {
   ecomReportBars,
   ecomReportKpis,
   ecomStock,
+  formatCurrency,
+  formatDeltaPercent,
+  formatKpiValue,
   type EcomNavItem,
 } from './catalogScreensData'
 

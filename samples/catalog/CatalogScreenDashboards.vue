@@ -12,15 +12,15 @@
         <div class="db-kpis">
           <div
             v-for="kpi in dashKpis"
-            :key="kpi.label"
+            :key="kpi.labelKey"
             class="db-kpi"
           >
-            <span class="db-kpi__label">{{ kpiLabel(kpi.label) }}</span>
-            <span class="db-kpi__value">{{ kpi.value }}</span>
+            <span class="db-kpi__label">{{ t[kpi.labelKey] }}</span>
+            <span class="db-kpi__value">{{ formatDashKpiValue(kpi, locale) }}</span>
             <span
               class="db-kpi__delta"
               :style="{ color: `var(--ds-color-${kpi.tone})` }"
-            >{{ kpi.delta }}</span>
+            >{{ formatDeltaPercent(kpi.delta, locale) }}</span>
           </div>
         </div>
 
@@ -88,14 +88,14 @@
               <div class="db-legend">
                 <div
                   v-for="slice in dashDonut"
-                  :key="slice.label"
+                  :key="slice.labelKey"
                   class="db-legend__item"
                 >
                   <span
                     class="db-legend__sw"
                     :style="{ background: `var(--ds-color-${slice.tone})` }"
                   />
-                  {{ slice.label }} <span class="db-legend__pct">{{ slice.pct }}</span>
+                  {{ t[slice.labelKey] }} <span class="db-legend__pct">{{ slice.pct }}</span>
                 </div>
               </div>
             </div>
@@ -122,10 +122,10 @@
             <div class="db-map">
               <div
                 v-for="rg in dashRegions"
-                :key="rg.name"
+                :key="rg.nameKey"
                 :style="rg.style"
               >
-                <span class="db-map__name">{{ rg.name }}</span>
+                <span class="db-map__name">{{ t[rg.nameKey] }}</span>
                 <span class="db-map__pct">{{ rg.pct }}</span>
               </div>
             </div>
@@ -157,18 +157,18 @@
 <script setup lang="ts">
 import CatalogScreenFrame from './CatalogScreenFrame.vue'
 import type { CatalogStrings } from './catalogI18n'
-import { dashBars, dashDonut, dashHeat, dashKpis, dashMatrix, dashRegions } from './catalogScreensData'
+import {
+  dashBars,
+  dashDonut,
+  dashHeat,
+  dashKpis,
+  dashMatrix,
+  dashRegions,
+  formatDashKpiValue,
+  formatDeltaPercent,
+} from './catalogScreensData'
 
-const props = defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
-
-/** KPI labels are either literal strings or i18n keys (Sessões/Churn mix). */
-function kpiLabel(label: string): string {
-  if (label === 'kpiRevenue') return props.t.kpiRevenue
-  if (label === 'kpiConv') return props.t.kpiConv
-  if (label === 'Sessões') return props.t.kpiSessions
-  if (label === 'Churn') return props.t.kpiChurn
-  return label
-}
+defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
 </script>
 
 <style scoped>

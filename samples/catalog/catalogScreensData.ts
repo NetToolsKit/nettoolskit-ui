@@ -74,72 +74,164 @@ export function formatDate(iso: string, locale: CatalogLocale): string {
   }
 }
 
+/** BCP-47 tag for the catalog locale (drives every Intl formatter below). */
+function intlTag(locale: CatalogLocale): string {
+  return locale === 'en' ? 'en-US' : 'pt-BR'
+}
+
+/**
+ * Locale-aware currency (BRL `R$` in pt-BR, USD `$` in en-US). When the source
+ * figure was authored in BRL, the en-US view is shown in USD at parity so the
+ * symbol and grouping localize exactly like the reference. `fractionDigits`
+ * controls min/max decimals (e.g. 2 for "R$ 99,90", 0 for "R$ 1.290").
+ */
+export function formatCurrency(n: number, locale: CatalogLocale, fractionDigits = 2): string {
+  try {
+    return new Intl.NumberFormat(intlTag(locale), {
+      style: 'currency',
+      currency: locale === 'en' ? 'USD' : 'BRL',
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    }).format(n)
+  } catch {
+    return `R$ ${n}`
+  }
+}
+
+/** Locale-aware compact currency (e.g. "R$ 128,4 mil" / "$128.4K"). */
+export function formatCurrencyCompact(n: number, locale: CatalogLocale): string {
+  try {
+    return new Intl.NumberFormat(intlTag(locale), {
+      style: 'currency',
+      currency: locale === 'en' ? 'USD' : 'BRL',
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(n)
+  } catch {
+    return `R$ ${n}`
+  }
+}
+
+/** Locale-aware integer with grouping (e.g. "1.284" / "1,284"). */
+export function formatInt(n: number, locale: CatalogLocale): string {
+  try {
+    return new Intl.NumberFormat(intlTag(locale)).format(n)
+  } catch {
+    return String(n)
+  }
+}
+
+/** Locale-aware percent from a 0–100 figure (e.g. "3,8%" / "3.8%"). */
+export function formatPercent(pct: number, locale: CatalogLocale, fractionDigits = 1): string {
+  try {
+    return new Intl.NumberFormat(intlTag(locale), {
+      style: 'percent',
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    }).format(pct / 100)
+  } catch {
+    return `${pct}%`
+  }
+}
+
+/** Locale-aware signed delta percent in points (e.g. "↑ 12,4%" / "↑ 12.4%"). */
+export function formatDeltaPercent(pct: number, locale: CatalogLocale): string {
+  const arrow = pct >= 0 ? '↑' : '↓'
+  return `${arrow} ${formatPercent(Math.abs(pct), locale)}`
+}
+
 /* ============================================================
  * E-commerce · KPIs / orders / products / stock / customers
  * ============================================================ */
+/** How a KPI's numeric `value` is rendered per locale (Intl-driven). */
+export type KpiFormat = 'currencyCompact' | 'int' | 'currency' | 'percent'
+
 export interface Kpi {
   readonly key: string
-  readonly value: string
-  readonly delta: string
+  readonly value: number
+  readonly format: KpiFormat
+  /** Signed delta in percentage points (formatted per locale at render). */
+  readonly delta: number
   readonly tone: 'success' | 'danger'
 }
 
 export const ecomKpis: readonly Kpi[] = [
-  { key: 'kpiRevenue', value: 'R$ 128,4k', delta: '↑ 12,4%', tone: 'success' },
-  { key: 'kpiOrders', value: '1.284', delta: '↑ 4,1%', tone: 'success' },
-  { key: 'kpiTicket', value: 'R$ 99,90', delta: '↓ 1,2%', tone: 'danger' },
-  { key: 'kpiConv', value: '3,8%', delta: '↑ 0,3pp', tone: 'success' },
+  { key: 'kpiRevenue', value: 128400, format: 'currencyCompact', delta: 12.4, tone: 'success' },
+  { key: 'kpiOrders', value: 1284, format: 'int', delta: 4.1, tone: 'success' },
+  { key: 'kpiTicket', value: 99.9, format: 'currency', delta: -1.2, tone: 'danger' },
+  { key: 'kpiConv', value: 3.8, format: 'percent', delta: 0.3, tone: 'success' },
 ]
+
+/** Renders a KPI numeric value with the right Intl formatter for its `format`. */
+export function formatKpiValue(kpi: Kpi, locale: CatalogLocale): string {
+  switch (kpi.format) {
+    case 'currencyCompact':
+      return formatCurrencyCompact(kpi.value, locale)
+    case 'int':
+      return formatInt(kpi.value, locale)
+    case 'currency':
+      return formatCurrency(kpi.value, locale)
+    case 'percent':
+      return formatPercent(kpi.value, locale)
+    default:
+      return String(kpi.value)
+  }
+}
 
 export type OrderStatusTone = 'success' | 'warning' | 'info' | 'danger'
 
 export interface OrderRow {
   readonly id: string
   readonly client: string
-  readonly total: string
+  /** Order total in BRL; rendered as locale currency at display time. */
+  readonly total: number
   readonly statusKey: string
   readonly tone: OrderStatusTone
 }
 
 /** Reference "Pedidos recentes" rows (Dashboard tab shows the first three). */
 export const ecomOrders: readonly OrderRow[] = [
-  { id: '#10482', client: 'Mariana Alves', total: 'R$ 249,80', statusKey: 'stActive', tone: 'success' },
-  { id: '#10481', client: 'Diego Fontes', total: 'R$ 1.290,00', statusKey: 'stPending', tone: 'warning' },
-  { id: '#10480', client: 'Bianca Souza', total: 'R$ 89,90', statusKey: 'mTop2', tone: 'info' },
-  { id: '#10479', client: 'Rafael Lima', total: 'R$ 149,90', statusKey: 'stActive', tone: 'success' },
-  { id: '#10478', client: 'Helena Castro', total: 'R$ 59,90', statusKey: 'stBlocked', tone: 'danger' },
-  { id: '#10477', client: 'Otávio Pires', total: 'R$ 2.580,00', statusKey: 'stActive', tone: 'success' },
+  { id: '#10482', client: 'Mariana Alves', total: 249.8, statusKey: 'stActive', tone: 'success' },
+  { id: '#10481', client: 'Diego Fontes', total: 1290, statusKey: 'stPending', tone: 'warning' },
+  { id: '#10480', client: 'Bianca Souza', total: 89.9, statusKey: 'mTop2', tone: 'info' },
+  { id: '#10479', client: 'Rafael Lima', total: 149.9, statusKey: 'stActive', tone: 'success' },
+  { id: '#10478', client: 'Helena Castro', total: 59.9, statusKey: 'stBlocked', tone: 'danger' },
+  { id: '#10477', client: 'Otávio Pires', total: 2580, statusKey: 'stActive', tone: 'success' },
 ]
 
 export interface ProductCard {
   readonly name: string
-  readonly price: string
+  /** Catalog price in BRL; rendered as locale currency at display time. */
+  readonly price: number
+  /** Whole-currency prices render with 0 decimals (e.g. "R$ 1.290" / "$1,290"). */
+  readonly priceDecimals: 0 | 2
   readonly tone: 'primary' | 'info' | 'success' | 'warning' | 'danger'
 }
 
 export const ecomProducts: readonly ProductCard[] = [
-  { name: 'Switch 24p', price: 'R$ 1.290', tone: 'primary' },
-  { name: 'Roteador X2', price: 'R$ 890', tone: 'info' },
-  { name: 'Patch Cord', price: 'R$ 19,90', tone: 'success' },
-  { name: 'Rack 12U', price: 'R$ 740', tone: 'warning' },
-  { name: 'Sensor IoT', price: 'R$ 320', tone: 'danger' },
-  { name: 'Gateway LTE', price: 'R$ 1.150', tone: 'primary' },
+  { name: 'Switch 24p', price: 1290, priceDecimals: 0, tone: 'primary' },
+  { name: 'Roteador X2', price: 890, priceDecimals: 0, tone: 'info' },
+  { name: 'Patch Cord', price: 19.9, priceDecimals: 2, tone: 'success' },
+  { name: 'Rack 12U', price: 740, priceDecimals: 0, tone: 'warning' },
+  { name: 'Sensor IoT', price: 320, priceDecimals: 0, tone: 'danger' },
+  { name: 'Gateway LTE', price: 1150, priceDecimals: 0, tone: 'primary' },
 ]
 
 export interface StockRow {
   readonly sku: string
   readonly name: string
   readonly qty: string
-  readonly label: string
+  /** i18n key for the stock-status pill (resolved against the active locale). */
+  readonly labelKey: string
   readonly tone: 'success' | 'warning' | 'danger'
 }
 
 export const ecomStock: readonly StockRow[] = [
-  { sku: 'SW-24', name: 'Switch 24p', qty: '128', label: 'OK', tone: 'success' },
-  { sku: 'RT-X2', name: 'Roteador X2', qty: '12', label: 'Baixo', tone: 'warning' },
-  { sku: 'PC-01', name: 'Patch Cord', qty: '0', label: 'Zerado', tone: 'danger' },
-  { sku: 'RK-12', name: 'Rack 12U', qty: '34', label: 'OK', tone: 'success' },
-  { sku: 'SN-IO', name: 'Sensor IoT', qty: '7', label: 'Baixo', tone: 'warning' },
+  { sku: 'SW-24', name: 'Switch 24p', qty: '128', labelKey: 'stockOk', tone: 'success' },
+  { sku: 'RT-X2', name: 'Roteador X2', qty: '12', labelKey: 'stockLow', tone: 'warning' },
+  { sku: 'PC-01', name: 'Patch Cord', qty: '0', labelKey: 'stockOut', tone: 'danger' },
+  { sku: 'RK-12', name: 'Rack 12U', qty: '34', labelKey: 'stockOk', tone: 'success' },
+  { sku: 'SN-IO', name: 'Sensor IoT', qty: '7', labelKey: 'stockLow', tone: 'warning' },
 ]
 
 export interface EcomCustomer {
@@ -159,15 +251,16 @@ export const ecomCustomers: readonly EcomCustomer[] = [
 ]
 
 export interface ReportKpi {
-  readonly label: string
+  /** i18n key for the report KPI label (resolved against the active locale). */
+  readonly labelKey: string
   readonly value: string
   readonly delta: string
 }
 
 export const ecomReportKpis: readonly ReportKpi[] = [
-  { label: 'NPS', value: '72', delta: '↑ 5' },
-  { label: 'SLA', value: '98,4%', delta: '↑ 0,6pp' },
-  { label: 'Devoluções', value: '2,1%', delta: '↓ 0,3pp' },
+  { labelKey: 'rptNps', value: '72', delta: '↑ 5' },
+  { labelKey: 'rptSla', value: '98,4%', delta: '↑ 0,6pp' },
+  { labelKey: 'rptReturns', value: '2,1%', delta: '↓ 0,3pp' },
 ]
 
 /** Mini bar chart heights (%) inside the Relatórios tab. */
@@ -192,18 +285,37 @@ export const ecomNav: readonly EcomNavItem[] = [
  * Dashboards · charts (deterministic, seeded exactly as the reference)
  * ============================================================ */
 export interface DashKpi {
-  readonly label: string
-  readonly value: string
-  readonly delta: string
+  /** i18n key for the KPI label (resolved against the active locale). */
+  readonly labelKey: string
+  readonly value: number
+  readonly format: KpiFormat
+  /** Signed delta in percentage points (formatted per locale at render). */
+  readonly delta: number
   readonly tone: 'success' | 'danger'
 }
 
 export const dashKpis: readonly DashKpi[] = [
-  { label: 'Sessões', value: '84.2k', delta: '↑ 9,1%', tone: 'success' },
-  { label: 'kpiRevenue', value: 'R$ 1,2M', delta: '↑ 6,7%', tone: 'success' },
-  { label: 'kpiConv', value: '4,3%', delta: '↑ 0,4pp', tone: 'success' },
-  { label: 'Churn', value: '1,9%', delta: '↑ 0,2pp', tone: 'danger' },
+  { labelKey: 'kpiSessions', value: 84200, format: 'int', delta: 9.1, tone: 'success' },
+  { labelKey: 'kpiRevenue', value: 1200000, format: 'currencyCompact', delta: 6.7, tone: 'success' },
+  { labelKey: 'kpiConv', value: 4.3, format: 'percent', delta: 0.4, tone: 'success' },
+  { labelKey: 'kpiChurn', value: 1.9, format: 'percent', delta: 0.2, tone: 'danger' },
 ]
+
+/** Renders a dashboard KPI numeric value with the right Intl formatter. */
+export function formatDashKpiValue(kpi: DashKpi, locale: CatalogLocale): string {
+  switch (kpi.format) {
+    case 'currencyCompact':
+      return formatCurrencyCompact(kpi.value, locale)
+    case 'int':
+      return formatInt(kpi.value, locale)
+    case 'currency':
+      return formatCurrency(kpi.value, locale)
+    case 'percent':
+      return formatPercent(kpi.value, locale)
+    default:
+      return String(kpi.value)
+  }
+}
 
 /** color-mix(in srgb, primary PCT%, surface) — re-resolves with theme/brand. */
 function mix(pct: number): string {
@@ -280,32 +392,37 @@ export const dashHeat: readonly DashCell[] = seeded.heat.map((pct) => ({
 }))
 
 export interface DashDonutSlice {
-  readonly label: string
+  /** i18n key for the legend label (resolved against the active locale). */
+  readonly labelKey: string
   readonly pct: string
   readonly tone: 'primary' | 'info' | 'success' | 'warning'
 }
 
 /** Distribuição donut legend (conic stops: 44 / 68 / 86 / 100). */
 export const dashDonut: readonly DashDonutSlice[] = [
-  { label: 'Direto', pct: '44%', tone: 'primary' },
-  { label: 'Orgânico', pct: '24%', tone: 'info' },
-  { label: 'Social', pct: '18%', tone: 'success' },
-  { label: 'Pago', pct: '14%', tone: 'warning' },
+  { labelKey: 'donutDirect', pct: '44%', tone: 'primary' },
+  { labelKey: 'donutOrganic', pct: '24%', tone: 'info' },
+  { labelKey: 'donutSocial', pct: '18%', tone: 'success' },
+  { labelKey: 'donutPaid', pct: '14%', tone: 'warning' },
 ]
 
 export interface DashRegion {
-  readonly name: string
+  /** i18n key for the region name (resolved against the active locale). */
+  readonly nameKey: string
   readonly pct: string
   readonly style: CSSProperties
 }
 
-const regionNames = ['Norte', 'Nordeste', 'Centro', 'Sudeste', 'Sul', 'Oeste', 'Leste', 'Litoral', 'Serra', 'Vale', 'Planalto', 'Capital']
+const regionNameKeys = [
+  'regNorth', 'regNortheast', 'regCenter', 'regSoutheast', 'regSouth', 'regWest',
+  'regEast', 'regCoast', 'regHighland', 'regValley', 'regPlateau', 'regCapital',
+]
 
-export const dashRegions: readonly DashRegion[] = regionNames.map((name, i) => {
+export const dashRegions: readonly DashRegion[] = regionNameKeys.map((nameKey, i) => {
   const pct = seeded.region[i]
   const fill = regionFill(pct)
   return {
-    name,
+    nameKey,
     pct: `${pct}%`,
     style: {
       background: fill.background,
