@@ -22,10 +22,9 @@ command -v node >/dev/null 2>&1 || fail "node is required."
 command -v npm >/dev/null 2>&1 || fail "npm is required."
 [ -f package.json ] || fail "package.json is required."
 
-package_name="${NTK_RIVER_NPM_PACKAGE_NAME:-}"
-if [ -z "$package_name" ]; then
-  package_name="$(node -p "require('./package.json').name")"
-fi
+# Name comes from package.json (the single source of truth). An env override can
+# go stale relative to the published River metadata and mis-target the publish.
+package_name="$(node -p "require('./package.json').name")"
 package_name="$(printf '%s' "$package_name" | tr -d '[:space:]')"
 package_version="${NTK_RIVER_NPM_PACKAGE_VERSION:-}"
 if [ -z "$package_version" ]; then
