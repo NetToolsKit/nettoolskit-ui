@@ -15,7 +15,7 @@ import type {
   NtkComponentSize,
 } from './contracts'
 
-export const ntkButtonVariants = ['solid', 'outline', 'ghost', 'link'] as const
+export const ntkButtonVariants = ['solid', 'soft', 'outline', 'ghost', 'link', 'plain'] as const
 export type NtkButtonVariant = (typeof ntkButtonVariants)[number]
 export type NtkButtonSize = NtkComponentSize
 export type NtkButtonIntent = NtkComponentIntent
@@ -45,9 +45,11 @@ export const ntkButtonRecipeClassMap = {
   root: 'ntk-button',
   variants: {
     solid: 'ntk-button--variant-solid',
+    soft: 'ntk-button--variant-soft',
     outline: 'ntk-button--variant-outline',
     ghost: 'ntk-button--variant-ghost',
     link: 'ntk-button--variant-link',
+    plain: 'ntk-button--variant-plain',
   },
   sizes: {
     sm: 'ntk-button--size-sm',

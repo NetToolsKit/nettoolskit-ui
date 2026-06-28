@@ -15,7 +15,7 @@ import {
 } from './recipe'
 import type { NtkComponentContractBase, NtkComponentIntent, NtkComponentSize } from './contracts'
 
-export const ntkBannerVariants = ['solid', 'soft', 'outline'] as const
+export const ntkBannerVariants = ['solid', 'soft', 'outline', 'accent'] as const
 export type NtkBannerVariant = (typeof ntkBannerVariants)[number]
 export type NtkBannerSize = NtkComponentSize
 export type NtkBannerIntent = NtkComponentIntent
@@ -45,6 +45,7 @@ export const ntkBannerRecipeClassMap = {
     solid: 'ntk-banner--variant-solid',
     soft: 'ntk-banner--variant-soft',
     outline: 'ntk-banner--variant-outline',
+    accent: 'ntk-banner--variant-accent',
   },
   sizes: {
     sm: 'ntk-banner--size-sm',

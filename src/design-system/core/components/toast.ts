@@ -16,7 +16,7 @@ import {
 } from './recipe'
 import type { NtkComponentContractBase, NtkComponentIntent, NtkComponentSize } from './contracts'
 
-export const ntkToastVariants = ['solid', 'soft', 'outline'] as const
+export const ntkToastVariants = ['solid', 'soft', 'outline', 'accent'] as const
 export type NtkToastVariant = (typeof ntkToastVariants)[number]
 export type NtkToastSize = NtkComponentSize
 export type NtkToastIntent = NtkComponentIntent
@@ -46,6 +46,7 @@ export const ntkToastRecipeClassMap = {
     solid: 'ntk-toast--variant-solid',
     soft: 'ntk-toast--variant-soft',
     outline: 'ntk-toast--variant-outline',
+    accent: 'ntk-toast--variant-accent',
   },
   sizes: {
     sm: 'ntk-toast--size-sm',

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "namespace": "nettoolskit",
   "source": "src/design-system/tokens/source.json",
-  "tokenCount": 122,
+  "tokenCount": 123,
   "groups": {
     "color": {
       "name": "color",
@@ -42,6 +42,7 @@
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -215,6 +216,7 @@
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -381,6 +383,7 @@
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -509,6 +512,7 @@
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -818,6 +822,19 @@
       "cssValue": "#ffffff",
       "cssVariable": "--ntk-text-on-primary",
       "references": []
+    },
+    "text.onSoft": {
+      "path": "text.onSoft",
+      "group": "text",
+      "type": "color",
+      "value": "#115e59",
+      "rawValue": "{color.primaryDark}",
+      "cssValue": "var(--ntk-primary-dark)",
+      "cssVariable": "--ntk-on-soft",
+      "references": [
+        "color.primaryDark"
+      ],
+      "description": "Readable foreground for soft (tinted) brand surfaces."
     },
     "text.link": {
       "path": "text.link",
@@ -1884,6 +1901,7 @@
     "--ntk-text-muted": "text.muted",
     "--ntk-text-inverse": "text.inverse",
     "--ntk-text-on-primary": "text.onPrimary",
+    "--ntk-on-soft": "text.onSoft",
     "--ntk-text-link": "text.link",
     "--ntk-text-link-hover": "text.linkHover",
     "--ntk-text-dark": "text.dark",

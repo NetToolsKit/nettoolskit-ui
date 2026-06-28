@@ -205,6 +205,41 @@ function onDismiss(): void {
   color: var(--ntk-text-inverse);
 }
 
+/* Accent: a neutral card surface with a single colored left border keyed to
+   the intent (the reference feedback look). The body text stays primary; only
+   the accent rail carries the intent color. */
+.ntk-toast--variant-accent {
+  --ntk-accent-c: var(--ntk-text-secondary);
+  border-color: var(--ntk-border-color);
+  border-inline-start: 3px solid var(--ntk-accent-c);
+  background: var(--ntk-bg-card);
+  color: var(--ntk-text-primary);
+}
+
+.ntk-toast--variant-accent.ntk-toast--intent-info {
+  --ntk-accent-c: var(--ntk-info);
+}
+
+.ntk-toast--variant-accent.ntk-toast--intent-primary {
+  --ntk-accent-c: var(--ntk-primary);
+}
+
+.ntk-toast--variant-accent.ntk-toast--intent-success {
+  --ntk-accent-c: var(--ntk-success);
+}
+
+.ntk-toast--variant-accent.ntk-toast--intent-warning {
+  --ntk-accent-c: var(--ntk-warning);
+}
+
+.ntk-toast--variant-accent.ntk-toast--intent-danger {
+  --ntk-accent-c: var(--ntk-error);
+}
+
+.ntk-toast--variant-accent .ntk-toast__icon {
+  color: var(--ntk-accent-c);
+}
+
 .ntk-toast--variant-outline {
   background: var(--ntk-bg-card);
 }

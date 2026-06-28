@@ -234,6 +234,16 @@
         }
       }
     },
+    "onSoft": {
+      "$type": "color",
+      "$value": "{color.primaryDark}",
+      "$description": "Readable foreground for soft (tinted) brand surfaces.",
+      "$extensions": {
+        "nettoolskit": {
+          "cssVariable": "--ntk-on-soft"
+        }
+      }
+    },
     "link": {
       "$type": "color",
       "$value": "{color.primary}",

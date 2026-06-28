@@ -79,6 +79,21 @@ describe('DsBadge', () => {
     expect(root.text()).toBe('')
   })
 
+  it('renders a decorative leading dot before the label when leadingDot is set', () => {
+    const wrapper = mount(DsBadge, { props: { label: 'Active', leadingDot: true, intent: 'success' } })
+    const root = wrapper.get('.ntk-badge')
+    expect(root.classes()).toContain('ntk-badge--has-leading-dot')
+    const dot = wrapper.get('.ntk-badge__dot')
+    expect(dot.attributes('aria-hidden')).toBe('true')
+    expect(root.text()).toBe('Active')
+  })
+
+  it('omits the leading dot by default and for the text-free dot mode', () => {
+    expect(mount(DsBadge, { props: { label: 'x' } }).find('.ntk-badge__dot').exists()).toBe(false)
+    expect(mount(DsBadge, { props: { dot: true, leadingDot: true, label: 'y' } }).find('.ntk-badge__dot').exists())
+      .toBe(false)
+  })
+
   it('has no accessibility violations', async () => {
     const wrapper = mount(DsBadge, { props: { label: '3', intent: 'danger' }, attachTo: document.body })
     await nextTick()

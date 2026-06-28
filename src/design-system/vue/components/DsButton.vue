@@ -180,6 +180,35 @@ const classes = computed(() => [
   background: color-mix(in srgb, var(--ntk-c-dark) 85%, black);
 }
 
+/* Soft: a tinted fill with an AA-safe foreground. The label uses the same
+   text-darkened intent channel as ghost/outline (intent blended toward the
+   near-black primary text), so small label text clears WCAG AA on the light
+   tint across themes/brands (the raw intent-dark shade alone can fail ~3.4:1
+   on its own light tint). */
+.ntk-button--variant-soft {
+  border-color: transparent;
+  background: var(--ntk-c-light);
+  /* Blend the intent strongly toward the near-black primary text so the label
+     clears WCAG AA (>=4.5:1) on the light soft tint even for the most saturated
+     brand hues (the 55/45 text channel alone lands ~4.2:1 on vivid brands). */
+  color: color-mix(in srgb, var(--ntk-c) 38%, var(--ntk-text-primary));
+}
+
+.ntk-button--variant-soft:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ntk-c-light) 88%, var(--ntk-c-dark));
+}
+
+/* Neutral soft has no semantic light tint, so it falls back to the page hover
+   surface with the secondary text shade. */
+.ntk-button--variant-soft.ntk-button--intent-neutral {
+  background: var(--ntk-bg-secondary);
+  color: var(--ntk-text-primary);
+}
+
+.ntk-button--variant-soft.ntk-button--intent-neutral:hover:not(:disabled) {
+  background: var(--ntk-bg-hover);
+}
+
 .ntk-button--variant-outline {
   border-color: var(--ntk-c);
   background: transparent;
@@ -210,6 +239,23 @@ const classes = computed(() => [
 .ntk-button--variant-link:hover:not(:disabled) {
   color: var(--ntk-text-link-hover);
   text-decoration: underline;
+}
+
+/* Plain: no chrome at all (transparent bg + border) with the intent text color.
+   Unlike ghost, plain keeps its label color flat on hover (no surface fill),
+   matching the reference low-emphasis action. Neutral plain uses primary text. */
+.ntk-button--variant-plain {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ntk-c-text);
+}
+
+.ntk-button--variant-plain.ntk-button--intent-neutral {
+  color: var(--ntk-text-primary);
+}
+
+.ntk-button--variant-plain:hover:not(:disabled) {
+  color: var(--ntk-c-dark);
 }
 
 /* States. */

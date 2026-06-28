@@ -37,7 +37,7 @@ Source: `src/design-system/core/components/button.ts`.
 | Setting | Values |
 | --- | --- |
 | Defaults | variant `solid`, size `md`, intent `primary` |
-| Variants | `solid`, `outline`, `ghost`, `link` |
+| Variants | `solid`, `soft`, `outline`, `ghost`, `link`, `plain` |
 | Sizes | `sm`, `md`, `lg` |
 | Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
 | States | `disabled`, `loading` |
@@ -66,9 +66,11 @@ Source: `src/design-system/core/components/button.ts`.
 | --- | --- |
 | `root` | `ntk-button` |
 | `variant solid` | `ntk-button--variant-solid` |
+| `variant soft` | `ntk-button--variant-soft` |
 | `variant outline` | `ntk-button--variant-outline` |
 | `variant ghost` | `ntk-button--variant-ghost` |
 | `variant link` | `ntk-button--variant-link` |
+| `variant plain` | `ntk-button--variant-plain` |
 | `size sm` | `ntk-button--size-sm` |
 | `size md` | `ntk-button--size-md` |
 | `size lg` | `ntk-button--size-lg` |
@@ -148,7 +150,7 @@ Source: `src/design-system/core/components/card.ts`.
 | Setting | Values |
 | --- | --- |
 | Defaults | variant `default`, size `md`, intent `neutral` |
-| Variants | `default`, `outlined`, `elevated`, `accent-left`, `accent-top` |
+| Variants | `default`, `soft`, `outlined`, `elevated`, `accent-left`, `accent-top` |
 | Sizes | `sm`, `md`, `lg` |
 | Intents | `neutral`, `primary`, `success`, `warning`, `danger`, `info` |
 | States | `clickable`, `selected` |
@@ -174,6 +176,7 @@ Source: `src/design-system/core/components/card.ts`.
 | --- | --- |
 | `root` | `ntk-card` |
 | `variant default` | `ntk-card--variant-default` |
+| `variant soft` | `ntk-card--variant-soft` |
 | `variant outlined` | `ntk-card--variant-outlined` |
 | `variant elevated` | `ntk-card--variant-elevated` |
 | `variant accent-left` | `ntk-card--variant-accent-left` |

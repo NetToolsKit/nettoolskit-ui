@@ -9,7 +9,7 @@ Do not edit by hand.
 | --- | ---: | --- |
 | `color` | 10 | Brand and compatibility colors. |
 | `surface` | 10 | Default light-mode application surfaces. |
-| `text` | 10 | Text hierarchy and aliases. |
+| `text` | 11 | Text hierarchy and aliases. |
 | `border` | 6 | Border and input outline colors. |
 | `feedback` | 15 | Semantic feedback colors using --ntk-* public aliases. |
 | `gradient` | 7 | Reusable gradients expressed with token references. |
@@ -65,6 +65,7 @@ Values are resolved. CSS values keep token references as CSS custom properties w
 | `text.muted` | `color` | `--ntk-text-muted` | `#94a3b8` | `#94a3b8` |
 | `text.inverse` | `color` | `--ntk-text-inverse` | `#ffffff` | `#ffffff` |
 | `text.onPrimary` | `color` | `--ntk-text-on-primary` | `#ffffff` | `#ffffff` |
+| `text.onSoft` | `color` | `--ntk-on-soft` | `#115e59` | `var(--ntk-primary-dark)` |
 | `text.link` | `color` | `--ntk-text-link` | `#0f766e` | `var(--ntk-primary)` |
 | `text.linkHover` | `color` | `--ntk-text-link-hover` | `#115e59` | `var(--ntk-primary-dark)` |
 | `text.dark` | `color` | `--ntk-text-dark` | `#424242` | `#424242` |

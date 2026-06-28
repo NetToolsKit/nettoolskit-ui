@@ -142,18 +142,17 @@ export const buttonVariantLabel: Record<ButtonVariant, string> = {
   plain: 'Plain',
 }
 
-/** Button size demo row. */
+/** Button size demo row, mapped to the governed DsButton size + density axes. */
 export const buttonSizes: readonly {
   readonly key: string
   readonly labelKey: string
-  readonly height: string
-  readonly padding: string
-  readonly fontSize: string
+  readonly dsSize: 'sm' | 'md' | 'lg'
+  readonly density: 'compact' | 'comfortable' | 'spacious'
 }[] = [
-  { key: 'xs', labelKey: 'szXs', height: '28px', padding: '0 12px', fontSize: '12px' },
-  { key: 'sm', labelKey: 'szSm', height: '32px', padding: '0 14px', fontSize: '13px' },
-  { key: 'md', labelKey: 'szMd', height: 'var(--ds-control-height)', padding: '0 16px', fontSize: '13.5px' },
-  { key: 'lg', labelKey: 'szLg', height: '48px', padding: '0 22px', fontSize: '15px' },
+  { key: 'xs', labelKey: 'szXs', dsSize: 'sm', density: 'compact' },
+  { key: 'sm', labelKey: 'szSm', dsSize: 'sm', density: 'comfortable' },
+  { key: 'md', labelKey: 'szMd', dsSize: 'md', density: 'comfortable' },
+  { key: 'lg', labelKey: 'szLg', dsSize: 'lg', density: 'spacious' },
 ]
 
 /** Scroll table columns + generated rows (verbatim from the reference). */

@@ -178,6 +178,13 @@ export const designTokens = {
     "cssValue": "#ffffff",
     "cssVariable": "--ntk-text-on-primary"
   },
+  "text.onSoft": {
+    "type": "color",
+    "value": "#115e59",
+    "rawValue": "{color.primaryDark}",
+    "cssValue": "var(--ntk-primary-dark)",
+    "cssVariable": "--ntk-on-soft"
+  },
   "text.link": {
     "type": "color",
     "value": "#0f766e",
@@ -885,6 +892,7 @@ export const designTokenValues = {
   "text.muted": "#94a3b8",
   "text.inverse": "#ffffff",
   "text.onPrimary": "#ffffff",
+  "text.onSoft": "#115e59",
   "text.link": "#0f766e",
   "text.linkHover": "#115e59",
   "text.dark": "#424242",
@@ -1010,6 +1018,7 @@ export const designTokenCssVariables = {
   "text.muted": "--ntk-text-muted",
   "text.inverse": "--ntk-text-inverse",
   "text.onPrimary": "--ntk-text-on-primary",
+  "text.onSoft": "--ntk-on-soft",
   "text.link": "--ntk-text-link",
   "text.linkHover": "--ntk-text-link-hover",
   "text.dark": "--ntk-text-dark",
@@ -1135,6 +1144,7 @@ export const designTokensByCssVariable = {
   "--ntk-text-muted": "text.muted",
   "--ntk-text-inverse": "text.inverse",
   "--ntk-text-on-primary": "text.onPrimary",
+  "--ntk-on-soft": "text.onSoft",
   "--ntk-text-link": "text.link",
   "--ntk-text-link-hover": "text.linkHover",
   "--ntk-text-dark": "text.dark",
@@ -1238,7 +1248,7 @@ export const designTokenResolver = {
   "schemaVersion": 1,
   "namespace": "nettoolskit",
   "source": "src/design-system/tokens/source.json",
-  "tokenCount": 122,
+  "tokenCount": 123,
   "groups": {
     "color": {
       "name": "color",
@@ -1278,6 +1288,7 @@ export const designTokenResolver = {
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -1451,6 +1462,7 @@ export const designTokenResolver = {
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -1617,6 +1629,7 @@ export const designTokenResolver = {
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -1745,6 +1758,7 @@ export const designTokenResolver = {
         "text.muted",
         "text.inverse",
         "text.onPrimary",
+        "text.onSoft",
         "text.link",
         "text.linkHover",
         "text.dark",
@@ -2054,6 +2068,19 @@ export const designTokenResolver = {
       "cssValue": "#ffffff",
       "cssVariable": "--ntk-text-on-primary",
       "references": []
+    },
+    "text.onSoft": {
+      "path": "text.onSoft",
+      "group": "text",
+      "type": "color",
+      "value": "#115e59",
+      "rawValue": "{color.primaryDark}",
+      "cssValue": "var(--ntk-primary-dark)",
+      "cssVariable": "--ntk-on-soft",
+      "references": [
+        "color.primaryDark"
+      ],
+      "description": "Readable foreground for soft (tinted) brand surfaces."
     },
     "text.link": {
       "path": "text.link",
@@ -3120,6 +3147,7 @@ export const designTokenResolver = {
     "--ntk-text-muted": "text.muted",
     "--ntk-text-inverse": "text.inverse",
     "--ntk-text-on-primary": "text.onPrimary",
+    "--ntk-on-soft": "text.onSoft",
     "--ntk-text-link": "text.link",
     "--ntk-text-link-hover": "text.linkHover",
     "--ntk-text-dark": "text.dark",

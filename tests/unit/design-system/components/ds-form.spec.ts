@@ -32,7 +32,10 @@ describe('DsForm', () => {
     const wrapper = mount(DsForm, { props: { schema } })
     expect(wrapper.find('#ds-form-name__control').exists()).toBe(true)
     expect(wrapper.find('#ds-form-age__control').attributes('type')).toBe('number')
-    expect(wrapper.find('#ds-form-role__control').element.tagName).toBe('SELECT')
+    // The governed select renders a themed combobox trigger, not a native select.
+    const roleTrigger = wrapper.find('#ds-form-role__trigger')
+    expect(roleTrigger.exists()).toBe(true)
+    expect(roleTrigger.attributes('role')).toBe('combobox')
     expect(wrapper.find('#ds-form-bio__control').element.tagName).toBe('TEXTAREA')
     expect(wrapper.text()).toContain('Name')
   })
@@ -50,21 +53,33 @@ describe('DsForm', () => {
   })
 
   it('maps a select option back to its typed value', async () => {
-    const wrapper = mount(DsForm, { props: { schema } })
-    await wrapper.find('#ds-form-role__control').setValue('1')
+    const wrapper = mount(DsForm, { props: { schema }, attachTo: document.body })
+    await wrapper.find('#ds-form-role__trigger').trigger('click')
+    await nextTick()
+    const adminOption = document.querySelector<HTMLElement>('#ds-form-role__listbox [role="option"]')
+    adminOption?.click()
+    await nextTick()
     const last = wrapper.emitted('update:modelValue')!.at(-1)![0] as Record<string, unknown>
     expect(last.role).toBe(1)
+    wrapper.unmount()
+    document.body.querySelectorAll('.ntk-select-panel').forEach(node => node.remove())
   })
 
   it('renders multiselect as a DsSelect and emits a typed array', async () => {
-    const wrapper = mount(DsForm, { props: { schema } })
-    const select = wrapper.find('#ds-form-tags__control')
-    expect(select.exists()).toBe(true)
-    expect(select.attributes('multiple')).toBeDefined()
+    const wrapper = mount(DsForm, { props: { schema }, attachTo: document.body })
+    const trigger = wrapper.find('#ds-form-tags__trigger')
+    expect(trigger.exists()).toBe(true)
 
-    await select.setValue(['a', 'b'])
+    await trigger.trigger('click')
+    await nextTick()
+    document.querySelectorAll<HTMLElement>('#ds-form-tags__listbox [role="option"]')[0]?.click()
+    await nextTick()
+    document.querySelectorAll<HTMLElement>('#ds-form-tags__listbox [role="option"]')[1]?.click()
+    await nextTick()
     const last = wrapper.emitted('update:modelValue')!.at(-1)![0] as Record<string, unknown>
     expect(last.tags).toEqual(['a', 'b'])
+    wrapper.unmount()
+    document.body.querySelectorAll('.ntk-select-panel').forEach(node => node.remove())
   })
 
   it('blocks submit and shows messages when invalid, then submits when valid', async () => {

@@ -55,13 +55,15 @@
         :hint="t.inHintPlano"
       />
 
-      <!-- Status (select) — themed custom dropdown (no native OS popup) -->
-      <CatalogSelect
+      <!-- Status (select) — governed DsSelect themed combobox (no native popup) -->
+      <DsSelect
         id="cg-in-status"
-        v-model="statusValue"
+        class="cg-field"
+        :model-value="statusValue"
         :label="t.inStatus"
         :options="statusOptions"
         :hint="t.inHintStatus"
+        @update:model-value="statusValue = $event as string"
       />
 
       <!-- Buscando (loading) -->
@@ -81,7 +83,7 @@
         <span class="cg-loadingfield__hint">{{ t.inHintLoading }}</span>
       </div>
 
-      <!-- (a) Multi-select with chips — themed CatalogSelect to add + DsChip -->
+      <!-- (a) Multi-select with chips — governed DsSelect to add + DsChip -->
       <div class="cg-field cg-xfield">
         <span class="cg-xfield__label">{{ t.inMulti }}</span>
         <div class="cg-chips">
@@ -101,68 +103,36 @@
             class="cg-chips__empty"
           >{{ t.inMultiEmpty }}</span>
         </div>
-        <CatalogSelect
+        <DsSelect
           id="cg-in-multi-add"
+          class="cg-field"
           :model-value="''"
           :options="availableMulti"
           :placeholder="t.inMultiAdd"
-          @update:model-value="addMulti"
+          @update:model-value="addMulti($event as string)"
         />
         <span class="cg-xfield__hint">{{ t.inHintMulti }}</span>
       </div>
 
-      <!-- (b) Searchable select / autocomplete — DsInput + filtered list -->
-      <div class="cg-field cg-xfield cg-auto">
-        <span
-          id="cg-auto-label"
-          class="cg-xfield__label"
-        >{{ t.inAuto }}</span>
-        <input
-          v-model="autoQuery"
-          class="cg-xcontrol"
-          type="text"
-          :placeholder="t.inAutoPh"
-          role="combobox"
-          aria-labelledby="cg-auto-label"
-          aria-controls="cg-auto-listbox"
-          :aria-expanded="autoExpanded"
-          aria-autocomplete="list"
-          @focus="autoOpen = true"
-        >
-        <ul
-          v-show="autoExpanded"
-          id="cg-auto-listbox"
-          class="cg-auto__list"
-          role="listbox"
-          aria-labelledby="cg-auto-label"
-        >
-          <li
-            v-for="opt in autoResults"
-            :key="opt.value"
-            role="option"
-            :aria-selected="false"
-          >
-            <button
-              type="button"
-              class="cg-auto__item"
-              @click="pickAuto(opt.label)"
-            >
-              {{ opt.label }}
-            </button>
-          </li>
-          <li
-            v-if="autoResults.length === 0"
-            class="cg-auto__empty"
-          >
-            {{ t.inAutoEmpty }}
-          </li>
-        </ul>
-        <span class="cg-xfield__hint">{{ t.inHintAuto }}</span>
-      </div>
+      <!-- (b) Searchable select / autocomplete — governed searchable DsSelect -->
+      <DsSelect
+        id="cg-in-auto"
+        class="cg-field"
+        :model-value="autoCity"
+        :label="t.inAuto"
+        :options="cityOptions"
+        :placeholder="t.inAutoPh"
+        searchable
+        :search-placeholder="t.inAutoPh"
+        :empty-label="t.inAutoEmpty"
+        :hint="t.inHintAuto"
+        @update:model-value="autoCity = $event as string"
+      />
 
-      <!-- (c) Required single-choice — themed custom dropdown -->
-      <CatalogSelect
+      <!-- (c) Required single-choice — governed DsSelect themed combobox -->
+      <DsSelect
         id="cg-in-dept"
+        class="cg-field"
         :model-value="requiredDept"
         :label="t.inRequired"
         :options="deptOptions"
@@ -170,7 +140,7 @@
         required
         :invalid="requiredDept === ''"
         :error-message="requiredDept === '' ? t.inRequiredErr : t.inHintRequired"
-        @update:model-value="onRequired"
+        @update:model-value="onRequired($event as string)"
       />
 
       <!-- (d) Radio group -->
@@ -223,9 +193,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { DsChip, DsInput } from '../../index'
+import { DsChip, DsInput, DsSelect } from '../../index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
-import CatalogSelect from './CatalogSelect.vue'
 import type { CatalogStrings } from './catalogI18n'
 
 interface Option { value: string; label: string }
@@ -271,18 +240,7 @@ const cityOptions = computed<Option[]>(() => [
   { value: 'ssa', label: props.t.citySalvador },
   { value: 'poa', label: props.t.cityPortoAlegre },
 ])
-const autoQuery = ref('')
-const autoOpen = ref(false)
-const autoResults = computed(() =>
-  cityOptions.value.filter((o) => o.label.toLowerCase().includes(autoQuery.value.trim().toLowerCase())),
-)
-/** Combobox expanded state — drives both `aria-expanded` and the listbox popup,
- *  so the ARIA combobox contract stays truthful (open only with an active query). */
-const autoExpanded = computed(() => autoOpen.value && autoQuery.value.trim().length > 0)
-function pickAuto(label: string): void {
-  autoQuery.value = label
-  autoOpen.value = false
-}
+const autoCity = ref('')
 
 /* (c) required single-choice */
 const deptOptions = computed<Option[]>(() => [
@@ -495,24 +453,6 @@ function toggleCheck(value: string): void {
   color: var(--ds-color-text-muted);
 }
 
-.cg-xcontrol {
-  height: var(--ds-control-height);
-  padding: 0 13px;
-  border: var(--ds-border-width) solid var(--ds-color-border);
-  border-radius: var(--ds-radius-md);
-  background: var(--ds-color-surface);
-  color: var(--ds-color-text);
-  font-size: 14px;
-  font-family: var(--ds-font-sans);
-  outline: none;
-  width: 100%;
-}
-
-.cg-xcontrol:focus {
-  border-color: var(--ds-color-primary);
-  box-shadow: var(--ds-focus-ring);
-}
-
 /* multi-select chips */
 .cg-chips {
   display: flex;
@@ -539,53 +479,6 @@ function toggleCheck(value: string): void {
 .cg-chips__empty {
   font-size: 12px;
   font-style: italic;
-  color: var(--ds-color-text-muted);
-}
-
-/* autocomplete dropdown */
-.cg-auto {
-  position: relative;
-}
-
-.cg-auto__list {
-  position: absolute;
-  z-index: 5;
-  top: calc(var(--ds-control-height) + 46px);
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-  background: var(--ds-color-surface);
-  border: var(--ds-border-width) solid var(--ds-color-border);
-  border-radius: var(--ds-radius-md);
-  box-shadow: var(--ds-shadow);
-  max-height: 180px;
-  overflow-y: auto;
-}
-
-.cg-auto__item {
-  appearance: none;
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: none;
-  background: transparent;
-  color: var(--ds-color-text);
-  font-family: var(--ds-font-sans);
-  font-size: 13.5px;
-  padding: 7px 10px;
-  border-radius: var(--ds-radius-sm);
-  cursor: pointer;
-}
-
-.cg-auto__item:hover {
-  background: var(--ds-color-surface-muted);
-}
-
-.cg-auto__empty {
-  padding: 8px 10px;
-  font-size: 13px;
   color: var(--ds-color-text-muted);
 }
 

@@ -219,4 +219,34 @@ describe('DsDialog', () => {
     expect(persistent.emitted('update:modelValue')).toBeUndefined()
     persistent.unmount()
   })
+
+  it('renders a header bar, scrollable body, and an always-present slim footer', async () => {
+    const wrapper = mount(DsDialog, {
+      props: { modelValue: true, title: 'Header bar' },
+      slots: { default: '<p>Body content</p>' },
+      attachTo: document.body,
+    })
+    await nextTick()
+
+    expect(wrapper.get('.ntk-dialog__header').exists()).toBe(true)
+    expect(wrapper.get('.ntk-dialog__body').text()).toContain('Body content')
+    const footer = wrapper.get('.ntk-dialog__footer')
+    expect(footer.exists()).toBe(true)
+    expect(footer.classes()).not.toContain('ntk-dialog__footer--actions')
+    wrapper.unmount()
+  })
+
+  it('grows the footer into an actions region when the actions slot is filled', async () => {
+    const wrapper = mount(DsDialog, {
+      props: { modelValue: true, title: 'With actions' },
+      slots: { actions: '<button type="button">OK</button>' },
+      attachTo: document.body,
+    })
+    await nextTick()
+
+    const footer = wrapper.get('.ntk-dialog__footer')
+    expect(footer.classes()).toContain('ntk-dialog__footer--actions')
+    expect(footer.text()).toContain('OK')
+    wrapper.unmount()
+  })
 })

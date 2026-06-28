@@ -15,17 +15,19 @@
         class="cg-badgerow"
       >
         <span class="cg-mono cg-badgerow__key">{{ tone }}</span>
-        <DsBadge :style="solidStyle(tone)">
-          <span
-            class="cg-badgedot"
-            :style="dotStyle(`var(--ds-color-${tone}-contrast)`)"
-          />{{ toneName(tone) }}
+        <DsBadge
+          variant="solid"
+          :intent="tone"
+          leading-dot
+        >
+          {{ toneName(tone) }}
         </DsBadge>
-        <DsBadge :style="softStyle(tone)">
-          <span
-            class="cg-badgedot"
-            :style="dotStyle(`var(--ds-color-${tone}-soft-fg)`)"
-          />{{ toneName(tone) }}
+        <DsBadge
+          variant="soft"
+          :intent="tone"
+          leading-dot
+        >
+          {{ toneName(tone) }}
         </DsBadge>
       </div>
     </div>
@@ -33,25 +35,15 @@
 </template>
 
 <script setup lang="ts">
-import type { CSSProperties } from 'vue'
 import { DsBadge } from '../../index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
 import { galleryTones, toneLabel, toneLabelEn, type GalleryTone } from './catalogGalleryData'
-import { badgeSoft, badgeSolid, dotStyle } from './catalogGalleryStyles'
 
 const props = defineProps<{ t: CatalogStrings; locale: 'pt' | 'en' }>()
 
 function toneName(tone: GalleryTone): string {
   return props.locale === 'en' ? toneLabelEn[tone] : toneLabel[tone]
-}
-
-function solidStyle(tone: GalleryTone): CSSProperties {
-  return badgeSolid(tone)
-}
-
-function softStyle(tone: GalleryTone): CSSProperties {
-  return badgeSoft(tone)
 }
 </script>
 
@@ -91,15 +83,8 @@ function softStyle(tone: GalleryTone): CSSProperties {
   flex: 0 0 auto;
 }
 
-.cg-badgedot {
-  display: inline-block;
-}
-
-/* DsBadge defaults set its own bg/padding/radius/min-width; reset so the inline
-   reference pill style renders 1:1. */
+/* Align the governed DsBadge font to the catalog sans stack. */
 .cg-badgerow :deep(.ntk-badge) {
-  min-inline-size: 0;
-  border: none;
   font-family: var(--ds-font-sans);
 }
 </style>

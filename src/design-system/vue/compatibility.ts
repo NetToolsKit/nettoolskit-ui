@@ -56,9 +56,11 @@ export interface NtkVueCompatCardProps {
 
 const ntkButtonVariantProps = {
   solid: { unelevated: true },
+  soft: { flat: true, unelevated: true },
   outline: { outline: true },
   ghost: { flat: true },
   link: { flat: true, unelevated: true },
+  plain: { flat: true },
 } as const satisfies Record<NtkButtonVariant, Partial<NtkVueCompatButtonProps>>
 
 const ntkFieldVariantProps = {

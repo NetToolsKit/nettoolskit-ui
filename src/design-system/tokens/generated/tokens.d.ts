@@ -28,6 +28,7 @@ export type DesignTokenPath =
   | "text.muted"
   | "text.inverse"
   | "text.onPrimary"
+  | "text.onSoft"
   | "text.link"
   | "text.linkHover"
   | "text.dark"
@@ -152,6 +153,7 @@ export type DesignTokenCssVariable =
   | "--ntk-text-muted"
   | "--ntk-text-inverse"
   | "--ntk-text-on-primary"
+  | "--ntk-on-soft"
   | "--ntk-text-link"
   | "--ntk-text-link-hover"
   | "--ntk-text-dark"
@@ -296,7 +298,7 @@ export interface DesignTokenResolver {
   readonly schemaVersion: 1
   readonly namespace: "nettoolskit"
   readonly source: "src/design-system/tokens/source.json"
-  readonly tokenCount: 122
+  readonly tokenCount: 123
   readonly groups: Readonly<Record<DesignTokenGroup, { readonly name: DesignTokenGroup; readonly tokens: readonly DesignTokenPath[] }>>
   readonly types: Readonly<Record<DesignTokenType, { readonly name: DesignTokenType; readonly tokens: readonly DesignTokenPath[] }>>
   readonly contexts: Readonly<Record<DesignTokenResolverContext, { readonly name: DesignTokenResolverContext; readonly status: string; readonly tokens: readonly DesignTokenPath[] }>>
