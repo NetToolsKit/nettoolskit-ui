@@ -10,7 +10,7 @@ such as `NetToolsKit.One`.
 ## Install
 
 ```bash
-npm install nettoolskit
+npm install @nettoolskit/ui
 ```
 
 Peer dependencies:
@@ -22,13 +22,22 @@ npm install vue quasar
 > **Preview release.** `0.0.1-preview.x` is an early preview: the public surface
 > is stabilizing and minor versions may introduce breaking changes until `0.1.0`.
 
+The package is published to **npmjs.org** (primary, shown above) and mirrored to
+**GitHub Packages** for org-internal use. To install from the mirror, point the
+`@nettoolskit` scope at GitHub Packages in your `.npmrc`:
+
+```
+@nettoolskit:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
 ## Quick start
 
 One-line install registers every `Ds*` component and bootstraps theming:
 
 ```ts
-import { createNetToolsKitUI } from 'nettoolskit'
-import 'nettoolskit/styles/global.scss'
+import { createNetToolsKitUI } from '@nettoolskit/ui'
+import '@nettoolskit/ui/styles/global.scss'
 
 app.use(createNetToolsKitUI({ theme: 'auto' }))
 ```
@@ -42,7 +51,7 @@ validated form + delete, with no per-screen CSS and no raw Quasar:
 </template>
 
 <script setup lang="ts">
-import { DsCrudPage, defineResource } from 'nettoolskit'
+import { DsCrudPage, defineResource } from '@nettoolskit/ui'
 
 const resource = defineResource({
   title: 'Clientes',
@@ -71,9 +80,9 @@ import {
   NtkCard,
   NtkInput,
   useFormRules,
-} from 'nettoolskit'
+} from '@nettoolskit/ui'
 
-import 'nettoolskit/styles/global.scss'
+import '@nettoolskit/ui/styles/global.scss'
 ```
 
 ## Layers (L0–L3)
@@ -121,26 +130,26 @@ Not in scope for this repository:
 ## Exports
 
 ```ts
-import { DsButton, DsCard, DsInput, DsSelect, DsTable } from 'nettoolskit'
-import { createDensityCssVariableAssignments } from 'nettoolskit'
+import { DsButton, DsCard, DsInput, DsSelect, DsTable } from '@nettoolskit/ui'
+import { createDensityCssVariableAssignments } from '@nettoolskit/ui'
 ```
 
 Style exports:
 
 ```scss
-@use 'nettoolskit/styles/tokens.scss';
-@use 'nettoolskit/styles/global.scss';
+@use '@nettoolskit/ui/styles/tokens.scss';
+@use '@nettoolskit/ui/styles/global.scss';
 ```
 
 Package subpaths:
 
-- `nettoolskit/styles`
-- `nettoolskit/styles/tokens.scss`
-- `nettoolskit/styles/global.scss`
-- `nettoolskit/styles/themes.css`
-- `nettoolskit/styles/quasar-variables.scss`
-- `nettoolskit/design-system/tokens.css`
-- `nettoolskit/design-system/resolver.json`
+- `@nettoolskit/ui/styles`
+- `@nettoolskit/ui/styles/tokens.scss`
+- `@nettoolskit/ui/styles/global.scss`
+- `@nettoolskit/ui/styles/themes.css`
+- `@nettoolskit/ui/styles/quasar-variables.scss`
+- `@nettoolskit/ui/design-system/tokens.css`
+- `@nettoolskit/ui/design-system/resolver.json`
 
 ## Development
 

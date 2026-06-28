@@ -27,7 +27,7 @@
  *
  *   // Utils
  *   validateEmail, validateCPF, retry, timeout
- * } from 'nettoolskit'
+ * } from '@nettoolskit/ui'
  * ```
  */
 

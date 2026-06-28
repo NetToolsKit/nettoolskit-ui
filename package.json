@@ -1,5 +1,5 @@
 {
-  "name": "nettoolskit",
+  "name": "@nettoolskit/ui",
   "version": "0.0.1-preview.1",
   "description": "Shared Vue 3 + Quasar component library with theme system, composables, and design tokens",
   "main": "./.build/dist/index.js",

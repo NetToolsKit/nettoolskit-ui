@@ -293,7 +293,7 @@ jobs:
       GITHUB_STATUS_CONTEXT: river/release
       GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
       RIVER_STAGE: release
-      NTK_RIVER_NPM_PACKAGE_NAME: nettoolskit
+      NTK_RIVER_NPM_PACKAGE_NAME: "@nettoolskit/ui"
       NTK_RIVER_NPM_DIST_TAG: preview
       npm_config_cache: .build/npm-cache-river
     steps:

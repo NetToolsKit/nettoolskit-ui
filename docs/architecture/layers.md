@@ -68,7 +68,7 @@ underneath normalize props, classes and validation for all of them.
 </template>
 
 <script setup lang="ts">
-import { DsCrudPage, defineResource } from 'nettoolskit'
+import { DsCrudPage, defineResource } from '@nettoolskit/ui'
 
 const resource = defineResource({
   title: 'Clientes',
@@ -117,7 +117,7 @@ the composite uses internally:
 And the one-line install that registers all of `L0` + bootstraps theming:
 
 ```ts
-import { createNetToolsKitUI } from 'nettoolskit'
+import { createNetToolsKitUI } from '@nettoolskit/ui'
 app.use(createNetToolsKitUI({ theme: 'auto' }))
 ```
 
