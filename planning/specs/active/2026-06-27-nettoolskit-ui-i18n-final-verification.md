@@ -49,8 +49,38 @@ against the reference.
 
 ## Progress Checklist
 
-Progress: 0% (0/3 checked)
+Progress: 100% (3/3 checked)
 
-- [ ] i18n coverage audit + PT/EN gaps closed
-- [ ] Locale-aware numbers/dates
-- [ ] Final verification sign-off (gates green via CI; visual vs reference)
+- [x] i18n coverage audit + PT/EN gaps closed
+- [x] Locale-aware numbers/dates
+- [x] Final verification sign-off (gates green via CI; visual vs reference)
+
+### P5 closeout notes (2026-06-27)
+
+i18n gaps closed (all wired through `catalogI18n.ts`; PT/EN at 476-key parity):
+
+- Hardcoded aria-labels / close-labels: Web search, e-commerce
+  notifications, draw-board "cor", Industrial Quick access / Ribbon /
+  Engineering workspace / Status, modal `close-label`, 3× feedback
+  `dismiss-label`.
+- E-commerce stock SKU/Qty headers + stock-status pills (OK/Baixo/Zerado),
+  report KPI labels (NPS/SLA/Devoluções), Settings labels + values (Loja /
+  Moeda / Fuso, localized store/currency/timezone).
+- Dashboards donut legend (Direto/Orgânico/Social/Pago) + region map names
+  (Norte…Capital) keyed; KPI labels (Sessões/Churn) folded into the dictionary.
+- Foundations type-scale labels + samples; scroll-table column headers (14-col
+  + 5-col); Kanban card titles; Viewer-3D frame/frames units.
+- Industrial quick actions, SCADA device labels, and the Output build log.
+
+Locale-aware numbers/dates (`Intl.NumberFormat` / `Intl.DateTimeFormat` keyed
+to `pt-BR` / `en-US`):
+
+- Web "Base de clientes" dates + monthly fee (already locale-aware; retained).
+- New formatters in `catalogScreensData.ts`: `formatCurrency`,
+  `formatCurrencyCompact`, `formatInt`, `formatPercent`, `formatDeltaPercent`.
+- E-commerce KPIs, order totals, product prices and dashboard KPIs converted
+  to numeric source data and formatted per locale (BRL `R$` ↔ USD `$`,
+  grouping `1.284` ↔ `1,284`, percent `3,8%` ↔ `3.8%`).
+
+Local gates: `lint` 0 errors, `lint:css` 0, `build:samples` ok, `type-check`
+(vue-tsc) exit 0. Units/e2e verified on Linux CI (local vitest can't run here).
