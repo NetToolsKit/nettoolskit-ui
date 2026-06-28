@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { DsBadge } from '../../index'
+import { DsBadge } from '../../src/index'
 import type { CatalogStrings } from './catalogI18n'
 import type { CatalogSectionMeta } from './useCatalogShell'
 

@@ -201,7 +201,7 @@ import {
   type NtkComponentIntent,
   type NtkStepItem,
   type NtkTabItem,
-} from '../../index'
+} from '../../src/index'
 
 // Drive the intent x variant matrices below so the e2e axe color-contrast scan
 // exercises every solid/soft/outline semantic pairing in one rendered DOM.

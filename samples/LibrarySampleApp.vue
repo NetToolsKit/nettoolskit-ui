@@ -247,7 +247,7 @@ import {
   useColorScheme,
   type ColorSchemeMode,
   type NtkComponentDensity,
-} from '../index'
+} from '../src/index'
 import { useThemeSwitcher, type ThemeId } from '../src/composables/useThemeSwitcher'
 import EcommerceApp from './apps/EcommerceApp.vue'
 import IndustrialStudioApp from './apps/IndustrialStudioApp.vue'

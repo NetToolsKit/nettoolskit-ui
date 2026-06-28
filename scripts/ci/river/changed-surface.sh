@@ -85,7 +85,7 @@ requires_gate() {
   case "$gate_name" in
     prepare)
       case "$checked_path" in
-        package.json | package-lock.json | sources.lock.yaml | index.ts | tsconfig.json | tsup.config.ts | vite.config.ts | eslint.config.mjs | stylelint.config.mjs | \
+        package.json | package-lock.json | sources.lock.yaml | tsconfig.json | tsup.config.ts | vite.config.ts | eslint.config.mjs | stylelint.config.mjs | \
           src/* | src/** | samples/* | samples/** | tests/* | tests/** | scripts/* | scripts/** | policies/* | policies/** | .gitriver/* | .gitriver/** | .github/* | .github/**)
           return 0
           ;;
@@ -93,7 +93,7 @@ requires_gate() {
       ;;
     standard)
       case "$checked_path" in
-        README.md | DESIGN.md | COMPONENTS.md | TOKENS.md | CHANGELOG.md | package.json | package-lock.json | sources.lock.yaml | index.ts | tsconfig.json | tsup.config.ts | vite.config.ts | eslint.config.mjs | stylelint.config.mjs | \
+        README.md | DESIGN.md | COMPONENTS.md | TOKENS.md | CHANGELOG.md | package.json | package-lock.json | sources.lock.yaml | tsconfig.json | tsup.config.ts | vite.config.ts | eslint.config.mjs | stylelint.config.mjs | \
           src/* | src/** | samples/* | samples/** | tests/* | tests/** | scripts/* | scripts/** | policies/* | policies/** | .gitriver/* | .gitriver/** | .github/* | .github/**)
           return 0
           ;;
@@ -108,7 +108,7 @@ requires_gate() {
       ;;
     build)
       case "$checked_path" in
-        package.json | package-lock.json | sources.lock.yaml | index.ts | tsconfig.json | tsup.config.ts | vite.config.ts | \
+        package.json | package-lock.json | sources.lock.yaml | tsconfig.json | tsup.config.ts | vite.config.ts | \
           src/* | src/** | samples/* | samples/** | scripts/* | scripts/** | policies/* | policies/** | .gitriver/* | .gitriver/** | .github/* | .github/**)
           return 0
           ;;
@@ -116,7 +116,7 @@ requires_gate() {
       ;;
     test)
       case "$checked_path" in
-        package.json | package-lock.json | sources.lock.yaml | index.ts | tsconfig.json | vite.config.ts | \
+        package.json | package-lock.json | sources.lock.yaml | tsconfig.json | vite.config.ts | \
           src/* | src/** | samples/* | samples/** | tests/* | tests/** | scripts/* | scripts/** | policies/* | policies/** | .gitriver/* | .gitriver/** | .github/* | .github/**)
           return 0
           ;;

@@ -52,7 +52,7 @@ import {
   DsWorkspaceCanvas,
   type NtkStatusBarSegment,
   type NtkTreeNode,
-} from '../../index'
+} from '../../src/index'
 
 // Controlled tree state: the explorer is stateless, so the recipe owns
 // expansion/selection and feeds it back through props.

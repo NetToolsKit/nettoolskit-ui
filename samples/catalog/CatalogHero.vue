@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DsChip } from '../../index'
+import { DsChip } from '../../src/index'
 import CatalogBrandMark from './CatalogBrandMark.vue'
 import type { CatalogStrings } from './catalogI18n'
 

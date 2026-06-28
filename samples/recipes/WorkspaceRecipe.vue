@@ -45,7 +45,7 @@ import {
   DsRibbon,
   type NtkQuickAccessItem,
   type NtkRibbonTab,
-} from '../../index'
+} from '../../src/index'
 
 const quickActions: NtkQuickAccessItem[] = [
   { id: 'new', label: 'New', icon: 'new' },

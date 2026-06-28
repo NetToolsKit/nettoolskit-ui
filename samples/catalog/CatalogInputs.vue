@@ -193,7 +193,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { DsChip, DsInput, DsSelect } from '../../index'
+import { DsChip, DsInput, DsSelect } from '../../src/index'
 import CatalogGalleryHeader from './CatalogGalleryHeader.vue'
 import type { CatalogStrings } from './catalogI18n'
 

@@ -5,7 +5,7 @@
 <script setup lang="ts">
 // Recipe: a complete CRUD screen from a single resource definition.
 // No custom CSS, no raw Quasar, no hand-rolled loading/empty/error states.
-import { DsCrudPage, defineResource } from '../../index'
+import { DsCrudPage, defineResource } from '../../src/index'
 
 interface Person {
   id: number
