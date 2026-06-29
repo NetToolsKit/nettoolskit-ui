@@ -64,7 +64,10 @@ resolve_bws() {
   bin="$tools/bws"
   if [ -x "$bin" ]; then bws_cmd=("$bin"); return 0; fi
   command -v curl >/dev/null 2>&1 || fail "curl is required to install bws."
-  command -v unzip >/dev/null 2>&1 || fail "unzip is required to install bws."
+  if ! command -v unzip >/dev/null 2>&1; then
+    if command -v apt-get >/dev/null 2>&1; then apt-get install -y --no-install-recommends unzip >/dev/null 2>&1 || true; fi
+    command -v unzip >/dev/null 2>&1 || fail "unzip is required to install bws."
+  fi
   command -v sha256sum >/dev/null 2>&1 || fail "sha256sum is required to verify bws."
   mkdir -p "$tools"
   url="${NTK_BWS_URL:-https://github.com/bitwarden/sdk-sm/releases/download/bws-v${ver}}"

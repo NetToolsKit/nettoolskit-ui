@@ -82,6 +82,21 @@ case "$stage" in
     # the GitHub Packages publish can reuse dist with --ignore-scripts.
     npm_ci
     npm run build
+    # Non-fatal Bitwarden-path self-test: forces the resolver down the Bitwarden
+    # (bws) path and reports OK/FAIL per token, WITHOUT affecting the real publish
+    # (which still resolves env-first below). This proves whether the synced
+    # publish tokens can be dropped. Never fails the stage. Secret values are
+    # discarded (stdout -> /dev/null); only the resolver's stderr reason is shown.
+    bws_selftest() {
+      local label="$1"; shift
+      if NTK_FORCE_BITWARDEN_RESOLVE=1 bash "$script_dir/resolve-secret.sh" "$@" >/dev/null 2>/tmp/bws-selftest.err; then
+        echo "::bws-selftest:: $label via Bitwarden = OK"
+      else
+        echo "::bws-selftest:: $label via Bitwarden = FAIL: $(tail -n 1 /tmp/bws-selftest.err 2>/dev/null)"
+      fi
+    }
+    bws_selftest "npm token" NPM_TOKEN NODE_AUTH_TOKEN NPM_PACKAGES || true
+    bws_selftest "gh-packages token" GITHUB_CR_PUBLISH_TOKEN GITHUB_PACKAGES NPM_PUBLISH_TOKEN || true
     bash "$script_dir/npm-publish.sh"
     bash "$script_dir/package-publish.sh"
     ;;
