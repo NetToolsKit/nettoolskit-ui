@@ -121,10 +121,10 @@ Target end state for the `nettoolskit-ui-ci` GitRiver project:
 
 ## Progress Checklist
 
-Progress: 0% (0/5 checked)
+Progress: 40% (2/5 checked)
 
-- [ ] `resolve-secret.sh` shared resolver (env-first → bws), pinned bws install
-- [ ] Wire `npm-publish.sh` + `package-publish.sh` to the resolver
+- [x] `resolve-secret.sh` shared resolver (env-first + force flag → bws), pinned bws install — UI side
+- [x] Wire `npm-publish.sh` + `package-publish.sh` to the resolver (dormant: env-first)
 - [ ] Access publisher: per-repo var set; sync `BITWARDEN_ACCESS_TOKEN`; drop publish tokens for `nettoolskit-ui-ci`
-- [ ] Verify runtime resolution in a runner with the token; flip the ui-ci var set
+- [ ] Verify runtime resolution in a runner with the token (NTK_FORCE_BITWARDEN_RESOLVE=1); flip the ui-ci var set
 - [ ] Docs + memory; sequence agent migration before any shared-default removal

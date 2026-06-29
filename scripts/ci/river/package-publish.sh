@@ -73,8 +73,12 @@ if [ -n "$existing_version" ]; then
   exit 0
 fi
 
-NODE_AUTH_TOKEN="${GITHUB_CR_PUBLISH_TOKEN:-${NPM_PUBLISH_TOKEN:-}}"
-[ -n "$NODE_AUTH_TOKEN" ] || fail "GitHub Packages credential is required (set GITHUB_CR_PUBLISH_TOKEN)."
+# Resolve the GitHub Packages token via the shared resolver: process env first
+# (a no-op while GitRiver still syncs GITHUB_CR_PUBLISH_TOKEN), else Bitwarden
+# (key GITHUB_PACKAGES).
+resolver_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NODE_AUTH_TOKEN="$(bash "$resolver_dir/resolve-secret.sh" GITHUB_CR_PUBLISH_TOKEN GITHUB_PACKAGES NPM_PUBLISH_TOKEN)" \
+  || fail "GitHub Packages credential is required (GITHUB_CR_PUBLISH_TOKEN env, or Bitwarden GITHUB_PACKAGES)."
 export NODE_AUTH_TOKEN
 
 scope="${package_name%%/*}"   # e.g. @nettoolskit
