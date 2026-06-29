@@ -125,6 +125,6 @@ Progress: 40% (2/5 checked)
 
 - [x] `resolve-secret.sh` shared resolver (env-first + force flag → bws), pinned bws install — UI side
 - [x] Wire `npm-publish.sh` + `package-publish.sh` to the resolver (dormant: env-first)
-- [ ] Access publisher: per-repo var set; sync `BITWARDEN_ACCESS_TOKEN`; drop publish tokens for `nettoolskit-ui-ci`
-- [ ] Verify runtime resolution in a runner with the token (NTK_FORCE_BITWARDEN_RESOLVE=1); flip the ui-ci var set
+- [ ] Access publisher: per-repo var set; sync `BITWARDEN_ACCESS_TOKEN` (DONE — synced into `nettoolskit-ui-ci`); drop publish tokens for `nettoolskit-ui-ci` (pending)
+- [ ] Verify runtime resolution in a runner with the token (NTK_FORCE_BITWARDEN_RESOLVE=1 self-test in the release stage); flip the ui-ci var set
 - [ ] Docs + memory; sequence agent migration before any shared-default removal
