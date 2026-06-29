@@ -59,7 +59,7 @@ resolve_bws() {
   # Pinned download (version/url overridable so it can be corrected without a
   # code change). Verifies the archive against the release-published checksums.
   local ver url tools archive checksums bin
-  ver="${NTK_BWS_VERSION:-1.0.0}"
+  ver="${NTK_BWS_VERSION:-2.1.0}"
   tools="${NTK_BWS_INSTALL_DIR:-.build/tools/bws}"
   bin="$tools/bws"
   if [ -x "$bin" ]; then bws_cmd=("$bin"); return 0; fi
@@ -73,7 +73,8 @@ resolve_bws() {
   url="${NTK_BWS_URL:-https://github.com/bitwarden/sdk-sm/releases/download/bws-v${ver}}"
   archive="$tools/bws.zip"
   checksums="$tools/checksums.txt"
-  curl -fsSL "$url/bws-x86_64-unknown-linux-gnu-${ver}.zip" -o "$archive"
+  curl -fsSL "$url/bws-x86_64-unknown-linux-gnu-${ver}.zip" -o "$archive" \
+    || fail "bws download failed: $url/bws-x86_64-unknown-linux-gnu-${ver}.zip"
   curl -fsSL "$url/bws-sha256-checksums-${ver}.txt" -o "$checksums" 2>/dev/null || true
   if [ -s "$checksums" ]; then
     local want got
@@ -83,7 +84,7 @@ resolve_bws() {
   else
     fail "bws checksums file not available from $url; refusing to install unverified bws."
   fi
-  unzip -o -q "$archive" -d "$tools"
+  unzip -o -q "$archive" -d "$tools" || fail "bws unzip failed for $archive"
   chmod 700 "$bin"
   bws_cmd=("$bin")
 }
@@ -96,11 +97,13 @@ common=()
 # Bitwarden SM CLI reads the token from BWS_ACCESS_TOKEN (Docker) or --access-token.
 export BWS_ACCESS_TOKEN="$BITWARDEN_ACCESS_TOKEN"
 
-projects_json="$("${bws_cmd[@]}" "${common[@]}" project list --output json --access-token "$BITWARDEN_ACCESS_TOKEN")"
+projects_json="$("${bws_cmd[@]}" "${common[@]}" project list --output json --access-token "$BITWARDEN_ACCESS_TOKEN" 2>/tmp/bws-cli.err)" \
+  || fail "bws 'project list' failed (runner network to Bitwarden SM server, or bws binary): $(tail -n 1 /tmp/bws-cli.err 2>/dev/null)"
 project_id="$(printf '%s' "$projects_json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const a=JSON.parse(s);const m=a.find(p=>p&&p.name===process.argv[1]);process.stdout.write(m&&m.id?String(m.id):"")}catch(e){process.exit(3)}})' "$project_name")"
 [ -n "$project_id" ] || fail "Bitwarden project '$project_name' not found for this access token."
 
-secrets_json="$("${bws_cmd[@]}" "${common[@]}" secret list "$project_id" --output json --access-token "$BITWARDEN_ACCESS_TOKEN")"
+secrets_json="$("${bws_cmd[@]}" "${common[@]}" secret list "$project_id" --output json --access-token "$BITWARDEN_ACCESS_TOKEN" 2>/tmp/bws-cli.err)" \
+  || fail "bws 'secret list' failed: $(tail -n 1 /tmp/bws-cli.err 2>/dev/null)"
 value="$(printf '%s' "$secrets_json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const a=JSON.parse(s);const wanted=process.argv.slice(1);const map={};for(const it of a){if(it&&it.key)map[it.key]=it.value;}for(const k of wanted){if(map[k]!=null&&String(map[k]).length){process.stdout.write(String(map[k]));return;}}}catch(e){process.exit(3)}})' "$@")"
 [ -n "$value" ] || fail "none of the candidate keys [$*] were found in Bitwarden project '$project_name'."
 
