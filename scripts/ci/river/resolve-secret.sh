@@ -99,13 +99,13 @@ export BWS_ACCESS_TOKEN="$BITWARDEN_ACCESS_TOKEN"
 
 projects_json="$("${bws_cmd[@]}" "${common[@]}" project list --output json --access-token "$BITWARDEN_ACCESS_TOKEN" 2>/tmp/bws-cli.err)" \
   || fail "bws 'project list' failed (runner network to Bitwarden SM server, or bws binary): $(tail -n 1 /tmp/bws-cli.err 2>/dev/null)"
-project_id="$(printf '%s' "$projects_json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const a=JSON.parse(s);const m=a.find(p=>p&&p.name===process.argv[1]);process.stdout.write(m&&m.id?String(m.id):"")}catch(e){process.exit(3)}})' "$project_name")"
-[ -n "$project_id" ] || fail "Bitwarden project '$project_name' not found for this access token."
+project_id="$(printf '%s' "$projects_json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const a=JSON.parse(s);const m=a.find(p=>p&&p.name===process.argv[1]);process.stdout.write(m&&m.id?String(m.id):"")}catch(e){process.exit(0)}})' "$project_name")"
+[ -n "$project_id" ] || fail "Bitwarden project '$project_name' not resolved. bws 'project list' returned (first 300 chars, no secrets): $(printf '%s' "$projects_json" | tr '\n' ' ' | head -c 300)"
 
 secrets_json="$("${bws_cmd[@]}" "${common[@]}" secret list "$project_id" --output json --access-token "$BITWARDEN_ACCESS_TOKEN" 2>/tmp/bws-cli.err)" \
   || fail "bws 'secret list' failed: $(tail -n 1 /tmp/bws-cli.err 2>/dev/null)"
-value="$(printf '%s' "$secrets_json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const a=JSON.parse(s);const wanted=process.argv.slice(1);const map={};for(const it of a){if(it&&it.key)map[it.key]=it.value;}for(const k of wanted){if(map[k]!=null&&String(map[k]).length){process.stdout.write(String(map[k]));return;}}}catch(e){process.exit(3)}})' "$@")"
-[ -n "$value" ] || fail "none of the candidate keys [$*] were found in Bitwarden project '$project_name'."
+value="$(printf '%s' "$secrets_json" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const a=JSON.parse(s);const wanted=process.argv.slice(1);const map={};for(const it of a){if(it&&it.key)map[it.key]=it.value;}for(const k of wanted){if(map[k]!=null&&String(map[k]).length){process.stdout.write(String(map[k]));return;}}}catch(e){process.exit(0)}})' "$@")"
+[ -n "$value" ] || fail "none of the candidate keys [$*] resolved (or 'secret list' output unparseable). bws returned $(printf '%s' "$secrets_json" | wc -c) bytes."
 
 log "resolved one of [$*] from Bitwarden project '$project_name'."
 printf '%s' "$value"
