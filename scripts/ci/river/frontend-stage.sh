@@ -92,7 +92,8 @@ case "$stage" in
       if NTK_FORCE_BITWARDEN_RESOLVE=1 bash "$script_dir/resolve-secret.sh" "$@" >/dev/null 2>/tmp/bws-selftest.err; then
         echo "::bws-selftest:: $label via Bitwarden = OK"
       else
-        echo "::bws-selftest:: $label via Bitwarden = FAIL: $(tail -n 1 /tmp/bws-selftest.err 2>/dev/null)"
+        echo "::bws-selftest:: $label via Bitwarden = FAIL"
+        sed 's/^/::bws-selftest::   /' /tmp/bws-selftest.err 2>/dev/null | tail -n 5
       fi
     }
     bws_selftest "npm token" NPM_TOKEN NODE_AUTH_TOKEN NPM_PACKAGES || true
