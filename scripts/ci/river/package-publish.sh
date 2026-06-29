@@ -57,25 +57,15 @@ esac
 
 log "package=$package_name version=$package_version registry=$registry ref=${source_ref:-unknown} publish=$should_publish"
 
-existing_version=""
-if existing_version="$(npm view "$package_name@$package_version" version --registry "$registry" 2>/dev/null)"; then
-  if [ -n "$existing_version" ]; then
-    log "$package_name@$existing_version already exists in GitHub Packages; skipping."
-  fi
-fi
-
 if [ "$should_publish" != "1" ]; then
-  log "dry-run only outside main or v* release refs."
-  exit 0
-fi
-
-if [ -n "$existing_version" ]; then
+  log "package=$package_name version=$package_version registry=$registry: dry-run only outside main or v* release refs."
   exit 0
 fi
 
 # Resolve the GitHub Packages token via the shared resolver: process env first
 # (a no-op while GitRiver still syncs GITHUB_CR_PUBLISH_TOKEN), else Bitwarden
-# (key GITHUB_PACKAGES).
+# (key GITHUB_PACKAGES). Auth is set up BEFORE the existence check because the
+# GitHub Packages registry requires authentication even to read.
 resolver_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NODE_AUTH_TOKEN="$(bash "$resolver_dir/resolve-secret.sh" GITHUB_CR_PUBLISH_TOKEN GITHUB_PACKAGES NPM_PUBLISH_TOKEN)" \
   || fail "GitHub Packages credential is required (GITHUB_CR_PUBLISH_TOKEN env, or Bitwarden GITHUB_PACKAGES)."
@@ -96,7 +86,23 @@ npm_userconfig="$tmp_dir/npmrc"
 } > "$npm_userconfig"
 export NPM_CONFIG_USERCONFIG="$npm_userconfig"
 
-# dist is already built by npm-publish.sh (run earlier in the release stage) and
-# by the explicit build; skip lifecycle scripts to avoid a redundant rebuild.
-npm publish --ignore-scripts --registry "$registry" --access restricted
-log "published $package_name@$package_version to GitHub Packages."
+# Idempotency: authenticated existence check (GitHub Packages needs auth to read).
+if existing_version="$(npm view "$package_name@$package_version" version --registry "$registry" 2>/dev/null)" \
+   && [ -n "$existing_version" ]; then
+  log "$package_name@$existing_version already exists in GitHub Packages; skipping publish."
+  exit 0
+fi
+
+# dist is already built earlier in the release stage; skip lifecycle scripts to
+# avoid a redundant rebuild. Tolerate an already-published race (409 conflict).
+if publish_log="$(npm publish --ignore-scripts --registry "$registry" --access restricted 2>&1)"; then
+  printf '%s\n' "$publish_log"
+  log "published $package_name@$package_version to GitHub Packages."
+else
+  if printf '%s' "$publish_log" | grep -qiE 'cannot publish over|already exists|EPUBLISHCONFLICT|conflict|409'; then
+    log "$package_name@$package_version is already present in GitHub Packages; treating as published."
+    exit 0
+  fi
+  printf '%s\n' "$publish_log" >&2
+  fail "GitHub Packages publish to $registry failed."
+fi
