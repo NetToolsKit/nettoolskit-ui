@@ -1,8 +1,8 @@
 # NetToolsKit UI GitRiver Secret Minimization + Runtime Bitwarden Resolution - Spec
 
 Generated: 2026-06-28 America/Sao_Paulo
-LastUpdated: 2026-06-28 America/Sao_Paulo
-Status: backlog
+LastUpdated: 2026-06-30 America/Sao_Paulo
+Status: active
 Priority: medium
 Workstream ID: `nettoolskit-ui-gitriver-secret-minimization`
 Phase: cicd-hardening
@@ -121,10 +121,11 @@ Target end state for the `nettoolskit-ui-ci` GitRiver project:
 
 ## Progress Checklist
 
-Progress: 40% (2/5 checked)
+Progress: 60% (3/5 checked) — resolver + wiring + docs landed; the runner
+verification and the control-plane flip remain (gated, deliberately deferred).
 
 - [x] `resolve-secret.sh` shared resolver (env-first + force flag → bws), pinned bws install — UI side
 - [x] Wire `npm-publish.sh` + `package-publish.sh` to the resolver (dormant: env-first)
-- [ ] Access publisher: per-repo var set; sync `BITWARDEN_ACCESS_TOKEN` (DONE — synced into `nettoolskit-ui-ci`); drop publish tokens for `nettoolskit-ui-ci` (pending)
-- [ ] Verify runtime resolution in a runner with the token (NTK_FORCE_BITWARDEN_RESOLVE=1 self-test in the release stage); flip the ui-ci var set
-- [ ] Docs + memory; sequence agent migration before any shared-default removal
+- [~] Access publisher: per-repo var set; sync `BITWARDEN_ACCESS_TOKEN` (DONE — synced into `nettoolskit-ui-ci`); **drop publish tokens for `nettoolskit-ui-ci` = GATED** on the runner verification below (control-plane change in `nettoolskit-access`)
+- [ ] **Verify runtime resolution in the runner** (the release stage's non-fatal `NTK_FORCE_BITWARDEN_RESOLVE=1` self-test prints the real outcome; the parse-fix in #107 surfaces the raw reason). **Gating step — flip only after this is green.**
+- [x] Docs + memory — `docs/architecture/ci-secret-resolution.md` (minimal secret set + resolution flow + rollout sequencing) and the [[npm-publish-mechanism]] memory updated. Agent migration must precede any shared-default removal (recorded in the doc's sequencing).
