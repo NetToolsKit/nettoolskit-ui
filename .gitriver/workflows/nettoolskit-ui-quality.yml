@@ -278,10 +278,10 @@ jobs:
             "River NetToolsKit UI ${RIVER_STAGE}" \
             bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
 
-  # Publishes nettoolskit to npm. Runs after the quality stages (needs: test);
+  # Publishes nettoolskit to npm. Runs after validation-only packaging;
   # job order in the file is irrelevant — River resolves the DAG by `needs`.
   release:
-    needs: [standard, security, build, test]
+    needs: package
     image: node:20-bookworm
     if: $GITHUB_SOURCE_REF
     timeout: 25m
@@ -346,6 +346,196 @@ jobs:
           bash scripts/ci/river/run-source-gate.sh \
             "River NetToolsKit UI ${RIVER_STAGE}" \
             bash scripts/ci/river/frontend-stage.sh "$RIVER_STAGE"
+
+  package:
+    needs: test
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 25m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/package
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: package
+      npm_config_cache: .build/npm-cache-river
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          base_ref="${INPUT_GITHUB_BASE_REF:-${GITHUB_BASE_REF:-main}}"
+          base_sha="${INPUT_GITHUB_BASE_SHA:-${GITHUB_BASE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          export GITHUB_BASE_REF="$base_ref"
+          export GITHUB_BASE_SHA="$base_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            bash -lc 'npm ci --no-audit --no-fund && npm run build && npm pack --dry-run'
+
+  deploy:
+    # reserved skipped stage: deploy is not applicable until approved automation exists.
+    needs: release
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 10m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/deploy
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: deploy
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            sh -c 'echo "NetToolsKit UI deploy is reserved for future approved automation."; exit 78'
+
+  verify:
+    # reserved skipped stage: verify is not applicable until deploy automation exists.
+    needs: deploy
+    image: node:20-bookworm
+    if: $GITHUB_SOURCE_REF
+    timeout: 10m
+    interruptible: true
+    env:
+      GITHUB_REPOSITORY: NetToolsKit/nettoolskit-ui
+      GITHUB_SOURCE_URL: https://github.com/NetToolsKit/nettoolskit-ui.git
+      GITHUB_BASE_REF: main
+      GITHUB_STATUS_CONTEXT: river/verify
+      GITRIVER_REPOSITORY_SLUG: nettoolskit-ui-ci
+      RIVER_STAGE: verify
+    steps:
+      - run: |
+          set -eu
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends ca-certificates curl git
+            rm -rf /var/lib/apt/lists/*
+          fi
+          test -n "$GITHUB_SOURCE_TOKEN"
+          source_ref="${INPUT_GITHUB_SOURCE_REF:-${GITHUB_SOURCE_REF:-main}}"
+          source_sha="${INPUT_GITHUB_SOURCE_SHA:-${GITHUB_SOURCE_SHA:-}}"
+          export GITHUB_SOURCE_REF="$source_ref"
+          export GITHUB_SOURCE_SHA="$source_sha"
+          workspace="${CI_WORKSPACE:-$PWD}"
+          source_dir="$workspace/nettoolskit-ui-${RIVER_STAGE}"
+          rm -rf "$source_dir"
+
+          cat > /tmp/git-askpass <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *) printf '%s\n' "$GITHUB_SOURCE_TOKEN" ;;
+          esac
+          EOF
+          chmod 700 /tmp/git-askpass
+          GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+            git clone --depth 64 --branch "$source_ref" "$GITHUB_SOURCE_URL" "$source_dir"
+          if [ -n "$source_sha" ]; then
+            (
+              cd "$source_dir"
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                GIT_ASKPASS=/tmp/git-askpass GIT_TERMINAL_PROMPT=0 \
+                  git fetch --depth 1 origin "$source_sha"
+                git checkout --detach "$source_sha"
+              fi
+              if [ "$(git rev-parse HEAD)" != "$source_sha" ]; then
+                echo "GitHub source checkout does not match GITHUB_SOURCE_SHA." >&2
+                exit 1
+              fi
+            )
+          fi
+          rm -f /tmp/git-askpass
+
+          cd "$source_dir"
+          bash scripts/ci/river/run-source-gate.sh \
+            "River NetToolsKit UI ${RIVER_STAGE}" \
+            sh -c 'echo "NetToolsKit UI verify is reserved for future approved automation."; exit 78'
 
   test:
     needs: build
