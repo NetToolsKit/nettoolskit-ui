@@ -1,8 +1,8 @@
 # NetToolsKit UI Framework-Agnostic Core Extraction - Spec
 
 Generated: 2026-06-28 America/Sao_Paulo
-LastUpdated: 2026-06-28 America/Sao_Paulo
-Status: backlog
+LastUpdated: 2026-06-30 America/Sao_Paulo
+Status: active
 Priority: medium
 Workstream ID: `nettoolskit-ui-framework-agnostic-core-extraction`
 Phase: architecture-foundation
@@ -109,9 +109,18 @@ Local vitest does NOT run here (Node 26 + network mount). Verify via:
 
 ## Progress Checklist
 
-Progress: 0% (0/4 checked)
+Progress: 75% (3/4 checked) — design + guardrails landed; the logic-move is the
+remaining (deferred) execution step.
 
-- [ ] Audit logic leakage; produce composable→core migration map
+- [x] Audit logic leakage; produce composable→core migration map —
+  `docs/architecture/core-extraction-migration-map.md` (14 composables classified
+  MOSTLY-PURE / MIXED / VUE-IDIOMATIC + ranked extraction order)
 - [ ] Push pure logic into `core/` (+ core unit tests), Vue composables as shells
-- [ ] Define package boundaries + add `core/` import-boundary CI rule
-- [ ] Write `docs/architecture/binding-contract.md`
+  — **deferred** (separate sequenced change so each move carries a core unit test
+  under the 100% coverage gate). Order defined in the migration map.
+- [x] Define package boundaries + add `core/` import-boundary CI rule — boundaries
+  documented in `binding-contract.md`; the `core-purity` rule shipped in
+  `scripts/check-layers.mjs` (layer-taxonomy formalization) and enforces
+  `core/**` Vue-free/DOM-free in River + `verify`.
+- [x] Write `docs/architecture/binding-contract.md` — the rubric a framework
+  binding is graded against.
