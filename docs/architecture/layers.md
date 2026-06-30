@@ -141,6 +141,33 @@ See the backlog specs for the planned path:
 `planning/specs/backlog/2026-06-28-nettoolskit-ui-framework-agnostic-core-extraction.md`
 and `…-react-binding-pilot.md`.
 
+## Enforcement (the taxonomy is gated, not just documented)
+
+The layer assignment lives in a machine-readable manifest,
+[`planning/architecture/layers.json`](../../planning/architecture/layers.json),
+which maps path globs → layer (first match wins, so composites resolve before the
+generic `Ds*.vue` primitive rule). A lightweight gate,
+[`scripts/check-layers.mjs`](../../scripts/check-layers.mjs), parses each source
+file's imports and fails on a **wrong-direction dependency**:
+
+- **core purity** — `src/design-system/core/**` must not import the `vue`
+  framework, anything under `src/design-system/vue/`, or `src/composables/**`
+  (this is the contract that lets `core/` port to another framework as-is).
+- **primitives don't depend on composites** — an `L0` `Ds*` primitive must not
+  import an `L1` composite (`DsCrudPage` / `DsFormPage`).
+
+Run it locally:
+
+```bash
+npm run layers:check    # enforce mode (exit 1 on a violation) — used in CI
+npm run layers:report   # advisory mode (prints findings, never fails)
+```
+
+The gate runs in the River `prepare` + `standard` stages alongside
+`tokens:check` and `docs:check`, and is part of `npm run verify`. To add or
+re-scope a layer, edit the manifest — the doc table above and the gate read from
+the same taxonomy.
+
 ## See also
 
 - [docs/RECIPES.md](../RECIPES.md) — copyable L3 patterns

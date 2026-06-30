@@ -31,12 +31,14 @@ case "$stage" in
     npm_ci_without_lifecycle_scripts
     npm run tokens:check
     npm run docs:check
+    npm run layers:check
     ;;
   standard)
     run_changed_surface
     npm_ci
     npm run tokens:check
     npm run docs:check
+    npm run layers:check
     npm run lint -- --quiet
     npm run lint:style
     npm run lint:css

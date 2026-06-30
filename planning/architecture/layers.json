@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "description": "Machine-readable L0-L3 layer taxonomy for nettoolskit-ui. Source of truth for the docs/architecture/layers.md taxonomy and the scripts/check-layers.mjs dependency-direction gate. Glob rules are evaluated in order; the first match wins, so more specific composites are listed before the generic Ds*.vue primitive rule.",
+  "doc": "docs/architecture/layers.md",
+  "layers": {
+    "core": {
+      "label": "L2-core (pure)",
+      "summary": "Framework-free contracts, class recipes (getNtk*Classes), schema (defineForm/defineResource), validation, icons. Zero Vue, ~zero DOM.",
+      "globs": ["src/design-system/core/**"]
+    },
+    "L1": {
+      "label": "L1 (composites)",
+      "summary": "DsCrudPage / DsFormPage composites that hand-compose Ds* primitives. First-class escape hatch.",
+      "globs": [
+        "src/design-system/vue/components/DsCrudPage.vue",
+        "src/design-system/vue/components/DsFormPage.vue"
+      ]
+    },
+    "L2-vue": {
+      "label": "L2 (schema renderer)",
+      "summary": "DsForm.vue renders the pure defineForm/defineResource schema output.",
+      "globs": ["src/design-system/vue/components/DsForm.vue"]
+    },
+    "L0": {
+      "label": "L0 (primitives + install)",
+      "summary": "Ds* primitives and createNetToolsKitUI() one-line install.",
+      "globs": [
+        "src/design-system/vue/components/Ds*.vue",
+        "src/design-system/vue/plugin/**"
+      ]
+    },
+    "L3": {
+      "label": "L3 (recipe catalog)",
+      "summary": "Sample apps that teach approved composition. Consume the public API only.",
+      "globs": ["samples/**"]
+    }
+  },
+  "rules": {
+    "description": "Forbidden dependency edges. Direction is L2-core <- L0 <- L1 <- L2-vue <- L3; everything pure lives in core. Each rule says: a file in `from` must NOT import a file classified as one of `forbidImportsOf`, nor any bare module in `forbidBareModules`, nor any path under `forbidPathPrefixes`.",
+    "edges": [
+      {
+        "id": "core-purity",
+        "from": "core",
+        "forbidImportsOf": ["L0", "L1", "L2-vue"],
+        "forbidBareModules": ["vue", "@vue/runtime-core", "@vue/reactivity", "quasar"],
+        "forbidPathPrefixes": ["src/design-system/vue/", "src/composables/"],
+        "reason": "core/ must stay framework-free and DOM-free so it ports to any framework as-is (the binding contract)."
+      },
+      {
+        "id": "primitive-no-composite",
+        "from": "L0",
+        "forbidImportsOf": ["L1"],
+        "forbidBareModules": [],
+        "forbidPathPrefixes": [],
+        "reason": "An L0 primitive must not depend on an L1 composite (wrong-direction dependency: composites are built ON primitives, not the reverse)."
+      }
+    ]
+  }
+}

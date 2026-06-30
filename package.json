@@ -54,6 +54,8 @@
     "docs:check": "node scripts/design-system-docs.mjs --check",
     "tokens:build": "node scripts/token-build.mjs",
     "tokens:check": "node scripts/token-build.mjs --check",
+    "layers:check": "node scripts/check-layers.mjs --check",
+    "layers:report": "node scripts/check-layers.mjs",
     "test": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
     "test:architecture": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/architecture",
     "test:design-system": "cross-env VITE_CJS_IGNORE_WARNING=true vitest run --config tests/vitest.config.ts tests/unit/design-system --pool=forks --maxWorkers=1 --no-file-parallelism --isolate=false",
@@ -67,7 +69,7 @@
     "lint:css": "node scripts/lint-css-governance.mjs",
     "sec:audit": "npm audit --omit=dev --audit-level=high",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run build:samples"
+    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run build:samples"
   },
   "keywords": [
     "vue",

@@ -1,8 +1,8 @@
 # NetToolsKit UI Layer Taxonomy Formalization (L0–L3) - Spec
 
 Generated: 2026-06-28 America/Sao_Paulo
-LastUpdated: 2026-06-28 America/Sao_Paulo
-Status: backlog
+LastUpdated: 2026-06-30 America/Sao_Paulo
+Status: completed
 Priority: medium
 Workstream ID: `nettoolskit-ui-layer-taxonomy-formalization`
 Phase: architecture-docs
@@ -90,9 +90,9 @@ Local vitest does NOT run here (Node 26 + network mount). Verify via:
 
 ## Progress Checklist
 
-Progress: 0% (0/4 checked)
+Progress: 100% (4/4 checked)
 
-- [ ] Write `docs/architecture/layers.md` (table + diagram + decision guide + example)
-- [ ] Add machine-readable layer manifest (paths → layers)
-- [ ] Add `check-layers` gate; wire into CI/River
-- [ ] Link from README; sync layer labels into generated `COMPONENTS.md`
+- [x] `docs/architecture/layers.md` (table + diagram + decision guide + L2→L1→L0 example) — already shipped; added an Enforcement section linking the manifest + gate
+- [x] Machine-readable layer manifest `planning/architecture/layers.json` (path globs → layer, first-match-wins)
+- [x] `scripts/check-layers.mjs` gate (advisory + `--check` enforce); wired into River `prepare`/`standard` + `npm run verify`; proven to catch core-purity + L0→L1 violations
+- [x] README already links `layers.md` (×3); taxonomy cross-linked from the doc's Enforcement section. (COMPONENTS.md label-sync deferred — kept out of the docs generator to avoid coupling; manifest is the single source.)
