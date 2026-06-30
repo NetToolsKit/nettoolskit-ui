@@ -109,15 +109,17 @@ Local vitest does NOT run here (Node 26 + network mount). Verify via:
 
 ## Progress Checklist
 
-Progress: 75% (3/4 checked) — design + guardrails landed; the logic-move is the
-remaining (deferred) execution step.
+Progress: 85% (3/4 checked; item 2 in progress) — design + guardrails landed; the
+logic-move is underway (2 of the ranked extractions shipped).
 
 - [x] Audit logic leakage; produce composable→core migration map —
   `docs/architecture/core-extraction-migration-map.md` (14 composables classified
   MOSTLY-PURE / MIXED / VUE-IDIOMATIC + ranked extraction order)
-- [ ] Push pure logic into `core/` (+ core unit tests), Vue composables as shells
-  — **deferred** (separate sequenced change so each move carries a core unit test
-  under the 100% coverage gate). Order defined in the migration map.
+- [~] Push pure logic into `core/` (+ core unit tests), Vue composables as shells
+  — **in progress.** Landed: `useDebounce`→`core/timing` (createDebouncer/
+  createThrottler) and `FormValidationService`→`core/validators`. Remaining
+  (sequenced, DOM-touching / medium-risk): `useColorScheme`, `useTheme`
+  (`applyThemeToCSS`), `useToast`. Order in the migration map.
 - [x] Define package boundaries + add `core/` import-boundary CI rule — boundaries
   documented in `binding-contract.md`; the `core-purity` rule shipped in
   `scripts/check-layers.mjs` (layer-taxonomy formalization) and enforces

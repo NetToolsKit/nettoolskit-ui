@@ -13,7 +13,7 @@
  * @layer Presentation
  */
 
-import { FormValidationService } from '../../services/FormValidationService'
+import { FormValidationService } from '../../design-system/core/validators/FormValidationService'
 
 /**
  * Composable useFormRules
@@ -70,4 +70,4 @@ export function useFormRules() {
 /**
  * Re-export types for convenience
  */
-export type { ValidationRule, ValidationResult } from '../../services/FormValidationService'
+export type { ValidationRule, ValidationResult } from '../../design-system/core/validators/FormValidationService'

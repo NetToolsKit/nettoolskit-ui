@@ -8,10 +8,10 @@ composable). It is the design artifact that makes the eventual logic-move
 mechanical; see [`binding-contract.md`](./binding-contract.md) for what a
 binding consumes and [`layers.md`](./layers.md) for the layer taxonomy.
 
-> **Status:** design/map only. No logic has moved yet. The actual extraction
-> (push pure parts down + leave reactive shells with unchanged public
-> signatures) is a separate, sequenced change so each move can carry a core unit
-> test under the existing 100% core-coverage gate.
+> **Status:** in progress. The map below is the plan; extractions land
+> incrementally, each leaving the composable's public signature unchanged and
+> carrying a core unit test. **Landed so far:** `useDebounce` → `core/timing`
+> (createDebouncer/createThrottler) and `FormValidationService` → `core/validators`.
 
 ## Baseline (verified 2026-06-30)
 
@@ -45,15 +45,17 @@ binding consumes and [`layers.md`](./layers.md) for the layer taxonomy.
 
 ## Recommended extraction order (highest value, lowest risk first)
 
-1. **`forms/useFormRules.ts` → `core/validators/`** — already pure (no Vue);
-   organizational move only, keep composable as a re-export. Risk: none.
+1. **`forms/useFormRules.ts` → `core/validators/`** — ✅ **landed.**
+   `FormValidationService` (already pure) now lives in
+   `src/design-system/core/validators/`; `useFormRules` re-exports it unchanged.
 2. **`ui/useColorScheme.ts` exported fns → `core/color-scheme/`** — pure
    `resolveColorScheme()` / `applyColorScheme()` / mode guard; wrapper keeps the
    singleton refs + media-query listener. Risk: low.
 3. **`ui/useTheme.ts` `applyThemeToCSS()` → `core/theme/`** — brightness/CSS-var
    derivation; wrapper keeps the reactive theme state. Risk: low.
-4. **`utils/useDebounce.ts` timing → `core/timing/`** — pure debounce/throttle
-   algorithm; wrapper keeps ref-wrapped timeout state. Risk: low.
+4. **`utils/useDebounce.ts` timing → `core/timing/`** — ✅ **landed.**
+   `createDebouncer`/`createThrottler` are framework-free; `useDebouncedSearch`/
+   `useThrottle` are reactive shells with the same public API.
 5. **`ui/useToast.ts` queue → `core/notifications/`** — queue mutations + id gen
    as a pure factory with injected timer; wrapper keeps the singleton refs.
    Risk: medium (stateful timer management — needs DI).
