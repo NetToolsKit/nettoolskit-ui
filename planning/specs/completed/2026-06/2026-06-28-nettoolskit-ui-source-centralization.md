@@ -1,8 +1,8 @@
 # NetToolsKit UI Source Centralization - Spec
 
 Generated: 2026-06-28 America/Sao_Paulo
-LastUpdated: 2026-06-28 America/Sao_Paulo
-Status: active
+LastUpdated: 2026-06-30 America/Sao_Paulo
+Status: completed
 Priority: medium
 Workstream ID: `nettoolskit-ui-source-centralization`
 Phase: cleanup
