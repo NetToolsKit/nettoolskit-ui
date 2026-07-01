@@ -5,7 +5,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 
 import { DsCrudPage } from '@/design-system/vue'
 import { defineResource } from '@/design-system/core'
@@ -182,5 +182,100 @@ describe('DsCrudPage', () => {
 
     expect(wrapper.text()).toContain('New')
     expect(wrapper.text()).not.toContain('Stale')
+  })
+})
+
+describe('DsCrudPage slot forwarding (extension model)', () => {
+  it('forwards #cell-<field> to the table and augments row actions via #row-actions', async () => {
+    const resource = makeResource()
+    const rowsSeen: unknown[] = []
+    const wrapper = mount(DsCrudPage, {
+      props: { resource },
+      slots: {
+        'cell-name': (scope: { value: unknown }) =>
+          h('em', { class: 'custom-cell' }, `${scope.value}!`),
+        'row-actions': (scope: { row: Client }) =>
+          h('button', {
+            class: 'extra-action',
+            type: 'button',
+            onClick: () => rowsSeen.push(scope.row),
+          }, 'Arquivar'),
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.get('.custom-cell').text()).toBe('Ana!')
+    // Governed actions are kept — the slot augments, never replaces.
+    expect(wrapper.text()).toContain('Editar')
+    expect(wrapper.text()).toContain('Excluir')
+
+    await wrapper.get('.extra-action').trigger('click')
+    expect(rowsSeen[0]).toMatchObject({ id: 1, name: 'Ana', email: 'ana@acme.co' })
+  })
+
+  it('shows the actions column for #row-actions even without update/remove', async () => {
+    const resource = makeResource({ update: undefined, remove: undefined })
+    const wrapper = mount(DsCrudPage, {
+      props: { resource },
+      slots: {
+        'row-actions': () => h('button', { class: 'extra-action', type: 'button' }, 'Ver'),
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.extra-action').exists()).toBe(true)
+    expect(wrapper.text()).not.toContain('Editar')
+  })
+
+  it('renders #header-actions before the governed new button', async () => {
+    const resource = makeResource()
+    const wrapper = mount(DsCrudPage, {
+      props: { resource },
+      slots: {
+        'header-actions': () => h('button', { class: 'header-extra', type: 'button' }, 'Exportar'),
+      },
+    })
+    await flushPromises()
+
+    const labels = wrapper.findAll('.ntk-page-header__actions button').map((b) => b.text())
+    expect(labels).toEqual(['Exportar', 'Novo'])
+  })
+
+  it('overrides the empty state via #empty with openCreate in scope', async () => {
+    const resource = makeResource({ fetch: vi.fn(async () => []) })
+    const wrapper = mount(DsCrudPage, {
+      props: { resource },
+      slots: {
+        empty: (scope: { openCreate: () => void }) =>
+          h('button', { class: 'custom-empty', type: 'button', onClick: scope.openCreate }, 'Começar'),
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.ntk-empty-state').exists()).toBe(false)
+    await wrapper.get('.custom-empty').trigger('click')
+    await nextTick()
+    expect(wrapper.find('dialog form').exists()).toBe(true)
+  })
+
+  it('forwards #form-field-<name> into the dialog form field slot', async () => {
+    const resource = makeResource()
+    const wrapper = mount(DsCrudPage, {
+      props: { resource },
+      slots: {
+        'form-field-name': (scope: { update: (value: unknown) => void }) =>
+          h('input', {
+            id: 'crud-custom-name',
+            onInput: (event: Event) => scope.update((event.target as HTMLInputElement).value),
+          }),
+      },
+    })
+    await flushPromises()
+
+    await wrapper.get('.ntk-page-header__actions button').trigger('click')
+    await nextTick()
+
+    expect(wrapper.find('#crud-custom-name').exists()).toBe(true)
+    expect(wrapper.find('#ds-crud-form-name__control').exists()).toBe(false)
   })
 })

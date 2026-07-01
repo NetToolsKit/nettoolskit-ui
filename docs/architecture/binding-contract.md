@@ -46,6 +46,11 @@ To bind framework `X`, the `@nettoolskit/X` package must:
    and event wiring are the framework-idiomatic part — and the *only* part a new
    binding writes. Pure logic that leaks into this layer is a bug: fix it in
    `core/` (which benefits every framework) rather than forking it per framework.
+5. **Expose the extension model's override points idiomatically.** The contract
+   in [extension-model.md](./extension-model.md) ("targeted, named override
+   points with a default") is framework-neutral: Vue exposes it as scoped slots
+   (`#cell-<field>`, `#field-<name>`); another binding exposes the equivalent
+   (render props / `renderCell`) with the same names, scope data, and defaults.
 
 ## What a binding MUST NOT do
 
