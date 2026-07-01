@@ -1,6 +1,7 @@
 # ADR-0001: Quasar as adapter; Ds* is the public contract
 
-- Status: accepted
+- Status: superseded by ADR-0006 (rendering mechanism only — the closed `Ds*`
+  contract remains in force)
 - Date: 2026-06-23
 - Deciders: Frontend architecture
 
