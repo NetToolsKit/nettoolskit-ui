@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- **BREAKING: legacy theme/config compatibility surface removed.**
+  - Deleted `NtkThemePlugin`/`useNtkTheme` (`config/theme/theme.plugin.ts`) and the dead `src/plugins` barrel; the runtime theme model is preset-driven (`useThemeSwitcher` palettes + `useColorScheme` + CSS custom properties).
+  - `theme-mode.config` is no longer exported from the package entry (stays internal to the presets).
+  - Removed `DESIGN_TOKENS`/`CSS_VARS` from `@nettoolskit/ui/styles` — token values live only in the token sources; `getCssVar()`/`setCssVar()` remain. Guarded by a no-hex test on the styles entry.
+  - See `MIGRATION.md` ("Removed legacy theme/config surface").
 - **BREAKING: legacy `Ntk*`/`Base*` component surface removed.**
   - Deleted the entire `src/components` tree (54 `Ntk*`/`Base*`/marketing/landing components plus `app-shell.{types,config,theme}`) and the `useNtkField`/`useBaseField` field composables.
   - `index.ts` now exports only the governed design system (`Ds*` components, tokens, recipes, schema, `createNetToolsKitUI`), the kept composables/services/utils/config, and the Quasar notification adapter.

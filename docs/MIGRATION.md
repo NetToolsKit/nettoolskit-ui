@@ -8,6 +8,19 @@ removed component to its replacement.
 > change without a major bump. Pin a previous version if you are not ready to
 > migrate.
 
+## Removed legacy theme/config surface (0.0.1-preview.2)
+
+The legacy compatibility exports were removed from the package entry:
+
+| Removed | Replacement |
+|---|---|
+| `NtkThemePlugin` / `useNtkTheme` (`theme.plugin`) | Preset-driven runtime theme: `useThemeSwitcher` (named palettes), `useColorScheme` (light/dark) and CSS custom properties. The file was deleted. |
+| `theme-mode.config` root exports (`lightThemeColors`, `darkThemeColors`, …) | Internal to the presets now. Consume the palette through CSS variables (`--ntk-*`) or the preset objects. |
+| `DESIGN_TOKENS` / `CSS_VARS` (from `@nettoolskit/ui/styles`) | Token values live only in the token sources (`design-system/tokens` + `themes.css`). Read at runtime with `getCssVar()` / write with `setCssVar()` (still exported). |
+
+Why: one theme door instead of three, and no token values duplicated in
+TypeScript (anti-duplicity rule of the frontend standard).
+
 ## Automated codemod
 
 A codemod rewrites the **1:1** import/usage mappings (Button, Card, Chip, Input,
