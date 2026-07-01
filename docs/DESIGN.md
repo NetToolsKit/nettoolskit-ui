@@ -27,6 +27,34 @@ Do not edit by hand.
 | Empty state recipe | `src/design-system/core/components/empty-state.ts` |
 | Metric grid recipe | `src/design-system/core/components/metric-grid.ts` |
 | State block recipe | `src/design-system/core/components/state-block.ts` |
+| App Shell recipe | `src/design-system/core/components/app-shell.ts` |
+| Avatar recipe | `src/design-system/core/components/avatar.ts` |
+| Badge recipe | `src/design-system/core/components/badge.ts` |
+| Banner recipe | `src/design-system/core/components/banner.ts` |
+| Breadcrumbs recipe | `src/design-system/core/components/breadcrumbs.ts` |
+| Chip recipe | `src/design-system/core/components/chip.ts` |
+| Command Icon recipe | `src/design-system/core/components/command-icon.ts` |
+| Date Picker recipe | `src/design-system/core/components/date-picker.ts` |
+| Dock Layout recipe | `src/design-system/core/components/dock-layout.ts` |
+| Dock Panel recipe | `src/design-system/core/components/dock-panel.ts` |
+| Drawer recipe | `src/design-system/core/components/drawer.ts` |
+| Footer recipe | `src/design-system/core/components/footer.ts` |
+| Header recipe | `src/design-system/core/components/header.ts` |
+| Logo recipe | `src/design-system/core/components/logo.ts` |
+| Quick Access Toolbar recipe | `src/design-system/core/components/quick-access-toolbar.ts` |
+| Ribbon Command recipe | `src/design-system/core/components/ribbon-command.ts` |
+| Ribbon Group recipe | `src/design-system/core/components/ribbon-group.ts` |
+| Ribbon recipe | `src/design-system/core/components/ribbon.ts` |
+| Sidebar recipe | `src/design-system/core/components/sidebar.ts` |
+| Skeleton recipe | `src/design-system/core/components/skeleton.ts` |
+| Status Bar recipe | `src/design-system/core/components/status-bar.ts` |
+| Steps recipe | `src/design-system/core/components/steps.ts` |
+| Tabs recipe | `src/design-system/core/components/tabs.ts` |
+| Time Picker recipe | `src/design-system/core/components/time-picker.ts` |
+| Toast recipe | `src/design-system/core/components/toast.ts` |
+| Tooltip recipe | `src/design-system/core/components/tooltip.ts` |
+| Tree Explorer recipe | `src/design-system/core/components/tree-explorer.ts` |
+| Workspace Canvas recipe | `src/design-system/core/components/workspace-canvas.ts` |
 
 ## Token Model
 
@@ -56,6 +84,34 @@ Do not edit by hand.
 | Empty state | `default` | `md` | `neutral` | `default`, `bordered`, `ghost` | None |
 | Metric grid | `default` | `md` | `neutral` | `default`, `bordered`, `plain` | None |
 | State block | `default` | `md` | `neutral` | `default`, `inline`, `overlay` | None |
+| App Shell | `default` | `md` | `neutral` | `default`, `fixed` | None |
+| Avatar | `soft` | `md` | `neutral` | `solid`, `soft`, `outline` | None |
+| Badge | `solid` | `md` | `neutral` | `solid`, `soft`, `outline` | None |
+| Banner | `soft` | `md` | `info` | `solid`, `soft`, `outline`, `accent` | None |
+| Breadcrumbs | `default` | `md` | `neutral` | `default`, `subtle` | None |
+| Chip | `solid` | `md` | `neutral` | `solid`, `soft`, `outline` | `clickable`, `selected`, `disabled` |
+| Command Icon | `line` | `md` | `neutral` | `line` | None |
+| Date Picker | `-` | `-` | `-` | None | None |
+| Dock Layout | `bordered` | `md` | `neutral` | `default`, `bordered` | None |
+| Dock Panel | `bordered` | `md` | `neutral` | `default`, `bordered` | `selected` |
+| Drawer | `default` | `md` | `neutral` | `default`, `elevated` | None |
+| Footer | `default` | `md` | `neutral` | `default`, `elevated`, `transparent` | None |
+| Header | `default` | `md` | `neutral` | `default`, `elevated`, `transparent` | None |
+| Logo | `gradient` | `md` | `primary` | `gradient`, `solid`, `outline` | `clickable` |
+| Quick Access Toolbar | `bordered` | `md` | `neutral` | `default`, `bordered`, `floating` | None |
+| Ribbon Command | `default` | `md` | `neutral` | `default` | `selected`, `disabled` |
+| Ribbon Group | `default` | `md` | `neutral` | `default` | None |
+| Ribbon | `bordered` | `md` | `neutral` | `default`, `bordered` | None |
+| Sidebar | `default` | `md` | `neutral` | `default`, `elevated`, `transparent` | None |
+| Skeleton | `text` | `md` | `neutral` | `text`, `block`, `circle` | None |
+| Status Bar | `bordered` | `md` | `neutral` | `default`, `bordered` | None |
+| Steps | `default` | `md` | `neutral` | `default`, `numbered`, `simple` | None |
+| Tabs | `line` | `md` | `primary` | `line`, `pill`, `enclosed` | None |
+| Time Picker | `-` | `-` | `-` | None | None |
+| Toast | `soft` | `md` | `info` | `solid`, `soft`, `outline`, `accent` | None |
+| Tooltip | `solid` | `md` | `neutral` | `solid`, `soft` | None |
+| Tree Explorer | `bordered` | `md` | `neutral` | `default`, `bordered` | None |
+| Workspace Canvas | `default` | `md` | `neutral` | `default` | None |
 
 ## Usage Rules
 
