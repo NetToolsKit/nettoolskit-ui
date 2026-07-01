@@ -1,105 +1,57 @@
 /**
- * Src/composables/utils/use Debounce module.
+ * useDebounce - Vue reactive shells over the framework-free timing core.
+ *
+ * The debounce/throttle algorithm lives in `design-system/core/timing` (pure,
+ * portable to any framework). These composables only add Vue reactivity: they
+ * mirror the core's waiting/throttled flags into refs so templates can react.
+ *
+ * @layer Presentation (thin shell over core/timing)
  */
 
 import { ref } from 'vue'
 
+import { createDebouncer, createThrottler } from '../../design-system/core/timing'
+
 /**
- * Composable for creating debounced functions
- * Useful for search inputs and events that fire many times
+ * Composable for creating debounced functions.
+ * Useful for search inputs and events that fire many times.
  */
 export function useDebouncedSearch<T extends (...args: any[]) => any>(
   callback: T,
   delay = 300
 ) {
-  const timeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
   const isWaiting = ref(false)
-
-  const debouncedFunction = (...args: Parameters<T>) => {
-    isWaiting.value = true
-
-    if (timeoutId.value) {
-      clearTimeout(timeoutId.value)
-    }
-
-    timeoutId.value = setTimeout(() => {
-      callback(...args)
-      isWaiting.value = false
-      timeoutId.value = null
-    }, delay)
-  }
-
-  const cancel = () => {
-    if (timeoutId.value) {
-      clearTimeout(timeoutId.value)
-      timeoutId.value = null
-      isWaiting.value = false
-    }
-  }
-
-  const flush = (...args: Parameters<T>) => {
-    cancel()
-    callback(...args)
-  }
+  const debouncer = createDebouncer<Parameters<T>>(
+    callback,
+    delay,
+    (waiting) => { isWaiting.value = waiting }
+  )
 
   return {
-    debouncedFunction,
+    debouncedFunction: debouncer.invoke,
     isWaiting,
-    cancel,
-    flush
+    cancel: debouncer.cancel,
+    flush: debouncer.flush
   }
 }
 
 /**
- * Composable for creating throttled functions
- * Ensures the function is executed at most once per interval
+ * Composable for creating throttled functions.
+ * Ensures the function is executed at most once per interval.
  */
 export function useThrottle<T extends (...args: any[]) => any>(
   callback: T,
   delay = 300
 ) {
-  const timeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
-  const lastExecuted = ref<number>(0)
   const isThrottled = ref(false)
-
-  const throttledFunction = (...args: Parameters<T>) => {
-    const now = Date.now()
-    const timeSinceLastExecution = now - lastExecuted.value
-
-    if (timeSinceLastExecution >= delay) {
-      callback(...args)
-      lastExecuted.value = now
-      isThrottled.value = true
-      
-      // Clear throttled state after delay
-      if (timeoutId.value) {
-        clearTimeout(timeoutId.value)
-      }
-      
-      timeoutId.value = setTimeout(() => {
-        isThrottled.value = false
-        timeoutId.value = null
-      }, delay)
-    } else {
-      isThrottled.value = true
-      
-      if (timeoutId.value) {
-        clearTimeout(timeoutId.value)
-      }
-
-      const remainingTime = delay - timeSinceLastExecution
-      
-      timeoutId.value = setTimeout(() => {
-        callback(...args)
-        lastExecuted.value = Date.now()
-        isThrottled.value = false
-        timeoutId.value = null
-      }, remainingTime)
-    }
-  }
+  const throttler = createThrottler<Parameters<T>>(
+    callback,
+    delay,
+    (throttled) => { isThrottled.value = throttled }
+  )
 
   return {
-    throttledFunction,
+    throttledFunction: throttler.invoke,
     isThrottled
   }
 }
