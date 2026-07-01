@@ -10,6 +10,10 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     styles: 'src/styles/index.ts',
+    // Optional-peer surfaces: static quasar/vue-router imports live only here
+    // so the root entry resolves without the optional peers installed.
+    quasar: 'src/quasar.ts',
+    router: 'src/router.ts',
   },
   format: ['cjs', 'esm'],
   outDir: '.build/dist',

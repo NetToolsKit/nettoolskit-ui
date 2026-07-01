@@ -16,6 +16,16 @@
       "import": "./.build/dist/styles.mjs",
       "require": "./.build/dist/styles.js"
     },
+    "./quasar": {
+      "types": "./.build/dist/src/quasar.d.ts",
+      "import": "./.build/dist/quasar.mjs",
+      "require": "./.build/dist/quasar.js"
+    },
+    "./router": {
+      "types": "./.build/dist/src/router.d.ts",
+      "import": "./.build/dist/router.mjs",
+      "require": "./.build/dist/router.js"
+    },
     "./styles/tokens.scss": "./src/styles/tokens.scss",
     "./styles/global.scss": "./src/styles/global.scss",
     "./styles/themes.css": "./src/styles/themes.css",
@@ -68,8 +78,9 @@
     "lint:style": "stylelint \"src/**/*.css\"",
     "lint:css": "node scripts/lint-css-governance.mjs",
     "sec:audit": "npm audit --omit=dev --audit-level=high",
+    "size:check": "node scripts/check-bundle-size.mjs",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run build:samples"
+    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run size:check && npm run build:samples"
   },
   "keywords": [
     "vue",
@@ -96,6 +107,14 @@
     "quasar": "^2.0.0",
     "vue": "^3.0.0",
     "vue-router": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "quasar": {
+      "optional": true
+    },
+    "vue-router": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",

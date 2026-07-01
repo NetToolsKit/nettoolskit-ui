@@ -1,5 +1,3 @@
-import { Dark } from 'quasar'
-
 export interface ThemeDomSyncOptions {
   dark?: boolean
   structuralBackground?: string
@@ -83,11 +81,25 @@ function setTemplateThemeScope(body: HTMLElement | null, templateScope?: boolean
   delete body.dataset.ntkTemplateTheme
 }
 
-function syncQuasarDarkMode(isDark: boolean): void {
+type ThemeDarkSync = (isDark: boolean) => void
+
+let themeDarkSync: ThemeDarkSync | null = null
+
+/**
+ * Register an optional host-framework dark-mode bridge (e.g. Quasar `Dark`
+ * via `installQuasarServices()` from `@nettoolskit/ui/quasar`). Pass `null`
+ * to detach. Keeps this module free of optional peers: the `--q-*` variable
+ * bridge below is plain CSS and needs no Quasar import.
+ */
+export function registerThemeDarkSync(sync: ThemeDarkSync | null): void {
+  themeDarkSync = sync
+}
+
+function syncHostDarkMode(isDark: boolean): void {
   try {
-    Dark.set(isDark)
+    themeDarkSync?.(isDark)
   } catch {
-    // Quasar may not be installed yet in tests or host apps; DOM classes remain authoritative fallback.
+    // Host bridge failed or is absent; DOM classes remain the authoritative fallback.
   }
 }
 
@@ -121,7 +133,7 @@ export function syncThemeDomState(options: ThemeDomSyncOptions = {}): void {
     setStyleProperty(root.style, quasarVar, value)
   }
 
-  syncQuasarDarkMode(isDark)
+  syncHostDarkMode(isDark)
   root.classList.toggle('dark', isDark)
   root.style.colorScheme = isDark ? 'dark' : 'light'
   root.style.backgroundColor = structuralBackground

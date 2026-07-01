@@ -71,6 +71,34 @@ library-only-surface cleanup). Move them into your product app if still needed:
 |---|---|
 | `useNtkField` / `useBaseField` | Build forms with `DsForm` + `defineForm`, or compose `useFormRules` + the pure `core/schema` validators directly. |
 
+## Optional peers: `quasar` and `vue-router` (0.0.1-preview.2)
+
+`quasar` and `vue-router` are now **optional** peer dependencies
+(`peerDependenciesMeta`). The modules that statically import them moved out of
+the root entry into dedicated subpaths so apps without those peers keep
+bundling (ADR-0006):
+
+| Was on the root entry | Now import from |
+|---|---|
+| `QuasarNotificationAdapter`, `getQuasarNotificationService` | `@nettoolskit/ui/quasar` |
+| `useDialogActions` | `@nettoolskit/ui/quasar` |
+| `useResponsive` | `@nettoolskit/ui/quasar` |
+| `useFilters` | `@nettoolskit/ui/router` |
+
+Behavior note: `useNotification()` now resolves its backend through
+`get/setNotificationService()` and defaults to the console-based base service.
+Apps that want the Quasar Notify experience opt in once at install time:
+
+```ts
+import { installQuasarServices } from '@nettoolskit/ui/quasar'
+
+installQuasarServices() // wires Notify notifications + the Quasar Dark bridge
+```
+
+The theme DOM sync no longer imports Quasar; `installQuasarServices()` also
+registers the `Dark` bridge (`registerThemeDarkSync`). The `--q-*` CSS variable
+aliases keep working unchanged — they are plain CSS.
+
 ## One-line install
 
 Register the whole `Ds*` system and bootstrap theme/color-scheme in one call:

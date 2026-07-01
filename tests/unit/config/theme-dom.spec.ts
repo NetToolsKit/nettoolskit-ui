@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { syncThemeDomState } from '../../../src/config/theme/theme-dom'
+import { registerThemeDarkSync, syncThemeDomState } from '../../../src/config/theme/theme-dom'
 
 describe('theme DOM sync', () => {
   beforeEach(() => {
@@ -50,5 +50,30 @@ describe('theme DOM sync', () => {
     syncThemeDomState()
 
     expect(root.style.getPropertyValue('--q-secondary')).toBe('#c96442')
+  })
+
+  describe('host dark-mode bridge (optional-peer surface)', () => {
+    afterEach(() => {
+      registerThemeDarkSync(null)
+    })
+
+    it('invokes a registered bridge with the resolved dark flag', () => {
+      const seen: boolean[] = []
+      registerThemeDarkSync((isDark) => seen.push(isDark))
+
+      syncThemeDomState({ dark: true })
+      syncThemeDomState({ dark: false })
+
+      expect(seen).toEqual([true, false])
+    })
+
+    it('stays no-op safe when no bridge is registered or the bridge throws', () => {
+      registerThemeDarkSync(() => {
+        throw new Error('host bridge exploded')
+      })
+
+      expect(() => syncThemeDomState({ dark: true })).not.toThrow()
+      expect(document.documentElement.classList.contains('dark')).toBe(true)
+    })
   })
 })
