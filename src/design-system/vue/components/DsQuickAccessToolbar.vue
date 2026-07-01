@@ -48,7 +48,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<NtkQuickAccessToolbarContract>(), {
   items: () => [],
-  ariaLabel: 'Quick access toolbar',
   variant: ntkQuickAccessToolbarDefaults.variant,
   size: ntkQuickAccessToolbarDefaults.size,
   intent: ntkQuickAccessToolbarDefaults.intent,
@@ -119,6 +118,11 @@ function onKeydown(event: KeyboardEvent, item: NtkQuickAccessItem): void {
   rovingId.value = nextId
   focusItem(nextId)
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.quickAccessToolbar'))
 </script>
 
 <style scoped>

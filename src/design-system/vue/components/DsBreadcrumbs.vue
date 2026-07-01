@@ -44,7 +44,6 @@ const props = withDefaults(defineProps<NtkBreadcrumbsContract>(), {
   size: ntkBreadcrumbsDefaults.size,
   intent: ntkBreadcrumbsDefaults.intent,
   separator: '/',
-  ariaLabel: 'Breadcrumb',
 })
 
 const classes = computed(() => resolveNtkBreadcrumbsRecipe({
@@ -53,6 +52,11 @@ const classes = computed(() => resolveNtkBreadcrumbsRecipe({
   intent: props.intent,
   class: props.class,
 }).classes)
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.breadcrumb'))
 </script>
 
 <style scoped>

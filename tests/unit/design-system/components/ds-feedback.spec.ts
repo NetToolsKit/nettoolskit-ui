@@ -121,7 +121,7 @@ describe('DsToast', () => {
     expect(wrapper.get('.ntk-toast__message').text()).toBe('Saved')
 
     const button = wrapper.get('.ntk-toast__dismiss')
-    expect(button.attributes('aria-label')).toBe('Dismiss')
+    expect(button.attributes('aria-label')).toBe('Dispensar')
     await button.trigger('click')
     expect(wrapper.emitted('dismiss')).toHaveLength(1)
   })
@@ -159,7 +159,7 @@ describe('DsToastHost', () => {
     expect(region.attributes('role')).toBe('region')
     expect(region.attributes('aria-live')).toBe('polite')
     expect(region.attributes('aria-atomic')).toBe('false')
-    expect(region.attributes('aria-label')).toBe('Notifications')
+    expect(region.attributes('aria-label')).toBe('Notificações')
     expect(region.classes()).toContain('ntk-toast-host--position-bottom-left')
   })
 

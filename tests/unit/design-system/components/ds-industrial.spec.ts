@@ -208,7 +208,7 @@ describe('DsQuickAccessToolbar', () => {
     const wrapper = mount(DsQuickAccessToolbar, { props: { items: quickItems } })
 
     const toolbar = wrapper.get('[role="toolbar"]')
-    expect(toolbar.attributes('aria-label')).toBe('Quick access toolbar')
+    expect(toolbar.attributes('aria-label')).toBe('Barra de acesso rápido')
 
     const buttons = wrapper.findAll('button')
     expect(buttons).toHaveLength(quickItems.length)

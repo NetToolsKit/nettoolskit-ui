@@ -47,7 +47,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<NtkStatusBarContract>(), {
   segments: () => [],
-  ariaLabel: 'Status bar',
   variant: ntkStatusBarDefaults.variant,
   size: ntkStatusBarDefaults.size,
   intent: ntkStatusBarDefaults.intent,
@@ -66,6 +65,11 @@ const iconSize = computed<NtkCommandIconSize>(() => (props.size === 'lg' ? 'md' 
 
 const segmentTitle = (segment: NtkStatusBarSegment): string | undefined =>
   getNtkStatusSegmentTitle(segment)
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.statusBar'))
 </script>
 
 <style scoped>

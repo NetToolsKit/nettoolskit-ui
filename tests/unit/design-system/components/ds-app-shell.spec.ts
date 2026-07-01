@@ -91,7 +91,7 @@ describe('DsSidebar', () => {
       },
     })
 
-    expect(wrapper.get('.ntk-sidebar__nav').attributes('aria-label')).toBe('Sidebar')
+    expect(wrapper.get('.ntk-sidebar__nav').attributes('aria-label')).toBe('Barra lateral')
     expect(wrapper.find('.ntk-sidebar__header .sb-header').exists()).toBe(true)
     expect(wrapper.find('.ntk-sidebar__footer .sb-footer').exists()).toBe(true)
   })
@@ -138,7 +138,7 @@ describe('DsDrawer', () => {
     const nav = wrapper.get('.ntk-drawer__nav')
     expect(nav.element.tagName).toBe('NAV')
     expect(nav.attributes('aria-label')).toBe('Mobile')
-    expect(wrapper.get('.ntk-drawer__close').attributes('aria-label')).toBe('Close')
+    expect(wrapper.get('.ntk-drawer__close').attributes('aria-label')).toBe('Fechar')
 
     wrapper.unmount()
   })

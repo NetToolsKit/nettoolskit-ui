@@ -37,8 +37,6 @@ const props = withDefaults(defineProps<{
   dismissLabel?: string
 }>(), {
   position: 'top-right',
-  ariaLabel: 'Notifications',
-  dismissLabel: 'Dismiss',
 })
 
 const { toasts, dismissToast } = useToast()
@@ -47,6 +45,12 @@ const hostClasses = computed(() => [
   'ntk-toast-host',
   getNtkToastHostPositionClass(props.position),
 ])
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.notifications'))
+const dismissLabel = computed(() => props.dismissLabel ?? ntkI18n.t('a11y.dismiss'))
 </script>
 
 <style scoped>

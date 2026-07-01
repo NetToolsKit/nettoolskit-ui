@@ -46,7 +46,6 @@ const props = withDefaults(defineProps<NtkStepsContract>(), {
   intent: ntkStepsDefaults.intent,
   orientation: ntkStepsDefaults.orientation,
   clickable: false,
-  ariaLabel: 'Progress',
 })
 
 const emit = defineEmits<{
@@ -80,6 +79,11 @@ const onStepClick = (index: number): void => {
     emit('step-click', index)
   }
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.progress'))
 </script>
 
 <style scoped>

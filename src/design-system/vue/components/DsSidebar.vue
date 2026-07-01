@@ -29,7 +29,6 @@ const props = withDefaults(defineProps<NtkSidebarContract>(), {
   variant: ntkSidebarDefaults.variant,
   size: ntkSidebarDefaults.size,
   intent: ntkSidebarDefaults.intent,
-  ariaLabel: 'Sidebar',
   collapsed: false,
 })
 
@@ -39,6 +38,11 @@ const classes = computed(() => resolveNtkSidebarRecipe({
   intent: props.intent,
   class: [props.class, props.collapsed ? ntkSidebarCollapsedClass : undefined],
 }).classes)
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.sidebar'))
 </script>
 
 <style scoped>

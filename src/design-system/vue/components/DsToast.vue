@@ -36,7 +36,6 @@ const props = withDefaults(defineProps<NtkToastContract>(), {
   size: ntkToastDefaults.size,
   intent: ntkToastDefaults.intent,
   dismissible: true,
-  dismissLabel: 'Dismiss',
 })
 
 const emit = defineEmits<{
@@ -53,6 +52,11 @@ const classes = computed(() => resolveNtkToastRecipe({
 function onDismiss(): void {
   emit('dismiss')
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const dismissLabel = computed(() => props.dismissLabel ?? ntkI18n.t('a11y.dismiss'))
 </script>
 
 <style scoped>

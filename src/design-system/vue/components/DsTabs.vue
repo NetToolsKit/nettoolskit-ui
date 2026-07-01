@@ -57,7 +57,6 @@ const props = withDefaults(defineProps<NtkTabsContract>(), {
   variant: ntkTabsDefaults.variant,
   size: ntkTabsDefaults.size,
   intent: ntkTabsDefaults.intent,
-  ariaLabel: 'Tabs',
 })
 
 const emit = defineEmits<{
@@ -113,6 +112,11 @@ function onKeydown(event: KeyboardEvent): void {
   onSelect(nextId)
   focusTab(nextId)
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.tabs'))
 </script>
 
 <style scoped>

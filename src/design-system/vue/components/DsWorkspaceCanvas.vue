@@ -23,7 +23,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<NtkWorkspaceCanvasContract>(), {
   surface: ntkWorkspaceCanvasDefaults.surface,
-  ariaLabel: 'Workspace',
   variant: ntkWorkspaceCanvasDefaults.variant,
   size: ntkWorkspaceCanvasDefaults.size,
   intent: ntkWorkspaceCanvasDefaults.intent,
@@ -36,6 +35,11 @@ const classes = computed(() => resolveNtkWorkspaceCanvasRecipe({
   surface: props.surface,
   class: props.class,
 }).classes)
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.workspace'))
 </script>
 
 <style scoped>

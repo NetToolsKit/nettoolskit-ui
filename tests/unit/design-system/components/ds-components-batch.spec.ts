@@ -362,7 +362,7 @@ describe('DsBreadcrumbs', () => {
   it('renders a nav landmark with an ordered trail', () => {
     const wrapper = mount(DsBreadcrumbs, { props: { items } })
     const nav = wrapper.get('nav.ntk-breadcrumbs')
-    expect(nav.attributes('aria-label')).toBe('Breadcrumb')
+    expect(nav.attributes('aria-label')).toBe('Trilha de navegação')
     expect(wrapper.findAll('.ntk-breadcrumbs__item')).toHaveLength(3)
     expect(wrapper.findAll('.ntk-breadcrumbs__link')).toHaveLength(2)
   })
