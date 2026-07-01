@@ -9,6 +9,8 @@
     :aria-describedby="description ? descriptionId : undefined"
     @cancel.prevent="onCancel"
     @click="onBackdropClick"
+    @command="onNativeCommand"
+    @close="onNativeClose"
   >
     <div class="ntk-dialog__surface" @click.stop>
       <header v-if="title || $slots.header || !hideClose" class="ntk-dialog__header">
@@ -83,6 +85,11 @@ function openDialog(): void {
   if (!el) {
     return
   }
+  if (el.open) {
+    // Already opened natively (e.g. an invoker command) — onNativeCommand has
+    // captured focus and emitted; this call is just v-model catching up.
+    return
+  }
   previouslyFocused = (document.activeElement as HTMLElement | null) ?? null
   // Native modal gives focus trap + inert background; fall back gracefully
   // for environments (e.g. jsdom) that do not implement showModal().
@@ -142,6 +149,41 @@ function requestClose(reason: CloseReason): void {
 
 function onCancel(): void {
   requestClose('escape')
+}
+
+/**
+ * Invoker Commands (`<button commandfor="<dialog id>" command="show-modal">`):
+ * the browser opens/closes the native `<dialog>` itself; these handlers mirror
+ * that into v-model so declarative HTML and component state stay in sync.
+ * Close/request-close are covered by the native `close` event; `--`-prefixed
+ * custom commands are ignored.
+ */
+interface NativeCommandEvent extends Event {
+  readonly command?: string
+  readonly source?: Element | null
+}
+
+function onNativeCommand(event: NativeCommandEvent): void {
+  if ((event.command ?? '') !== 'show-modal') {
+    return
+  }
+  previouslyFocused = (event.source as HTMLElement | null)
+    ?? (document.activeElement as HTMLElement | null)
+  if (!props.modelValue) {
+    emit('update:modelValue', true)
+    emit('open')
+    void nextTick(() => focusInitial())
+  }
+}
+
+function onNativeClose(): void {
+  // Fires for any native close (invoker command, form method="dialog",
+  // programmatic close()). When the close originated outside the component,
+  // v-model is still true here; our own closeDialog() runs only after the
+  // parent has already set it to false, so this never double-fires.
+  if (props.modelValue) {
+    emit('update:modelValue', false)
+  }
 }
 
 function onBackdropClick(event: MouseEvent): void {
