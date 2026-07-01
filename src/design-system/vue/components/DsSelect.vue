@@ -123,6 +123,7 @@ import {
   resolveNtkFieldRecipe,
   type NtkFieldContract,
 } from '../../core'
+import { useNtkI18n } from '../composables/useNtkI18n'
 
 interface DsSelectOption {
   readonly label: string
@@ -157,8 +158,6 @@ const props = withDefaults(defineProps<NtkFieldContract<DsSelectValue> & {
   options: () => [],
   multiple: false,
   searchable: false,
-  searchPlaceholder: 'Search...',
-  emptyLabel: 'No options',
 })
 
 const emit = defineEmits<{
@@ -166,6 +165,11 @@ const emit = defineEmits<{
   focus: [event: FocusEvent]
   blur: [event: FocusEvent]
 }>()
+
+// Built-in labels resolve from the active locale; explicit props win.
+const { t } = useNtkI18n()
+const searchPlaceholder = computed(() => props.searchPlaceholder ?? t('crud.searchPlaceholder'))
+const emptyLabel = computed(() => props.emptyLabel ?? t('select.empty'))
 
 const triggerRef = ref<HTMLButtonElement | null>(null)
 const panelRef = ref<HTMLElement | null>(null)

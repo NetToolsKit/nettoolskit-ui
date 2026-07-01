@@ -141,6 +141,7 @@ import {
   type NtkTableRow,
   type NtkTableSort,
 } from '../../core'
+import { useNtkI18n } from '../composables/useNtkI18n'
 
 defineOptions({
   name: 'DsTable',
@@ -164,18 +165,21 @@ const props = withDefaults(defineProps<NtkTableContract & {
   intent: ntkTableDefaults.intent,
   density: ntkTableDefaults.density,
   selectable: false,
-  emptyLabel: 'No records found',
   emptyValueLabel: '-',
-  ariaLabel: 'Data table',
-  selectAllLabel: 'Select all rows',
   sort: null,
   pagination: null,
   loading: false,
-  loadingLabel: 'Loading...',
-  paginationLabel: 'Pagination',
-  previousPageLabel: 'Previous',
-  nextPageLabel: 'Next',
 })
+
+// Built-in labels resolve from the active locale; explicit props win.
+const { t } = useNtkI18n()
+const emptyLabel = computed(() => props.emptyLabel ?? t('table.empty'))
+const ariaLabel = computed(() => props.ariaLabel ?? t('table.ariaLabel'))
+const selectAllLabel = computed(() => props.selectAllLabel ?? t('table.selectAll'))
+const loadingLabel = computed(() => props.loadingLabel ?? t('table.loading'))
+const paginationLabel = computed(() => props.paginationLabel ?? t('table.pagination'))
+const previousPageLabel = computed(() => props.previousPageLabel ?? t('table.previousPage'))
+const nextPageLabel = computed(() => props.nextPageLabel ?? t('table.nextPage'))
 
 const emit = defineEmits<{
   'update:selectedKeys': [ids: string[]]
@@ -250,7 +254,7 @@ function formatCellValue(value: unknown): string | number {
   }
 
   if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No'
+    return value ? t('table.yes') : t('table.no')
   }
 
   if (typeof value === 'string' || typeof value === 'number') {
@@ -265,7 +269,7 @@ function getSelectRowLabel(row: NtkTableRow): string {
     .map(column => formatCellValue(row.cells[column.id]))
     .find(value => String(value).trim() && value !== props.emptyValueLabel)
 
-  return props.selectRowLabel?.(row) ?? `Select row ${firstReadableValue ?? row.id}`
+  return props.selectRowLabel?.(row) ?? `${t('table.selectRow')} ${firstReadableValue ?? row.id}`
 }
 
 function onToggleAll(): void {

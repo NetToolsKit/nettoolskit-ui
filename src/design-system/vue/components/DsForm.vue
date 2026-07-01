@@ -111,6 +111,7 @@ import DsButton from './DsButton.vue'
 import DsFormLayout from './DsFormLayout.vue'
 import DsInput from './DsInput.vue'
 import DsSelect from './DsSelect.vue'
+import { useNtkI18n } from '../composables/useNtkI18n'
 
 defineOptions({
   name: 'DsForm',
@@ -133,8 +134,6 @@ const props = withDefaults(defineProps<{
 }>(), {
   loading: false,
   disabled: false,
-  submitLabel: 'Salvar',
-  resetLabel: 'Limpar',
   showActions: true,
   showReset: true,
   idPrefix: 'ds-form',
@@ -145,6 +144,11 @@ const emit = defineEmits<{
   submit: [values: Record<string, unknown>]
   reset: []
 }>()
+
+// Built-in labels resolve from the active locale; explicit props win.
+const { t } = useNtkI18n()
+const submitLabel = computed(() => props.submitLabel ?? t('form.submit'))
+const resetLabel = computed(() => props.resetLabel ?? t('form.reset'))
 
 const INPUT_FIELD_TYPES: ReadonlySet<NtkFieldType> = new Set([
   'text', 'email', 'password', 'number', 'date', 'time', 'textarea',
