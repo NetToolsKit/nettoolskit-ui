@@ -36,11 +36,23 @@ export default defineConfig({
       exclude: [
         'src/**/*.d.ts',
         'src/**/index.ts',
-        'src/styles/**'
+        'src/styles/**',
+        // Generated build artifact (token catalog data, "do not edit") — the
+        // only non-barrel exclusion; everything else earns coverage with
+        // behavior tests.
+        'src/design-system/tokens/generated.ts',
+        'src/design-system/tokens/generated/**'
       ],
       // The deterministic core (contracts + recipes) is the highest-value layer
       // to keep fully covered. Other layers are gated by their own suites.
       thresholds: {
+        // Global floor (achieved 91.4/83.5/91.7/91.5 on 2026-07-01 with
+        // behavior tests only — no data-restating fillers). Raising a floor
+        // requires tests; lowering one requires an ADR.
+        statements: 90,
+        branches: 82,
+        functions: 90,
+        lines: 90,
         'src/design-system/core/components/**/*.ts': {
           statements: 100,
           functions: 100,

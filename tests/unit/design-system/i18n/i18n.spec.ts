@@ -16,7 +16,7 @@ import {
   formatNtkMessage,
   minLengthRule,
 } from '@/design-system/core'
-import { DsForm, DsTable, setNtkLocale, useNtkI18n } from '@/design-system/vue'
+import { DsForm, DsTable, getNtkLocale, setNtkLocale, useNtkI18n } from '@/design-system/vue'
 
 afterEach(() => {
   setNtkLocale(DEFAULT_NTK_LOCALE)
@@ -96,10 +96,12 @@ describe('component built-in labels (reactive locale)', () => {
   it('useNtkI18n exposes the reactive locale', () => {
     const { locale, t } = useNtkI18n()
     expect(locale.value).toBe('pt-BR')
+    expect(getNtkLocale()).toBe('pt-BR')
     expect(t('dialog.close')).toBe('Fechar')
 
     setNtkLocale('en')
     expect(locale.value).toBe('en')
+    expect(getNtkLocale()).toBe('en')
     expect(t('dialog.close')).toBe('Close')
   })
 })
