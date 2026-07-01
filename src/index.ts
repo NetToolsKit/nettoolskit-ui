@@ -79,7 +79,7 @@ export * from './composables/services/useNotification'
 // ============================================================================
 export * from './services/NotificationService'
 export * from './services/FilterService'
-export * from './services/FormValidationService'
+export * from './design-system/core/validators/FormValidationService'
 
 // ============================================================================
 // UTILS - Validators

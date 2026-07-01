@@ -1,12 +1,13 @@
 /**
- * FormValidationService - Application Layer service for validations
- * 
+ * FormValidationService - framework-free form validation rules.
+ *
  * Encapsulates form validation rules without framework dependencies.
  * Can be used in any context (Vue, React, Angular, vanilla JS).
- * 
- * Follows Clean Architecture: Application Layer defines business rules.
- * 
- * @layer Application
+ *
+ * Lives in the framework-free core (L2-core): pure TypeScript, zero Vue/DOM, so
+ * any framework binding consumes it directly (see binding-contract.md).
+ *
+ * @layer core (framework-free)
  */
 
 /**

@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { FormValidationService, FormValidator } from '../../../src/services/FormValidationService'
+import { FormValidationService, FormValidator } from '../../../../src/design-system/core/validators/FormValidationService'
 
 describe('FormValidationService', () => {
   // ============================================================================
