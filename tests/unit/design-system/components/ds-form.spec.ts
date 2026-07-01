@@ -6,7 +6,7 @@
 import axe, { type RunOptions } from 'axe-core'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
 
 import { DsForm } from '@/design-system/vue'
 import { defineForm } from '@/design-system/core'
@@ -135,5 +135,61 @@ describe('DsForm', () => {
     const summary = results.violations.map((v) => `${v.id}: ${v.help}`).join('\n')
     expect(results.violations, summary).toEqual([])
     wrapper.unmount()
+  })
+})
+
+describe('DsForm field override slots (extension model)', () => {
+  it('replaces the schema control via #field-<name> and writes back through update()', async () => {
+    const wrapper = mount(DsForm, {
+      props: { schema },
+      slots: {
+        'field-name': (scope: { value: unknown; update: (value: unknown) => void }) =>
+          h('input', {
+            id: 'custom-name',
+            value: (scope.value as string) ?? '',
+            onInput: (event: Event) => scope.update((event.target as HTMLInputElement).value),
+          }),
+      },
+    })
+
+    expect(wrapper.find('#custom-name').exists()).toBe(true)
+    expect(wrapper.find('#ds-form-name__control').exists()).toBe(false)
+    // Other fields keep the schema-driven default control.
+    expect(wrapper.find('#ds-form-age__control').exists()).toBe(true)
+
+    await wrapper.find('#custom-name').setValue('Ana')
+    const last = wrapper.emitted('update:modelValue')!.at(-1)![0] as Record<string, unknown>
+    expect(last.name).toBe('Ana')
+  })
+
+  it('exposes the field error in the slot scope after a failed submit', async () => {
+    const wrapper = mount(DsForm, {
+      props: { schema },
+      slots: {
+        'field-name': (scope: { error?: string }) =>
+          h('span', { class: 'custom-field-error' }, scope.error ?? 'no-error'),
+      },
+    })
+
+    await wrapper.find('form').trigger('submit')
+    await nextTick()
+
+    expect(wrapper.find('.custom-field-error').text()).toContain('Preencha')
+  })
+
+  it('renders #before-fields and #after-fields inside the fields grid', () => {
+    const wrapper = mount(DsForm, {
+      props: { schema },
+      slots: {
+        'before-fields': () => h('p', { class: 'intro' }, 'Intro'),
+        'after-fields': () => h('p', { class: 'outro' }, 'Outro'),
+      },
+    })
+
+    const fields = wrapper.get('.ntk-form-layout__fields')
+    expect(fields.find('.intro').exists()).toBe(true)
+    expect(fields.find('.outro').exists()).toBe(true)
+    // Generated controls still render between the structural slots.
+    expect(fields.find('#ds-form-name__control').exists()).toBe(true)
   })
 })

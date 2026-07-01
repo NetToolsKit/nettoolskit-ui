@@ -170,6 +170,7 @@ the same taxonomy.
 
 ## See also
 
+- [extension-model.md](./extension-model.md) — how each layer may vary (props vs slots) and the curated L2 override points
 - [docs/RECIPES.md](../RECIPES.md) — copyable L3 patterns
 - [docs/COMPONENTS.md](../COMPONENTS.md) — generated component reference
 - [docs/TOKENS.md](../TOKENS.md) — generated token reference

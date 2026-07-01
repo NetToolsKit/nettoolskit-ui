@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 
 import { DsTable } from '@/design-system/vue'
 
@@ -233,5 +234,18 @@ describe('DsTable', () => {
     for (const button of wrapper.findAll('.ntk-table__pagination-button')) {
       expect(button.attributes('disabled')).toBeDefined()
     }
+  })
+
+  it('overrides the empty state content via the #empty slot', () => {
+    const wrapper = mount(DsTable, {
+      props: { columns, rows: [], emptyLabel: 'No records found' },
+      slots: {
+        empty: () => h('button', { class: 'custom-empty', type: 'button' }, 'Criar primeiro registro'),
+      },
+    })
+
+    const emptyCell = wrapper.get('.ntk-table__empty-cell')
+    expect(emptyCell.find('.custom-empty').text()).toBe('Criar primeiro registro')
+    expect(emptyCell.text()).not.toContain('No records found')
   })
 })

@@ -56,7 +56,7 @@
         </tr>
         <tr v-else-if="rows.length === 0" class="ntk-table__row ntk-table__row--empty">
           <td class="ntk-table__empty-cell" :colspan="columnSpan">
-            {{ emptyLabel }}
+            <slot name="empty">{{ emptyLabel }}</slot>
           </td>
         </tr>
         <tr

@@ -1,8 +1,9 @@
 <template>
   <DsPage class="ntk-crud-page">
     <DsPageHeader :title="resource.title" :description="resource.description">
-      <template v-if="resource.create" #actions>
-        <DsButton intent="primary" @click="openCreate">{{ newLabel }}</DsButton>
+      <template v-if="resource.create || $slots['header-actions']" #actions>
+        <slot name="header-actions" />
+        <DsButton v-if="resource.create" intent="primary" @click="openCreate">{{ newLabel }}</DsButton>
       </template>
     </DsPageHeader>
 
@@ -25,26 +26,25 @@
       </template>
     </DsFilterBar>
 
-    <DsStateBlock
-      v-if="loading"
-      state="loading"
-      :title="loadingLabel"
-    />
-    <DsStateBlock
-      v-else-if="error"
-      state="error"
-      :title="errorTitle"
-      :description="error"
-    />
-    <DsEmptyState
-      v-else-if="tableRows.length === 0"
-      :title="emptyTitle"
-      :description="emptyDescription"
-    >
-      <template v-if="resource.create" #actions>
-        <DsButton intent="primary" @click="openCreate">{{ newLabel }}</DsButton>
-      </template>
-    </DsEmptyState>
+    <template v-if="loading">
+      <slot name="loading">
+        <DsStateBlock state="loading" :title="loadingLabel" />
+      </slot>
+    </template>
+    <template v-else-if="error">
+      <slot name="error" :error="error" :retry="reload">
+        <DsStateBlock state="error" :title="errorTitle" :description="error" />
+      </slot>
+    </template>
+    <template v-else-if="tableRows.length === 0">
+      <slot name="empty" :open-create="openCreate">
+        <DsEmptyState :title="emptyTitle" :description="emptyDescription">
+          <template v-if="resource.create" #actions>
+            <DsButton intent="primary" @click="openCreate">{{ newLabel }}</DsButton>
+          </template>
+        </DsEmptyState>
+      </slot>
+    </template>
     <DsTable
       v-else
       :columns="tableColumns"
@@ -56,6 +56,9 @@
       @update:sort="onSortChange"
       @update:page="onPageChange"
     >
+      <template v-for="name in forwardedTableSlots" :key="name" #[name]="scope">
+        <slot :name="name" v-bind="scope" />
+      </template>
       <template v-if="hasRowActions" #cell-__actions="{ row }">
         <div class="ntk-crud-page__row-actions">
           <DsButton
@@ -71,6 +74,7 @@
             intent="danger"
             @click="onDelete(row.id)"
           >{{ deleteLabel }}</DsButton>
+          <slot name="row-actions" :row="domainRow(row.id)" />
         </div>
       </template>
     </DsTable>
@@ -90,13 +94,17 @@
         @update:model-value="formValues = $event"
         @submit="onSubmit"
         @reset="dialogOpen = false"
-      />
+      >
+        <template v-for="name in forwardedFormFieldSlots" :key="name" #[formFieldTarget(name)]="scope">
+          <slot :name="name" v-bind="scope" />
+        </template>
+      </DsForm>
     </DsDialog>
   </DsPage>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useSlots } from 'vue'
 import {
   createInitialValues,
   normalizeFetchResult,
@@ -187,8 +195,31 @@ const sort = ref<NtkTableSort | null>(
 // Monotonic token so a slow in-flight fetch can never overwrite a newer result.
 let requestToken = 0
 
+const slots = useSlots()
+
+// Curated slot forwarding (see docs/architecture/extension-model.md):
+// `cell-<field>`/`header-<field>` pass straight through to DsTable with the
+// same scope. `cell-__actions` stays internal (extend via `row-actions`) and
+// `header-actions` is reserved for the page header, not a table column.
+const forwardedTableSlots = computed(() =>
+  Object.keys(slots).filter(name =>
+    (name.startsWith('cell-') || name.startsWith('header-'))
+    && name !== 'cell-__actions'
+    && name !== 'header-actions',
+  ),
+)
+
+const FORM_FIELD_SLOT_PREFIX = 'form-field-'
+const forwardedFormFieldSlots = computed(() =>
+  Object.keys(slots).filter(name => name.startsWith(FORM_FIELD_SLOT_PREFIX)),
+)
+const formFieldTarget = (name: string): string =>
+  `field-${name.slice(FORM_FIELD_SLOT_PREFIX.length)}`
+
 const searchable = computed(() => props.searchable && Boolean(props.resource.fetch))
-const hasRowActions = computed(() => Boolean(props.resource.update || props.resource.remove))
+const hasRowActions = computed(() =>
+  Boolean(props.resource.update || props.resource.remove || slots['row-actions']),
+)
 const paginated = computed(() => Boolean(props.resource.pageSize))
 const pagination = computed<NtkTablePagination | null>(() => (
   paginated.value ? { page: page.value, pageSize: pageSize.value, total: total.value } : null
@@ -214,6 +245,9 @@ const rowsById = computed(() => {
   }
   return map
 })
+
+/** Resolve the original domain row for a table row id (used by `row-actions`). */
+const domainRow = (rowId: string): CrudRow => rowsById.value.get(rowId) ?? { id: rowId }
 
 const toCellValue = (value: unknown): NtkTableCellValue => {
   if (value === null || value === undefined) {

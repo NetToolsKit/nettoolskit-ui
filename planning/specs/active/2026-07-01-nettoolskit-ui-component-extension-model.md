@@ -2,7 +2,7 @@
 
 Generated: 2026-07-01 America/Sao_Paulo
 LastUpdated: 2026-07-01 America/Sao_Paulo
-Status: backlog
+Status: active
 Priority: medium-high
 Workstream ID: `nettoolskit-ui-component-extension-model`
 Phase: architecture-extensibility
@@ -141,10 +141,27 @@ mount — run targeted specs, not the whole suite). Verify via:
 
 ## Progress Checklist
 
-Progress: 0% (0/5 checked)
+Progress: 100% (5/5 checked)
 
-- [ ] `DsForm`: `#field-<name>` (+ `#before-fields`/`#after-fields`) scoped slots, schema default preserved
-- [ ] `DsCrudPage`: forward the curated slot set (table cell/header, row-actions, header-actions, form-field, states)
-- [ ] `DsTable`: confirm/add `#empty`; document the scoped-slot contract
-- [ ] `docs/architecture/extension-model.md` (props-vs-slots rule + primitives non-goal); link from layers + binding-contract
-- [ ] Advisory guardrail: primitives must not accrue arbitrary slots (review-rule first)
+- [x] `DsForm`: `#field-<name>` (+ `#before-fields`/`#after-fields`) scoped slots, schema default preserved
+- [x] `DsCrudPage`: forward the curated slot set (table cell/header, row-actions, header-actions, form-field, states)
+- [x] `DsTable`: confirm/add `#empty`; document the scoped-slot contract
+- [x] `docs/architecture/extension-model.md` (props-vs-slots rule + primitives non-goal); link from layers + binding-contract
+- [x] Advisory guardrail: primitives must not accrue arbitrary slots (review-rule first)
+
+## Evidence (2026-07-01)
+
+- `DsForm`: `fieldSlotProps()` exposes `{ field, value, error, disabled, update }`;
+  `update` reuses the internal normalized write path (v-model + live validation
+  preserved). Structural `#before-fields`/`#after-fields` render inside the
+  fields grid.
+- `DsCrudPage`: `forwardedTableSlots`/`forwardedFormFieldSlots` computed from
+  `useSlots()`; `cell-__actions` and `header-actions` reserved; `#row-actions`
+  augments (never replaces) the governed edit/remove buttons and receives the
+  original domain row; `#loading`/`#error`/`#empty` wrap the default state
+  blocks with defaults preserved.
+- Contract + guardrail documented in `docs/architecture/extension-model.md`,
+  linked from `layers.md` and `binding-contract.md`.
+- Unit specs cover field override write-back, curated forwarding, row-actions
+  augmentation and state overrides (see `ds-form.spec.ts`, `ds-crud-page.spec.ts`,
+  `ds-table.spec.ts`).

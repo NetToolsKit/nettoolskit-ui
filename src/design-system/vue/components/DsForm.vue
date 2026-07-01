@@ -8,7 +8,9 @@
     @reset.prevent="onReset"
   >
     <DsFormLayout :legend="legend" :columns="resolvedColumns">
+      <slot name="before-fields" />
       <template v-for="field in fields" :key="field.field">
+        <slot :name="`field-${field.field}`" v-bind="fieldSlotProps(field)">
         <DsInput
           v-if="isInputField(field.type)"
           :id="fieldId(field.field)"
@@ -76,7 +78,9 @@
           :error-message="errors[field.field]"
           @update:model-value="setMultiselect(field, $event)"
         />
+        </slot>
       </template>
+      <slot name="after-fields" />
 
       <template v-if="showActions" #actions>
         <DsButton v-if="showReset" type="reset" variant="ghost" intent="neutral">
@@ -225,6 +229,20 @@ const setMultiselect = (field: NtkNormalizedField, raw: string | string[]): void
     .map((option) => option.value)
   update(field, mapped)
 }
+
+/**
+ * Scope handed to a per-field override slot (`#field-<name>`). `update` writes
+ * through the same normalized `update:modelValue` path as the schema-driven
+ * control, so an overridden field keeps v-model, live validation on submit,
+ * and initial-value semantics without leaving L2.
+ */
+const fieldSlotProps = (field: NtkNormalizedField) => ({
+  field,
+  value: values.value[field.field],
+  error: errors.value[field.field],
+  disabled: Boolean(props.disabled || field.disabled),
+  update: (value: unknown) => update(field, value),
+})
 
 const validate = (): boolean => {
   submitted.value = true
