@@ -8,6 +8,30 @@ published CI metadata.
 Spec: `planning/specs/.../nettoolskit-ui-gitriver-secret-minimization.md`.
 Related memory: `npm-publish-mechanism`.
 
+## Sanctioned resolution paths (the standard — only these two)
+
+A secret is **only ever** obtained through one of these two paths. There is no
+third way: no developer copying a plaintext secret, no hardcoding, no ad-hoc
+`bws`/`bw` call outside these flows, no committing resolved values.
+
+1. **Automated — via GitRiver in CI/CD.** The pipeline runs `resolve-secret.sh`
+   inside the runner, which resolves from the process env (while tokens are still
+   synced) or from Bitwarden SM using the runner's `BITWARDEN_ACCESS_TOKEN`. This
+   is the path every publish takes. No human handles a value.
+
+2. **Manual — only via the access repo's DevOps methods.** When a human action is
+   required (e.g. (re)publishing CI metadata / syncing masked vars), it goes
+   through `nettoolskit-access`'s documented tooling —
+   `scripts/integrations/gitriver/publish-ci-metadata.ps1` and
+   `scripts/runtime/bitwarden-runtime.ps1` — invoked with the DPAPI-protected
+   `BITWARDEN_ACCESS_TOKEN` loaded via `~/.ntk/secrets/load-bitwarden-token.ps1`.
+   The operator never sees or pastes the downstream secret values; the tooling
+   resolves and forwards them.
+
+Everything below describes **how** these two paths work. If a task seems to need
+a secret outside both, that task is mis-shaped — fix the pipeline or the access
+tooling, do not resolve the secret by hand.
+
 ## Target secret set for the `nettoolskit-ui-ci` GitRiver project
 
 | Held in GitRiver (bootstrap minimum) | Resolved at runtime from Bitwarden |
