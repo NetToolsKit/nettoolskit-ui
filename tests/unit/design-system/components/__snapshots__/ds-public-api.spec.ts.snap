@@ -467,31 +467,31 @@ exports[`Ds* public API contract > pins the public props/events of DsCrudPage 1`
   "name": "DsCrudPage",
   "props": {
     "cancelLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "deleteLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "editLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "editTitle": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "emptyDescription": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "emptyTitle": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "errorTitle": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "idPrefix": {
@@ -499,11 +499,11 @@ exports[`Ds* public API contract > pins the public props/events of DsCrudPage 1`
       "required": false,
     },
     "loadingLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "newLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "resource": {
@@ -511,15 +511,15 @@ exports[`Ds* public API contract > pins the public props/events of DsCrudPage 1`
       "required": true,
     },
     "saveLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "searchLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "searchPlaceholder": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "searchable": {
@@ -641,7 +641,7 @@ exports[`Ds* public API contract > pins the public props/events of DsDialog 1`] 
       "required": false,
     },
     "closeLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "description": {
@@ -938,7 +938,7 @@ exports[`Ds* public API contract > pins the public props/events of DsFilterBar 1
   "name": "DsFilterBar",
   "props": {
     "applyLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "ariaLabel": {
@@ -966,7 +966,7 @@ exports[`Ds* public API contract > pins the public props/events of DsFilterBar 1
       "required": false,
     },
     "resetLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "showActions": {
@@ -1056,7 +1056,7 @@ exports[`Ds* public API contract > pins the public props/events of DsForm 1`] = 
       "required": false,
     },
     "resetLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "schema": {
@@ -1072,7 +1072,7 @@ exports[`Ds* public API contract > pins the public props/events of DsForm 1`] = 
       "required": false,
     },
     "submitLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
   },
@@ -1821,7 +1821,7 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "required": false,
     },
     "emptyLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "errorMessage": {
@@ -1877,7 +1877,7 @@ exports[`Ds* public API contract > pins the public props/events of DsSelect 1`] 
       "required": false,
     },
     "searchPlaceholder": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "searchable": {
@@ -2146,7 +2146,7 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
   "name": "DsTable",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "caption": {
@@ -2166,7 +2166,7 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "required": false,
     },
     "emptyLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "emptyValueLabel": {
@@ -2186,11 +2186,11 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "required": false,
     },
     "loadingLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "nextPageLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "pagination": {
@@ -2198,11 +2198,11 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "required": false,
     },
     "paginationLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "previousPageLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "rows": {
@@ -2214,7 +2214,7 @@ exports[`Ds* public API contract > pins the public props/events of DsTable 1`] =
       "required": false,
     },
     "selectAllLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "selectRowLabel": {

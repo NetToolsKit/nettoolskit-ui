@@ -45,6 +45,7 @@ import {
   resolveNtkDialogRecipe,
   type NtkDialogContract,
 } from '../../core'
+import { useNtkI18n } from '../composables/useNtkI18n'
 
 type CloseReason = 'button' | 'action' | 'escape' | 'backdrop'
 
@@ -58,7 +59,6 @@ const props = withDefaults(defineProps<NtkDialogContract>(), {
   size: ntkDialogDefaults.size,
   intent: ntkDialogDefaults.intent,
   persistent: false,
-  closeLabel: 'Close',
   hideClose: false,
 })
 
@@ -67,6 +67,10 @@ const emit = defineEmits<{
   open: []
   close: []
 }>()
+
+// Built-in label resolves from the active locale; an explicit prop wins.
+const { t } = useNtkI18n()
+const closeLabel = computed(() => props.closeLabel ?? t('dialog.close'))
 
 const dialogRef = ref<HTMLDialogElement | null>(null)
 let previouslyFocused: HTMLElement | null = null

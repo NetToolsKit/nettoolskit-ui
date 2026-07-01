@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Library i18n (pt-BR default / en).** Pure core dictionaries + locale
+  registry (`core/i18n`), reactive `useNtkI18n()`/`setNtkLocale()`, and a
+  `locale` option on `createNetToolsKitUI()`. Governed built-in strings
+  (`DsCrudPage`, `DsForm`, `DsTable` incl. boolean cells, `DsDialog`,
+  `DsFilterBar`, `DsSelect`) and validation-rule default messages resolve from
+  the active locale; explicit label props/messages always win.
+
+### Changed
+
+- **Default locale is pt-BR**: `DsTable`/`DsDialog`/`DsFilterBar`/`DsSelect`
+  built-in strings switch from English to Portuguese out of the box. Use
+  `createNetToolsKitUI({ locale: 'en' })` (or `setNtkLocale('en')`) for
+  English.
+
 ## [0.0.1-preview.2] - 2026-07-01
 
 ### Added

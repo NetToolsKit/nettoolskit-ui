@@ -35,6 +35,7 @@ import {
   resolveNtkFilterBarRecipe,
   type NtkFilterBarContract,
 } from '../../core'
+import { useNtkI18n } from '../composables/useNtkI18n'
 
 defineOptions({
   name: 'DsFilterBar',
@@ -46,10 +47,13 @@ const props = withDefaults(defineProps<NtkFilterBarContract>(), {
   intent: ntkFilterBarDefaults.intent,
   density: ntkFilterBarDefaults.density,
   loading: false,
-  applyLabel: 'Apply',
-  resetLabel: 'Reset',
   showActions: true,
 })
+
+// Built-in labels resolve from the active locale; explicit props win.
+const { t } = useNtkI18n()
+const applyLabel = computed(() => props.applyLabel ?? t('filterBar.apply'))
+const resetLabel = computed(() => props.resetLabel ?? t('filterBar.reset'))
 
 const emit = defineEmits<{
   apply: [event: Event]

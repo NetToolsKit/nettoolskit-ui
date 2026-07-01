@@ -15,6 +15,8 @@
 import type { App, Component, Plugin } from 'vue'
 
 import * as dsComponents from '../components'
+import { setNtkLocale } from '../composables/useNtkI18n'
+import type { NtkLocale } from '../../core'
 import {
   bootstrapColorScheme,
   setColorScheme,
@@ -39,6 +41,12 @@ export interface NetToolsKitUIOptions {
    * current/stored preference.
    */
   readonly colorScheme?: NetToolsKitColorScheme
+  /**
+   * Locale for the governed built-in strings (CRUD/form/table/dialog labels
+   * and validation messages). Default `'pt-BR'`; per-component label props
+   * always override the dictionary. Runtime switching: `setNtkLocale()`.
+   */
+  readonly locale?: NtkLocale
   /**
    * Register all `Ds*` components globally. Default `true`. Set to `false` when
    * you prefer explicit per-screen imports for maximum tree-shaking.
@@ -80,12 +88,16 @@ export const registerNtkUiComponents = (app: App): void => {
  * ```
  */
 export function createNetToolsKitUI(options: NetToolsKitUIOptions = {}): Plugin {
-  const { theme, colorScheme, registerComponents = true } = options
+  const { theme, colorScheme, locale, registerComponents = true } = options
 
   return {
     install(app: App): void {
       if (registerComponents) {
         registerNtkUiComponents(app)
+      }
+
+      if (locale) {
+        setNtkLocale(locale)
       }
 
       // Color scheme first so the initial paint already reflects light/dark.

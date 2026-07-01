@@ -125,6 +125,7 @@ import DsPage from './DsPage.vue'
 import DsPageHeader from './DsPageHeader.vue'
 import DsStateBlock from './DsStateBlock.vue'
 import DsTable from './DsTable.vue'
+import { useNtkI18n } from '../composables/useNtkI18n'
 
 type CrudRow = Record<string, unknown>
 
@@ -151,18 +152,6 @@ const props = withDefaults(defineProps<{
 }>(), {
   searchable: true,
   idPrefix: 'ds-crud',
-  newLabel: 'Novo',
-  editLabel: 'Editar',
-  deleteLabel: 'Excluir',
-  saveLabel: 'Salvar',
-  cancelLabel: 'Cancelar',
-  editTitle: 'Editar registro',
-  searchLabel: 'Buscar',
-  searchPlaceholder: 'Buscar...',
-  loadingLabel: 'Carregando...',
-  errorTitle: 'Não foi possível carregar',
-  emptyTitle: 'Nenhum registro',
-  emptyDescription: 'Não há dados para exibir.',
 })
 
 const emit = defineEmits<{
@@ -171,6 +160,22 @@ const emit = defineEmits<{
   deleted: [row: CrudRow]
   error: [error: unknown]
 }>()
+
+// Built-in labels resolve from the active locale dictionary; an explicit
+// label prop always wins (see core/i18n).
+const { t } = useNtkI18n()
+const newLabel = computed(() => props.newLabel ?? t('crud.new'))
+const editLabel = computed(() => props.editLabel ?? t('crud.edit'))
+const deleteLabel = computed(() => props.deleteLabel ?? t('crud.delete'))
+const saveLabel = computed(() => props.saveLabel ?? t('crud.save'))
+const cancelLabel = computed(() => props.cancelLabel ?? t('crud.cancel'))
+const editTitle = computed(() => props.editTitle ?? t('crud.editTitle'))
+const searchLabel = computed(() => props.searchLabel ?? t('crud.search'))
+const searchPlaceholder = computed(() => props.searchPlaceholder ?? t('crud.searchPlaceholder'))
+const loadingLabel = computed(() => props.loadingLabel ?? t('crud.loading'))
+const errorTitle = computed(() => props.errorTitle ?? t('crud.errorTitle'))
+const emptyTitle = computed(() => props.emptyTitle ?? t('crud.emptyTitle'))
+const emptyDescription = computed(() => props.emptyDescription ?? t('crud.emptyDescription'))
 
 const rows = ref<CrudRow[]>([])
 const loading = ref(false)

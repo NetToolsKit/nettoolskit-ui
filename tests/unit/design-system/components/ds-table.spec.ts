@@ -73,10 +73,10 @@ describe('DsTable', () => {
     expect(bodyRows[0]?.attributes('tabindex')).toBe('0')
     expect(bodyRows[0]?.classes()).toContain('custom-row')
     expect(bodyRows[0]?.text()).toContain('Release 1')
-    expect(bodyRows[0]?.text()).toContain('Yes')
-    expect(bodyRows[0]?.get('input[type="checkbox"]').attributes('aria-label')).toBe('Select row Release 1')
+    expect(bodyRows[0]?.text()).toContain('Sim')
+    expect(bodyRows[0]?.get('input[type="checkbox"]').attributes('aria-label')).toBe('Selecionar linha Release 1')
     expect(bodyRows[1]?.text()).toContain('-')
-    expect(bodyRows[1]?.text()).toContain('No')
+    expect(bodyRows[1]?.text()).toContain('Não')
   })
 
   it('emits row clicks and selected key updates', async () => {
