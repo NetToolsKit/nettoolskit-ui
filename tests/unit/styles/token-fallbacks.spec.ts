@@ -3,8 +3,6 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { DESIGN_TOKENS } from '../../../src/styles'
-
 function readRepoFile(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), 'utf8')
 }
@@ -27,19 +25,14 @@ function readCssBlock(source: string, selector: string): string {
 }
 
 describe('style token fallback palette', () => {
-  it('uses Revolut as the exported design-token fallback instead of the legacy purple palette', () => {
-    expect(DESIGN_TOKENS.colors.primary).toBe('#0f766e')
-    expect(DESIGN_TOKENS.colors.primaryDark).toBe('#115e59')
-    expect(DESIGN_TOKENS.colors.primaryLight).toBe('#2dd4bf')
-    expect(DESIGN_TOKENS.colors.secondary).toBe('#0f766e')
-    expect(DESIGN_TOKENS.colors.success).toBe('#10b981')
-    expect(DESIGN_TOKENS.colors.info).toBe('#14b8a6')
-    expect(DESIGN_TOKENS.gradients.primary).toBe('linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)')
-
+  it('keeps the styles entry free of duplicated token literals (anti-duplicity)', () => {
     const stylesIndexSource = readRepoFile('../../../src/styles/index.ts')
-    expect(stylesIndexSource).not.toContain("primary: '#512BD4'")
-    expect(stylesIndexSource).not.toContain('#3B1F9E')
-    expect(stylesIndexSource).not.toContain('#7B74D4')
+
+    // Values live only in the token sources; the TS entry must not restate
+    // any color literal (the old DESIGN_TOKENS/CSS_VARS maps were removed).
+    expect(stylesIndexSource).not.toMatch(/#[0-9a-fA-F]{3,8}\b/)
+    expect(stylesIndexSource).not.toContain('DESIGN_TOKENS')
+    expect(stylesIndexSource).not.toContain('CSS_VARS')
   })
 
   it('keeps base CSS tokens Revolut-based and secondary token-driven', () => {

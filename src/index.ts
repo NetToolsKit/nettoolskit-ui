@@ -95,10 +95,10 @@ export * from './utils/async'
 // ============================================================================
 // CONFIG - Theme
 // ============================================================================
+// The runtime theme model is preset-driven: named palettes (useThemeSwitcher),
+// light/dark scheme (useColorScheme) and CSS custom properties. The legacy
+// NtkThemePlugin/useNtkTheme surface was removed (see MIGRATION.md).
 export * from './config/theme/theme.config'
-// Legacy compatibility export. Prefer the preset-driven runtime theme model,
-// CSS custom properties, and Quasar Dark Plugin sync for new template work.
-export * from './config/theme/theme.plugin'
 
 // ============================================================================
 // CONFIG - Brand
@@ -115,8 +115,7 @@ export * from './config/presets'
 // ============================================================================
 // CONFIG - Colors
 // ============================================================================
+// theme-mode.config stays internal (consumed by the presets); white-label
+// runtime work uses preset/theme CSS custom properties, not plugin writes.
 export * from './config/colors/palette.config'
 export * from './config/colors/semantic.config'
-// Legacy compatibility export. Prefer preset/theme CSS custom properties for
-// runtime white-label work so tokens can be swapped without plugin writes.
-export * from './config/colors/theme-mode.config'
