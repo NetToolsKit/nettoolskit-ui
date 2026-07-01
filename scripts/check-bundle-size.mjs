@@ -39,6 +39,17 @@ const FORBIDDEN_DEPENDENCIES = {
   'router.mjs': ['quasar'],
 }
 
+/**
+ * Dynamic-code sinks banned from every published entry (OWASP A03/A08 and
+ * CSP compatibility: consumers must be able to run under a policy without
+ * `unsafe-eval`).
+ */
+const FORBIDDEN_SINKS = [
+  { label: 'eval(', pattern: /\beval\s*\(/ },
+  { label: 'new Function(', pattern: /\bnew\s+Function\s*\(/ },
+  { label: 'document.write(', pattern: /\bdocument\.write(?:ln)?\s*\(/ },
+]
+
 const kib = (bytes) => (bytes / 1024).toFixed(1)
 
 let failed = false
@@ -72,6 +83,16 @@ for (const [file, budget] of Object.entries(GZIP_BUDGETS)) {
       console.error(
         `${file}: forbidden dependency "${dependency}" — optional peers must stay`
         + ' in their subpath entries (see ADR-0006 and package.json exports).',
+      )
+    }
+  }
+
+  for (const sink of FORBIDDEN_SINKS) {
+    if (sink.pattern.test(source)) {
+      failed = true
+      console.error(
+        `${file}: forbidden dynamic-code sink "${sink.label}" — published entries`
+        + ' must stay CSP-compatible (no unsafe-eval) per the security baseline.',
       )
     }
   }

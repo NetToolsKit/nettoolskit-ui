@@ -43,19 +43,36 @@ export function useTableColumns(
     defaultVisibleColumns
   } = options
 
-  // Loads saved visibility from localStorage.
+  // Loads saved visibility from localStorage. Persisted state is untrusted
+  // input (any script/extension on the origin can write it): only a plain
+  // object survives, and only boolean values for KNOWN column names are
+  // copied onto a fresh object — malformed payloads, arrays, `null`, foreign
+  // keys and non-boolean values all degrade to defaults instead of leaking
+  // into component state.
   const loadSavedVisibility = (): Record<string, boolean> => {
-    if (persistKey && typeof window !== 'undefined') {
-      const saved = localStorage.getItem(persistKey)
-      if (saved) {
-        try {
-          return JSON.parse(saved)
-        } catch {
-          return {}
+    if (!persistKey || typeof window === 'undefined') {
+      return {}
+    }
+    const saved = localStorage.getItem(persistKey)
+    if (!saved) {
+      return {}
+    }
+    try {
+      const parsed: unknown = JSON.parse(saved)
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return {}
+      }
+      const visibility: Record<string, boolean> = {}
+      for (const column of initialColumns) {
+        const value = (parsed as Record<string, unknown>)[column.name]
+        if (typeof value === 'boolean') {
+          visibility[column.name] = value
         }
       }
+      return visibility
+    } catch {
+      return {}
     }
-    return {}
   }
 
   const savedVisibility = loadSavedVisibility()

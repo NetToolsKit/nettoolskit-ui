@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -- registry-only build-time SVG paths keyed by a closed name union; no untrusted string can reach this sink (see icons/registry.ts) -->
   <svg
     :id="id"
     :class="classes"
@@ -16,6 +17,7 @@
     :aria-label="label || undefined"
     v-html="iconMarkup"
   />
+  <!-- eslint-enable vue/no-v-html -->
 </template>
 
 <script setup lang="ts">
