@@ -40,7 +40,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<NtkTreeExplorerContract>(), {
   nodes: () => [],
-  ariaLabel: 'Tree',
   variant: ntkTreeExplorerDefaults.variant,
   size: ntkTreeExplorerDefaults.size,
   intent: ntkTreeExplorerDefaults.intent,
@@ -157,6 +156,11 @@ function onKeydown(event: KeyboardEvent, nodeId: string): void {
 
 const treeRef = ref<HTMLUListElement>()
 defineExpose({ treeRef })
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.tree'))
 </script>
 
 <style scoped>

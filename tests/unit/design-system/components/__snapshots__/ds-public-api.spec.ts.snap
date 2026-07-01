@@ -149,7 +149,7 @@ exports[`Ds* public API contract > pins the public props/events of DsBanner 1`] 
       "required": false,
     },
     "dismissLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "dismissible": {
@@ -198,7 +198,7 @@ exports[`Ds* public API contract > pins the public props/events of DsBreadcrumbs
   "name": "DsBreadcrumbs",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -392,7 +392,7 @@ exports[`Ds* public API contract > pins the public props/events of DsChip 1`] = 
       "required": false,
     },
     "removeLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "selected": {
@@ -612,7 +612,7 @@ exports[`Ds* public API contract > pins the public props/events of DsDatePicker 
       "required": false,
     },
     "triggerLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "variant": {
@@ -696,7 +696,7 @@ exports[`Ds* public API contract > pins the public props/events of DsDockLayout 
   "name": "DsDockLayout",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "bottomSize": {
@@ -821,7 +821,7 @@ exports[`Ds* public API contract > pins the public props/events of DsDrawer 1`] 
   "name": "DsDrawer",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -829,7 +829,7 @@ exports[`Ds* public API contract > pins the public props/events of DsDrawer 1`] 
       "required": false,
     },
     "closeLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "hideClose": {
@@ -849,7 +849,7 @@ exports[`Ds* public API contract > pins the public props/events of DsDrawer 1`] 
       "required": false,
     },
     "navLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "persistent": {
@@ -1213,7 +1213,7 @@ exports[`Ds* public API contract > pins the public props/events of DsHeader 1`] 
       "required": false,
     },
     "menuLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "showMenu": {
@@ -1549,7 +1549,7 @@ exports[`Ds* public API contract > pins the public props/events of DsQuickAccess
   "name": "DsQuickAccessToolbar",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -1601,7 +1601,7 @@ exports[`Ds* public API contract > pins the public props/events of DsRibbon 1`] 
       "required": false,
     },
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -1906,7 +1906,7 @@ exports[`Ds* public API contract > pins the public props/events of DsSidebar 1`]
   "name": "DsSidebar",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -2041,7 +2041,7 @@ exports[`Ds* public API contract > pins the public props/events of DsStatusBar 1
   "name": "DsStatusBar",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -2088,7 +2088,7 @@ exports[`Ds* public API contract > pins the public props/events of DsSteps 1`] =
   "name": "DsSteps",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -2257,7 +2257,7 @@ exports[`Ds* public API contract > pins the public props/events of DsTabs 1`] = 
   "name": "DsTabs",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -2382,7 +2382,7 @@ exports[`Ds* public API contract > pins the public props/events of DsTimePicker 
       "required": false,
     },
     "triggerLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "variant": {
@@ -2405,7 +2405,7 @@ exports[`Ds* public API contract > pins the public props/events of DsToast 1`] =
       "required": false,
     },
     "dismissLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "dismissible": {
@@ -2454,11 +2454,11 @@ exports[`Ds* public API contract > pins the public props/events of DsToastHost 1
   "name": "DsToastHost",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "dismissLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "position": {
@@ -2568,7 +2568,7 @@ exports[`Ds* public API contract > pins the public props/events of DsTreeExplore
   "name": "DsTreeExplorer",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {
@@ -2613,7 +2613,7 @@ exports[`Ds* public API contract > pins the public props/events of DsWorkspaceCa
   "name": "DsWorkspaceCanvas",
   "props": {
     "ariaLabel": {
-      "hasDefault": true,
+      "hasDefault": false,
       "required": false,
     },
     "class": {

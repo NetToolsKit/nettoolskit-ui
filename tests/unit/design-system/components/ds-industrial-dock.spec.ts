@@ -261,7 +261,7 @@ describe('DsStatusBar', () => {
 
     const bar = wrapper.get('[role="status"]')
     expect(bar.attributes('aria-live')).toBe('off')
-    expect(bar.attributes('aria-label')).toBe('Status bar')
+    expect(bar.attributes('aria-label')).toBe('Barra de status')
     expect(bar.classes()).toContain('ntk-status-bar')
 
     const segments = wrapper.findAll('.ntk-status-bar__segment')

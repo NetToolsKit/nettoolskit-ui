@@ -93,6 +93,15 @@ describe('component built-in labels (reactive locale)', () => {
     expect(wrapper.text()).not.toContain('Save')
   })
 
+  it('a11y labels of long-tail components follow the locale (props still win)', () => {
+    expect(useNtkI18n().t('a11y.remove')).toBe('Remover')
+    expect(useNtkI18n().t('a11y.openCalendar')).toBe('Abrir calendário')
+
+    setNtkLocale('en')
+    expect(useNtkI18n().t('a11y.remove')).toBe('Remove')
+    expect(useNtkI18n().t('a11y.notifications')).toBe('Notifications')
+  })
+
   it('useNtkI18n exposes the reactive locale', () => {
     const { locale, t } = useNtkI18n()
     expect(locale.value).toBe('pt-BR')

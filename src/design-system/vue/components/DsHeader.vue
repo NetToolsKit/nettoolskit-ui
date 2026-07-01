@@ -42,7 +42,6 @@ const props = withDefaults(defineProps<NtkHeaderContract>(), {
   size: ntkHeaderDefaults.size,
   intent: ntkHeaderDefaults.intent,
   showMenu: false,
-  menuLabel: 'Open menu',
 })
 
 const emit = defineEmits<{
@@ -59,6 +58,11 @@ const classes = computed(() => resolveNtkHeaderRecipe({
 function onToggleMenu(): void {
   emit('toggle-menu')
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const menuLabel = computed(() => props.menuLabel ?? ntkI18n.t('a11y.openMenu'))
 </script>
 
 <style scoped>

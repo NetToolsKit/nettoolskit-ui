@@ -40,7 +40,6 @@ const props = withDefaults(defineProps<NtkBannerContract>(), {
   size: ntkBannerDefaults.size,
   intent: ntkBannerDefaults.intent,
   dismissible: false,
-  dismissLabel: 'Dismiss',
 })
 
 const emit = defineEmits<{
@@ -59,6 +58,11 @@ const role = computed(() => getNtkBannerRole(props.intent))
 function onDismiss(): void {
   emit('dismiss')
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const dismissLabel = computed(() => props.dismissLabel ?? ntkI18n.t('a11y.dismiss'))
 </script>
 
 <style scoped>

@@ -64,7 +64,6 @@ defineOptions({
 
 const props = withDefaults(defineProps<NtkRibbonContract>(), {
   tabs: () => [],
-  ariaLabel: 'Ribbon',
   variant: ntkRibbonDefaults.variant,
   size: ntkRibbonDefaults.size,
   intent: ntkRibbonDefaults.intent,
@@ -132,6 +131,11 @@ function onKeydown(event: KeyboardEvent): void {
   onSelect(nextId)
   focusTab(nextId)
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.ribbon'))
 </script>
 
 <style scoped>

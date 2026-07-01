@@ -52,10 +52,7 @@ const props = withDefaults(defineProps<NtkDrawerContract>(), {
   variant: ntkDrawerDefaults.variant,
   size: ntkDrawerDefaults.size,
   intent: ntkDrawerDefaults.intent,
-  ariaLabel: 'Navigation drawer',
-  navLabel: 'Drawer',
   persistent: false,
-  closeLabel: 'Close',
   hideClose: false,
 })
 
@@ -178,6 +175,13 @@ onBeforeUnmount(() => {
     }
   }
 })
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const ariaLabel = computed(() => props.ariaLabel ?? ntkI18n.t('a11y.navigationDrawer'))
+const navLabel = computed(() => props.navLabel ?? ntkI18n.t('a11y.drawerNav'))
+const closeLabel = computed(() => props.closeLabel ?? ntkI18n.t('dialog.close'))
 </script>
 
 <style scoped>

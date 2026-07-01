@@ -90,7 +90,6 @@ const props = withDefaults(defineProps<NtkTimePickerContract>(), {
   readonly: false,
   required: false,
   invalid: false,
-  triggerLabel: 'Open time list',
 })
 
 const emit = defineEmits<{
@@ -265,6 +264,11 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({ open })
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const triggerLabel = computed(() => props.triggerLabel ?? ntkI18n.t('a11y.openTimeList'))
 </script>
 
 <style scoped>

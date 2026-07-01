@@ -48,7 +48,6 @@ const props = withDefaults(defineProps<NtkChipContract>(), {
   selected: false,
   disabled: false,
   removable: false,
-  removeLabel: 'Remove',
 })
 
 const emit = defineEmits<{
@@ -79,6 +78,11 @@ function onRemove(): void {
   }
   emit('remove')
 }
+
+// Built-in a11y labels resolve from the active locale; explicit props win.
+import { useNtkI18n } from '../composables/useNtkI18n'
+const ntkI18n = useNtkI18n()
+const removeLabel = computed(() => props.removeLabel ?? ntkI18n.t('a11y.remove'))
 </script>
 
 <style scoped>
