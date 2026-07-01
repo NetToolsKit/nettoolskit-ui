@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.1-preview.2] - 2026-07-01
+
+### Added
+
+- **Component extension model (L2 slot forwarding).** `DsForm` gains `#field-<name>` scoped overrides (`{ field, value, error, disabled, update }`) plus `#before-fields`/`#after-fields`; `DsCrudPage` forwards a curated slot set (`#cell-*`/`#header-*` to the table, `#row-actions` augmenting the governed actions, `#header-actions`, `#form-field-*` into the dialog form, `#loading`/`#error`/`#empty` state overrides); `DsTable` gains `#empty`. Contract documented in `docs/architecture/extension-model.md`.
+- **Declarative dialogs.** `DsDialog` mirrors the native Invoker Commands API (`<button commandfor command="show-modal|close">`) into `v-model` — open/close with zero per-screen JS in supporting browsers; progressive enhancement with no new props.
+- **Optional-peer subpath entries.** `@nettoolskit/ui/quasar` (`QuasarNotificationAdapter`, `useDialogActions`, `useResponsive`, `installQuasarServices()`) and `@nettoolskit/ui/router` (`useFilters`).
+- **Bundle budget gate.** `npm run size:check` (wired into `verify` after `build`): gzip budgets per published entry plus a scan that fails if the root entries regain `quasar`/`vue-router` specifiers.
+- **ADR-0006 — native-element primitives.** Quasar reduced to optional service adapters; supersedes the rendering mechanism of ADR-0001 (the closed `Ds*` contract stays in force).
+- **Docs generator auto-discovery.** `COMPONENTS.md` now documents all 42 core recipe modules and 48 `Ds*` wrappers (was 14); `verify` now ends with the Playwright/axe browser gate.
+
 ### Removed
 
 - **BREAKING: legacy theme/config compatibility surface removed.**
@@ -32,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BREAKING: `quasar` and `vue-router` are now optional peers** (`peerDependenciesMeta`). The modules that statically import them moved to the `./quasar` and `./router` subpaths so the root entry bundles without the optional peers; `useNotification()` defaults to the framework-free base service until `installQuasarServices()` is called (see `MIGRATION.md`).
 - **BREAKING: package renamed `nettoolskit` → `@nettoolskit/ui`** to follow the `@nettoolskit/*` org scope convention. Update installs (`npm install @nettoolskit/ui`), imports (`from '@nettoolskit/ui'`) and style subpaths (`@nettoolskit/ui/styles/*`). The unscoped `nettoolskit` preview is deprecated on npm with a pointer to the new name.
 - **CSS governance is now zero-tolerance.** The baseline scans `src/design-system/vue/components` with all metrics at 0 (directQuasarTags / quasarClassSelectors / unmanagedDeepSelectors / importantDeclarations / rawHexColors), and an ESLint rule blocks reintroducing legacy `Ntk*`/`Base*` or `src/components` imports.
 
