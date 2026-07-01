@@ -64,10 +64,11 @@ describe('createDebouncer (core/timing)', () => {
 })
 
 describe('createThrottler (core/timing)', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-    vi.setSystemTime(0)
-  })
+  // No setSystemTime here: fake timers start at the current wall clock, so the
+  // very first invoke sees a large `now - lastExecuted(0)` gap and takes the
+  // leading (immediate) branch — matching real usage. Pinning the clock to 0
+  // would make the first call fall into the trailing branch instead.
+  beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())
 
   it('invokes immediately on the first call (leading)', () => {
