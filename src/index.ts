@@ -32,9 +32,13 @@
  */
 
 // ============================================================================
-// ADAPTERS
+// OPTIONAL PEER SURFACE
 // ============================================================================
-export * from './adapters/QuasarNotificationAdapter'
+// Modules that statically import the optional peers stay OUT of this entry so
+// the package resolves without them (see MIGRATION.md):
+//   '@nettoolskit/ui/quasar' -> QuasarNotificationAdapter, useDialogActions,
+//                               useResponsive, installQuasarServices()
+//   '@nettoolskit/ui/router' -> useFilters
 
 // ============================================================================
 // DESIGN SYSTEM (Ds* components, tokens, recipes, schema, install plugin)
@@ -50,8 +54,6 @@ export * from './composables/forms/useFormRules'
 // COMPOSABLES - UI
 // ============================================================================
 export * from './composables/ui/useDialog'
-export * from './composables/ui/useDialogActions'
-export * from './composables/ui/useResponsive'
 export * from './composables/ui/useTheme'
 export * from './composables/ui/useColorScheme'
 export * from './composables/ui/useBranding'
@@ -60,7 +62,6 @@ export * from './composables/ui/useToast'
 // ============================================================================
 // COMPOSABLES - Data
 // ============================================================================
-export * from './composables/data/useFilters'
 export * from './composables/data/useTableColumns'
 
 // ============================================================================
