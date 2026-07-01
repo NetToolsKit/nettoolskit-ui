@@ -80,7 +80,7 @@
     "sec:audit": "npm audit --omit=dev --audit-level=high",
     "size:check": "node scripts/check-bundle-size.mjs",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run size:check && npm run build:samples"
+    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run size:check && npm run build:samples && npm run test:e2e"
   },
   "keywords": [
     "vue",

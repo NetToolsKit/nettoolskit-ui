@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import ts from 'typescript'
@@ -262,6 +262,102 @@ const VUE_WRAPPER_CONFIGS = [
   },
 ]
 
+// Modules under core/components that are not recipe modules.
+const CORE_COMPONENT_EXCLUDES = new Set(['contracts.ts', 'recipe.ts', 'index.ts'])
+
+function camelCaseFromFileName(fileName) {
+  return fileName.replace(/\.ts$/, '').replace(/-([a-z0-9])/g, (_, character) => character.toUpperCase())
+}
+
+function toAsciiPurpose(value, fallback) {
+  const ascii = String(value ?? '').replace(/[^\x09\x20-\x7e]/g, '').trim()
+  return ascii || fallback
+}
+
+/**
+ * Discover every recipe module in core/components beyond the curated list.
+ * A module qualifies when it exports the conventional trio: a
+ * `ntk*RecipeClassMap`, a `ntk*Defaults`, and a `Ntk*Contract` interface
+ * (`ntk*Variants` is optional — e.g. the pickers have none). The purpose line
+ * comes from the module's leading doc comment.
+ */
+async function discoverComponentConfigs(componentsDirectory) {
+  const curatedKeys = new Set(COMPONENT_CONFIGS.map(config => config.key))
+  const fileNames = (await readdir(componentsDirectory))
+    .filter(fileName => fileName.endsWith('.ts') && !CORE_COMPONENT_EXCLUDES.has(fileName))
+    .sort()
+  const discovered = []
+
+  for (const fileName of fileNames) {
+    const key = camelCaseFromFileName(fileName)
+
+    if (curatedKeys.has(key)) {
+      continue
+    }
+
+    const filePath = path.join(componentsDirectory, fileName)
+    const text = await readFile(filePath, 'utf8')
+    const classMapExport = text.match(/export const (ntk\w+RecipeClassMap)/)?.[1]
+    const defaultsExport = text.match(/export const (ntk\w+Defaults)/)?.[1]
+    const variantsExport = text.match(/export const (ntk\w+Variants)/)?.[1] ?? null
+    const contractName = text.match(/export interface (Ntk\w+Contract)\b/)?.[1]
+
+    if (!classMapExport || !defaultsExport || !contractName) {
+      continue
+    }
+
+    const headerLine = text.match(/^\/\*\*\s*\r?\n\s*\*\s*(.+?)\s*\r?\n/)?.[1]
+
+    discovered.push({
+      key,
+      name: titleCase(key),
+      contractName,
+      variantsExport,
+      defaultsExport,
+      classMapExport,
+      purpose: toAsciiPurpose(headerLine, `${titleCase(key)} contract and class recipe.`),
+      sourcePath: filePath,
+    })
+  }
+
+  return discovered
+}
+
+/**
+ * Discover every Ds* Vue wrapper. Curated entries keep their hand-written
+ * purpose; the rest get their contract from the SFC source and a derived
+ * purpose line. Ordering is alphabetical for determinism.
+ */
+async function discoverVueWrapperConfigs(vueComponentsDirectory) {
+  const curated = new Map(VUE_WRAPPER_CONFIGS.map(wrapper => [wrapper.name, wrapper]))
+  const fileNames = (await readdir(vueComponentsDirectory))
+    .filter(fileName => fileName.endsWith('.vue'))
+    .sort()
+  const wrappers = []
+
+  for (const fileName of fileNames) {
+    const name = fileName.replace(/\.vue$/, '')
+    const existing = curated.get(name)
+
+    if (existing) {
+      wrappers.push(existing)
+      continue
+    }
+
+    const text = await readFile(path.join(vueComponentsDirectory, fileName), 'utf8')
+    const contractName = text.match(/Ntk\w+Contract/)?.[0] ?? 'None'
+
+    wrappers.push({
+      name,
+      contractName,
+      sourcePath: `src/design-system/vue/components/${fileName}`,
+      purpose: `Native Vue wrapper for the ${titleCase(name.replace(/^Ds/, ''))} primitive.`,
+    })
+  }
+
+  return wrappers
+}
+
 const DOC_ORDER = ['design', 'tokens', 'components']
 const FORBIDDEN_DOC_WORDS = [
   new RegExp(`\\b${'canon'}${'ical'}\\b`, 'i'),
@@ -482,7 +578,8 @@ function createComponentModel(config, sourceFile, sourcePath, repoRoot, shared) 
     name: config.name,
     sourcePath: toRepoPath(sourcePath, repoRoot),
     purpose: config.purpose,
-    variants: readExportedConst(sourceFile, config.variantsExport),
+    // Some recipe modules (e.g. the pickers) have no variants export.
+    variants: config.variantsExport ? readExportedConst(sourceFile, config.variantsExport) : [],
     sizes: shared.sizes,
     intents: shared.intents,
     defaults: readExportedConst(sourceFile, config.defaultsExport),
@@ -541,6 +638,28 @@ function flattenClassMap(classMap) {
     }
   }
 
+  // Discovered recipes may define extra class groups (elements, tones, ...).
+  for (const [group, value] of Object.entries(classMap)) {
+    if (group === 'root' || group in groupLabels || !value || typeof value !== 'object') {
+      continue
+    }
+
+    for (const [key, className] of Object.entries(value)) {
+      if (typeof className === 'string') {
+        rows.push({ slot: `${group} ${key}`, className })
+        continue
+      }
+
+      if (className && typeof className === 'object') {
+        for (const [subKey, subClassName] of Object.entries(className)) {
+          if (typeof subClassName === 'string') {
+            rows.push({ slot: `${group} ${key} ${subKey}`, className: subClassName })
+          }
+        }
+      }
+    }
+  }
+
   return rows
 }
 
@@ -551,10 +670,20 @@ export async function readDesignSystemSources(options = {}) {
     ...DEFAULT_COMPONENT_SOURCE_PATHS,
     ...(options.componentSourcePaths ?? {}),
   }
+  const coreComponentsDirectory = path.dirname(componentSourcePaths.contracts)
+  const vueComponentsDirectory = path.join(repoRoot, 'src/design-system/vue/components')
+  const discoveredConfigs = await discoverComponentConfigs(coreComponentsDirectory)
+  // Curated configs keep their order and hand-written purposes; discovered
+  // recipe modules follow alphabetically so the docs cover the whole catalog.
+  const allConfigs = [
+    ...COMPONENT_CONFIGS.map(config => ({ ...config, sourcePath: componentSourcePaths[config.key] })),
+    ...discoveredConfigs,
+  ]
+  const vueWrappers = await discoverVueWrapperConfigs(vueComponentsDirectory)
   const [tokenSource, contractsText, ...componentTexts] = await Promise.all([
     readTokenSource(tokenSourcePath),
     readFile(componentSourcePaths.contracts, 'utf8'),
-    ...COMPONENT_CONFIGS.map(config => readFile(componentSourcePaths[config.key], 'utf8')),
+    ...allConfigs.map(config => readFile(config.sourcePath, 'utf8')),
   ])
   const contractsSourceFile = parseTsSource(contractsText, componentSourcePaths.contracts)
   const shared = {
@@ -562,10 +691,9 @@ export async function readDesignSystemSources(options = {}) {
     intents: readExportedConst(contractsSourceFile, 'ntkComponentIntents'),
     baseProperties: readInterfaceProperties(contractsSourceFile, 'NtkComponentContractBase'),
   }
-  const components = COMPONENT_CONFIGS.map((config, index) => {
-    const sourcePath = componentSourcePaths[config.key]
-    const sourceFile = parseTsSource(componentTexts[index], sourcePath)
-    return createComponentModel(config, sourceFile, sourcePath, repoRoot, shared)
+  const components = allConfigs.map((config, index) => {
+    const sourceFile = parseTsSource(componentTexts[index], config.sourcePath)
+    return createComponentModel(config, sourceFile, config.sourcePath, repoRoot, shared)
   })
 
   assertValidTokenSource(tokenSource)
@@ -579,7 +707,7 @@ export async function readDesignSystemSources(options = {}) {
     tokenDts: toRepoPath(DEFAULT_GENERATED_TOKEN_DTS_OUTPUT_PATH, repoRoot),
     contracts: toRepoPath(componentSourcePaths.contracts, repoRoot),
     components: Object.fromEntries(
-      COMPONENT_CONFIGS.map(config => [config.key, toRepoPath(componentSourcePaths[config.key], repoRoot)]),
+      allConfigs.map(config => [config.key, toRepoPath(config.sourcePath, repoRoot)]),
     ),
   }
 
@@ -594,6 +722,7 @@ export async function readDesignSystemSources(options = {}) {
     tokenTypeCounts: countTokensByType(tokens),
     shared,
     components,
+    vueWrappers,
   }
 }
 
@@ -634,9 +763,9 @@ function generateDesignOverviewDoc(model) {
       const states = Object.keys(component.classMap.states ?? {})
       return [
         `| ${component.name}`,
-        codeCell(component.defaults.variant),
-        codeCell(component.defaults.size),
-        codeCell(component.defaults.intent),
+        codeCell(component.defaults.variant ?? '-'),
+        codeCell(component.defaults.size ?? '-'),
+        codeCell(component.defaults.intent ?? '-'),
         listCode(component.variants),
         listCode(states),
       ].join(' | ') + ' |'
@@ -737,7 +866,7 @@ function generateComponentsDoc(model) {
     '',
     '| Component | Contract | Source | Purpose |',
     '| --- | --- | --- | --- |',
-    ...VUE_WRAPPER_CONFIGS.map(wrapper => [
+    ...(model.vueWrappers ?? VUE_WRAPPER_CONFIGS).map(wrapper => [
       `| ${wrapper.name}`,
       codeCell(wrapper.contractName),
       codeCell(wrapper.sourcePath),
@@ -757,7 +886,7 @@ function generateComponentsDoc(model) {
       '',
       '| Setting | Values |',
       '| --- | --- |',
-      `| Defaults | variant ${code(component.defaults.variant)}, size ${code(component.defaults.size)}, intent ${code(component.defaults.intent)} |`,
+      `| Defaults | ${Object.entries(component.defaults).map(([key, value]) => `${key} ${code(value)}`).join(', ') || 'None'} |`,
       `| Variants | ${listCode(component.variants)} |`,
       `| Sizes | ${listCode(component.sizes)} |`,
       `| Intents | ${listCode(component.intents)} |`,
