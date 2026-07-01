@@ -30,6 +30,29 @@ copy wrapper is
 | Primitives gallery | `ComponentsGalleryRecipe.vue` | `DsBadge`, `DsChip`, `DsAvatar`, `DsTabs`, `DsTooltip`, `DsSkeleton`, `DsBreadcrumbs`, `DsSteps`, `DsBanner`, `DsButton` + `useToast` → `DsToast`/`DsToastHost` | A few variants of each newer primitive; the toast button pushes onto the shared queue rendered by `<DsToastHost />`. |
 | Copy wrapper | `RecipeShowcase.vue` | `DsCard`, `DsButton` | Presentational shell: live preview + copyable `<pre><code>` snippet with an accessible Copy button. |
 
+## Declarative dialogs (Invoker Commands)
+
+In browsers with the HTML Invoker Commands API (Baseline newly available:
+Chrome/Edge 135+, Firefox 144+, Safari 26+), a `DsDialog` with an `id` can be
+opened and closed with **no handler code** — the browser performs the action
+and the component mirrors it back into `v-model`:
+
+```vue
+<button commandfor="invite-dialog" command="show-modal">Convidar</button>
+
+<DsDialog id="invite-dialog" v-model="open" title="Convidar usuário">
+  <p>Conteúdo…</p>
+  <template #actions="{ close }">
+    <button commandfor="invite-dialog" command="close">Cancelar</button>
+    <DsButton @click="close">Confirmar</DsButton>
+  </template>
+</DsDialog>
+```
+
+`v-model` stays the source of truth (older browsers keep the existing
+programmatic flow — the attributes are simply inert there), `persistent` still
+governs Esc/backdrop, and custom (`--*`) commands are ignored.
+
 ## Conventions
 
 - Import everything from the package entry (`'../../index'` in samples,
