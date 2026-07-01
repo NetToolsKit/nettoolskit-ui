@@ -17,11 +17,11 @@ separate design boundary.
 | # | Spec | Branch / PR |
 |---|---|---|
 | WS1 | `planning/specs/active/2026-07-01-nettoolskit-ui-component-extension-model.md` | `docs/spec-component-extension-model` → PR #117 |
-| WS2 | `planning/specs/active/2026-07-01-nettoolskit-ui-dsdialog-invoker-commands.md` | `feat/dsdialog-invoker-commands` |
-| WS3 | `planning/specs/active/2026-07-01-nettoolskit-ui-public-api-legacy-cut.md` | `refactor/public-api-legacy-cut` |
-| WS4 | `planning/specs/active/2026-07-01-nettoolskit-ui-optional-peers-bundle-budget.md` | `feat/optional-peers-size-gate` |
-| WS5 | `planning/specs/active/2026-07-01-nettoolskit-ui-adr-native-primitives.md` | `docs/adr-native-primitives` |
-| WS6 | `planning/specs/active/2026-07-01-nettoolskit-ui-docs-coverage-e2e-verify.md` | `feat/docs-coverage-e2e-verify` |
+| WS2 | `planning/specs/active/2026-07-01-nettoolskit-ui-dsdialog-invoker-commands.md` | `feat/dsdialog-invoker-commands` → PR #118 |
+| WS3 | `planning/specs/active/2026-07-01-nettoolskit-ui-public-api-legacy-cut.md` | `refactor/public-api-legacy-cut` → PR #121 |
+| WS4 | `planning/specs/active/2026-07-01-nettoolskit-ui-optional-peers-bundle-budget.md` | `feat/optional-peers-size-gate` → PR #120 |
+| WS5 | `planning/specs/active/2026-07-01-nettoolskit-ui-adr-native-primitives.md` | `docs/adr-native-primitives` → PR #119 |
+| WS6 | `planning/specs/active/2026-07-01-nettoolskit-ui-docs-coverage-e2e-verify.md` | `feat/docs-coverage-e2e-verify` → PR #122 (stacked on #120) |
 
 ## Execution order and isolation
 
@@ -53,8 +53,8 @@ non-overlapping regions.
 Progress: tracked per spec (each spec carries its own checklist)
 
 - [x] WS1 implemented + validated (PR #117)
-- [ ] WS2 implemented + validated
-- [ ] WS3 implemented + validated
-- [ ] WS4 implemented + validated
-- [ ] WS5 implemented + validated
-- [ ] WS6 implemented + validated
+- [x] WS2 implemented + validated (PR #118)
+- [x] WS3 implemented + validated (PR #121)
+- [x] WS4 implemented + validated (PR #120)
+- [x] WS5 implemented + validated (PR #119)
+- [x] WS6 implemented + validated (PR #122 — merge #120 first or merge #122 directly)
