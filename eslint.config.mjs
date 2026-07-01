@@ -71,6 +71,10 @@ export default [
     rules: {
       ...tsRules,
       'vue/require-default-prop': 'off',
+      // OWASP A03 (XSS): v-html renders raw HTML and bypasses Vue escaping.
+      // Hard error everywhere; the single sanctioned use (DsCommandIcon,
+      // registry-only markup) carries a justified inline disable.
+      'vue/no-v-html': 'error',
     },
   },
 

@@ -90,3 +90,53 @@ describe('useTableColumns', () => {
     expect(toggleableColumns.value).toHaveLength(3)
   })
 })
+
+describe('useTableColumns persisted-state hardening (untrusted localStorage)', () => {
+  const persistKey = 'ntk-test-columns'
+
+  const withPayload = (payload: string) => {
+    localStorage.setItem(persistKey, payload)
+    const api = useTableColumns(sampleColumns, { persistKey })
+    localStorage.removeItem(persistKey)
+    return api
+  }
+
+  it('applies only boolean values for known column names', () => {
+    const { visibleColumns } = withPayload(JSON.stringify({
+      name: false,
+      status: true,
+      unknownColumn: true,
+      email: 'yes',
+    }))
+
+    const names = visibleColumns.value.map(c => c.name)
+    expect(names).not.toContain('name') // persisted boolean honored
+    expect(names).toContain('status') // persisted boolean honored
+    expect(names).toContain('email') // non-boolean value ignored -> default
+  })
+
+  it.each([
+    ['null', 'null'],
+    ['array', '[true,false]'],
+    ['string', '"true"'],
+    ['number', '42'],
+    ['broken JSON', '{oops'],
+  ])('degrades to defaults for a %s payload', (_label, payload) => {
+    const { visibleColumns } = withPayload(payload)
+    expect(visibleColumns.value.map(c => c.name)).toEqual(['id', 'name', 'email'])
+  })
+
+  it('does not copy foreign keys such as __proto__ into state', () => {
+    const { columns } = withPayload('{"__proto__":{"polluted":true},"name":false}')
+
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined()
+    for (const column of columns.value) {
+      expect(Object.keys(column)).not.toContain('__proto__')
+    }
+  })
+
+  it('keeps required columns visible even when persisted state hides them', () => {
+    const { visibleColumns } = withPayload(JSON.stringify({ id: false }))
+    expect(visibleColumns.value.map(c => c.name)).toContain('id')
+  })
+})

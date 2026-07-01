@@ -78,9 +78,10 @@
     "lint:style": "stylelint \"src/**/*.css\"",
     "lint:css": "node scripts/lint-css-governance.mjs",
     "sec:audit": "npm audit --omit=dev --audit-level=high",
+    "sec:lockfile": "lockfile-lint --path package-lock.json --type npm --allowed-hosts npm --validate-https --validate-integrity",
     "size:check": "node scripts/check-bundle-size.mjs",
     "type-check": "vue-tsc --noEmit",
-    "verify": "npm run sec:audit && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run size:check && npm run build:samples && npm run test:e2e"
+    "verify": "npm run sec:audit && npm run sec:lockfile && npm run tokens:check && npm run docs:check && npm run layers:check && npm run lint -- --quiet && npm run lint:style && npm run lint:css && npm run type-check && npm run test:coverage && npm run build && npm run size:check && npm run build:samples && npm run test:e2e"
   },
   "keywords": [
     "vue",
@@ -136,6 +137,7 @@
     "eslint-plugin-vue": "^10.9.2",
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",
+    "lockfile-lint": "^5.0.0",
     "quasar": "^2.20.1",
     "sass": "^1.101.0",
     "stylelint": "^17.13.0",
