@@ -14,7 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `locale` option on `createNetToolsKitUI()`. Governed built-in strings
   (`DsCrudPage`, `DsForm`, `DsTable` incl. boolean cells, `DsDialog`,
   `DsFilterBar`, `DsSelect`) and validation-rule default messages resolve from
-  the active locale; explicit label props/messages always win.
+  the active locale; explicit label props/messages always win. The a11y
+  long tail followed (19 `a11y.*` keys, 21 labels across 18 components).
+- **OWASP security baseline with executable gates.** Security headers on the
+  samples deploy (CSP without `unsafe-eval`, nosniff, HSTS, frame-ancestors,
+  COOP/CORP), `vue/no-v-html` as an ESLint error (single justified
+  registry-only sink), whitelist parsing for persisted table-column state,
+  `sec:lockfile` (lockfile-lint) in `verify`, and a published-entry scan that
+  fails on `eval`/`new Function`/`document.write`. See `SECURITY.md`.
+- **Enforced coverage gate.** Suite raised to 93%+ statements/functions/lines
+  with behavior tests; vitest thresholds enforce the floors globally (plus
+  the existing 100% core thresholds), so coverage regressions fail `verify`.
 
 ### Changed
 
