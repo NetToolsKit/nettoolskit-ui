@@ -46,13 +46,13 @@ export default defineConfig({
       // The deterministic core (contracts + recipes) is the highest-value layer
       // to keep fully covered. Other layers are gated by their own suites.
       thresholds: {
-        // Global floor (achieved 93.4/86.3/93.9/93.5 on 2026-07-01 with
+        // Global floor (achieved 95.6/89.9/95.9/95.7 on 2026-07-01 with
         // behavior tests only — no data-restating fillers). Raising a floor
         // requires tests; lowering one requires an ADR.
-        statements: 92,
-        branches: 85,
-        functions: 92,
-        lines: 92,
+        statements: 94,
+        branches: 89,
+        functions: 94,
+        lines: 94,
         'src/design-system/core/components/**/*.ts': {
           statements: 100,
           functions: 100,
