@@ -113,8 +113,8 @@ import {
   isNtkDateDisabled,
   ntkDatePickerDefaults,
   ntkFieldRecipeClassMap,
-  ntkMonthLabels,
-  ntkWeekdayLabels,
+  getNtkMonthLabels,
+  getNtkWeekdayLabels,
   parseNtkDate,
   resolveNtkDatePickerRecipe,
   shiftNtkDate,
@@ -152,7 +152,7 @@ const open = ref(false)
 // ISO of the day that currently owns the roving tabindex inside the grid.
 const focusedIso = ref<string>(props.modelValue ?? formatNtkDate(new Date()))
 
-const weekdayLabels = ntkWeekdayLabels
+const weekdayLabels = computed(() => getNtkWeekdayLabels(ntkI18n.locale.value))
 
 const inputId = computed(() => (props.id ? `${props.id}__control` : undefined))
 const labelId = computed(() => (props.id ? `${props.id}__label` : undefined))
@@ -179,10 +179,12 @@ const focusedDate = computed(() => parseNtkDate(focusedIso.value) ?? new Date())
 const matrix = computed(() =>
   getNtkCalendarMatrix(focusedDate.value.getUTCFullYear(), focusedDate.value.getUTCMonth()))
 const monthLabel = computed(() =>
-  `${ntkMonthLabels[focusedDate.value.getUTCMonth()]} ${focusedDate.value.getUTCFullYear()}`)
-const calendarLabel = computed(() => props.label ? `${props.label} calendar` : 'Choose date')
-const previousMonthLabel = 'Previous month'
-const nextMonthLabel = 'Next month'
+  `${getNtkMonthLabels(ntkI18n.locale.value)[focusedDate.value.getUTCMonth()]} ${focusedDate.value.getUTCFullYear()}`)
+const calendarLabel = computed(() => (props.label
+  ? ntkI18n.t('a11y.calendarFor', { label: props.label })
+  : ntkI18n.t('a11y.chooseDate')))
+const previousMonthLabel = computed(() => ntkI18n.t('a11y.previousMonth'))
+const nextMonthLabel = computed(() => ntkI18n.t('a11y.nextMonth'))
 
 function isCellDisabled(iso: string): boolean {
   return isNtkDateDisabled(iso, props.min, props.max)
