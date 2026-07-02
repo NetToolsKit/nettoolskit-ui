@@ -111,7 +111,9 @@ const labelId = computed(() => (props.id ? `${props.id}__label` : undefined))
 const descriptionId = computed(() => (
   (props.errorMessage || props.hint) && props.id ? `${props.id}__description` : undefined
 ))
-const listLabel = computed(() => (props.label ? `${props.label} options` : 'Choose time'))
+const listLabel = computed(() => (props.label
+  ? ntkI18n.t('a11y.optionsFor', { label: props.label })
+  : ntkI18n.t('a11y.chooseTime')))
 
 const options = computed(() => enumerateNtkTimeOptions(props.step, props.min, props.max))
 
