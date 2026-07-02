@@ -8,6 +8,7 @@
  * string parsed/formatted in UTC so it is fully deterministic and unit-testable.
  */
 
+import { getNtkCoreLocale } from '../i18n'
 import {
   resolveNtkRecipe,
   type NtkClassValue,
@@ -62,10 +63,43 @@ export const getNtkDatePickerClassName = (options: NtkDatePickerRecipeOptions = 
 
 // --- Pure date helpers --------------------------------------------------------
 
-/** Weekday header labels, Sunday-first. */
+/**
+ * Locale-aware calendar labels via `Intl.DateTimeFormat` — no hand-written
+ * dictionaries to maintain, correct for any BCP-47 locale. Defaults to the
+ * active core locale (`setNtkCoreLocale`); pass a locale explicitly for a
+ * reactive binding (the Vue layer passes `useNtkI18n().locale.value`).
+ * Cached per locale; anchored on a known Sunday (2023-01-01) in UTC.
+ */
+const calendarLabelCache = new Map<string, { weekdays: readonly string[]; months: readonly string[] }>()
+
+const getCalendarLabels = (locale: string): { weekdays: readonly string[]; months: readonly string[] } => {
+  let entry = calendarLabelCache.get(locale)
+  if (!entry) {
+    const weekdayFormat = new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' })
+    const monthFormat = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' })
+    entry = {
+      weekdays: Array.from({ length: 7 }, (_, day) =>
+        weekdayFormat.format(new Date(Date.UTC(2023, 0, 1 + day)))),
+      months: Array.from({ length: 12 }, (_, month) =>
+        monthFormat.format(new Date(Date.UTC(2023, month, 1)))),
+    }
+    calendarLabelCache.set(locale, entry)
+  }
+  return entry
+}
+
+/** Weekday header labels, Sunday-first, in the given (or active) locale. */
+export const getNtkWeekdayLabels = (locale?: string): readonly string[] =>
+  getCalendarLabels(locale ?? getNtkCoreLocale()).weekdays
+
+/** Month name labels, January-first, in the given (or active) locale. */
+export const getNtkMonthLabels = (locale?: string): readonly string[] =>
+  getCalendarLabels(locale ?? getNtkCoreLocale()).months
+
+/** @deprecated Static English labels; prefer `getNtkWeekdayLabels()`. */
 export const ntkWeekdayLabels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const
 
-/** Month name labels, January-first. */
+/** @deprecated Static English labels; prefer `getNtkMonthLabels()`. */
 export const ntkMonthLabels = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',

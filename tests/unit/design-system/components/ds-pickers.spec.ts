@@ -133,16 +133,17 @@ describe('DsDatePicker', () => {
 
     await wrapper.get('.ntk-date-picker__trigger').trigger('click')
     await nextTick()
-    expect(wrapper.get('.ntk-date-picker__month-label').text()).toBe('June 2024')
+    // Default locale is pt-BR; month names now come from Intl.
+    expect(wrapper.get('.ntk-date-picker__month-label').text()).toBe('junho 2024')
 
-    await wrapper.get('[aria-label="Next month"]').trigger('click')
+    await wrapper.get('[aria-label="Próximo mês"]').trigger('click')
     await nextTick()
-    expect(wrapper.get('.ntk-date-picker__month-label').text()).toBe('July 2024')
+    expect(wrapper.get('.ntk-date-picker__month-label').text()).toBe('julho 2024')
 
-    await wrapper.get('[aria-label="Previous month"]').trigger('click')
-    await wrapper.get('[aria-label="Previous month"]').trigger('click')
+    await wrapper.get('[aria-label="Mês anterior"]').trigger('click')
+    await wrapper.get('[aria-label="Mês anterior"]').trigger('click')
     await nextTick()
-    expect(wrapper.get('.ntk-date-picker__month-label').text()).toBe('May 2024')
+    expect(wrapper.get('.ntk-date-picker__month-label').text()).toBe('maio 2024')
 
     wrapper.unmount()
   })

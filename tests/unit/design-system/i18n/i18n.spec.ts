@@ -93,6 +93,20 @@ describe('component built-in labels (reactive locale)', () => {
     expect(wrapper.text()).not.toContain('Save')
   })
 
+  it('calendar month/weekday labels follow the locale via Intl', async () => {
+    const { getNtkMonthLabels, getNtkWeekdayLabels } = await import('@/design-system/core')
+
+    expect(getNtkMonthLabels('en')[0]).toBe('January')
+    expect(getNtkMonthLabels('pt-BR')[0]?.toLowerCase()).toBe('janeiro')
+    expect(getNtkWeekdayLabels('pt-BR')).toHaveLength(7)
+    // Registry default: active locale drives the unqualified call.
+    expect(getNtkMonthLabels()[5]?.toLowerCase()).toBe('junho')
+    setNtkLocale('en')
+    expect(getNtkMonthLabels()[5]).toBe('June')
+    // Cache returns the same array instance per locale.
+    expect(getNtkMonthLabels('en')).toBe(getNtkMonthLabels('en'))
+  })
+
   it('a11y labels of long-tail components follow the locale (props still win)', () => {
     expect(useNtkI18n().t('a11y.remove')).toBe('Remover')
     expect(useNtkI18n().t('a11y.openCalendar')).toBe('Abrir calendário')
